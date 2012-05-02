@@ -1,0 +1,11 @@
+{
+    "name": "productmanager"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": ">= 2.4.7"
+    , "ejs": ">= 0.4.3"
+    , "formidable": ">= 1.0.6"
+    , "azure": ">= 0.5.1"
+  }
+}

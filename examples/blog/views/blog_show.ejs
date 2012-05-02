@@ -1,0 +1,17 @@
+<h1>
+  <%-title%>
+</h1>
+<div class="post">
+  <% if (post.created_at) {%>
+  <div class="created_at">
+    <p>
+      Posted on: <%-post.created_at%>
+    </p>
+  </div>
+  <% }%>
+  <div class="body">
+    <p>
+      <%-post.body%>
+    </p>
+  </div>
+</div>

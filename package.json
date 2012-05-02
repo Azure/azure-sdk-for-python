@@ -1,0 +1,36 @@
+{
+    "name": "azure",
+    "author": "Microsoft Corporation",
+    "version": "0.5.2",
+    "description": "Windows Azure Client Library for node",
+    "tags" : ["azure", "sdk"],
+    "keywords": [ "node", "azure" ],
+    "main": "./lib/azure.js",
+    "engines": { "node": ">= 0.4.7" },
+    "licenses": [ { "type": "Apache", "url": "http://www.apache.org/licenses/LICENSE-2.0" } ],
+    "dependencies": {
+        "xml2js" : ">= 0.1.11",
+        "sax": ">= 0.1.1",
+        "qs": ">= 0.3.1",
+        "log": ">= 1.2.0",
+        "xmlbuilder": ">= 0.3.1",
+        "mime": ">= 1.2.4",
+        "dateformat": "1.0.2-1.2.3"
+    },
+    "devDependencies": {
+        "nodeunit": ">= 0.6.4"
+    },
+    "homepage": "http://github.com/WindowsAzure/azure-sdk-for-node",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:WindowsAzure/azure-sdk-for-node.git"
+    },
+    "bugs" : {
+        "url" : "http://github.com/WindowsAzure/azure-sdk-for-node/issues"
+    },
+    "scripts": {
+      "test": "node test/runtests.js",
+      "jshint": "node test/runjshint.js",
+      "extendedtests": "node test/runextendedtests.js"
+    }
+}

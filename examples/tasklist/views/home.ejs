@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>Index</title>
+    </head>
+    <body>
+        <h1>My Task List</h1>
+
+        <form action="/home/completed" method="post">
+            <table border="1">
+                <tr>
+                    <td>Name</td>
+                    <td>Category</td>
+                    <td>Date</td>
+                    <td>Complete</td>
+                </tr>
+
+                <% taskList.forEach(function(item){ %>
+                <tr>
+                    <td><%-item.name%></td>
+                    <td><%-item.category%></td>
+                    <td><%-item.date%></td>
+                    <td>
+                        <input type="checkbox" name="completed" value="<%-item.RowKey%>" />
+                    </td>
+                </tr>
+                <% }) %>
+            </table>
+
+            <p>
+                <input type="submit" value="Complete" />
+            </p>
+        </form>
+
+        <form action="/home/newitem" method="post">
+            <table border="1">
+                <tr>
+                    <td>Item Name:</td>
+                    <td>
+                        <input name="item[name]" type="textbox" />
+                    </td>
+                </tr>
+                    <td>Item Category:</td>
+                    <td>
+                        <input name="item[category]" type="textbox" />
+                    </td>
+                <tr>
+                </tr>
+                <tr>
+                    <td>Item Date:</td>
+                    <td>
+                        <input name="item[date]" type="textbox" />
+                    </td>
+                </tr>
+            </table>
+            <p>
+                <input type="submit" value="Add item" />
+            </p>
+        </form>
+    </body>
+</html>
