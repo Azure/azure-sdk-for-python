@@ -1,0 +1,68 @@
+body {
+  font-family: Tahoma, "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  text-stroke: 1px rgba(255,255,255,0.10);
+  color: #555;
+  background-color: #f3f4f5;
+}
+h1,
+h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #343434;
+}
+h1 {
+  font-size: 60px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+#posts {
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #fff;
+  width: 80%;
+}
+#posts #newPost {
+  float: right;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+#posts #deletePost {
+  float: right;
+}
+#posts .post {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #d3d2d2;
+  padding: 20px;
+}
+#posts .post .created_at {
+  font-size: 10px;
+  padding-bottom: 5px;
+}
+#posts .post .title {
+  font-weight: bold;
+  text-decoration: underline;
+  padding-bottom: 5px;
+}
+.post {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #d3d2d2;
+  padding: 20px;
+  background-color: #fff;
+}
+.post #editPostSubmitDiv {
+  padding-top: 20px;
+}
+.post #editPostTitle {
+  width: 300px;
+}
+.post #editPostBodyDiv {
+  padding-top: 20px;
+}
+.post #editPostBody {
+  width: 100%;
+  height: 90px;
+}

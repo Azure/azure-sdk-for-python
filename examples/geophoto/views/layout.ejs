@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Geophoto</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link type="text/css" href="stylesheets/style.css" rel="stylesheet" />
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="socket.io/socket.io.js"></script>
+
+    <script type="text/javascript">
+      var bingMapsCredentials = '<%= bingMapsCredentials %>';
+      var initialPushpins = [
+        <% pushpins.forEach(function(pushpin) { %>
+         { title: '<%= pushpin.title %>', description: '<%= pushpin.description %>', latitude: '<%= pushpin.latitude %>', longitude: '<%= pushpin.longitude %>', RowKey: '<%= pushpin.RowKey %>', PartitionKey: '<%= pushpin.PartitionKey %>' },
+        <% }) %>
+      ];
+    </script>
+
+    <script type="text/javascript" src="scripts/geophoto.js"></script>
+  </head>
+
+  <body onload="initialize()">
+    <%- body %>
+  </body>
+</html>

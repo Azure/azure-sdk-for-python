@@ -1,0 +1,36 @@
+<h2><%= title %></h2>
+
+<p>My upcoming events:</p>
+
+<% if (eventList.length == 0) {%>
+<p>No Events found.</p>
+<% } else { %>
+<ul>
+<% for(var i=0; i<eventList.length; i++) {%>
+<li><a href="/events/<%= eventList[i].RowKey %>"><%= eventList[i].name %><a/>: <%= eventList[i].date %></li>
+<% } %>
+</ul>
+<% } %>
+
+<p>Create a new Event:</p>
+<form action="/events/create" enctype="multipart/form-data" method="post">
+	<table>
+		<tr>
+			<td><label>Event Name:</label></td>
+			<td><input type="textbox" name="item[name]" /></td>
+		<tr>
+		<tr>
+			<td><label>Event Date:</label></td>
+			<td><input type="textbox" name="item[date]" /></td>
+		<tr>
+		<tr>
+			<td><label>Event Description:</label></td>
+			<td><input type="textbox" name="item[description]" /></td>
+		<tr>
+		<tr>
+			<td><label>Event Image:</label></td>
+			<td><input type="file" name="item[file]" /></td>
+		<tr>
+	</table>
+	<input type="submit" value="Create Event" />	
+</form>

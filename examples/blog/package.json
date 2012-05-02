@@ -1,0 +1,12 @@
+{
+    "name": "application-name"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": ">= 2.4.7"
+    , "stylus": ">= 0.0.1"
+    , "ejs": ">= 0.4.3"
+    , "node-uuid": ">= 1.2.0"
+    , "azure": ">= 0.5.1"
+  }
+}
