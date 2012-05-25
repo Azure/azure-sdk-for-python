@@ -352,7 +352,7 @@ def _sign_storage_table_request(request, account_name, account_key):
             string_to_sign += '?comp=' + value
             break
 
-    httpclientLogger.debug("sign string: " + string_to_sign)
+    storageLogger.debug("sign string: " + string_to_sign)
 
     #sign the request
     decode_account_key = base64.b64decode(account_key)
