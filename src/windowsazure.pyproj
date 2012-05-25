@@ -29,6 +29,7 @@
     <Folder Include="windowsazure\storage\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="setup.py" />
     <Compile Include="windowsazure\http\batchclient.py" />
     <Compile Include="windowsazure\http\httpclient.py" />
     <Compile Include="windowsazure\http\winhttp.py" />
@@ -45,7 +46,10 @@
     <Compile Include="windowsazure\__init__.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="README_WINDOWSAZURE" />
+    <Content Include="build.bat" />
+    <Content Include="install.bat" />
+    <Content Include="installfrompip.bat" />
+    <Content Include="upload.bat" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>
