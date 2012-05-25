@@ -21,9 +21,12 @@ import urllib2
 import httplib
 import ast
 import sys
+import logging
 from xml.dom import minidom
 
 from windowsazure import HTTPError
+
+httpclientLogger = logging.getLogger("windowsazure.http.httpclient")
 
 class _HTTPClient:
     def __init__(self, service_instance, cert_file=None, account_name=None, account_key=None, service_namespace=None, issuer=None, x_ms_version=None, protocol='https'):
@@ -79,9 +82,9 @@ class _HTTPClient:
         elif resp.length > 0:
             respbody = resp.read(resp.length)
     
-        print(self.status)
-        #print(self.message)
-        #print(respbody)
+        httpclientLogger.debug(self.status)
+        #httpclientLogger.debug(self.message)
+        #httpclientLogger.debug(respbody)
         if self.status >= 300:
             raise HTTPError(self.status, self.message, self.respheader, respbody)
         

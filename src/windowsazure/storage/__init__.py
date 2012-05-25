@@ -38,7 +38,11 @@ X_MS_VERSION = '2011-08-18'
 # You must not remove this notice, or any other, from this software.
 #------------------------------------------------------------------------------
 
+import logging
+
 from windowsazure import WindowsAzureData, DEV_ACCOUNT_NAME
+
+storageLogger = logging.getLogger("windowsazure.storage")
 
 class EnumResultsBase:
     def __int__(self):
@@ -319,7 +323,7 @@ def _sign_storage_blob_request(request, account_name, account_key):
             else:
                 string_to_sign += '\n' + ',' + value
 
-    print("sign string: " + string_to_sign)
+    storageLogger.debug("sign string: " + string_to_sign)
 
     #sign the request
     decode_account_key = base64.b64decode(account_key)
@@ -348,7 +352,7 @@ def _sign_storage_table_request(request, account_name, account_key):
             string_to_sign += '?comp=' + value
             break
 
-    print("sign string: " + string_to_sign)
+    httpclientLogger.debug("sign string: " + string_to_sign)
 
     #sign the request
     decode_account_key = base64.b64decode(account_key)

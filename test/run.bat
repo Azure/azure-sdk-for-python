@@ -13,6 +13,12 @@ REM You must not remove this notice, or any other, from this software.
 REM----------------------------------------------------------------------------
 cls
 
+if "%PYTHONPATH%" == "" (
+	set PYTHONPATH=..\src
+) else (
+	set PYTHONPATH=%PYTHONPATH%:..\src
+)
+
 echo Running tests...
 %SystemDrive%\Python27\python.exe -m unittest discover -p "test_*.py"
 set UNITTEST_EC=%ERRORLEVEL%
