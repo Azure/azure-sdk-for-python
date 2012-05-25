@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{c0742a2d-4862-40e4-8a28-036eecdbc614}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>..\src</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>windowsazuretest</Name>
+    <RootNamespace>windowsazuretest</RootNamespace>
+    <SccProjectName>
+    </SccProjectName>
+    <SccProvider>
+    </SccProvider>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccLocalPath>
+    </SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="windowsazuretest\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="windowsazuretest\test_cloudblobclient.py" />
+    <Compile Include="windowsazuretest\test_cloudqueueclient.py" />
+    <Compile Include="windowsazuretest\test_cloudtableclient.py" />
+    <Compile Include="windowsazuretest\test_servicebusservice.py" />
+    <Compile Include="windowsazuretest\util.py" />
+    <Compile Include="windowsazuretest\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="run.bat" />
+    <Content Include="run.bash" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>
