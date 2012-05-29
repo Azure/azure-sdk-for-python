@@ -433,10 +433,11 @@ def _dont_fail_not_exist(error):
         return False
     else:
         raise error
-
-
+    
 def _parse_response_for_dict(service_instance):
-    http_headers = ['content-type', 'server', 'date', 'location', 'host']
+    http_headers = ['server', 'date', 'location', 'host', 
+                    'via', 'proxy-connection', 'x-ms-version', 'connection',
+                    'content-length', 'x-ms-request-id']
     if service_instance.respheader:
         return_dict = {}
         for name, value in service_instance.respheader:

@@ -38,14 +38,10 @@ X_MS_VERSION = '2011-08-18'
 # You must not remove this notice, or any other, from this software.
 #------------------------------------------------------------------------------
 
-import logging
-
 from windowsazure import WindowsAzureData, DEV_ACCOUNT_NAME
 
-storageLogger = logging.getLogger("windowsazure.storage")
-
 class EnumResultsBase:
-    def __int__(self):
+    def __init__(self):
         self.prefix = ''
         self.marker = ''
         self.max_results = 0
@@ -53,9 +49,14 @@ class EnumResultsBase:
 
 class ContainerEnumResults(EnumResultsBase):
     def __init__(self):
+        EnumResultsBase.__init__(self)
         self.containers = []   
     def __iter__(self):
         return iter(self.containers)
+    def __len__(self):
+        return len(self.containers)
+    def __getitem__(self, index):
+        return self.containers[index]
 
 class Container(WindowsAzureData):
     def __init__(self):
@@ -128,9 +129,14 @@ class SignedIdentifiers(WindowsAzureData):
 
 class BlobEnumResults(EnumResultsBase):
     def __init__(self):
+        EnumResultsBase.__init__(self)
         self.blobs = []
     def __iter__(self):
         return iter(self.blobs)
+    def __len__(self):
+        return len(self.blobs)
+    def __getitem__(self, index):
+        return self.blobs[index]
 
 class Blob(WindowsAzureData):
     def __init__(self):
@@ -187,9 +193,14 @@ class PageList:
 
 class QueueEnumResults(EnumResultsBase):
     def __init__(self):
+        EnumResultsBase.__init__(self)
         self.queues = []        
     def __iter__(self):
         return iter(self.queues)
+    def __len__(self):
+        return len(self.queues)
+    def __getitem__(self, index):
+        return self.queues[index]
 
 class Queue(WindowsAzureData):
     def __init__(self):
@@ -202,6 +213,10 @@ class QueueMessageList:
         self.queue_messages = []
     def __iter__(self):
         return iter(self.queue_messages)
+    def __len__(self):
+        return len(self.queue_messages)
+    def __getitem__(self, index):
+        return self.queue_messages[index]
 
 class QueueMessage(WindowsAzureData):
     def __init__(self):
@@ -215,9 +230,14 @@ class QueueMessage(WindowsAzureData):
 
 class TableEnumResult(EnumResultsBase):
     def __init__():
+        EnumResultsBase.__init__(self)
         self.tables = []
     def __iter__(self):
         return iter(self.tables)
+    def __len__(self):
+        return len(self.tables)
+    def __getitem__(self, index):
+        return self.tables[index]
 
 class Entity(WindowsAzureData):
     pass
@@ -323,8 +343,6 @@ def _sign_storage_blob_request(request, account_name, account_key):
             else:
                 string_to_sign += '\n' + ',' + value
 
-    storageLogger.debug("sign string: " + string_to_sign)
-
     #sign the request
     decode_account_key = base64.b64decode(account_key)
     signed_hmac_sha256 = hmac.HMAC(decode_account_key, string_to_sign, hashlib.sha256)
@@ -351,8 +369,6 @@ def _sign_storage_table_request(request, account_name, account_key):
         if name == 'comp' and uri_path == '/':
             string_to_sign += '?comp=' + value
             break
-
-    storageLogger.debug("sign string: " + string_to_sign)
 
     #sign the request
     decode_account_key = base64.b64decode(account_key)

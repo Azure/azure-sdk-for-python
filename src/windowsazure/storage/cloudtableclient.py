@@ -11,6 +11,7 @@
 # You must not remove this notice, or any other, from this software.
 #------------------------------------------------------------------------------
 import base64
+import os
 import urllib2
 
 from windowsazure.storage import *
@@ -37,7 +38,7 @@ class CloudTableClient(_StorageClient):
 
     def begin_batch(self):
         if self._batchclient is None:
-            self._batchclient = _BatchClient(service_instance=self, account_key=self.account_key, account_name=self.account_name, x_ms_version=self.x_ms_version)
+            self._batchclient = _BatchClient(service_instance=self, account_key=self.account_key, account_name=self.account_name)
         return self._batchclient.begin_batch()
 
     def commit_batch(self):

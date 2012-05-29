@@ -24,6 +24,9 @@ from windowsazure import (WindowsAzureError, remove_xmltag_namespace, WindowsAzu
                           HTTPError)
 
 DEFAULT_RULE_NAME='$Default'
+AZURE_SERVICEBUS_NAMESPACE = 'AZURE_SERVICEBUS_NAMESPACE'
+AZURE_SERVICEBUS_ACCESS_KEY = 'AZURE_SERVICEBUS_ACCESS_KEY'
+AZURE_SERVICEBUS_ISSUER = 'AZURE_SERVICEBUS_ISSUER'
 
 class Queue(WindowsAzureData):
     def __init__(self):
@@ -247,6 +250,7 @@ def convert_xml_to_queue(xmlstr):
     xmldoc = minidom.parseString(xmlstr)
     queue = Queue()
 
+    invalid_queue = True
     for attr_name, attr_value in vars(queue).iteritems():
         tag_name = attr_name.replace('_', '')
         xml_attrs = xmldoc.getElementsByTagName(tag_name)
@@ -254,6 +258,10 @@ def convert_xml_to_queue(xmlstr):
             xml_attr = xml_attrs[0]
             if xml_attr.firstChild:
                 setattr(queue, attr_name, xml_attr.firstChild.nodeValue)
+                invalid_queue = False
+
+    if invalid_queue:
+        raise WindowsAzureError('Queue is not Found')
 
     for name, value in get_entry_properties(xmlstr, ['id', 'updated', 'name']).iteritems():
         setattr(queue, name, value)
@@ -265,6 +273,8 @@ def convert_xml_to_topic(xmlstr):
     xmlstr = remove_xmltag_namespace(xmlstr, to_lower=True)
     xmldoc = minidom.parseString(xmlstr)
     topic = Topic()
+
+    invalid_topic = True
     for attr_name, attr_value in vars(topic).iteritems():
         tag_name = attr_name.replace('_', '')
         xml_attrs = xmldoc.getElementsByTagName(tag_name)
@@ -272,6 +282,11 @@ def convert_xml_to_topic(xmlstr):
             xml_attr = xml_attrs[0]
             if xml_attr.firstChild:
                 setattr(topic, attr_name, xml_attr.firstChild.nodeValue)
+                invalid_topic = False
+
+    if invalid_topic:
+        raise WindowsAzureError('Topic is not Found')
+
     for name, value in get_entry_properties(xmlstr, ['id', 'updated', 'name']).iteritems():
         setattr(topic, name, value)
     return topic

@@ -21,12 +21,16 @@ from windowsazure.http.httpclient import _HTTPClient
 from windowsazure import (_parse_response, HTTPError, WindowsAzureError,
                           DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY)
 
+AZURE_STORAGE_ACCOUNT = 'AZURE_STORAGE_ACCOUNT'
+AZURE_STORAGE_ACCESS_KEY = 'AZURE_STORAGE_ACCESS_KEY'
+EMULATED = 'EMULATED'
+
 class _StorageClient:
     '''
     This is the base class for BlobManager, TableManager and QueueManager.
     '''
 
-    def __init__(self, account_name, account_key, use_local_storage=None, protocol='http'):
+    def __init__(self, account_name=None, account_key=None, protocol='http'):
         self.account_name = account_name
         self.account_key = account_key
         self.status = None
@@ -34,20 +38,32 @@ class _StorageClient:
         self.respheader = None
         self.requestid = None
         self.protocol = protocol
-        self.use_local_storage = use_local_storage
-        if use_local_storage is None:
-            if os.environ.has_key('EMULATED'):
+        self.use_local_storage = False
+        if os.environ.has_key(EMULATED):
+            if os.environ[EMULATED].lower() == 'false':
+                self.is_emulated = False
+            else:
+                self.is_emulated = True
+        else:
+            self.is_emulated = False
+
+        if not account_name or not account_key:
+            if self.is_emulated:
+                self.account_name = DEV_ACCOUNT_NAME
+                self.account_key = DEV_ACCOUNT_KEY
                 self.use_local_storage = True
             else:
-                self.use_local_storage = False
-        else:
-            self.use_local_storage = use_local_storage
-        if self.use_local_storage:
-            self.account_name = DEV_ACCOUNT_NAME
-            self.account_key = DEV_ACCOUNT_KEY
+                if os.environ.has_key(AZURE_STORAGE_ACCOUNT):
+                    self.account_name = os.environ[AZURE_STORAGE_ACCOUNT]
+                if os.environ.has_key(AZURE_STORAGE_ACCESS_KEY):
+                    self.account_key = os.environ[AZURE_STORAGE_ACCESS_KEY]
         else:
             self.account_name = account_name
             self.account_key = account_key
+
+        if not self.account_name or not self.account_key:
+            raise WindowsAzureError('You need to provide both account name and access key')
+
         self.x_ms_version = X_MS_VERSION
         self._httpclient = _HTTPClient(service_instance=self, account_key=account_key, account_name=account_name, x_ms_version=self.x_ms_version, protocol=protocol)
         self._batchclient = None

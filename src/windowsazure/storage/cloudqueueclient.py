@@ -11,6 +11,7 @@
 # You must not remove this notice, or any other, from this software.
 #------------------------------------------------------------------------------
 import base64
+import os
 import urllib2
 
 from windowsazure.storage import *

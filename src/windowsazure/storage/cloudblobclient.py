@@ -11,6 +11,7 @@
 # You must not remove this notice, or any other, from this software.
 #------------------------------------------------------------------------------
 import base64
+import os
 import urllib2
 
 from windowsazure.storage import *
@@ -37,8 +38,8 @@ class CloudBlobClient(_StorageClient):
         '''
         The List Containers operation returns a list of the containers under the specified account.
         
-        prefix: Optional. A string value that identifies the portion of the list to be returned 
-                with the next list operation. 
+        prefix: Optional. Filters the results to return only containers whose name begins with
+        		the specified prefix.. 
         marker: Optional. A string value that identifies the portion of the list to be returned 
                 with the next list operation.
         maxresults: Optional. Specifies the maximum number of containers to return. 
@@ -111,7 +112,7 @@ class CloudBlobClient(_StorageClient):
     def get_container_metadata(self, container_name):
         '''
         Returns all user-defined metadata for the specified container. The metadata will be 
-        in 'x_ms_meta_(name)' property of return object. Example: x_ms_meta_category.
+        in returned dictionary['x-ms-meta-(name)'].
         '''
         validate_not_none('container-name', container_name)
         request = _Request()
@@ -212,11 +213,69 @@ class CloudBlobClient(_StorageClient):
 
         return self._parse_response(respbody, BlobEnumResults)
 
-    def set_blob_properties(self, storage_service_properties=None, x_ms_blob_cache_control=None, x_ms_blob_content_type=None, x_ms_blob_content_md5=None, x_ms_blob_content_encoding=None, x_ms_blob_content_language=None, x_ms_lease_id=None):
+    def set_blob_service_properties(self, storage_service_properties, timeout=None):
+        '''
+        Sets the properties of a storage account's Blob service, including Windows Azure 
+        Storage Analytics. You can also use this operation to set the default request 
+        version for all incoming requests that do not have a version specified.
+        
+        storage_service_properties: a StorageServiceProperties object.
+        timeout: Optional. The timeout parameter is expressed in seconds. For example, the 
+        		following value sets a timeout of 30 seconds for the request: timeout=30.
+        '''
+        validate_not_none('class:storage_service_properties', storage_service_properties)
+        request = _Request()
+        request.method = 'PUT'
+        request.host = get_host(BLOB_SERVICE, self.account_name, self.use_local_storage)
+        request.uri = '/?restype=service&comp=properties'
+        request.query = [('timeout', to_right_type(timeout))]
+        request.body = _get_request_body(convert_class_to_xml(storage_service_properties))
+        request.uri, request.query = _update_request_uri_query(request, self.use_local_storage)
+        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
+        respbody = self._perform_request(request)
+
+    def get_blob_service_properties(self, timeout=None):
+        '''
+        Gets the properties of a storage account's Blob service, including Windows Azure 
+        Storage Analytics.
+        
+        timeout: Optional. The timeout parameter is expressed in seconds. For example, the 
+        		following value sets a timeout of 30 seconds for the request: timeout=30.
+        '''
+        request = _Request()
+        request.method = 'GET'
+        request.host = get_host(BLOB_SERVICE, self.account_name, self.use_local_storage)
+        request.uri = '/?restype=service&comp=properties'
+        request.query = [('timeout', to_right_type(timeout))]
+        request.uri, request.query = _update_request_uri_query(request, self.use_local_storage)
+        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
+        respbody = self._perform_request(request)
+
+        return self._parse_response(respbody, StorageServiceProperties)
+
+    def get_blob_properties(self, container_name, blob_name, x_ms_lease_id=None):
+        '''
+        Returns all user-defined metadata, standard HTTP properties, and system properties for the blob.
+        
+        x_ms_lease_id: Required if the blob has an active lease.
+        '''
+        validate_not_none('container-name', container_name)
+        validate_not_none('blob-name', blob_name)
+        request = _Request()
+        request.method = 'HEAD'
+        request.host = get_host(BLOB_SERVICE, self.account_name, self.use_local_storage)
+        request.uri = '/' + to_right_type(container_name) + '/' + to_right_type(blob_name) + ''
+        request.header = [('x-ms-lease-id', to_right_type(x_ms_lease_id))]
+        request.uri, request.query = _update_request_uri_query(request, self.use_local_storage)
+        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
+        respbody = self._perform_request(request)
+
+        return _parse_response_for_dict(self)
+
+    def set_blob_properties(self, container_name, blob_name, x_ms_blob_cache_control=None, x_ms_blob_content_type=None, x_ms_blob_content_md5=None, x_ms_blob_content_encoding=None, x_ms_blob_content_language=None, x_ms_lease_id=None):
         '''
         Sets system properties on the blob.
         
-        storage_service_properties: a StorageServiceProperties object.
         x_ms_blob_cache_control: Optional. Modifies the cache control string for the blob. 
         x_ms_blob_content_type: Optional. Sets the blob's content type. 
         x_ms_blob_content_md5: Optional. Sets the blob's MD5 hash.
@@ -224,10 +283,12 @@ class CloudBlobClient(_StorageClient):
         x_ms_blob_content_language: Optional. Sets the blob's content language.
         x_ms_lease_id: Required if the blob has an active lease.
         '''
+        validate_not_none('container-name', container_name)
+        validate_not_none('blob-name', blob_name)
         request = _Request()
         request.method = 'PUT'
         request.host = get_host(BLOB_SERVICE, self.account_name, self.use_local_storage)
-        request.uri = '/?restype=service&comp=properties'
+        request.uri = '/' + to_right_type(container_name) + '/' + to_right_type(blob_name) + '?comp=properties'
         request.header = [
             ('x-ms-blob-cache-control', to_right_type(x_ms_blob_cache_control)),
             ('x-ms-blob-content-type', to_right_type(x_ms_blob_content_type)),
@@ -236,27 +297,9 @@ class CloudBlobClient(_StorageClient):
             ('x-ms-blob-content-language', to_right_type(x_ms_blob_content_language)),
             ('x-ms-lease-id', to_right_type(x_ms_lease_id))
             ]
-        request.body = _get_request_body(convert_class_to_xml(storage_service_properties))
         request.uri, request.query = _update_request_uri_query(request, self.use_local_storage)
         request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
         respbody = self._perform_request(request)
-
-    def get_blob_properties(self, x_ms_lease_id=None):
-        '''
-        Returns all user-defined metadata, standard HTTP properties, and system properties for the blob.
-        
-        x_ms_lease_id: Required if the blob has an active lease.
-        '''
-        request = _Request()
-        request.method = 'GET'
-        request.host = get_host(BLOB_SERVICE, self.account_name, self.use_local_storage)
-        request.uri = '/?restype=service&comp=properties'
-        request.header = [('x-ms-lease-id', to_right_type(x_ms_lease_id))]
-        request.uri, request.query = _update_request_uri_query(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
-
-        return self._parse_response(respbody, StorageServiceProperties)
 
     def put_blob(self, container_name, blob_name, blob, x_ms_blob_type, content_encoding=None, content_language=None, content_m_d5=None, cache_control=None, x_ms_blob_content_type=None, x_ms_blob_content_encoding=None, x_ms_blob_content_language=None, x_ms_blob_content_md5=None, x_ms_blob_cache_control=None, x_ms_meta_name_values=None, x_ms_lease_id=None, x_ms_blob_content_length=None, x_ms_blob_sequence_number=None):
         '''

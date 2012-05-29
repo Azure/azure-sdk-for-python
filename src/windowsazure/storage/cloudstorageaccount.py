@@ -16,7 +16,7 @@ from windowsazure.storage.cloudqueueclient import CloudQueueClient
 
 class CloudStorageAccount:
     
-    def __init__(self, account_name, account_key):
+    def __init__(self, account_name=None, account_key=None):
         self.account_name = account_name
         self.account_key = account_key
 

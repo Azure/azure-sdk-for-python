@@ -11,6 +11,7 @@
 # You must not remove this notice, or any other, from this software.
 #------------------------------------------------------------------------------
 import base64
+import os
 import urllib2
 
 from windowsazure.http.httpclient import _HTTPClient
@@ -19,7 +20,8 @@ from windowsazure.servicebus import (_update_service_bus_header, _create_message
                                 convert_queue_to_xml, convert_xml_to_queue, 
                                 convert_subscription_to_xml, convert_xml_to_subscription, 
                                 convert_rule_to_xml, convert_xml_to_rule, 
-                                _service_bus_error_handler) 
+                                _service_bus_error_handler, AZURE_SERVICEBUS_NAMESPACE, 
+                                AZURE_SERVICEBUS_ACCESS_KEY, AZURE_SERVICEBUS_ISSUER)
 from windowsazure import (validate_length, validate_values, validate_not_none, Feed, _Request, 
                                 convert_xml_to_feeds, to_right_type, 
                                 _get_request_body, _update_request_uri_query, get_host, 
@@ -30,17 +32,6 @@ from windowsazure import (validate_length, validate_values, validate_not_none, F
                                 BLOB_SERVICE, QUEUE_SERVICE, TABLE_SERVICE, SERVICE_BUS_SERVICE)
 
 class ServiceBusService:
-
-    def __init__(self, service_namespace, account_key, issuer, x_ms_version='2011-06-01'):
-        self.status = None
-        self.message = None
-        self.respheader = None
-        self.requestid = None
-        self.service_namespace = service_namespace
-        self.account_key = account_key
-        self.issuer = issuer
-        self.x_ms_version = x_ms_version
-        self._httpclient = _HTTPClient(service_instance=self, service_namespace=service_namespace, account_key=account_key, issuer=issuer, x_ms_version=self.x_ms_version)
 
     def create_queue(self, queue_name, queue=None, fail_on_exist=False):
         '''
@@ -653,6 +644,30 @@ class ServiceBusService:
         else:
             return self.read_delete_subscription_message(topic_name, subscription_name, timeout)
     
+    def __init__(self, service_namespace=None, account_key=None, issuer=None, x_ms_version='2011-06-01'):
+        self.status = None
+        self.message = None
+        self.respheader = None
+        self.requestid = None
+        self.service_namespace = service_namespace
+        self.account_key = account_key
+        self.issuer = issuer    
+        if not service_namespace:
+            if os.environ.has_key(AZURE_SERVICEBUS_NAMESPACE):
+                self.service_namespace = os.environ[AZURE_SERVICEBUS_NAMESPACE]
+        if not account_key:
+            if os.environ.has_key(AZURE_SERVICEBUS_ACCESS_KEY):
+                self.account_key = os.environ[AZURE_SERVICEBUS_ACCESS_KEY]
+        if not issuer:
+            if os.environ.has_key(AZURE_SERVICEBUS_ISSUER):
+                self.issuer = os.environ[AZURE_SERVICEBUS_ISSUER]
+        
+        if not self.service_namespace or not self.account_key or not self.issuer:
+            raise WindowsAzureError('You need to provide servicebus namespace, access key and Issuer')
+        
+        self.x_ms_version = x_ms_version
+        self._httpclient = _HTTPClient(service_instance=self, service_namespace=service_namespace, account_key=account_key, issuer=issuer, x_ms_version=self.x_ms_version)
+        
     def _perform_request(self, request):
         try:
             resp = self._httpclient.perform_request(request)            

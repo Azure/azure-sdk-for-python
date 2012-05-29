@@ -17,7 +17,7 @@ from windowsazure.storage import _update_storage_table_header
 
 class _BatchClient(_HTTPClient):
 
-    def __init__(self, service_instance, account_key, account_name, x_ms_version, protocol):
+    def __init__(self, service_instance, account_key, account_name, x_ms_version=None, protocol='http'):
         _HTTPClient.__init__(self, service_instance, account_name=account_name, account_key=account_key, x_ms_version=x_ms_version, protocol=protocol)
         self.is_batch = False
         self.batch_requests = []
