@@ -297,7 +297,7 @@ class TableService(_StorageClient):
         request.header = _update_storage_table_header(request, self.account_name, self.account_key)
         respbody = self._perform_request(request)
 
-    def insert_or_replace_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml', if_match='*'):
+    def insert_or_replace_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml'):
         '''
         Replaces an existing entity or inserts a new entity if it does not exist in the table. 
         Because this operation can insert or update an entity, it is also known as an "upsert"
@@ -317,10 +317,7 @@ class TableService(_StorageClient):
         request.method = 'PUT'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')'
-        request.header = [
-            ('Content-Type', _str_or_none(content_type)),
-            ('If-Match', _str_or_none(if_match))
-            ]
+        request.header = [('Content-Type', _str_or_none(content_type))]
         request.body = _get_request_body(convert_entity_to_xml(entity))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.header = _update_storage_table_header(request, self.account_name, self.account_key)
