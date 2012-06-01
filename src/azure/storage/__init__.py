@@ -304,17 +304,17 @@ def _update_storage_header(request):
 
     #if it is PUT, POST, MERGE, DELETE, need to add content-lengt to header.
     if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
-            request.header.append(('Content-Length', str(len(request.body))))  
+            request.headers.append(('Content-Length', str(len(request.body))))  
 
     #append addtional headers base on the service
-    request.header.append(('x-ms-version', X_MS_VERSION))
+    request.headers.append(('x-ms-version', X_MS_VERSION))
 
     #append x-ms-meta name, values to header
-    for name, value in request.header:
+    for name, value in request.headers:
         if 'x-ms-meta-name-values' in name and value:
             for meta_name, meta_value in value.iteritems():
-                request.header.append(('x-ms-meta-' + meta_name, meta_value))
-            request.header.remove((name, value))
+                request.headers.append(('x-ms-meta-' + meta_name, meta_value))
+            request.headers.remove((name, value))
             break
     return request
 
@@ -323,11 +323,11 @@ def _update_storage_blob_header(request, account_name, account_key):
 
     request = _update_storage_header(request)
     current_time = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
-    request.header.append(('x-ms-date', current_time))
-    request.header.append(('Content-Type', 'application/octet-stream Charset=UTF-8'))  
-    request.header.append(('Authorization', _sign_storage_blob_request(request, account_name, account_key)))
+    request.headers.append(('x-ms-date', current_time))
+    request.headers.append(('Content-Type', 'application/octet-stream Charset=UTF-8'))  
+    request.headers.append(('Authorization', _sign_storage_blob_request(request, account_name, account_key)))
 
-    return request.header
+    return request.headers
 
 def _update_storage_queue_header(request, account_name, account_key):
     ''' add additional headers for storage queue request. '''
@@ -337,18 +337,18 @@ def _update_storage_table_header(request, account_name, account_key):
     ''' add additional headers for storage table request. '''
 
     request = _update_storage_header(request)
-    for name, value in request.header:
+    for name, value in request.headers:
         if name.lower() == 'content-type':
             break;
     else:
-        request.header.append(('Content-Type', 'application/atom+xml'))  
-    request.header.append(('DataServiceVersion', '2.0;NetFx'))
-    request.header.append(('MaxDataServiceVersion', '2.0;NetFx'))
+        request.headers.append(('Content-Type', 'application/atom+xml'))  
+    request.headers.append(('DataServiceVersion', '2.0;NetFx'))
+    request.headers.append(('MaxDataServiceVersion', '2.0;NetFx'))
     current_time = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
-    request.header.append(('x-ms-date', current_time))
-    request.header.append(('Date', current_time))
-    request.header.append(('Authorization', _sign_storage_table_request(request, account_name, account_key)))
-    return request.header
+    request.headers.append(('x-ms-date', current_time))
+    request.headers.append(('Date', current_time))
+    request.headers.append(('Authorization', _sign_storage_table_request(request, account_name, account_key)))
+    return request.headers
 
 def _sign_storage_blob_request(request, account_name, account_key):
     ''' 
@@ -366,7 +366,7 @@ def _sign_storage_blob_request(request, account_name, account_key):
                         'content-md5', 'content-type', 'date', 'if-modified-since', 
                         'if-Match', 'if-none-match', 'if-unmodified-since', 'range']
     for header in headers_to_sign:
-        for name, value in request.header:
+        for name, value in request.headers:
             if value and name.lower() == header:
                 string_to_sign += value + '\n'
                 break
@@ -375,7 +375,7 @@ def _sign_storage_blob_request(request, account_name, account_key):
 
     #get x-ms header to sign
     x_ms_headers = []
-    for name, value in request.header:
+    for name, value in request.headers:
         if 'x-ms' in name:
             x_ms_headers.append((name.lower(), value))                
     x_ms_headers.sort()
@@ -410,7 +410,7 @@ def _sign_storage_table_request(request, account_name, account_key):
     string_to_sign = request.method + '\n'
     headers_to_sign = ['content-md5', 'content-type', 'date']
     for header in headers_to_sign:
-        for name, value in request.header:
+        for name, value in request.headers:
             if value and name.lower() == header:
                 string_to_sign += value + '\n'
                 break
@@ -520,13 +520,13 @@ def convert_block_list_to_xml(block_id_list):
  
     return xml+'</BlockList>'
 
-def convert_xml_to_block_list(xmlstr):
+def convert_response_to_block_list(response):
     '''
     Converts xml response to block list class.
     '''
     blob_block_list = BlobBlockList()
     
-    xmldoc = minidom.parseString(xmlstr)
+    xmldoc = minidom.parseString(response.body)
     for xml_block in _get_children_from_path(xmldoc, 'BlockList', 'CommittedBlocks', 'Block'):
         xml_block_id = base64.b64decode(_get_child_nodes(xml_block, 'Name')[0].firstChild.nodeValue)
         xml_block_size = int(_get_child_nodes(xml_block, 'Size')[0].firstChild.nodeValue)
@@ -546,7 +546,10 @@ def _remove_prefix(name):
     return name
 
 METADATA_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
-def convert_xml_to_entity(xmlstr):
+def _convert_response_to_entity(response):
+    return _convert_xml_to_entity(response.body)
+
+def _convert_xml_to_entity(xmlstr):
     ''' Convert xml response to entity. 
 
     The format of entity:
@@ -613,12 +616,12 @@ def convert_xml_to_entity(xmlstr):
 
     return entity
 
-def convert_xml_to_table(xmlstr):
+def _convert_xml_to_table(xmlstr):
     ''' Converts the xml response to table class
     Simply call convert_xml_to_entity and extract the table name, and add updated and author info
     '''
     table = Table()
-    entity = convert_xml_to_entity(xmlstr)
+    entity = _convert_xml_to_entity(xmlstr)
     setattr(table, 'name', entity.TableName)
     for name, value in _get_entry_properties(xmlstr, False).iteritems():
        setattr(table, name, value)

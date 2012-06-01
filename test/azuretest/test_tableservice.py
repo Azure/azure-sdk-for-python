@@ -37,6 +37,7 @@ TABLE_NO_DELETE = 'mytesttablenodelete%s' % (__uid)
 ENTITY_TO_DELETE = 'mytestentitytodelete%s' % (__uid)
 ENTITY_NO_DELETE = 'mytestentitynodelete%s' % (__uid)
 BATCH_TABLE = 'mytestbatchtable%s' % (__uid)
+FILTER_TABLE = 'mytestfiltertable%s' % (__uid)
 #------------------------------------------------------------------------------
 class StorageTest(unittest.TestCase):
     '''
@@ -351,6 +352,42 @@ class StorageTest(unittest.TestCase):
     def sanity_cancel_batch(self):
         resp = self.tc.cancel_batch()
         self.assertEquals(resp, None)
+
+    def test_with_filter(self):
+        # Single filter
+        called = []
+        def my_filter(request, next):
+            called.append(True)
+            return next(request)
+
+        tc = self.tc.with_filter(my_filter)
+        tc.create_table(FILTER_TABLE)
+
+        self.assertTrue(called)
+
+        del called[:]        
+        
+        tc.delete_table(FILTER_TABLE)
+
+        self.assertTrue(called)
+        del called[:]        
+
+        # Chained filters
+        def filter_a(request, next):
+            called.append('a')
+            return next(request)
+        
+        def filter_b(request, next):
+            called.append('b')
+            return next(request)
+
+        tc = self.tc.with_filter(filter_a).with_filter(filter_b)
+        tc.create_table(FILTER_TABLE + '0')
+
+        self.assertEqual(called, ['b', 'a'])
+
+        tc.delete_table(FILTER_TABLE + '0')
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

@@ -1,4 +1,5 @@
 @echo OFF
+SETLOCAL
 REM----------------------------------------------------------------------------
 REM Copyright (c) Microsoft Corporation. 
 REM

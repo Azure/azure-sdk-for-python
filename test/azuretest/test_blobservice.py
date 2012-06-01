@@ -17,6 +17,7 @@ from azure.storage.blobservice import *
 from azure.storage import Metrics, BlockList
 from azure import WindowsAzureError
 from azuretest.util import *
+from azure.http import HTTPRequest, HTTPResponse
 
 import unittest
 import time
@@ -722,6 +723,63 @@ class BlobServiceTest(unittest.TestCase):
         self.assertEquals(ranges.page_ranges[0].end, 511)
         self.assertEquals(ranges.page_ranges[1].start, 1024)
         self.assertEquals(ranges.page_ranges[1].end, 1535)
+
+    def test_with_filter(self):
+        # Single filter
+        called = []
+        def my_filter(request, next):
+            called.append(True)
+            self.assertIsInstance(request, HTTPRequest)
+            for header in request.headers:
+                self.assertIsInstance(header, tuple)
+                for item in header:
+                    self.assertIsInstance(item, (str, unicode, type(None)))
+            self.assertIsInstance(request.host, (str, unicode))
+            self.assertIsInstance(request.method, (str, unicode))
+            self.assertIsInstance(request.uri, (str, unicode))
+            self.assertIsInstance(request.query, list)
+            self.assertIsInstance(request.body, (str, unicode))
+            response = next(request)
+                
+            self.assertIsInstance(response, HTTPResponse)
+            self.assertIsInstance(response.body, (str, type(None)))
+            self.assertIsInstance(response.headers, list)
+            for header in response.headers:
+                self.assertIsInstance(header, tuple)
+                for item in header:
+                    self.assertIsInstance(item, (str, unicode))
+            self.assertIsInstance(response.status, int)
+            return response
+
+        bc = self.bc.with_filter(my_filter)
+        bc.create_container(self.container_name + '0', None, None, False)
+
+        self.assertTrue(called)
+
+        del called[:]
+        
+        bc.delete_container(self.container_name + '0')
+
+        self.assertTrue(called)
+        del called[:]
+
+        # Chained filters
+        def filter_a(request, next):
+            called.append('a')
+            return next(request)
+        
+        def filter_b(request, next):
+            called.append('b')
+            return next(request)
+
+        bc = self.bc.with_filter(filter_a).with_filter(filter_b)
+        bc.create_container(self.container_name + '1', None, None, False)
+
+        self.assertEqual(called, ['b', 'a'])
+        
+        bc.delete_container(self.container_name + '1')
+
+        self.assertEqual(called, ['b', 'a', 'b', 'a'])
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

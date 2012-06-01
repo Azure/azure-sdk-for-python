@@ -25,7 +25,7 @@ import ast
 import sys
 from xml.dom import minidom
 
-from azure import HTTPError
+from azure.http import HTTPError, HTTPResponse
 
 class _HTTPClient:
     ''' 
@@ -87,20 +87,21 @@ class _HTTPClient:
 
         connection = self.get_connection(request)
         connection.putrequest(request.method, request.uri)
-        self.send_request_headers(connection, request.header)
+        self.send_request_headers(connection, request.headers)
         self.send_request_body(connection, request.body)
 
         resp = connection.getresponse()
         self.status = int(resp.status)
         self.message = resp.reason
-        self.respheader = resp.getheaders()
+        self.respheader = headers = resp.getheaders()
         respbody = None
         if resp.length is None:
             respbody = resp.read()
         elif resp.length > 0:
             respbody = resp.read(resp.length)
     
+        response = HTTPResponse(int(resp.status), resp.reason, headers, respbody)
         if self.status >= 300:
             raise HTTPError(self.status, self.message, self.respheader, respbody)
         
-        return respbody
+        return response

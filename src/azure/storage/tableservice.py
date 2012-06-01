@@ -19,16 +19,18 @@ import urllib2
 from azure.storage import *
 from azure.storage.storageclient import _StorageClient
 from azure.storage import (_update_storage_table_header, 
-                                convert_table_to_xml, convert_xml_to_table, 
-                                convert_entity_to_xml, convert_xml_to_entity)
+                                convert_table_to_xml,  _convert_xml_to_table,
+                                convert_entity_to_xml, _convert_response_to_entity, 
+                                _convert_xml_to_entity)
 from azure.http.batchclient import _BatchClient
-from azure import (_validate_not_none, Feed, _Request, 
-                                _convert_xml_to_feeds, _str_or_none, 
+from azure.http import HTTPRequest
+from azure import (_validate_not_none, Feed,
+                                _convert_response_to_feeds, _str_or_none, 
                                 _get_request_body, _update_request_uri_query, 
-                                _dont_fail_on_exist, _dont_fail_not_exist, HTTPError, 
-                                WindowsAzureError, _parse_response, _Request, _convert_class_to_xml, 
+                                _dont_fail_on_exist, _dont_fail_not_exist, 
+                                WindowsAzureError, _parse_response, _convert_class_to_xml, 
                                 _parse_response_for_dict, _parse_response_for_dict_prefix, 
-                                _parse_response_for_dict_filter, _parse_response_for_dict_special, 
+                                _parse_response_for_dict_filter,  
                                 _parse_enum_results_list, _update_request_uri_query_local_storage, 
                                 _get_table_host, _get_queue_host, _get_blob_host, 
                                 _parse_simple_list, SERVICE_BUS_HOST_BASE)  
@@ -60,15 +62,15 @@ class TableService(_StorageClient):
         Gets the properties of a storage account's Table service, including Windows Azure
         Storage Analytics.
         '''
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/?restype=service&comp=properties'
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_response(respbody, StorageServiceProperties)
+        return _parse_response(response, StorageServiceProperties)
 
     def set_table_service_properties(self, storage_service_properties):
         '''
@@ -77,30 +79,30 @@ class TableService(_StorageClient):
         storage_service_properties: a StorageServiceProperties object.
         '''
         _validate_not_none('class:storage_service_properties', storage_service_properties)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/?restype=service&comp=properties'
         request.body = _get_request_body(_convert_class_to_xml(storage_service_properties))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_response_for_dict(self)
+        return _parse_response_for_dict(response)
 
     def query_tables(self):
         '''
         Returns a list of tables under the specified account.
         '''
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/Tables'
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _convert_xml_to_feeds(respbody, convert_xml_to_table)
+        return _convert_response_to_feeds(response, _convert_xml_to_table)
 
     def create_table(self, table, fail_on_exist=False):
         '''
@@ -110,13 +112,13 @@ class TableService(_StorageClient):
         fail_on_exist: specify whether throw exception when table exists.
         '''
         _validate_not_none('feed:table', table)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'POST'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/Tables'
         request.body = _get_request_body(convert_table_to_xml(table))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
         if not fail_on_exist:
             try:
                 self._perform_request(request)
@@ -135,12 +137,12 @@ class TableService(_StorageClient):
         fail_not_exist: specify whether throw exception when table doesn't exist.
         '''
         _validate_not_none('table-name', table_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/Tables(\'' + str(table_name) + '\')'
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
         if not fail_not_exist:
             try:
                 self._perform_request(request)
@@ -164,15 +166,15 @@ class TableService(_StorageClient):
         _validate_not_none('partition-key', partition_key)
         _validate_not_none('row-key', row_key)
         _validate_not_none('comma-separated-property-names', comma_separated_property_names)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')?$select=' + str(comma_separated_property_names) + ''
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return convert_xml_to_entity(respbody)
+        return _convert_response_to_entity(response)
 
     def query_entities(self, table_name, query_expression='', comma_separated_property_names=''):
         '''
@@ -184,15 +186,15 @@ class TableService(_StorageClient):
         _validate_not_none('table-name', table_name)
         _validate_not_none('query-expression', query_expression)
         _validate_not_none('comma-separated-property-names', comma_separated_property_names)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(table_name) + '()?$filter=' + str(query_expression) + '&$select=' + str(comma_separated_property_names) + ''
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _convert_xml_to_feeds(respbody, convert_xml_to_entity)
+        return _convert_response_to_feeds(response, _convert_xml_to_entity)
 
     def insert_entity(self, table_name, entity, content_type='application/atom+xml'):
         '''
@@ -204,15 +206,15 @@ class TableService(_StorageClient):
         _validate_not_none('table-name', table_name)
         _validate_not_none('feed:entity', entity)
         _validate_not_none('Content-Type', content_type)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'POST'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(table_name) + ''
-        request.header = [('Content-Type', _str_or_none(content_type))]
+        request.headers = [('Content-Type', _str_or_none(content_type))]
         request.body = _get_request_body(convert_entity_to_xml(entity))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def update_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml', if_match='*'):
         '''
@@ -229,18 +231,18 @@ class TableService(_StorageClient):
         _validate_not_none('row-key', row_key)
         _validate_not_none('feed:entity', entity)
         _validate_not_none('Content-Type', content_type)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')'
-        request.header = [
+        request.headers = [
             ('Content-Type', _str_or_none(content_type)),
             ('If-Match', _str_or_none(if_match))
             ]
         request.body = _get_request_body(convert_entity_to_xml(entity))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def merge_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml', if_match='*'):
         '''
@@ -257,18 +259,18 @@ class TableService(_StorageClient):
         _validate_not_none('row-key', row_key)
         _validate_not_none('feed:entity', entity)
         _validate_not_none('Content-Type', content_type)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'MERGE'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')'
-        request.header = [
+        request.headers = [
             ('Content-Type', _str_or_none(content_type)),
             ('If-Match', _str_or_none(if_match))
             ]
         request.body = _get_request_body(convert_entity_to_xml(entity))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def delete_entity(self, table_name, partition_key, row_key, content_type='application/atom+xml', if_match='*'):
         '''
@@ -285,17 +287,17 @@ class TableService(_StorageClient):
         _validate_not_none('row-key', row_key)
         _validate_not_none('Content-Type', content_type)
         _validate_not_none('If-Match', if_match)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')'
-        request.header = [
+        request.headers = [
             ('Content-Type', _str_or_none(content_type)),
             ('If-Match', _str_or_none(if_match))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def insert_or_replace_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml'):
         '''
@@ -313,15 +315,15 @@ class TableService(_StorageClient):
         _validate_not_none('row-key', row_key)
         _validate_not_none('feed:entity', entity)
         _validate_not_none('Content-Type', content_type)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')'
-        request.header = [('Content-Type', _str_or_none(content_type))]
+        request.headers = [('Content-Type', _str_or_none(content_type))]
         request.body = _get_request_body(convert_entity_to_xml(entity))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def insert_or_merge_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml', if_match='*'):
         '''
@@ -339,17 +341,17 @@ class TableService(_StorageClient):
         _validate_not_none('row-key', row_key)
         _validate_not_none('feed:entity', entity)
         _validate_not_none('Content-Type', content_type)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'MERGE'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')'
-        request.header = [
+        request.headers = [
             ('Content-Type', _str_or_none(content_type)),
             ('If-Match', _str_or_none(if_match))
             ]
         request.body = _get_request_body(convert_entity_to_xml(entity))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_table_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
 

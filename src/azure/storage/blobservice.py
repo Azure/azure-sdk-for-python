@@ -19,14 +19,15 @@ import urllib2
 from azure.storage import *
 from azure.storage.storageclient import _StorageClient
 from azure.storage import (_update_storage_blob_header,
-                                convert_block_list_to_xml, convert_xml_to_block_list) 
-from azure import (_validate_not_none, Feed, _Request, 
-                                _convert_xml_to_feeds, _str_or_none, 
+                                convert_block_list_to_xml, convert_response_to_block_list) 
+from azure.http import HTTPRequest
+from azure import (_validate_not_none, Feed,
+                                _convert_response_to_feeds, _str_or_none, 
                                 _get_request_body, _update_request_uri_query, 
-                                _dont_fail_on_exist, _dont_fail_not_exist, HTTPError, 
-                                WindowsAzureError, _parse_response, _Request, _convert_class_to_xml, 
+                                _dont_fail_on_exist, _dont_fail_not_exist, 
+                                WindowsAzureError, _parse_response, _convert_class_to_xml, 
                                 _parse_response_for_dict, _parse_response_for_dict_prefix, 
-                                _parse_response_for_dict_filter, _parse_response_for_dict_special, 
+                                _parse_response_for_dict_filter,  
                                 _parse_enum_results_list, _update_request_uri_query_local_storage, 
                                 _get_table_host, _get_queue_host, _get_blob_host, 
                                 _parse_simple_list, SERVICE_BUS_HOST_BASE)  
@@ -50,7 +51,7 @@ class BlobService(_StorageClient):
         include: Optional. Include this parameter to specify that the container's metadata be 
                 returned as part of the response body.
         '''
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/?comp=list'
@@ -61,10 +62,10 @@ class BlobService(_StorageClient):
             ('include', _str_or_none(include))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_enum_results_list(respbody, ContainerEnumResults, "Containers", Container)
+        return _parse_enum_results_list(response, ContainerEnumResults, "Containers", Container)
 
     def create_container(self, container_name, x_ms_meta_name_values=None, x_ms_blob_public_access=None, fail_on_exist=False):
         '''
@@ -77,16 +78,16 @@ class BlobService(_StorageClient):
         fail_on_exist: specify whether to throw an exception when the container exists.
         '''
         _validate_not_none('container-name', container_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '?restype=container'
-        request.header = [
+        request.headers = [
             ('x-ms-meta-name-values', x_ms_meta_name_values),
             ('x-ms-blob-public-access', _str_or_none(x_ms_blob_public_access))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         if not fail_on_exist:
             try:
                 self._perform_request(request)
@@ -103,15 +104,15 @@ class BlobService(_StorageClient):
         Returns all user-defined metadata and system properties for the specified container.
         '''
         _validate_not_none('container-name', container_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '?restype=container'
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_response_for_dict(self)
+        return _parse_response_for_dict(response)
 
     def get_container_metadata(self, container_name):
         '''
@@ -119,15 +120,15 @@ class BlobService(_StorageClient):
         in returned dictionary['x-ms-meta-(name)'].
         '''
         _validate_not_none('container-name', container_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '?restype=container&comp=metadata'
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_response_for_dict(self)
+        return _parse_response_for_dict(response)
 
     def set_container_metadata(self, container_name, x_ms_meta_name_values=None):
         '''
@@ -136,29 +137,29 @@ class BlobService(_StorageClient):
         x_ms_meta_name_values: A dict containing name, value for metadata. Example: {'category':'test'}
         '''
         _validate_not_none('container-name', container_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '?restype=container&comp=metadata'
-        request.header = [('x-ms-meta-name-values', x_ms_meta_name_values)]
+        request.headers = [('x-ms-meta-name-values', x_ms_meta_name_values)]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def get_container_acl(self, container_name):
         '''
         Gets the permissions for the specified container.
         '''
         _validate_not_none('container-name', container_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '?restype=container&comp=acl'
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_response(respbody, SignedIdentifiers)
+        return _parse_response(response, SignedIdentifiers)
 
     def set_container_acl(self, container_name, signed_identifiers=None, x_ms_blob_public_access=None):
         '''
@@ -168,15 +169,15 @@ class BlobService(_StorageClient):
         signed_identifiers: SignedIdentifers instance
         '''
         _validate_not_none('container-name', container_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '?restype=container&comp=acl'
-        request.header = [('x-ms-blob-public-access', _str_or_none(x_ms_blob_public_access))]
+        request.headers = [('x-ms-blob-public-access', _str_or_none(x_ms_blob_public_access))]
         request.body = _get_request_body(_convert_class_to_xml(signed_identifiers))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def delete_container(self, container_name, fail_not_exist=False):
         '''
@@ -185,12 +186,12 @@ class BlobService(_StorageClient):
         fail_not_exist: specify whether to throw an exception when the container doesn't exist.
         '''
         _validate_not_none('container-name', container_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '?restype=container'
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         if not fail_not_exist:
             try:
                 self._perform_request(request)
@@ -207,15 +208,15 @@ class BlobService(_StorageClient):
         Returns the list of blobs under the specified container.
         '''
         _validate_not_none('container-name', container_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '?restype=container&comp=list'
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_enum_results_list(respbody, BlobEnumResults, "Blobs", Blob)
+        return _parse_enum_results_list(response, BlobEnumResults, "Blobs", Blob)
 
     def set_blob_service_properties(self, storage_service_properties, timeout=None):
         '''
@@ -228,15 +229,15 @@ class BlobService(_StorageClient):
         		following value sets a timeout of 30 seconds for the request: timeout=30.
         '''
         _validate_not_none('class:storage_service_properties', storage_service_properties)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/?restype=service&comp=properties'
         request.query = [('timeout', _str_or_none(timeout))]
         request.body = _get_request_body(_convert_class_to_xml(storage_service_properties))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def get_blob_service_properties(self, timeout=None):
         '''
@@ -246,16 +247,16 @@ class BlobService(_StorageClient):
         timeout: Optional. The timeout parameter is expressed in seconds. For example, the 
         		following value sets a timeout of 30 seconds for the request: timeout=30.
         '''
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/?restype=service&comp=properties'
         request.query = [('timeout', _str_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_response(respbody, StorageServiceProperties)
+        return _parse_response(response, StorageServiceProperties)
 
     def get_blob_properties(self, container_name, blob_name, x_ms_lease_id=None):
         '''
@@ -265,16 +266,16 @@ class BlobService(_StorageClient):
         '''
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'HEAD'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + ''
-        request.header = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
+        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_response_for_dict(self)
+        return _parse_response_for_dict(response)
 
     def set_blob_properties(self, container_name, blob_name, x_ms_blob_cache_control=None, x_ms_blob_content_type=None, x_ms_blob_content_md5=None, x_ms_blob_content_encoding=None, x_ms_blob_content_language=None, x_ms_lease_id=None):
         '''
@@ -289,11 +290,11 @@ class BlobService(_StorageClient):
         '''
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=properties'
-        request.header = [
+        request.headers = [
             ('x-ms-blob-cache-control', _str_or_none(x_ms_blob_cache_control)),
             ('x-ms-blob-content-type', _str_or_none(x_ms_blob_content_type)),
             ('x-ms-blob-content-md5', _str_or_none(x_ms_blob_content_md5)),
@@ -302,8 +303,8 @@ class BlobService(_StorageClient):
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def put_blob(self, container_name, blob_name, blob, x_ms_blob_type, content_encoding=None, content_language=None, content_m_d5=None, cache_control=None, x_ms_blob_content_type=None, x_ms_blob_content_encoding=None, x_ms_blob_content_language=None, x_ms_blob_content_md5=None, x_ms_blob_cache_control=None, x_ms_meta_name_values=None, x_ms_lease_id=None, x_ms_blob_content_length=None, x_ms_blob_sequence_number=None):
         '''
@@ -320,11 +321,11 @@ class BlobService(_StorageClient):
         _validate_not_none('blob-name', blob_name)
         _validate_not_none('binary:blob', blob)
         _validate_not_none('x-ms-blob-type', x_ms_blob_type)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + ''
-        request.header = [
+        request.headers = [
             ('x-ms-blob-type', _str_or_none(x_ms_blob_type)),
             ('Content-Encoding', _str_or_none(content_encoding)),
             ('Content-Language', _str_or_none(content_language)),
@@ -342,8 +343,8 @@ class BlobService(_StorageClient):
             ]
         request.body = _get_request_body(blob)
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def get_blob(self, container_name, blob_name, snapshot=None, x_ms_range=None, x_ms_lease_id=None, x_ms_range_get_content_md5=None):
         '''
@@ -355,21 +356,21 @@ class BlobService(_StorageClient):
         '''
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + ''
-        request.header = [
+        request.headers = [
             ('x-ms-range', _str_or_none(x_ms_range)),
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
             ('x-ms-range-get-content-md5', _str_or_none(x_ms_range_get_content_md5))
             ]
         request.query = [('snapshot', _str_or_none(snapshot))]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return respbody
+        return response.body
 
     def get_blob_metadata(self, container_name, blob_name, snapshot=None, x_ms_lease_id=None):
         '''
@@ -380,17 +381,17 @@ class BlobService(_StorageClient):
         '''
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=metadata'
-        request.header = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
+        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
         request.query = [('snapshot', _str_or_none(snapshot))]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_response_for_dict_prefix(self, prefix='x-ms-meta')
+        return _parse_response_for_dict_prefix(response, prefix='x-ms-meta')
 
     def set_blob_metadata(self, container_name, blob_name, x_ms_meta_name_values=None, x_ms_lease_id=None):
         '''
@@ -402,17 +403,17 @@ class BlobService(_StorageClient):
         '''
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=metadata'
-        request.header = [
+        request.headers = [
             ('x-ms-meta-name-values', x_ms_meta_name_values),
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def lease_blob(self, container_name, blob_name, x_ms_lease_action, x_ms_lease_id=None):
         '''
@@ -426,19 +427,19 @@ class BlobService(_StorageClient):
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
         _validate_not_none('x-ms-lease-action', x_ms_lease_action)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=lease'
-        request.header = [
+        request.headers = [
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
             ('x-ms-lease-action', _str_or_none(x_ms_lease_action))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_response_for_dict_filter(self, filter=['x-ms-lease-id'])
+        return _parse_response_for_dict_filter(response, filter=['x-ms-lease-id'])
 
     def snapshot_blob(self, container_name, blob_name, x_ms_meta_name_values=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, x_ms_lease_id=None):
         '''
@@ -458,11 +459,11 @@ class BlobService(_StorageClient):
         '''
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=snapshot'
-        request.header = [
+        request.headers = [
             ('x-ms-meta-name-values', x_ms_meta_name_values),
             ('If-Modified-Since', _str_or_none(if_modified_since)),
             ('If-Unmodified-Since', _str_or_none(if_unmodified_since)),
@@ -471,8 +472,8 @@ class BlobService(_StorageClient):
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def copy_blob(self, container_name, blob_name, x_ms_copy_source, x_ms_meta_name_values=None, x_ms_source_if_modified_since=None, x_ms_source_if_unmodified_since=None, x_ms_source_if_match=None, x_ms_source_if_none_match=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, x_ms_lease_id=None, x_ms_source_lease_id=None):
         '''
@@ -503,11 +504,11 @@ class BlobService(_StorageClient):
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
         _validate_not_none('x-ms-copy-source', x_ms_copy_source)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + ''
-        request.header = [
+        request.headers = [
             ('x-ms-copy-source', _str_or_none(x_ms_copy_source)),
             ('x-ms-meta-name-values', x_ms_meta_name_values),
             ('x-ms-source-if-modified-since', _str_or_none(x_ms_source_if_modified_since)),
@@ -522,8 +523,8 @@ class BlobService(_StorageClient):
             ('x-ms-source-lease-id', _str_or_none(x_ms_source_lease_id))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def delete_blob(self, container_name, blob_name, snapshot=None, x_ms_copy_source=None, x_ms_meta_name_values=None, x_ms_source_if_modified_since=None, x_ms_source_if_unmodified_since=None, x_ms_source_if_match=None, x_ms_source_if_none_match=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, x_ms_lease_id=None, x_ms_source_lease_id=None):
         '''
@@ -554,11 +555,11 @@ class BlobService(_StorageClient):
         '''
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + ''
-        request.header = [
+        request.headers = [
             ('x-ms-copy-source', _str_or_none(x_ms_copy_source)),
             ('x-ms-meta-name-values', x_ms_meta_name_values),
             ('x-ms-source-if-modified-since', _str_or_none(x_ms_source_if_modified_since)),
@@ -574,8 +575,8 @@ class BlobService(_StorageClient):
             ]
         request.query = [('snapshot', _str_or_none(snapshot))]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def put_block(self, container_name, blob_name, block, blockid, content_m_d5=None, x_ms_lease_id=None):
         '''
@@ -593,19 +594,19 @@ class BlobService(_StorageClient):
         _validate_not_none('blob-name', blob_name)
         _validate_not_none('binary:block', block)
         _validate_not_none('blockid', blockid)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=block'
-        request.header = [
+        request.headers = [
             ('Content-MD5', _str_or_none(content_m_d5)),
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id))
             ]
         request.query = [('blockid', base64.b64encode(_str_or_none(blockid)))]
         request.body = _get_request_body(block)
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def put_block_list(self, container_name, blob_name, block_list, content_m_d5=None, x_ms_blob_cache_control=None, x_ms_blob_content_type=None, x_ms_blob_content_encoding=None, x_ms_blob_content_language=None, x_ms_blob_content_md5=None, x_ms_meta_name_values=None, x_ms_lease_id=None):
         '''
@@ -637,11 +638,11 @@ class BlobService(_StorageClient):
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
         _validate_not_none('class:block_list', block_list)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=blocklist'
-        request.header = [
+        request.headers = [
             ('Content-MD5', _str_or_none(content_m_d5)),
             ('x-ms-blob-cache-control', _str_or_none(x_ms_blob_cache_control)),
             ('x-ms-blob-content-type', _str_or_none(x_ms_blob_content_type)),
@@ -653,8 +654,8 @@ class BlobService(_StorageClient):
             ]
         request.body = _get_request_body(convert_block_list_to_xml(block_list))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def get_block_list(self, container_name, blob_name, snapshot=None, blocklisttype=None, x_ms_lease_id=None):
         '''
@@ -669,20 +670,20 @@ class BlobService(_StorageClient):
         '''
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=blocklist'
-        request.header = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
+        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
         request.query = [
             ('snapshot', _str_or_none(snapshot)),
             ('blocklisttype', _str_or_none(blocklisttype))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return convert_xml_to_block_list(respbody)
+        return convert_response_to_block_list(response)
 
     def put_page(self, container_name, blob_name, page, x_ms_range, x_ms_page_write, content_m_d5=None, x_ms_lease_id=None, x_ms_if_sequence_number_lte=None, x_ms_if_sequence_number_lt=None, x_ms_if_sequence_number_eq=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None):
         '''
@@ -709,11 +710,11 @@ class BlobService(_StorageClient):
         _validate_not_none('binary:page', page)
         _validate_not_none('x-ms-range', x_ms_range)
         _validate_not_none('x-ms-page-write', x_ms_page_write)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=page'
-        request.header = [
+        request.headers = [
             ('x-ms-range', _str_or_none(x_ms_range)),
             ('Content-MD5', _str_or_none(content_m_d5)),
             ('x-ms-page-write', _str_or_none(x_ms_page_write)),
@@ -728,8 +729,8 @@ class BlobService(_StorageClient):
             ]
         request.body = _get_request_body(page)
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
     def get_page_ranges(self, container_name, blob_name, snapshot=None, range=None, x_ms_range=None, x_ms_lease_id=None):
         '''
@@ -747,18 +748,18 @@ class BlobService(_StorageClient):
         '''
         _validate_not_none('container-name', container_name)
         _validate_not_none('blob-name', blob_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_blob_host(self.account_name, self.use_local_storage)
         request.uri = '/' + str(container_name) + '/' + str(blob_name) + '?comp=pagelist'
-        request.header = [
+        request.headers = [
             ('Range', _str_or_none(range)),
             ('x-ms-range', _str_or_none(x_ms_range)),
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id))
             ]
         request.query = [('snapshot', _str_or_none(snapshot))]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
-        request.header = _update_storage_blob_header(request, self.account_name, self.account_key)
-        respbody = self._perform_request(request)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
 
-        return _parse_simple_list(respbody, PageList, PageRange, "page_ranges")
+        return _parse_simple_list(response, PageList, PageRange, "page_ranges")

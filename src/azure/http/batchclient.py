@@ -15,7 +15,8 @@
 import urllib2
 import azure
 from azure.http.httpclient import _HTTPClient
-from azure import _Request, _update_request_uri_query, WindowsAzureError, HTTPError
+from azure.http import HTTPError, HTTPRequest
+from azure import _update_request_uri_query, WindowsAzureError
 from azure.storage import _update_storage_table_header
 
 class _BatchClient(_HTTPClient):
@@ -170,11 +171,11 @@ class _BatchClient(_HTTPClient):
         
         #Commits batch only the requests list is not empty.
         if self.batch_requests:
-            request = _Request()
+            request = HTTPRequest()
             request.method = 'POST'
             request.host = self.batch_requests[0].host
             request.uri = '/$batch'
-            request.header = [('Content-Type', 'multipart/mixed; boundary=' + batch_boundary),
+            request.headers = [('Content-Type', 'multipart/mixed; boundary=' + batch_boundary),
                               ('Accept', 'application/atom+xml,application/xml'),
                               ('Accept-Charset', 'UTF-8')]
             
@@ -200,8 +201,8 @@ class _BatchClient(_HTTPClient):
                     request.body += batch_request.body + '\n'
                 else:
                     find_if_match = False
-                    for name, value in batch_request.header:
-                        #If-Match should be already included in batch_request.header, but in case it is missing, just add it.
+                    for name, value in batch_request.headers:
+                        #If-Match should be already included in batch_request.headers, but in case it is missing, just add it.
                         if name == 'If-Match':
                             request.body += name + ': ' + value + '\n\n'
                             break
@@ -212,10 +213,11 @@ class _BatchClient(_HTTPClient):
             request.body += '--' + batch_boundary + '--' 
 
             request.uri, request.query = _update_request_uri_query(request)
-            request.header = _update_storage_table_header(request, self.account_name, self.account_key)
+            request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
 
             #Submit the whole request as batch request.
-            resp = self.perform_request(request)
+            response = self.perform_request(request)
+            resp = response.body
 
             #Extracts the status code from the response body.  If any operation fails, the status code will appear right after the first HTTP/1.1.
             pos1 = resp.find('HTTP/1.1 ') + len('HTTP/1.1 ')

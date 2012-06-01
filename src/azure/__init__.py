@@ -61,28 +61,6 @@ class WindowsAzureData(object):
     ''' This is the base of data class.  It is only used to check whether it is instance or not. '''
     pass
 
-class _Request:
-    ''' request class for all APIs. '''
-
-    def __init__(self):
-        self.host = ''
-        self.method = ''
-        self.uri = ''
-        self.query = []      # list of (name, value)
-        self.header = []     # list of (header name, header value)
-        self.body = ''
-
-class HTTPError(Exception):
-    ''' HTTP Exception when response status code >= 300 '''
-
-    def __init__(self, status, message, respheader, respbody):
-        '''Creates a new HTTPError with the specified status, message, 
-        response headers and body'''
-        self.message = message
-        self.status = status
-        self.respheader = respheader
-        self.respbody = respbody
-
 class WindowsAzureError(Exception):
     ''' WindowsAzure Excpetion base class. '''
     def __init__(self, message):
@@ -259,9 +237,9 @@ def _clone_node_with_namespaces(node_to_clone, original_doc):
 
     return clone
 
-def _convert_xml_to_feeds(xmlstr, convert_func):
+def _convert_response_to_feeds(response, convert_func):
     feeds = []
-    xmldoc = minidom.parseString(xmlstr)
+    xmldoc = minidom.parseString(response.body)
     for xml_entry in _get_children_from_path(xmldoc, 'feed', 'entry'):
         new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
         feeds.append(convert_func(new_node.toxml()))
@@ -280,7 +258,7 @@ def _html_encode(html):
 
 def _fill_list_of(xmldoc, element_type):
     xmlelements = _get_child_nodes(xmldoc, element_type.__name__)
-    return [_parse_response(xmlelement.toxml(), element_type) for xmlelement in xmlelements]
+    return [_parse_response_body(xmlelement.toxml(), element_type) for xmlelement in xmlelements]
 
 def _fill_instance_child(xmldoc, element_name, return_type):
     '''Converts a child of the current dom element to the specified type.  The child name
@@ -294,7 +272,7 @@ def _fill_instance_child(xmldoc, element_name, return_type):
 
 def _fill_instance_element(element, return_type):
     """Converts a DOM element into the specified object""" 
-    return _parse_response(element.toxml(), return_type)
+    return _parse_response_body(element.toxml(), return_type)
 
 
 def _fill_data_minidom(xmldoc, element_name, data_member):
@@ -326,7 +304,7 @@ def _get_request_body(request_body):
 
     return request_body
 
-def _parse_enum_results_list(respbody, return_type, resp_type, item_type):
+def _parse_enum_results_list(response, return_type, resp_type, item_type):
     """resp_body is the XML we received
 resp_type is a string, such as Containers,
 return_type is the type we're constructing, such as ContainerEnumResults
@@ -345,7 +323,7 @@ containers member populated with the results.
     #       </Queue>
     #   </Queues>
     # </EnumerationResults>
-
+    respbody = response.body
     return_obj = return_type()
     doc = minidom.parseString(respbody)
 
@@ -366,7 +344,8 @@ containers member populated with the results.
     setattr(return_obj, resp_type.lower(), items)
     return return_obj
 
-def _parse_simple_list(respbody, type, item_type, list_name):
+def _parse_simple_list(response, type, item_type, list_name):
+    respbody = response.body
     res = type()
     res_items = []
     doc = minidom.parseString(respbody)
@@ -378,11 +357,16 @@ def _parse_simple_list(respbody, type, item_type, list_name):
     setattr(res, list_name, res_items)
     return res
 
-def _parse_response(respbody, return_type):  
+def _parse_response(response, return_type):  
     '''
-    parse the xml response and fill all the data into a class of return_type
+    parse the HTTPResponse's body and fill all the data into a class of return_type
     '''
+    return _parse_response_body(response.body, return_type)
 
+def _parse_response_body(respbody, return_type):
+    '''
+    parse the xml and fill all the data into a class of return_type
+    '''
     doc = minidom.parseString(respbody)
     return_obj = return_type()
     for node in _get_child_nodes(doc, return_type.__name__):
@@ -456,24 +440,25 @@ def _dont_fail_not_exist(error):
     else:
         raise error
     
-def _parse_response_for_dict(service_instance):
+def _parse_response_for_dict(response):
     ''' Extracts name-values from response header. Filter out the standard http headers.'''
 
     http_headers = ['server', 'date', 'location', 'host', 
                     'via', 'proxy-connection', 'x-ms-version', 'connection',
                     'content-length']
-    if service_instance.respheader:
-        return_dict = {}
-        for name, value in service_instance.respheader:
+    return_dict = {}
+    if response.headers:
+        for name, value in response.headers:
             if not name.lower() in http_headers:
                 return_dict[name] = value
+
     return return_dict
 
-def _parse_response_for_dict_prefix(service_instance, prefix):
+def _parse_response_for_dict_prefix(response, prefix):
     ''' Extracts name-values for names starting with prefix from response header. Filter out the standard http headers.'''
 
     return_dict = {}    
-    orig_dict = _parse_response_for_dict(service_instance)
+    orig_dict = _parse_response_for_dict(response)
     if orig_dict:
         for name, value in orig_dict.iteritems():
             for prefix_value in prefix:
@@ -484,32 +469,14 @@ def _parse_response_for_dict_prefix(service_instance, prefix):
     else:
         return None
 
-def _parse_response_for_dict_filter(service_instance, filter):
+def _parse_response_for_dict_filter(response, filter):
     ''' Extracts name-values for names in filter from response header. Filter out the standard http headers.'''
     return_dict = {}    
-    orig_dict = _parse_response_for_dict(service_instance)
+    orig_dict = _parse_response_for_dict(response)
     if orig_dict:
         for name, value in orig_dict.iteritems():
             if name.lower() in filter:
                 return_dict[name] = value
-        return return_dict
-    else:
-        return None
-
-def _parse_response_for_dict_special(service_instance, prefix, filter):
-    ''' Extracts name-values for names in filter or names starting with prefix from response header. 
-    Filter out the standard http headers.'''
-    return_dict = {}    
-    orig_dict = _parse_response_for_dict(service_instance)
-    if orig_dict:
-        for name, value in orig_dict.iteritems():
-            if name.lower() in filter:
-                return_dict[name] = value
-            else:
-                for prefix_value in prefix:
-                    if name.lower().startswith(prefix_value.lower()):
-                        return_dict[name] = value
-                        break
         return return_dict
     else:
         return None

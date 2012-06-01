@@ -21,9 +21,10 @@ import httplib
 from datetime import datetime
 
 
+from azure.http import HTTPError
 from azure import (WindowsAzureError, WindowsAzureData, 
                           _create_entry, _get_entry_properties, _html_encode,
-                          HTTPError, _get_child_nodes, WindowsAzureMissingResourceError,
+                          _get_child_nodes, WindowsAzureMissingResourceError,
                           WindowsAzureConflictError, _get_serialization_name, 
                           _get_children_from_path)
 import azure
@@ -151,39 +152,39 @@ class Message(WindowsAzureData):
         if self.custom_properties:
             for name, value in self.custom_properties.iteritems():
                 if isinstance(value, str):
-                    request.header.append((name, '"' + str(value) + '"'))
+                    request.headers.append((name, '"' + str(value) + '"'))
                 elif isinstance(value, datetime):
-                    request.header.append((name, '"' + value.strftime('%a, %d %b %Y %H:%M:%S GMT') + '"'))
+                    request.headers.append((name, '"' + value.strftime('%a, %d %b %Y %H:%M:%S GMT') + '"'))
                 else:
-                    request.header.append((name, str(value)))
+                    request.headers.append((name, str(value)))
         
         # Adds content-type
-        request.header.append(('Content-Type', self.type))
+        request.headers.append(('Content-Type', self.type))
 
         # Adds BrokerProperties
         if self.broker_properties:
-            request.header.append(('BrokerProperties', str(self.broker_properties)))
+            request.headers.append(('BrokerProperties', str(self.broker_properties)))
 
-        return request.header       
+        return request.headers
 
 def _update_service_bus_header(request, account_key, issuer): 
     ''' Add additional headers for service bus. '''
 
     if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
-        request.header.append(('Content-Length', str(len(request.body))))  
+        request.headers.append(('Content-Length', str(len(request.body))))  
         
     # if it is not GET or HEAD request, must set content-type.            
     if not request.method in ['GET', 'HEAD']:
-        for name, value in request.header:
+        for name, value in request.headers:
             if 'content-type' == name.lower():
                 break
         else:
-            request.header.append(('Content-Type', 'application/atom+xml;type=entry;charset=utf-8')) 
+            request.headers.append(('Content-Type', 'application/atom+xml;type=entry;charset=utf-8')) 
 
     # Adds authoriaztion header for authentication.
-    request.header.append(('Authorization', _sign_service_bus_request(request, account_key, issuer)))
+    request.headers.append(('Authorization', _sign_service_bus_request(request, account_key, issuer)))
 
-    return request.header
+    return request.headers
 
 def _sign_service_bus_request(request, account_key, issuer):
     ''' return the signed string with token. '''
@@ -245,20 +246,20 @@ def _get_token(request, account_key, issuer):
 
     return token
 
-def _create_message(service_instance, respbody):
+def _create_message(response, service_instance):
     ''' Create message from response. 
     
+    response: response from service bus cloud server.
     service_instance: the service bus client.
-    respbody: response from service bus cloud server.
     '''
-
+    respbody = response.body
     custom_properties = {}
     broker_properties = None
     message_type = None
     message_location = None
 
     #gets all information from respheaders.
-    for name, value in service_instance.respheader:
+    for name, value in response.headers:
         if name.lower() == 'brokerproperties':
             broker_properties = ast.literal_eval(value)
         elif name.lower() == 'content-type':
@@ -277,7 +278,10 @@ def _create_message(service_instance, respbody):
     return message
 
 #convert functions
-def convert_xml_to_rule(xmlstr):
+def _convert_response_to_rule(response):
+    return _convert_xml_to_rule(response.body)
+
+def _convert_xml_to_rule(xmlstr):
     ''' Converts response xml to rule object.  
 
     The format of xml for rule:
@@ -320,7 +324,10 @@ def convert_xml_to_rule(xmlstr):
 
     return rule
 
-def convert_xml_to_queue(xmlstr):
+def _convert_response_to_queue(response):
+    return _convert_xml_to_queue(response.body)
+
+def _convert_xml_to_queue(xmlstr):
     ''' Converts xml response to queue object.
     
     The format of xml response for queue:
@@ -358,7 +365,10 @@ def convert_xml_to_queue(xmlstr):
 
     return queue
 
-def convert_xml_to_topic(xmlstr):
+def _convert_response_to_topic(response):
+    return _convert_xml_to_topic(response.body)
+
+def _convert_xml_to_topic(xmlstr):
     '''Converts xml response to topic
 
     The xml format for topic:
@@ -398,7 +408,10 @@ def convert_xml_to_topic(xmlstr):
         setattr(topic, name, value)
     return topic
 
-def convert_xml_to_subscription(xmlstr):
+def _convert_response_to_subscription(response):
+    return _convert_xml_to_subscription(response.body)
+
+def _convert_xml_to_subscription(xmlstr):
     '''Converts xml response to subscription
 
     The xml format for subscription:

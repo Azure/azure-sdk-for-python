@@ -825,6 +825,43 @@ class ServiceBusTest(unittest.TestCase):
         self.assertEquals(sent_msg.body, received_msg.body)
         self.assertEquals(received_again_msg.body, received_msg.body)
 
+    def test_with_filter(self):
+         # Single filter
+        called = []
+        def my_filter(request, next):
+            called.append(True)
+            return next(request)
+
+        sbs = self.sbs.with_filter(my_filter)
+        sbs.create_topic(self.topic_name + '0', None, True)
+
+        self.assertTrue(called)
+
+        del called[:]        
+        
+        sbs.delete_topic(self.topic_name + '0')
+
+        self.assertTrue(called)
+        del called[:]        
+
+        # Chained filters
+        def filter_a(request, next):
+            called.append('a')
+            return next(request)
+        
+        def filter_b(request, next):
+            called.append('b')
+            return next(request)
+
+        sbs = self.sbs.with_filter(filter_a).with_filter(filter_b)
+        sbs.create_topic(self.topic_name + '0', None, True)
+
+        self.assertEqual(called, ['b', 'a'])
+
+        sbs.delete_topic(self.topic_name + '0')
+
+        self.assertEqual(called, ['b', 'a', 'b', 'a'])
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

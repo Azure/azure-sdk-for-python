@@ -20,7 +20,8 @@ import os
 
 from azure.storage import _storage_error_handler, X_MS_VERSION
 from azure.http.httpclient import _HTTPClient
-from azure import (_parse_response, HTTPError, WindowsAzureError,
+from azure.http import HTTPError
+from azure import (_parse_response, WindowsAzureError,
                           DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY)
 import azure
 
@@ -31,7 +32,7 @@ AZURE_STORAGE_ACCESS_KEY = 'AZURE_STORAGE_ACCESS_KEY'
 EMULATED = 'EMULATED'
 
 #--------------------------------------------------------------------------
-class _StorageClient:
+class _StorageClient(object):
     '''
     This is the base class for BlobManager, TableManager and QueueManager.
     '''
@@ -39,12 +40,8 @@ class _StorageClient:
     def __init__(self, account_name=None, account_key=None, protocol='http'):
         self.account_name = account_name
         self.account_key = account_key
-        self.status = None
-        self.message = None
-        self.respheader = None
         self.requestid = None
         self.protocol = protocol
-
         
         #the app is not run in azure emulator or use default development 
         #storage account and key if app is run in emulator. 
@@ -83,6 +80,22 @@ class _StorageClient:
         self.x_ms_version = X_MS_VERSION
         self._httpclient = _HTTPClient(service_instance=self, account_key=account_key, account_name=account_name, x_ms_version=self.x_ms_version, protocol=protocol)
         self._batchclient = None
+        self._filter = self._httpclient.perform_request
+    
+    def with_filter(self, filter):
+        '''Returns a new service which will process requests with the
+        specified filter.  Filtering operations can include logging, automatic
+        retrying, etc...  The filter is a lambda which receives the HTTPRequest
+        and another lambda.  The filter can perform any pre-processing on the
+        request, pass it off to the next lambda, and then perform any post-processing
+        on the response.'''
+        res = type(self)(self.account_name, self.account_key, self.protocol)
+        old_filter = self._filter
+        def new_filter(request):
+            return filter(request, old_filter)
+                    
+        res._filter = new_filter
+        return res
 
     def _perform_request(self, request):
         ''' Sends the request and return response. Catches HTTPError and hand it to error handler'''
@@ -91,14 +104,8 @@ class _StorageClient:
             if self._batchclient is not None:
                 return self._batchclient.insert_request_to_batch(request)
             else:
-                resp = self._httpclient.perform_request(request)
-            self.status = self._httpclient.status
-            self.message = self._httpclient.message
-            self.respheader = self._httpclient.respheader
+                resp = self._filter(request)
         except HTTPError as e:
-            self.status = self._httpclient.status
-            self.message = self._httpclient.message
-            self.respheader = self._httpclient.respheader
             _storage_error_handler(e)
 
         if not resp:

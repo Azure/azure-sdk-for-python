@@ -17,20 +17,24 @@ import os
 import urllib2
 
 from azure.http.httpclient import _HTTPClient
+from azure.http import HTTPError
 from azure.servicebus import (_update_service_bus_header, _create_message, 
-                                convert_topic_to_xml, convert_xml_to_topic, 
-                                convert_queue_to_xml, convert_xml_to_queue, 
-                                convert_subscription_to_xml, convert_xml_to_subscription, 
-                                convert_rule_to_xml, convert_xml_to_rule, 
+                                convert_topic_to_xml, _convert_response_to_topic, 
+                                convert_queue_to_xml, _convert_response_to_queue, 
+                                convert_subscription_to_xml, _convert_response_to_subscription, 
+                                convert_rule_to_xml, _convert_response_to_rule, 
+                                _convert_xml_to_queue, _convert_xml_to_topic, 
+                                _convert_xml_to_subscription, _convert_xml_to_rule,
                                 _service_bus_error_handler, AZURE_SERVICEBUS_NAMESPACE, 
                                 AZURE_SERVICEBUS_ACCESS_KEY, AZURE_SERVICEBUS_ISSUER)
-from azure import (_validate_not_none, Feed, _Request, 
-                                _convert_xml_to_feeds, _str_or_none, 
+from azure.http import HTTPRequest
+from azure import (_validate_not_none, Feed,
+                                _convert_response_to_feeds, _str_or_none, 
                                 _get_request_body, _update_request_uri_query, 
-                                _dont_fail_on_exist, _dont_fail_not_exist, HTTPError, 
-                                WindowsAzureError, _parse_response, _Request, _convert_class_to_xml, 
+                                _dont_fail_on_exist, _dont_fail_not_exist, 
+                                WindowsAzureError, _parse_response, _convert_class_to_xml, 
                                 _parse_response_for_dict, _parse_response_for_dict_prefix, 
-                                _parse_response_for_dict_filter, _parse_response_for_dict_special, 
+                                _parse_response_for_dict_filter,  
                                 _parse_enum_results_list, _update_request_uri_query_local_storage, 
                                 _get_table_host, _get_queue_host, _get_blob_host, 
                                 _parse_simple_list, SERVICE_BUS_HOST_BASE)  
@@ -46,13 +50,13 @@ class ServiceBusService:
         fail_on_exist: specify whether to throw an exception when the queue exists.
         '''
         _validate_not_none('queue-name', queue_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + ''
         request.body = _get_request_body(convert_queue_to_xml(queue))
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_on_exist:
             try:
                 self._perform_request(request)
@@ -72,12 +76,12 @@ class ServiceBusService:
         fail_not_exist: specify whether to throw an exception if the queue doesn't exist.
         '''
         _validate_not_none('queue-name', queue_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_not_exist:
             try:
                 self._perform_request(request)
@@ -96,29 +100,29 @@ class ServiceBusService:
         queue_name: name of the queue.
         '''
         _validate_not_none('queue-name', queue_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return convert_xml_to_queue(respbody)
+        return _convert_response_to_queue(response)
 
     def list_queues(self):
         '''
         Enumerates the queues in the service namespace.
         '''
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/$Resources/Queues'
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return _convert_xml_to_feeds(respbody, convert_xml_to_queue)
+        return _convert_response_to_feeds(response, _convert_xml_to_queue)
 
     def create_topic(self, topic_name, topic=None, fail_on_exist=False):
         '''
@@ -129,13 +133,13 @@ class ServiceBusService:
         fail_on_exist: specify whether to throw an exception when the topic exists.
         '''
         _validate_not_none('topic_name', topic_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + ''
         request.body = _get_request_body(convert_topic_to_xml(topic))
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_on_exist:
             try:
                 self._perform_request(request)
@@ -156,12 +160,12 @@ class ServiceBusService:
         fail_not_exist: specify whether throw exception when topic doesn't exist.
         '''
         _validate_not_none('topic_name', topic_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_not_exist:
             try:
                 self._perform_request(request)
@@ -180,29 +184,29 @@ class ServiceBusService:
         topic_name: name of the topic.
         '''
         _validate_not_none('topic_name', topic_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return convert_xml_to_topic(respbody)
+        return _convert_response_to_topic(response)
 
     def list_topics(self):
         '''
         Retrieves the topics in the service namespace.
         '''
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/$Resources/Topics'
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return _convert_xml_to_feeds(respbody, convert_xml_to_topic)
+        return _convert_response_to_feeds(response, _convert_xml_to_topic)
 
     def create_rule(self, topic_name, subscription_name, rule_name, rule=None, fail_on_exist=False):
         '''
@@ -216,13 +220,13 @@ class ServiceBusService:
         _validate_not_none('topic-name', topic_name)
         _validate_not_none('subscription-name', subscription_name)
         _validate_not_none('rule-name', rule_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/' + str(rule_name) + ''
         request.body = _get_request_body(convert_rule_to_xml(rule))
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_on_exist:
             try:
                 self._perform_request(request)
@@ -247,12 +251,12 @@ class ServiceBusService:
         _validate_not_none('topic-name', topic_name)
         _validate_not_none('subscription-name', subscription_name)
         _validate_not_none('rule-name', rule_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/' + str(rule_name) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_not_exist:
             try:
                 self._perform_request(request)
@@ -275,15 +279,15 @@ class ServiceBusService:
         _validate_not_none('topic-name', topic_name)
         _validate_not_none('subscription-name', subscription_name)
         _validate_not_none('rule-name', rule_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/' + str(rule_name) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return convert_xml_to_rule(respbody)
+        return _convert_response_to_rule(response)
 
     def list_rules(self, topic_name, subscription_name):
         '''
@@ -294,15 +298,15 @@ class ServiceBusService:
         '''
         _validate_not_none('topic-name', topic_name)
         _validate_not_none('subscription-name', subscription_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/'
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return _convert_xml_to_feeds(respbody, convert_xml_to_rule)
+        return _convert_response_to_feeds(response, _convert_xml_to_rule)
 
     def create_subscription(self, topic_name, subscription_name, subscription=None, fail_on_exist=False):
         '''
@@ -315,13 +319,13 @@ class ServiceBusService:
         '''
         _validate_not_none('topic-name', topic_name)
         _validate_not_none('subscription-name', subscription_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + ''
         request.body = _get_request_body(convert_subscription_to_xml(subscription))
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_on_exist:
             try:
                 self._perform_request(request)
@@ -343,12 +347,12 @@ class ServiceBusService:
         '''
         _validate_not_none('topic-name', topic_name)
         _validate_not_none('subscription-name', subscription_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_not_exist:
             try:
                 self._perform_request(request)
@@ -369,15 +373,15 @@ class ServiceBusService:
         '''
         _validate_not_none('topic-name', topic_name)
         _validate_not_none('subscription-name', subscription_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return convert_xml_to_subscription(respbody)
+        return _convert_response_to_subscription(response)
 
     def list_subscriptions(self, topic_name):
         '''
@@ -386,15 +390,15 @@ class ServiceBusService:
         topic_name: the name of the topic
         '''
         _validate_not_none('topic-name', topic_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/'
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return _convert_xml_to_feeds(respbody, convert_xml_to_subscription)
+        return _convert_response_to_feeds(response, _convert_xml_to_subscription)
 
     def send_topic_message(self, topic_name, message=None):
         '''
@@ -407,15 +411,15 @@ class ServiceBusService:
         message: the Message object containing message body and properties.
         '''
         _validate_not_none('topic-name', topic_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/messages'
-        request.header = message.add_headers(request)
+        request.headers = message.add_headers(request)
         request.body = _get_request_body(message.body)
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
     def peek_lock_subscription_message(self, topic_name, subscription_name, timeout='60'):
         '''
@@ -435,16 +439,16 @@ class ServiceBusService:
         '''
         _validate_not_none('topic-name', topic_name)
         _validate_not_none('subscription-name', subscription_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/head'
         request.query = [('timeout', _str_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return _create_message(self, respbody)
+        return _create_message(response, self)
 
     def unlock_subscription_message(self, topic_name, subscription_name, sequence_number, lock_token):
         '''
@@ -464,13 +468,13 @@ class ServiceBusService:
         _validate_not_none('subscription-name', subscription_name)
         _validate_not_none('sequence-number', sequence_number)
         _validate_not_none('lock-token', lock_token)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
     def read_delete_subscription_message(self, topic_name, subscription_name, timeout='60'):
         '''
@@ -484,16 +488,16 @@ class ServiceBusService:
         '''
         _validate_not_none('topic-name', topic_name)
         _validate_not_none('subscription-name', subscription_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/head'
         request.query = [('timeout', _str_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return _create_message(self, respbody)
+        return _create_message(response, self)
 
     def delete_subscription_message(self, topic_name, subscription_name, sequence_number, lock_token):
         '''
@@ -512,13 +516,13 @@ class ServiceBusService:
         _validate_not_none('subscription-name', subscription_name)
         _validate_not_none('sequence-number', sequence_number)
         _validate_not_none('lock-token', lock_token)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
     def send_queue_message(self, queue_name, message=None):
         '''
@@ -531,15 +535,15 @@ class ServiceBusService:
         message: the Message object containing message body and properties.
         '''
         _validate_not_none('queue-name', queue_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + '/messages'
-        request.header = message.add_headers(request)
+        request.headers = message.add_headers(request)
         request.body = _get_request_body(message.body)
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
     def peek_lock_queue_message(self, queue_name, timeout='60'):
         '''
@@ -556,16 +560,16 @@ class ServiceBusService:
         queue_name: name of the queue
         '''
         _validate_not_none('queue-name', queue_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + '/messages/head'
         request.query = [('timeout', _str_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return _create_message(self, respbody)
+        return _create_message(response, self)
 
     def unlock_queue_message(self, queue_name, sequence_number, lock_token):
         '''
@@ -583,13 +587,13 @@ class ServiceBusService:
         _validate_not_none('queue-name', queue_name)
         _validate_not_none('sequence-number', sequence_number)
         _validate_not_none('lock-token', lock_token)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
     def read_delete_queue_message(self, queue_name, timeout='60'):
         '''
@@ -601,16 +605,16 @@ class ServiceBusService:
         queue_name: name of the queue
         '''
         _validate_not_none('queue-name', queue_name)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + '/messages/head'
         request.query = [('timeout', _str_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
-        return _create_message(self, respbody)
+        return _create_message(response, self)
 
     def delete_queue_message(self, queue_name, sequence_number, lock_token):
         '''
@@ -627,13 +631,13 @@ class ServiceBusService:
         _validate_not_none('queue-name', queue_name)
         _validate_not_none('sequence_number', sequence_number)
         _validate_not_none('lock-token', lock_token)
-        request = _Request()
+        request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
         request.uri, request.query = _update_request_uri_query(request)
-        request.header = _update_service_bus_header(request, self.account_key, self.issuer)
-        respbody = self._perform_request(request)
+        request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
+        response = self._perform_request(request)
 
 
     def receive_queue_message(self, queue_name, peek_lock=True, timeout=60):
@@ -649,9 +653,6 @@ class ServiceBusService:
             return self.read_delete_subscription_message(topic_name, subscription_name, timeout)
     
     def __init__(self, service_namespace=None, account_key=None, issuer=None, x_ms_version='2011-06-01'):
-        self.status = None
-        self.message = None
-        self.respheader = None
         self.requestid = None
         self.service_namespace = service_namespace
         self.account_key = account_key
@@ -674,17 +675,28 @@ class ServiceBusService:
         
         self.x_ms_version = x_ms_version
         self._httpclient = _HTTPClient(service_instance=self, service_namespace=service_namespace, account_key=account_key, issuer=issuer, x_ms_version=self.x_ms_version)
-        
+        self._filter = self._httpclient.perform_request
+    
+    def with_filter(self, filter):
+        '''Returns a new service which will process requests with the
+        specified filter.  Filtering operations can include logging, automatic
+        retrying, etc...  The filter is a lambda which receives the HTTPRequest
+        and another lambda.  The filter can perform any pre-processing on the
+        request, pass it off to the next lambda, and then perform any post-processing
+        on the response.'''
+        res = ServiceBusService(self.service_namespace, self.account_key, 
+                                self.issuer, self.x_ms_version)
+        old_filter = self._filter
+        def new_filter(request):
+            return filter(request, old_filter)
+                    
+        res._filter = new_filter
+        return res
+            
     def _perform_request(self, request):
         try:
-            resp = self._httpclient.perform_request(request)            
-            self.status = self._httpclient.status
-            self.message = self._httpclient.message
-            self.respheader = self._httpclient.respheader
+            resp = self._filter(request)
         except HTTPError as e:
-            self.status = e.status
-            self.message = e.message
-            self.respheader = e.respheader
             return _service_bus_error_handler(e)
     
         if not resp:

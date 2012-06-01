@@ -1,3 +1,4 @@
+
 #-------------------------------------------------------------------------
 # Copyright 2011 Microsoft Corporation
 #
@@ -15,7 +16,7 @@
 
 from azure.storage.queueservice import *
 
-from azuretest.util import credentials, getUniqueTestRunID
+from azuretest.util import *
 
 import unittest
 import time
@@ -23,38 +24,48 @@ import time
 #------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'
 #------------------------------------------------------------------------------
-test_queues = []
-creatable_queues = []
-queue_client = QueueService(account_name=credentials.getStorageServicesName(), 
-                                                account_key=credentials.getStorageServicesKey())
-#------------------------------------------------------------------------------
-
-def _initialize():
-    for i in range(10):
-        test_queues.append(u'%s%d' % (TEST_QUEUE_PREFIX, i))
-    for i in range(4):
-        creatable_queues.append(u'mycreatablequeue%d' % (i))
-    _uninitialize()
-    for queue_name in test_queues:
-        queue_client.create_queue(queue_name)
-    time.sleep(60)
-
-def _uninitialize():
-    for queue_name in test_queues:
-        queue_client.delete_queue(queue_name)
-    for queue_name in creatable_queues:
-        queue_client.delete_queue(queue_name)
-    time.sleep(60)
-
-#------------------------------------------------------------------------------
 class QueueServiceTest(unittest.TestCase):
+
+    def setUp(self):
+        self.queue_client = QueueService(account_name=credentials.getStorageServicesName(), 
+                                                account_key=credentials.getStorageServicesKey())
+        # TODO: it may be overkill to use the machine name from 
+        #       getUniqueTestRunID, current time may be unique enough
+        __uid = getUniqueTestRunID()
+
+        queue_base_name = u'%s' % (__uid)
+        self.test_queues = []
+        self.creatable_queues = []
+        for i in range(10):
+            self.test_queues.append(TEST_QUEUE_PREFIX + getUniqueNameBasedOnCurrentTime(queue_base_name))
+        for i in range(4):
+            self.creatable_queues.append('mycreatablequeue' + getUniqueNameBasedOnCurrentTime(queue_base_name))
+        for queue_name in self.test_queues:
+            self.queue_client.create_queue(queue_name)
+
+    def tearDown(self):
+        self.cleanup()
+        return super(QueueServiceTest, self).tearDown()
+    
+    def cleanup(self):
+        for queue_name in self.test_queues:
+            try:
+                self.queue_client.delete_queue(queue_name)
+            except:
+                pass
+        for queue_name in self.creatable_queues:
+            try:
+                self.queue_client.delete_queue(queue_name)
+            except:
+                pass
+
     def test_get_service_properties(self):
         #This api doesn't apply to local storage
-        if queue_client.use_local_storage:
+        if self.queue_client.use_local_storage:
             return
 
         #Action
-        properties = queue_client.get_queue_service_properties()
+        properties = self.queue_client.get_queue_service_properties()
 
         #Asserts
         self.assertIsNotNone(properties)
@@ -67,14 +78,14 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_set_service_properties(self):
         #This api doesn't apply to local storage
-        if queue_client.use_local_storage:
+        if self.queue_client.use_local_storage:
             return
 
         #Action
-        queue_properties = queue_client.get_queue_service_properties()
+        queue_properties = self.queue_client.get_queue_service_properties()
         queue_properties.logging.read=True
-        queue_client.set_queue_service_properties(queue_properties)
-        properties = queue_client.get_queue_service_properties()
+        self.queue_client.set_queue_service_properties(queue_properties)
+        properties = self.queue_client.get_queue_service_properties()
 
         #Asserts
         self.assertIsNotNone(properties)
@@ -88,9 +99,9 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_create_queue(self):
         #Action
-        queue_client.create_queue(creatable_queues[0])
-        result = queue_client.get_queue_metadata(creatable_queues[0])
-        queue_client.delete_queue(creatable_queues[0])
+        self.queue_client.create_queue(self.creatable_queues[0])
+        result = self.queue_client.get_queue_metadata(self.creatable_queues[0])
+        self.queue_client.delete_queue(self.creatable_queues[0])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -98,8 +109,8 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_create_queue_with_options(self):
         #Action
-        queue_client.create_queue(creatable_queues[1], x_ms_meta_name_values = {'foo':'test', 'bar':'blah'})
-        result = queue_client.get_queue_metadata(creatable_queues[1])
+        self.queue_client.create_queue(self.creatable_queues[1], x_ms_meta_name_values = {'foo':'test', 'bar':'blah'})
+        result = self.queue_client.get_queue_metadata(self.creatable_queues[1])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -109,18 +120,18 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_list_queues(self):
         #Action
-        queues = queue_client.list_queues()
+        queues = self.queue_client.list_queues()
 
         #Asserts
         self.assertIsNotNone(queues)
         self.assertEqual('', queues.marker)
         self.assertEqual(0, queues.max_results)
-        self.assertTrue(len(test_queues) <= len(queues))
+        self.assertTrue(len(self.test_queues) <= len(queues))
 
     def test_list_queues_with_options(self):
         #Action
-        queues_1 = queue_client.list_queues(prefix=TEST_QUEUE_PREFIX, maxresults=3)
-        queues_2 = queue_client.list_queues(prefix=TEST_QUEUE_PREFIX, marker=queues_1.next_marker, include='metadata')
+        queues_1 = self.queue_client.list_queues(prefix=TEST_QUEUE_PREFIX, maxresults=3)
+        queues_2 = self.queue_client.list_queues(prefix=TEST_QUEUE_PREFIX, marker=queues_1.next_marker, include='metadata')
 
         #Asserts
         self.assertIsNotNone(queues_1)
@@ -133,7 +144,7 @@ class QueueServiceTest(unittest.TestCase):
         self.assertNotEqual('', queues_1[0].url) 
         #Asserts
         self.assertIsNotNone(queues_2)
-        self.assertTrue(len(test_queues) -3 <= len(queues_2))
+        self.assertTrue(len(self.test_queues) -3 <= len(queues_2))
         self.assertEqual(0, queues_2.max_results)
         self.assertEqual(queues_1.next_marker, queues_2.marker)
         self.assertIsNotNone(queues_2[0])
@@ -143,10 +154,10 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_set_queue_metadata(self):
         #Action
-        queue_client.create_queue(creatable_queues[2])
-        queue_client.set_queue_metadata(creatable_queues[2], x_ms_meta_name_values={'foo':'test', 'bar':'blah'})
-        result = queue_client.get_queue_metadata(creatable_queues[2])
-        queue_client.delete_queue(creatable_queues[2])
+        self.queue_client.create_queue(self.creatable_queues[2])
+        self.queue_client.set_queue_metadata(self.creatable_queues[2], x_ms_meta_name_values={'foo':'test', 'bar':'blah'})
+        result = self.queue_client.get_queue_metadata(self.creatable_queues[2])
+        self.queue_client.delete_queue(self.creatable_queues[2])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -156,18 +167,18 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_put_message(self):
         #Action.  No exception means pass. No asserts needed.
-        queue_client.put_message(test_queues[0], 'message1')
-        queue_client.put_message(test_queues[0], 'message2')
-        queue_client.put_message(test_queues[0], 'message3')
-        queue_client.put_message(test_queues[0], 'message4')
+        self.queue_client.put_message(self.test_queues[0], 'message1')
+        self.queue_client.put_message(self.test_queues[0], 'message2')
+        self.queue_client.put_message(self.test_queues[0], 'message3')
+        self.queue_client.put_message(self.test_queues[0], 'message4')
     
     def test_get_messges(self):
         #Action
-        queue_client.put_message(test_queues[1], 'message1')
-        queue_client.put_message(test_queues[1], 'message2')
-        queue_client.put_message(test_queues[1], 'message3')
-        queue_client.put_message(test_queues[1], 'message4')
-        result = queue_client.get_messages(test_queues[1])
+        self.queue_client.put_message(self.test_queues[1], 'message1')
+        self.queue_client.put_message(self.test_queues[1], 'message2')
+        self.queue_client.put_message(self.test_queues[1], 'message3')
+        self.queue_client.put_message(self.test_queues[1], 'message4')
+        result = self.queue_client.get_messages(self.test_queues[1])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -184,11 +195,11 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_get_messages_with_options(self):
         #Action
-        queue_client.put_message(test_queues[2], 'message1')
-        queue_client.put_message(test_queues[2], 'message2')
-        queue_client.put_message(test_queues[2], 'message3')
-        queue_client.put_message(test_queues[2], 'message4')
-        result = queue_client.get_messages(test_queues[2], numofmessages=4, visibilitytimeout=20)
+        self.queue_client.put_message(self.test_queues[2], 'message1')
+        self.queue_client.put_message(self.test_queues[2], 'message2')
+        self.queue_client.put_message(self.test_queues[2], 'message3')
+        self.queue_client.put_message(self.test_queues[2], 'message4')
+        result = self.queue_client.get_messages(self.test_queues[2], numofmessages=4, visibilitytimeout=20)
 
         #Asserts
         self.assertIsNotNone(result)
@@ -206,11 +217,11 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_peek_messages(self):
         #Action
-        queue_client.put_message(test_queues[3], 'message1')
-        queue_client.put_message(test_queues[3], 'message2')
-        queue_client.put_message(test_queues[3], 'message3')
-        queue_client.put_message(test_queues[3], 'message4')
-        result = queue_client.peek_messages(test_queues[3])
+        self.queue_client.put_message(self.test_queues[3], 'message1')
+        self.queue_client.put_message(self.test_queues[3], 'message2')
+        self.queue_client.put_message(self.test_queues[3], 'message3')
+        self.queue_client.put_message(self.test_queues[3], 'message4')
+        result = self.queue_client.peek_messages(self.test_queues[3])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -227,11 +238,11 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_peek_messages_with_options(self):
         #Action
-        queue_client.put_message(test_queues[4], 'message1')
-        queue_client.put_message(test_queues[4], 'message2')
-        queue_client.put_message(test_queues[4], 'message3')
-        queue_client.put_message(test_queues[4], 'message4')
-        result = queue_client.peek_messages(test_queues[4], numofmessages=4)
+        self.queue_client.put_message(self.test_queues[4], 'message1')
+        self.queue_client.put_message(self.test_queues[4], 'message2')
+        self.queue_client.put_message(self.test_queues[4], 'message3')
+        self.queue_client.put_message(self.test_queues[4], 'message4')
+        result = self.queue_client.peek_messages(self.test_queues[4], numofmessages=4)
 
         #Asserts
         self.assertIsNotNone(result)
@@ -248,12 +259,12 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_clear_messages(self):
         #Action
-        queue_client.put_message(test_queues[5], 'message1')
-        queue_client.put_message(test_queues[5], 'message2')
-        queue_client.put_message(test_queues[5], 'message3')
-        queue_client.put_message(test_queues[5], 'message4')
-        queue_client.clear_messages(test_queues[5])
-        result = queue_client.peek_messages(test_queues[5])
+        self.queue_client.put_message(self.test_queues[5], 'message1')
+        self.queue_client.put_message(self.test_queues[5], 'message2')
+        self.queue_client.put_message(self.test_queues[5], 'message3')
+        self.queue_client.put_message(self.test_queues[5], 'message4')
+        self.queue_client.clear_messages(self.test_queues[5])
+        result = self.queue_client.peek_messages(self.test_queues[5])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -261,13 +272,13 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_delete_message(self):
         #Action
-        queue_client.put_message(test_queues[6], 'message1')
-        queue_client.put_message(test_queues[6], 'message2')
-        queue_client.put_message(test_queues[6], 'message3')
-        queue_client.put_message(test_queues[6], 'message4')
-        result = queue_client.get_messages(test_queues[6])
-        queue_client.delete_message(test_queues[6], result[0].message_id, result[0].pop_receipt)
-        result2 = queue_client.get_messages(test_queues[6], numofmessages=32)
+        self.queue_client.put_message(self.test_queues[6], 'message1')
+        self.queue_client.put_message(self.test_queues[6], 'message2')
+        self.queue_client.put_message(self.test_queues[6], 'message3')
+        self.queue_client.put_message(self.test_queues[6], 'message4')
+        result = self.queue_client.get_messages(self.test_queues[6])
+        self.queue_client.delete_message(self.test_queues[6], result[0].message_id, result[0].pop_receipt)
+        result2 = self.queue_client.get_messages(self.test_queues[6], numofmessages=32)
         
         #Asserts
         self.assertIsNotNone(result2)
@@ -275,10 +286,10 @@ class QueueServiceTest(unittest.TestCase):
 
     def test_update_message(self):
         #Action
-        queue_client.put_message(test_queues[7], 'message1')
-        list_result1 = queue_client.get_messages(test_queues[7])
-        queue_client.update_message(test_queues[7], list_result1[0].message_id, 'new text', list_result1[0].pop_receipt, visibilitytimeout=0)
-        list_result2 = queue_client.get_messages(test_queues[7])
+        self.queue_client.put_message(self.test_queues[7], 'message1')
+        list_result1 = self.queue_client.get_messages(self.test_queues[7])
+        self.queue_client.update_message(self.test_queues[7], list_result1[0].message_id, 'new text', list_result1[0].pop_receipt, visibilitytimeout=0)
+        list_result2 = self.queue_client.get_messages(self.test_queues[7])
 
         #Asserts
         self.assertIsNotNone(list_result2)
@@ -291,9 +302,35 @@ class QueueServiceTest(unittest.TestCase):
         self.assertNotEqual('', message.insertion_time)
         self.assertNotEqual('', message.expiration_time)
         self.assertNotEqual('', message.time_next_visible)
+
+    def test_with_filter(self):
+        # Single filter
+        called = []
+        def my_filter(request, next):
+            called.append(True)
+            return next(request)
+        qc = self.queue_client.with_filter(my_filter)
+        qc.put_message(self.test_queues[7], 'message1')
+
+        self.assertTrue(called)
+
+        del called[:]        
+        
+        # Chained filters
+        def filter_a(request, next):
+            called.append('a')
+            return next(request)
+        
+        def filter_b(request, next):
+            called.append('b')
+            return next(request)
+
+        qc = self.queue_client.with_filter(filter_a).with_filter(filter_b)
+        qc.put_message(self.test_queues[7], 'message1')
+
+        self.assertEqual(called, ['b', 'a'])
+
         
 #------------------------------------------------------------------------------
-_initialize()
 if __name__ == '__main__':
     unittest.main()
-    _unitialize()
