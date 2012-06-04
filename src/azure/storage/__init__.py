@@ -333,7 +333,7 @@ def _update_storage_queue_header(request, account_name, account_key):
     ''' add additional headers for storage queue request. '''
     return _update_storage_blob_header(request, account_name, account_key)
 
-def _update_storage_table_header(request, account_name, account_key):
+def _update_storage_table_header(request):
     ''' add additional headers for storage table request. '''
 
     request = _update_storage_header(request)
@@ -347,7 +347,6 @@ def _update_storage_table_header(request, account_name, account_key):
     current_time = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
     request.headers.append(('x-ms-date', current_time))
     request.headers.append(('Date', current_time))
-    request.headers.append(('Authorization', _sign_storage_table_request(request, account_name, account_key)))
     return request.headers
 
 def _sign_storage_blob_request(request, account_name, account_key):
@@ -362,9 +361,9 @@ def _sign_storage_blob_request(request, account_name, account_key):
     string_to_sign = request.method + '\n'
 
     #get headers to sign
-    headers_to_sign = ['content-encoding', 'content-Language', 'content-length', 
+    headers_to_sign = ['content-encoding', 'content-language', 'content-length', 
                         'content-md5', 'content-type', 'date', 'if-modified-since', 
-                        'if-Match', 'if-none-match', 'if-unmodified-since', 'range']
+                        'if-match', 'if-none-match', 'if-unmodified-since', 'range']
     for header in headers_to_sign:
         for name, value in request.headers:
             if value and name.lower() == header:

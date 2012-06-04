@@ -80,7 +80,7 @@ class _StorageClient(object):
         self.x_ms_version = X_MS_VERSION
         self._httpclient = _HTTPClient(service_instance=self, account_key=account_key, account_name=account_name, x_ms_version=self.x_ms_version, protocol=protocol)
         self._batchclient = None
-        self._filter = self._httpclient.perform_request
+        self._filter = self._perform_request_worker
     
     def with_filter(self, filter):
         '''Returns a new service which will process requests with the
@@ -96,6 +96,9 @@ class _StorageClient(object):
                     
         res._filter = new_filter
         return res
+
+    def _perform_request_worker(self, request):
+        return self._httpclient.perform_request(request)
 
     def _perform_request(self, request):
         ''' Sends the request and return response. Catches HTTPError and hand it to error handler'''

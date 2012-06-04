@@ -17,7 +17,7 @@ import azure
 from azure.http.httpclient import _HTTPClient
 from azure.http import HTTPError, HTTPRequest
 from azure import _update_request_uri_query, WindowsAzureError, _get_children_from_path
-from azure.storage import _update_storage_table_header, METADATA_NS
+from azure.storage import _update_storage_table_header, METADATA_NS, _sign_storage_table_request
 from xml.dom import minidom
 
 _DATASERVICES_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices'
@@ -216,7 +216,11 @@ class _BatchClient(_HTTPClient):
             request.body += '--' + batch_boundary + '--' 
 
             request.uri, request.query = _update_request_uri_query(request)
-            request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
+            request.headers = _update_storage_table_header(request)
+            auth = _sign_storage_table_request(request, 
+                                        self.account_name, 
+                                        self.account_key)
+            request.headers.append(('Authorization', auth))
 
             #Submit the whole request as batch request.
             response = self.perform_request(request)

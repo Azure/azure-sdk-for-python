@@ -208,5 +208,14 @@ Content-Type=application/atom+xml;required:application/atom+xml|#this is require
 If-Match=*
 [requestbody]
 feed:entity;required:feed
-[end]
 
+[methods_code]
+def _perform_request_worker(self, request):
+    auth = _sign_storage_table_request(request, 
+                                            self.account_name, 
+                                            self.account_key)
+    request.headers.append(('Authorization', auth))
+    return self._httpclient.perform_request(request)
+    
+    
+[end]
