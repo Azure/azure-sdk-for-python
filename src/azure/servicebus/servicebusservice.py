@@ -29,7 +29,7 @@ from azure.servicebus import (_update_service_bus_header, _create_message,
                                 AZURE_SERVICEBUS_ACCESS_KEY, AZURE_SERVICEBUS_ISSUER)
 from azure.http import HTTPRequest
 from azure import (_validate_not_none, Feed,
-                                _convert_response_to_feeds, _str_or_none, 
+                                _convert_response_to_feeds, _str_or_none, _int_or_none,
                                 _get_request_body, _update_request_uri_query, 
                                 _dont_fail_on_exist, _dont_fail_not_exist, 
                                 WindowsAzureError, _parse_response, _convert_class_to_xml, 
@@ -37,7 +37,7 @@ from azure import (_validate_not_none, Feed,
                                 _parse_response_for_dict_filter,  
                                 _parse_enum_results_list, _update_request_uri_query_local_storage, 
                                 _get_table_host, _get_queue_host, _get_blob_host, 
-                                _parse_simple_list, SERVICE_BUS_HOST_BASE)  
+                                _parse_simple_list, SERVICE_BUS_HOST_BASE, xml_escape)  
 
 class ServiceBusService:
 
@@ -49,7 +49,7 @@ class ServiceBusService:
         queue_name: the name of the queue.
         fail_on_exist: specify whether to throw an exception when the queue exists.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -75,7 +75,7 @@ class ServiceBusService:
         
         fail_not_exist: specify whether to throw an exception if the queue doesn't exist.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -99,7 +99,7 @@ class ServiceBusService:
         
         queue_name: name of the queue.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -217,9 +217,9 @@ class ServiceBusService:
         rule_name: name of the rule.
         fail_on_exist: specify whether to throw an exception when the rule exists.
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
-        _validate_not_none('rule-name', rule_name)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
+        _validate_not_none('rule_name', rule_name)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -248,9 +248,9 @@ class ServiceBusService:
         		to delete default rule for the subscription.
         fail_not_exist: specify whether throw exception when rule doesn't exist.
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
-        _validate_not_none('rule-name', rule_name)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
+        _validate_not_none('rule_name', rule_name)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -276,9 +276,9 @@ class ServiceBusService:
         subscription_name: the name of the subscription
         rule_name: name of the rule
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
-        _validate_not_none('rule-name', rule_name)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
+        _validate_not_none('rule_name', rule_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -296,8 +296,8 @@ class ServiceBusService:
         topic_name: the name of the topic
         subscription_name: the name of the subscription
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -317,8 +317,8 @@ class ServiceBusService:
         subscription_name: the name of the subscription
         fail_on_exist: specify whether throw exception when subscription exists.
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -345,8 +345,8 @@ class ServiceBusService:
         subscription_name: the name of the subscription
         fail_not_exist: specify whether to throw an exception when the subscription doesn't exist.
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -371,8 +371,8 @@ class ServiceBusService:
         topic_name: the name of the topic
         subscription_name: the name of the subscription
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -389,7 +389,7 @@ class ServiceBusService:
         
         topic_name: the name of the topic
         '''
-        _validate_not_none('topic-name', topic_name)
+        _validate_not_none('topic_name', topic_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -410,7 +410,7 @@ class ServiceBusService:
         topic_name: name of the topic.
         message: the Message object containing message body and properties.
         '''
-        _validate_not_none('topic-name', topic_name)
+        _validate_not_none('topic_name', topic_name)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -437,13 +437,13 @@ class ServiceBusService:
         topic_name: the name of the topic
         subscription_name: the name of the subscription
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/head'
-        request.query = [('timeout', _str_or_none(timeout))]
+        request.query = [('timeout', _int_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
@@ -464,10 +464,10 @@ class ServiceBusService:
         lock_token: The ID of the lock as returned by the Peek Message operation in 
         		BrokerProperties['LockToken']
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
-        _validate_not_none('sequence-number', sequence_number)
-        _validate_not_none('lock-token', lock_token)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
+        _validate_not_none('sequence_number', sequence_number)
+        _validate_not_none('lock_token', lock_token)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -486,13 +486,13 @@ class ServiceBusService:
         topic_name: the name of the topic
         subscription_name: the name of the subscription
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/head'
-        request.query = [('timeout', _str_or_none(timeout))]
+        request.query = [('timeout', _int_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
@@ -512,10 +512,10 @@ class ServiceBusService:
         lock_token: The ID of the lock as returned by the Peek Message operation in 
         		BrokerProperties['LockToken']
         '''
-        _validate_not_none('topic-name', topic_name)
-        _validate_not_none('subscription-name', subscription_name)
-        _validate_not_none('sequence-number', sequence_number)
-        _validate_not_none('lock-token', lock_token)
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
+        _validate_not_none('sequence_number', sequence_number)
+        _validate_not_none('lock_token', lock_token)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -534,7 +534,7 @@ class ServiceBusService:
         queue_name: name of the queue
         message: the Message object containing message body and properties.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -559,12 +559,12 @@ class ServiceBusService:
         
         queue_name: name of the queue
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + '/messages/head'
-        request.query = [('timeout', _str_or_none(timeout))]
+        request.query = [('timeout', _int_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
@@ -584,9 +584,9 @@ class ServiceBusService:
         lock_token: The ID of the lock as returned by the Peek Message operation in 
         		BrokerProperties['LockToken']
         '''
-        _validate_not_none('queue-name', queue_name)
-        _validate_not_none('sequence-number', sequence_number)
-        _validate_not_none('lock-token', lock_token)
+        _validate_not_none('queue_name', queue_name)
+        _validate_not_none('sequence_number', sequence_number)
+        _validate_not_none('lock_token', lock_token)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
@@ -604,12 +604,12 @@ class ServiceBusService:
         
         queue_name: name of the queue
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
         request.uri = '/' + str(queue_name) + '/messages/head'
-        request.query = [('timeout', _str_or_none(timeout))]
+        request.query = [('timeout', _int_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
@@ -628,9 +628,9 @@ class ServiceBusService:
         lock_token: The ID of the lock as returned by the Peek Message operation in 
         		BrokerProperties['LockToken']
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         _validate_not_none('sequence_number', sequence_number)
-        _validate_not_none('lock-token', lock_token)
+        _validate_not_none('lock_token', lock_token)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE

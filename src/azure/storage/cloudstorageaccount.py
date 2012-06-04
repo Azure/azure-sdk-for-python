@@ -22,11 +22,11 @@ class CloudStorageAccount:
         self.account_name = account_name
         self.account_key = account_key
 
-    def create_blob_client(self):
+    def create_blob_service(self):
         return BlobService(self.account_name, self.account_key)
 
-    def create_table_client(self):
+    def create_table_service(self):
         return TableService(self.account_name, self.account_key)
 
-    def create_queue_client(self):
+    def create_queue_service(self):
         return QueueService(self.account_name, self.account_key)

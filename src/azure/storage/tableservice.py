@@ -25,7 +25,7 @@ from azure.storage import (_update_storage_table_header,
 from azure.http.batchclient import _BatchClient
 from azure.http import HTTPRequest
 from azure import (_validate_not_none, Feed,
-                                _convert_response_to_feeds, _str_or_none, 
+                                _convert_response_to_feeds, _str_or_none, _int_or_none,
                                 _get_request_body, _update_request_uri_query, 
                                 _dont_fail_on_exist, _dont_fail_not_exist, 
                                 WindowsAzureError, _parse_response, _convert_class_to_xml, 
@@ -33,7 +33,7 @@ from azure import (_validate_not_none, Feed,
                                 _parse_response_for_dict_filter,  
                                 _parse_enum_results_list, _update_request_uri_query_local_storage, 
                                 _get_table_host, _get_queue_host, _get_blob_host, 
-                                _parse_simple_list, SERVICE_BUS_HOST_BASE)  
+                                _parse_simple_list, SERVICE_BUS_HOST_BASE, xml_escape)  
 
 class TableService(_StorageClient):
     '''
@@ -78,7 +78,7 @@ class TableService(_StorageClient):
         
         storage_service_properties: a StorageServiceProperties object.
         '''
-        _validate_not_none('class:storage_service_properties', storage_service_properties)
+        _validate_not_none('storage_service_properties', storage_service_properties)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
@@ -90,14 +90,19 @@ class TableService(_StorageClient):
 
         return _parse_response_for_dict(response)
 
-    def query_tables(self):
+    def query_tables(self, table_name = None, top=None):
         '''
         Returns a list of tables under the specified account.
         '''
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
-        request.uri = '/Tables'
+        if table_name is not None:
+            uri_part_table_name = "('" + table_name + "')"
+        else:
+            uri_part_table_name = ""
+        request.uri = '/Tables' + uri_part_table_name + ''
+        request.query = [('$top', _int_or_none(top))]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
@@ -111,7 +116,7 @@ class TableService(_StorageClient):
         table: name of the table to create.
         fail_on_exist: specify whether throw exception when table exists.
         '''
-        _validate_not_none('feed:table', table)
+        _validate_not_none('table', table)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
@@ -136,7 +141,7 @@ class TableService(_StorageClient):
         
         fail_not_exist: specify whether throw exception when table doesn't exist.
         '''
-        _validate_not_none('table-name', table_name)
+        _validate_not_none('table_name', table_name)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
@@ -162,10 +167,10 @@ class TableService(_StorageClient):
         row_key: RowKey of the entity.
         comma_separated_property_names: the property names to select.
         '''
-        _validate_not_none('table-name', table_name)
-        _validate_not_none('partition-key', partition_key)
-        _validate_not_none('row-key', row_key)
-        _validate_not_none('comma-separated-property-names', comma_separated_property_names)
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('partition_key', partition_key)
+        _validate_not_none('row_key', row_key)
+        _validate_not_none('comma_separated_property_names', comma_separated_property_names)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
@@ -176,20 +181,25 @@ class TableService(_StorageClient):
 
         return _convert_response_to_entity(response)
 
-    def query_entities(self, table_name, query_expression='', comma_separated_property_names=''):
+    def query_entities(self, table_name, filter=None, select=None, top=None):
         '''
         Get entities in a table; includes the $filter and $select options. 
         
-        query_expression: the query to get entities.
-        comma_separated_property_names: the property names to select.
+        table_name: the table to query
+        filter: a filter as described at http://msdn.microsoft.com/en-us/library/windowsazure/dd894031.aspx
+        select: the property names to select from the entities
+        top: the maximum number of entities to return
         '''
-        _validate_not_none('table-name', table_name)
-        _validate_not_none('query-expression', query_expression)
-        _validate_not_none('comma-separated-property-names', comma_separated_property_names)
+        _validate_not_none('table_name', table_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(table_name) + '()?$filter=' + str(query_expression) + '&$select=' + str(comma_separated_property_names) + ''
+        request.uri = '/' + str(table_name) + '()'
+        request.query = [
+            ('$filter', _str_or_none(filter)),
+            ('$select', _str_or_none(select)),
+            ('$top', _int_or_none(top))
+            ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
@@ -203,9 +213,9 @@ class TableService(_StorageClient):
         entity: Required. The entity object to insert. Could be a dict format or entity object.
         Content-Type: this is required and has to be set to application/atom+xml
         '''
-        _validate_not_none('table-name', table_name)
-        _validate_not_none('feed:entity', entity)
-        _validate_not_none('Content-Type', content_type)
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('entity', entity)
+        _validate_not_none('content_type', content_type)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
@@ -226,11 +236,11 @@ class TableService(_StorageClient):
         row_key: RowKey of the entity.
         Content-Type: this is required and has to be set to application/atom+xml
         '''
-        _validate_not_none('table-name', table_name)
-        _validate_not_none('partition-key', partition_key)
-        _validate_not_none('row-key', row_key)
-        _validate_not_none('feed:entity', entity)
-        _validate_not_none('Content-Type', content_type)
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('partition_key', partition_key)
+        _validate_not_none('row_key', row_key)
+        _validate_not_none('entity', entity)
+        _validate_not_none('content_type', content_type)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
@@ -254,11 +264,11 @@ class TableService(_StorageClient):
         row_key: RowKey of the entity.
         Content-Type: this is required and has to be set to application/atom+xml
         '''
-        _validate_not_none('table-name', table_name)
-        _validate_not_none('partition-key', partition_key)
-        _validate_not_none('row-key', row_key)
-        _validate_not_none('feed:entity', entity)
-        _validate_not_none('Content-Type', content_type)
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('partition_key', partition_key)
+        _validate_not_none('row_key', row_key)
+        _validate_not_none('entity', entity)
+        _validate_not_none('content_type', content_type)
         request = HTTPRequest()
         request.method = 'MERGE'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
@@ -282,11 +292,11 @@ class TableService(_StorageClient):
         		To force an unconditional delete, set If-Match to the wildcard character (*). 
         Content-Type: this is required and has to be set to application/atom+xml
         '''
-        _validate_not_none('table-name', table_name)
-        _validate_not_none('partition-key', partition_key)
-        _validate_not_none('row-key', row_key)
-        _validate_not_none('Content-Type', content_type)
-        _validate_not_none('If-Match', if_match)
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('partition_key', partition_key)
+        _validate_not_none('row_key', row_key)
+        _validate_not_none('content_type', content_type)
+        _validate_not_none('if_match', if_match)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
@@ -310,11 +320,11 @@ class TableService(_StorageClient):
         row_key: RowKey of the entity.
         Content-Type: this is required and has to be set to application/atom+xml
         '''
-        _validate_not_none('table-name', table_name)
-        _validate_not_none('partition-key', partition_key)
-        _validate_not_none('row-key', row_key)
-        _validate_not_none('feed:entity', entity)
-        _validate_not_none('Content-Type', content_type)
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('partition_key', partition_key)
+        _validate_not_none('row_key', row_key)
+        _validate_not_none('entity', entity)
+        _validate_not_none('content_type', content_type)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
@@ -336,11 +346,11 @@ class TableService(_StorageClient):
         row_key: RowKey of the entity.
         Content-Type: this is required and has to be set to application/atom+xml
         '''
-        _validate_not_none('table-name', table_name)
-        _validate_not_none('partition-key', partition_key)
-        _validate_not_none('row-key', row_key)
-        _validate_not_none('feed:entity', entity)
-        _validate_not_none('Content-Type', content_type)
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('partition_key', partition_key)
+        _validate_not_none('row_key', row_key)
+        _validate_not_none('entity', entity)
+        _validate_not_none('content_type', content_type)
         request = HTTPRequest()
         request.method = 'MERGE'
         request.host = _get_table_host(self.account_name, self.use_local_storage)

@@ -15,12 +15,12 @@
 
 from distutils.core import setup
 
-setup(name='windowsazure',
-      version='0.2.2',
+setup(name='azure',
+      version='0.2.3',
       description='Windows Azure client APIs',
       url='https://github.com/WindowsAzure/azure-sdk-for-python',
-      packages=['windowsazure',
-                'windowsazure.http',
-                'windowsazure.servicebus',
-                'windowsazure.storage']
+      packages=['sazure',
+                'azure.http',
+                'azure.servicebus',
+                'azure.storage']
      )

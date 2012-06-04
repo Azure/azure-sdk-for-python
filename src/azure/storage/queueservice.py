@@ -21,7 +21,7 @@ from azure.storage.storageclient import _StorageClient
 from azure.storage import (_update_storage_queue_header)
 from azure.http import HTTPRequest
 from azure import (_validate_not_none, Feed,
-                                _convert_response_to_feeds, _str_or_none, 
+                                _convert_response_to_feeds, _str_or_none, _int_or_none,
                                 _get_request_body, _update_request_uri_query, 
                                 _dont_fail_on_exist, _dont_fail_not_exist, 
                                 WindowsAzureError, _parse_response, _convert_class_to_xml, 
@@ -29,7 +29,7 @@ from azure import (_validate_not_none, Feed,
                                 _parse_response_for_dict_filter,  
                                 _parse_enum_results_list, _update_request_uri_query_local_storage, 
                                 _get_table_host, _get_queue_host, _get_blob_host, 
-                                _parse_simple_list, SERVICE_BUS_HOST_BASE)  
+                                _parse_simple_list, SERVICE_BUS_HOST_BASE, xml_escape)  
 
 class QueueService(_StorageClient):
     '''
@@ -50,7 +50,7 @@ class QueueService(_StorageClient):
         request.method = 'GET'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
         request.uri = '/?restype=service&comp=properties'
-        request.query = [('timeout', _str_or_none(timeout))]
+        request.query = [('timeout', _int_or_none(timeout))]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
@@ -68,7 +68,7 @@ class QueueService(_StorageClient):
         request.query = [
             ('prefix', _str_or_none(prefix)),
             ('marker', _str_or_none(marker)),
-            ('maxresults', _str_or_none(maxresults)),
+            ('maxresults', _int_or_none(maxresults)),
             ('include', _str_or_none(include))
             ]
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
@@ -86,7 +86,7 @@ class QueueService(_StorageClient):
         		with the queue as metadata.
         fail_on_exist: specify whether throw exception when queue exists.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
@@ -112,7 +112,7 @@ class QueueService(_StorageClient):
         queue_name: name of the queue.
         fail_not_exist: specify whether throw exception when queue doesn't exist.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
@@ -137,7 +137,7 @@ class QueueService(_StorageClient):
         
         queue_name: name of the queue.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
@@ -157,7 +157,7 @@ class QueueService(_StorageClient):
         x_ms_meta_name_values: Optional. A dict containing name-value pairs to associate 
         		with the queue as metadata.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
@@ -182,8 +182,8 @@ class QueueService(_StorageClient):
         		in seconds. The maximum time-to-live allowed is 7 days. If this parameter
         		is omitted, the default time-to-live is 7 days.
         '''
-        _validate_not_none('queue-name', queue_name)
-        _validate_not_none('MessageText', message_text)
+        _validate_not_none('queue_name', queue_name)
+        _validate_not_none('message_text', message_text)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
@@ -194,7 +194,7 @@ class QueueService(_StorageClient):
             ]
         request.body = _get_request_body('<?xml version="1.0" encoding="utf-8"?> \
 <QueueMessage> \
-    <MessageText>' + str(message_text) + '</MessageText> \
+    <MessageText>' + xml_escape(str(message_text)) + '</MessageText> \
 </QueueMessage>')
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
@@ -215,7 +215,7 @@ class QueueService(_StorageClient):
         		hours on REST protocol versions prior to version 2011-08-18. The visibility
         		timeout of a message can be set to a value later than the expiry time.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
@@ -240,7 +240,7 @@ class QueueService(_StorageClient):
         		messages to peek from the queue, up to a maximum of 32. By default, 
         		a single message is peeked from the queue with this operation.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
@@ -260,8 +260,8 @@ class QueueService(_StorageClient):
         popreceipt: Required. A valid pop receipt value returned from an earlier call 
         		to the Get Messages or Update Message operation.
         '''
-        _validate_not_none('queue-name', queue_name)
-        _validate_not_none('message-id', message_id)
+        _validate_not_none('queue_name', queue_name)
+        _validate_not_none('message_id', message_id)
         _validate_not_none('popreceipt', popreceipt)
         request = HTTPRequest()
         request.method = 'DELETE'
@@ -278,7 +278,7 @@ class QueueService(_StorageClient):
         
         queue_name: name of the queue.
         '''
-        _validate_not_none('queue-name', queue_name)
+        _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
@@ -301,9 +301,9 @@ class QueueService(_StorageClient):
         		of a message cannot be set to a value later than the expiry time. A 
         		message can be updated until it has been deleted or has expired.
         '''
-        _validate_not_none('queue-name', queue_name)
-        _validate_not_none('message-id', message_id)
-        _validate_not_none('MessageText', message_text)
+        _validate_not_none('queue_name', queue_name)
+        _validate_not_none('message_id', message_id)
+        _validate_not_none('message_text', message_text)
         _validate_not_none('popreceipt', popreceipt)
         _validate_not_none('visibilitytimeout', visibilitytimeout)
         request = HTTPRequest()
@@ -316,7 +316,7 @@ class QueueService(_StorageClient):
             ]
         request.body = _get_request_body('<?xml version="1.0" encoding="utf-8"?> \
 <QueueMessage> \
-    <MessageText>;' + str(message_text) + '</MessageText> \
+    <MessageText>;' + xml_escape(str(message_text)) + '</MessageText> \
 </QueueMessage>')
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
@@ -332,12 +332,12 @@ class QueueService(_StorageClient):
         storage_service_properties: a StorageServiceProperties object.
         timeout: Optional. The timeout parameter is expressed in seconds.
         '''
-        _validate_not_none('class:storage_service_properties', storage_service_properties)
+        _validate_not_none('storage_service_properties', storage_service_properties)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
         request.uri = '/?restype=service&comp=properties'
-        request.query = [('timeout', _str_or_none(timeout))]
+        request.query = [('timeout', _int_or_none(timeout))]
         request.body = _get_request_body(_convert_class_to_xml(storage_service_properties))
         request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)

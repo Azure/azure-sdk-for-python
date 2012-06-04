@@ -16,8 +16,11 @@ import urllib2
 import azure
 from azure.http.httpclient import _HTTPClient
 from azure.http import HTTPError, HTTPRequest
-from azure import _update_request_uri_query, WindowsAzureError
-from azure.storage import _update_storage_table_header
+from azure import _update_request_uri_query, WindowsAzureError, _get_children_from_path
+from azure.storage import _update_storage_table_header, METADATA_NS
+from xml.dom import minidom
+
+_DATASERVICES_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices'
 
 class _BatchClient(_HTTPClient):
     '''
@@ -55,11 +58,11 @@ class _BatchClient(_HTTPClient):
         request: the request to insert, update or delete entity
         '''
         if request.method == 'POST':
-            pos1 = request.body.find('<d:PartitionKey>')
-            pos2 = request.body.find('</d:PartitionKey>')
-            if pos1 == -1 or pos2 == -1:
+            doc = minidom.parseString(request.body)
+            part_key = _get_children_from_path(doc, 'entry', 'content', (METADATA_NS, 'properties'), (_DATASERVICES_NS, 'PartitionKey'))
+            if not part_key:
                 raise WindowsAzureError(azure._ERROR_CANNOT_FIND_PARTITION_KEY)
-            return request.body[pos1 + len('<d:PartitionKey>'):pos2]
+            return part_key[0].firstChild.nodeValue
         else:
             uri = urllib2.unquote(request.uri)
             pos1 = uri.find('PartitionKey=\'')
@@ -219,12 +222,7 @@ class _BatchClient(_HTTPClient):
             response = self.perform_request(request)
             resp = response.body
 
-            #Extracts the status code from the response body.  If any operation fails, the status code will appear right after the first HTTP/1.1.
-            pos1 = resp.find('HTTP/1.1 ') + len('HTTP/1.1 ')
-            pos2 = resp.find(' ', pos1)
-            status = resp[pos1:pos2]
-
-            if int(status) >= 300:
+            if response.status >= 300:
                 raise HTTPError(status, azure._ERROR_BATCH_COMMIT_FAIL, self.respheader, resp)
             return resp
 

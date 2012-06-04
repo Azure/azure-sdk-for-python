@@ -312,6 +312,27 @@ class StorageTest(unittest.TestCase):
         self.assertRaises(WindowsAzureError,
                           lambda: self.tc.get_entity(TABLE_NO_DELETE, ln, fn, ''))
     
+    def test_batch_partition_key(self):
+        tn = BATCH_TABLE + 'pk'
+        self.tc.create_table(tn)
+        try:
+            self.tc.begin_batch()
+            self.tc.insert_entity(TABLE_NO_DELETE, {'PartitionKey':'Lastname', 
+                                                       'RowKey':'Firstname', 
+                                                       'age':39, 
+                                                       'sex':'male', 
+                                                       'birthday':datetime(1973,10,04)})
+
+            self.tc.insert_entity(TABLE_NO_DELETE, {'PartitionKey':'Lastname', 
+                                                       'RowKey':'Firstname2', 
+                                                       'age':39, 
+                                                       'sex':'male', 
+                                                       'birthday':datetime(1973,10,04)})
+
+            self.tc.commit_batch()
+        finally:
+            self.tc.delete_table(tn)
+
     def test_sanity_batch(self):
         return
         self.tc.create_table(BATCH_TABLE)
@@ -352,6 +373,14 @@ class StorageTest(unittest.TestCase):
     def sanity_cancel_batch(self):
         resp = self.tc.cancel_batch()
         self.assertEquals(resp, None)
+
+    def test_query_tables_top(self):
+        table_id = getUniqueTestRunID()
+        for i in xrange(20):
+            self.tc.create_table(table_id + str(i))
+
+        res = self.tc.query_tables(top = 5)
+        self.assertEqual(len(res), 5)
 
     def test_with_filter(self):
         # Single filter

@@ -118,7 +118,10 @@ def _get_children_from_path(node, *path):
     not cousins.'''
     cur = node
     for index, child in enumerate(path):    
-        next = _get_child_nodes(cur, child)
+        if isinstance(child, basestring):
+            next = _get_child_nodes(cur, child)
+        else:
+            next = _get_child_nodesNS(cur, *child)
         if index == len(path) - 1:
             return next
         elif not next:
@@ -176,6 +179,11 @@ def _str_or_none(value):
 
     return str(value)
 
+def _int_or_none(value):
+    if value is None:
+        return None
+
+    return str(int(value))
 
 def _convert_class_to_xml(source, xml_prefix = True):
     if source is None:
@@ -190,12 +198,7 @@ def _convert_class_to_xml(source, xml_prefix = True):
             xmlstr += _convert_class_to_xml(value, False)
     elif isinstance(source, WindowsAzureData):
         class_name = source.__class__.__name__
-        xmlstr += '<' + class_name
-        if 'attributes' in dir(source):
-            attributes = getattr(source, 'attributes')
-            for name, value in attributes:
-                xmlstr += ' ' + name + '="' + value + '"'
-        xmlstr += '>'
+        xmlstr += '<' + class_name + '>'
         for name, value in vars(source).iteritems():
             if value is not None:
                 if isinstance(value, list) or isinstance(value, WindowsAzureData):
