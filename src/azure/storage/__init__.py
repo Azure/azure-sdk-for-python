@@ -293,7 +293,6 @@ class EntityProperty(WindowsAzureData):
     def __init__(self, type=None, value=None):
         self.type = type
         self.value = value
-    pass
 
 class Table(WindowsAzureData):
     ''' Only for intellicens and telling user the return type. '''
@@ -600,17 +599,21 @@ def _convert_xml_to_entity(xmlstr):
             
             isnull = xml_property.getAttributeNS(METADATA_NS, 'null')
             mtype = xml_property.getAttributeNS(METADATA_NS, 'type')
-            property = EntityProperty()
+
 
             #if not isnull and no type info, then it is a string and we just need the str type to hold the property.
             if not isnull and not mtype:
                 setattr(entity, name, value)
             else: #need an object to hold the property
-                setattr(property, 'value', value)
-                if isnull:
-                    setattr(property, 'isnull', str(isnull))            
-                if mtype:
-                    setattr(property, 'type', str(mtype))
+                if mtype == 'Edm.Int32' or mtype=='Edm.Int64':
+                    property = int(value)
+                else:
+                    property = EntityProperty()
+                    setattr(property, 'value', value)
+                    if isnull:
+                        property.isnull = str(isnull)
+                    if mtype:
+                        property.type = str(mtype)
                 setattr(entity, name, property)
 
     return entity

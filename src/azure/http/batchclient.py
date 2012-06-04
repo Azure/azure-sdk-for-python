@@ -163,8 +163,8 @@ class _BatchClient(_HTTPClient):
         ''' Resets batch flag and commits the batch requests. '''  
         if self.is_batch:
             self.is_batch = False
-            resp = self.commit_batch_requests()            
-        return resp
+            self.commit_batch_requests()            
+        
 
     def commit_batch_requests(self):
         ''' Commits the batch requests. '''

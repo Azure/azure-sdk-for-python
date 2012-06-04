@@ -103,7 +103,7 @@ def output_import(output_file, class_name):
             output_str += 'from azure.storage import (_update_storage_table_header, \n'
             output_str += indent*8 + 'convert_table_to_xml,  _convert_xml_to_table,\n'
             output_str += indent*8 + 'convert_entity_to_xml, _convert_response_to_entity, \n'
-            output_str += indent*8 + '_convert_xml_to_entity)\n'
+            output_str += indent*8 + '_convert_xml_to_entity, _sign_storage_table_request)\n'
 
     if 'Table' in class_name:
         output_str += 'from azure.http.batchclient import _BatchClient\n'
@@ -329,7 +329,7 @@ def output_method_body(return_type, method_params, uri_param, req_protocol, req_
     if 'servicebus' in req_host:
         output_body += indent*2 + 'request.headers = _update_service_bus_header(request, self.account_key, self.issuer)\n'
     elif 'table.core.windows.net' in req_host:
-        output_body += indent*2 + 'request.headers = _update_storage_table_header(request, self.account_name, self.account_key)\n'
+        output_body += indent*2 + 'request.headers = _update_storage_table_header(request)\n'
     elif 'blob.core.windows.net' in req_host:
         output_body += indent*2 + 'request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)\n'
     elif 'queue.core.windows.net' in req_host:

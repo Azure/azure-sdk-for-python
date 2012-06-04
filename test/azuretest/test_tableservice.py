@@ -192,16 +192,14 @@ class StorageTest(unittest.TestCase):
                                   '')                
         self.assertEquals(resp.PartitionKey, ln)
         self.assertEquals(resp.RowKey, fn1)
-        self.assertEquals(resp.age.value, u'39')
-        self.assertEquals(resp.age.type, u'Edm.Int32')
-        self.assertEquals(resp.Birthday.value, u'20')
-        self.assertEquals(resp.Birthday.type, 'Edm.Int64')
+        self.assertEquals(resp.age, 39)
+        self.assertEquals(resp.Birthday, 20)
 
     def sanity_query_entities(self):
         resp = self.tc.query_entities(TABLE_NO_DELETE, '', '')
         self.assertEquals(len(resp), 2)
         self.assertEquals(resp[0].birthday.value, u'1973-10-04T00:00:00Z')
-        self.assertEquals(resp[1].Birthday.value, u'20')
+        self.assertEquals(resp[1].Birthday, 20)
 
     def sanity_update_entity(self):
         ln = u'Lastname'
@@ -222,8 +220,7 @@ class StorageTest(unittest.TestCase):
                                   '')
         self.assertEquals(resp.PartitionKey, ln)
         self.assertEquals(resp.RowKey, fn)
-        self.assertEquals(resp.age.value, u'21')
-        self.assertEquals(resp.age.type, u'Edm.Int32')
+        self.assertEquals(resp.age, 21)
         self.assertEquals(resp.sex, u'female')
         self.assertEquals(resp.birthday.value, u'1991-10-04T00:00:00Z')
         self.assertEquals(resp.birthday.type, 'Edm.DateTime')
@@ -273,7 +270,7 @@ class StorageTest(unittest.TestCase):
                                   '')
         self.assertEquals(resp.PartitionKey, ln)
         self.assertEquals(resp.RowKey, fn)
-        self.assertEquals(resp.age.value, u'1')
+        self.assertEquals(resp.age, 1)
         self.assertEquals(resp.sex, u'male')
         self.assertFalse(hasattr(resp, "birthday"))
         self.assertFalse(hasattr(resp, "sign"))
@@ -296,7 +293,7 @@ class StorageTest(unittest.TestCase):
                                   '')
         self.assertEquals(resp.PartitionKey, ln)
         self.assertEquals(resp.RowKey, fn)
-        self.assertEquals(resp.age.value, u'1')
+        self.assertEquals(resp.age, 1)
         self.assertEquals(resp.sex, u'female')
         self.assertEquals(resp.fact, u'nice person')
         self.assertFalse(hasattr(resp, "birthday"))

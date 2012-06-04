@@ -33,7 +33,7 @@ from azure import (_validate_not_none, Feed,
 
 class QueueService(_StorageClient):
     '''
-    This is the main class managing Blob resources.
+    This is the main class managing queue resources.
     account_name: your storage account name, required for all operations.
     account_key: your storage account key, required for all operations.
     '''
