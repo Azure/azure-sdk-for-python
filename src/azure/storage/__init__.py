@@ -29,7 +29,8 @@ from azure import (_create_entry,
                           DEV_TABLE_HOST, TABLE_SERVICE_HOST_BASE, DEV_BLOB_HOST, 
                           BLOB_SERVICE_HOST_BASE, DEV_QUEUE_HOST, 
                           QUEUE_SERVICE_HOST_BASE, WindowsAzureData, 
-                          _get_children_from_path)
+                          _get_children_from_path, xml_escape,
+                          _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY)
 import azure
                          
 
@@ -429,6 +430,69 @@ def _sign_storage_table_request(request, account_name, account_key):
     auth_string = 'SharedKey ' + account_name + ':' + base64.b64encode(signed_hmac_sha256.digest())
     return auth_string
 
+
+
+def _to_python_bool(value):
+    if value.lower() == 'true':
+        return True
+    return False
+    
+def _to_entity_int(data):
+    return 'Edm.Int32', str(data)
+
+def _to_entity_bool(value):
+    if value:
+        return 'Edm.Boolean', 'true'
+    return 'Edm.Boolean', 'false'
+
+def _to_entity_datetime(value):
+    return 'Edm.DateTime', value.strftime('%Y-%m-%dT%H:%M:%S')
+
+def _to_entity_float(value):
+    return 'Edm.Double', str(value)
+
+def _to_entity_property(value):
+    return value.type, str(value.value)
+
+def _to_entity_none(value):
+    return '', ''
+
+def _to_entity_str(value):
+    return 'Edm.String', value
+
+
+# Tables of conversions to and from entity types.  We support specific 
+# datatypes, and beyond that the user can use an EntityProperty to get
+# custom data type support.
+
+def _from_entity_int(value):
+    return int(value)
+
+def _from_entity_datetime(value):
+    return datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')
+
+_ENTITY_TO_PYTHON_CONVERSIONS = {
+    'Edm.Int32': _from_entity_int,
+    'Edm.Int64': _from_entity_int,
+    'Edm.Double': float,
+    'Edm.Boolean': _to_python_bool,
+    'Edm.DateTime': _from_entity_datetime,
+}
+
+# Conversion from Python type to a function which returns a tuple of the
+# type string and content string.
+_PYTHON_TO_ENTITY_CONVERSIONS = {
+    int: _to_entity_int,
+    long: _to_entity_int,
+    bool: _to_entity_bool,
+    datetime: _to_entity_datetime,
+    float: _to_entity_float,
+    EntityProperty: _to_entity_property,
+    types.NoneType: _to_entity_none,
+    str: _to_entity_str,
+    unicode: _to_entity_str,
+}
+
 def convert_entity_to_xml(source):
     ''' Converts an entity object to xml to send.
 
@@ -470,23 +534,17 @@ def convert_entity_to_xml(source):
     #if value has type info, then set the type to value.type
     for name, value in source.iteritems():
         mtype = ''
-        if type(value) is types.IntType:
-            mtype = 'Edm.Int32'
-        elif type(value) is types.FloatType:
-            mtype = 'Edm.Double'
-        elif type(value) is types.BooleanType:
-            mtype = 'Edm.Boolean'
-        elif isinstance(value, datetime):
-            mtype = 'Edm.DateTime'
-            value = value.strftime('%Y-%m-%dT%H:%M:%S')
-        elif isinstance(value, EntityProperty):
-            mtype = value.type
-            value = value.value
+        conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
+        if conv is None:
+            raise WindowsAzureError(_ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY % type(value).__name__)
+
+        mtype, value = conv(value)
+        
         #form the property node
         properties_str += ''.join(['<d:', name])
         if mtype:
             properties_str += ''.join([' m:type="', mtype, '"'])
-        properties_str += ''.join(['>', str(value), '</d:', name, '>'])
+        properties_str += ''.join(['>', xml_escape(value), '</d:', name, '>'])
 
     #generate the entity_body
     entity_body = entity_body.format(properties=properties_str)
@@ -546,7 +604,7 @@ def _remove_prefix(name):
 METADATA_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
 def _convert_response_to_entity(response):
     return _convert_xml_to_entity(response.body)
-
+        
 def _convert_xml_to_entity(xmlstr):
     ''' Convert xml response to entity. 
 
@@ -605,8 +663,9 @@ def _convert_xml_to_entity(xmlstr):
             if not isnull and not mtype:
                 setattr(entity, name, value)
             else: #need an object to hold the property
-                if mtype == 'Edm.Int32' or mtype=='Edm.Int64':
-                    property = int(value)
+                conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
+                if conv is not None:
+                    property = conv(value)
                 else:
                     property = EntityProperty()
                     setattr(property, 'value', value)

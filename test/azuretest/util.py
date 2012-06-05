@@ -91,7 +91,7 @@ def getUniqueNameBasedOnCurrentTime(base_name):
     parallel test runs using the same Azure keys do not interfere
     with one another.
     '''
-    cur_time = str(time.clock())
+    cur_time = str(time.time())
     for bad in ["-", "_", " ", "."]:
         cur_time = cur_time.replace(bad, "")
     cur_time = cur_time.lower().strip()

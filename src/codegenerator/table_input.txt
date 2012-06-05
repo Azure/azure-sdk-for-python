@@ -82,11 +82,11 @@ Get an entity in a table; includes the $select options.
 
 partition_key: PartitionKey of the entity.
 row_key: RowKey of the entity.
-comma_separated_property_names: the property names to select.
+select: the property names to select.
 [return]
 Feed('entity')
 [url]
-GET http://<account-name>.table.core.windows.net/<table-name>(PartitionKey=\'<partition-key>\',RowKey=\'<row-key>\')?$select=<comma-separated-property-names=''>
+GET http://<account-name>.table.core.windows.net/<table-name>(PartitionKey=\'<partition-key>\',RowKey=\'<row-key>\')?$select=<select=''>
 
 [method]
 query_entities

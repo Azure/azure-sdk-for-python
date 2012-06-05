@@ -56,6 +56,7 @@ _ERROR_SERVICEBUS_MISSING_INFO = 'You need to provide servicebus namespace, acce
 _ERROR_STORAGE_MISSING_INFO = 'You need to provide both account name and access key'
 _ERROR_ACCESS_POLICY = 'share_access_policy must be either SignedIdentifier or AccessPolicy instance'
 _ERROR_VALUE_SHOULD_NOT_BE_NULL  = '%s should not be None.'
+_ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = 'Cannot serialize the specified value (%s) to an entity.  Please use an EntityProperty (which can specify custom types), int, str, bool, or datetime'
 
 class WindowsAzureData(object):
     ''' This is the base of data class.  It is only used to check whether it is instance or not. '''

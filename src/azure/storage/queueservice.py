@@ -316,7 +316,7 @@ class QueueService(_StorageClient):
             ]
         request.body = _get_request_body('<?xml version="1.0" encoding="utf-8"?> \
 <QueueMessage> \
-    <MessageText>;' + xml_escape(str(message_text)) + '</MessageText> \
+    <MessageText>' + xml_escape(str(message_text)) + '</MessageText> \
 </QueueMessage>')
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)

@@ -215,7 +215,7 @@ visibilitytimeout=;required
 [requestbody]
 <?xml version="1.0" encoding="utf-8"?>
 <QueueMessage>
-    <MessageText>;required</MessageText>
+    <MessageText>required</MessageText>
 </QueueMessage>
 
 [method]

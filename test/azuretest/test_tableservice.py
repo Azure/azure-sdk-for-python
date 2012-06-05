@@ -19,11 +19,12 @@ from azure import WindowsAzureError
 
 
 from azuretest.util import (credentials, 
-                                   getUniqueTestRunID,
-                                   STATUS_OK,
-                                   STATUS_CREATED,
-                                   STATUS_ACCEPTED,
-                                   STATUS_NO_CONTENT)
+                            getUniqueTestRunID,
+                            STATUS_OK,
+                            STATUS_CREATED,
+                            STATUS_ACCEPTED,
+                            STATUS_NO_CONTENT,
+                            getUniqueNameBasedOnCurrentTime)
 
 import unittest
 import time
@@ -52,9 +53,14 @@ class StorageTest(unittest.TestCase):
     '''
 
     def setUp(self):
-        self.tc = TableService(account_name=credentials.getStorageServicesName(), 
-                                   account_key=credentials.getStorageServicesKey())
-        self.cleanup()
+        self.tc = TableService(account_name=credentials.getStorageServicesName().encode('ascii', 'ignore'), 
+                                   account_key=credentials.getStorageServicesKey().encode('ascii', 'ignore'))
+
+        __uid = getUniqueTestRunID()
+        test_table_base_name = u'testtable%s' % (__uid)
+        self.test_table = getUniqueNameBasedOnCurrentTime(test_table_base_name)     
+        self.tc.create_table(self.test_table)
+
         #time.sleep(10)
     
     def tearDown(self):
@@ -65,6 +71,7 @@ class StorageTest(unittest.TestCase):
         for cont in [TABLE_NO_DELETE, TABLE_TO_DELETE]:
             try:    self.tc.delete_table(cont)
             except: pass
+        self.tc.delete_table(self.test_table)
 
     def test_sanity(self):
         self.sanity_create_table()
@@ -198,7 +205,7 @@ class StorageTest(unittest.TestCase):
     def sanity_query_entities(self):
         resp = self.tc.query_entities(TABLE_NO_DELETE, '', '')
         self.assertEquals(len(resp), 2)
-        self.assertEquals(resp[0].birthday.value, u'1973-10-04T00:00:00Z')
+        self.assertEquals(resp[0].birthday, datetime(1973, 10, 04))
         self.assertEquals(resp[1].Birthday, 20)
 
     def sanity_update_entity(self):
@@ -222,9 +229,8 @@ class StorageTest(unittest.TestCase):
         self.assertEquals(resp.RowKey, fn)
         self.assertEquals(resp.age, 21)
         self.assertEquals(resp.sex, u'female')
-        self.assertEquals(resp.birthday.value, u'1991-10-04T00:00:00Z')
-        self.assertEquals(resp.birthday.type, 'Edm.DateTime')
-
+        self.assertEquals(resp.birthday, datetime(1991, 10, 04))
+        
     def sanity_insert_or_merge_entity(self):
         ln = u'Lastname'
         fn = u'Firstname'
@@ -248,8 +254,7 @@ class StorageTest(unittest.TestCase):
         self.assertEquals(resp.RowKey, fn)
         self.assertEquals(resp.age, u'abc')
         self.assertEquals(resp.sex, u'male')
-        self.assertEquals(resp.birthday.value, u'1991-10-04T00:00:00Z')
-        self.assertEquals(resp.birthday.type, 'Edm.DateTime')
+        self.assertEquals(resp.birthday, datetime(1991, 10, 4))
         self.assertEquals(resp.sign, u'aquarius')
 
     def sanity_insert_or_replace_entity(self):
@@ -413,6 +418,240 @@ class StorageTest(unittest.TestCase):
         self.assertEqual(called, ['b', 'a'])
 
         tc.delete_table(FILTER_TABLE + '0')
+
+    def test_batch_insert(self):
+        #Act
+        entity = Entity()
+        entity.PartitionKey = '001'
+        entity.RowKey = 'batch_insert'
+        entity.test = EntityProperty('Edm.Boolean', 'true')
+        entity.test2 = 'value'
+        entity.test3 = 3
+        entity.test4 = EntityProperty('Edm.Int64', '1234567890')
+        entity.test5 = datetime.utcnow()
+
+        self.tc.begin_batch()
+        self.tc.insert_entity(self.test_table, entity)
+        self.tc.commit_batch()
+
+        #Assert 
+        result = self.tc.get_entity(self.test_table, '001', 'batch_insert')
+        self.assertIsNotNone(result) 
+
+    def test_batch_update(self):
+        #Act
+        entity = Entity()
+        entity.PartitionKey = '001'
+        entity.RowKey = 'batch_update'
+        entity.test = EntityProperty('Edm.Boolean', 'true')
+        entity.test2 = 'value'
+        entity.test3 = 3
+        entity.test4 = EntityProperty('Edm.Int64', '1234567890')
+        entity.test5 = datetime.utcnow()
+        self.tc.insert_entity(self.test_table, entity)
+
+        entity = self.tc.get_entity(self.test_table, '001', 'batch_update')
+        self.assertEqual(3, entity.test3)
+        entity.test2 = 'value1'
+        self.tc.begin_batch()
+        self.tc.update_entity(self.test_table, '001', 'batch_update', entity)
+        self.tc.commit_batch()
+        entity = self.tc.get_entity(self.test_table, '001', 'batch_update')
+
+        #Assert
+        self.assertEqual('value1', entity.test2)
+
+    def test_batch_merge(self):
+        #Act
+        entity = Entity()
+        entity.PartitionKey = '001'
+        entity.RowKey = 'batch_merge'
+        entity.test = EntityProperty('Edm.Boolean', 'true')
+        entity.test2 = 'value'
+        entity.test3 = 3
+        entity.test4 = EntityProperty('Edm.Int64', '1234567890')
+        entity.test5 = datetime.utcnow()
+        self.tc.insert_entity(self.test_table, entity)
+
+        entity = self.tc.get_entity(self.test_table, '001', 'batch_merge')
+        self.assertEqual(3, entity.test3)
+        entity = Entity()
+        entity.PartitionKey = '001'
+        entity.RowKey = 'batch_merge'
+        entity.test2 = 'value1'
+        self.tc.begin_batch()
+        self.tc.merge_entity(self.test_table, '001', 'batch_merge', entity)
+        self.tc.commit_batch()
+        entity = self.tc.get_entity(self.test_table, '001', 'batch_merge')
+
+        #Assert
+        self.assertEqual('value1', entity.test2)
+        self.assertEqual(1234567890, entity.test4)
+
+    def test_batch_insert_replace(self):
+        #Act
+        entity = Entity()
+        entity.PartitionKey = '001'
+        entity.RowKey = 'batch_insert_replace'
+        entity.test = EntityProperty('Edm.Boolean', 'true')
+        entity.test2 = 'value'
+        entity.test3 = 3
+        entity.test4 = EntityProperty('Edm.Int64', '1234567890')
+        entity.test5 = datetime.utcnow()
+        self.tc.begin_batch()
+        self.tc.insert_or_replace_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+        self.tc.commit_batch()
+
+        entity = self.tc.get_entity(self.test_table, '001', 'batch_insert_replace')
+        
+        #Assert
+        self.assertIsNotNone(entity)
+        self.assertEqual('value', entity.test2)
+        self.assertEqual(1234567890, entity.test4)
+
+    def test_batch_insert_merge(self):
+        #Act
+        entity = Entity()
+        entity.PartitionKey = '001'
+        entity.RowKey = 'batch_insert_merge'
+        entity.test = EntityProperty('Edm.Boolean', 'true')
+        entity.test2 = 'value'
+        entity.test3 = 3
+        entity.test4 = EntityProperty('Edm.Int64', '1234567890')
+        entity.test5 = datetime.utcnow()
+        self.tc.begin_batch()
+        self.tc.insert_or_merge_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+        self.tc.commit_batch()
+
+        entity = self.tc.get_entity(self.test_table, '001', 'batch_insert_merge')
+        
+        #Assert
+        self.assertIsNotNone(entity)
+        self.assertEqual('value', entity.test2)
+        self.assertEqual(1234567890, entity.test4)
+
+    def test_batch_delete(self):
+        #Act
+        entity = Entity()
+        entity.PartitionKey = '001'
+        entity.RowKey = 'batch_delete'
+        entity.test = EntityProperty('Edm.Boolean', 'true')
+        entity.test2 = 'value'
+        entity.test3 = 3
+        entity.test4 = EntityProperty('Edm.Int64', '1234567890')
+        entity.test5 = datetime.utcnow()
+        self.tc.insert_entity(self.test_table, entity)
+
+        entity = self.tc.get_entity(self.test_table, '001', 'batch_delete')
+        #self.assertEqual(3, entity.test3)
+        self.tc.begin_batch()
+        self.tc.delete_entity(self.test_table, '001', 'batch_delete')
+        self.tc.commit_batch()
+
+    def test_batch_inserts(self):
+        #Act
+        entity = Entity()
+        entity.PartitionKey = 'batch_inserts'
+        entity.test = EntityProperty('Edm.Boolean', 'true')
+        entity.test2 = 'value'
+        entity.test3 = 3
+        entity.test4 = EntityProperty('Edm.Int64', '1234567890')
+
+        self.tc.begin_batch()
+        for i in range(100):
+            entity.RowKey = str(i)
+            self.tc.insert_entity(self.test_table, entity)
+        self.tc.commit_batch()
+        
+        entities = self.tc.query_entities(self.test_table, "PartitionKey eq 'batch_inserts'", '')
+
+        #Assert
+        self.assertIsNotNone(entities);
+        self.assertEqual(100, len(entities))
+
+    def test_batch_all_operations_together(self):
+         #Act
+        entity = Entity()
+        entity.PartitionKey = '003'
+        entity.RowKey = 'batch_all_operations_together-1'
+        entity.test = EntityProperty('Edm.Boolean', 'true')
+        entity.test2 = 'value'
+        entity.test3 = 3
+        entity.test4 = EntityProperty('Edm.Int64', '1234567890')
+        entity.test5 = datetime.utcnow()
+        self.tc.insert_entity(self.test_table, entity)
+        entity.RowKey = 'batch_all_operations_together-2'
+        self.tc.insert_entity(self.test_table, entity)
+        entity.RowKey = 'batch_all_operations_together-3'
+        self.tc.insert_entity(self.test_table, entity)
+        entity.RowKey = 'batch_all_operations_together-4'
+        self.tc.insert_entity(self.test_table, entity)
+
+        self.tc.begin_batch()
+        entity.RowKey = 'batch_all_operations_together'
+        self.tc.insert_entity(self.test_table, entity)
+        entity.RowKey = 'batch_all_operations_together-1'
+        self.tc.delete_entity(self.test_table, entity.PartitionKey, entity.RowKey)
+        entity.RowKey = 'batch_all_operations_together-2'
+        entity.test3 = 10
+        self.tc.update_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+        entity.RowKey = 'batch_all_operations_together-3'
+        entity.test3 = 100
+        self.tc.merge_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+        entity.RowKey = 'batch_all_operations_together-4'
+        entity.test3 = 10
+        self.tc.insert_or_replace_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+        entity.RowKey = 'batch_all_operations_together-5'
+        self.tc.insert_or_merge_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+        self.tc.commit_batch()
+
+        #Assert
+        entities = self.tc.query_entities(self.test_table, "PartitionKey eq '003'", '')
+        self.assertEqual(5, len(entities))
+
+    def test_batch_negative(self):
+        #Act
+        entity = Entity()
+        entity.PartitionKey = '001'
+        entity.RowKey = 'batch_negative_1'
+        entity.test = 1
+
+        self.tc.insert_entity(self.test_table, entity)
+        entity.test = 2
+        entity.RowKey = 'batch_negative_2'
+        self.tc.insert_entity(self.test_table, entity)
+        entity.test = 3
+        entity.RowKey = 'batch_negative_3'
+        self.tc.insert_entity(self.test_table, entity)
+        entity.test = -2
+        self.tc.update_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+
+        try:        
+            self.tc.begin_batch()
+            entity.RowKey = 'batch_negative_1'
+            self.tc.update_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+            self.tc.merge_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+            self.fail('Should raise WindowsAzueError exception')
+            self.tc.commit_batch()            
+        except:
+            self.tc.cancel_batch()
+            pass
+        
+
+        try:        
+            self.tc.begin_batch()
+            entity.PartitionKey = '001'
+            entity.RowKey = 'batch_negative_1'
+            self.tc.update_entity(self.test_table, entity.PartitionKey, entity.RowKey, entity)
+            entity.PartitionKey = '002'
+            entity.RowKey = 'batch_negative_1'
+            self.tc.insert_entity(self.test_table, entity) 
+            self.fail('Should raise WindowsAzueError exception')
+            self.tc.commit_batch()
+        except:
+            self.tc.cancel_batch()
+            pass
+        
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

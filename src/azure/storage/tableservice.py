@@ -162,22 +162,22 @@ class TableService(_StorageClient):
             self._perform_request(request)
             return True
 
-    def get_entity(self, table_name, partition_key, row_key, comma_separated_property_names=''):
+    def get_entity(self, table_name, partition_key, row_key, select=''):
         '''
         Get an entity in a table; includes the $select options. 
         
         partition_key: PartitionKey of the entity.
         row_key: RowKey of the entity.
-        comma_separated_property_names: the property names to select.
+        select: the property names to select.
         '''
         _validate_not_none('table_name', table_name)
         _validate_not_none('partition_key', partition_key)
         _validate_not_none('row_key', row_key)
-        _validate_not_none('comma_separated_property_names', comma_separated_property_names)
+        _validate_not_none('select', select)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
-        request.path = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')?$select=' + str(comma_separated_property_names) + ''
+        request.path = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')?$select=' + str(select) + ''
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
