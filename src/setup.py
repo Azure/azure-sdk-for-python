@@ -19,7 +19,7 @@ setup(name='azure',
       version='0.2.3',
       description='Windows Azure client APIs',
       url='https://github.com/WindowsAzure/azure-sdk-for-python',
-      packages=['sazure',
+      packages=['azure',
                 'azure.http',
                 'azure.servicebus',
                 'azure.storage']

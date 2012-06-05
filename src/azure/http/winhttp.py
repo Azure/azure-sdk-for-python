@@ -123,7 +123,7 @@ class _WinHttpRequest(c_void_p):
     Maps the Com API to Python class functions. Not all methods in IWinHttpWebRequest 
     are mapped - only the methods we use.
     '''
-    _AddRef = WINFUNCTYPE(c_long)(1, 'Release')
+    _AddRef = WINFUNCTYPE(c_long)(1, 'AddRef')
     _Release = WINFUNCTYPE(c_long)(2, 'Release')
     _SetProxy = WINFUNCTYPE(HRESULT, HTTPREQUEST_PROXY_SETTING, VARIANT, VARIANT)(7, 'SetProxy')
     _SetCredentials = WINFUNCTYPE(HRESULT, BSTR, BSTR, HTTPREQUEST_SETCREDENTIALS_FLAGS)(8, 'SetCredentials')
