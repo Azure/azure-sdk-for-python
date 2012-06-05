@@ -43,15 +43,15 @@ class _BatchClient(_HTTPClient):
 
         request: the request to insert, update or delete entity
         '''
-        if '(' in request.uri:
-            pos = request.uri.find('(')
-            return request.uri[1:pos]
+        if '(' in request.path:
+            pos = request.path.find('(')
+            return request.path[1:pos]
         else:
-            return request.uri[1:]  
+            return request.path[1:]  
 
     def get_request_partition_key(self, request):
         '''
-        Extracts PartitionKey from request.body if it is a POST request or from request.uri if 
+        Extracts PartitionKey from request.body if it is a POST request or from request.path if 
         it is not a POST request. Only insert operation request is a POST request and the 
         PartitionKey is in the request body.
 
@@ -64,7 +64,7 @@ class _BatchClient(_HTTPClient):
                 raise WindowsAzureError(azure._ERROR_CANNOT_FIND_PARTITION_KEY)
             return part_key[0].firstChild.nodeValue
         else:
-            uri = urllib2.unquote(request.uri)
+            uri = urllib2.unquote(request.path)
             pos1 = uri.find('PartitionKey=\'')
             pos2 = uri.find('\',', pos1)
             if pos1 == -1 or pos2 == -1:
@@ -73,20 +73,20 @@ class _BatchClient(_HTTPClient):
 
     def get_request_row_key(self, request):
         '''
-        Extracts RowKey from request.body if it is a POST request or from request.uri if 
+        Extracts RowKey from request.body if it is a POST request or from request.path if 
         it is not a POST request. Only insert operation request is a POST request and the 
         Rowkey is in the request body.
 
         request: the request to insert, update or delete entity
         '''
         if request.method == 'POST':
-            pos1 = request.body.find('<d:RowKey>')
-            pos2 = request.body.find('</d:RowKey>')
-            if pos1 == -1 or pos2 == -1:
+            doc = minidom.parseString(request.body)
+            row_key = _get_children_from_path(doc, 'entry', 'content', (METADATA_NS, 'properties'), (_DATASERVICES_NS, 'RowKey'))
+            if not row_key:
                 raise WindowsAzureError(azure._ERROR_CANNOT_FIND_ROW_KEY)
-            return request.body[pos1 + len('<d:RowKey>'):pos2]
+            return row_key[0].firstChild.nodeValue
         else:
-            uri = urllib2.unquote(request.uri)
+            uri = urllib2.unquote(request.path)
             pos1 = uri.find('RowKey=\'')
             pos2 = uri.find('\')', pos1)
             if pos1 == -1 or pos2 == -1:
@@ -177,7 +177,7 @@ class _BatchClient(_HTTPClient):
             request = HTTPRequest()
             request.method = 'POST'
             request.host = self.batch_requests[0].host
-            request.uri = '/$batch'
+            request.path = '/$batch'
             request.headers = [('Content-Type', 'multipart/mixed; boundary=' + batch_boundary),
                               ('Accept', 'application/atom+xml,application/xml'),
                               ('Accept-Charset', 'UTF-8')]
@@ -193,7 +193,7 @@ class _BatchClient(_HTTPClient):
                 request.body += 'Content-Type: application/http\n'
                 request.body += 'Content-Transfer-Encoding: binary\n\n'
 
-                request.body += batch_request.method + ' http://' + batch_request.host + batch_request.uri + ' HTTP/1.1\n'
+                request.body += batch_request.method + ' http://' + batch_request.host + batch_request.path + ' HTTP/1.1\n'
                 request.body += 'Content-ID: ' + str(content_id) + '\n'
                 content_id += 1
                 
@@ -215,7 +215,7 @@ class _BatchClient(_HTTPClient):
             request.body += '--' + changeset_boundary + '--' + '\n'
             request.body += '--' + batch_boundary + '--' 
 
-            request.uri, request.query = _update_request_uri_query(request)
+            request.path, request.query = _update_request_uri_query(request)
             request.headers = _update_storage_table_header(request)
             auth = _sign_storage_table_request(request, 
                                         self.account_name, 

@@ -48,42 +48,42 @@ class Queue(WindowsAzureData):
     ''' Queue class corresponding to Queue Description: http://msdn.microsoft.com/en-us/library/windowsazure/hh780773'''
 
     def __init__(self):
-        self.lock_duration = ''
-        self.max_size_in_megabytes = ''
-        self.duplicate_detection = ''
-        self.requires_duplicate_detection = ''
-        self.requires_session = ''
-        self.default_message_time_to_live = ''
-        self.enable_dead_lettering_on_message_expiration = ''
-        self.duplicate_detection_history_time_window = ''
-        self.max_delivery_count = ''
-        self.enable_batched_operations = ''
-        self.size_in_bytes = ''
-        self.message_count = ''
+        self.lock_duration = None
+        self.max_size_in_megabytes = None
+        self.duplicate_detection = None
+        self.requires_duplicate_detection = None
+        self.requires_session = None
+        self.default_message_time_to_live = None
+        self.enable_dead_lettering_on_message_expiration = None
+        self.duplicate_detection_history_time_window = None
+        self.max_delivery_count = None
+        self.enable_batched_operations = None
+        self.size_in_bytes = None
+        self.message_count = None
 
 class Topic(WindowsAzureData):
     ''' Topic class corresponding to Topic Description: http://msdn.microsoft.com/en-us/library/windowsazure/hh780749. '''
 
     def __init__(self):
-        self.default_message_time_to_live = ''
-        self.max_size_in_mega_bytes = ''
-        self.requires_duplicate_detection = ''
-        self.duplicate_detection_history_time_window = ''
-        self.enable_batched_operations = ''
-        self.size_in_bytes = ''
+        self.default_message_time_to_live = None
+        self.max_size_in_mega_bytes = None
+        self.requires_duplicate_detection = None
+        self.duplicate_detection_history_time_window = None
+        self.enable_batched_operations = None
+        self.size_in_bytes = None
 
 class Subscription(WindowsAzureData):
     ''' Subscription class corresponding to Subscription Description: http://msdn.microsoft.com/en-us/library/windowsazure/hh780763. '''
 
     def __init__(self):
-        self.lock_duration = ''
-        self.requires_session = ''
-        self.default_message_time_to_live = ''
-        self.dead_lettering_on_message_expiration = ''
-        self.dead_lettering_on_filter_evaluation_exceptions = ''
-        self.enable_batched_operations = ''
-        self.max_delivery_count = ''
-        self.message_count = ''
+        self.lock_duration = None
+        self.requires_session = None
+        self.default_message_time_to_live = None
+        self.dead_lettering_on_message_expiration = None
+        self.dead_lettering_on_filter_evaluation_exceptions = None
+        self.enable_batched_operations = None
+        self.max_delivery_count = None
+        self.message_count = None
 
 class Rule(WindowsAzureData):
     ''' Rule class corresponding to Rule Description: http://msdn.microsoft.com/en-us/library/windowsazure/hh780753. '''
@@ -209,7 +209,7 @@ def _get_token(request, account_key, issuer):
     account_key: service bus access key
     issuer: service bus issuer
     '''
-    wrap_scope = 'http://' + request.host + request.uri
+    wrap_scope = 'http://' + request.host + request.path
        
     # Check whether has unexpired cache, return cached token if it is still usable. 
     if _tokens.has_key(wrap_scope):
@@ -220,7 +220,7 @@ def _get_token(request, account_key, issuer):
     #get token from accessconstrol server
     request_body = ('wrap_name=' + urllib2.quote(issuer) + '&wrap_password=' +
                     urllib2.quote(account_key) + '&wrap_scope=' + 
-                    urllib2.quote('http://' + request.host + request.uri))
+                    urllib2.quote('http://' + request.host + request.path))
     host = request.host.replace('.servicebus.', '-sb.accesscontrol.')
     if sys.platform.lower().startswith('win'):
         import azure.http.winhttp
@@ -453,21 +453,21 @@ def convert_subscription_to_xml(subscription):
 
     subscription_body = '<SubscriptionDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
     if subscription:
-        if subscription.lock_duration:
+        if subscription.lock_duration is not None:
             subscription_body += ''.join(['<LockDuration>', subscription.lock_duration, '</LockDuration>'])
-        if subscription.requires_session:
+        if subscription.requires_session is not None:
             subscription_body += ''.join(['<RequiresSession>', subscription.requires_session, '</RequiresSession>'])    
-        if subscription.default_message_time_to_live:
+        if subscription.default_message_time_to_live is not None:
             subscription_body += ''.join(['<DefaultMessageTimeToLive>', subscription.default_message_time_to_live, '</DefaultMessageTimeToLive>'])
-        if subscription.dead_lettering_on_message_expiration:
+        if subscription.dead_lettering_on_message_expiration is not None:
             subscription_body += ''.join(['<DeadLetteringOnMessageExpiration>', subscription.dead_lettering_on_message_expiration, '</DeadLetteringOnMessageExpiration>'])    
-        if subscription.dead_lettering_on_filter_evaluation_exceptions:
+        if subscription.dead_lettering_on_filter_evaluation_exceptions is not None:
             subscription_body += ''.join(['<DeadLetteringOnFilterEvaluationExceptions>', subscription.dead_lettering_on_filter_evaluation_exceptions, '</DeadLetteringOnFilterEvaluationExceptions>'])    
-        if subscription.enable_batched_operations:
+        if subscription.enable_batched_operations is not None:
             subscription_body += ''.join(['<EnableBatchedOperations>', subscription.enable_batched_operations, '</EnableBatchedOperations>'])    
-        if subscription.max_delivery_count:
+        if subscription.max_delivery_count is not None:
             subscription_body += ''.join(['<MaxDeliveryCount>', subscription.max_delivery_count, '</MaxDeliveryCount>'])
-        if subscription.message_count:
+        if subscription.message_count is not None:
             subscription_body += ''.join(['<MessageCount>', subscription.message_count, '</MessageCount>'])  
          
     subscription_body += '</SubscriptionDescription>'    
@@ -509,18 +509,18 @@ def convert_topic_to_xml(topic):
 
     topic_body = '<TopicDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
     if topic:
-        if topic.default_message_time_to_live:
-            topic_body += ''.join(['<DefaultMessageTimeToLive>', topic.default_message_time_to_live, '</DefaultMessageTimeToLive>'])
-        if topic.max_size_in_mega_bytes:
-            topic_body += ''.join(['<MaxSizeInMegabytes>', topic.default_message_time_to_live, '</MaxSizeInMegabytes>'])
-        if topic.requires_duplicate_detection:
-            topic_body += ''.join(['<RequiresDuplicateDetection>', topic.default_message_time_to_live, '</RequiresDuplicateDetection>'])
-        if topic.duplicate_detection_history_time_window:
-            topic_body += ''.join(['<DuplicateDetectionHistoryTimeWindow>', topic.default_message_time_to_live, '</DuplicateDetectionHistoryTimeWindow>'])    
-        if topic.enable_batched_operations:
-            topic_body += ''.join(['<EnableBatchedOperations>', topic.default_message_time_to_live, '</EnableBatchedOperations>'])
-        if topic.size_in_bytes:
-            topic_body += ''.join(['<SizeinBytes>', topic.default_message_time_to_live, '</SizeinBytes>'])    
+        if topic.default_message_time_to_live is not None:
+            topic_body += ''.join(['<DefaultMessageTimeToLive>', str(topic.default_message_time_to_live), '</DefaultMessageTimeToLive>'])
+        if topic.max_size_in_mega_bytes is not None:
+            topic_body += ''.join(['<MaxSizeInMegabytes>', str(topic.default_message_time_to_live), '</MaxSizeInMegabytes>'])
+        if topic.requires_duplicate_detection is not None:
+            topic_body += ''.join(['<RequiresDuplicateDetection>', str(topic.default_message_time_to_live), '</RequiresDuplicateDetection>'])
+        if topic.duplicate_detection_history_time_window is not None:
+            topic_body += ''.join(['<DuplicateDetectionHistoryTimeWindow>', str(topic.default_message_time_to_live), '</DuplicateDetectionHistoryTimeWindow>'])    
+        if topic.enable_batched_operations is not None:
+            topic_body += ''.join(['<EnableBatchedOperations>', str(topic.default_message_time_to_live), '</EnableBatchedOperations>'])
+        if topic.size_in_bytes is not None:
+            topic_body += ''.join(['<SizeinBytes>', str(topic.default_message_time_to_live), '</SizeinBytes>'])    
     topic_body += '</TopicDescription>'
 
     return _create_entry(topic_body)
@@ -535,27 +535,27 @@ def convert_queue_to_xml(queue):
     queue_body = '<QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
     if queue:
         if queue.lock_duration:
-            queue_body += ''.join(['<LockDuration>', queue.lock_duration, '</LockDuration>'])
-        if queue.max_size_in_megabytes:
-            queue_body += ''.join(['<MaxSizeInMegabytes>', queue.max_size_in_megabytes, '</MaxSizeInMegabytes>'])
-        if queue.requires_duplicate_detection:
-            queue_body += ''.join(['<RequiresDuplicateDetection>', queue.requires_duplicate_detection, '</RequiresDuplicateDetection>'])
-        if queue.requires_session:
-            queue_body += ''.join(['<RequiresSession>', queue.requires_session, '</RequiresSession>'])    
-        if queue.default_message_time_to_live:
-            queue_body += ''.join(['<DefaultMessageTimeToLive>', queue.default_message_time_to_live, '</DefaultMessageTimeToLive>'])
-        if queue.enable_dead_lettering_on_message_expiration:
-            queue_body += ''.join(['<EnableDeadLetteringOnMessageExpiration>', queue.enable_dead_lettering_on_message_expiration, '</EnableDeadLetteringOnMessageExpiration>'])    
-        if queue.duplicate_detection_history_time_window:
-            queue_body += ''.join(['<DuplicateDetectionHistoryTimeWindow>', queue.duplicate_detection_history_time_window, '</DuplicateDetectionHistoryTimeWindow>'])    
-        if queue.max_delivery_count:
-            queue_body += ''.join(['<MaxDeliveryCount>', queue.max_delivery_count, '</MaxDeliveryCount>'])
-        if queue.enable_batched_operations:
-            queue_body += ''.join(['<EnableBatchedOperations>', queue.enable_batched_operations, '</EnableBatchedOperations>'])    
-        if queue.size_in_bytes:
-            queue_body += ''.join(['<SizeinBytes>', queue.size_in_bytes, '</SizeinBytes>'])
-        if queue.message_count:
-            queue_body += ''.join(['<MessageCount>', queue.message_count, '</MessageCount>'])  
+            queue_body += ''.join(['<LockDuration>', str(queue.lock_duration), '</LockDuration>'])
+        if queue.max_size_in_megabytes is not None:
+            queue_body += ''.join(['<MaxSizeInMegabytes>', str(queue.max_size_in_megabytes), '</MaxSizeInMegabytes>'])
+        if queue.requires_duplicate_detection is not None:
+            queue_body += ''.join(['<RequiresDuplicateDetection>', str(queue.requires_duplicate_detection), '</RequiresDuplicateDetection>'])
+        if queue.requires_session is not None:
+            queue_body += ''.join(['<RequiresSession>', str(queue.requires_session), '</RequiresSession>'])    
+        if queue.default_message_time_to_live is not None:
+            queue_body += ''.join(['<DefaultMessageTimeToLive>', str(queue.default_message_time_to_live), '</DefaultMessageTimeToLive>'])
+        if queue.enable_dead_lettering_on_message_expiration is not None:
+            queue_body += ''.join(['<EnableDeadLetteringOnMessageExpiration>', str(queue.enable_dead_lettering_on_message_expiration), '</EnableDeadLetteringOnMessageExpiration>'])    
+        if queue.duplicate_detection_history_time_window is not None:
+            queue_body += ''.join(['<DuplicateDetectionHistoryTimeWindow>', str(queue.duplicate_detection_history_time_window), '</DuplicateDetectionHistoryTimeWindow>'])    
+        if queue.max_delivery_count is not None:
+            queue_body += ''.join(['<MaxDeliveryCount>', str(queue.max_delivery_count), '</MaxDeliveryCount>'])
+        if queue.enable_batched_operations is not None:
+            queue_body += ''.join(['<EnableBatchedOperations>', str(queue.enable_batched_operations), '</EnableBatchedOperations>'])    
+        if queue.size_in_bytes is not None:
+            queue_body += ''.join(['<SizeinBytes>', str(queue.size_in_bytes), '</SizeinBytes>'])
+        if queue.message_count is not None:
+            queue_body += ''.join(['<MessageCount>', str(queue.message_count), '</MessageCount>'])  
          
     queue_body += '</QueueDescription>'
     return _create_entry(queue_body)

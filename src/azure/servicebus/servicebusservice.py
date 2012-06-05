@@ -53,9 +53,9 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(queue_name) + ''
+        request.path = '/' + str(queue_name) + ''
         request.body = _get_request_body(convert_queue_to_xml(queue))
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_on_exist:
             try:
@@ -79,8 +79,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(queue_name) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(queue_name) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_not_exist:
             try:
@@ -103,8 +103,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(queue_name) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(queue_name) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -117,8 +117,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/$Resources/Queues'
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/$Resources/Queues'
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -136,9 +136,9 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + ''
+        request.path = '/' + str(topic_name) + ''
         request.body = _get_request_body(convert_topic_to_xml(topic))
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_on_exist:
             try:
@@ -163,8 +163,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_not_exist:
             try:
@@ -187,8 +187,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -201,8 +201,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/$Resources/Topics'
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/$Resources/Topics'
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -223,9 +223,9 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/' + str(rule_name) + ''
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/' + str(rule_name) + ''
         request.body = _get_request_body(convert_rule_to_xml(rule))
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_on_exist:
             try:
@@ -254,8 +254,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/' + str(rule_name) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/' + str(rule_name) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_not_exist:
             try:
@@ -282,8 +282,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/' + str(rule_name) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/' + str(rule_name) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -301,8 +301,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/'
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/rules/'
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -322,9 +322,9 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + ''
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + ''
         request.body = _get_request_body(convert_subscription_to_xml(subscription))
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_on_exist:
             try:
@@ -350,8 +350,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         if not fail_not_exist:
             try:
@@ -376,8 +376,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -393,8 +393,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/'
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + '/subscriptions/'
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -414,10 +414,10 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/messages'
+        request.path = '/' + str(topic_name) + '/messages'
         request.headers = message.add_headers(request)
         request.body = _get_request_body(message.body)
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -442,9 +442,9 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/head'
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/head'
         request.query = [('timeout', _int_or_none(timeout))]
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -471,8 +471,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -491,9 +491,9 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/head'
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/head'
         request.query = [('timeout', _int_or_none(timeout))]
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -519,8 +519,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(topic_name) + '/subscriptions/' + str(subscription_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -538,10 +538,10 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(queue_name) + '/messages'
+        request.path = '/' + str(queue_name) + '/messages'
         request.headers = message.add_headers(request)
         request.body = _get_request_body(message.body)
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -563,9 +563,9 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(queue_name) + '/messages/head'
+        request.path = '/' + str(queue_name) + '/messages/head'
         request.query = [('timeout', _int_or_none(timeout))]
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -590,8 +590,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(queue_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(queue_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -608,9 +608,9 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(queue_name) + '/messages/head'
+        request.path = '/' + str(queue_name) + '/messages/head'
         request.query = [('timeout', _int_or_none(timeout))]
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 
@@ -634,8 +634,8 @@ class ServiceBusService:
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.service_namespace + SERVICE_BUS_HOST_BASE
-        request.uri = '/' + str(queue_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
-        request.uri, request.query = _update_request_uri_query(request)
+        request.path = '/' + str(queue_name) + '/messages/' + str(sequence_number) + '/' + str(lock_token) + ''
+        request.path, request.query = _update_request_uri_query(request)
         request.headers = _update_service_bus_header(request, self.account_key, self.issuer)
         response = self._perform_request(request)
 

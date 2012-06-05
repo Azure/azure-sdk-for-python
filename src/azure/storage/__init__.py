@@ -354,7 +354,7 @@ def _sign_storage_blob_request(request, account_name, account_key):
     This is also used to sign queue request.
     '''
 
-    uri_path = request.uri.split('?')[0]
+    uri_path = request.path.split('?')[0]
 
     #method to sign
     string_to_sign = request.method + '\n'
@@ -403,7 +403,7 @@ def _sign_storage_blob_request(request, account_name, account_key):
     return auth_string
 
 def _sign_storage_table_request(request, account_name, account_key):
-    uri_path = request.uri.split('?')[0]
+    uri_path = request.path.split('?')[0]
 
     string_to_sign = request.method + '\n'
     headers_to_sign = ['content-md5', 'content-type', 'date']

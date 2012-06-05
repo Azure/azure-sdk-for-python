@@ -108,7 +108,7 @@ class ServiceBusTest(unittest.TestCase):
 
         # Act
         queue_options = Queue()
-        queue_options.max_size_in_megabytes = '5120'
+        queue_options.max_size_in_megabytes = 5120
         queue_options.default_message_time_to_live = 'PT1M'
         created = self.sbs.create_queue(self.queue_name, queue_options)
 

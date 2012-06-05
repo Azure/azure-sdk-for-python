@@ -404,10 +404,10 @@ def _update_request_uri_query(request):
     query parameters on the request the parameters in the URI will
     appear after the existing parameters'''
 
-    if '?' in request.uri:
-        pos = request.uri.find('?')
-        query_string = request.uri[pos+1:]
-        request.uri = request.uri[:pos]           
+    if '?' in request.path:
+        pos = request.path.find('?')
+        query_string = request.path[pos+1:]
+        request.path = request.path[:pos]           
         if query_string:
             query_params = query_string.split('&')
             for query in query_params:
@@ -417,17 +417,17 @@ def _update_request_uri_query(request):
                     value = query[pos+1:]
                     request.query.append((name, value))
 
-    request.uri = urllib2.quote(request.uri, '/()$=\',')
+    request.path = urllib2.quote(request.path, '/()$=\',')
 
-    #add encoded queries to request.uri. 
+    #add encoded queries to request.path. 
     if request.query:
-        request.uri += '?' 
+        request.path += '?' 
         for name, value in request.query:
             if value is not None:
-                request.uri += name + '=' + urllib2.quote(value, '/()$=\',') + '&'
-        request.uri = request.uri[:-1]
+                request.path += name + '=' + urllib2.quote(value, '/()$=\',') + '&'
+        request.path = request.path[:-1]
 
-    return request.uri, request.query
+    return request.path, request.query
 
 def _dont_fail_on_exist(error):
     ''' don't throw exception if the resource exists. This is called by create_* APIs with fail_on_exist=False'''

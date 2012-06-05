@@ -49,9 +49,9 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/?restype=service&comp=properties'
+        request.path = '/?restype=service&comp=properties'
         request.query = [('timeout', _int_or_none(timeout))]
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -64,14 +64,14 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/?comp=list'
+        request.path = '/?comp=list'
         request.query = [
             ('prefix', _str_or_none(prefix)),
             ('marker', _str_or_none(marker)),
             ('maxresults', _int_or_none(maxresults)),
             ('include', _str_or_none(include))
             ]
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -90,9 +90,9 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + ''
+        request.path = '/' + str(queue_name) + ''
         request.headers = [('x-ms-meta-name-values', x_ms_meta_name_values)]
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         if not fail_on_exist:
             try:
@@ -116,8 +116,8 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + ''
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path = '/' + str(queue_name) + ''
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         if not fail_not_exist:
             try:
@@ -141,8 +141,8 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + '?comp=metadata'
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path = '/' + str(queue_name) + '?comp=metadata'
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -161,9 +161,9 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + '?comp=metadata'
+        request.path = '/' + str(queue_name) + '?comp=metadata'
         request.headers = [('x-ms-meta-name-values', x_ms_meta_name_values)]
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -187,7 +187,7 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'POST'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + '/messages'
+        request.path = '/' + str(queue_name) + '/messages'
         request.query = [
             ('visibilitytimeout', _str_or_none(visibilitytimeout)),
             ('messagettl', _str_or_none(messagettl))
@@ -196,7 +196,7 @@ class QueueService(_StorageClient):
 <QueueMessage> \
     <MessageText>' + xml_escape(str(message_text)) + '</MessageText> \
 </QueueMessage>')
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -219,12 +219,12 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + '/messages'
+        request.path = '/' + str(queue_name) + '/messages'
         request.query = [
             ('numofmessages', _str_or_none(numofmessages)),
             ('visibilitytimeout', _str_or_none(visibilitytimeout))
             ]
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -244,9 +244,9 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'GET'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + '/messages?peekonly=true'
+        request.path = '/' + str(queue_name) + '/messages?peekonly=true'
         request.query = [('numofmessages', _str_or_none(numofmessages))]
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -266,9 +266,9 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + '/messages/' + str(message_id) + ''
+        request.path = '/' + str(queue_name) + '/messages/' + str(message_id) + ''
         request.query = [('popreceipt', _str_or_none(popreceipt))]
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -282,8 +282,8 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + '/messages'
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path = '/' + str(queue_name) + '/messages'
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -309,7 +309,7 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/' + str(queue_name) + '/messages/' + str(message_id) + ''
+        request.path = '/' + str(queue_name) + '/messages/' + str(message_id) + ''
         request.query = [
             ('popreceipt', _str_or_none(popreceipt)),
             ('visibilitytimeout', _str_or_none(visibilitytimeout))
@@ -318,7 +318,7 @@ class QueueService(_StorageClient):
 <QueueMessage> \
     <MessageText>;' + xml_escape(str(message_text)) + '</MessageText> \
 </QueueMessage>')
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
@@ -336,10 +336,10 @@ class QueueService(_StorageClient):
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = _get_queue_host(self.account_name, self.use_local_storage)
-        request.uri = '/?restype=service&comp=properties'
+        request.path = '/?restype=service&comp=properties'
         request.query = [('timeout', _int_or_none(timeout))]
         request.body = _get_request_body(_convert_class_to_xml(storage_service_properties))
-        request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 

@@ -86,7 +86,7 @@ class _HTTPClient:
         ''' Sends request to cloud service server and return the response. '''
 
         connection = self.get_connection(request)
-        connection.putrequest(request.method, request.uri)
+        connection.putrequest(request.method, request.path)
         self.send_request_headers(connection, request.headers)
         self.send_request_body(connection, request.body)
 

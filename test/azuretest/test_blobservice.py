@@ -736,7 +736,7 @@ class BlobServiceTest(unittest.TestCase):
                     self.assertIsInstance(item, (str, unicode, type(None)))
             self.assertIsInstance(request.host, (str, unicode))
             self.assertIsInstance(request.method, (str, unicode))
-            self.assertIsInstance(request.uri, (str, unicode))
+            self.assertIsInstance(request.path, (str, unicode))
             self.assertIsInstance(request.query, list)
             self.assertIsInstance(request.body, (str, unicode))
             response = next(request)

@@ -283,7 +283,7 @@ def output_method_body(return_type, method_params, uri_param, req_protocol, req_
         if extra:
             output_body += extra
         
-    output_body += ''.join([indent*2, 'request.uri = \'', req_uri, '\'\n'])
+    output_body += ''.join([indent*2, 'request.path = \'', req_uri, '\'\n'])
 
     output_body += output_headers('request.headers', req_header)
     output_body += output_query('request.query', req_query)
@@ -325,9 +325,9 @@ def output_method_body(return_type, method_params, uri_param, req_protocol, req_
             elif req_body.strip():
                 output_body += ''.join([indent*2, 'request.body = _get_request_body(\'', req_body.strip(), '\')\n'])
     if SERVICE_BUS_HOST_BASE in req_host:
-        output_body += indent*2 + 'request.uri, request.query = _update_request_uri_query(request)\n'
+        output_body += indent*2 + 'request.path, request.query = _update_request_uri_query(request)\n'
     else:
-        output_body += indent*2 + 'request.uri, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)\n'
+        output_body += indent*2 + 'request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)\n'
 
 
     if 'servicebus' in req_host:

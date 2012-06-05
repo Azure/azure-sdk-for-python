@@ -318,8 +318,15 @@ class _HTTPConnection:
         status_text = self._httprequest.status_text()
 
         resp_headers = self._httprequest.get_all_response_headers()
-        headers = []
+        fixed_headers = []
         for resp_header in resp_headers.split('\n'):
+            if resp_header.startswith('\t') or resp_header.startswith(' ') and headers:
+                fixed_headers[-1] += resp_header
+            else:
+                fixed_headers.append(resp_header)
+
+        headers = []
+        for resp_header in fixed_headers:
             if ':' in resp_header:
                 pos = resp_header.find(':')
                 headers.append((resp_header[:pos], resp_header[pos+1:].strip()))

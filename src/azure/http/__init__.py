@@ -48,7 +48,7 @@ class HTTPRequest:
     
     host: the host name to connect to
     method: the method to use to connect (string such as GET, POST, PUT, etc...)
-    uri: the uri fragment 
+    path: the uri fragment 
     query: query parameters specified as a list of (name, value) pairs
     headers: header values specified as (name, value) pairs
     body: the body of the request.
@@ -57,7 +57,7 @@ class HTTPRequest:
     def __init__(self):
         self.host = ''
         self.method = ''
-        self.uri = ''
+        self.path = ''
         self.query = []      # list of (name, value)
         self.headers = []    # list of (header name, header value)
         self.body = ''
