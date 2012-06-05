@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+
+# To Run: C:\Python27\python.exe codegenerator.py
+# It expects the souce files to live in ..\azure\...
+
 from xml.dom import minidom
 import urllib2 
 
