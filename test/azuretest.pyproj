@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="azuretest\test_blobservice.py" />
     <Compile Include="azuretest\test_queueservice.py" />
+    <Compile Include="azuretest\test_sharedaccesssignature.py" />
     <Compile Include="azuretest\test_tableservice.py" />
     <Compile Include="azuretest\test_servicebusservice.py" />
     <Compile Include="azuretest\util.py" />
