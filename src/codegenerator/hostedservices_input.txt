@@ -1,0 +1,499 @@
+[class]
+HostedServiceManager
+[x-ms-version]
+2011-08-18
+[init]
+cert_file
+
+[method]
+list_storage_accounts
+[return]
+StorageServices
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/storageservices
+
+[method]
+get_storage_account_properties
+[return]
+StorageService
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/storageservices/<service-name> 
+
+[method]
+get_storage_account_keys
+[return]
+StorageService
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/storageservices/<service-name>/keys 
+
+[method]
+regenerate_storage_account_keys
+[return]
+StorageService
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/storageservices/<service-name>/keys?action=regenerate 
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<RegenerateKeys xmlns="http://schemas.microsoft.com/windowsazure">
+  <KeyType>Primary|Secondary</KeyType>
+</RegenerateKeys>
+
+[method]
+create_storage_account
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/storageservices 
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<CreateStorageServiceInput xmlns="http://schemas.microsoft.com/windowsazure">
+   <ServiceName>service-name</ServiceName>
+   <Description>service-description</Description>
+   <Label>base64-encoded-label</Label>
+   <AffinityGroup>affinity-group-name</AffinityGroup>
+   <Location>location-of-the-storage-account</Location>
+</CreateStorageServiceInput>
+
+[method]
+delete_storage_account
+[url] 
+DELETE https://management.core.windows.net/<subscription-id>/services/storageservices/<service-name>
+
+[method]
+update_storage_account
+[url]
+PUT https://management.core.windows.net/<subscription-id>/services/storageservices/<service-name>
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<UpdateStorageServiceInput xmlns="http://schemas.microsoft.com/windowsazure">
+    <Description>Description of the storage service</Description>
+    <Label>base64 encoded label</Label>
+</UpdateStorageServiceInput>
+
+[method]
+list_hosted_services
+[return]
+HostedServices
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/hostedservices
+
+[method]
+delete_hosted_service
+[url]
+DELETE https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name> 
+
+[method]
+update_hosted_service
+[url]
+PUT https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<UpdateHostedService xmlns="http://schemas.microsoft.com/windowsazure">
+  <Label>base64-encoded-service-label</Label>
+  <Description>description</Description>
+</UpdateHostedService>
+
+[method]
+create_hosted_service
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<CreateHostedService xmlns="http://schemas.microsoft.com/windowsazure">
+  <ServiceName>service-name</ServiceName>
+  <Label>base64-encoded-service-label</Label>
+  <Description>description</Description>
+  <Location>location</Location>
+  <AffinityGroup>affinity-group</AffinityGroup>
+</CreateHostedService>
+
+[method]
+get_hosted_service_properties
+[return]
+HostedService
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>
+[query]
+embed-detail=false
+
+[method]
+create_deployment
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot-name> 
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<CreateDeployment xmlns="http://schemas.microsoft.com/windowsazure">
+  <Name>deployment-name</Name>
+  <PackageUrl>package-url-in-blob-storage</PackageUrl>
+  <Label>base64-encoded-deployment-label</Label>
+  <Configuration>base64-encoded-configuration-file</Configuration>
+  <StartDeployment>true|false</StartDeployment>
+  <TreatWarningsAsError>true|false</TreatWarningsAsError>
+</CreateDeployment>
+
+
+[method]
+get_deployment_by_slot
+[return]
+Deployment
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot> 
+
+[method]
+get_deployment_by_name
+[return]
+Deployment
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deployments/<deployment-name>  
+
+[method]
+swap_deployment
+[return]
+Deployment
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>  
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<Swap xmlns="http://schemas.microsoft.com/windowsazure">
+  <Production>production-deployment-name</Production>
+  <SourceDeployment>deployment-name-to-be-swapped-with-production</SourceDeployment>
+</Swap>
+
+[method]
+delete_deployment_by_slot
+[url]
+DELETE https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot>  
+
+[method]
+delete_deployment_by_name
+[url]
+DELETE https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deployments/<deployment-name>  
+
+[method]
+change_deployment_configuration_by_slot
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot>/?comp=config 
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<ChangeConfiguration xmlns="http://schemas.microsoft.com/windowsazure">
+   <Configuration>base-64-encoded-configuration-file</Configuration>
+   <TreatWarningsAsError>true|false</TreatWarningsAsError>
+   <Mode>Auto|Manual</Mode>
+</ChangeConfiguration>
+
+[method]
+change_deployment_configuration_by_name
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deployments/<deployment-name>/?comp=config  
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<ChangeConfiguration xmlns="http://schemas.microsoft.com/windowsazure">
+   <Configuration>base-64-encoded-configuration-file</Configuration>
+   <TreatWarningsAsError>true|false</TreatWarningsAsError>
+   <Mode>Auto|Manual</Mode>
+</ChangeConfiguration>
+
+[method]
+update_deployment_status_by_slot
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot>/?comp=status 
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<UpdateDeploymentStatus xmlns="http://schemas.microsoft.com/windowsazure">
+  <Status>Running|Suspended</Status>
+</UpdateDeploymentStatus>
+
+[method]
+update_deployment_status_by_name
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deployments/<deployment-name>/?comp=status  
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<UpdateDeploymentStatus xmlns="http://schemas.microsoft.com/windowsazure">
+  <Status>Running|Suspended</Status>
+</UpdateDeploymentStatus>
+
+[method]
+upgrade_deployment_by_slot
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot>/?comp=upgrade
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<UpgradeDeployment xmlns="http://schemas.microsoft.com/windowsazure">
+   <Mode>auto|manual</Mode>
+   <PackageUrl>url-to-package</PackageUrl>
+   <Configuration>base64-encoded-config-file</Configuration>
+   <Label>base-64-encoded-label</Label>
+   <RoleToUpgrade>role-name</RoleToUpgrade>
+   <Force>true|false</Force>
+</UpgradeDeployment>
+
+[method]
+upgrade_deployment_by_name
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deployments/<deployment-name>/?comp=upgrade  
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<UpgradeDeployment xmlns="http://schemas.microsoft.com/windowsazure">
+   <Mode>auto|manual</Mode>
+   <PackageUrl>url-to-package</PackageUrl>
+   <Configuration>base64-encoded-config-file</Configuration>
+   <Label>base-64-encoded-label</Label>
+   <RoleToUpgrade>role-name</RoleToUpgrade>
+   <Force>true|false</Force>
+</UpgradeDeployment>
+
+[method]
+walk_upgrade_domain_by_slot
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot>/?comp=walkupgradedomain
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<WalkUpgradeDomain xmlns="http://schemas.microsoft.com/windowsazure">
+  <UpgradeDomain>upgrade-domain-id</UpgradeDomain>
+</WalkUpgradeDomain>
+
+[method]
+walk_upgrade_domain_by_name
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deployments/<deployment-name>/?comp=walkupgradedomain  
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<WalkUpgradeDomain xmlns="http://schemas.microsoft.com/windowsazure">
+  <UpgradeDomain>upgrade-domain-id</UpgradeDomain>
+</WalkUpgradeDomain>
+
+[method] 
+reboot_role_instance_by_slot
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot>/roleinstances/<role-instance-name>?comp=reboot
+[requestheader]
+Content-Length=0
+
+[method]  
+reboot_role_instance_by_name
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deployments/<deployment-name>/roleinstances/<role-instance-name>?comp=reboot  
+[requestheader]
+Content-Length=0
+
+[method] 
+reimage_role_instance_by_slot
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot>/roleinstances/<role-instance-name>?comp=reimage
+[requestheader]
+Content-Length=0
+
+[method]  
+reimage_role_instance_by_name
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deployments/<deployment-name>/roleinstances/<role-instance-name>?comp=reimage  
+[requestheader]
+Content-Length=0
+
+[method] 
+rollback_update_by_slot
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deploymentslots/<deployment-slot>/?comp=rollback
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<RollbackUpdateOrUpgrade xmlns="http://schemas.microsoft.com/windowsazure">
+   <Mode>auto|manual</Mode>
+   <Force>true|false</Force>
+</RollbackUpdateOrUpgrade>
+
+[method]  
+rollback_update_by_name
+[url]
+POST hhttps://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/deployments/<deployment-name>/?comp=rollback  
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<RollbackUpdateOrUpgrade xmlns="http://schemas.microsoft.com/windowsazure">
+   <Mode>auto|manual</Mode>
+   <Force>true|false</Force>
+</RollbackUpdateOrUpgrade>
+
+[method]  
+list_certificates
+[return]
+Certificates
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-DNS-name>/certificates
+
+[method]  
+get_certificate
+[return]
+Certificate
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/certificates/<thumbalgorithm-thumbprint>
+
+[method]  
+add_certificate
+[return]
+Certificates
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/certificates
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<CertificateFile xmlns="http://schemas.microsoft.com/windowsazure">
+  <Data>base64-encoded-pfx-file</Data>
+  <CertificateFormat>pfx</CertificateFormat>
+  <Password>pfx-file-password</Password>
+</CertificateFile>
+
+[method]  
+delete_certificate
+[return]
+Certificates
+[url]
+DELETE https://management.core.windows.net/<subscription-id>/services/hostedservices/<service-name>/certificates/<thumbprint>
+
+[method]  
+list_affinity_groups
+[return]
+AffinityGroups
+[url]
+DELETE https://management.core.windows.net/<subscription-id>/affinitygroups
+
+[method]  
+create_affinity_group
+[url]
+POST https://management.core.windows.net/<subscription-id>/affinitygroups
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<CreateAffinityGroup xmlns="http://schemas.microsoft.com/windowsazure">
+      <Name>affinity-group-name</Name>
+      <Label>base64-encoded-affinity-group-label</Label>
+      <Description>affinity-group-description</Description>
+      <Location>location</Location>
+</CreateAffinityGroup>
+
+[method]  
+delete_affinity_group
+[return]
+AffinityGroups
+[url]
+DELETE https://management.core.windows.net/<subscription-id>/affinitygroups/<affinity-group-name>
+
+[method]  
+update_affinity_group
+[url]
+PUT https://management.core.windows.net/<subscription-id>/affinitygroups/<affinity-group-name>
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<UpdateAffinityGroup xmlns="http://schemas.microsoft.com/windowsazure">
+      <Label>base64-encoded-affinity-group-label</Label>
+      <Description>affinity-group-description</Description>
+</UpdateAffinityGroup>
+
+[method]  
+get_affinity_group_properties
+[return]
+AffinityGroup
+[url]
+GET https://management.core.windows.net/<subscription-id>/affinitygroups/<affinity-group-name>
+
+[method]  
+list_locations
+[return]
+Locations
+[url]
+GET https://management.core.windows.net/<subscription-id>/locations
+
+[method]  
+get_operation_status
+[return]
+OperationStatus
+[url]
+GET https://management.core.windows.net/<subscription-id>/operations/<request-id>
+
+[method]  
+list_operating_systems
+[return]
+OperatingSystems
+[url]
+GET https://management.core.windows.net/<subscription-id>/operatingsystems
+
+[method]  
+list_operating_system_families
+[return]
+OperatingSystemFamilies
+[url]
+GET https://management.core.windows.net/<subscription-id>/operatingsystemfamilies 
+
+[method]  
+list_subscription_operations
+[return]
+SubscriptionOperationCollection
+[url]
+GET https://management.core.windows.net/<subscription-id>/operations
+[query]
+StartTime=;required
+EndTime=;required
+ObjectIdFilter=
+OperationResultFilter=
+ContinuationToken=
+
+[method]  
+get_subscription
+[return]
+Subscription
+[url]
+GET https://management.core.windows.net/<subscription-id>
+
+[method]  
+create_profile
+[url]
+POST https://management.core.windows.net/<subscription-id>/services/WATM/profiles 
+[requestbody]
+<Profile xmlns="http://schemas.microsoft.com/windowsazure">
+  <DomainName>[domain-name-for-the-profile]</DomainName>
+  <Name>[service-profile-name]</Name>
+</Profile>
+
+[method]
+list_profiles
+[return]
+Profiles
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/WATM/profiles 
+
+[method]  
+get_profile
+[return]
+Profile
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/WATM/profiles/<profile-name> 
+
+[method]  
+delete_profile
+[return]
+Profile
+[url]
+DELETE https://management.core.windows.net/<subscription-id>/services/WATM/profiles/<profile-name> 
+
+[method]  
+list_definitions
+[return]
+Definitions
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/WATM/profiles/<profile-name>/definitions
+
+[method]  
+get_definition
+[return]
+Definition
+[url]
+GET https://management.core.windows.net/<subscription-id>/services/WATM/profiles/<profile-name>/definitions/<version>
+[requestbody]
+binary:blob
+
+[method]
+update_profile
+[return]
+[url]
+PUT https://management.core.windows.net/<subscription-id>/services/WATM/profiles/<profile-name>
+[requestbody]
+class:profile
+
+[end]
+
+

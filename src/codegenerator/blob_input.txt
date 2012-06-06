@@ -1,0 +1,556 @@
+[class]
+BlobService
+[x-ms-version]
+2011-08-18
+[class-comment]
+This is the main class managing Blob resources.
+account_name: your storage account name, required for all operations.
+account_key: your storage account key, required for all operations.
+[init]
+account_name
+account_key
+
+[method]  
+list_containers
+[comment]
+The List Containers operation returns a list of the containers under the specified account.
+
+prefix: Optional. Filters the results to return only containers whose names begin with
+		the specified prefix. 
+marker: Optional. A string value that identifies the portion of the list to be returned 
+        with the next list operation.
+maxresults: Optional. Specifies the maximum number of containers to return. 
+include: Optional. Include this parameter to specify that the container's metadata be 
+        returned as part of the response body.
+[return]
+ContainerEnumResults
+[url]
+GET http://<account-name>.blob.core.windows.net/?comp=list
+[query]
+prefix= 
+marker=
+maxresults=
+include=
+
+[method]  
+create_container
+[params]
+fail_on_exist=False
+[comment]
+Creates a new container under the specified account. If the container with the same name 
+already exists, the operation fails.
+
+x_ms_meta_name_values: Optional. A dict with name_value pairs to associate with the 
+        container as metadata. Example:{'Category':'test'}
+x_ms_blob_public_access: Optional. Possible values include: container, blob.
+fail_on_exist: specify whether to throw an exception when the container exists.
+[return]
+None
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>?restype=container
+[requestheader]
+x-ms-meta-name-values=
+x-ms-blob-public-access=
+
+[method]  
+get_container_properties
+[comment]
+Returns all user-defined metadata and system properties for the specified container. 
+[return]
+dict
+[url]
+GET http://<account-name>.blob.core.windows.net/<container-name>?restype=container
+
+[method]  
+get_container_metadata
+[comment]
+Returns all user-defined metadata for the specified container. The metadata will be 
+in returned dictionary['x-ms-meta-(name)']. 
+[return]
+dict
+[url]
+GET http://<account-name>.blob.core.windows.net/<container-name>?restype=container&comp=metadata
+
+[method]  
+set_container_metadata
+[comment]
+Sets one or more user-defined name-value pairs for the specified container.
+
+x_ms_meta_name_values: A dict containing name, value for metadata. Example: {'category':'test'}
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>?restype=container&comp=metadata 
+[requestheader]
+x-ms-meta-name-values=
+
+[method]  
+get_container_acl
+[comment]
+Gets the permissions for the specified container. 
+[return]
+SignedIdentifiers
+[url]
+GET http://<account-name>.blob.core.windows.net/<container-name>?restype=container&comp=acl
+
+[method]
+set_container_acl
+[comment]
+Sets the permissions for the specified container.
+
+x_ms_blob_public_access: Optional. Possible values include 'container' and 'blob'. 
+signed_identifiers: SignedIdentifers instance
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>?restype=container&comp=acl
+[requestheader]
+x-ms-blob-public-access=
+[requestbody]
+class:signed_identifiers;
+
+[method]
+delete_container
+[params]
+fail_not_exist=False
+[comment]
+Marks the specified container for deletion.
+
+fail_not_exist: specify whether to throw an exception when the container doesn't exist.
+[return]
+None
+[url]
+DELETE http://<account-name>.blob.core.windows.net/<container-name>?restype=container
+
+[method]  
+list_blobs
+[comment]
+Returns the list of blobs under the specified container.
+[return]
+BlobEnumResults
+[url]
+GET http://<account-name>.blob.core.windows.net/<container-name>?restype=container&comp=list
+[query]
+prefix= 
+marker=
+maxresults=
+include=
+
+[method]  
+set_blob_service_properties
+[comment]
+Sets the properties of a storage account's Blob service, including Windows Azure 
+Storage Analytics. You can also use this operation to set the default request 
+version for all incoming requests that do not have a version specified.
+
+storage_service_properties: a StorageServiceProperties object.
+timeout: Optional. The timeout parameter is expressed in seconds. For example, the 
+		following value sets a timeout of 30 seconds for the request: timeout=30.
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/?restype=service&comp=properties 
+[query]
+timeout=
+[requestbody]
+class:storage_service_properties;required
+
+[method]  
+get_blob_service_properties
+[comment]
+Gets the properties of a storage account's Blob service, including Windows Azure 
+Storage Analytics.
+
+timeout: Optional. The timeout parameter is expressed in seconds. For example, the 
+		following value sets a timeout of 30 seconds for the request: timeout=30.
+[return]
+StorageServiceProperties
+[url]
+GET http://<account-name>.blob.core.windows.net/?restype=service&comp=properties  
+[query]
+timeout=
+
+[method]  
+get_blob_properties
+[comment]
+Returns all user-defined metadata, standard HTTP properties, and system properties for the blob.
+
+x_ms_lease_id: Required if the blob has an active lease. 
+[return]
+dict
+[url]
+HEAD http://myaccount.blob.core.windows.net/<container-name>/<blob-name>
+[requestheader]
+x-ms-lease-id=
+
+[method]  
+set_blob_properties
+[comment]
+Sets system properties on the blob.
+
+x_ms_blob_cache_control: Optional. Modifies the cache control string for the blob. 
+x_ms_blob_content_type: Optional. Sets the blob's content type. 
+x_ms_blob_content_md5: Optional. Sets the blob's MD5 hash.
+x_ms_blob_content_encoding: Optional. Sets the blob's content encoding.
+x_ms_blob_content_language: Optional. Sets the blob's content language.
+x_ms_lease_id: Required if the blob has an active lease. 
+[return]
+[url]
+PUT http://myaccount.blob.core.windows.net/<container-name>/<blob-name>?comp=properties   
+[requestheader]
+x-ms-blob-cache-control=
+x-ms-blob-content-type=
+x-ms-blob-content-md5=
+x-ms-blob-content-encoding=
+x-ms-blob-content-language=
+x-ms-lease-id=
+
+[method]  
+put_blob
+[comment]
+Creates a new block blob or page blob, or updates the content of an existing block blob. 
+
+container_name: the name of container to put the blob
+blob_name: the name of blob
+x_ms_blob_type: Required. Could be BlockBlob or PageBlob
+x_ms_meta_name_values: A dict containing name, value for metadata.
+x_ms_lease_id: Required if the blob has an active lease.
+blob: the content of blob. 
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>
+[requestheader]
+x-ms-blob-type=;required
+Content-Encoding=
+Content-Language=
+Content-MD5=
+Cache-Control=
+x-ms-blob-content-type=
+x-ms-blob-content-encoding=
+x-ms-blob-content-language=
+x-ms-blob-content-md5=
+x-ms-blob-cache-control=
+x-ms-meta-name-values=;
+x-ms-lease-id=
+x-ms-blob-content-length=
+x-ms-blob-sequence-number= 
+[requestbody]
+binary:blob;required
+
+[method]  
+get_blob
+[comment]
+Reads or downloads a blob from the system, including its metadata and properties. 
+
+container_name: the name of container to get the blob
+blob_name: the name of blob
+x_ms_range: Optional. Return only the bytes of the blob in the specified range. 
+[return]
+str
+[url]
+GET http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>
+[query]
+snapshot=
+[requestheader]
+x-ms-range=
+x-ms-lease-id=
+x-ms-range-get-content-md5= 
+
+[method]  
+get_blob_metadata
+[comment]
+Returns all user-defined metadata for the specified blob or snapshot.
+
+container_name: the name of container containing the blob.
+blob_name: the name of blob to get metadata.
+[return]
+dict
+prefix='x-ms-meta'
+[url]
+GET http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=metadata
+[query]
+snapshot=
+[requestheader]
+x-ms-lease-id=
+
+[method]  
+set_blob_metadata
+[comment]
+Sets user-defined metadata for the specified blob as one or more name-value pairs.
+
+container_name: the name of container containing the blob
+blob_name: the name of blob
+x_ms_meta_name_values: Dict containing name and value pairs.
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=metadata
+[requestheader]
+x-ms-meta-name-values=
+x-ms-lease-id=
+
+[method]  
+lease_blob
+[comment]
+Establishes and manages a one-minute lock on a blob for write operations.
+
+container_name: the name of container.
+blob_name: the name of blob
+x_ms_lease_id: Any GUID format string
+x_ms_lease_action: Required. Possible values: acquire|renew|release|break
+[return]
+dict
+filter=['x-ms-lease-id']
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=lease
+[requestheader]
+x-ms-lease-id=
+x-ms-lease-action=;required:acquire|renew|release|break
+
+[method]  
+snapshot_blob
+[comment]
+Creates a read-only snapshot of a blob.
+
+container_name: the name of container.
+blob_name: the name of blob
+x_ms_meta_name_values: Optional. Dict containing name and value pairs.
+if_modified_since: Optional. Datetime string.
+if_unmodified_since: DateTime string.
+if_match: Optional. snapshot the blob only if its ETag value matches the value specified. 
+if_none_match: Optional. An ETag value
+x_ms_lease_id: Optional. If this header is specified, the operation will be performed 
+          only if both of the following conditions are met. 
+			1. The blob's lease is currently active
+			2. The lease ID specified in the request matches that of the blob.
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=snapshot
+[query]
+[requestheader]
+x-ms-meta-name-values=
+If-Modified-Since=
+If-Unmodified-Since=
+If-Match=
+If-None-Match=
+x-ms-lease-id=
+[requestbody]
+ 
+[method]  
+copy_blob	
+[comment]
+Copies a blob to a destination within the storage account. 
+
+container_name: the name of container.
+blob_name: the name of blob
+x_ms_copy_source: the blob to be copied. Should be absolute path format.
+x_ms_meta_name_values: Optional. Dict containing name and value pairs.
+x_ms_source_if_modified_since: Optional. An ETag value. Specify this conditional 
+		header to copy the source blob only if its ETag matches the value specified.
+x_ms_source_if_unmodified_since: Optional. An ETag value. Specify this conditional 
+		header to copy the blob only if its ETag does not match the value specified.
+x_ms_source_if_match: Optional. A DateTime value. Specify this conditional header to copy
+		the blob only if the source blob has been modified since the specified date/time.
+x_ms_source_if_none_match: Optional. An ETag value. Specify this conditional header to 
+		copy the source blob only if its ETag matches the value specified.
+if_modified_since: Optional. Datetime string.
+if_unmodified_since: DateTime string.
+if_match: Optional. snapshot the blob only if its ETag value matches the value specified. 
+if_none_match: Optional. An ETag value
+x_ms_lease_id: Optional. If this header is specified, the operation will be performed 
+		only if both of the following conditions are met. 
+		1. The blob's lease is currently active
+		2. The lease ID specified in the request matches that of the blob.
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>
+[query]
+[requestheader]
+x-ms-copy-source=;required
+x-ms-meta-name-values=;# a dict containing name, value for metadata.
+x-ms-source-if-modified-since=
+x-ms-source-if-unmodified-since=
+x-ms-source-if-match=
+x-ms-source-if-none-match=
+If-Modified-Since=
+If-Unmodified-Since=
+If-Match=
+If-None-Match=
+x-ms-lease-id=
+x-ms-source-lease-id=
+[requestbody]
+
+[method]  
+delete_blob	
+[comment]
+Marks the specified blob or snapshot for deletion. The blob is later deleted 
+during garbage collection.
+
+To mark a specific snapshot for deletion provide the date/time of the snapshot via
+the snapshot parameter.
+
+container_name: the name of container.
+blob_name: the name of blob
+x_ms_lease_id: Optional. If this header is specified, the operation will be performed 
+		only if both of the following conditions are met. 
+		1. The blob's lease is currently active
+		2. The lease ID specified in the request matches that of the blob.
+[return]
+[url]
+DELETE http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>
+[query]
+snapshot=
+[requestheader]
+x-ms-lease-id=
+[requestbody]
+
+[method]  
+put_block	
+[comment]
+Creates a new block to be committed as part of a blob.
+
+container_name: the name of the container.
+blob_name: the name of the blob
+content_md5: Optional. An MD5 hash of the block content. This hash is used to verify
+		the integrity of the blob during transport. When this header is specified, 
+		the storage service checks the hash that has arrived with the one that was sent.
+x_ms_lease_id: Required if the blob has an active lease. To perform this operation on
+		a blob with an active lease, specify the valid lease ID for this header.
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=block
+[query]
+blockid=;required:base64
+[requestheader]
+Content-MD5=
+x-ms-lease-id=
+[requestbody]
+binary:block;required
+
+[method]  
+put_block_list	
+[comment]
+Writes a blob by specifying the list of block IDs that make up the blob. In order to 
+be written as part of a blob, a block must have been successfully written to the server
+in a prior Put Block (REST API) operation.
+
+container_name: the name of container.
+blob_name: the name of blob
+x_ms_meta_name_values: Optional. Dict containing name and value pairs.
+x_ms_blob_cache_control: Optional. Sets the blob's cache control. If specified, this 
+		property is stored with the blob and returned with a read request.
+x_ms_blob_content_type: Optional. Sets the blob's content type. If specified, this 
+		property is stored with the blob and returned with a read request.
+x_ms_blob_content_encoding: Optional. Sets the blob's content encoding. If specified,
+		this property is stored with the blob and returned with a read request.
+x_ms_blob_content_language: Optional. Set the blob's content language. If specified, 
+		this property is stored with the blob and returned with a read request. 
+x_ms_blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash
+		is not validated, as the hashes for the individual blocks were validated when
+		each was uploaded.
+content_md5: Optional. An MD5 hash of the block content. This hash is used to verify
+		the integrity of the blob during transport. When this header is specified, 
+		the storage service checks the hash that has arrived with the one that was sent.
+x_ms_lease_id: Required if the blob has an active lease. To perform this operation on
+		a blob with an active lease, specify the valid lease ID for this header.
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=blocklist
+[requestheader]
+Content-MD5=
+x-ms-blob-cache-control=
+x-ms-blob-content-type=
+x-ms-blob-content-encoding=
+x-ms-blob-content-language=
+x-ms-blob-content-md5=
+x-ms-meta-name-values=;# a dict containing name, value for metadata.
+x-ms-lease-id=
+[requestbody]
+class:block_list;required
+
+
+[method]  
+get_block_list	
+[comment]
+Retrieves the list of blocks that have been uploaded as part of a block blob.
+
+container_name: the name of container.
+blob_name: the name of blob
+snapshot: Optional. Datetime to determine the time to retrieve the blocks.
+blocklisttype: Specifies whether to return the list of committed blocks, the 
+		list of uncommitted blocks, or both lists together. Valid values are 
+		committed, uncommitted, or all.
+[return]
+BlobBlockList
+[url]
+GET http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=blocklist
+[query]
+snapshot=
+blocklisttype=
+[requestheader]
+x-ms-lease-id=
+
+[method]  
+put_page	
+[comment]
+Writes a range of pages to a page blob.
+
+container_name: the name of container.
+blob_name: the name of blob
+timeout: the timeout parameter is expressed in seconds.
+x_ms_range: Required. Specifies the range of bytes to be written as a page. Both the start
+		and end of the range must be specified. Must be in format: bytes=startByte-endByte.
+		Given that pages must be aligned with 512-byte boundaries, the start offset must be
+		a modulus of 512 and the end offset must be a modulus of 512-1. Examples of valid
+		byte ranges are 0-511, 512-1023, etc.
+x_ms_page_write: Required. You may specify one of the following options : 
+		1. update(lower case): Writes the bytes specified by the request body into the specified 
+		   range. The Range and Content-Length headers must match to perform the update.
+		2. clear(lower case): Clears the specified range and releases the space used in storage  
+		   for that range. To clear a range, set the Content-Length header to zero, and the Range
+		   header to a value that indicates the range to clear, up to maximum blob size.
+x_ms_lease_id: Required if the blob has an active lease. To perform this operation on a blob
+		 with an active lease, specify the valid lease ID for this header.
+[return]
+[url]
+PUT http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=page
+[requestheader]
+x-ms-range=;required
+Content-MD5=
+x-ms-page-write=;required:update|clear
+x-ms-lease-id=
+x-ms-if-sequence-number-lte=
+x-ms-if-sequence-number-lt=
+x-ms-if-sequence-number-eq=
+If-Modified-Since=
+If-Unmodified-Since=
+If-Match=
+If-None-Match=
+[query]
+timeout=
+[requestbody]
+binary:page;required
+
+[method]  
+get_page_ranges	
+[comment]
+Retrieves the page ranges for a blob.
+
+container_name: the name of container.
+blob_name: the name of blob
+_ms_range: Optional. Specifies the range of bytes to be written as a page. Both the start
+		and end of the range must be specified. Must be in format: bytes=startByte-endByte.
+		Given that pages must be aligned with 512-byte boundaries, the start offset must be
+		a modulus of 512 and the end offset must be a modulus of 512-1. Examples of valid
+		byte ranges are 0-511, 512-1023, etc.
+x_ms_lease_id: Required if the blob has an active lease. To perform this operation on a blob
+		 with an active lease, specify the valid lease ID for this header.
+[return]
+PageList
+[url]
+GET http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=pagelist
+[query]
+snapshot=
+[requestheader]
+Range=
+x-ms-range=
+x-ms-lease-id=
+
+[end]
+
