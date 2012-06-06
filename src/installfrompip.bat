@@ -13,4 +13,4 @@ REM You must not remove this notice, or any other, from this software.
 REM----------------------------------------------------------------------------
 cls
 
-%SystemDrive%\Python27\Scripts\pip.exe install windowsazure --upgrade
+%SystemDrive%\Python27\Scripts\pip.exe install azure --upgrade
