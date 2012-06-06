@@ -1,0 +1,50 @@
+[class]
+SqlAzureManager
+[x-ms-version]
+2011-06-01
+[init]
+account_name
+account_key
+
+[method]  
+create_server
+[return]
+ServerName
+[url]
+POST https://management.database.windows.net:8443/<subscription-id>/servers 
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<Server xmlns="http://schemas.microsoft.com/sqlazure/2010/12/">
+  <AdministratorLogin>MyAdminAccount</AdministratorLogin>
+  <AdministratorLoginPassword>MyAdminPassword</AdministratorLoginPassword>
+  <Location>North Central US | South Central US | North Europe | West Europe | East Asia | Southeast Asia</Location>
+</Server>
+
+[method]  
+enumerate_servers
+[return]
+Servers
+[url]
+GET https://management.database.windows.net:8443/<subscription-id>/servers 
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<Server xmlns="http://schemas.microsoft.com/sqlazure/2010/12/">
+  <AdministratorLogin>MyAdminAccount</AdministratorLogin>
+  <AdministratorLoginPassword>MyAdminPassword</AdministratorLoginPassword>
+  <Location>North Central US | South Central US | North Europe | West Europe | East Asia | Southeast Asia</Location>
+</Server>
+
+[method]  
+drop_server
+[url]
+DELETE https://management.database.windows.net:8443/<subscription-id>/servers/<servername>
+
+[method]  
+set_admin_password
+[url]
+POST https://management.database.windows.net:8443/<subscription-id>/servers/<servername>?op=ResetPassword
+[requestbody]
+<?xml version="1.0" encoding="utf-8"?>
+<AdministratorLoginPassword xmlns="http://schemas.microsoft.com/sqlazure/2010/12/">TheNewPassword</AdministratorLoginPassword>
+
+[end]
