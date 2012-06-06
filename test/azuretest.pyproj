@@ -42,6 +42,7 @@
     <Compile Include="azuretest\__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="run.bash" />
     <Content Include="run.bat" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
