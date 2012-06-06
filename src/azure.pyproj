@@ -46,8 +46,8 @@
     <Compile Include="azure\storage\__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="azure\" />
     <Folder Include="azure\http" />
-    <Folder Include="azure\tests\" />
     <Folder Include="azure\servicebus\" />
     <Folder Include="azure\storage" />
   </ItemGroup>
