@@ -45,204 +45,149 @@ the local Storage Emulator (with the exception of Service Bus features).
 # Usage
 ## Table Storage
 
-To ensure a table exists, call **createTableIfNotExists**:
+To ensure a table exists, call **create_table**:
 
-```Javascript
-var tableService = azure.createTableService();
-tableService.createTableIfNotExists('tasktable', function(error){
-    if(!error){
-        // Table exists
-    }
-});
-```
-A new entity can be added by calling **insertEntity**:
-
-```Javascript
-var tableService = azure.createTableService(),
-    task1 = {
-        PartitionKey : 'tasksSeattle',
-        RowKey: '1',
-        Description: 'Take out the trash',
-        DueDate: new Date(2011, 12, 14, 12) 
-    };
-tableService.insertEntity('tasktable', task1, function(error){ 
-    if(!error){
-        // Entity inserted
-    }
-});
+```Python
+from azure.storage import TableService
+ts = TableService(account_name, account_key)
+table = ts.create_table('tasktable')
 ```
 
-The method **queryEntity** can then be used to fetch the entity that was just inserted:
+A new entity can be added by calling **insert_entity**:
 
-```Javascript
-var tableService = azure.createTableService();
-tableService.queryEntity('tasktable', 'tasksSeattle', '1', function(error, serverEntity){
-    if(!error){
-        // Entity available in serverEntity variable
+```Python
+ts = TableService(account_name, account_key)
+table = ts.create_table('tasktable')
+table.insert_entity(
+     'tasktable',
+     {
+        'PartitionKey' : 'tasksSeattle',
+        'RowKey': '1',
+        'Description': 'Take out the trash',
+        'DueDate': datetime(2011, 12, 14, 12) 
     }
-});
+)
+```
+
+The method **get_entity** can then be used to fetch the entity that was just inserted:
+
+```Python
+ts = TableService(account_name, account_key)
+entity = ts.get_entity('tasktable', 'tasksSeattle', '1')
 ```
 
 ## Blob Storage
 
-The **createContainerIfNotExists** method can be used to create a 
+The **create_container** method can be used to create a 
 container in which to store a blob:
 
-```Javascript
-var blobService = azure.createBlobService();
-blobService.createContainerIfNotExists('taskcontainer', {publicAccessLevel : 'blob'}, function(error){
-    if(!error){
-        // Container exists and is public
-    }
-});
+```Python
+from azure.storage import BlobService
+blob_service = BlobService()
+container = blob_service.create_container('taskcontainer')
 ```
 
-To upload a file (assuming it is called task1-upload.txt, it contains the exact text "hello world" (no quotation marks), and it is placed in the same folder as the script below), the method **createBlockBlobFromStream** can be used:
+To upload a file (assuming it is called task1-upload.txt, it contains the exact text "hello world" (no quotation marks), and it is placed in the same folder as the script below), the method **put_blob** can be used:
 
-```Javascript
-var blobService = azure.createBlobService();
-blobService.createBlockBlobFromStream('taskcontainer', 'task1', fs.createReadStream('task1-upload.txt'), 11, function(error){
-    if(!error){
-        // Blob uploaded
-    }
-});
+```Python
+from azure.storage import BlobService
+blob_service = BlobService(account_name, account_key)
+blob_service.put_blob('taskcontainer', 'task1', 
+blobService = azure.createBlobService()
+blobService.put_blob('taskcontainer', 'task1', file('task1-upload.txt').read())
+
 ```
 
-To download the blob and write it to the file system, the **getBlobToStream** method can be used:
+To download the blob and write it to the file system, the **get_blob** method can be used:
 
-```Javascript
-var blobService = azure.createBlobService();
-blobService.getBlobToStream('taskcontainer', 'task1', fs.createWriteStream('task1-download.txt'), function(error, serverBlob){
-    if(!error){
-        // Blob available in serverBlob.blob variable
-    }
-});
+```Python
+from azure.storage import BlobService
+blob_service = BlobService(account_name, account_key)
+blob = blob_service.get_blob('taskcontainer', 'task1')
 ```
 
 ## Storage Queues
 
-The **createQueueIfNotExists** method can be used to ensure a queue exists:
+The **create_queue** method can be used to ensure a queue exists:
 
-```Javascript
-var queueService = azure.createQueueService();
-queueService.createQueueIfNotExists('taskqueue', function(error){
-    if(!error){
-        // Queue exists
-    }
-});
+```Python
+from azure.storage import QueueService
+queue_service = QueueService(account_name, account_key)
+queue = queue_service.create_queue('taskqueue')
 ```
 
-The **createMessage** method can then be called to insert the message into the queue:
+The **put_message** method can then be called to insert the message into the queue:
 
-```Javascript
-var queueService = azure.createQueueService();
-queueService.createMessage('taskqueue', "Hello world!", function(error){
-    if(!error){
-        // Message inserted
-    }
-});
+```Python
+from azure.storage import QueueService
+queue_service = QueueService(account_name, account_key)
+queue_service.put_message('taskqueue', 'Hello world!')
 ```
 
-It is then possible to call the **getMessage** method, process the message and then call **deleteMessage** inside the callback. This two-step process ensures messages don't get lost when they are removed from the queue.
+It is then possible to call the **get___messages** method, process the message and then call **delete_message** on the messages ID. This two-step process ensures messages don't get lost when they are removed from the queue.
 
-```Javascript
-var queueService = azure.createQueueService(),
-    queueName = 'taskqueue';
-queueService.getMessages(queueName, function(error, serverMessages){
-    if(!error){
-        // Process the message in less than 30 seconds, the message
-        // text is available in serverMessages[0].messagetext 
-
-        queueService.deleteMessage(queueName, serverMessages[0].messageid, serverMessages[0].popreceipt, function(error){
-            if(!error){
-                // Message deleted
-            }
-        });
-    }
-});
+```Python
+from azure.storage import QueueService
+queue_service = QueueService(account_name, account_key)
+messages = queue_service.get_messages('taskqueue')
+queue_service.delete_message('taskqueue', messages[0].message_id)
 ```
 
 ## ServiceBus Queues
 
 ServiceBus Queues are an alternative to Storage Queues that might be useful in scenarios where more advanced messaging features are needed (larger message sizes, message ordering, single-operaiton destructive reads, scheduled delivery) using push-style delivery (using long polling).
 
-The **createQueueIfNotExists** method can be used to ensure a queue exists:
+The **create_queue** method can be used to ensure a queue exists:
 
-```Javascript
-var serviceBusService = azure.createServiceBusService();
-serviceBusService.createQueueIfNotExists('taskqueue', function(error){
-    if(!error){
-        // Queue exists
-    }
-});
+```Python
+from azure.servicebus import ServiceBusService
+sbs = ServiceBusService(service_namespace, account_key)
+queue = sbs.create_queue('taskqueue');
 ```
 
-The **sendQueueMessage** method can then be called to insert the message into the queue:
+The **send__queue__message** method can then be called to insert the message into the queue:
 
-```Javascript
-var serviceBusService = azure.createServiceBusService();
-serviceBusService.sendQueueMessage('taskqueue', 'Hello world!', function(
-    if(!error){
-        // Message sent
-     }
-});
+```Python
+from azure.servicebus import ServiceBusService
+sbs = ServiceBusService(service_namespace, account_key)
+sbs.send_queue_message('taskqueue', 'Hello World!')
 ```
 
-It is then possible to call the **receiveQueueMessage** method to dequeue the message.
+It is then possible to call the **read__delete___queue__message** method to dequeue the message.
 
-```Javascript
-var serviceBusService = azure.createServiceBusService();
-serviceBusService.receiveQueueMessage('taskqueue', function(error, serverMessage){
-    if(!error){
-        // Process the message
-    }
-});
+```Python
+from azure.servicebus import ServiceBusService
+sbs = ServiceBusService(service_namespace, account_key)
+msg = sbs.read_delete_queue_message('taskqueue')
 ```
 
 ## ServiceBus Topics
 
 ServiceBus topics are an abstraction on top of ServiceBus Queues that make pub/sub scenarios easy to implement.
 
-The **createTopicIfNotExists** method can be used to create a server-side topic:
+The **create_topic** method can be used to create a server-side topic:
 
-```Javascript
-var serviceBusService = azure.createServiceBusService();
-serviceBusService.createTopicIfNotExists('taskdiscussion', function(error){
-    if(!error){
-        // Topic exists
-    }
-});
+```Python
+from azure.servicebus import ServiceBusService
+sbs = ServiceBusService(service_namespace, account_key)
+topic = sbs.create_topic('taskdiscussion')
 ```
 
-The **sendTopicMessage** method can be used to send a message to a topic:
+The **send__topic__message** method can be used to send a message to a topic:
 
-```Javascript
-var serviceBusService = azure.createServiceBusService();
-serviceBusService.sendTopicMessage('taskdiscussion', 'Hello world!', function(error){
-    if(!error){
-        // Message sent
-    }
-});
+```Python
+from azure.servicebus import ServiceBusService
+sbs = ServiceBusService(service_namespace, account_key)
+sbs.send_topic_message('taskdiscussion', 'Hello world!')
 ```
 
-A client can then create a subscription and start consuming messages by calling the **createSubscription** method followed by the **receiveSubscriptionMessage** method. Please note that any messages sent before the subscription is created will not be received.
+A client can then create a subscription and start consuming messages by calling the **create__subscription** method followed by the **receive__subscription__message** method. Please note that any messages sent before the subscription is created will not be received.
 
-```Javascript
-var serviceBusService = azure.createServiceBusService(),
-    topic = 'taskdiscussion',
-    subscription = 'client1';
-
-serviceBusService.createSubscription(topic, subscription, function(error1){
-    if(!error1){
-        // Subscription created
-
-        serviceBusService.receiveSubscriptionMessage(topic, subscription, function(error2, serverMessage){
-            if(!error2){
-                // Process message
-            }
-        });
-     }
-});
+```Python
+from azure.servicebus import ServiceBusService
+sbs = ServiceBusService(service_namespace, account_key)
+sbs.create_subscription('taskdiscussion', 'client1')
+msg = sbs.receive_subscription_message('taskdiscussion', 'client1')
 ```
 
 ** For more examples please see the [Windows Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python) **
