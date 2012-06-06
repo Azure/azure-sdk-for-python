@@ -186,7 +186,7 @@ class QueueServiceTest(unittest.TestCase):
         message = result[0]
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.message_id)
-        self.assertNotEqual('', message.message_text)
+        self.assertEqual('message1', message.message_text)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual('1', message.dequeue_count)
         self.assertNotEqual('', message.insertion_time)
@@ -296,7 +296,7 @@ class QueueServiceTest(unittest.TestCase):
         message = list_result2[0]
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.message_id)
-        self.assertNotEqual('', message.message_text)
+        self.assertEqual('new text', message.message_text)
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual('2', message.dequeue_count)
         self.assertNotEqual('', message.insertion_time)

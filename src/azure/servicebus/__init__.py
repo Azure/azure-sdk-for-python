@@ -327,6 +327,23 @@ def _convert_xml_to_rule(xmlstr):
 def _convert_response_to_queue(response):
     return _convert_xml_to_queue(response.body)
 
+def _parse_bool(value):
+    if value.lower() == 'true':
+        return True
+    return False
+
+
+_QUEUE_CONVERSION = {
+    'MaxSizeInMegaBytes': int,
+    'RequiresGroupedReceives': _parse_bool,
+    'SupportsDuplicateDetection': _parse_bool,
+    'SizeinBytes': int,
+    'MessageCount': int,
+    'EnableBatchedOperations': _parse_bool,
+    'RequiresSession': _parse_bool,
+    'LockDuration': int,
+}
+
 def _convert_xml_to_queue(xmlstr):
     ''' Converts xml response to queue object.
     
@@ -352,8 +369,11 @@ def _convert_xml_to_queue(xmlstr):
             if xml_attrs:
                 xml_attr = xml_attrs[0]
                 if xml_attr.firstChild:
-                    setattr(queue, attr_name, 
-                            xml_attr.firstChild.nodeValue)
+                    value = xml_attr.firstChild.nodeValue
+                    conversion = _QUEUE_CONVERSION.get(attr_name)
+                    if conversion is not None:
+                        value = conversion(value)
+                    setattr(queue, attr_name, value)
                     invalid_queue = False
 
     if invalid_queue:
@@ -367,6 +387,12 @@ def _convert_xml_to_queue(xmlstr):
 
 def _convert_response_to_topic(response):
     return _convert_xml_to_topic(response.body)
+
+_TOPIC_CONVERSION = {
+    'MaxSizeInMegaBytes': int,
+    'RequiresDuplicateDetection': _parse_bool,
+    'DeadLetteringOnFilterEvaluationExceptions': _parse_bool
+}
 
 def _convert_xml_to_topic(xmlstr):
     '''Converts xml response to topic
@@ -396,8 +422,11 @@ def _convert_xml_to_topic(xmlstr):
             if xml_attrs:
                 xml_attr = xml_attrs[0]
                 if xml_attr.firstChild:
-                    setattr(topic, attr_name, 
-                            xml_attr.firstChild.nodeValue)
+                    value = xml_attr.firstChild.nodeValue
+                    conversion = _TOPIC_CONVERSION.get(attr_name)
+                    if conversion is not None:
+                        value = conversion(value)
+                    setattr(topic, attr_name, value)
                     invalid_topic = False
 
     if invalid_topic:
@@ -410,6 +439,15 @@ def _convert_xml_to_topic(xmlstr):
 
 def _convert_response_to_subscription(response):
     return _convert_xml_to_subscription(response.body)
+
+_SUBSCRIPTION_CONVERSION = {
+    'RequiresSession' : _parse_bool,
+    'DeadLetteringOnMessageExpiration': _parse_bool,
+    'DefaultMessageTimeToLive': int,
+    'EnableBatchedOperations': _parse_bool,
+    'MaxDeliveryCount': int,
+    'MessageCount': int,
+}
 
 def _convert_xml_to_subscription(xmlstr):
     '''Converts xml response to subscription
@@ -436,7 +474,11 @@ def _convert_xml_to_subscription(xmlstr):
             if xml_attrs:
                 xml_attr = xml_attrs[0]
                 if xml_attr.firstChild:
-                    setattr(subscription, attr_name, xml_attr.firstChild.nodeValue)
+                    value = xml_attr.firstChild.nodeValue
+                    conversion = _SUBSCRIPTION_CONVERSION.get(attr_name)
+                    if conversion is not None:
+                        value = conversion(value)
+                    setattr(subscription, attr_name, value)
 
     for name, value in _get_entry_properties(xmlstr, True).iteritems():
         setattr(subscription, name, value)
@@ -512,15 +554,15 @@ def convert_topic_to_xml(topic):
         if topic.default_message_time_to_live is not None:
             topic_body += ''.join(['<DefaultMessageTimeToLive>', str(topic.default_message_time_to_live), '</DefaultMessageTimeToLive>'])
         if topic.max_size_in_mega_bytes is not None:
-            topic_body += ''.join(['<MaxSizeInMegabytes>', str(topic.default_message_time_to_live), '</MaxSizeInMegabytes>'])
+            topic_body += ''.join(['<MaxSizeInMegabytes>', str(topic.max_size_in_megabytes), '</MaxSizeInMegabytes>'])
         if topic.requires_duplicate_detection is not None:
-            topic_body += ''.join(['<RequiresDuplicateDetection>', str(topic.default_message_time_to_live), '</RequiresDuplicateDetection>'])
+            topic_body += ''.join(['<RequiresDuplicateDetection>', str(topic.requires_duplicate_detection), '</RequiresDuplicateDetection>'])
         if topic.duplicate_detection_history_time_window is not None:
-            topic_body += ''.join(['<DuplicateDetectionHistoryTimeWindow>', str(topic.default_message_time_to_live), '</DuplicateDetectionHistoryTimeWindow>'])    
+            topic_body += ''.join(['<DuplicateDetectionHistoryTimeWindow>', str(topic.duplicate_detection_history_time_window), '</DuplicateDetectionHistoryTimeWindow>'])    
         if topic.enable_batched_operations is not None:
-            topic_body += ''.join(['<EnableBatchedOperations>', str(topic.default_message_time_to_live), '</EnableBatchedOperations>'])
+            topic_body += ''.join(['<EnableBatchedOperations>', str(topic.enable_batched_operations), '</EnableBatchedOperations>'])
         if topic.size_in_bytes is not None:
-            topic_body += ''.join(['<SizeinBytes>', str(topic.default_message_time_to_live), '</SizeinBytes>'])    
+            topic_body += ''.join(['<SizeinBytes>', str(topic.size_in_bytes), '</SizeinBytes>'])    
     topic_body += '</TopicDescription>'
 
     return _create_entry(topic_body)
