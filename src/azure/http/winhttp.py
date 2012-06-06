@@ -320,7 +320,7 @@ class _HTTPConnection:
         resp_headers = self._httprequest.get_all_response_headers()
         fixed_headers = []
         for resp_header in resp_headers.split('\n'):
-            if resp_header.startswith('\t') or resp_header.startswith(' ') and fixed_headers:
+            if (resp_header.startswith('\t') or resp_header.startswith(' ')) and fixed_headers:
                 # append to previous header
                 fixed_headers[-1] += resp_header
             else:
