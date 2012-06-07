@@ -16,7 +16,7 @@
 from distutils.core import setup
 
 setup(name='azure',
-      version='0.2.3',
+      version='0.5',
       description='Windows Azure client APIs',
       url='https://github.com/WindowsAzure/azure-sdk-for-python',
       packages=['azure',

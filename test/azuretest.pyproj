@@ -36,12 +36,14 @@
   <ItemGroup>
     <Compile Include="azuretest\test_blobservice.py" />
     <Compile Include="azuretest\test_queueservice.py" />
+    <Compile Include="azuretest\test_sharedaccesssignature.py" />
     <Compile Include="azuretest\test_tableservice.py" />
     <Compile Include="azuretest\test_servicebusservice.py" />
     <Compile Include="azuretest\util.py" />
     <Compile Include="azuretest\__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="run.bash" />
     <Content Include="run.bat" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

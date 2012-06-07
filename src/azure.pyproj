@@ -44,10 +44,11 @@
     <Compile Include="azure\servicebus\__init__.py" />
     <Compile Include="azure\storage\storageclient.py" />
     <Compile Include="azure\storage\__init__.py" />
+    <Compile Include="setup.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="azure\" />
     <Folder Include="azure\http" />
-    <Folder Include="azure\tests\" />
     <Folder Include="azure\servicebus\" />
     <Folder Include="azure\storage" />
   </ItemGroup>
