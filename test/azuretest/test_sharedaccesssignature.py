@@ -13,23 +13,14 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
-from azure import WindowsAzureError, DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY
+from azure import DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY
 from azure.storage.sharedaccesssignature import (SharedAccessSignature, 
                                                  SharedAccessPolicy, 
                                                  Permission, 
                                                  WebResource)
 from azure.storage import AccessPolicy
 
-from azuretest.util import (credentials, 
-                            getUniqueTestRunID,
-                            STATUS_OK,
-                            STATUS_CREATED,
-                            STATUS_ACCEPTED,
-                            DEFAULT_SLEEP_TIME,
-                            DEFAULT_LEASE_TIME)
-
 import unittest
-import time
 
 #------------------------------------------------------------------------------
 SIGNED_START = 'st'
@@ -50,101 +41,94 @@ class SharedAccessSignatureTest(unittest.TestCase):
         self.sas = SharedAccessSignature(account_name=DEV_ACCOUNT_NAME, 
                                          account_key=DEV_ACCOUNT_KEY)
     def tearDown(self):
-        self.cleanup()
         return super(SharedAccessSignatureTest, self).tearDown()
-
-    def cleanup(self):
-        pass
         
     def test_generate_signature_container(self):
-        access_policy = AccessPolicy()
-        access_policy.start = '2011-10-11'
-        access_policy.expiry = '2011-10-12'
-        access_policy.permission = 'r'
+        accss_plcy = AccessPolicy()
+        accss_plcy.start = '2011-10-11'
+        accss_plcy.expiry = '2011-10-12'
+        accss_plcy.permission = 'r'
         signed_identifier = 'YWJjZGVmZw=='
-        shared_access_policy = SharedAccessPolicy(access_policy, 
-                                                  signed_identifier)
+        sap = SharedAccessPolicy(accss_plcy, signed_identifier)
         signature = self.sas._generate_signature('images', 
                                                  RESOURCE_CONTAINER, 
-                                                 shared_access_policy)
+                                                 sap)
         self.assertEqual(signature, 
                          'VdlALM4TYEYYNf94Bvt3dn48TsA01wk45ltwP3zeKp4=')
 
     def test_generate_signature_blob(self):
-        access_policy = AccessPolicy()
-        access_policy.start = '2011-10-11T11:03:40Z'
-        access_policy.expiry = '2011-10-12T11:53:40Z'
-        access_policy.permission = 'r'
-        shared_access_policy = SharedAccessPolicy(access_policy)
+        accss_plcy = AccessPolicy()
+        accss_plcy.start = '2011-10-11T11:03:40Z'
+        accss_plcy.expiry = '2011-10-12T11:53:40Z'
+        accss_plcy.permission = 'r'
+        sap = SharedAccessPolicy(accss_plcy)
 
         signature = self.sas._generate_signature('images/pic1.png', 
                                                  RESOURCE_BLOB, 
-                                                 shared_access_policy)
+                                                 sap)
         self.assertEqual(signature, 
                          '7NIEip+VOrQ5ZV80pORPK1MOsJc62wwCNcbMvE+lQ0s=')
 
     def test_blob_signed_query_string(self):
-        access_policy = AccessPolicy()
-        access_policy.start = '2011-10-11'
-        access_policy.expiry = '2011-10-12'
-        access_policy.permission = 'w'
-        shared_access_policy = SharedAccessPolicy(access_policy)
-        query_string = self.sas.generate_signed_query_string('images/pic1.png', 
-                                                             RESOURCE_BLOB, 
-                                                             shared_access_policy)
-        self.assertEqual(query_string[SIGNED_START], '2011-10-11')
-        self.assertEqual(query_string[SIGNED_EXPIRY], '2011-10-12')
-        self.assertEqual(query_string[SIGNED_RESOURCE], RESOURCE_BLOB)
-        self.assertEqual(query_string[SIGNED_PERMISSION], 'w')
-        self.assertEqual(query_string[SIGNED_SIGNATURE], 
+        accss_plcy = AccessPolicy()
+        accss_plcy.start = '2011-10-11'
+        accss_plcy.expiry = '2011-10-12'
+        accss_plcy.permission = 'w'
+        sap = SharedAccessPolicy(accss_plcy)
+        qry_str = self.sas.generate_signed_query_string('images/pic1.png',
+                                                        RESOURCE_BLOB, 
+                                                        sap)
+        self.assertEqual(qry_str[SIGNED_START], '2011-10-11')
+        self.assertEqual(qry_str[SIGNED_EXPIRY], '2011-10-12')
+        self.assertEqual(qry_str[SIGNED_RESOURCE], RESOURCE_BLOB)
+        self.assertEqual(qry_str[SIGNED_PERMISSION], 'w')
+        self.assertEqual(qry_str[SIGNED_SIGNATURE], 
                          'k8uyTrn3pgLXuhwgZhxeAH6mZ/es9k2vqHPJEuIH4CE=')
 
     def test_container_signed_query_string(self):
-        access_policy = AccessPolicy()
-        access_policy.start = '2011-10-11'
-        access_policy.expiry = '2011-10-12'
-        access_policy.permission = 'r'
+        accss_plcy = AccessPolicy()
+        accss_plcy.start = '2011-10-11'
+        accss_plcy.expiry = '2011-10-12'
+        accss_plcy.permission = 'r'
         signed_identifier = 'YWJjZGVmZw=='
-        shared_access_policy = SharedAccessPolicy(access_policy, 
-                                                  signed_identifier)
-        query_string = self.sas.generate_signed_query_string('images', 
-                                                             RESOURCE_CONTAINER, 
-                                                             shared_access_policy)
-        self.assertEqual(query_string[SIGNED_START], '2011-10-11')
-        self.assertEqual(query_string[SIGNED_EXPIRY], '2011-10-12')
-        self.assertEqual(query_string[SIGNED_RESOURCE], RESOURCE_CONTAINER)
-        self.assertEqual(query_string[SIGNED_PERMISSION], 'r')
-        self.assertEqual(query_string[SIGNED_IDENTIFIER], 'YWJjZGVmZw==')
-        self.assertEqual(query_string[SIGNED_SIGNATURE], 
+        sap = SharedAccessPolicy(accss_plcy, signed_identifier)
+        qry_str = self.sas.generate_signed_query_string('images', 
+                                                        RESOURCE_CONTAINER, 
+                                                        sap)
+        self.assertEqual(qry_str[SIGNED_START], '2011-10-11')
+        self.assertEqual(qry_str[SIGNED_EXPIRY], '2011-10-12')
+        self.assertEqual(qry_str[SIGNED_RESOURCE], RESOURCE_CONTAINER)
+        self.assertEqual(qry_str[SIGNED_PERMISSION], 'r')
+        self.assertEqual(qry_str[SIGNED_IDENTIFIER], 'YWJjZGVmZw==')
+        self.assertEqual(qry_str[SIGNED_SIGNATURE], 
                          'VdlALM4TYEYYNf94Bvt3dn48TsA01wk45ltwP3zeKp4=')
 
     def test_sign_request(self):
-        access_policy = AccessPolicy()
-        access_policy.start = '2011-10-11'
-        access_policy.expiry = '2011-10-12'
-        access_policy.permission = 'r'
-        shared_access_policy = SharedAccessPolicy(access_policy)
-        query_string = self.sas.generate_signed_query_string('images/pic1.png', 
-                                                             RESOURCE_BLOB, 
-                                                             shared_access_policy)
-        permission_set = []
+        accss_plcy = AccessPolicy()
+        accss_plcy.start = '2011-10-11'
+        accss_plcy.expiry = '2011-10-12'
+        accss_plcy.permission = 'r'
+        sap = SharedAccessPolicy(accss_plcy)
+        qry_str = self.sas.generate_signed_query_string('images/pic1.png', 
+                                                   RESOURCE_BLOB, 
+                                                   sap)
+        
         permission = Permission()
         permission.path = '/images/pic1.png'
-        permission.query_string = query_string
-        permission_set.append(permission)
-        self.sas.permission_set = permission_set
+        permission.query_string = qry_str
+        self.sas.permission_set = [permission]
 
-        web_resource = WebResource()
-        web_resource.properties[SIGNED_RESOURCE_TYPE] = RESOURCE_BLOB
-        web_resource.properties[SHARED_ACCESS_PERMISSION] = 'r'
-        web_resource.path = '/images/pic1.png?comp=metadata'
-        web_resource.request_url = '/images/pic1.png?comp=metadata'
+        web_rsrc = WebResource()
+        web_rsrc.properties[SIGNED_RESOURCE_TYPE] = RESOURCE_BLOB
+        web_rsrc.properties[SHARED_ACCESS_PERMISSION] = 'r'
+        web_rsrc.path = '/images/pic1.png?comp=metadata'
+        web_rsrc.request_url = '/images/pic1.png?comp=metadata'
 
-        web_resource = self.sas.sign_request(web_resource)
+        web_rsrc = self.sas.sign_request(web_rsrc)
 
-        self.assertEqual(web_resource.request_url, 
+        self.assertEqual(web_rsrc.request_url, 
                          '/images/pic1.png?comp=metadata&' + 
-                         self.sas._convert_query_string(query_string))
+                         self.sas._convert_query_string(qry_str))
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
