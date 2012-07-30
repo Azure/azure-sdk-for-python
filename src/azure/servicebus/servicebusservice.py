@@ -17,7 +17,7 @@ import os
 import urllib2
 
 from azure.http.httpclient import _HTTPClient
-from azure.http import HTTPError
+from azure.http import HTTPError, HTTP_RESPONSE_NO_CONTENT
 from azure.servicebus import (_update_service_bus_header, _create_message, 
                                 convert_topic_to_xml, _convert_response_to_topic, 
                                 convert_queue_to_xml, _convert_response_to_queue, 
@@ -27,11 +27,11 @@ from azure.servicebus import (_update_service_bus_header, _create_message,
                                 _convert_xml_to_subscription, _convert_xml_to_rule,
                                 _service_bus_error_handler, AZURE_SERVICEBUS_NAMESPACE, 
                                 AZURE_SERVICEBUS_ACCESS_KEY, AZURE_SERVICEBUS_ISSUER)
-from azure.http import HTTPRequest
+from azure.http import HTTPRequest, HTTP_RESPONSE_NO_CONTENT
 from azure import (_validate_not_none, Feed,
                                 _convert_response_to_feeds, _str_or_none, _int_or_none,
                                 _get_request_body, _update_request_uri_query, 
-                                _dont_fail_on_exist, _dont_fail_not_exist, 
+                                _dont_fail_on_exist, _dont_fail_not_exist, WindowsAzureConflictError, 
                                 WindowsAzureError, _parse_response, _convert_class_to_xml, 
                                 _parse_response_for_dict, _parse_response_for_dict_prefix, 
                                 _parse_response_for_dict_filter,  
@@ -699,7 +699,5 @@ class ServiceBusService:
         except HTTPError as e:
             return _service_bus_error_handler(e)
     
-        if not resp:
-            return None
         return resp
     

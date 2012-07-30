@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from ctypes import c_void_p, c_long, c_ulong, c_longlong, c_ulonglong, c_short, c_ushort, c_wchar_p, c_byte
+from ctypes import c_void_p, c_long, c_ulong, c_longlong, c_ulonglong, c_short, c_ushort, c_wchar_p, c_byte, c_size_t
 from ctypes import byref, Structure, Union, POINTER, WINFUNCTYPE, HRESULT, oledll, WinDLL, cast, create_string_buffer
 import ctypes
 import urllib2  
@@ -41,11 +41,23 @@ _ole32 = oledll.ole32
 _oleaut32 = WinDLL('oleaut32')
 _CLSIDFromString = _ole32.CLSIDFromString
 _CoInitialize = _ole32.CoInitialize
+_CoInitialize.argtypes = [c_void_p]
+
 _CoCreateInstance = _ole32.CoCreateInstance
+
 _SysAllocString = _oleaut32.SysAllocString
+_SysAllocString.restype = c_void_p
+_SysAllocString.argtypes = [c_wchar_p]
+
 _SysFreeString = _oleaut32.SysFreeString
+_SysFreeString.argtypes = [c_void_p]
+
 _SafeArrayDestroy = _oleaut32.SafeArrayDestroy
+_SafeArrayDestroy.argtypes = [c_void_p]
+
 _CoTaskMemAlloc = _ole32.CoTaskMemAlloc
+_CoTaskMemAlloc.restype = c_void_p
+_CoTaskMemAlloc.argtypes = [c_size_t]
 #------------------------------------------------------------------------------
 
 class BSTR(c_wchar_p):
@@ -215,17 +227,7 @@ class _WinHttpRequest(c_void_p):
         status_text = bstr_status_text.value
         _SysFreeString(bstr_status_text)
         return status_text
-
-    def response_text(self):
-        ''' Gets response body as text. '''
-
-        bstr_resptext = c_void_p()
-        _WinHttpRequest._ResponseText(self, byref(bstr_resptext))
-        bstr_resptext = ctypes.cast(bstr_resptext, c_wchar_p)
-        resptext = bstr_resptext.value
-        _SysFreeString(bstr_resptext)
-        return resptext
-    
+ 
     def response_body(self):
         ''' 
         Gets response body as a SAFEARRAY and converts the SAFEARRAY to str.  If it is an xml 
@@ -283,7 +285,7 @@ class _HTTPConnection:
         self.protocol = protocol
         clsid = GUID('{2087C2F4-2CEF-4953-A8AB-66779B670495}')
         iid = GUID('{016FE2EC-B2C8-45F8-B23B-39E53A75396B}')
-        _CoInitialize(0)
+        _CoInitialize(None)
         _CoCreateInstance(byref(clsid), 0, 1, byref(iid), byref(self._httprequest))
         
     def putrequest(self, method, uri):
@@ -330,7 +332,7 @@ class _HTTPConnection:
         for resp_header in fixed_headers:
             if ':' in resp_header:
                 pos = resp_header.find(':')
-                headers.append((resp_header[:pos], resp_header[pos+1:].strip()))
+                headers.append((resp_header[:pos].lower(), resp_header[pos+1:].strip()))
 
         body = self._httprequest.response_body()
         length = len(body)
