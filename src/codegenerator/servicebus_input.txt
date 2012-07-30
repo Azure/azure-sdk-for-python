@@ -470,8 +470,6 @@ def _perform_request(self, request):
     except HTTPError as e:
         return _service_bus_error_handler(e)
 
-    if not resp:
-        return None
     return resp
 
 [end]

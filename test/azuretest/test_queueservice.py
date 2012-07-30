@@ -19,27 +19,25 @@ from azure.storage.queueservice import *
 from azuretest.util import *
 
 import unittest
-import time
 
 #------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'
 #------------------------------------------------------------------------------
-class QueueServiceTest(unittest.TestCase):
+class QueueServiceTest(AzureTestCase):
 
     def setUp(self):
         self.queue_client = QueueService(account_name=credentials.getStorageServicesName(), 
                                                 account_key=credentials.getStorageServicesKey())
-        # TODO: it may be overkill to use the machine name from 
-        #       getUniqueTestRunID, current time may be unique enough
+
         __uid = getUniqueTestRunID()
 
         queue_base_name = u'%s' % (__uid)
         self.test_queues = []
         self.creatable_queues = []
         for i in range(10):
-            self.test_queues.append(TEST_QUEUE_PREFIX + getUniqueNameBasedOnCurrentTime(queue_base_name))
+            self.test_queues.append(TEST_QUEUE_PREFIX + str(i) + getUniqueNameBasedOnCurrentTime(queue_base_name))
         for i in range(4):
-            self.creatable_queues.append('mycreatablequeue' + getUniqueNameBasedOnCurrentTime(queue_base_name))
+            self.creatable_queues.append('mycreatablequeue' + str(i) + getUniqueNameBasedOnCurrentTime(queue_base_name))
         for queue_name in self.test_queues:
             self.queue_client.create_queue(queue_name)
 
@@ -107,6 +105,24 @@ class QueueServiceTest(unittest.TestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result['x-ms-approximate-messages-count'], '0')
 
+    def test_create_queue_already_exist(self):
+        #Action
+        created1 = self.queue_client.create_queue(self.creatable_queues[0])
+        created2 = self.queue_client.create_queue(self.creatable_queues[0])
+
+        #Asserts
+        self.assertTrue(created1)
+        self.assertFalse(created2)
+
+    def test_create_queue_fail_on_exist(self):
+        #Action
+        created = self.queue_client.create_queue(self.creatable_queues[0], None, True)
+        with self.assertRaises(WindowsAzureError):
+            self.queue_client.create_queue(self.creatable_queues[0], None, True)
+
+        #Asserts
+        self.assertTrue(created)
+
     def test_create_queue_with_options(self):
         #Action
         self.queue_client.create_queue(self.creatable_queues[1], x_ms_meta_name_values = {'foo':'test', 'bar':'blah'})
@@ -118,9 +134,34 @@ class QueueServiceTest(unittest.TestCase):
         self.assertEqual('test', result['x-ms-meta-foo'])
         self.assertEqual('blah', result['x-ms-meta-bar'])
 
+    def test_delete_queue_not_exist(self):
+        #Action
+        deleted = self.queue_client.delete_queue(self.creatable_queues[0])
+
+        #Asserts
+        self.assertFalse(deleted)
+
+    def test_delete_queue_fail_not_exist_not_exist(self):
+        #Action
+        with self.assertRaises(WindowsAzureError):
+            self.queue_client.delete_queue(self.creatable_queues[0], True)
+
+        #Asserts
+
+    def test_delete_queue_fail_not_exist_already_exist(self):
+        #Action
+        created = self.queue_client.create_queue(self.creatable_queues[0])
+        deleted = self.queue_client.delete_queue(self.creatable_queues[0], True)
+
+        #Asserts
+        self.assertTrue(created)
+        self.assertTrue(deleted)
+
     def test_list_queues(self):
         #Action
         queues = self.queue_client.list_queues()
+        for queue in queues:
+            pass
 
         #Asserts
         self.assertIsNotNone(queues)
@@ -172,7 +213,7 @@ class QueueServiceTest(unittest.TestCase):
         self.queue_client.put_message(self.test_queues[0], 'message3')
         self.queue_client.put_message(self.test_queues[0], 'message4')
     
-    def test_get_messges(self):
+    def test_get_messages(self):
         #Action
         self.queue_client.put_message(self.test_queues[1], 'message1')
         self.queue_client.put_message(self.test_queues[1], 'message2')
