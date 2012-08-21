@@ -34,7 +34,7 @@ To get the source code of the SDK via **git** just type:
 
 Alternatively, to get the source code via the Python Package Index (PyPI), type
 
-    %SystemDrive%\Python27\Scripts\pip.exe install pyazure
+    %SystemDrive%\Python27\Scripts\pip.exe install azure
 
 You can use these packages against the cloud Windows Azure Services, or against
 the local Storage Emulator (with the exception of Service Bus features).
