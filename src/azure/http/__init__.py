@@ -13,6 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
+HTTP_RESPONSE_NO_CONTENT = 204
 
 class HTTPError(Exception):
     ''' HTTP Exception when response status code >= 300 '''

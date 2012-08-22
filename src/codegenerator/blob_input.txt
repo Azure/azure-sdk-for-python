@@ -21,7 +21,8 @@ marker: Optional. A string value that identifies the portion of the list to be r
         with the next list operation.
 maxresults: Optional. Specifies the maximum number of containers to return. 
 include: Optional. Include this parameter to specify that the container's metadata be 
-        returned as part of the response body.
+        returned as part of the response body. set this parameter to string 'metadata' to
+		get container's metadata.
 [return]
 ContainerEnumResults
 [url]
@@ -243,7 +244,7 @@ container_name: the name of container to get the blob
 blob_name: the name of blob
 x_ms_range: Optional. Return only the bytes of the blob in the specified range. 
 [return]
-str
+BlobResult
 [url]
 GET http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>
 [query]
@@ -320,6 +321,8 @@ x_ms_lease_id: Optional. If this header is specified, the operation will be perf
 			1. The blob's lease is currently active
 			2. The lease ID specified in the request matches that of the blob.
 [return]
+dict
+filter=['x-ms-snapshot', 'etag', 'last-modified']
 [url]
 PUT http://<account-name>.blob.core.windows.net/<container-name>/<blob-name>?comp=snapshot
 [query]

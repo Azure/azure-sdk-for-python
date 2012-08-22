@@ -19,11 +19,11 @@ import urllib2
 from azure.storage import *
 from azure.storage.storageclient import _StorageClient
 from azure.storage import (_update_storage_queue_header)
-from azure.http import HTTPRequest
+from azure.http import HTTPRequest, HTTP_RESPONSE_NO_CONTENT
 from azure import (_validate_not_none, Feed,
                                 _convert_response_to_feeds, _str_or_none, _int_or_none,
                                 _get_request_body, _update_request_uri_query, 
-                                _dont_fail_on_exist, _dont_fail_not_exist, 
+                                _dont_fail_on_exist, _dont_fail_not_exist, WindowsAzureConflictError, 
                                 WindowsAzureError, _parse_response, _convert_class_to_xml, 
                                 _parse_response_for_dict, _parse_response_for_dict_prefix, 
                                 _parse_response_for_dict_filter,  
@@ -96,13 +96,17 @@ class QueueService(_StorageClient):
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         if not fail_on_exist:
             try:
-                self._perform_request(request)
+                response = self._perform_request(request)
+                if response.status == HTTP_RESPONSE_NO_CONTENT:
+                    return False
                 return True
             except WindowsAzureError as e:
                 _dont_fail_on_exist(e)
                 return False
         else:
-            self._perform_request(request)
+            response = self._perform_request(request)
+            if response.status == HTTP_RESPONSE_NO_CONTENT:
+                raise WindowsAzureConflictError(azure._ERROR_CONFLICT)
             return True
 
     def delete_queue(self, queue_name, fail_not_exist=False):
