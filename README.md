@@ -34,7 +34,7 @@ To get the source code of the SDK via **git** just type:
 
 Alternatively, to get the source code via the Python Package Index (PyPI), type
 
-    %SystemDrive%\Python27\Scripts\pip.exe install pyazure
+    %SystemDrive%\Python27\Scripts\pip.exe install azure
 
 You can use these packages against the cloud Windows Azure Services, or against
 the local Storage Emulator (with the exception of Service Bus features).
@@ -45,20 +45,21 @@ the local Storage Emulator (with the exception of Service Bus features).
 # Usage
 ## Table Storage
 
-To ensure a table exists, call **create_table**:
+To ensure a table exists, call **create\_table**:
 
 ```Python
 from azure.storage import TableService
 ts = TableService(account_name, account_key)
-table = ts.create_table('tasktable')
+ts.create_table('tasktable')
 ```
 
-A new entity can be added by calling **insert_entity**:
+A new entity can be added by calling **insert\_entity**:
 
 ```Python
+from datetime import datetime
 ts = TableService(account_name, account_key)
-table = ts.create_table('tasktable')
-table.insert_entity(
+ts.create_table('tasktable')
+ts.insert_entity(
      'tasktable',
      {
         'PartitionKey' : 'tasksSeattle',
@@ -69,7 +70,7 @@ table.insert_entity(
 )
 ```
 
-The method **get_entity** can then be used to fetch the entity that was just inserted:
+The method **get\_entity** can then be used to fetch the entity that was just inserted:
 
 ```Python
 ts = TableService(account_name, account_key)
@@ -78,27 +79,25 @@ entity = ts.get_entity('tasktable', 'tasksSeattle', '1')
 
 ## Blob Storage
 
-The **create_container** method can be used to create a 
+The **create\_container** method can be used to create a 
 container in which to store a blob:
 
 ```Python
 from azure.storage import BlobService
-blob_service = BlobService()
-container = blob_service.create_container('taskcontainer')
+blob_service = BlobService(account_name, account_key)
+blob_service.create_container('taskcontainer')
 ```
 
-To upload a file (assuming it is called task1-upload.txt, it contains the exact text "hello world" (no quotation marks), and it is placed in the same folder as the script below), the method **put_blob** can be used:
+To upload a file (assuming it is called task1-upload.txt, it contains the exact text "hello world" (no quotation marks), and it is placed in the same folder as the script below), the method **put\_blob** can be used:
 
 ```Python
 from azure.storage import BlobService
 blob_service = BlobService(account_name, account_key)
-blob_service.put_blob('taskcontainer', 'task1', 
-blobService = azure.createBlobService()
-blobService.put_blob('taskcontainer', 'task1', file('task1-upload.txt').read())
+blob_service.put_blob('taskcontainer', 'task1', file('task1-upload.txt').read(), 'BlockBlob')
 
 ```
 
-To download the blob and write it to the file system, the **get_blob** method can be used:
+To download the blob and write it to the file system, the **get\_blob** method can be used:
 
 ```Python
 from azure.storage import BlobService
@@ -108,15 +107,15 @@ blob = blob_service.get_blob('taskcontainer', 'task1')
 
 ## Storage Queues
 
-The **create_queue** method can be used to ensure a queue exists:
+The **create\_queue** method can be used to ensure a queue exists:
 
 ```Python
 from azure.storage import QueueService
 queue_service = QueueService(account_name, account_key)
-queue = queue_service.create_queue('taskqueue')
+queue_service.create_queue('taskqueue')
 ```
 
-The **put_message** method can then be called to insert the message into the queue:
+The **put\_message** method can then be called to insert the message into the queue:
 
 ```Python
 from azure.storage import QueueService
@@ -124,69 +123,73 @@ queue_service = QueueService(account_name, account_key)
 queue_service.put_message('taskqueue', 'Hello world!')
 ```
 
-It is then possible to call the **get___messages** method, process the message and then call **delete_message** on the messages ID. This two-step process ensures messages don't get lost when they are removed from the queue.
+It is then possible to call the **get\_messages** method, process the message and then call **delete\_message** with the message id and receipt. This two-step process ensures messages don't get lost when they are removed from the queue.
 
 ```Python
 from azure.storage import QueueService
 queue_service = QueueService(account_name, account_key)
 messages = queue_service.get_messages('taskqueue')
-queue_service.delete_message('taskqueue', messages[0].message_id)
+queue_service.delete_message('taskqueue', messages[0].message_id, messages[0].pop_receipt)
 ```
 
 ## ServiceBus Queues
 
 ServiceBus Queues are an alternative to Storage Queues that might be useful in scenarios where more advanced messaging features are needed (larger message sizes, message ordering, single-operaiton destructive reads, scheduled delivery) using push-style delivery (using long polling).
 
-The **create_queue** method can be used to ensure a queue exists:
+The **create\_queue** method can be used to ensure a queue exists:
 
 ```Python
 from azure.servicebus import ServiceBusService
-sbs = ServiceBusService(service_namespace, account_key)
-queue = sbs.create_queue('taskqueue');
+sbs = ServiceBusService(service_namespace, account_key, 'owner')
+sbs.create_queue('taskqueue')
 ```
 
-The **send__queue__message** method can then be called to insert the message into the queue:
+The **send\_queue\_message** method can then be called to insert the message into the queue:
 
 ```Python
-from azure.servicebus import ServiceBusService
-sbs = ServiceBusService(service_namespace, account_key)
-sbs.send_queue_message('taskqueue', 'Hello World!')
+from azure.servicebus import ServiceBusService, Message
+sbs = ServiceBusService(service_namespace, account_key, 'owner')
+msg = Message('Hello World!')
+sbs.send_queue_message('taskqueue', msg)
 ```
 
-It is then possible to call the **read__delete___queue__message** method to dequeue the message.
+It is then possible to call the **receive\_queue\_message** method to dequeue the message.
 
 ```Python
 from azure.servicebus import ServiceBusService
-sbs = ServiceBusService(service_namespace, account_key)
-msg = sbs.read_delete_queue_message('taskqueue')
+sbs = ServiceBusService(service_namespace, account_key, 'owner')
+msg = sbs.receive_queue_message('taskqueue')
 ```
 
 ## ServiceBus Topics
 
 ServiceBus topics are an abstraction on top of ServiceBus Queues that make pub/sub scenarios easy to implement.
 
-The **create_topic** method can be used to create a server-side topic:
+The **create\_topic** method can be used to create a server-side topic:
 
 ```Python
 from azure.servicebus import ServiceBusService
-sbs = ServiceBusService(service_namespace, account_key)
-topic = sbs.create_topic('taskdiscussion')
+sbs = ServiceBusService(service_namespace, account_key, 'owner')
+sbs.create_topic('taskdiscussion')
 ```
 
-The **send__topic__message** method can be used to send a message to a topic:
+The **send\_topic\_message** method can be used to send a message to a topic:
 
 ```Python
-from azure.servicebus import ServiceBusService
-sbs = ServiceBusService(service_namespace, account_key)
-sbs.send_topic_message('taskdiscussion', 'Hello world!')
+from azure.servicebus import ServiceBusService, Message
+sbs = ServiceBusService(service_namespace, account_key, 'owner')
+msg = Message('Hello World!')
+sbs.send_topic_message('taskdiscussion', msg)
 ```
 
-A client can then create a subscription and start consuming messages by calling the **create__subscription** method followed by the **receive__subscription__message** method. Please note that any messages sent before the subscription is created will not be received.
+A client can then create a subscription and start consuming messages by calling the **create\_subscription** method followed by the **receive\_subscription\_message** method. Please note that any messages sent before the subscription is created will not be received.
 
 ```Python
-from azure.servicebus import ServiceBusService
-sbs = ServiceBusService(service_namespace, account_key)
+from azure.servicebus import ServiceBusService, Message
+sbs = ServiceBusService(service_namespace, account_key, 'owner')
 sbs.create_subscription('taskdiscussion', 'client1')
+msg = Message('Hello World!')
+sbs.send_topic_message('taskdiscussion', msg)
 msg = sbs.receive_subscription_message('taskdiscussion', 'client1')
 ```
 

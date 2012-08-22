@@ -40,8 +40,8 @@ def to_legalname(name):
         if ch.isupper():
             legalname += '_'
         legalname += ch
-    legalname = legalname.replace('__', '_').replace('_m_d5', '_md5')
-    return legalname.lower()
+    legalname = legalname.replace('__', '_').lower().replace('_m_d5', '_md5')
+    return legalname
 
 def normalize_xml(xmlstr):
     if xmlstr:
@@ -99,7 +99,7 @@ def output_import(output_file, class_name):
         output_str += 'from azure.storage import *\n'
         output_str += 'from azure.storage.storageclient import _StorageClient\n'
         if 'Blob' in class_name:
-            output_str += 'from azure.storage import (_update_storage_blob_header,\n'
+            output_str += 'from azure.storage import (_update_storage_blob_header, _create_blob_result,\n'
             output_str += indent*8 + 'convert_block_list_to_xml, convert_response_to_block_list) \n'
         elif 'Queue' in class_name:
             output_str += 'from azure.storage import (_update_storage_queue_header)\n'            
@@ -115,7 +115,7 @@ def output_import(output_file, class_name):
     output_str += 'from azure import (_validate_not_none, Feed,\n'
     output_str += indent*8 + '_convert_response_to_feeds, _str_or_none, _int_or_none,\n'
     output_str += indent*8 + '_get_request_body, _update_request_uri_query, \n'
-    output_str += indent*8 + '_dont_fail_on_exist, _dont_fail_not_exist, \n'
+    output_str += indent*8 + '_dont_fail_on_exist, _dont_fail_not_exist, WindowsAzureConflictError, \n'
     output_str += indent*8 + 'WindowsAzureError, _parse_response, _convert_class_to_xml, \n' 
     output_str += indent*8 + '_parse_response_for_dict, _parse_response_for_dict_prefix, \n'
     output_str += indent*8 + '_parse_response_for_dict_filter,  \n'
@@ -260,7 +260,7 @@ def output_list(list_name, request_list, validate_conversions):
     return output_list_str
 
 
-def output_method_body(return_type, method_params, uri_param, req_protocol, req_host, host_param, req_method, req_uri, req_query, req_header, req_body, req_param):
+def output_method_body(method_name, return_type, method_params, uri_param, req_protocol, req_host, host_param, req_method, req_uri, req_query, req_header, req_body, req_param):
     indent = '    '
     output_body = ''.join([indent*2, 'request = HTTPRequest()\n'])
 
@@ -341,16 +341,32 @@ def output_method_body(return_type, method_params, uri_param, req_protocol, req_
 
     for name, value in method_params:
         if 'fail_on_exist' in name:
-            output_body += indent*2 + 'if not ' + name + ':\n'
-            output_body += indent*3 + 'try:\n'
-            output_body += ''.join([indent*4, 'self._perform_request(request)\n'])     
-            output_body += ''.join([indent*4, 'return True\n'])         
-            output_body += indent*3 + 'except WindowsAzureError as e:\n'
-            output_body += indent*4 + '_dont_fail_on_exist(e)\n'
-            output_body += indent*4 + 'return False\n'
-            output_body += indent*2 + 'else:\n'
-            output_body += ''.join([indent*3, 'self._perform_request(request)\n'])
-            output_body += ''.join([indent*3, 'return True\n\n'])
+            if method_name == 'create_queue' and 'queue.core' in req_host:  #QueueService create_queue
+                output_body += indent*2 + 'if not ' + name + ':\n'
+                output_body += indent*3 + 'try:\n'
+                output_body += ''.join([indent*4, 'response = self._perform_request(request)\n'])     
+                output_body += ''.join([indent*4, 'if response.status == 204:\n'])
+                output_body += ''.join([indent*5, 'return False\n']) 
+                output_body += ''.join([indent*4, 'return True\n'])         
+                output_body += indent*3 + 'except WindowsAzureError as e:\n'
+                output_body += indent*4 + '_dont_fail_on_exist(e)\n'
+                output_body += indent*4 + 'return False\n'
+                output_body += indent*2 + 'else:\n'
+                output_body += ''.join([indent*3, 'response = self._perform_request(request)\n'])
+                output_body += ''.join([indent*3, 'if response.status == 204:\n'])
+                output_body += ''.join([indent*4, 'raise WindowsAzureConflictError(azure._ERROR_CONFLICT)\n'])
+                output_body += ''.join([indent*3, 'return True\n\n'])
+            else:
+                output_body += indent*2 + 'if not ' + name + ':\n'
+                output_body += indent*3 + 'try:\n'
+                output_body += ''.join([indent*4, 'self._perform_request(request)\n'])     
+                output_body += ''.join([indent*4, 'return True\n'])         
+                output_body += indent*3 + 'except WindowsAzureError as e:\n'
+                output_body += indent*4 + '_dont_fail_on_exist(e)\n'
+                output_body += indent*4 + 'return False\n'
+                output_body += indent*2 + 'else:\n'
+                output_body += ''.join([indent*3, 'self._perform_request(request)\n'])
+                output_body += ''.join([indent*3, 'return True\n\n'])
             break
         elif 'fail_not_exist' in name:
             output_body += indent*2 + 'if not ' + name + ':\n'
@@ -383,13 +399,15 @@ def output_method_body(return_type, method_params, uri_param, req_protocol, req_
         elif return_type == 'PageList':
             output_body += indent*2 + 'return _parse_simple_list(response, PageList, PageRange, "page_ranges")'
         else:
-            if return_type == 'Message':
+            if return_type == 'BlobResult':
+                output_body += indent*2 + 'return _create_blob_result(response)\n\n'
+            elif return_type == 'Message':
                 output_body += indent*2 + 'return _create_message(response, self)\n\n'
             elif return_type == 'str':
                 output_body += indent*2 + 'return response.body\n\n'
             elif return_type == 'BlobBlockList':
                 output_body += indent*2 + 'return convert_response_to_block_list(response)\n\n'
-            elif 'Feed' in return_type:
+            elif 'Feed' in return_type:           
                 for name in ['table', 'entity', 'topic', 'subscription', 'queue', 'rule']:
                     if name +'\'),' in return_type:
                         convert_func = '_convert_xml_to_' + name
@@ -412,7 +430,7 @@ def output_method(output_file, method_name, method_params, method_comment, retur
     output_str += output_method_def(method_name, method_params, uri_param, req_param, req_query, req_header)
     output_str += output_method_comments(method_comment, req_param, req_query, req_header)
     output_str += output_method_validates(uri_param, req_param, req_query, req_header)
-    output_str += output_method_body(return_type, method_params, uri_param, req_protocol, req_host, host_param, req_method, req_uri, req_query, req_header, req_body, req_param)    
+    output_str += output_method_body(method_name, return_type, method_params, uri_param, req_protocol, req_host, host_param, req_method, req_uri, req_query, req_header, req_body, req_param)    
     output_file.write(output_str)
 
 
@@ -686,20 +704,32 @@ if __name__ == '__main__':
     auto_codegen('queue_input.txt', '../azure/storage/queueservice.py')
     auto_codegen('servicebus_input.txt', '../azure/servicebus/servicebusservice.py')
 
-    def add_license(license_file_name, output_file_name):
-        license_file = open(license_file_name, 'r')
+    def add_license(license_str, output_file_name):
         output_file = open(output_file_name, 'r')
         content = output_file.read()
-        license_txt = license_file.read()
-        license_file.close()
         output_file.close()
         output_file = open(output_file_name, 'w')
-        output_file.write(license_txt)
+        output_file.write(license_str)
         output_file.write(content)
         output_file.close()
 
+    license_str = '''#-------------------------------------------------------------------------
+# Copyright 2011 Microsoft Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#--------------------------------------------------------------------------
+'''
 
-    add_license('license.txt', '../azure/storage/blobservice.py')
-    add_license('license.txt', '../azure/storage/tableservice.py')
-    add_license('license.txt', '../azure/storage/queueservice.py')
-    add_license('license.txt', '../azure/servicebus/servicebusservice.py')
+    add_license(license_str, '../azure/storage/blobservice.py')
+    add_license(license_str, '../azure/storage/tableservice.py')
+    add_license(license_str, '../azure/storage/queueservice.py')
+    add_license(license_str, '../azure/servicebus/servicebusservice.py')

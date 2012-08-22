@@ -23,11 +23,11 @@ from azure.storage import (_update_storage_table_header,
                                 convert_entity_to_xml, _convert_response_to_entity, 
                                 _convert_xml_to_entity, _sign_storage_table_request)
 from azure.http.batchclient import _BatchClient
-from azure.http import HTTPRequest
+from azure.http import HTTPRequest, HTTP_RESPONSE_NO_CONTENT
 from azure import (_validate_not_none, Feed,
                                 _convert_response_to_feeds, _str_or_none, _int_or_none,
                                 _get_request_body, _update_request_uri_query, 
-                                _dont_fail_on_exist, _dont_fail_not_exist, 
+                                _dont_fail_on_exist, _dont_fail_not_exist, WindowsAzureConflictError, 
                                 WindowsAzureError, _parse_response, _convert_class_to_xml, 
                                 _parse_response_for_dict, _parse_response_for_dict_prefix, 
                                 _parse_response_for_dict_filter,  
@@ -90,7 +90,7 @@ class TableService(_StorageClient):
 
         return _parse_response_for_dict(response)
 
-    def query_tables(self, table_name = None, top=None):
+    def query_tables(self, table_name = None, top=None, next_table_name=None):
         '''
         Returns a list of tables under the specified account.
         
@@ -105,7 +105,10 @@ class TableService(_StorageClient):
         else:
             uri_part_table_name = ""
         request.path = '/Tables' + uri_part_table_name + ''
-        request.query = [('$top', _int_or_none(top))]
+        request.query = [
+            ('$top', _int_or_none(top)),
+            ('NextTableName', _str_or_none(next_table_name))
+            ]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
@@ -116,7 +119,9 @@ class TableService(_StorageClient):
         '''
         Creates a new table in the storage account.
         
-        table: name of the table to create.
+        table: name of the table to create. Table name may contain only alphanumeric characters
+             and cannot begin with a numeric character. It is case-insensitive and must be from 
+        	 3 to 63 characters long.
         fail_on_exist: specify whether throw exception when table exists.
         '''
         _validate_not_none('table', table)
@@ -184,7 +189,7 @@ class TableService(_StorageClient):
 
         return _convert_response_to_entity(response)
 
-    def query_entities(self, table_name, filter=None, select=None, top=None):
+    def query_entities(self, table_name, filter=None, select=None, top=None, next_partition_key=None, next_row_key=None):
         '''
         Get entities in a table; includes the $filter and $select options. 
         
@@ -201,7 +206,9 @@ class TableService(_StorageClient):
         request.query = [
             ('$filter', _str_or_none(filter)),
             ('$select', _str_or_none(select)),
-            ('$top', _int_or_none(top))
+            ('$top', _int_or_none(top)),
+            ('NextPartitionKey', _str_or_none(next_partition_key)),
+            ('NextRowKey', _str_or_none(next_row_key))
             ]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
@@ -228,6 +235,8 @@ class TableService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
+
+        return _convert_response_to_entity(response)
 
     def update_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml', if_match='*'):
         '''
@@ -257,6 +266,8 @@ class TableService(_StorageClient):
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
 
+        return _parse_response_for_dict_filter(response, filter=['etag'])
+
     def merge_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml', if_match='*'):
         '''
         Updates an existing entity by updating the entity's properties. This operation does 
@@ -284,6 +295,8 @@ class TableService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
+
+        return _parse_response_for_dict_filter(response, filter=['etag'])
 
     def delete_entity(self, table_name, partition_key, row_key, content_type='application/atom+xml', if_match='*'):
         '''
@@ -338,7 +351,9 @@ class TableService(_StorageClient):
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
 
-    def insert_or_merge_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml', if_match='*'):
+        return _parse_response_for_dict_filter(response, filter=['etag'])
+
+    def insert_or_merge_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml'):
         '''
         Merges an existing entity or inserts a new entity if it does not exist in the table. 
         Because this operation can insert or update an entity, it is also known as an "upsert"
@@ -358,14 +373,13 @@ class TableService(_StorageClient):
         request.method = 'MERGE'
         request.host = _get_table_host(self.account_name, self.use_local_storage)
         request.path = '/' + str(table_name) + '(PartitionKey=\'' + str(partition_key) + '\',RowKey=\'' + str(row_key) + '\')'
-        request.headers = [
-            ('Content-Type', _str_or_none(content_type)),
-            ('If-Match', _str_or_none(if_match))
-            ]
+        request.headers = [('Content-Type', _str_or_none(content_type))]
         request.body = _get_request_body(convert_entity_to_xml(entity))
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
+
+        return _parse_response_for_dict_filter(response, filter=['etag'])
 
 
     def _perform_request_worker(self, request):

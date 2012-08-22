@@ -43,12 +43,12 @@ _ERROR_CANNOT_FIND_PARTITION_KEY = 'Cannot find partition key in request.'
 _ERROR_CANNOT_FIND_ROW_KEY = 'Cannot find row key in request.'
 _ERROR_INCORRECT_TABLE_IN_BATCH = 'Table should be the same in a batch operations'
 _ERROR_INCORRECT_PARTITION_KEY_IN_BATCH = 'Partition Key should be the same in a batch operations'
-_ERROR_DUPLICATE_ROW_KEY_IN_BATCH = 'Partition Key should be the same in a batch operations'
+_ERROR_DUPLICATE_ROW_KEY_IN_BATCH = 'Row Keys should not be the same in a batch operations'
 _ERROR_BATCH_COMMIT_FAIL = 'Batch Commit Fail'
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE = 'Message is not peek locked and cannot be deleted.'
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK = 'Message is not peek locked and cannot be unlocked.'
-_ERROR_QUEUE_NOT_FOUND = 'Queue is not Found'
-_ERROR_TOPIC_NOT_FOUND = 'Topic is not Found'
+_ERROR_QUEUE_NOT_FOUND = 'Queue was not found'
+_ERROR_TOPIC_NOT_FOUND = 'Topic was not found'
 _ERROR_CONFLICT = 'Conflict'
 _ERROR_NOT_FOUND = 'Not found'
 _ERROR_UNKNOWN = 'Unknown error (%s)'
@@ -57,6 +57,8 @@ _ERROR_STORAGE_MISSING_INFO = 'You need to provide both account name and access 
 _ERROR_ACCESS_POLICY = 'share_access_policy must be either SignedIdentifier or AccessPolicy instance'
 _ERROR_VALUE_SHOULD_NOT_BE_NULL  = '%s should not be None.'
 _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = 'Cannot serialize the specified value (%s) to an entity.  Please use an EntityProperty (which can specify custom types), int, str, bool, or datetime'
+
+METADATA_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
 
 class WindowsAzureData(object):
     ''' This is the base of data class.  It is only used to check whether it is instance or not. '''
@@ -80,8 +82,11 @@ class WindowsAzureMissingResourceError(WindowsAzureError):
         self.message = message
 
 class Feed:
-    def __init__(self, type):
-        self.type = type
+    pass
+
+class HeaderDict(dict):
+    def __getitem__(self, index):
+        return super(HeaderDict, self).__getitem__(index.lower())
 
 def _get_readable_id(id_name):
     """simplified an id to be more friendly for us people"""
@@ -97,6 +102,9 @@ def _get_entry_properties(xmlstr, include_id):
     properties = {}
     
     for entry in _get_child_nodes(xmldoc, 'entry'):
+        etag = entry.getAttributeNS(METADATA_NS, 'etag')
+        if etag:
+            properties['etag'] = etag
         for updated in _get_child_nodes(entry, 'updated'):
             properties['updated'] = updated.firstChild.nodeValue
         for name in _get_children_from_path(entry, 'author', 'name'):
@@ -108,6 +116,14 @@ def _get_entry_properties(xmlstr, include_id):
                 properties['name'] = _get_readable_id(id.firstChild.nodeValue)
 
     return properties
+
+def _get_first_child_node_value(parent_node, node_name):
+    xml_attrs = _get_child_nodes(parent_node, node_name)
+    if xml_attrs:
+        xml_attr = xml_attrs[0]
+        if xml_attr.firstChild:
+            value = xml_attr.firstChild.nodeValue
+            return value
 
 def _get_child_nodes(node, tagName):
     return [childNode for childNode in node.getElementsByTagName(tagName)
@@ -142,7 +158,7 @@ def _create_entry(entry_body):
         updated_str += '+00:00'
     
     entry_start = '''<?xml version="1.0" encoding="utf-8" standalone="yes"?>   
-<entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">
+<entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom" >
 <title /><updated>{updated}</updated><author><name /></author><id />
 <content type="application/xml">
     {body}</content></entry>'''
@@ -242,9 +258,23 @@ def _clone_node_with_namespaces(node_to_clone, original_doc):
     return clone
 
 def _convert_response_to_feeds(response, convert_func):
-    feeds = []
+    if response is None:
+        return None
+
+    feeds = _list_of(Feed)
+    
+    x_ms_continuation = HeaderDict()
+    for name, value in response.headers:
+        if 'x-ms-continuation' in name:
+            x_ms_continuation[name[len('x-ms-continuation')+1:]] = value
+    if x_ms_continuation:
+        setattr(feeds, 'x_ms_continuation', x_ms_continuation)
+
     xmldoc = minidom.parseString(response.body)
-    for xml_entry in _get_children_from_path(xmldoc, 'feed', 'entry'):
+    xml_entries = _get_children_from_path(xmldoc, 'feed', 'entry')
+    if not xml_entries:
+        xml_entries = _get_children_from_path(xmldoc, 'entry') #in some cases, response contains only entry but no feed
+    for xml_entry in xml_entries:
         new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
         feeds.append(convert_func(new_node.toxml()))
 
@@ -254,15 +284,18 @@ def _validate_not_none(param_name, param):
     if param is None:
         raise TypeError(_ERROR_VALUE_SHOULD_NOT_BE_NULL % (param_name))
 
-def _html_encode(html):
-    ch_map = (('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;'), ('"', '&quot'), ('\'', '&apos'))
-    for name, value in ch_map:
-        html = html.replace(name, value)
-    return html
-
 def _fill_list_of(xmldoc, element_type):
     xmlelements = _get_child_nodes(xmldoc, element_type.__name__)
     return [_parse_response_body(xmlelement.toxml(), element_type) for xmlelement in xmlelements]
+
+def _fill_dict(xmldoc, element_name):    
+    xmlelements = _get_child_nodes(xmldoc, element_name)
+    if xmlelements:
+        return_obj = {}
+        for child in xmlelements[0].childNodes:
+            if child.firstChild:
+                return_obj[child.nodeName] = child.firstChild.nodeValue
+        return return_obj
 
 def _fill_instance_child(xmldoc, element_name, return_type):
     '''Converts a child of the current dom element to the specified type.  The child name
@@ -272,7 +305,10 @@ def _fill_instance_child(xmldoc, element_name, return_type):
     if not xmlelements:
         return None
 
-    return _fill_instance_element(xmlelements[0], return_type)
+    return_obj = return_type()
+    _fill_data_to_return_object(xmlelements[0], return_obj)
+
+    return return_obj
 
 def _fill_instance_element(element, return_type):
     """Converts a DOM element into the specified object""" 
@@ -367,6 +403,19 @@ def _parse_response(response, return_type):
     '''
     return _parse_response_body(response.body, return_type)
 
+def _fill_data_to_return_object(node, return_obj):
+    for name, value in vars(return_obj).iteritems():
+        if isinstance(value, _list_of):
+            setattr(return_obj, name, _fill_list_of(node, value.list_type))
+        elif isinstance(value, WindowsAzureData):
+            setattr(return_obj, name, _fill_instance_child(node, name, value.__class__))
+        elif isinstance(value, dict):
+            setattr(return_obj, name, _fill_dict(node, _get_serialization_name(name)))
+        else:
+            value = _fill_data_minidom(node, name, value)
+            if value is not None:
+                setattr(return_obj, name, value)
+
 def _parse_response_body(respbody, return_type):
     '''
     parse the xml and fill all the data into a class of return_type
@@ -374,15 +423,7 @@ def _parse_response_body(respbody, return_type):
     doc = minidom.parseString(respbody)
     return_obj = return_type()
     for node in _get_child_nodes(doc, return_type.__name__):
-        for name, value in vars(return_obj).iteritems():
-            if isinstance(value, _list_of):
-                setattr(return_obj, name, _fill_list_of(node, value.list_type))
-            elif isinstance(value, WindowsAzureData):
-                setattr(return_obj, name, _fill_instance_child(node, name, value.__class__))
-            else:
-                value = _fill_data_minidom(node, name, value)
-                if value is not None:
-                    setattr(return_obj, name, value)
+        _fill_data_to_return_object(node, return_obj)
 
     return return_obj
 
@@ -446,11 +487,12 @@ def _dont_fail_not_exist(error):
     
 def _parse_response_for_dict(response):
     ''' Extracts name-values from response header. Filter out the standard http headers.'''
-
+    
+    if response is None:
+        return None
     http_headers = ['server', 'date', 'location', 'host', 
-                    'via', 'proxy-connection', 'x-ms-version', 'connection',
-                    'content-length']
-    return_dict = {}
+                    'via', 'proxy-connection', 'connection']
+    return_dict = HeaderDict()
     if response.headers:
         for name, value in response.headers:
             if not name.lower() in http_headers:
@@ -461,6 +503,8 @@ def _parse_response_for_dict(response):
 def _parse_response_for_dict_prefix(response, prefix):
     ''' Extracts name-values for names starting with prefix from response header. Filter out the standard http headers.'''
 
+    if response is None:
+        return None
     return_dict = {}    
     orig_dict = _parse_response_for_dict(response)
     if orig_dict:
@@ -475,6 +519,8 @@ def _parse_response_for_dict_prefix(response, prefix):
 
 def _parse_response_for_dict_filter(response, filter):
     ''' Extracts name-values for names in filter from response header. Filter out the standard http headers.'''
+    if response is None:
+        return None
     return_dict = {}    
     orig_dict = _parse_response_for_dict(response)
     if orig_dict:

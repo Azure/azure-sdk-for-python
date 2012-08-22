@@ -14,6 +14,7 @@
 import json
 import os
 import time
+import unittest
 from exceptions import EnvironmentError
 
 STATUS_OK         = 200
@@ -60,9 +61,6 @@ class Credentials(object):
     def getStorageServicesName(self):
         return self.ns[u'storageservicesname']
 
-    def getHostServiceID(self):
-        return self.ns[u'hostserviceid']
-
 credentials = Credentials()
 
 def getUniqueTestRunID():
@@ -83,7 +81,8 @@ def getUniqueTestRunID():
     for bad in ["-", "_", " ", "."]:
         ret_val = ret_val.replace(bad, "")
     ret_val = ret_val.lower().strip()
-    return ret_val
+    #only return the first 20 characters so the lenghth of queue, table name will be less than 64. It may not be unique but doesn't really matter for the tests.
+    return ret_val[:20]  
 
 def getUniqueNameBasedOnCurrentTime(base_name):
     '''
@@ -96,3 +95,18 @@ def getUniqueNameBasedOnCurrentTime(base_name):
         cur_time = cur_time.replace(bad, "")
     cur_time = cur_time.lower().strip()
     return base_name + cur_time
+
+class AzureTestCase(unittest.TestCase):
+    def assertNamedItemInContainer(self, container, item_name, msg=None):
+        for item in container:
+            if item.name == item_name:
+                return
+
+        standardMsg = '%s not found in %s' % (repr(item_name), repr(container))
+        self.fail(self._formatMessage(msg, standardMsg))
+
+    def assertNamedItemNotInContainer(self, container, item_name, msg=None):
+        for item in container:
+            if item.name == item_name:
+                standardMsg = '%s unexpectedly found in %s' % (repr(item_name), repr(container))
+                self.fail(self._formatMessage(msg, standardMsg))
