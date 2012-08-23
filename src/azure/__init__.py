@@ -276,7 +276,7 @@ def _convert_response_to_feeds(response, convert_func):
         xml_entries = _get_children_from_path(xmldoc, 'entry') #in some cases, response contains only entry but no feed
     for xml_entry in xml_entries:
         new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
-        feeds.append(convert_func(new_node.toxml()))
+        feeds.append(convert_func(new_node.toxml('utf-8')))
 
     return feeds
 
