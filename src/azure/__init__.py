@@ -276,7 +276,7 @@ def _convert_response_to_feeds(response, convert_func):
         xml_entries = _get_children_from_path(xmldoc, 'entry') #in some cases, response contains only entry but no feed
     for xml_entry in xml_entries:
         new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
-        feeds.append(convert_func(new_node.toxml()))
+        feeds.append(convert_func(new_node.toxml('utf-8')))
 
     return feeds
 
@@ -286,7 +286,7 @@ def _validate_not_none(param_name, param):
 
 def _fill_list_of(xmldoc, element_type):
     xmlelements = _get_child_nodes(xmldoc, element_type.__name__)
-    return [_parse_response_body(xmlelement.toxml(), element_type) for xmlelement in xmlelements]
+    return [_parse_response_body(xmlelement.toxml('utf-8'), element_type) for xmlelement in xmlelements]
 
 def _fill_dict(xmldoc, element_name):    
     xmlelements = _get_child_nodes(xmldoc, element_name)
@@ -312,7 +312,7 @@ def _fill_instance_child(xmldoc, element_name, return_type):
 
 def _fill_instance_element(element, return_type):
     """Converts a DOM element into the specified object""" 
-    return _parse_response_body(element.toxml(), return_type)
+    return _parse_response_body(element.toxml('utf-8'), return_type)
 
 
 def _fill_data_minidom(xmldoc, element_name, data_member):
