@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright 2011 Microsoft Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,6 @@
 from azure.storage.tableservice import *
 from azure.storage import EntityProperty, Entity, StorageServiceProperties
 from azure import WindowsAzureError
-
 
 from azuretest.util import (credentials, 
                             getUniqueTestRunID,
@@ -1039,8 +1038,18 @@ class StorageTest(AzureTestCase):
 
         self.tc.cancel_batch()
 
+    def test_unicode_xml_encoding(self):
+        ''' regression test for github issue #57'''
+        # Act
+        self._create_table(self.table_name)
+        self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test1', 'Description': u'ꀕ'}) 
+        self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', 'Description': 'ꀕ'})        
+        resp = self.tc.query_entities(self.table_name, "PartitionKey eq 'test'")   
         # Assert
-
+        self.assertEquals(len(resp), 2)
+        self.assertEquals(resp[0].Description, u'ꀕ')
+        self.assertEquals(resp[1].Description, u'ꀕ')
+        
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
