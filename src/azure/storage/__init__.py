@@ -564,6 +564,9 @@ def convert_entity_to_xml(source):
                 properties_str += ''.join([' m:type="', mtype, '"'])
             properties_str += ''.join(['>', xml_escape(value), '</d:', name, '>'])
 
+    if isinstance(properties_str, unicode):
+        properties_str = properties_str.encode(encoding='utf-8')
+
     #generate the entity_body
     entity_body = entity_body.format(properties=properties_str)
     xmlstr = _create_entry(entity_body)
