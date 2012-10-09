@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright 2011-2012 Microsoft Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import sys
 from xml.dom import minidom
 
 from azure.http import HTTPError, HTTPResponse
+from azure import _USER_AGENT_STRING
 
 class _HTTPClient:
     ''' 
@@ -53,6 +54,13 @@ class _HTTPClient:
         self.issuer = issuer
         self.x_ms_version = x_ms_version
         self.protocol = protocol
+        self.proxy_host = None
+        self.proxy_port = None
+
+    def set_proxy(self, host, port):
+        '''Sets the proxy server host and port for the HTTP CONNECT Tunnelling.'''
+        self.proxy_host = host
+        self.proxy_port = port
 
     def get_connection(self, request):
         ''' Create connection for the request. '''
@@ -67,12 +75,17 @@ class _HTTPClient:
             _connection = httplib.HTTPConnection(request.host)
         else:
             _connection = httplib.HTTPSConnection(request.host, cert_file=self.cert_file)
+
+        if self.proxy_host:
+            _connection.set_tunnel(self.proxy_host, self.proxy_port)
+
         return _connection
 
     def send_request_headers(self, connection, request_headers):
         for name, value in request_headers:
             if value:
                 connection.putheader(name, value)
+        connection.putheader('User-Agent', _USER_AGENT_STRING)
         connection.endheaders()
 
     def send_request_body(self, connection, request_body):

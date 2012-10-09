@@ -26,6 +26,11 @@ class ServiceBusTest(AzureTestCase):
                                      credentials.getServiceBusKey(), 
                                      'owner')
 
+        proxy_host = credentials.getProxyHost()
+        proxy_port = credentials.getProxyPort()
+        if proxy_host:
+            self.sbs.set_proxy(proxy_host, proxy_port)
+
         __uid = getUniqueTestRunID()
 
         queue_base_name = u'mytestqueue%s' % (__uid)

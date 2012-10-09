@@ -40,6 +40,11 @@ class StorageTest(AzureTestCase):
         self.tc = TableService(account_name=credentials.getStorageServicesName(), 
                                    account_key=credentials.getStorageServicesKey())
 
+        proxy_host = credentials.getProxyHost()
+        proxy_port = credentials.getProxyPort()
+        if proxy_host:
+            self.tc.set_proxy(proxy_host, proxy_port)
+
         __uid = getUniqueTestRunID()
         table_base_name = u'testtable%s' % (__uid)
         self.table_name = getUniqueNameBasedOnCurrentTime(table_base_name)     

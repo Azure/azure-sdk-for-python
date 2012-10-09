@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright 2011-2012 Microsoft Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ from azure import (WindowsAzureError, WindowsAzureData,
                           _create_entry, _get_entry_properties, xml_escape,
                           _get_child_nodes, WindowsAzureMissingResourceError,
                           WindowsAzureConflictError, _get_serialization_name, 
-                          _get_children_from_path, _get_first_child_node_value)
+                          _get_children_from_path, _get_first_child_node_value,
+                          _USER_AGENT_STRING)
 import azure
 
 #default rule name for subscription
@@ -267,6 +268,7 @@ def _get_token(request, account_key, issuer):
         connection = httplib.HTTPSConnection(host)
     connection.putrequest('POST', '/WRAPv0.9')
     connection.putheader('Content-Length', len(request_body))
+    connection.putheader('User-Agent', _USER_AGENT_STRING)
     connection.endheaders()
     connection.send(request_body)
     resp = connection.getresponse()

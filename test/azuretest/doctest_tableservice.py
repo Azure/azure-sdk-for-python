@@ -24,25 +24,25 @@ True
 How to Add an Entity to a Table
 -------------------------------
 >>> task = {'PartitionKey': 'tasksSeattle', 'RowKey': '1', 'description' : 'Take out the trash', 'priority' : 200}
->>> table_service.insert_entity('tasktable', task)
+>>> entity = table_service.insert_entity('tasktable', task)
 
 >>> task = Entity()
 >>> task.PartitionKey = 'tasksSeattle'
 >>> task.RowKey = '2'
 >>> task.description = 'Wash the car'
 >>> task.priority = 100
->>> table_service.insert_entity('tasktable', task)
+>>> entity = table_service.insert_entity('tasktable', task)
 
 How to Update an Entity
 -----------------------
 >>> task = {'description' : 'Take out the garbage', 'priority' : 250}
->>> table_service.update_entity('tasktable', 'tasksSeattle', '1', task)
+>>> entity = table_service.update_entity('tasktable', 'tasksSeattle', '1', task)
 
 >>> task = {'description' : 'Take out the garbage again', 'priority' : 250}
->>> table_service.insert_or_replace_entity('tasktable', 'tasksSeattle', '1', task)
+>>> entity = table_service.insert_or_replace_entity('tasktable', 'tasksSeattle', '1', task)
 
 >>> task = {'description' : 'Buy detergent', 'priority' : 300}
->>> table_service.insert_or_replace_entity('tasktable', 'tasksSeattle', '3', task)
+>>> entity = table_service.insert_or_replace_entity('tasktable', 'tasksSeattle', '3', task)
 
 
 How to Change a Group of Entities

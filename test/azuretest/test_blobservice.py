@@ -29,6 +29,11 @@ class BlobServiceTest(AzureTestCase):
         self.bc = BlobService(account_name=credentials.getStorageServicesName(), 
                                   account_key=credentials.getStorageServicesKey())
 
+        proxy_host = credentials.getProxyHost()
+        proxy_port = credentials.getProxyPort()
+        if proxy_host:
+            self.bc.set_proxy(proxy_host, proxy_port)
+
         __uid = getUniqueTestRunID()
 
         container_base_name = u'mytestcontainer%s' % (__uid)

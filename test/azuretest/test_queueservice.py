@@ -29,6 +29,11 @@ class QueueServiceTest(AzureTestCase):
         self.queue_client = QueueService(account_name=credentials.getStorageServicesName(), 
                                                 account_key=credentials.getStorageServicesKey())
 
+        proxy_host = credentials.getProxyHost()
+        proxy_port = credentials.getProxyPort()
+        if proxy_host:
+            self.queue_client.set_proxy(proxy_host, proxy_port)
+
         __uid = getUniqueTestRunID()
 
         queue_base_name = u'%s' % (__uid)

@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright 2011-2012 Microsoft Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class _StorageClient(object):
     This is the base class for BlobManager, TableManager and QueueManager.
     '''
 
-    def __init__(self, account_name=None, account_key=None, protocol='http'):
+    def __init__(self, account_name=None, account_key=None, protocol='http', host_base='', dev_host=''):
         if account_name is not None:
             self.account_name = account_name.encode('ascii', 'ignore')
         else:
@@ -50,6 +50,8 @@ class _StorageClient(object):
 
         self.requestid = None
         self.protocol = protocol
+        self.host_base = host_base
+        self.dev_host = dev_host
         
         #the app is not run in azure emulator or use default development 
         #storage account and key if app is run in emulator. 
@@ -101,6 +103,16 @@ class _StorageClient(object):
                     
         res._filter = new_filter
         return res
+
+    def set_proxy(self, host, port):
+        '''Sets the proxy server host and port for the HTTP CONNECT Tunnelling.'''
+        self._httpclient.set_proxy(host, port)
+
+    def _get_host(self):
+        if self.use_local_storage:
+            return self.dev_host
+        else:
+            return self.account_name + self.host_base
 
     def _perform_request_worker(self, request):
         return self._httpclient.perform_request(request)
