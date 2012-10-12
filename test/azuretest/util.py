@@ -49,6 +49,12 @@ class Credentials(object):
         with open(tmpName, "r") as f:
             self.ns = json.load(f)
 
+    def getManagementCertFile(self):
+        return self.ns[u'managementcertfile'] 
+
+    def getSubscriptionId(self):
+        return self.ns[u'subscriptionid'] 
+
     def getServiceBusKey(self):
         return self.ns[u'servicebuskey'] 
 
@@ -60,6 +66,15 @@ class Credentials(object):
 
     def getStorageServicesName(self):
         return self.ns[u'storageservicesname']
+
+    def getLinuxOSVHD(self):
+        return self.ns[u'linuxosvhd']
+
+    def getProxyHost(self):
+        return self.ns[u'proxyhost']
+
+    def getProxyPort(self):
+        return self.ns[u'proxyport']
 
 credentials = Credentials()
 

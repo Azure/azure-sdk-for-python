@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright 2011-2012 Microsoft Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ from datetime import datetime
 from azure import (_create_entry, METADATA_NS, _parse_response_for_dict, 
                           _get_entry_properties, WindowsAzureError,
                           _get_child_nodes, _get_child_nodesNS, 
-                          WindowsAzureConflictError, 
+                          WindowsAzureConflictError, _general_error_handler,
                           WindowsAzureMissingResourceError, _list_of, 
                           DEV_TABLE_HOST, TABLE_SERVICE_HOST_BASE, DEV_BLOB_HOST, 
                           BLOB_SERVICE_HOST_BASE, DEV_QUEUE_HOST, 
@@ -720,12 +720,7 @@ def _convert_xml_to_table(xmlstr):
 
 def _storage_error_handler(http_error):
     ''' Simple error handler for storage service. Will add more specific cases '''
-    if http_error.status == 409:
-        raise WindowsAzureConflictError(azure._ERROR_CONFLICT)
-    elif http_error.status == 404:
-        raise WindowsAzureMissingResourceError(azure._ERROR_NOT_FOUND)
-    else:
-        raise WindowsAzureError(azure._ERROR_UNKNOWN % http_error.message)
+    return _general_error_handler(http_error)
 
 # make these available just from storage.
 from blobservice import BlobService

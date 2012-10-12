@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright 2011-2012 Microsoft Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,6 +25,11 @@ class ServiceBusTest(AzureTestCase):
         self.sbs = ServiceBusService(credentials.getServiceBusNamespace(), 
                                      credentials.getServiceBusKey(), 
                                      'owner')
+
+        proxy_host = credentials.getProxyHost()
+        proxy_port = credentials.getProxyPort()
+        if proxy_host:
+            self.sbs.set_proxy(proxy_host, proxy_port)
 
         __uid = getUniqueTestRunID()
 

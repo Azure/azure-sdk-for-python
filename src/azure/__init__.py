@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright 2011-2012 Microsoft Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import sys
 import types
 from datetime import datetime
 from xml.dom import minidom
@@ -28,6 +29,7 @@ BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
 QUEUE_SERVICE_HOST_BASE = '.queue.core.windows.net'
 TABLE_SERVICE_HOST_BASE = '.table.core.windows.net'
 SERVICE_BUS_HOST_BASE = '.servicebus.windows.net'
+MANAGEMENT_HOST = 'management.core.windows.net'
 
 #Development ServiceClient URLs
 DEV_BLOB_HOST = '127.0.0.1:10000'
@@ -58,6 +60,8 @@ _ERROR_ACCESS_POLICY = 'share_access_policy must be either SignedIdentifier or A
 _ERROR_VALUE_SHOULD_NOT_BE_NULL  = '%s should not be None.'
 _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = 'Cannot serialize the specified value (%s) to an entity.  Please use an EntityProperty (which can specify custom types), int, str, bool, or datetime'
 
+_USER_AGENT_STRING = 'pyazure'
+
 METADATA_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
 
 class WindowsAzureData(object):
@@ -82,6 +86,9 @@ class WindowsAzureMissingResourceError(WindowsAzureError):
         self.message = message
 
 class Feed:
+    pass
+
+class _Base64String(str):
     pass
 
 class HeaderDict(dict):
@@ -172,6 +179,16 @@ _KNOWN_SERIALIZATION_XFORMS = {'include_apis':'IncludeAPIs',
                                'content_md5':'Content-MD5',
                                'last_modified': 'Last-Modified',
                                'cache_control': 'Cache-Control',
+                               'account_admin_live_email_id': 'AccountAdminLiveEmailId',
+                               'service_admin_live_email_id': 'ServiceAdminLiveEmailId',
+                               'subscription_id': 'SubscriptionID',
+                               'fqdn': 'FQDN',
+                               'private_id': 'PrivateID',
+                               'os_virtual_hard_disk': 'OSVirtualHardDisk',
+                               'logical_disk_size_in_gb':'LogicalDiskSizeInGB',
+                               'logical_size_in_gb':'LogicalSizeInGB',
+                               'os':'OS',
+                               'persistent_vm_downtime_info':'PersistentVMDowntimeInfo',
                                }
 
 def _get_serialization_name(element_name):
@@ -201,6 +218,18 @@ def _int_or_none(value):
         return None
 
     return str(int(value))
+
+def _bool_or_none(value):
+    if value is None:
+        return None
+
+    if isinstance(value, bool):
+        if value:
+            return 'true'
+        else:
+            return 'false'
+
+    return str(value)
 
 def _convert_class_to_xml(source, xml_prefix = True):
     if source is None:
@@ -284,9 +313,28 @@ def _validate_not_none(param_name, param):
     if param is None:
         raise TypeError(_ERROR_VALUE_SHOULD_NOT_BE_NULL % (param_name))
 
-def _fill_list_of(xmldoc, element_type):
-    xmlelements = _get_child_nodes(xmldoc, element_type.__name__)
-    return [_parse_response_body(xmlelement.toxml('utf-8'), element_type) for xmlelement in xmlelements]
+def _fill_list_of(xmldoc, element_type, xml_element_name):
+    xmlelements = _get_child_nodes(xmldoc, xml_element_name)
+    return [_parse_response_body_from_xml_node(xmlelement, element_type) for xmlelement in xmlelements]
+
+def _fill_scalar_list_of(xmldoc, element_type, parent_xml_element_name, xml_element_name):
+    '''Converts an xml fragment into a list of scalar types.  The parent xml element contains a 
+    flat list of xml elements which are converted into the specified scalar type and added to the list.
+    Example:
+    xmldoc=
+     <Endpoints>
+        <Endpoint>http://{storage-service-name}.blob.core.windows.net/</Endpoint>
+        <Endpoint>http://{storage-service-name}.queue.core.windows.net/</Endpoint>
+        <Endpoint>http://{storage-service-name}.table.core.windows.net/</Endpoint>
+      </Endpoints>
+    element_type=str
+    parent_xml_element_name='Endpoints'
+    xml_element_name='Endpoint'
+    '''
+    xmlelements = _get_child_nodes(xmldoc, parent_xml_element_name)
+    if xmlelements:
+        xmlelements = _get_child_nodes(xmlelements[0], xml_element_name)
+        return [_get_node_value(xmlelement, element_type) for xmlelement in xmlelements]
 
 def _fill_dict(xmldoc, element_name):    
     xmlelements = _get_child_nodes(xmldoc, element_name)
@@ -296,6 +344,43 @@ def _fill_dict(xmldoc, element_name):
             if child.firstChild:
                 return_obj[child.nodeName] = child.firstChild.nodeValue
         return return_obj
+
+def _fill_dict_of(xmldoc, parent_xml_element_name, pair_xml_element_name, key_xml_element_name, value_xml_element_name):
+    '''Converts an xml fragment into a dictionary. The parent xml element contains a 
+    list of xml elements where each element has a child element for the key, and another for the value.
+    Example:
+    xmldoc=
+      <ExtendedProperties>
+        <ExtendedProperty>
+          <Name>Ext1</Name>
+          <Value>Val1</Value>
+        </ExtendedProperty>
+        <ExtendedProperty>
+          <Name>Ext2</Name>
+          <Value>Val2</Value>
+        </ExtendedProperty>
+      </ExtendedProperties>
+    element_type=str
+    parent_xml_element_name='ExtendedProperties'
+    pair_xml_element_name='ExtendedProperty'
+    key_xml_element_name='Name'
+    value_xml_element_name='Value'
+    '''
+    return_obj = { }
+
+    xmlelements = _get_child_nodes(xmldoc, parent_xml_element_name)
+    if xmlelements:
+        xmlelements = _get_child_nodes(xmlelements[0], pair_xml_element_name)
+        for pair in xmlelements:
+            keys = _get_child_nodes(pair, key_xml_element_name)
+            values = _get_child_nodes(pair, value_xml_element_name)
+            if keys and values:
+                key = str(keys[0].firstChild.nodeValue)
+                value = str(values[0].firstChild.nodeValue)
+
+                return_obj[key] = value
+
+    return return_obj
 
 def _fill_instance_child(xmldoc, element_name, return_type):
     '''Converts a child of the current dom element to the specified type.  The child name
@@ -312,7 +397,7 @@ def _fill_instance_child(xmldoc, element_name, return_type):
 
 def _fill_instance_element(element, return_type):
     """Converts a DOM element into the specified object""" 
-    return _parse_response_body(element.toxml('utf-8'), return_type)
+    return _parse_response_body_from_xml_node(element, return_type)
 
 
 def _fill_data_minidom(xmldoc, element_name, data_member):
@@ -331,6 +416,15 @@ def _fill_data_minidom(xmldoc, element_name, data_member):
         return value.lower() != 'false'
     else:
         return type(data_member)(value)
+
+def _get_node_value(xmlelement, data_type):
+    value = xmlelement.firstChild.nodeValue
+    if data_type is datetime:
+        return _to_datetime(value)
+    elif data_type is types.BooleanType:
+        return value.lower() != 'false'
+    else:
+        return data_type(value)
 
 def _get_request_body(request_body):
     '''Converts an object into a request body.  If it's None
@@ -401,22 +495,42 @@ def _parse_response(response, return_type):
     '''
     parse the HTTPResponse's body and fill all the data into a class of return_type
     '''
-    return _parse_response_body(response.body, return_type)
+    return _parse_response_body_from_xml_text(response.body, return_type)
 
 def _fill_data_to_return_object(node, return_obj):
-    for name, value in vars(return_obj).iteritems():
+    members = dict(vars(return_obj))
+    for name, value in members.iteritems():
         if isinstance(value, _list_of):
-            setattr(return_obj, name, _fill_list_of(node, value.list_type))
+            setattr(return_obj, name, _fill_list_of(node, value.list_type, value.xml_element_name))
+        elif isinstance(value, _scalar_list_of):
+            setattr(return_obj, name, _fill_scalar_list_of(node, value.list_type, _get_serialization_name(name), value.xml_element_name))
+        elif isinstance(value, _dict_of):
+            setattr(return_obj, name, _fill_dict_of(node, _get_serialization_name(name), value.pair_xml_element_name, value.key_xml_element_name, value.value_xml_element_name))
         elif isinstance(value, WindowsAzureData):
             setattr(return_obj, name, _fill_instance_child(node, name, value.__class__))
         elif isinstance(value, dict):
             setattr(return_obj, name, _fill_dict(node, _get_serialization_name(name)))
+        elif isinstance(value, _Base64String):
+            value = _fill_data_minidom(node, name, '')
+            if value is not None:
+                value = base64.b64decode(value)
+            #always set the attribute, so we don't end up returning an object with type _Base64String
+            setattr(return_obj, name, value)
         else:
             value = _fill_data_minidom(node, name, value)
             if value is not None:
                 setattr(return_obj, name, value)
 
-def _parse_response_body(respbody, return_type):
+def _parse_response_body_from_xml_node(node, return_type):
+    '''
+    parse the xml and fill all the data into a class of return_type
+    '''
+    return_obj = return_type()
+    _fill_data_to_return_object(node, return_obj)
+
+    return return_obj
+
+def _parse_response_body_from_xml_text(respbody, return_type):
     '''
     parse the xml and fill all the data into a class of return_type
     '''
@@ -427,11 +541,31 @@ def _parse_response_body(respbody, return_type):
 
     return return_obj
 
+class _dict_of(dict):
+    """a dict which carries with it the xml element names for key,val.
+    Used for deserializaion and construction of the lists"""
+    def __init__(self, pair_xml_element_name, key_xml_element_name, value_xml_element_name):
+        self.pair_xml_element_name = pair_xml_element_name
+        self.key_xml_element_name = key_xml_element_name
+        self.value_xml_element_name = value_xml_element_name
+
 class _list_of(list):
     """a list which carries with it the type that's expected to go in it.
     Used for deserializaion and construction of the lists"""
-    def __init__(self, list_type):
+    def __init__(self, list_type, xml_element_name=None):
         self.list_type = list_type
+        if xml_element_name is None:
+            self.xml_element_name = list_type.__name__
+        else:
+            self.xml_element_name = xml_element_name
+
+class _scalar_list_of(list):
+    """a list of scalar types which carries with it the type that's 
+    expected to go in it along with its xml element name.
+    Used for deserializaion and construction of the lists"""
+    def __init__(self, list_type, xml_element_name):
+        self.list_type = list_type
+        self.xml_element_name = xml_element_name
 
 def _update_request_uri_query_local_storage(request, use_local_storage):
     ''' create correct uri and query for the request '''
@@ -447,16 +581,12 @@ def _update_request_uri_query(request):
     appear after the existing parameters'''
 
     if '?' in request.path:
-        pos = request.path.find('?')
-        query_string = request.path[pos+1:]
-        request.path = request.path[:pos]           
+        request.path, _, query_string = request.path.partition('?')
         if query_string:
             query_params = query_string.split('&')
             for query in query_params:
                 if '=' in query:
-                    pos = query.find('=')
-                    name = query[:pos]
-                    value = query[pos+1:]
+                    name, _, value = query.partition('=')
                     request.query.append((name, value))
 
     request.path = urllib2.quote(request.path, '/()$=\',')
@@ -484,6 +614,18 @@ def _dont_fail_not_exist(error):
         return False
     else:
         raise error
+
+def _general_error_handler(http_error):
+    ''' Simple error handler for azure.'''
+    if http_error.status == 409:
+        raise WindowsAzureConflictError(_ERROR_CONFLICT)
+    elif http_error.status == 404:
+        raise WindowsAzureMissingResourceError(_ERROR_NOT_FOUND)
+    else:
+        if http_error.respbody is not None:
+            raise WindowsAzureError(_ERROR_UNKNOWN % http_error.message + '\n' + http_error.respbody)
+        else:
+            raise WindowsAzureError(_ERROR_UNKNOWN % http_error.message)
     
 def _parse_response_for_dict(response):
     ''' Extracts name-values from response header. Filter out the standard http headers.'''
@@ -530,23 +672,3 @@ def _parse_response_for_dict_filter(response, filter):
         return return_dict
     else:
         return None
-
-def _get_table_host(account_name, use_local_storage=False):
-    ''' Gets service host base on the service type and whether it is using local storage. '''
-
-    if use_local_storage:
-        return DEV_TABLE_HOST
-    else:
-        return account_name + TABLE_SERVICE_HOST_BASE
-
-def _get_queue_host(account_name, use_local_storage=False):
-    if use_local_storage:
-        return DEV_QUEUE_HOST
-    else:
-        return account_name + QUEUE_SERVICE_HOST_BASE
-
-def _get_blob_host(account_name, use_local_storage=False):
-    if use_local_storage:
-        return DEV_BLOB_HOST
-    else:
-        return account_name + BLOB_SERVICE_HOST_BASE

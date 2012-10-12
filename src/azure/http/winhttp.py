@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright 2011-2012 Microsoft Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ VT_I8 = 20
 VT_UI8 = 21
 VT_ARRAY = 8192
 
+HTTPREQUEST_PROXYSETTING_PROXY = 2
+
 HTTPREQUEST_PROXY_SETTING = c_long
 HTTPREQUEST_SETCREDENTIALS_FLAGS = c_long
 #------------------------------------------------------------------------------
@@ -52,12 +54,13 @@ _SysAllocString.argtypes = [c_wchar_p]
 _SysFreeString = _oleaut32.SysFreeString
 _SysFreeString.argtypes = [c_void_p]
 
-_SafeArrayDestroy = _oleaut32.SafeArrayDestroy
-_SafeArrayDestroy.argtypes = [c_void_p]
-
 _CoTaskMemAlloc = _ole32.CoTaskMemAlloc
 _CoTaskMemAlloc.restype = c_void_p
 _CoTaskMemAlloc.argtypes = [c_size_t]
+
+_CoTaskMemFree = _ole32.CoTaskMemFree
+_CoTaskMemFree.argtypes = [c_void_p]
+
 #------------------------------------------------------------------------------
 
 class BSTR(c_wchar_p):
@@ -87,8 +90,7 @@ class _tagSAFEARRAY(Structure):
                 ('rgsabound', _tagSAFEARRAYBOUND*1)]
 
     def __del__(self):
-        _SafeArrayDestroy(self.pvdata)
-        pass
+        _CoTaskMemFree(self.pvdata)
 
 class VARIANT(Structure):
     ''' 
@@ -250,6 +252,24 @@ class _WinHttpRequest(c_void_p):
         _certificate = BSTR(certificate)
         _WinHttpRequest._SetClientCertificate(self, _certificate)
 
+    def set_tunnel(self, host, port):
+        ''' Sets up the host and the port for the HTTP CONNECT Tunnelling.'''
+        url = host
+        if port:
+            url = url + u':' + port
+
+        var_host = VARIANT()
+        var_host.vt = VT_BSTR
+        var_host.vdata.bstrval = BSTR(url)
+
+        var_empty = VARIANT()
+        var_empty.vt = VT_EMPTY
+        var_empty.vdata.llval = 0
+
+        _WinHttpRequest._SetProxy(self, HTTPREQUEST_PROXYSETTING_PROXY, var_host, var_empty)
+
+        _SysFreeString(var_host.vdata.bstrval)
+
     def __del__(self):
         if self.value is not None:
             _WinHttpRequest._Release(self)
@@ -288,6 +308,10 @@ class _HTTPConnection:
         _CoInitialize(None)
         _CoCreateInstance(byref(clsid), 0, 1, byref(iid), byref(self._httprequest))
         
+    def set_tunnel(self, host, port=None):
+        ''' Sets up the host and the port for the HTTP CONNECT Tunnelling. '''
+        self._httprequest.set_tunnel(unicode(host), unicode(str(port)))
+
     def putrequest(self, method, uri):
         ''' Connects to host and sends the request. '''
 
@@ -338,7 +362,3 @@ class _HTTPConnection:
         length = len(body)
                 
         return _Response(status, status_text, length, headers, body)
-
-
-
-
