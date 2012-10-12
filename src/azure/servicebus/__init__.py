@@ -22,7 +22,7 @@ from datetime import datetime
 
 
 from azure.http import HTTPError
-from azure import (WindowsAzureError, WindowsAzureData, 
+from azure import (WindowsAzureError, WindowsAzureData, _general_error_handler,
                           _create_entry, _get_entry_properties, xml_escape,
                           _get_child_nodes, WindowsAzureMissingResourceError,
                           WindowsAzureConflictError, _get_serialization_name, 
@@ -690,12 +690,6 @@ def convert_queue_to_xml(queue):
 
 def _service_bus_error_handler(http_error):
     ''' Simple error handler for service bus service. Will add more specific cases '''
-
-    if http_error.status == 409:
-        raise WindowsAzureConflictError(azure._ERROR_CONFLICT)
-    elif http_error.status == 404:
-        raise WindowsAzureMissingResourceError(azure._ERROR_NOT_FOUND)
-    else:
-        raise WindowsAzureError(azure._ERROR_UNKNOWN % http_error.message)
+    return _general_error_handler(http_error)
 
 from azure.servicebus.servicebusservice import ServiceBusService

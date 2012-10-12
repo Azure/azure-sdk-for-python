@@ -652,6 +652,7 @@ class ServiceBusService:
             return self.read_delete_subscription_message(topic_name, subscription_name, timeout)
     
     def __init__(self, service_namespace=None, account_key=None, issuer=None, x_ms_version='2011-06-01', host_base=SERVICE_BUS_HOST_BASE):
+        #x_ms_version is not used, but the parameter is kept for backwards compatibility
         self.requestid = None
         self.service_namespace = service_namespace
         self.account_key = account_key
@@ -673,8 +674,7 @@ class ServiceBusService:
         if not self.service_namespace or not self.account_key or not self.issuer:
             raise WindowsAzureError('You need to provide servicebus namespace, access key and Issuer')
         
-        self.x_ms_version = x_ms_version
-        self._httpclient = _HTTPClient(service_instance=self, service_namespace=service_namespace, account_key=account_key, issuer=issuer, x_ms_version=self.x_ms_version)
+        self._httpclient = _HTTPClient(service_instance=self, service_namespace=service_namespace, account_key=account_key, issuer=issuer)
         self._filter = self._httpclient.perform_request
     
     def with_filter(self, filter):
@@ -685,7 +685,7 @@ class ServiceBusService:
         request, pass it off to the next lambda, and then perform any post-processing
         on the response.'''
         res = ServiceBusService(self.service_namespace, self.account_key, 
-                                self.issuer, self.x_ms_version)
+                                self.issuer)
         old_filter = self._filter
         def new_filter(request):
             return filter(request, old_filter)

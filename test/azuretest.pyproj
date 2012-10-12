@@ -6,7 +6,7 @@
     <ProjectGuid>{c0742a2d-4862-40e4-8a28-036eecdbc614}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>azuretest\doctest_blobservice.py</StartupFile>
+    <StartupFile>azuretest\test_servicemanagementservice.py</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azuretest</Name>

@@ -33,7 +33,7 @@ class _HTTPClient:
     Takes the request and sends it to cloud service and returns the response.
     '''
 
-    def __init__(self, service_instance, cert_file=None, account_name=None, account_key=None, service_namespace=None, issuer=None, x_ms_version=None, protocol='https'):
+    def __init__(self, service_instance, cert_file=None, account_name=None, account_key=None, service_namespace=None, issuer=None, protocol='https'):
         '''
         service_instance: service client instance. 
         cert_file: certificate file name/location. This is only used in hosted service management.
@@ -41,7 +41,6 @@ class _HTTPClient:
         account_key: the storage account access key for storage services or servicebus access key for service bus service.
         service_namespace: the service namespace for service bus.
         issuer: the issuer for service bus service.
-        x_ms_version: the x_ms_version for the service.
         '''
         self.service_instance = service_instance
         self.status = None
@@ -52,7 +51,6 @@ class _HTTPClient:
         self.account_key = account_key    
         self.service_namespace = service_namespace    
         self.issuer = issuer
-        self.x_ms_version = x_ms_version
         self.protocol = protocol
         self.proxy_host = None
         self.proxy_port = None

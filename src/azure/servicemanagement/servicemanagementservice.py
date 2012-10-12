@@ -30,7 +30,7 @@ from azure import (_validate_not_none,
                     MANAGEMENT_HOST)
 
 class ServiceManagementService:
-    def __init__(self, subscription_id=None, cert_file=None, x_ms_version='2011-08-18', host=MANAGEMENT_HOST):
+    def __init__(self, subscription_id=None, cert_file=None, host=MANAGEMENT_HOST):
         self.requestid = None
         self.subscription_id = subscription_id
         self.cert_file = cert_file
@@ -47,8 +47,7 @@ class ServiceManagementService:
         if not self.cert_file or not self.subscription_id:
             raise WindowsAzureError('You need to provide subscription id and certificate file')
         
-        self.x_ms_version = x_ms_version
-        self._httpclient = _HTTPClient(service_instance=self, cert_file=self.cert_file, x_ms_version=self.x_ms_version)
+        self._httpclient = _HTTPClient(service_instance=self, cert_file=self.cert_file)
         self._filter = self._httpclient.perform_request
     
     def with_filter(self, filter):
@@ -58,7 +57,7 @@ class ServiceManagementService:
         and another lambda.  The filter can perform any pre-processing on the
         request, pass it off to the next lambda, and then perform any post-processing
         on the response.'''
-        res = ServiceManagementService(self.subscription_id, self.cert_file, self.x_ms_version)
+        res = ServiceManagementService(self.subscription_id, self.cert_file)
         old_filter = self._filter
         def new_filter(request):
             return filter(request, old_filter)

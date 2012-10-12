@@ -19,7 +19,7 @@ import hashlib
 import os
 
 
-from azure.storage import _storage_error_handler, X_MS_VERSION
+from azure.storage import _storage_error_handler
 from azure.http.httpclient import _HTTPClient
 from azure.http import HTTPError
 from azure import (_parse_response, WindowsAzureError,
@@ -84,8 +84,7 @@ class _StorageClient(object):
         if not self.account_name or not self.account_key:
             raise WindowsAzureError(azure._ERROR_STORAGE_MISSING_INFO)
         
-        self.x_ms_version = X_MS_VERSION
-        self._httpclient = _HTTPClient(service_instance=self, account_key=self.account_key, account_name=self.account_name, x_ms_version=self.x_ms_version, protocol=protocol)
+        self._httpclient = _HTTPClient(service_instance=self, account_key=self.account_key, account_name=self.account_name, protocol=protocol)
         self._batchclient = None
         self._filter = self._perform_request_worker
     

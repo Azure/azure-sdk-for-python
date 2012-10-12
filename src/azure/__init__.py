@@ -614,6 +614,18 @@ def _dont_fail_not_exist(error):
         return False
     else:
         raise error
+
+def _general_error_handler(http_error):
+    ''' Simple error handler for azure.'''
+    if http_error.status == 409:
+        raise WindowsAzureConflictError(_ERROR_CONFLICT)
+    elif http_error.status == 404:
+        raise WindowsAzureMissingResourceError(_ERROR_NOT_FOUND)
+    else:
+        if http_error.respbody is not None:
+            raise WindowsAzureError(_ERROR_UNKNOWN % http_error.message + '\n' + http_error.respbody)
+        else:
+            raise WindowsAzureError(_ERROR_UNKNOWN % http_error.message)
     
 def _parse_response_for_dict(response):
     ''' Extracts name-values from response header. Filter out the standard http headers.'''

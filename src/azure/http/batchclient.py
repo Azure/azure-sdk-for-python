@@ -28,8 +28,8 @@ class _BatchClient(_HTTPClient):
     It only supports one changeset.
     '''
 
-    def __init__(self, service_instance, account_key, account_name, x_ms_version=None, protocol='http'):
-        _HTTPClient.__init__(self, service_instance, account_name=account_name, account_key=account_key, x_ms_version=x_ms_version, protocol=protocol)
+    def __init__(self, service_instance, account_key, account_name, protocol='http'):
+        _HTTPClient.__init__(self, service_instance, account_name=account_name, account_key=account_key, protocol=protocol)
         self.is_batch = False
         self.batch_requests = []
         self.batch_table = ''

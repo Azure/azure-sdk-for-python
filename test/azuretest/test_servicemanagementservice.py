@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright 2011-2012 Microsoft Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -1502,7 +1502,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         # Assert
         self.assertTrue(self._os_image_exists(self.os_image_name))
 
-    def test_update_os_images(self):
+    def test_update_os_image(self):
         # Arrange
         self._create_os_image(self.os_image_name, LINUX_OS_VHD_URL, 'Linux')
 

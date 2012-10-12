@@ -14,7 +14,7 @@
 #--------------------------------------------------------------------------
 import base64
 from azure.http import HTTPError
-from azure import (WindowsAzureError, WindowsAzureData,
+from azure import (WindowsAzureError, WindowsAzureData, _general_error_handler,
                           _create_entry, _get_entry_properties, xml_escape,
                           _get_child_nodes, WindowsAzureMissingResourceError,
                           WindowsAzureConflictError, _get_serialization_name, 
@@ -671,412 +671,266 @@ def _parse_response_for_async_op(response):
 
 def _management_error_handler(http_error):
     ''' Simple error handler for management service. Will add more specific cases '''
+    return _general_error_handler(http_error)
 
-    if http_error.status == 409:
-        raise WindowsAzureConflictError(azure._ERROR_CONFLICT)
-    elif http_error.status == 404:
-        raise WindowsAzureMissingResourceError(azure._ERROR_NOT_FOUND)
-    else:
-        raise WindowsAzureError(azure._ERROR_UNKNOWN % http_error.message + '\n' + http_error.respbody)
+def _lower(text):
+    return text.lower()
 
 class _XmlSerializer(object):
     @staticmethod
-    def extended_properties_dict_to_xml_fragment(extended_properties):
-        xml = ''
-        if extended_properties is not None and len(extended_properties) > 0:
-            xml += '<ExtendedProperties>'
-            for key, val in extended_properties.items():
-                xml += ''.join(['<ExtendedProperty>', '<Name>', str(key), '</Name>', '<Value>', str(val), '</Value>', '</ExtendedProperty>'])
-            xml += '</ExtendedProperties>'
-        return xml
-
-    @staticmethod
     def create_storage_service_input_to_xml(service_name, description, label, affinity_group, location, geo_replication_enabled, extended_properties):
-        xml = '<CreateStorageServiceInput xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if service_name is not None:
-            xml += ''.join(['<ServiceName>', str(service_name), '</ServiceName>'])
-        if description is not None:
-            xml += ''.join(['<Description>', str(description), '</Description>'])
-        if label is not None:
-            xml += ''.join(['<Label>', base64.b64encode(str(label)), '</Label>'])
-        if affinity_group is not None:
-            xml += ''.join(['<AffinityGroup>', str(affinity_group), '</AffinityGroup>'])
-        if location is not None:
-            xml += ''.join(['<Location>', str(location), '</Location>'])
-        if geo_replication_enabled is not None:
-            xml += ''.join(['<GeoReplicationEnabled>', str(geo_replication_enabled).lower(), '</GeoReplicationEnabled>'])
-        xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(extended_properties)
-
-        xml += '</CreateStorageServiceInput>'
-        return xml
+        return _XmlSerializer.doc_from_data('CreateStorageServiceInput',
+                                            [('ServiceName', service_name),
+                                             ('Description', description),
+                                             ('Label', label, base64.b64encode),
+                                             ('AffinityGroup', affinity_group),
+                                             ('Location', location),
+                                             ('GeoReplicationEnabled', geo_replication_enabled, _lower)],
+                                            extended_properties)
 
     @staticmethod
     def update_storage_service_input_to_xml(description, label, geo_replication_enabled, extended_properties):
-        xml = '<UpdateStorageServiceInput xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if description is not None:
-            xml += ''.join(['<Description>', str(description), '</Description>'])
-        if label is not None:
-            xml += ''.join(['<Label>', base64.b64encode(str(label)), '</Label>'])
-        if geo_replication_enabled is not None:
-            xml += ''.join(['<GeoReplicationEnabled>', str(geo_replication_enabled).lower(), '</GeoReplicationEnabled>'])
-        xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(extended_properties)
-
-        xml += '</UpdateStorageServiceInput>'
-        return xml
+        return _XmlSerializer.doc_from_data('UpdateStorageServiceInput',
+                                            [('Description', description),
+                                             ('Label', label, base64.b64encode),
+                                             ('GeoReplicationEnabled', geo_replication_enabled, _lower)],
+                                            extended_properties)
 
     @staticmethod
     def regenerate_keys_to_xml(key_type):
-        xml = '<?xml version="1.0" encoding="utf-8"?> \
-    <RegenerateKeys xmlns="http://schemas.microsoft.com/windowsazure"> \
-      <KeyType>' + xml_escape(str(key_type)) + '</KeyType> \
-    </RegenerateKeys>'
-        return xml
+        return _XmlSerializer.doc_from_data('RegenerateKeys',
+                                            [('KeyType', key_type)])
 
     @staticmethod
     def update_hosted_service_to_xml(label, description, extended_properties):
-        xml = '<UpdateHostedService xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if label is not None:
-            xml += ''.join(['<Label>', base64.b64encode(str(label)), '</Label>'])
-        if description is not None:
-            xml += ''.join(['<Description>', str(description), '</Description>'])
-        xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(extended_properties)
-
-        xml += '</UpdateHostedService>'
-        return xml
+        return _XmlSerializer.doc_from_data('UpdateHostedService',
+                                            [('Label', label, base64.b64encode),
+                                             ('Description', description)],
+                                            extended_properties)
 
     @staticmethod
     def create_hosted_service_to_xml(service_name, label, description, location, affinity_group, extended_properties):
-        xml = '<CreateHostedService xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if service_name is not None:
-            xml += ''.join(['<ServiceName>', str(service_name), '</ServiceName>'])
-        if label is not None:
-            xml += ''.join(['<Label>', base64.b64encode(str(label)), '</Label>'])
-        if description is not None:
-            xml += ''.join(['<Description>', str(description), '</Description>'])
-        if location is not None:
-            xml += ''.join(['<Location>', str(location), '</Location>'])
-        if affinity_group is not None:
-            xml += ''.join(['<AffinityGroup>', str(affinity_group), '</AffinityGroup>'])
-        xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(extended_properties)
-
-        xml += '</CreateHostedService>'
-        return xml
+        return _XmlSerializer.doc_from_data('CreateHostedService',
+                                            [('ServiceName', service_name),
+                                             ('Label', label, base64.b64encode),
+                                             ('Description', description),
+                                             ('Location', location),
+                                             ('AffinityGroup', affinity_group)],
+                                            extended_properties)
 
     @staticmethod
     def create_deployment_to_xml(name, package_url, label, configuration, start_deployment, treat_warnings_as_error, extended_properties):
-        xml = '<CreateDeployment xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if name is not None:
-            xml += ''.join(['<Name>', str(name), '</Name>'])
-        if package_url is not None:
-            xml += ''.join(['<PackageUrl>', str(package_url), '</PackageUrl>'])
-        if label is not None:
-            xml += ''.join(['<Label>', base64.b64encode(str(label)), '</Label>'])
-        if configuration is not None:
-            xml += ''.join(['<Configuration>', str(configuration), '</Configuration>'])
-        if start_deployment is not None:
-            xml += ''.join(['<StartDeployment>', str(start_deployment).lower(), '</StartDeployment>'])
-        if treat_warnings_as_error is not None:
-            xml += ''.join(['<TreatWarningsAsError>', str(treat_warnings_as_error).lower(), '</TreatWarningsAsError>'])
-        xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(extended_properties)
-
-        xml += '</CreateDeployment>'
-        return xml
+        return _XmlSerializer.doc_from_data('CreateDeployment',
+                                            [('Name', name),
+                                             ('PackageUrl', package_url),
+                                             ('Label', label, base64.b64encode),
+                                             ('Configuration', configuration),
+                                             ('StartDeployment', start_deployment, _lower),
+                                             ('TreatWarningsAsError', treat_warnings_as_error, _lower)],
+                                            extended_properties)
 
     @staticmethod
     def swap_deployment_to_xml(production, source_deployment):
-        xml = '<Swap xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if production is not None:
-            xml += ''.join(['<Production>', str(production), '</Production>'])
-        if source_deployment is not None:
-            xml += ''.join(['<SourceDeployment>', str(source_deployment), '</SourceDeployment>'])
-
-        xml += '</Swap>'
-        return xml
+        return _XmlSerializer.doc_from_data('Swap',
+                                            [('Production', production),
+                                             ('SourceDeployment', source_deployment)])
 
     @staticmethod
     def update_deployment_status_to_xml(status):
-        xml = '<UpdateDeploymentStatus xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if status is not None:
-            xml += ''.join(['<Status>', str(status), '</Status>'])
-
-        xml += '</UpdateDeploymentStatus>'
-        return xml
+        return _XmlSerializer.doc_from_data('UpdateDeploymentStatus',
+                                            [('Status', status)])
 
     @staticmethod
     def change_deployment_to_xml(configuration, treat_warnings_as_error, mode, extended_properties):
-        xml = '<ChangeConfiguration xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if configuration is not None:
-            xml += ''.join(['<Configuration>', str(configuration), '</Configuration>'])
-        if treat_warnings_as_error is not None:
-            xml += ''.join(['<TreatWarningsAsError>', str(treat_warnings_as_error).lower(), '</TreatWarningsAsError>'])
-        if mode is not None:
-            xml += ''.join(['<Mode>', str(mode), '</Mode>'])
-        xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(extended_properties)
-
-        xml += '</ChangeConfiguration>'
-        return xml
+        return _XmlSerializer.doc_from_data('ChangeConfiguration',
+                                            [('Configuration', configuration),
+                                             ('TreatWarningsAsError', treat_warnings_as_error, _lower),
+                                             ('Mode', mode)],
+                                            extended_properties)
 
     @staticmethod
     def upgrade_deployment_to_xml(mode, package_url, configuration, label, role_to_upgrade, force, extended_properties):
-        xml = '<UpgradeDeployment xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if mode is not None:
-            xml += ''.join(['<Mode>', str(mode), '</Mode>'])
-        if package_url is not None:
-            xml += ''.join(['<PackageUrl>', str(package_url), '</PackageUrl>'])
-        if configuration is not None:
-            xml += ''.join(['<Configuration>', str(configuration), '</Configuration>'])
-        if label is not None:
-            xml += ''.join(['<Label>', base64.b64encode(str(label)), '</Label>'])
-        if role_to_upgrade is not None:
-            xml += ''.join(['<RoleToUpgrade>', str(role_to_upgrade), '</RoleToUpgrade>'])
-        if force is not None:
-            xml += ''.join(['<Force>', str(force).lower(), '</Force>'])
-        xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(extended_properties)
-
-        xml += '</UpgradeDeployment>'
-        return xml
+        return _XmlSerializer.doc_from_data('UpgradeDeployment',
+                                            [('Mode', mode),
+                                             ('PackageUrl', package_url),
+                                             ('Configuration', configuration),
+                                             ('Label', label, base64.b64encode),
+                                             ('RoleToUpgrade', role_to_upgrade),
+                                             ('Force', force, _lower)],
+                                            extended_properties)
 
     @staticmethod
     def rollback_upgrade_to_xml(mode, force):
-        xml = '<RollbackUpdateOrUpgrade xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if mode is not None:
-            xml += ''.join(['<Mode>', str(mode), '</Mode>'])
-        if force is not None:
-            xml += ''.join(['<Force>', str(force).lower(), '</Force>'])
-
-        xml += '</RollbackUpdateOrUpgrade>'
-        return xml
+        return _XmlSerializer.doc_from_data('RollbackUpdateOrUpgrade',
+                                            [('Mode', mode),
+                                             ('Force', force, _lower)])
 
     @staticmethod
     def walk_upgrade_domain_to_xml(upgrade_domain):
-        xml = '<WalkUpgradeDomain xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if upgrade_domain is not None:
-            xml += ''.join(['<UpgradeDomain>', str(upgrade_domain), '</UpgradeDomain>'])
-
-        xml += '</WalkUpgradeDomain>'
-        return xml
+        return _XmlSerializer.doc_from_data('WalkUpgradeDomain',
+                                            [('UpgradeDomain', upgrade_domain)])
 
     @staticmethod
     def certificate_file_to_xml(data, certificate_format, password):
-        xml = '<CertificateFile xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if data is not None:
-            xml += ''.join(['<Data>', str(data), '</Data>'])
-        if certificate_format is not None:
-            xml += ''.join(['<CertificateFormat>', str(certificate_format), '</CertificateFormat>'])
-        if password is not None:
-            xml += ''.join(['<Password>', str(password), '</Password>'])
-
-        xml += '</CertificateFile>'
-        return xml
+        return _XmlSerializer.doc_from_data('CertificateFile',
+                                            [('Data', data),
+                                             ('CertificateFormat', certificate_format),
+                                             ('Password', password)])
 
     @staticmethod
     def create_affinity_group_to_xml(name, label, description, location):
-        xml = '<CreateAffinityGroup xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if name is not None:
-            xml += ''.join(['<Name>', str(name), '</Name>'])
-        if label is not None:
-            xml += ''.join(['<Label>', base64.b64encode(str(label)), '</Label>'])
-        if description is not None:
-            xml += ''.join(['<Description>', str(description), '</Description>'])
-        if location is not None:
-            xml += ''.join(['<Location>', str(location), '</Location>'])
-
-        xml += '</CreateAffinityGroup>'
-        return xml
+        return _XmlSerializer.doc_from_data('CreateAffinityGroup',
+                                            [('Name', name),
+                                             ('Label', label, base64.b64encode),
+                                             ('Description', description),
+                                             ('Location', location)])
 
     @staticmethod
     def update_affinity_group_to_xml(label, description):
-        xml = '<UpdateAffinityGroup xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if label is not None:
-            xml += ''.join(['<Label>', base64.b64encode(str(label)), '</Label>'])
-        if description is not None:
-            xml += ''.join(['<Description>', str(description), '</Description>'])
-
-        xml += '</UpdateAffinityGroup>'
-        return xml
+        return _XmlSerializer.doc_from_data('UpdateAffinityGroup',
+                                            [('Label', label, base64.b64encode),
+                                             ('Description', description)])
 
     @staticmethod
     def subscription_certificate_to_xml(public_key, thumbprint, data):
-        xml = '<SubscriptionCertificate xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if public_key is not None:
-            xml += ''.join(['<SubscriptionCertificatePublicKey>', str(public_key), '</SubscriptionCertificatePublicKey>'])
-        if thumbprint is not None:
-            xml += ''.join(['<SubscriptionCertificateThumbprint>', str(thumbprint), '</SubscriptionCertificateThumbprint>'])
-        if data is not None:
-            xml += ''.join(['<SubscriptionCertificateData>', str(data), '</SubscriptionCertificateData>'])
-        xml += '</SubscriptionCertificate>'
-        return xml
+        return _XmlSerializer.doc_from_data('SubscriptionCertificate',
+                                            [('SubscriptionCertificatePublicKey', public_key),
+                                             ('SubscriptionCertificateThumbprint', thumbprint),
+                                             ('SubscriptionCertificateData', data)])
 
     @staticmethod
     def os_image_to_xml(label, media_link, name, os):
-        xml = '<OSImage xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if label is not None:
-            xml += ''.join(['<Label>', str(label), '</Label>'])
-        if media_link is not None:
-            xml += ''.join(['<MediaLink>', str(media_link), '</MediaLink>'])
-        if name is not None:
-            xml += ''.join(['<Name>', str(name), '</Name>'])
-        if os is not None:
-            xml += ''.join(['<OS>', str(os), '</OS>'])
-        xml += '</OSImage>'
-        return xml
+        return _XmlSerializer.doc_from_data('OSImage',
+                                            [('Label', label),
+                                             ('MediaLink', media_link),
+                                             ('Name', name),
+                                             ('OS', os)])
 
     @staticmethod
     def data_virtual_hard_disk_to_xml(host_caching, disk_label, disk_name, lun, logical_disk_size_in_gb, media_link, source_media_link):
-        xml = '<DataVirtualHardDisk xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if host_caching is not None:
-            xml += ''.join(['<HostCaching>', str(host_caching), '</HostCaching>'])
-        if disk_label is not None:
-            xml += ''.join(['<DiskLabel>', str(disk_label), '</DiskLabel>'])
-        if disk_name is not None:
-            xml += ''.join(['<DiskName>', str(disk_name), '</DiskName>'])
-        if lun is not None:
-            xml += ''.join(['<Lun>', str(lun), '</Lun>'])
-        if logical_disk_size_in_gb is not None:
-            xml += ''.join(['<LogicalDiskSizeInGB>', str(logical_disk_size_in_gb), '</LogicalDiskSizeInGB>'])
-        if media_link is not None:
-            xml += ''.join(['<MediaLink>', str(media_link), '</MediaLink>'])
-        if source_media_link is not None:
-            xml += ''.join(['<SourceMediaLink>', str(source_media_link), '</SourceMediaLink>'])
-        xml += '</DataVirtualHardDisk>'
-        return xml
+        return _XmlSerializer.doc_from_data('DataVirtualHardDisk',
+                                            [('HostCaching', host_caching),
+                                             ('DiskLabel', disk_label),
+                                             ('DiskName', disk_name),
+                                             ('Lun', lun),
+                                             ('LogicalDiskSizeInGB', logical_disk_size_in_gb),
+                                             ('MediaLink', media_link),
+                                             ('SourceMediaLink', source_media_link)])
 
     @staticmethod
     def disk_to_xml(has_operating_system, label, media_link, name, os):
-        xml = '<Disk xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        if has_operating_system is not None:
-            xml += ''.join(['<HasOperatingSystem>', str(has_operating_system).lower(), '</HasOperatingSystem>'])
-        if label is not None:
-            xml += ''.join(['<Label>', str(label), '</Label>'])
-        if media_link is not None:
-            xml += ''.join(['<MediaLink>', str(media_link), '</MediaLink>'])
-        if name is not None:
-            xml += ''.join(['<Name>', str(name), '</Name>'])
-        if os is not None:
-            xml += ''.join(['<OS>', str(os), '</OS>'])
-        xml += '</Disk>'
-        return xml
+        return _XmlSerializer.doc_from_data('Disk',
+                                            [('HasOperatingSystem', has_operating_system, _lower),
+                                             ('Label', label),
+                                             ('MediaLink', media_link),
+                                             ('Name', name),
+                                             ('OS', os)])
 
     @staticmethod
     def restart_role_operation_to_xml():
-        xml = '<RestartRoleOperation xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        xml += '<OperationType>RestartRoleOperation</OperationType>'
-        xml += '</RestartRoleOperation>'
-        return xml
+        return _XmlSerializer.doc_from_xml('RestartRoleOperation',
+                                           '<OperationType>RestartRoleOperation</OperationType>')
 
     @staticmethod
     def shutdown_role_operation_to_xml():
-        xml = '<ShutdownRoleOperation xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        xml += '<OperationType>ShutdownRoleOperation</OperationType>'
-        xml += '</ShutdownRoleOperation>'
-        return xml
+        return _XmlSerializer.doc_from_xml('ShutdownRoleOperation',
+                                           '<OperationType>ShutdownRoleOperation</OperationType>')
 
     @staticmethod
     def start_role_operation_to_xml():
-        xml = '<StartRoleOperation xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        xml += '<OperationType>StartRoleOperation</OperationType>'
-        xml += '</StartRoleOperation>'
-        return xml
+        return _XmlSerializer.doc_from_xml('StartRoleOperation',
+                                           '<OperationType>StartRoleOperation</OperationType>')
 
     @staticmethod
     def windows_configuration_to_xml(configuration):
-        xml = ''.join(['<ConfigurationSetType>', str(configuration.configuration_set_type), '</ConfigurationSetType>'])
-        if configuration.computer_name is not None:
-            xml += ''.join(['<ComputerName>', str(configuration.computer_name), '</ComputerName>'])
-        if configuration.admin_password is not None:
-            xml += ''.join(['<AdminPassword>', base64.b64encode(str(configuration.admin_password)), '</AdminPassword>'])
-        if configuration.reset_password_on_first_logon is not None:
-            xml += ''.join(['<ResetPasswordOnFirstLogon>', str(configuration.reset_password_on_first_logon).lower(), '</ResetPasswordOnFirstLogon>'])
-        if configuration.enable_automatic_updates is not None:
-            xml += ''.join(['<EnableAutomaticUpdates>', str(configuration.enable_automatic_updates).lower(), '</EnableAutomaticUpdates>'])
-        if configuration.time_zone is not None:
-            xml += ''.join(['<TimeZone>', str(configuration.time_zone), '</TimeZone>'])
+        xml = _XmlSerializer.data_to_xml([('ConfigurationSetType', configuration.configuration_set_type),
+                                          ('ComputerName', configuration.computer_name),
+                                          ('AdminPassword', configuration.admin_password, base64.b64encode),
+                                          ('ResetPasswordOnFirstLogon', configuration.reset_password_on_first_logon, _lower),
+                                          ('EnableAutomaticUpdates', configuration.enable_automatic_updates, _lower),
+                                          ('TimeZone', configuration.time_zone)])
+
         if configuration.domain_join is not None:
             xml += '<DomainJoin>'
             xml += '<Credentials>'
-            xml += ''.join(['<Domain>', str(configuration.domain_join.credentials.domain), '</Domain>'])
-            xml += ''.join(['<Username>', str(configuration.domain_join.credentials.username), '</Username>'])
-            xml += ''.join(['<Password>', str(configuration.domain_join.credentials.password), '</Password>'])
+            xml += _XmlSerializer.data_to_xml([('Domain', configuration.domain_join.credentials.domain),
+                                               ('Username', configuration.domain_join.credentials.username),
+                                               ('Password', configuration.domain_join.credentials.password)])
             xml += '</Credentials>'
-            xml += ''.join(['<JoinDomain>', str(configuration.domain_join.join_domain), '</JoinDomain>'])
-            xml += ''.join(['<MachineObjectOU>', str(configuration.domain_join.machine_object_ou), '</MachineObjectOU>'])
+            xml += _XmlSerializer.data_to_xml([('JoinDomain', configuration.domain_join.join_domain),
+                                               ('MachineObjectOU', configuration.domain_join.machine_object_ou)])
             xml += '</DomainJoin>'
         if configuration.stored_certificate_settings is not None:
             xml += '<StoredCertificateSettings>'
             for cert in configuration.stored_certificate_settings:
                 xml += '<CertificateSetting>'
-                xml += ''.join(['<StoreLocation>', str(cert.store_location), '</StoreLocation>'])
-                xml += ''.join(['<StoreName>', str(cert.store_name), '</StoreName>'])
-                xml += ''.join(['<Thumbprint>', str(cert.thumbprint), '</Thumbprint>'])
+                xml += _XmlSerializer.data_to_xml([('StoreLocation', cert.store_location),
+                                                   ('StoreName', cert.store_name),
+                                                   ('Thumbprint', cert.thumbprint)])
                 xml += '</CertificateSetting>'
             xml += '</StoredCertificateSettings>'
         return xml
 
     @staticmethod
     def linux_configuration_to_xml(configuration):
-        xml = ''.join(['<ConfigurationSetType>', str(configuration.configuration_set_type), '</ConfigurationSetType>'])
-        if configuration.host_name is not None:
-            xml += ''.join(['<HostName>', str(configuration.host_name), '</HostName>'])
-        if configuration.user_name is not None:
-            xml += ''.join(['<UserName>', str(configuration.user_name), '</UserName>'])
-        if configuration.user_password is not None:
-            xml += ''.join(['<UserPassword>', str(configuration.user_password), '</UserPassword>'])
-        if configuration.disable_ssh_password_authentication is not None:
-            xml += ''.join(['<DisableSshPasswordAuthentication>', str(configuration.disable_ssh_password_authentication).lower(), '</DisableSshPasswordAuthentication>'])
+        xml = _XmlSerializer.data_to_xml([('ConfigurationSetType', configuration.configuration_set_type),
+                                          ('HostName', configuration.host_name),
+                                          ('UserName', configuration.user_name),
+                                          ('UserPassword', configuration.user_password),
+                                          ('DisableSshPasswordAuthentication', configuration.disable_ssh_password_authentication, _lower)])
+
         if configuration.ssh is not None:
             xml += '<SSH>'
             xml += '<PublicKeys>'
             for key in configuration.ssh.public_keys:
                 xml += '<PublicKey>'
-                xml += ''.join(['<FingerPrint>', str(key.finger_print), '</FingerPrint>'])
-                xml += ''.join(['<Path>', str(key.path), '</Path>'])
+                xml += _XmlSerializer.data_to_xml([('FingerPrint', key.finger_print),
+                                                   ('Path', key.path)])
                 xml += '</PublicKey>'
             xml += '</PublicKeys>'
             xml += '<KeyPairs>'
             for key in configuration.ssh.key_pairs:
                 xml += '<KeyPair>'
-                xml += ''.join(['<FingerPrint>', str(key.finger_print), '</FingerPrint>'])
-                xml += ''.join(['<Path>', str(key.path), '</Path>'])
+                xml += _XmlSerializer.data_to_xml([('FingerPrint', key.finger_print),
+                                                   ('Path', key.path)])
                 xml += '</KeyPair>'
-        
             xml += '</KeyPairs>'
             xml += '</SSH>'
         return xml
 
     @staticmethod
     def network_configuration_to_xml(configuration):
-        xml = ''.join(['<ConfigurationSetType>', str(configuration.configuration_set_type), '</ConfigurationSetType>'])
+        xml = _XmlSerializer.data_to_xml([('ConfigurationSetType', configuration.configuration_set_type)])
         xml += '<InputEndpoints>'
         for endpoint in configuration.input_endpoints:
             xml += '<InputEndpoint>'
-            xml += ''.join(['<EnableDirectServerReturn>', str(endpoint.enable_direct_server_return).lower(), '</EnableDirectServerReturn>'])
-            xml += ''.join(['<LoadBalancedEndpointSetName>', str(endpoint.load_balanced_endpoint_set_name), '</LoadBalancedEndpointSetName>'])
-            xml += ''.join(['<LocalPort>', str(endpoint.local_port), '</LocalPort>'])
-            xml += ''.join(['<Name>', str(endpoint.name), '</Name>'])
-            xml += ''.join(['<Port>', str(endpoint.port), '</Port>'])
+            xml += _XmlSerializer.data_to_xml([('EnableDirectServerReturn', endpoint.enable_direct_server_return, _lower),
+                                               ('LoadBalancedEndpointSetName', endpoint.load_balanced_endpoint_set_name),
+                                               ('LocalPort', endpoint.local_port),
+                                               ('Name', endpoint.name),
+                                               ('Port', endpoint.port)])
+
             if endpoint.load_balancer_probe.path or endpoint.load_balancer_probe.port or endpoint.load_balancer_probe.protocol:
                 xml += '<LoadBalancerProbe>'
-                if endpoint.load_balancer_probe.path:
-                    xml += ''.join(['<Path>', str(endpoint.load_balancer_probe.path), '</Path>'])
-                if endpoint.load_balancer_probe.port:
-                    xml += ''.join(['<Port>', str(endpoint.load_balancer_probe.port), '</Port>'])
-                if endpoint.load_balancer_probe.protocol:
-                    xml += ''.join(['<Protocol>', str(endpoint.load_balancer_probe.protocol), '</Protocol>'])
+                xml += _XmlSerializer.data_to_xml([('Path', endpoint.load_balancer_probe.path),
+                                                   ('Port', endpoint.load_balancer_probe.port),
+                                                   ('Protocol', endpoint.load_balancer_probe.protocol)])
                 xml += '</LoadBalancerProbe>'
-            xml += ''.join(['<Protocol>', str(endpoint.protocol), '</Protocol>'])
+
+            xml += _XmlSerializer.data_to_xml([('Protocol', endpoint.protocol)])
             xml += '</InputEndpoint>'
         xml += '</InputEndpoints>'
         xml += '<SubnetNames>'
         for name in configuration.subnet_names:
-            xml += ''.join(['<SubnetName>', str(name), '</SubnetName>'])
+            xml += _XmlSerializer.data_to_xml([('SubnetName', name)])
         xml += '</SubnetNames>'
         return xml
 
     @staticmethod
     def role_to_xml(availability_set_name, data_virtual_hard_disks, network_configuration_set, os_virtual_hard_disk, role_name, role_size, role_type, system_configuration_set):
-        xml = ''.join(['<RoleName>', str(role_name), '</RoleName>'])
-        xml += ''.join(['<RoleType>', str(role_type), '</RoleType>'])
-        
+        xml = _XmlSerializer.data_to_xml([('RoleName', role_name),
+                                          ('RoleType', role_type)])
+
         xml += '<ConfigurationSets>'
         
         if system_configuration_set is not None:
@@ -1095,67 +949,49 @@ class _XmlSerializer(object):
         xml += '</ConfigurationSets>'
         
         if availability_set_name is not None:
-            xml += ''.join(['<AvailabilitySetName>', str(availability_set_name), '</AvailabilitySetName>'])
+            xml += _XmlSerializer.data_to_xml([('AvailabilitySetName', availability_set_name)])
         
         if data_virtual_hard_disks is not None:
             xml += '<DataVirtualHardDisks>'
             for hd in data_virtual_hard_disks:
                 xml += '<DataVirtualHardDisk>'
-                if hd.host_caching is not None:
-                    xml += ''.join(['<HostCaching>', str(hd.host_caching), '</HostCaching>'])
-                if hd.disk_label is not None:
-                    xml += ''.join(['<DiskLabel>', str(hd.disk_label), '</DiskLabel>'])
-                if hd.disk_name is not None:
-                    xml += ''.join(['<DiskName>', str(hd.disk_name), '</DiskName>'])
-                if hd.lun is not None:
-                    xml += ''.join(['<Lun>', str(hd.lun), '</Lun>'])
-                if hd.logical_disk_size_in_gb is not None:
-                    xml += ''.join(['<LogicalDiskSizeInGB>', str(hd.logical_disk_size_in_gb), '</LogicalDiskSizeInGB>'])
-                if hd.media_link is not None:
-                    xml += ''.join(['<MediaLink>', str(hd.media_link), '</MediaLink>'])
+                xml += _XmlSerializer.data_to_xml([('HostCaching', hd.host_caching),
+                                                   ('DiskLabel', hd.disk_label),
+                                                   ('DiskName', hd.disk_name),
+                                                   ('Lun', hd.lun),
+                                                   ('LogicalDiskSizeInGB', hd.logical_disk_size_in_gb),
+                                                   ('MediaLink', hd.media_link)])
                 xml += '</DataVirtualHardDisk>'
             xml += '</DataVirtualHardDisks>'
         
         if os_virtual_hard_disk is not None:
             xml += '<OSVirtualHardDisk>'
-            if os_virtual_hard_disk.host_caching is not None:
-                xml += ''.join(['<HostCaching>', str(os_virtual_hard_disk.host_caching), '</HostCaching>'])
-            if os_virtual_hard_disk.disk_label is not None:
-                xml += ''.join(['<DiskLabel>', str(os_virtual_hard_disk.disk_label), '</DiskLabel>'])
-            if os_virtual_hard_disk.disk_name is not None:
-                xml += ''.join(['<DiskName>', str(os_virtual_hard_disk.disk_name), '</DiskName>'])
-            if os_virtual_hard_disk.media_link is not None:
-                xml += ''.join(['<MediaLink>', str(os_virtual_hard_disk.media_link), '</MediaLink>'])
-            if os_virtual_hard_disk.source_image_name is not None:
-                xml += ''.join(['<SourceImageName>', str(os_virtual_hard_disk.source_image_name), '</SourceImageName>'])
+            xml += _XmlSerializer.data_to_xml([('HostCaching', os_virtual_hard_disk.host_caching),
+                                               ('DiskLabel', os_virtual_hard_disk.disk_label),
+                                               ('DiskName', os_virtual_hard_disk.disk_name),
+                                               ('MediaLink', os_virtual_hard_disk.media_link),
+                                               ('SourceImageName', os_virtual_hard_disk.source_image_name)])
             xml += '</OSVirtualHardDisk>'
         
         if role_size is not None:
-            xml += ''.join(['<RoleSize>', str(role_size), '</RoleSize>'])
+            xml += _XmlSerializer.data_to_xml([('RoleSize', role_size)])
         
         return xml
 
     @staticmethod
     def add_role_to_xml(role_name, system_configuration_set, os_virtual_hard_disk, role_type, network_configuration_set, availability_set_name, data_virtual_hard_disks, role_size):
-        xml = '<PersistentVMRole xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        xml += _XmlSerializer.role_to_xml(availability_set_name, data_virtual_hard_disks, network_configuration_set, os_virtual_hard_disk, role_name, role_size, role_type, system_configuration_set)
-        xml += '</PersistentVMRole>'
-
-        return xml
+        xml = _XmlSerializer.role_to_xml(availability_set_name, data_virtual_hard_disks, network_configuration_set, os_virtual_hard_disk, role_name, role_size, role_type, system_configuration_set)
+        return _XmlSerializer.doc_from_xml('PersistentVMRole', xml)
 
     @staticmethod
     def update_role_to_xml(role_name, os_virtual_hard_disk, role_type, network_configuration_set, availability_set_name, data_virtual_hard_disks, role_size):
-        xml = '<PersistentVMRole xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        xml += _XmlSerializer.role_to_xml(availability_set_name, data_virtual_hard_disks, network_configuration_set, os_virtual_hard_disk, role_name, role_size, role_type, None)
-        xml += '</PersistentVMRole>'
-        
-        return xml
+        xml = _XmlSerializer.role_to_xml(availability_set_name, data_virtual_hard_disks, network_configuration_set, os_virtual_hard_disk, role_name, role_size, role_type, None)
+        return _XmlSerializer.doc_from_xml('PersistentVMRole', xml)
 
     @staticmethod
     def capture_role_to_xml(post_capture_action, target_image_name, target_image_label, provisioning_configuration):
-        xml = '<CaptureRoleOperation xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        xml += '<OperationType>CaptureRoleOperation</OperationType>'
-        xml += ''.join(['<PostCaptureAction>', str(post_capture_action), '</PostCaptureAction>'])
+        xml = _XmlSerializer.data_to_xml([('OperationType', 'CaptureRoleOperation'),
+                                          ('PostCaptureAction', post_capture_action)])
         if provisioning_configuration is not None:
             xml += '<ProvisioningConfiguration>'
             if isinstance(provisioning_configuration, WindowsConfigurationSet):
@@ -1163,25 +999,69 @@ class _XmlSerializer(object):
             elif isinstance(provisioning_configuration, LinuxConfigurationSet):
                 xml += _XmlSerializer.linux_configuration_to_xml(provisioning_configuration)
             xml += '</ProvisioningConfiguration>'
-        xml += ''.join(['<TargetImageLabel>', str(target_image_label), '</TargetImageLabel>'])
-        xml += ''.join(['<TargetImageName>', str(target_image_name), '</TargetImageName>'])
-        xml += '</CaptureRoleOperation>'
-
-        return xml
+        xml += _XmlSerializer.data_to_xml([('TargetImageLabel', target_image_label),
+                                           ('TargetImageName', target_image_name)])
+        return _XmlSerializer.doc_from_xml('CaptureRoleOperation', xml)
 
     @staticmethod
     def virtual_machine_deployment_to_xml(deployment_name, deployment_slot, label, role_name, system_configuration_set, os_virtual_hard_disk, role_type, network_configuration_set, availability_set_name, data_virtual_hard_disks, role_size):
-        xml = '<Deployment xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
-        xml += ''.join(['<Name>', str(deployment_name), '</Name>'])
-        xml += ''.join(['<DeploymentSlot>', str(deployment_slot), '</DeploymentSlot>'])
-        xml += ''.join(['<Label>', base64.b64encode(str(label)), '</Label>'])
+        xml = _XmlSerializer.data_to_xml([('Name', deployment_name),
+                                          ('DeploymentSlot', deployment_slot),
+                                          ('Label', label, base64.b64encode)])
         xml += '<RoleList>'
         xml += '<Role>'
         xml += _XmlSerializer.role_to_xml(availability_set_name, data_virtual_hard_disks, network_configuration_set, os_virtual_hard_disk, role_name, role_size, role_type, system_configuration_set)
         xml += '</Role>'
         xml += '</RoleList>'
-        xml += '</Deployment>'
-        
+        return _XmlSerializer.doc_from_xml('Deployment', xml)
+
+    @staticmethod
+    def data_to_xml(data):
+        '''Creates an xml fragment from the specified data.
+           data: Array of tuples, where first: xml element name
+                                        second: xml element text
+                                        third: conversion function
+        '''
+        xml = ''
+        for element in data:
+            name = element[0]
+            val = element[1]
+            if len(element) > 2:
+                converter = element[2]
+            else:
+                converter = None
+
+            if val is not None:
+                if converter is not None:
+                    text = converter(str(val))
+                else:
+                    text = str(val)
+                xml += ''.join(['<', name, '>', text, '</', name, '>'])
+        return xml
+
+    @staticmethod
+    def doc_from_xml(document_element_name, inner_xml):
+        '''Wraps the specified xml in an xml root element with default azure namespaces'''
+        xml = ''.join(['<', document_element_name, ' xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'])
+        xml += inner_xml
+        xml += ''.join(['</', document_element_name, '>'])
+        return xml
+
+    @staticmethod
+    def doc_from_data(document_element_name, data, extended_properties=None):
+        xml = _XmlSerializer.data_to_xml(data)
+        if extended_properties is not None:
+            xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(extended_properties)
+        return _XmlSerializer.doc_from_xml(document_element_name, xml)
+
+    @staticmethod
+    def extended_properties_dict_to_xml_fragment(extended_properties):
+        xml = ''
+        if extended_properties is not None and len(extended_properties) > 0:
+            xml += '<ExtendedProperties>'
+            for key, val in extended_properties.items():
+                xml += ''.join(['<ExtendedProperty>', '<Name>', str(key), '</Name>', '<Value>', str(val), '</Value>', '</ExtendedProperty>'])
+            xml += '</ExtendedProperties>'
         return xml
 
 from azure.servicemanagement.servicemanagementservice import ServiceManagementService
