@@ -1,6 +1,5 @@
-
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,6 +27,11 @@ class QueueServiceTest(AzureTestCase):
     def setUp(self):
         self.queue_client = QueueService(account_name=credentials.getStorageServicesName(), 
                                                 account_key=credentials.getStorageServicesKey())
+
+        proxy_host = credentials.getProxyHost()
+        proxy_port = credentials.getProxyPort()
+        if proxy_host:
+            self.queue_client.set_proxy(proxy_host, proxy_port)
 
         __uid = getUniqueTestRunID()
 

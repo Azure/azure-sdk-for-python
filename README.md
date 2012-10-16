@@ -21,6 +21,17 @@ Python Developer Center.
 * Service Bus
     * Queues: create, list and delete queues; create, list, and delete subscriptions; send, receive, unlock and delete messages
     * Topics: create, list, and delete topics; create, list, and delete rules
+* Service Management
+    * storage accounts: create, update, delete, list, regenerate keys
+    * affinity groups: create, update, delete, list, get properties
+    * locations: list
+    * hosted services: create, update, delete, list, get properties
+    * deployment: create, get, delete, swap, change configuration, update status, upgrade, rollback
+    * role instance: reboot, reimage
+    * discover addresses and ports for the endpoints of other role instances in your service
+    * get configuration settings and access local resources
+    * get role instance information for current role and other role instances
+    * query and set the status of the current role
 
 # Getting Started
 ## Download Source Code
@@ -192,6 +203,78 @@ msg = Message('Hello World!')
 sbs.send_topic_message('taskdiscussion', msg)
 msg = sbs.receive_subscription_message('taskdiscussion', 'client1')
 ```
+
+
+## Service Management
+
+### Set-up certificates
+
+You  need to create two certificates, one for the server (a .cer file) and one for the client (a .pem file). To create the .pem file using [OpenSSL](http://www.openssl.org), execute this: 
+
+	openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
+
+To create the .cer certificate, execute this: 
+
+	openssl x509 -inform pem -in mycert.pem -outform der -out mycert.cer
+
+### List Available Locations
+
+```Python
+locations = sms.list_locations()
+for location in locations:
+    print(location.name)
+```
+
+### Create a Storage Service
+
+To create a storage service, you need a name for the service (between 3 and 24 lowercase characters and unique within Windows Azure), a label (up to 100 characters, automatically encoded to base-64), and either a location or an affinity group.
+
+```Python
+name = "mystorageservice"
+desc = name
+label = name
+location = 'West US'
+
+result = sms.create_storage_account(name, desc, label, location=location)
+```
+	
+	
+### Create a Cloud Service
+
+A cloud service is also known as a hosted service (from earlier versions of Windows Azure).  The **create_hosted_service** method allows you to create a new hosted service by providing a hosted service name (which must be unique in Windows Azure), a label (automatically encoded to base-64), and the location *or* the affinity group for your service. 
+
+```Python
+name = "myhostedservice"
+desc = name
+label = name
+location = 'West US'
+
+result = sms.create_hosted_service(name, label, desc, location=location)
+```
+
+### Create a Deployment
+
+To make a new deployment to Azure you must store the package file in a Windows Azure Blob Storage account under the same subscription as the hosted service to which the package is being uploaded. You can create a deployment package with the [Windows Azure PowerShell cmdlets](https://www.windowsazure.com/en-us/develop/php/how-to-guides/powershell-cmdlets/), or with the [cspack commandline tool](http://msdn.microsoft.com/en-us/library/windowsazure/gg432988.aspx).
+
+```Python
+service_name = "myhostedservice"
+deployment_name = "v1"
+slot = 'Production'
+package_url = "URL_for_.cspkg_file"
+configuration = base64.b64encode(open(file_path, 'rb').read('path_to_.cscfg_file'))
+label = service_name
+
+result = sms.create_deployment(service_name,
+										 slot,
+										 deployment_name,
+										 package_url,
+										 label,
+										 configuration)
+
+operation = sms.get_operation_status(result.request_id)
+print('Operation status: ' + operation.status)
+```
+
 
 ** For more examples please see the [Windows Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python) **
 

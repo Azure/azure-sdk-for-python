@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,6 +28,11 @@ class BlobServiceTest(AzureTestCase):
     def setUp(self):
         self.bc = BlobService(account_name=credentials.getStorageServicesName(), 
                                   account_key=credentials.getStorageServicesKey())
+
+        proxy_host = credentials.getProxyHost()
+        proxy_port = credentials.getProxyPort()
+        if proxy_host:
+            self.bc.set_proxy(proxy_host, proxy_port)
 
         __uid = getUniqueTestRunID()
 
