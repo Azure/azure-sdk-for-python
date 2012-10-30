@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ from xml.dom import minidom
 import types
 from datetime import datetime
 
-from azure import (_create_entry, 
-                          _get_entry_properties, _html_encode, WindowsAzureError,
+from azure import (_create_entry, METADATA_NS, _parse_response_for_dict, 
+                          _get_entry_properties, WindowsAzureError,
                           _get_child_nodes, _get_child_nodesNS, 
-                          WindowsAzureConflictError, 
+                          WindowsAzureConflictError, _general_error_handler,
                           WindowsAzureMissingResourceError, _list_of, 
                           DEV_TABLE_HOST, TABLE_SERVICE_HOST_BASE, DEV_BLOB_HOST, 
                           BLOB_SERVICE_HOST_BASE, DEV_QUEUE_HOST, 
@@ -51,10 +51,13 @@ class ContainerEnumResults(EnumResultsBase):
     def __init__(self):
         EnumResultsBase.__init__(self)
         self.containers = _list_of(Container)
+
     def __iter__(self):
         return iter(self.containers)
+
     def __len__(self):
         return len(self.containers)
+
     def __getitem__(self, index):
         return self.containers[index]
 
@@ -65,7 +68,7 @@ class Container(WindowsAzureData):
         self.name = ''
         self.url = ''
         self.properties = Properties()
-        self.metadata = Metadata()
+        self.metadata = {}
 
 class Properties(WindowsAzureData):
     ''' Blob container's properties class. '''
@@ -74,29 +77,20 @@ class Properties(WindowsAzureData):
         self.last_modified = ''
         self.etag = ''
 
-class Metadata(WindowsAzureData):
-    ''' Metadata class. '''
-
-    def __init__(self):
-        self.metadata_name = ''
-
 class RetentionPolicy(WindowsAzureData):
     ''' RetentionPolicy in service properties. '''
+
     def __init__(self):
         self.enabled = False
         self.__dict__['days'] = None
 
-    def get_days(self):
-        
+    def get_days(self):        
         #convert days to int value
         return int(self.__dict__['days'])
 
     def set_days(self, value):
         ''' set default days if days is set to empty. '''
-        if value == '':
-            self.__dict__['days'] = 10
-        else:
-            self.__dict__['days'] = value
+        self.__dict__['days'] = value
 
     days = property(fget=get_days, fset=set_days)
 
@@ -143,10 +137,18 @@ class SignedIdentifier(WindowsAzureData):
 
 class SignedIdentifiers(WindowsAzureData):
     ''' SignedIdentifier list. '''
+    
     def __init__(self):
-        self.signed_identifiers = _list_of(SignedIdentifier)
+        self.signed_identifiers = _list_of(SignedIdentifier) 
+
     def __iter__(self):
-        return self.signed_identifiers
+        return iter(self.signed_identifiers)
+
+    def __len__(self):
+        return len(self.signed_identifiers)
+
+    def __getitem__(self, index):
+        return self.signed_identifiers[index]
 
 class BlobEnumResults(EnumResultsBase):
     ''' Blob list.'''
@@ -154,12 +156,23 @@ class BlobEnumResults(EnumResultsBase):
     def __init__(self):
         EnumResultsBase.__init__(self)
         self.blobs = _list_of(Blob)
+
     def __iter__(self):
         return iter(self.blobs)
+
     def __len__(self):
         return len(self.blobs)
+
     def __getitem__(self, index):
         return self.blobs[index]
+
+class BlobResult(str):
+
+    def __new__(cls, blob, properties):
+        return str.__new__(cls, blob)
+
+    def __init__(self, blob, properties):
+        self.properties = properties
 
 class Blob(WindowsAzureData):
     ''' Blob class. '''
@@ -169,7 +182,7 @@ class Blob(WindowsAzureData):
         self.snapshot = ''
         self.url = ''
         self.properties = BlobProperties()
-        self.metadata = Metadata()
+        self.metadata = {}
         self.blob_prefix = BlobPrefix()
 
 class BlobProperties(WindowsAzureData):
@@ -202,20 +215,14 @@ class BlobBlock(WindowsAzureData):
 
 class BlobBlockList(WindowsAzureData):
     ''' BlobBlockList class '''
+
     def __init__(self):
         self.committed_blocks = []
         self.uncommitted_blocks = []
 
-class BlockList(WindowsAzureData):
-    ''' BlockList used to submit block list. '''
-
-    def __init__(self):
-        self.committed = []
-        self.uncommitted = []
-        self.latest = []
-
 class PageRange(WindowsAzureData):
     ''' Page Range for page blob. '''
+
     def __init__(self):
         self.start = 0
         self.end = 0
@@ -225,8 +232,15 @@ class PageList:
 
     def __init__(self):
         self.page_ranges = _list_of(PageRange)
+
     def __iter__(self):
-        return self.page_ranges
+        return iter(self.page_ranges)
+
+    def __len__(self):
+        return len(self.page_ranges)
+
+    def __getitem__(self, index):
+        return self.page_ranges[index]
 
 class QueueEnumResults(EnumResultsBase):
     ''' Queue list'''
@@ -234,10 +248,13 @@ class QueueEnumResults(EnumResultsBase):
     def __init__(self):
         EnumResultsBase.__init__(self)
         self.queues = _list_of(Queue)
+
     def __iter__(self):
         return iter(self.queues)
+
     def __len__(self):
         return len(self.queues)
+
     def __getitem__(self, index):
         return self.queues[index]
 
@@ -247,17 +264,20 @@ class Queue(WindowsAzureData):
     def __init__(self):
         self.name = ''
         self.url = ''
-        self.metadata = Metadata()
+        self.metadata = {}
 
 class QueueMessagesList(WindowsAzureData):
     ''' Queue message list. '''
 
     def __init__(self):
         self.queue_messages = _list_of(QueueMessage)
+
     def __iter__(self):
         return iter(self.queue_messages)
+
     def __len__(self):
         return len(self.queue_messages)
+
     def __getitem__(self, index):
         return self.queue_messages[index]
 
@@ -272,17 +292,6 @@ class QueueMessage(WindowsAzureData):
         self.time_next_visible = ''
         self.dequeue_count = ''
         self.message_text = ''
-
-class TableEnumResult(EnumResultsBase):
-    def __init__():
-        EnumResultsBase.__init__(self)
-        self.tables = _list_of(Table)
-    def __iter__(self):
-        return iter(self.tables)
-    def __len__(self):
-        return len(self.tables)
-    def __getitem__(self, index):
-        return self.tables[index]
 
 class Entity(WindowsAzureData):
     ''' Entity class. The attributes of entity will be created dynamically. '''
@@ -430,15 +439,18 @@ def _sign_storage_table_request(request, account_name, account_key):
     auth_string = 'SharedKey ' + account_name + ':' + base64.b64encode(signed_hmac_sha256.digest())
     return auth_string
 
-
-
 def _to_python_bool(value):
     if value.lower() == 'true':
         return True
     return False
     
 def _to_entity_int(data):
-    return 'Edm.Int32', str(data)
+    int_max = (2 << 30) - 1
+    import sys
+    if data > (int_max) or data < (int_max + 1)*(-1):
+        return 'Edm.Int64', str(data)
+    else:
+        return 'Edm.Int32', str(data)
 
 def _to_entity_bool(value):
     if value:
@@ -469,7 +481,10 @@ def _from_entity_int(value):
     return int(value)
 
 def _from_entity_datetime(value):
-    return datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')
+    if value.endswith('Z'):
+        return datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')   
+    else:
+        return datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')   
 
 _ENTITY_TO_PYTHON_CONVERSIONS = {
     'Edm.Int32': _from_entity_int,
@@ -542,9 +557,15 @@ def convert_entity_to_xml(source):
         
         #form the property node
         properties_str += ''.join(['<d:', name])
-        if mtype:
-            properties_str += ''.join([' m:type="', mtype, '"'])
-        properties_str += ''.join(['>', xml_escape(value), '</d:', name, '>'])
+        if value == '':
+            properties_str += ' m:null="true" />'
+        else:
+            if mtype:
+                properties_str += ''.join([' m:type="', mtype, '"'])
+            properties_str += ''.join(['>', xml_escape(value), '</d:', name, '>'])
+
+    if isinstance(properties_str, unicode):
+        properties_str = properties_str.encode(encoding='utf-8')
 
     #generate the entity_body
     entity_body = entity_body.format(properties=properties_str)
@@ -576,6 +597,10 @@ def convert_block_list_to_xml(block_id_list):
  
     return xml+'</BlockList>'
 
+def _create_blob_result(response):
+    blob_properties = _parse_response_for_dict(response)
+    return BlobResult(response.body, blob_properties)
+
 def convert_response_to_block_list(response):
     '''
     Converts xml response to block list class.
@@ -601,8 +626,9 @@ def _remove_prefix(name):
         return name[colon + 1:]
     return name
 
-METADATA_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
 def _convert_response_to_entity(response):
+    if response is None:
+        return response
     return _convert_xml_to_entity(response.body)
         
 def _convert_xml_to_entity(xmlstr):
@@ -644,7 +670,6 @@ def _convert_xml_to_entity(xmlstr):
         return None
 
     entity = Entity()
-
     #extract each property node and get the type from attribute and node value
     for xml_property in xml_properties[0].childNodes:
         if xml_property.firstChild:
@@ -662,18 +687,23 @@ def _convert_xml_to_entity(xmlstr):
             #if not isnull and no type info, then it is a string and we just need the str type to hold the property.
             if not isnull and not mtype:
                 setattr(entity, name, value)
+            elif isnull == 'true':
+                if mtype:
+                    property = EntityProperty(mtype, None)
+                else:
+                    property = EntityProperty('Edm.String', None)
             else: #need an object to hold the property
                 conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
                 if conv is not None:
                     property = conv(value)
                 else:
-                    property = EntityProperty()
-                    setattr(property, 'value', value)
-                    if isnull:
-                        property.isnull = str(isnull)
-                    if mtype:
-                        property.type = str(mtype)
+                    property = EntityProperty(mtype, value)
                 setattr(entity, name, property)
+
+        #extract id, updated and name value from feed entry and set them of rule.
+    for name, value in _get_entry_properties(xmlstr, True).iteritems():
+        if name in ['etag']:
+            setattr(entity, name, value)
 
     return entity
 
@@ -690,12 +720,7 @@ def _convert_xml_to_table(xmlstr):
 
 def _storage_error_handler(http_error):
     ''' Simple error handler for storage service. Will add more specific cases '''
-    if http_error.status == 409:
-        raise WindowsAzureConflictError(azure._ERROR_CONFLICT)
-    elif http_error.status == 404:
-        raise WindowsAzureMissingResourceError(azure._ERROR_NOT_FOUND)
-    else:
-        raise WindowsAzureError(azure._ERROR_UNKNOWN % http_error.message)
+    return _general_error_handler(http_error)
 
 # make these available just from storage.
 from blobservice import BlobService

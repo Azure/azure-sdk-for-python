@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@ import hmac
 import hashlib 
 import os
 
-from azure.storage import _storage_error_handler, X_MS_VERSION
+
+from azure.storage import _storage_error_handler
 from azure.http.httpclient import _HTTPClient
 from azure.http import HTTPError
 from azure import (_parse_response, WindowsAzureError,
@@ -37,11 +38,20 @@ class _StorageClient(object):
     This is the base class for BlobManager, TableManager and QueueManager.
     '''
 
-    def __init__(self, account_name=None, account_key=None, protocol='http'):
-        self.account_name = account_name
-        self.account_key = account_key
+    def __init__(self, account_name=None, account_key=None, protocol='http', host_base='', dev_host=''):
+        if account_name is not None:
+            self.account_name = account_name.encode('ascii', 'ignore')
+        else:
+            self.account_name = None
+        if account_key is not None:
+            self.account_key = account_key.encode('ascii', 'ignore')
+        else:
+            self.account_key = None
+
         self.requestid = None
         self.protocol = protocol
+        self.host_base = host_base
+        self.dev_host = dev_host
         
         #the app is not run in azure emulator or use default development 
         #storage account and key if app is run in emulator. 
@@ -60,7 +70,7 @@ class _StorageClient(object):
         #get the account and key from environment variables if the app is not run
         #in azure emulator or use default development storage account and key if 
         #app is run in emulator. 
-        if not account_name or not account_key:
+        if not self.account_name or not self.account_key:
             if self.is_emulated:
                 self.account_name = DEV_ACCOUNT_NAME
                 self.account_key = DEV_ACCOUNT_KEY
@@ -70,15 +80,11 @@ class _StorageClient(object):
                     self.account_name = os.environ[AZURE_STORAGE_ACCOUNT]
                 if os.environ.has_key(AZURE_STORAGE_ACCESS_KEY):
                     self.account_key = os.environ[AZURE_STORAGE_ACCESS_KEY]
-        else:
-            self.account_name = account_name
-            self.account_key = account_key
 
         if not self.account_name or not self.account_key:
             raise WindowsAzureError(azure._ERROR_STORAGE_MISSING_INFO)
         
-        self.x_ms_version = X_MS_VERSION
-        self._httpclient = _HTTPClient(service_instance=self, account_key=account_key, account_name=account_name, x_ms_version=self.x_ms_version, protocol=protocol)
+        self._httpclient = _HTTPClient(service_instance=self, account_key=self.account_key, account_name=self.account_name, protocol=protocol)
         self._batchclient = None
         self._filter = self._perform_request_worker
     
@@ -97,6 +103,16 @@ class _StorageClient(object):
         res._filter = new_filter
         return res
 
+    def set_proxy(self, host, port):
+        '''Sets the proxy server host and port for the HTTP CONNECT Tunnelling.'''
+        self._httpclient.set_proxy(host, port)
+
+    def _get_host(self):
+        if self.use_local_storage:
+            return self.dev_host
+        else:
+            return self.account_name + self.host_base
+
     def _perform_request_worker(self, request):
         return self._httpclient.perform_request(request)
 
@@ -111,6 +127,4 @@ class _StorageClient(object):
         except HTTPError as e:
             _storage_error_handler(e)
 
-        if not resp:
-            return None
         return resp

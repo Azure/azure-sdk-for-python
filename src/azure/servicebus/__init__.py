@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------
-# Copyright 2011 Microsoft Corporation
+# Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,11 +22,12 @@ from datetime import datetime
 
 
 from azure.http import HTTPError
-from azure import (WindowsAzureError, WindowsAzureData, 
-                          _create_entry, _get_entry_properties, _html_encode,
+from azure import (WindowsAzureError, WindowsAzureData, _general_error_handler,
+                          _create_entry, _get_entry_properties, xml_escape,
                           _get_child_nodes, WindowsAzureMissingResourceError,
                           WindowsAzureConflictError, _get_serialization_name, 
-                          _get_children_from_path)
+                          _get_children_from_path, _get_first_child_node_value,
+                          _USER_AGENT_STRING)
 import azure
 
 #default rule name for subscription
@@ -47,52 +48,90 @@ XML_SCHEMA_NAMESPACE = 'http://www.w3.org/2001/XMLSchema-instance'
 class Queue(WindowsAzureData):
     ''' Queue class corresponding to Queue Description: http://msdn.microsoft.com/en-us/library/windowsazure/hh780773'''
 
-    def __init__(self):
-        self.lock_duration = None
-        self.max_size_in_megabytes = None
-        self.duplicate_detection = None
-        self.requires_duplicate_detection = None
-        self.requires_session = None
-        self.default_message_time_to_live = None
-        self.enable_dead_lettering_on_message_expiration = None
-        self.duplicate_detection_history_time_window = None
-        self.max_delivery_count = None
-        self.enable_batched_operations = None
-        self.size_in_bytes = None
-        self.message_count = None
+    def __init__(self,                         
+                 lock_duration=None,                
+                 max_size_in_megabytes=None,               
+                 requires_duplicate_detection=None,                
+                 requires_session=None,                
+                 default_message_time_to_live=None,                
+                 dead_lettering_on_message_expiration=None,                
+                 duplicate_detection_history_time_window=None,                
+                 max_delivery_count=None,                
+                 enable_batched_operations=None,                
+                 size_in_bytes=None,                
+                 message_count=None):
+
+        self.lock_duration = lock_duration
+        self.max_size_in_megabytes = max_size_in_megabytes
+        self.requires_duplicate_detection = requires_duplicate_detection
+        self.requires_session = requires_session
+        self.default_message_time_to_live = default_message_time_to_live
+        self.dead_lettering_on_message_expiration = dead_lettering_on_message_expiration
+        self.duplicate_detection_history_time_window = duplicate_detection_history_time_window
+        self.max_delivery_count = max_delivery_count
+        self.enable_batched_operations = enable_batched_operations
+        self.size_in_bytes = size_in_bytes
+        self.message_count = message_count
 
 class Topic(WindowsAzureData):
     ''' Topic class corresponding to Topic Description: http://msdn.microsoft.com/en-us/library/windowsazure/hh780749. '''
 
-    def __init__(self):
-        self.default_message_time_to_live = None
-        self.max_size_in_mega_bytes = None
-        self.requires_duplicate_detection = None
-        self.duplicate_detection_history_time_window = None
-        self.enable_batched_operations = None
-        self.size_in_bytes = None
+    def __init__(self, 
+                 default_message_time_to_live=None, 
+                 max_size_in_megabytes=None, 
+                 requires_duplicate_detection=None, 
+                 duplicate_detection_history_time_window=None, 
+                 enable_batched_operations=None, 
+                 size_in_bytes=None):
+
+        self.default_message_time_to_live = default_message_time_to_live
+        self.max_size_in_megabytes = max_size_in_megabytes
+        self.requires_duplicate_detection = requires_duplicate_detection
+        self.duplicate_detection_history_time_window = duplicate_detection_history_time_window
+        self.enable_batched_operations = enable_batched_operations
+        self.size_in_bytes = size_in_bytes
+
+    @property 
+    def max_size_in_mega_bytes(self):
+        import warnings
+        warnings.warn('This attribute has been changed to max_size_in_megabytes.')
+        return self.max_size_in_megabytes
+
+    @max_size_in_mega_bytes.setter
+    def max_size_in_mega_bytes(self, value):
+        self.max_size_in_megabytes = value
+
 
 class Subscription(WindowsAzureData):
     ''' Subscription class corresponding to Subscription Description: http://msdn.microsoft.com/en-us/library/windowsazure/hh780763. '''
 
-    def __init__(self):
-        self.lock_duration = None
-        self.requires_session = None
-        self.default_message_time_to_live = None
-        self.dead_lettering_on_message_expiration = None
-        self.dead_lettering_on_filter_evaluation_exceptions = None
-        self.enable_batched_operations = None
-        self.max_delivery_count = None
-        self.message_count = None
+    def __init__(self, 
+                 lock_duration=None, 
+                 requires_session=None,        
+                 default_message_time_to_live=None,         
+                 dead_lettering_on_message_expiration=None,         
+                 dead_lettering_on_filter_evaluation_exceptions=None,         
+                 enable_batched_operations=None,         
+                 max_delivery_count=None,         
+                 message_count=None):
+
+        self.lock_duration = lock_duration
+        self.requires_session = requires_session
+        self.default_message_time_to_live = default_message_time_to_live
+        self.dead_lettering_on_message_expiration = dead_lettering_on_message_expiration
+        self.dead_lettering_on_filter_evaluation_exceptions = dead_lettering_on_filter_evaluation_exceptions
+        self.enable_batched_operations = enable_batched_operations
+        self.max_delivery_count = max_delivery_count
+        self.message_count = message_count
 
 class Rule(WindowsAzureData):
     ''' Rule class corresponding to Rule Description: http://msdn.microsoft.com/en-us/library/windowsazure/hh780753. '''
 
-    def __init__(self):
-        self.filter_type = ''
-        self.filter_expression = ''
-        self.action_type = ''
-        self.action_expression = ''
+    def __init__(self, filter_type=None, filter_expression=None, action_type=None, action_expression=None):
+        self.filter_type = filter_type
+        self.filter_expression = filter_expression
+        self.action_type = action_type
+        self.action_expression = action_type
 
 class Message(WindowsAzureData):
     ''' Message class that used in send message/get mesage apis. '''
@@ -156,7 +195,7 @@ class Message(WindowsAzureData):
                 elif isinstance(value, datetime):
                     request.headers.append((name, '"' + value.strftime('%a, %d %b %Y %H:%M:%S GMT') + '"'))
                 else:
-                    request.headers.append((name, str(value)))
+                    request.headers.append((name, str(value).lower()))
         
         # Adds content-type
         request.headers.append(('Content-Type', self.type))
@@ -229,6 +268,7 @@ def _get_token(request, account_key, issuer):
         connection = httplib.HTTPSConnection(host)
     connection.putrequest('POST', '/WRAPv0.9')
     connection.putheader('Content-Length', len(request_body))
+    connection.putheader('User-Agent', _USER_AGENT_STRING)
     connection.endheaders()
     connection.send(request_body)
     resp = connection.getresponse()
@@ -268,11 +308,23 @@ def _create_message(response, service_instance):
             message_location = value
         elif name.lower() not in ['content-type', 'brokerproperties', 'transfer-encoding', 'server', 'location', 'date']:
             if '"' in value:
-                custom_properties[name] = value[1:-1]
-            else:
-                custom_properties[name] = value
+                value = value[1:-1]
+                try:
+                    custom_properties[name] = datetime.strptime(value, '%a, %d %b %Y %H:%M:%S GMT')
+                except ValueError:
+                    custom_properties[name] = value
+            else: #only int, float or boolean
+                if value.lower() == 'true':
+                    custom_properties[name] = True
+                elif value.lower() == 'false':
+                    custom_properties[name] = False
+                elif str(int(float(value))) == value:  #int('3.1') doesn't work so need to get float('3.14') first
+                    custom_properties[name] = int(value)
+                else: 
+                    custom_properties[name] = float(value)
+
     if message_type == None:
-        message = Message(respbody, service_instance, message_location, custom_properties, broker_properties)
+        message = Message(respbody, service_instance, message_location, custom_properties, 'application/atom+xml;type=entry;charset=utf-8', broker_properties)
     else:
         message = Message(respbody, service_instance, message_location, custom_properties, message_type, broker_properties)
     return message
@@ -332,18 +384,6 @@ def _parse_bool(value):
         return True
     return False
 
-
-_QUEUE_CONVERSION = {
-    'MaxSizeInMegaBytes': int,
-    'RequiresGroupedReceives': _parse_bool,
-    'SupportsDuplicateDetection': _parse_bool,
-    'SizeinBytes': int,
-    'MessageCount': int,
-    'EnableBatchedOperations': _parse_bool,
-    'RequiresSession': _parse_bool,
-    'LockDuration': int,
-}
-
 def _convert_xml_to_queue(xmlstr):
     ''' Converts xml response to queue object.
     
@@ -363,18 +403,51 @@ def _convert_xml_to_queue(xmlstr):
 
     invalid_queue = True
     #get node for each attribute in Queue class, if nothing found then the response is not valid xml for Queue.
-    for queue_desc in _get_children_from_path(xmldoc, 'entry', 'content', 'QueueDescription'):
-        for attr_name, attr_value in vars(queue).iteritems():
-            xml_attrs = _get_child_nodes(queue_desc, _get_serialization_name(attr_name))
-            if xml_attrs:
-                xml_attr = xml_attrs[0]
-                if xml_attr.firstChild:
-                    value = xml_attr.firstChild.nodeValue
-                    conversion = _QUEUE_CONVERSION.get(attr_name)
-                    if conversion is not None:
-                        value = conversion(value)
-                    setattr(queue, attr_name, value)
-                    invalid_queue = False
+    for desc in _get_children_from_path(xmldoc, 'entry', 'content', 'QueueDescription'):
+        node_value = _get_first_child_node_value(desc, 'LockDuration')
+        if node_value is not None:
+            queue.lock_duration = node_value
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'MaxSizeInMegabytes')
+        if node_value is not None:
+            queue.max_size_in_megabytes = int(node_value)
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'RequiresDuplicateDetection')
+        if node_value is not None:
+            queue.requires_duplicate_detection = _parse_bool(node_value)
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'RequiresSession')
+        if node_value is not None:
+            queue.requires_session = _parse_bool(node_value)
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'DefaultMessageTimeToLive')
+        if node_value is not None:
+            queue.default_message_time_to_live = node_value
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'DeadLetteringOnMessageExpiration')
+        if node_value is not None:
+            queue.dead_lettering_on_message_expiration = _parse_bool(node_value)
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'DuplicateDetectionHistoryTimeWindow')
+        if node_value is not None:
+            queue.duplicate_detection_history_time_window = node_value
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'EnableBatchedOperations')
+        if node_value is not None:
+            queue.enable_batched_operations = _parse_bool(node_value)
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'MaxDeliveryCount')
+        if node_value is not None:
+            queue.max_delivery_count = int(node_value)
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'MessageCount')
+        if node_value is not None:
+            queue.message_count = int(node_value)
+            invalid_queue = False
+        node_value = _get_first_child_node_value(desc, 'SizeInBytes')
+        if node_value is not None:
+            queue.size_in_bytes = int(node_value)
+            invalid_queue = False
 
     if invalid_queue:
         raise WindowsAzureError(azure._ERROR_QUEUE_NOT_FOUND)
@@ -388,12 +461,6 @@ def _convert_xml_to_queue(xmlstr):
 def _convert_response_to_topic(response):
     return _convert_xml_to_topic(response.body)
 
-_TOPIC_CONVERSION = {
-    'MaxSizeInMegaBytes': int,
-    'RequiresDuplicateDetection': _parse_bool,
-    'DeadLetteringOnFilterEvaluationExceptions': _parse_bool
-}
-
 def _convert_xml_to_topic(xmlstr):
     '''Converts xml response to topic
 
@@ -402,7 +469,7 @@ def _convert_xml_to_topic(xmlstr):
     <content type='application/xml'>    
     <TopicDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">
        <DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive>
-       <MaxSizeInMegaBytes>1024</MaxSizeInMegaBytes>
+       <MaxSizeInMegabytes>1024</MaxSizeInMegabytes>
        <RequiresDuplicateDetection>false</RequiresDuplicateDetection>
        <DuplicateDetectionHistoryTimeWindow>P7D</DuplicateDetectionHistoryTimeWindow>
        <DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions>
@@ -414,20 +481,34 @@ def _convert_xml_to_topic(xmlstr):
     topic = Topic()
 
     invalid_topic = True
+
     #get node for each attribute in Topic class, if nothing found then the response is not valid xml for Topic.
     for desc in _get_children_from_path(xmldoc, 'entry', 'content', 'TopicDescription'):
         invalid_topic = True
-        for attr_name, attr_value in vars(topic).iteritems():
-            xml_attrs = _get_child_nodes(desc, _get_serialization_name(attr_name))
-            if xml_attrs:
-                xml_attr = xml_attrs[0]
-                if xml_attr.firstChild:
-                    value = xml_attr.firstChild.nodeValue
-                    conversion = _TOPIC_CONVERSION.get(attr_name)
-                    if conversion is not None:
-                        value = conversion(value)
-                    setattr(topic, attr_name, value)
-                    invalid_topic = False
+        node_value = _get_first_child_node_value(desc, 'DefaultMessageTimeToLive')
+        if node_value is not None:
+            topic.default_message_time_to_live = node_value
+            invalid_topic = False
+        node_value = _get_first_child_node_value(desc, 'MaxSizeInMegabytes')
+        if node_value is not None:
+            topic.max_size_in_megabytes = int(node_value)
+            invalid_topic = False
+        node_value = _get_first_child_node_value(desc, 'RequiresDuplicateDetection')
+        if node_value is not None:
+            topic.requires_duplicate_detection = _parse_bool(node_value)
+            invalid_topic = False
+        node_value = _get_first_child_node_value(desc, 'DuplicateDetectionHistoryTimeWindow')
+        if node_value is not None:
+            topic.duplicate_detection_history_time_window = node_value
+            invalid_topic = False
+        node_value = _get_first_child_node_value(desc, 'EnableBatchedOperations')
+        if node_value is not None:
+            topic.enable_batched_operations = _parse_bool(node_value)
+            invalid_topic = False
+        node_value = _get_first_child_node_value(desc, 'SizeInBytes')
+        if node_value is not None:
+            topic.size_in_bytes = int(node_value)
+            invalid_topic = False
 
     if invalid_topic:
         raise WindowsAzureError(azure._ERROR_TOPIC_NOT_FOUND)
@@ -439,15 +520,6 @@ def _convert_xml_to_topic(xmlstr):
 
 def _convert_response_to_subscription(response):
     return _convert_xml_to_subscription(response.body)
-
-_SUBSCRIPTION_CONVERSION = {
-    'RequiresSession' : _parse_bool,
-    'DeadLetteringOnMessageExpiration': _parse_bool,
-    'DefaultMessageTimeToLive': int,
-    'EnableBatchedOperations': _parse_bool,
-    'MaxDeliveryCount': int,
-    'MessageCount': int,
-}
 
 def _convert_xml_to_subscription(xmlstr):
     '''Converts xml response to subscription
@@ -467,18 +539,31 @@ def _convert_xml_to_subscription(xmlstr):
     xmldoc = minidom.parseString(xmlstr)
     subscription = Subscription()
 
-    for desc in _get_children_from_path(xmldoc, 'entry', 'content', 'subscriptiondescription'):
-        for attr_name, attr_value in vars(subscription).iteritems():
-            tag_name = attr_name.replace('_', '')
-            xml_attrs = _get_child_nodes(desc, tag_name)
-            if xml_attrs:
-                xml_attr = xml_attrs[0]
-                if xml_attr.firstChild:
-                    value = xml_attr.firstChild.nodeValue
-                    conversion = _SUBSCRIPTION_CONVERSION.get(attr_name)
-                    if conversion is not None:
-                        value = conversion(value)
-                    setattr(subscription, attr_name, value)
+    for desc in _get_children_from_path(xmldoc, 'entry', 'content', 'SubscriptionDescription'):        
+        node_value = _get_first_child_node_value(desc, 'LockDuration')
+        if node_value is not None:
+            subscription.lock_duration = node_value
+        node_value = _get_first_child_node_value(desc, 'RequiresSession')
+        if node_value is not None:
+            subscription.requires_session = _parse_bool(node_value)
+        node_value = _get_first_child_node_value(desc, 'DefaultMessageTimeToLive')
+        if node_value is not None:
+            subscription.default_message_time_to_live = node_value
+        node_value = _get_first_child_node_value(desc, 'DeadLetteringOnFilterEvaluationExceptions')
+        if node_value is not None:
+            subscription.dead_lettering_on_filter_evaluation_exceptions = _parse_bool(node_value)
+        node_value = _get_first_child_node_value(desc, 'DeadLetteringOnMessageExpiration')
+        if node_value is not None:
+            subscription.dead_lettering_on_message_expiration = _parse_bool(node_value)
+        node_value = _get_first_child_node_value(desc, 'EnableBatchedOperations')
+        if node_value is not None:
+            subscription.enable_batched_operations = _parse_bool(node_value)
+        node_value = _get_first_child_node_value(desc, 'MaxDeliveryCount')
+        if node_value is not None:
+            subscription.max_delivery_count = int(node_value)
+        node_value = _get_first_child_node_value(desc, 'MessageCount')
+        if node_value is not None:
+            subscription.message_count = int(node_value)
 
     for name, value in _get_entry_properties(xmlstr, True).iteritems():
         setattr(subscription, name, value)
@@ -496,21 +581,21 @@ def convert_subscription_to_xml(subscription):
     subscription_body = '<SubscriptionDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
     if subscription:
         if subscription.lock_duration is not None:
-            subscription_body += ''.join(['<LockDuration>', subscription.lock_duration, '</LockDuration>'])
+            subscription_body += ''.join(['<LockDuration>', str(subscription.lock_duration), '</LockDuration>'])
         if subscription.requires_session is not None:
-            subscription_body += ''.join(['<RequiresSession>', subscription.requires_session, '</RequiresSession>'])    
+            subscription_body += ''.join(['<RequiresSession>', str(subscription.requires_session).lower(), '</RequiresSession>'])    
         if subscription.default_message_time_to_live is not None:
-            subscription_body += ''.join(['<DefaultMessageTimeToLive>', subscription.default_message_time_to_live, '</DefaultMessageTimeToLive>'])
+            subscription_body += ''.join(['<DefaultMessageTimeToLive>', str(subscription.default_message_time_to_live), '</DefaultMessageTimeToLive>'])
         if subscription.dead_lettering_on_message_expiration is not None:
-            subscription_body += ''.join(['<DeadLetteringOnMessageExpiration>', subscription.dead_lettering_on_message_expiration, '</DeadLetteringOnMessageExpiration>'])    
+            subscription_body += ''.join(['<DeadLetteringOnMessageExpiration>', str(subscription.dead_lettering_on_message_expiration).lower(), '</DeadLetteringOnMessageExpiration>'])    
         if subscription.dead_lettering_on_filter_evaluation_exceptions is not None:
-            subscription_body += ''.join(['<DeadLetteringOnFilterEvaluationExceptions>', subscription.dead_lettering_on_filter_evaluation_exceptions, '</DeadLetteringOnFilterEvaluationExceptions>'])    
+            subscription_body += ''.join(['<DeadLetteringOnFilterEvaluationExceptions>', str(subscription.dead_lettering_on_filter_evaluation_exceptions).lower(), '</DeadLetteringOnFilterEvaluationExceptions>'])    
         if subscription.enable_batched_operations is not None:
-            subscription_body += ''.join(['<EnableBatchedOperations>', subscription.enable_batched_operations, '</EnableBatchedOperations>'])    
+            subscription_body += ''.join(['<EnableBatchedOperations>', str(subscription.enable_batched_operations).lower(), '</EnableBatchedOperations>'])    
         if subscription.max_delivery_count is not None:
-            subscription_body += ''.join(['<MaxDeliveryCount>', subscription.max_delivery_count, '</MaxDeliveryCount>'])
+            subscription_body += ''.join(['<MaxDeliveryCount>', str(subscription.max_delivery_count), '</MaxDeliveryCount>'])
         if subscription.message_count is not None:
-            subscription_body += ''.join(['<MessageCount>', subscription.message_count, '</MessageCount>'])  
+            subscription_body += ''.join(['<MessageCount>', str(subscription.message_count), '</MessageCount>'])  
          
     subscription_body += '</SubscriptionDescription>'    
     return _create_entry(subscription_body)
@@ -525,17 +610,18 @@ def convert_rule_to_xml(rule):
     rule_body = '<RuleDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
     if rule:
         if rule.filter_type:
-            rule_body += ''.join(['<Filter i:type="', _html_encode(rule.filter_type), '">'])
+            rule_body += ''.join(['<Filter i:type="', xml_escape(rule.filter_type), '">'])
             if rule.filter_type == 'CorrelationFilter':
-                rule_body += ''.join(['<CorrelationId>', _html_encode(rule.filter_expression), '</CorrelationId>'])
+                rule_body += ''.join(['<CorrelationId>', xml_escape(rule.filter_expression), '</CorrelationId>'])
             else:
-                rule_body += ''.join(['<SqlExpression>', _html_encode(rule.filter_expression), '</SqlExpression>'])
+                rule_body += ''.join(['<SqlExpression>', xml_escape(rule.filter_expression), '</SqlExpression>'])
                 rule_body += '<CompatibilityLevel>20</CompatibilityLevel>'
             rule_body += '</Filter>'
         if rule.action_type:
-            rule_body += ''.join(['<Action i:type="', _html_encode(rule.action_type), '">'])
-            if rule.action_type == 'SqlFilterAction':
-                rule_body += ''.join(['<SqlExpression>', _html_encode(rule.action_expression), '</SqlExpression>'])
+            rule_body += ''.join(['<Action i:type="', xml_escape(rule.action_type), '">'])
+            if rule.action_type == 'SqlRuleAction':
+                rule_body += ''.join(['<SqlExpression>', xml_escape(rule.action_expression), '</SqlExpression>'])
+                rule_body += '<CompatibilityLevel>20</CompatibilityLevel>'
             rule_body += '</Action>'
     rule_body += '</RuleDescription>'    
 
@@ -553,16 +639,16 @@ def convert_topic_to_xml(topic):
     if topic:
         if topic.default_message_time_to_live is not None:
             topic_body += ''.join(['<DefaultMessageTimeToLive>', str(topic.default_message_time_to_live), '</DefaultMessageTimeToLive>'])
-        if topic.max_size_in_mega_bytes is not None:
+        if topic.max_size_in_megabytes is not None:
             topic_body += ''.join(['<MaxSizeInMegabytes>', str(topic.max_size_in_megabytes), '</MaxSizeInMegabytes>'])
         if topic.requires_duplicate_detection is not None:
-            topic_body += ''.join(['<RequiresDuplicateDetection>', str(topic.requires_duplicate_detection), '</RequiresDuplicateDetection>'])
+            topic_body += ''.join(['<RequiresDuplicateDetection>', str(topic.requires_duplicate_detection).lower(), '</RequiresDuplicateDetection>'])
         if topic.duplicate_detection_history_time_window is not None:
             topic_body += ''.join(['<DuplicateDetectionHistoryTimeWindow>', str(topic.duplicate_detection_history_time_window), '</DuplicateDetectionHistoryTimeWindow>'])    
         if topic.enable_batched_operations is not None:
-            topic_body += ''.join(['<EnableBatchedOperations>', str(topic.enable_batched_operations), '</EnableBatchedOperations>'])
+            topic_body += ''.join(['<EnableBatchedOperations>', str(topic.enable_batched_operations).lower(), '</EnableBatchedOperations>'])
         if topic.size_in_bytes is not None:
-            topic_body += ''.join(['<SizeinBytes>', str(topic.size_in_bytes), '</SizeinBytes>'])    
+            topic_body += ''.join(['<SizeInBytes>', str(topic.size_in_bytes), '</SizeInBytes>'])    
     topic_body += '</TopicDescription>'
 
     return _create_entry(topic_body)
@@ -581,21 +667,21 @@ def convert_queue_to_xml(queue):
         if queue.max_size_in_megabytes is not None:
             queue_body += ''.join(['<MaxSizeInMegabytes>', str(queue.max_size_in_megabytes), '</MaxSizeInMegabytes>'])
         if queue.requires_duplicate_detection is not None:
-            queue_body += ''.join(['<RequiresDuplicateDetection>', str(queue.requires_duplicate_detection), '</RequiresDuplicateDetection>'])
+            queue_body += ''.join(['<RequiresDuplicateDetection>', str(queue.requires_duplicate_detection).lower(), '</RequiresDuplicateDetection>'])
         if queue.requires_session is not None:
-            queue_body += ''.join(['<RequiresSession>', str(queue.requires_session), '</RequiresSession>'])    
+            queue_body += ''.join(['<RequiresSession>', str(queue.requires_session).lower(), '</RequiresSession>'])    
         if queue.default_message_time_to_live is not None:
             queue_body += ''.join(['<DefaultMessageTimeToLive>', str(queue.default_message_time_to_live), '</DefaultMessageTimeToLive>'])
-        if queue.enable_dead_lettering_on_message_expiration is not None:
-            queue_body += ''.join(['<EnableDeadLetteringOnMessageExpiration>', str(queue.enable_dead_lettering_on_message_expiration), '</EnableDeadLetteringOnMessageExpiration>'])    
+        if queue.dead_lettering_on_message_expiration is not None:
+            queue_body += ''.join(['<DeadLetteringOnMessageExpiration>', str(queue.dead_lettering_on_message_expiration).lower(), '</DeadLetteringOnMessageExpiration>'])    
         if queue.duplicate_detection_history_time_window is not None:
             queue_body += ''.join(['<DuplicateDetectionHistoryTimeWindow>', str(queue.duplicate_detection_history_time_window), '</DuplicateDetectionHistoryTimeWindow>'])    
         if queue.max_delivery_count is not None:
             queue_body += ''.join(['<MaxDeliveryCount>', str(queue.max_delivery_count), '</MaxDeliveryCount>'])
         if queue.enable_batched_operations is not None:
-            queue_body += ''.join(['<EnableBatchedOperations>', str(queue.enable_batched_operations), '</EnableBatchedOperations>'])    
+            queue_body += ''.join(['<EnableBatchedOperations>', str(queue.enable_batched_operations).lower(), '</EnableBatchedOperations>'])    
         if queue.size_in_bytes is not None:
-            queue_body += ''.join(['<SizeinBytes>', str(queue.size_in_bytes), '</SizeinBytes>'])
+            queue_body += ''.join(['<SizeInBytes>', str(queue.size_in_bytes), '</SizeInBytes>'])
         if queue.message_count is not None:
             queue_body += ''.join(['<MessageCount>', str(queue.message_count), '</MessageCount>'])  
          
@@ -604,12 +690,6 @@ def convert_queue_to_xml(queue):
 
 def _service_bus_error_handler(http_error):
     ''' Simple error handler for service bus service. Will add more specific cases '''
-
-    if http_error.status == 409:
-        raise WindowsAzureConflictError(azure._ERROR_CONFLICT)
-    elif http_error.status == 404:
-        raise WindowsAzureMissingResourceError(azure._ERROR_NOT_FOUND)
-    else:
-        raise WindowsAzureError(azure._ERROR_UNKNOWN % http_error.message)
+    return _general_error_handler(http_error)
 
 from azure.servicebus.servicebusservice import ServiceBusService
