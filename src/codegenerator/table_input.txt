@@ -46,13 +46,16 @@ top: the maximum number of tables to return
 GET http://<account-name>.table.core.windows.net/Tables<?table_name:('[table_name]')>
 [query]
 $top=
+NextTableName=
 
 [method]  
 create_table
 [comment]
 Creates a new table in the storage account.
 
-table: name of the table to create.
+table: name of the table to create. Table name may contain only alphanumeric characters
+     and cannot begin with a numeric character. It is case-insensitive and must be from 
+	 3 to 63 characters long.
 fail_on_exist: specify whether throw exception when table exists.
 [params]
 fail_on_exist=False
@@ -105,6 +108,8 @@ GET http://<account-name>.table.core.windows.net/<table-name>()
 $filter=
 $select=
 $top=
+NextPartitionKey=
+NextRowKey=
 
 [method]
 insert_entity
@@ -113,6 +118,7 @@ Inserts a new entity into a table.
 
 entity: Required. The entity object to insert. Could be a dict format or entity object.
 [return]
+Feed('entity')
 [url]
 POST http://<account-name>.table.core.windows.net/<table-name>
 [requestheader]
@@ -130,6 +136,8 @@ entity: Required. The entity object to insert. Could be a dict format or entity 
 partition_key: PartitionKey of the entity.
 row_key: RowKey of the entity.
 [return]
+dict
+filter=['etag']
 [url]
 PUT http://<account-name>.table.core.windows.net/<table-name>(PartitionKey=\'<partition-key>\',RowKey=\'<row-key>\')
 [requestheader]
@@ -148,6 +156,8 @@ entity: Required. The entity object to insert. Can be a dict format or entity ob
 partition_key: PartitionKey of the entity.
 row_key: RowKey of the entity.
 [return]
+dict
+filter=['etag']
 [url]
 MERGE http://<account-name>.table.core.windows.net/<table-name>(PartitionKey=\'<partition-key>\',RowKey=\'<row-key>\')
 [requestheader]
@@ -183,6 +193,8 @@ entity: Required. The entity object to insert. Could be a dict format or entity 
 partition_key: PartitionKey of the entity.
 row_key: RowKey of the entity.
 [return]
+dict
+filter=['etag']
 [url]
 PUT http://<account-name>.table.core.windows.net/<table-name>(PartitionKey=\'<partition-key>\',RowKey=\'<row-key>\')
 [requestheader]
@@ -201,11 +213,12 @@ entity: Required. The entity object to insert. Could be a dict format or entity 
 partition_key: PartitionKey of the entity.
 row_key: RowKey of the entity.
 [return]
+dict
+filter=['etag']
 [url]
 MERGE http://<account-name>.table.core.windows.net/<table-name>(PartitionKey=\'<partition-key>\',RowKey=\'<row-key>\')
 [requestheader]
 Content-Type=application/atom+xml;required:application/atom+xml|#this is required and has to be set to application/atom+xml
-If-Match=*
 [requestbody]
 feed:entity;required:feed
 

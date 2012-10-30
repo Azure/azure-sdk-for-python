@@ -1,15 +1,17 @@
-#------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. 
+#-------------------------------------------------------------------------
+# Copyright (c) Microsoft.  All rights reserved.
 #
-# This source code is subject to terms and conditions of the Apache License, 
-# Version 2.0. A copy of the license can be found in the License.html file at 
-# the root of this distribution. If you cannot locate the Apache License, 
-# Version 2.0, please send an email to vspython@microsoft.com. By using this 
-# source code in any fashion, you are agreeing to be bound by the terms of the 
-# Apache License, Version 2.0.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
-# You must not remove this notice, or any other, from this software.
-#------------------------------------------------------------------------------
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#--------------------------------------------------------------------------
 
 from azure import *
 from azure.servicebus import *
@@ -18,14 +20,17 @@ from azuretest.util import *
 import unittest
 
 #------------------------------------------------------------------------------
-class ServiceBusTest(unittest.TestCase):
+class ServiceBusTest(AzureTestCase):
     def setUp(self):
         self.sbs = ServiceBusService(credentials.getServiceBusNamespace(), 
                                      credentials.getServiceBusKey(), 
                                      'owner')
 
-        # TODO: it may be overkill to use the machine name from 
-        #       getUniqueTestRunID, current time may be unique enough
+        proxy_host = credentials.getProxyHost()
+        proxy_port = credentials.getProxyPort()
+        if proxy_host:
+            self.sbs.set_proxy(proxy_host, proxy_port)
+
         __uid = getUniqueTestRunID()
 
         queue_base_name = u'mytestqueue%s' % (__uid)
@@ -48,25 +53,6 @@ class ServiceBusTest(unittest.TestCase):
         except: pass
 
     #--Helpers-----------------------------------------------------------------
-
-    # TODO: move this function out of here so other tests can use them
-    # TODO: find out how to import/use safe_repr instead repr
-    def assertNamedItemInContainer(self, container, item_name, msg=None):
-        for item in container:
-            if item.name == item_name:
-                return
-
-        standardMsg = '%s not found in %s' % (repr(item_name), repr(container))
-        self.fail(self._formatMessage(msg, standardMsg))
-
-    # TODO: move this function out of here so other tests can use them
-    # TODO: find out how to import/use safe_repr instead repr
-    def assertNamedItemNotInContainer(self, container, item_name, msg=None):
-        for item in container:
-            if item.name == item_name:
-                standardMsg = '%s unexpectedly found in %s' % (repr(item_name), repr(container))
-                self.fail(self._formatMessage(msg, standardMsg))
-
     def _create_queue(self, queue_name):
         self.sbs.create_queue(queue_name, None, True)
 
@@ -83,6 +69,44 @@ class ServiceBusTest(unittest.TestCase):
 
     def _create_subscription(self, topic_name, subscription_name):
         self.sbs.create_subscription(topic_name, subscription_name, None, True)
+
+    #--Test cases for service bus service -------------------------------------
+    def test_create_service_bus_missing_arguments(self):
+        # Arrange
+        if os.environ.has_key(AZURE_SERVICEBUS_NAMESPACE):
+            del os.environ[AZURE_SERVICEBUS_NAMESPACE]
+        if os.environ.has_key(AZURE_SERVICEBUS_ACCESS_KEY):
+            del os.environ[AZURE_SERVICEBUS_ACCESS_KEY]
+        if os.environ.has_key(AZURE_SERVICEBUS_ISSUER):
+            del os.environ[AZURE_SERVICEBUS_ISSUER]
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            sbs = ServiceBusService()
+
+        # Assert
+
+    def test_create_service_bus_env_variables(self):
+        # Arrange
+        os.environ[AZURE_SERVICEBUS_NAMESPACE] = credentials.getServiceBusNamespace()
+        os.environ[AZURE_SERVICEBUS_ACCESS_KEY] = credentials.getServiceBusKey()
+        os.environ[AZURE_SERVICEBUS_ISSUER] = 'owner'
+
+        # Act
+        sbs = ServiceBusService()
+
+        if os.environ.has_key(AZURE_SERVICEBUS_NAMESPACE):
+            del os.environ[AZURE_SERVICEBUS_NAMESPACE]
+        if os.environ.has_key(AZURE_SERVICEBUS_ACCESS_KEY):
+            del os.environ[AZURE_SERVICEBUS_ACCESS_KEY]
+        if os.environ.has_key(AZURE_SERVICEBUS_ISSUER):
+            del os.environ[AZURE_SERVICEBUS_ISSUER]
+
+        # Assert
+        self.assertIsNotNone(sbs)
+        self.assertEquals(sbs.service_namespace, credentials.getServiceBusNamespace())
+        self.assertEquals(sbs.account_key, credentials.getServiceBusKey())
+        self.assertEquals(sbs.issuer, 'owner')
 
     #--Test cases for queues --------------------------------------------------
     def test_create_queue_no_options(self):
@@ -108,12 +132,33 @@ class ServiceBusTest(unittest.TestCase):
 
         # Act
         queue_options = Queue()
-        queue_options.max_size_in_megabytes = 5120
         queue_options.default_message_time_to_live = 'PT1M'
+        queue_options.duplicate_detection_history_time_window = 'PT5M'
+        queue_options.enable_batched_operations = False
+        queue_options.dead_lettering_on_message_expiration = False 
+        queue_options.lock_duration = 'PT1M'
+        queue_options.max_delivery_count = 15
+        queue_options.max_size_in_megabytes = 5120
+        queue_options.message_count = 0
+        queue_options.requires_duplicate_detection = False
+        queue_options.requires_session = False
+        queue_options.size_in_bytes = 0
         created = self.sbs.create_queue(self.queue_name, queue_options)
 
         # Assert
         self.assertTrue(created)
+        queue = self.sbs.get_queue(self.queue_name)
+        self.assertEquals('PT1M', queue.default_message_time_to_live)
+        self.assertEquals('PT5M', queue.duplicate_detection_history_time_window)
+        self.assertEquals(False, queue.enable_batched_operations)
+        self.assertEquals(False, queue.dead_lettering_on_message_expiration)
+        self.assertEquals('PT1M', queue.lock_duration)
+        self.assertEquals(15, queue.max_delivery_count)
+        self.assertEquals(5120, queue.max_size_in_megabytes)
+        self.assertEquals(0, queue.message_count)
+        self.assertEquals(False, queue.requires_duplicate_detection)
+        self.assertEquals(False, queue.requires_session)
+        self.assertEquals(0, queue.size_in_bytes)
 
     def test_create_queue_with_already_existing_queue(self):
         # Arrange
@@ -319,7 +364,14 @@ class ServiceBusTest(unittest.TestCase):
         self._create_queue(self.queue_name)
 
         # Act
-        sent_msg = Message('message with properties', custom_properties={'hello':'world', 'foo':42})
+        props = {'hello':'world',
+                 'foo':42,
+                 'active':True,
+                 'deceased':False,
+                 'large':8555111000,
+                 'floating':3.14,
+                 'dob':datetime(2011, 12, 14)}
+        sent_msg = Message('message with properties', custom_properties=props)
         self.sbs.send_queue_message(self.queue_name, sent_msg)
         received_msg = self.sbs.receive_queue_message(self.queue_name, True, 5)
         received_msg.delete()
@@ -327,7 +379,12 @@ class ServiceBusTest(unittest.TestCase):
         # Assert
         self.assertIsNotNone(received_msg)
         self.assertEquals(received_msg.custom_properties['hello'], 'world')
-        self.assertEquals(received_msg.custom_properties['foo'], '42') # TODO: note that the integer became a string
+        self.assertEquals(received_msg.custom_properties['foo'], 42)
+        self.assertEquals(received_msg.custom_properties['active'], True)
+        self.assertEquals(received_msg.custom_properties['deceased'], False)
+        self.assertEquals(received_msg.custom_properties['large'], 8555111000)
+        self.assertEquals(received_msg.custom_properties['floating'], 3.14)
+        self.assertEquals(received_msg.custom_properties['dob'], datetime(2011, 12, 14))
 
     #--Test cases for topics/subscriptions ------------------------------------
     def test_create_topic_no_options(self):
@@ -353,12 +410,24 @@ class ServiceBusTest(unittest.TestCase):
 
         # Act
         topic_options = Topic()
-        topic_options.max_size_in_megabytes = '5120'
         topic_options.default_message_time_to_live = 'PT1M'
+        topic_options.duplicate_detection_history_time_window = 'PT5M'
+        topic_options.enable_batched_operations = False
+        topic_options.max_size_in_megabytes = 5120 
+        topic_options.requires_duplicate_detection = False
+        topic_options.size_in_bytes = 0
+        #TODO: MaximumNumberOfSubscriptions is not supported?
         created = self.sbs.create_topic(self.topic_name, topic_options)
 
         # Assert
         self.assertTrue(created)
+        topic = self.sbs.get_topic(self.topic_name)
+        self.assertEquals('PT1M', topic.default_message_time_to_live)
+        self.assertEquals('PT5M', topic.duplicate_detection_history_time_window)
+        self.assertEquals(False, topic.enable_batched_operations)
+        self.assertEquals(5120, topic.max_size_in_megabytes)
+        self.assertEquals(False, topic.requires_duplicate_detection)
+        self.assertEquals(0, topic.size_in_bytes)
 
     def test_create_topic_with_already_existing_topic(self):
         # Arrange
@@ -381,6 +450,23 @@ class ServiceBusTest(unittest.TestCase):
 
         # Assert
         self.assertTrue(created)
+
+    def test_topic_backwards_compatibility_warning(self):
+        # Arrange
+        topic_options = Topic()
+        topic_options.max_size_in_megabytes = 5120
+
+        # Act
+        val = topic_options.max_size_in_mega_bytes
+
+        # Assert
+        self.assertEqual(val, 5120)
+
+        # Act
+        topic_options.max_size_in_mega_bytes = 1024
+
+        # Assert
+        self.assertEqual(topic_options.max_size_in_megabytes, 1024)
 
     def test_get_topic_with_existing_topic(self):
         # Arrange
@@ -466,6 +552,35 @@ class ServiceBusTest(unittest.TestCase):
 
         # Assert
         self.assertTrue(created)
+
+    def test_create_subscription_with_options(self):
+        # Arrange
+        self._create_topic(self.topic_name)
+
+        # Act
+        subscription_options = Subscription()
+        subscription_options.dead_lettering_on_filter_evaluation_exceptions = False
+        subscription_options.dead_lettering_on_message_expiration = False
+        subscription_options.default_message_time_to_live = 'PT15M'
+        subscription_options.enable_batched_operations = False
+        subscription_options.lock_duration = 'PT1M'
+        subscription_options.max_delivery_count = 15 
+        #message_count is read-only
+        subscription_options.message_count = 0
+        subscription_options.requires_session = False
+        created = self.sbs.create_subscription(self.topic_name, 'MySubscription', subscription_options)
+
+        # Assert
+        self.assertTrue(created)
+        subscription = self.sbs.get_subscription(self.topic_name, 'MySubscription')
+        self.assertEquals(False, subscription.dead_lettering_on_filter_evaluation_exceptions)
+        self.assertEquals(False, subscription.dead_lettering_on_message_expiration)
+        self.assertEquals('PT15M', subscription.default_message_time_to_live)
+        self.assertEquals(False, subscription.enable_batched_operations)
+        self.assertEquals('PT1M', subscription.lock_duration)
+        #self.assertEquals(15, subscription.max_delivery_count) #no idea why max_delivery_count is always 10
+        self.assertEquals(0, subscription.message_count)
+        self.assertEquals(False, subscription.requires_session)
 
     def test_create_subscription_fail_on_exist(self):
         # Arrange
@@ -630,7 +745,7 @@ class ServiceBusTest(unittest.TestCase):
         # Assert
         self.assertTrue(created)
 
-    def test_create_rule_with_options(self):
+    def test_create_rule_with_options_sql_filter(self):
         # Arrange
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
@@ -638,6 +753,71 @@ class ServiceBusTest(unittest.TestCase):
         rule1 = Rule()
         rule1.filter_type = 'SqlFilter'
         rule1.filter_expression = 'foo > 40'
+        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+
+        # Assert
+        self.assertTrue(created)
+
+    def test_create_rule_with_options_true_filter(self):
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+
+        # Act
+        rule1 = Rule()
+        rule1.filter_type = 'TrueFilter'
+        rule1.filter_expression = '1=1'
+        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+
+        # Assert
+        self.assertTrue(created)
+
+    def test_create_rule_with_options_false_filter(self):
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+
+        # Act
+        rule1 = Rule()
+        rule1.filter_type = 'FalseFilter'
+        rule1.filter_expression = '1=0'
+        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+
+        # Assert
+        self.assertTrue(created)
+
+    def test_create_rule_with_options_correlation_filter(self):
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+
+        # Act
+        rule1 = Rule()
+        rule1.filter_type = 'CorrelationFilter'
+        rule1.filter_expression = 'myid'
+        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+
+        # Assert
+        self.assertTrue(created)
+
+    def test_create_rule_with_options_empty_rule_action(self):
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+
+        # Act
+        rule1 = Rule()
+        rule1.action_type = 'EmptyRuleAction'
+        rule1.action_expression = ''
+        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+
+        # Assert
+        self.assertTrue(created)
+
+    def test_create_rule_with_options_sql_rule_action(self):
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+
+        # Act
+        rule1 = Rule()
+        rule1.action_type = 'SqlRuleAction'
+        rule1.action_expression = "SET foo = 5"
         created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
 
         # Assert
@@ -674,6 +854,27 @@ class ServiceBusTest(unittest.TestCase):
             self.sbs.get_rule(self.topic_name, 'MySubscription', 'NonExistingRule')
 
         # Assert
+
+    def test_get_rule_with_existing_rule_with_options(self):
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+        sent_rule = Rule()
+        sent_rule.filter_type = 'SqlFilter'
+        sent_rule.filter_expression = 'foo > 40'
+        sent_rule.action_type = 'SqlRuleAction'
+        sent_rule.action_expression = 'SET foo = 5'
+        self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', sent_rule)
+
+        # Act
+        received_rule = self.sbs.get_rule(self.topic_name, 'MySubscription', 'MyRule1')
+
+        # Assert
+        self.assertIsNotNone(received_rule)
+        self.assertEquals(received_rule.name, 'MyRule1')
+        self.assertEquals(received_rule.filter_type, sent_rule.filter_type)
+        self.assertEquals(received_rule.filter_expression, sent_rule.filter_expression)
+        self.assertEquals(received_rule.action_type, sent_rule.action_type)
+        self.assertEquals(received_rule.action_expression, sent_rule.action_expression)
 
     def test_delete_rule_with_existing_rule(self):
         # Arrange

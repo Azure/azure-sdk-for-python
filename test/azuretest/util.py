@@ -1,19 +1,22 @@
-#------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. 
+#-------------------------------------------------------------------------
+# Copyright (c) Microsoft.  All rights reserved.
 #
-# This source code is subject to terms and conditions of the Apache License, 
-# Version 2.0. A copy of the license can be found in the License.html file at 
-# the root of this distribution. If you cannot locate the Apache License, 
-# Version 2.0, please send an email to vspython@microsoft.com. By using this 
-# source code in any fashion, you are agreeing to be bound by the terms of the 
-# Apache License, Version 2.0.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
-# You must not remove this notice, or any other, from this software.
-#------------------------------------------------------------------------------
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#--------------------------------------------------------------------------
 
 import json
 import os
 import time
+import unittest
 from exceptions import EnvironmentError
 
 STATUS_OK         = 200
@@ -48,6 +51,12 @@ class Credentials(object):
         with open(tmpName, "r") as f:
             self.ns = json.load(f)
 
+    def getManagementCertFile(self):
+        return self.ns[u'managementcertfile'] 
+
+    def getSubscriptionId(self):
+        return self.ns[u'subscriptionid'] 
+
     def getServiceBusKey(self):
         return self.ns[u'servicebuskey'] 
 
@@ -60,8 +69,14 @@ class Credentials(object):
     def getStorageServicesName(self):
         return self.ns[u'storageservicesname']
 
-    def getHostServiceID(self):
-        return self.ns[u'hostserviceid']
+    def getLinuxOSVHD(self):
+        return self.ns[u'linuxosvhd']
+
+    def getProxyHost(self):
+        return self.ns[u'proxyhost']
+
+    def getProxyPort(self):
+        return self.ns[u'proxyport']
 
 credentials = Credentials()
 
@@ -83,7 +98,8 @@ def getUniqueTestRunID():
     for bad in ["-", "_", " ", "."]:
         ret_val = ret_val.replace(bad, "")
     ret_val = ret_val.lower().strip()
-    return ret_val
+    #only return the first 20 characters so the lenghth of queue, table name will be less than 64. It may not be unique but doesn't really matter for the tests.
+    return ret_val[:20]  
 
 def getUniqueNameBasedOnCurrentTime(base_name):
     '''
@@ -96,3 +112,18 @@ def getUniqueNameBasedOnCurrentTime(base_name):
         cur_time = cur_time.replace(bad, "")
     cur_time = cur_time.lower().strip()
     return base_name + cur_time
+
+class AzureTestCase(unittest.TestCase):
+    def assertNamedItemInContainer(self, container, item_name, msg=None):
+        for item in container:
+            if item.name == item_name:
+                return
+
+        standardMsg = '%s not found in %s' % (repr(item_name), repr(container))
+        self.fail(self._formatMessage(msg, standardMsg))
+
+    def assertNamedItemNotInContainer(self, container, item_name, msg=None):
+        for item in container:
+            if item.name == item_name:
+                standardMsg = '%s unexpectedly found in %s' % (repr(item_name), repr(container))
+                self.fail(self._formatMessage(msg, standardMsg))
