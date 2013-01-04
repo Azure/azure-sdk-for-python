@@ -6,8 +6,7 @@
     <ProjectGuid>{25b2c65a-0553-4452-8907-8b5b17544e68}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>azure\storage\blobservice.py</StartupFile>
     <SearchPath>..</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>

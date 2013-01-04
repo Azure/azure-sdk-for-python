@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,8 @@ from azure import *
 from azure.servicebus import *
 from azuretest.util import *
 
+import random
+import time
 import unittest
 
 #------------------------------------------------------------------------------
@@ -39,6 +41,9 @@ class ServiceBusTest(AzureTestCase):
         self.queue_name = getUniqueNameBasedOnCurrentTime(queue_base_name)
         self.topic_name = getUniqueNameBasedOnCurrentTime(topic_base_name)
 
+        self.additional_queue_names = []
+        self.additional_topic_names = []
+
     def tearDown(self):
         self.cleanup()
         return super(ServiceBusTest, self).tearDown()
@@ -48,9 +53,19 @@ class ServiceBusTest(AzureTestCase):
             self.sbs.delete_queue(self.queue_name)
         except: pass
 
+        for name in self.additional_queue_names:
+            try:
+                self.sbs.delete_queue(name)
+            except: pass
+
         try:
             self.sbs.delete_topic(self.topic_name)
         except: pass
+
+        for name in self.additional_topic_names:
+            try:
+                self.sbs.delete_topic(name)
+            except: pass
 
     #--Helpers-----------------------------------------------------------------
     def _create_queue(self, queue_name):
@@ -214,6 +229,21 @@ class ServiceBusTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(queues)
         self.assertNamedItemInContainer(queues, self.queue_name)
+
+    def test_list_queues_with_special_chars(self):
+        # Arrange
+        # Name must start and end with an alphanumeric and can only contain 
+        # letters, numbers, periods, hyphens, forward slashes and underscores.
+        other_queue_name = self.queue_name + 'foo/.-_123'
+        self.additional_queue_names = [other_queue_name]
+        self._create_queue(other_queue_name)
+        
+        # Act
+        queues = self.sbs.list_queues()
+
+        # Assert
+        self.assertIsNotNone(queues)
+        self.assertNamedItemInContainer(queues, other_queue_name)
 
     def test_delete_queue_with_existing_queue(self):
         # Arrange
@@ -386,6 +416,34 @@ class ServiceBusTest(AzureTestCase):
         self.assertEquals(received_msg.custom_properties['floating'], 3.14)
         self.assertEquals(received_msg.custom_properties['dob'], datetime(2011, 12, 14))
 
+    def test_receive_queue_message_timeout_5(self):
+        # Arrange
+        self._create_queue(self.queue_name)
+
+        # Act
+        start = time.clock()
+        received_msg = self.sbs.receive_queue_message(self.queue_name, True, 5)
+        duration = time.clock() - start
+
+        # Assert
+        self.assertTrue(duration > 3 and duration < 7)
+        self.assertIsNotNone(received_msg)
+        self.assertIsNone(received_msg.body)
+
+    def test_receive_queue_message_timeout_50(self):
+        # Arrange
+        self._create_queue(self.queue_name)
+
+        # Act
+        start = time.clock()
+        received_msg = self.sbs.receive_queue_message(self.queue_name, True, 50)
+        duration = time.clock() - start
+
+        # Assert
+        self.assertTrue(duration > 48 and duration < 52)
+        self.assertIsNotNone(received_msg)
+        self.assertIsNone(received_msg.body)
+
     #--Test cases for topics/subscriptions ------------------------------------
     def test_create_topic_no_options(self):
         # Arrange
@@ -500,6 +558,21 @@ class ServiceBusTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(topics)
         self.assertNamedItemInContainer(topics, self.topic_name)
+
+    def test_list_topics_with_special_chars(self):
+        # Arrange
+        # Name must start and end with an alphanumeric and can only contain 
+        # letters, numbers, periods, hyphens, forward slashes and underscores.
+        other_topic_name = self.topic_name + 'foo/.-_123'
+        self.additional_topic_names = [other_topic_name]
+        self._create_topic(other_topic_name)
+        
+        # Act
+        topics = self.sbs.list_topics()
+
+        # Assert
+        self.assertIsNotNone(topics)
+        self.assertNamedItemInContainer(topics, other_topic_name)
 
     def test_delete_topic_with_existing_topic(self):
         # Arrange
@@ -1062,6 +1135,148 @@ class ServiceBusTest(AzureTestCase):
         sbs.delete_topic(self.topic_name + '0')
 
         self.assertEqual(called, ['b', 'a', 'b', 'a'])
+
+    def test_two_identities(self):
+        # In order to run this test, 2 service bus service identities are created using
+        # the sbaztool available at:
+        # http://code.msdn.microsoft.com/windowsazure/Authorization-SBAzTool-6fd76d93
+        #
+        # Use the following commands to create 2 identities and grant access rights.
+        # Replace <servicebusnamespace> with the namespace specified in the test .json file
+        # Replace <servicebuskey> with the key specified in the test .json file
+        # This only needs to be executed once, after the service bus namespace is created.
+        #
+        # sbaztool makeid user1 NoHEoD6snlvlhZm7yek9Etxca3l0CYjfc19ICIJZoUg= -n <servicebusnamespace> -k <servicebuskey>
+        # sbaztool grant Send /path1 user1 -n <servicebusnamespace> -k <servicebuskey>
+        # sbaztool grant Listen /path1 user1 -n <servicebusnamespace> -k <servicebuskey>
+        # sbaztool grant Manage /path1 user1 -n <servicebusnamespace> -k <servicebuskey>
+
+        # sbaztool makeid user2 Tb6K5qEgstyRBwp86JEjUezKj/a+fnkLFnibfgvxvdg= -n <servicebusnamespace> -k <servicebuskey> 
+        # sbaztool grant Send /path2 user2 -n <servicebusnamespace> -k <servicebuskey>
+        # sbaztool grant Listen /path2 user2 -n <servicebusnamespace> -k <servicebuskey>
+        # sbaztool grant Manage /path2 user2 -n <servicebusnamespace> -k <servicebuskey>
+
+        sbs1 = ServiceBusService(credentials.getServiceBusNamespace(), 
+                                 'NoHEoD6snlvlhZm7yek9Etxca3l0CYjfc19ICIJZoUg=', 
+                                 'user1')
+        sbs2 = ServiceBusService(credentials.getServiceBusNamespace(), 
+                                 'Tb6K5qEgstyRBwp86JEjUezKj/a+fnkLFnibfgvxvdg=', 
+                                 'user2')
+
+        queue1_name = 'path1/queue' + str(random.randint(1, 10000000))
+        queue2_name = 'path2/queue' + str(random.randint(1, 10000000))
+
+        try:
+            # Create queues, success
+            sbs1.create_queue(queue1_name)
+            sbs2.create_queue(queue2_name)
+
+            # Receive messages, success
+            msg = sbs1.receive_queue_message(queue1_name, True, 1)
+            self.assertIsNone(msg.body)
+            msg = sbs1.receive_queue_message(queue1_name, True, 1)
+            self.assertIsNone(msg.body)
+            msg = sbs2.receive_queue_message(queue2_name, True, 1)
+            self.assertIsNone(msg.body)
+            msg = sbs2.receive_queue_message(queue2_name, True, 1)
+            self.assertIsNone(msg.body)
+
+            # Receive messages, failure
+            with self.assertRaises(HTTPError):
+                msg = sbs1.receive_queue_message(queue2_name, True, 1)
+            with self.assertRaises(HTTPError):
+                msg = sbs2.receive_queue_message(queue1_name, True, 1)
+        finally:
+            try:
+                sbs1.delete_queue(queue1_name)
+            except: pass
+            try:
+                sbs2.delete_queue(queue2_name)
+            except: pass
+
+    def test_unicode_create_queue_unicode_name(self):
+        # Arrange
+        self.queue_name = self.queue_name + u'啊齄丂狛狜'
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            created = self.sbs.create_queue(self.queue_name)
+
+        # Assert
+
+    def test_unicode_receive_queue_message_unicode_data(self):
+        # Assert
+        sent_msg = Message('receive message啊齄丂狛狜')
+        self._create_queue_and_send_msg(self.queue_name, sent_msg)
+
+        # Act
+        received_msg = self.sbs.receive_queue_message(self.queue_name, False)
+
+        # Assert
+        self.assertIsNotNone(received_msg)
+        self.assertEquals(sent_msg.body, received_msg.body)
+
+    def test_unicode_receive_queue_message_binary_data(self):
+        # Assert
+        base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        binary_data = base64.b64decode(base64_data)
+        sent_msg = Message(binary_data)
+        self._create_queue_and_send_msg(self.queue_name, sent_msg)
+
+        # Act
+        received_msg = self.sbs.receive_queue_message(self.queue_name, False)
+
+        # Assert
+        self.assertIsNotNone(received_msg)
+        self.assertEquals(sent_msg.body, received_msg.body)
+
+    def test_unicode_create_subscription_unicode_name(self):
+        # Arrange
+        self._create_topic(self.topic_name)
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            created = self.sbs.create_subscription(self.topic_name, u'MySubscription啊齄丂狛狜')
+
+        # Assert
+
+    def test_unicode_create_rule_unicode_name(self):
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule啊齄丂狛狜')
+
+        # Assert
+
+    def test_unicode_receive_subscription_message_unicode_data(self):
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+        sent_msg = Message('subscription message啊齄丂狛狜')
+        self.sbs.send_topic_message(self.topic_name, sent_msg)
+        
+        # Act
+        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', False)
+
+        # Assert
+        self.assertIsNotNone(received_msg)
+        self.assertEquals(sent_msg.body, received_msg.body)
+
+    def test_unicode_receive_subscription_message_binary_data(self):
+        # Arrange
+        base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        binary_data = base64.b64decode(base64_data)
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+        sent_msg = Message(binary_data)
+        self.sbs.send_topic_message(self.topic_name, sent_msg)
+        
+        # Act
+        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', False)
+
+        # Assert
+        self.assertIsNotNone(received_msg)
+        self.assertEquals(sent_msg.body, received_msg.body)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
