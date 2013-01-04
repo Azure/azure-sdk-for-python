@@ -190,7 +190,9 @@ class Message(WindowsAzureData):
         # Adds custom properties
         if self.custom_properties:
             for name, value in self.custom_properties.iteritems():
-                if isinstance(value, str):
+                if isinstance(value, unicode):
+                    request.headers.append((name, '"' + value.encode('utf-8') + '"'))
+                elif isinstance(value, str):
                     request.headers.append((name, '"' + str(value) + '"'))
                 elif isinstance(value, datetime):
                     request.headers.append((name, '"' + value.strftime('%a, %d %b %Y %H:%M:%S GMT') + '"'))
@@ -248,8 +250,8 @@ def _get_token(request, account_key, issuer):
     account_key: service bus access key
     issuer: service bus issuer
     '''
-    wrap_scope = 'http://' + request.host + request.path
-       
+    wrap_scope = 'http://' + request.host + request.path + issuer + account_key
+
     # Check whether has unexpired cache, return cached token if it is still usable. 
     if _tokens.has_key(wrap_scope):
         token = _tokens[wrap_scope]
@@ -371,7 +373,7 @@ def _convert_xml_to_rule(xmlstr):
                     setattr(rule, 'action_expression', action_expression.nodeValue)
    
     #extract id, updated and name value from feed entry and set them of rule.
-    for name, value in _get_entry_properties(xmlstr, True).iteritems():
+    for name, value in _get_entry_properties(xmlstr, True, '/rules').iteritems():
         setattr(rule, name, value)
 
     return rule
@@ -565,7 +567,7 @@ def _convert_xml_to_subscription(xmlstr):
         if node_value is not None:
             subscription.message_count = int(node_value)
 
-    for name, value in _get_entry_properties(xmlstr, True).iteritems():
+    for name, value in _get_entry_properties(xmlstr, True, '/subscriptions').iteritems():
         setattr(subscription, name, value)
 
     return subscription

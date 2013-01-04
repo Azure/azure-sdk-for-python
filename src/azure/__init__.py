@@ -95,15 +95,23 @@ class HeaderDict(dict):
     def __getitem__(self, index):
         return super(HeaderDict, self).__getitem__(index.lower())
 
-def _get_readable_id(id_name):
+def _get_readable_id(id_name, id_prefix_to_skip):
     """simplified an id to be more friendly for us people"""
-    pos = id_name.rfind('/')
+    # id_name is in the form 'https://namespace.host.suffix/name'
+    # where name may contain a forward slash!
+    pos = id_name.find('//')
     if pos != -1:
-        return id_name[pos+1:]
-    else:
-        return id_name
+        pos += 2
+        if id_prefix_to_skip:
+            pos = id_name.find(id_prefix_to_skip, pos)
+            if pos != -1:
+                pos += len(id_prefix_to_skip)
+        pos = id_name.find('/', pos)
+        if pos != -1:
+            return id_name[pos+1:]
+    return id_name
 
-def _get_entry_properties(xmlstr, include_id):
+def _get_entry_properties(xmlstr, include_id, id_prefix_to_skip=None):
     ''' get properties from entry xml '''
     xmldoc = minidom.parseString(xmlstr)
     properties = {}
@@ -120,7 +128,7 @@ def _get_entry_properties(xmlstr, include_id):
             
         if include_id:
             for id in _get_child_nodes(entry, 'id'):
-                properties['name'] = _get_readable_id(id.firstChild.nodeValue)
+                properties['name'] = _get_readable_id(id.firstChild.nodeValue, id_prefix_to_skip)
 
     return properties
 
@@ -207,7 +215,16 @@ def _get_serialization_name(element_name):
 
     return ''.join(name.capitalize() for name in element_name.split('_'))
 
+def _str(value):
+    if isinstance(value, unicode):
+        return value.encode('utf-8')
+
+    return str(value)
+
 def _str_or_none(value):
+    if isinstance(value, unicode):
+        return value.encode('utf-8')
+
     if value is None:
         return None
 
@@ -375,9 +392,8 @@ def _fill_dict_of(xmldoc, parent_xml_element_name, pair_xml_element_name, key_xm
             keys = _get_child_nodes(pair, key_xml_element_name)
             values = _get_child_nodes(pair, value_xml_element_name)
             if keys and values:
-                key = str(keys[0].firstChild.nodeValue)
-                value = str(values[0].firstChild.nodeValue)
-
+                key = keys[0].firstChild.nodeValue
+                value = values[0].firstChild.nodeValue
                 return_obj[key] = value
 
     return return_obj
@@ -436,7 +452,7 @@ def _get_request_body(request_body):
     elif isinstance(request_body, WindowsAzureData):
         return _convert_class_to_xml(request_body)
 
-    return request_body
+    return _str(request_body)
 
 def _parse_enum_results_list(response, return_type, resp_type, item_type):
     """resp_body is the XML we received
@@ -514,6 +530,9 @@ def _fill_data_to_return_object(node, return_obj):
             value = _fill_data_minidom(node, name, '')
             if value is not None:
                 value = base64.b64decode(value)
+                try:
+                    value = value.decode('utf-8')
+                except: pass
             #always set the attribute, so we don't end up returning an object with type _Base64String
             setattr(return_obj, name, value)
         else:
