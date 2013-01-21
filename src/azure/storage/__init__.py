@@ -40,10 +40,10 @@ X_MS_VERSION = '2011-08-18'
 class EnumResultsBase:
     ''' base class for EnumResults. '''
     def __init__(self):
-        self.prefix = ''
-        self.marker = ''
+        self.prefix = u''
+        self.marker = u''
         self.max_results = 0
-        self.next_marker = ''
+        self.next_marker = u''
 
 class ContainerEnumResults(EnumResultsBase):
     ''' Blob Container list. '''
@@ -65,8 +65,8 @@ class Container(WindowsAzureData):
     ''' Blob container class. '''
 
     def __init__(self):
-        self.name = ''
-        self.url = ''
+        self.name = u''
+        self.url = u''
         self.properties = Properties()
         self.metadata = {}
 
@@ -74,8 +74,8 @@ class Properties(WindowsAzureData):
     ''' Blob container's properties class. '''
 
     def __init__(self):
-        self.last_modified = ''
-        self.etag = ''
+        self.last_modified = u''
+        self.etag = u''
 
 class RetentionPolicy(WindowsAzureData):
     ''' RetentionPolicy in service properties. '''
@@ -98,7 +98,7 @@ class Logging(WindowsAzureData):
     ''' Logging class in service properties. '''
 
     def __init__(self):
-        self.version = '1.0'
+        self.version = u'1.0'
         self.delete = False
         self.read = False
         self.write = False
@@ -108,7 +108,7 @@ class Metrics(WindowsAzureData):
     ''' Metrics class in service properties. '''
 
     def __init__(self):
-        self.version = '1.0'
+        self.version = u'1.0'
         self.enabled = False
         self.include_apis = None
         self.retention_policy = RetentionPolicy()
@@ -124,15 +124,15 @@ class AccessPolicy(WindowsAzureData):
     ''' Access Policy class in service properties. '''
 
     def __init__(self):
-        self.start = ''
-        self.expiry = ''
-        self.permission = ''
+        self.start = u''
+        self.expiry = u''
+        self.permission = u''
 
 class SignedIdentifier(WindowsAzureData):
     ''' Signed Identifier class for service properties. '''
 
     def __init__(self):
-        self.id = ''
+        self.id = u''
         self.access_policy = AccessPolicy()
 
 class SignedIdentifiers(WindowsAzureData):
@@ -178,9 +178,9 @@ class Blob(WindowsAzureData):
     ''' Blob class. '''
 
     def __init__(self):
-        self.name = ''
-        self.snapshot = ''
-        self.url = ''
+        self.name = u''
+        self.snapshot = u''
+        self.url = u''
         self.properties = BlobProperties()
         self.metadata = {}
         self.blob_prefix = BlobPrefix()
@@ -189,16 +189,16 @@ class BlobProperties(WindowsAzureData):
     ''' Blob Properties '''
 
     def __init__(self):
-        self.last_modified = ''
-        self.etag = ''
+        self.last_modified = u''
+        self.etag = u''
         self.content_length = 0
-        self.content_type = ''
-        self.content_encoding = ''
-        self.content_language = ''
-        self.content_md5 = ''
+        self.content_type = u''
+        self.content_encoding = u''
+        self.content_language = u''
+        self.content_md5 = u''
         self.xms_blob_sequence_number = 0
-        self.blob_type = ''
-        self.lease_status = ''
+        self.blob_type = u''
+        self.lease_status = u''
 
 class BlobPrefix(WindowsAzureData):
     ''' BlobPrefix in Blob. '''
@@ -262,8 +262,8 @@ class Queue(WindowsAzureData):
     ''' Queue class '''
 
     def __init__(self):
-        self.name = ''
-        self.url = ''
+        self.name = u''
+        self.url = u''
         self.metadata = {}
 
 class QueueMessagesList(WindowsAzureData):
@@ -285,13 +285,13 @@ class QueueMessage(WindowsAzureData):
     ''' Queue message class. '''
 
     def __init__(self):
-        self.message_id = ''
-        self.insertion_time = ''
-        self.expiration_time = ''
-        self.pop_receipt = ''
-        self.time_next_visible = ''
-        self.dequeue_count = ''
-        self.message_text = ''
+        self.message_id = u''
+        self.insertion_time = u''
+        self.expiration_time = u''
+        self.pop_receipt = u''
+        self.time_next_visible = u''
+        self.dequeue_count = u''
+        self.message_text = u''
 
 class Entity(WindowsAzureData):
     ''' Entity class. The attributes of entity will be created dynamically. '''
@@ -686,7 +686,7 @@ def _convert_xml_to_entity(xmlstr):
 
             #if not isnull and no type info, then it is a string and we just need the str type to hold the property.
             if not isnull and not mtype:
-                setattr(entity, name, value)
+                _set_entity_attr(entity, name, value)
             elif isnull == 'true':
                 if mtype:
                     property = EntityProperty(mtype, None)
@@ -698,14 +698,22 @@ def _convert_xml_to_entity(xmlstr):
                     property = conv(value)
                 else:
                     property = EntityProperty(mtype, value)
-                setattr(entity, name, property)
+                _set_entity_attr(entity, name, property)
 
         #extract id, updated and name value from feed entry and set them of rule.
     for name, value in _get_entry_properties(xmlstr, True).iteritems():
         if name in ['etag']:
-            setattr(entity, name, value)
+            _set_entity_attr(entity, name, value)
 
     return entity
+
+def _set_entity_attr(entity, name, value):
+    try:
+        setattr(entity, name, value)
+    except UnicodeEncodeError:
+        # Python 2 doesn't support unicode attribute names, so we'll
+        # add them and access them directly through the dictionary
+        entity.__dict__[name] = value
 
 def _convert_xml_to_table(xmlstr):
     ''' Converts the xml response to table class

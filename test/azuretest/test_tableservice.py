@@ -34,7 +34,7 @@ from datetime import datetime
 
 MAX_RETRY = 60
 #------------------------------------------------------------------------------
-class StorageTest(AzureTestCase):
+class TableServiceTest(AzureTestCase):
 
     def setUp(self):
         self.tc = TableService(account_name=credentials.getStorageServicesName(), 
@@ -52,7 +52,7 @@ class StorageTest(AzureTestCase):
     
     def tearDown(self):
         self.cleanup()
-        return super(StorageTest, self).tearDown()
+        return super(TableServiceTest, self).tearDown()
 
     def cleanup(self):
         try:
@@ -1043,7 +1043,7 @@ class StorageTest(AzureTestCase):
 
         self.tc.cancel_batch()
 
-    def test_unicode_xml_encoding(self):
+    def test_unicode_property_value(self):
         ''' regression test for github issue #57'''
         # Act
         self._create_table(self.table_name)
@@ -1054,7 +1054,29 @@ class StorageTest(AzureTestCase):
         self.assertEquals(len(resp), 2)
         self.assertEquals(resp[0].Description, u'ꀕ')
         self.assertEquals(resp[1].Description, u'ꀕ')
-        
+
+    def test_unicode_property_name(self):
+        # Act
+        self._create_table(self.table_name)
+        self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test1', u'啊齄丂狛狜': u'ꀕ'}) 
+        self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', u'啊齄丂狛狜': 'hello'})        
+        resp = self.tc.query_entities(self.table_name, "PartitionKey eq 'test'")   
+        # Assert
+        self.assertEquals(len(resp), 2)
+        self.assertEquals(resp[0].__dict__[u'啊齄丂狛狜'], u'ꀕ')
+        self.assertEquals(resp[1].__dict__[u'啊齄丂狛狜'], u'hello')
+
+    def test_unicode_create_table_unicode_name(self):
+        # Arrange
+        self.table_name = unicode(self.table_name) + u'啊齄丂狛狜'
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            # not supported - table name must be alphanumeric, lowercase
+            self.tc.create_table(self.table_name)
+
+        # Assert
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

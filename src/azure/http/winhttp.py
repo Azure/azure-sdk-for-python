@@ -163,6 +163,7 @@ class _WinHttpRequest(c_void_p):
         method: the request VERB 'GET', 'POST', etc.
         url: the url to connect
         '''
+        _WinHttpRequest._SetTimeouts(self, 0, 65000, 65000, 65000)
         
         flag = VARIANT()
         flag.vt = VT_BOOL
@@ -321,11 +322,12 @@ class _HTTPConnection:
 
         #sets certificate for the connection if cert_file is set.
         if self.cert_file is not None:
-            self._httprequest.set_client_certificate(BSTR(unicode(self.cert_file)))
+            self._httprequest.set_client_certificate(unicode(self.cert_file))
 
     def putheader(self, name, value):
         ''' Sends the headers of request. '''
-        self._httprequest.set_request_header(unicode(name), unicode(value))
+        self._httprequest.set_request_header(str(name).decode('utf-8'),
+                                                str(value).decode('utf-8'))
 
     def endheaders(self):
         ''' No operation. Exists only to provide the same interface of httplib HTTPConnection.'''

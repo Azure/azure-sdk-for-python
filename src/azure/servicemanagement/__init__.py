@@ -15,11 +15,7 @@
 import base64
 from azure.http import HTTPError
 from azure import (WindowsAzureError, WindowsAzureData, _general_error_handler,
-                          _create_entry, _get_entry_properties, xml_escape,
-                          _get_child_nodes, WindowsAzureMissingResourceError,
-                          WindowsAzureConflictError, _get_serialization_name, 
-                          _list_of, _scalar_list_of, _dict_of, _Base64String,
-                          _get_children_from_path, _get_first_child_node_value)
+                          _str, _list_of, _scalar_list_of, _dict_of, _Base64String)
 import azure
 
 #-----------------------------------------------------------------------------
@@ -57,23 +53,23 @@ class StorageService(WindowsAzureData):
 
 class StorageAccountProperties(WindowsAzureData):
     def __init__(self):
-        self.description = ''
-        self.affinity_group = ''
-        self.location = ''
+        self.description = u''
+        self.affinity_group = u''
+        self.location = u''
         self.label = _Base64String()
-        self.status = ''
+        self.status = u''
         self.endpoints = _scalar_list_of(str, 'Endpoint')
         self.geo_replication_enabled = False
-        self.geo_primary_region = ''
-        self.status_of_primary = ''
-        self.geo_secondary_region = ''
-        self.status_of_secondary = ''
-        self.last_geo_failover_time = ''
+        self.geo_primary_region = u''
+        self.status_of_primary = u''
+        self.geo_secondary_region = u''
+        self.status_of_secondary = u''
+        self.last_geo_failover_time = u''
 
 class StorageServiceKeys(WindowsAzureData):
     def __init__(self):
-        self.primary = ''
-        self.secondary = ''
+        self.primary = u''
+        self.secondary = u''
 
 class Locations(WindowsAzureData):
     def __init__(self):
@@ -90,16 +86,16 @@ class Locations(WindowsAzureData):
 
 class Location(WindowsAzureData):
     def __init__(self):
-        self.name = ''
-        self.display_name = ''
+        self.name = u''
+        self.display_name = u''
         self.available_services = _scalar_list_of(str, 'AvailableService')
 
 class AffinityGroup(WindowsAzureData):
     def __init__(self):
         self.name = ''
         self.label = _Base64String()
-        self.description = ''
-        self.location = ''
+        self.description = u''
+        self.location = u''
         self.hosted_services = HostedServices()
         self.storage_services = StorageServices()
         self.capabilities = _scalar_list_of(str, 'Capability')
@@ -132,20 +128,20 @@ class HostedServices(WindowsAzureData):
 
 class HostedService(WindowsAzureData):
     def __init__(self):
-        self.url = ''
-        self.service_name = ''
+        self.url = u''
+        self.service_name = u''
         self.hosted_service_properties = HostedServiceProperties()
         self.deployments = Deployments()
 
 class HostedServiceProperties(WindowsAzureData):
     def __init__(self):
-        self.description = ''
-        self.location = ''
-        self.affinity_group = ''
+        self.description = u''
+        self.location = u''
+        self.affinity_group = u''
         self.label = _Base64String()
-        self.status = ''
-        self.date_created = ''
-        self.date_last_modified = ''
+        self.status = u''
+        self.date_created = u''
+        self.date_last_modified = u''
         self.extended_properties = _dict_of('ExtendedProperty', 'Name', 'Value')
 
 class Deployments(WindowsAzureData):
@@ -163,24 +159,24 @@ class Deployments(WindowsAzureData):
 
 class Deployment(WindowsAzureData):
     def __init__(self):
-        self.name = ''
-        self.deployment_slot = ''
-        self.private_id = ''
-        self.status = ''
+        self.name = u''
+        self.deployment_slot = u''
+        self.private_id = u''
+        self.status = u''
         self.label = _Base64String()
-        self.url = ''
+        self.url = u''
         self.configuration = _Base64String()
         self.role_instance_list = RoleInstanceList()
         self.upgrade_status = UpgradeStatus()
-        self.upgrade_domain_count = ''
+        self.upgrade_domain_count = u''
         self.role_list = RoleList()
-        self.sdk_version = ''
+        self.sdk_version = u''
         self.input_endpoint_list = InputEndpoints()
         self.locked = False
         self.rollback_allowed = False
         self.persistent_vm_downtime_info = PersistentVMDowntimeInfo()
-        self.created_time = ''
-        self.last_modified_time = ''
+        self.created_time = u''
+        self.last_modified_time = u''
         self.extended_properties = _dict_of('ExtendedProperty', 'Name', 'Value')
 
 class RoleInstanceList(WindowsAzureData):
@@ -198,23 +194,23 @@ class RoleInstanceList(WindowsAzureData):
 
 class RoleInstance(WindowsAzureData):
     def __init__(self):
-        self.role_name = ''
-        self.instance_name = ''
-        self.instance_status = ''
+        self.role_name = u''
+        self.instance_name = u''
+        self.instance_status = u''
         self.instance_upgrade_domain = 0
         self.instance_fault_domain = 0
-        self.instance_size = ''
-        self.instance_state_details = ''
-        self.instance_error_code = ''
-        self.ip_address = ''
-        self.power_state = ''
-        self.fqdn = ''
+        self.instance_size = u''
+        self.instance_state_details = u''
+        self.instance_error_code = u''
+        self.ip_address = u''
+        self.power_state = u''
+        self.fqdn = u''
 
 class UpgradeStatus(WindowsAzureData):
     def __init__(self):
-        self.upgrade_type = ''
-        self.current_upgrade_domain_state = ''
-        self.current_upgrade_domain = ''
+        self.upgrade_type = u''
+        self.current_upgrade_domain_state = u''
+        self.current_upgrade_domain = u''
 
 class InputEndpoints(WindowsAzureData):
     def __init__(self):
@@ -231,9 +227,9 @@ class InputEndpoints(WindowsAzureData):
 
 class InputEndpoint(WindowsAzureData):
     def __init__(self):
-        self.role_name = ''
-        self.vip = ''
-        self.port = ''
+        self.role_name = u''
+        self.vip = u''
+        self.port = u''
 
 class RoleList(WindowsAzureData):
     def __init__(self):
@@ -250,14 +246,14 @@ class RoleList(WindowsAzureData):
 
 class Role(WindowsAzureData):
     def __init__(self):
-        self.role_name = ''
-        self.os_version = ''
+        self.role_name = u''
+        self.os_version = u''
 
 class PersistentVMDowntimeInfo(WindowsAzureData):
     def __init__(self):
-        self.start_time = ''
-        self.end_time = ''
-        self.status = ''
+        self.start_time = u''
+        self.end_time = u''
+        self.status = u''
 
 class Certificates(WindowsAzureData):
     def __init__(self):
@@ -274,26 +270,26 @@ class Certificates(WindowsAzureData):
 
 class Certificate(WindowsAzureData):
     def __init__(self):
-        self.certificate_url = ''
-        self.thumbprint = ''
-        self.thumbprint_algorithm = ''
-        self.data = ''
+        self.certificate_url = u''
+        self.thumbprint = u''
+        self.thumbprint_algorithm = u''
+        self.data = u''
 
 class OperationError(WindowsAzureData):
     def __init__(self):
-        self.code = ''
-        self.message = ''
+        self.code = u''
+        self.message = u''
         
 class Operation(WindowsAzureData):
     def __init__(self):
-        self.id = ''
-        self.status = ''
-        self.http_status_code = ''
+        self.id = u''
+        self.status = u''
+        self.http_status_code = u''
         self.error = OperationError()
 
 class OperatingSystem(WindowsAzureData):
     def __init__(self):
-        self.version = ''
+        self.version = u''
         self.label = _Base64String()
         self.is_default = True
         self.is_active = True
@@ -315,7 +311,7 @@ class OperatingSystems(WindowsAzureData):
 
 class OperatingSystemFamily(WindowsAzureData):
     def __init__(self):
-        self.name = ''
+        self.name = u''
         self.label = _Base64String()
         self.operating_systems = OperatingSystems()
 
@@ -334,11 +330,11 @@ class OperatingSystemFamilies(WindowsAzureData):
 
 class Subscription(WindowsAzureData):
     def __init__(self):
-        self.subscription_id = ''
-        self.subscription_name = ''
-        self.subscription_status = ''
-        self.account_admin_live_email_id = ''
-        self.service_admin_live_email_id = ''
+        self.subscription_id = u''
+        self.subscription_name = u''
+        self.subscription_status = u''
+        self.account_admin_live_email_id = u''
+        self.service_admin_live_email_id = u''
         self.max_core_count = 0
         self.max_storage_accounts = 0
         self.max_hosted_services = 0
@@ -368,10 +364,10 @@ class SubscriptionCertificates(WindowsAzureData):
 
 class SubscriptionCertificate(WindowsAzureData):
     def __init__(self):
-        self.subscription_certificate_public_key = ''
-        self.subscription_certificate_thumbprint = ''
-        self.subscription_certificate_data = ''
-        self.created = ''
+        self.subscription_certificate_public_key = u''
+        self.subscription_certificate_thumbprint = u''
+        self.subscription_certificate_data = u''
+        self.created = u''
 
 class Images(WindowsAzureData):
     def __init__(self):
@@ -388,16 +384,16 @@ class Images(WindowsAzureData):
 
 class OSImage(WindowsAzureData):
     def __init__(self):
-        self.affinity_group = ''
-        self.category = ''
-        self.location = ''
+        self.affinity_group = u''
+        self.category = u''
+        self.location = u''
         self.logical_size_in_gb = 0
-        self.label = ''
-        self.media_link = ''
-        self.name = ''
-        self.os = ''
-        self.eula = ''
-        self.description = ''
+        self.label = u''
+        self.media_link = u''
+        self.name = u''
+        self.os = u''
+        self.eula = u''
+        self.description = u''
 
 class Disks(WindowsAzureData):
     def __init__(self):
@@ -414,34 +410,34 @@ class Disks(WindowsAzureData):
 
 class Disk(WindowsAzureData):
     def __init__(self):
-        self.affinity_group = ''
+        self.affinity_group = u''
         self.attached_to = AttachedTo()
-        self.has_operating_system = ''
-        self.is_corrupted = ''
-        self.location = ''
+        self.has_operating_system = u''
+        self.is_corrupted = u''
+        self.location = u''
         self.logical_disk_size_in_gb = 0
-        self.label = ''
-        self.media_link= ''
-        self.name = ''
-        self.os = ''
-        self.source_image_name = ''
+        self.label = u''
+        self.media_link = u''
+        self.name = u''
+        self.os = u''
+        self.source_image_name = u''
 
 class AttachedTo(WindowsAzureData):
     def __init__(self):
-        self.hosted_service_name = ''
-        self.deployment_name = ''
-        self.role_name = ''
+        self.hosted_service_name = u''
+        self.deployment_name = u''
+        self.role_name = u''
 
 class PersistentVMRole(WindowsAzureData):
     def __init__(self):
-        self.role_name = ''
-        self.role_type= ''
-        self.os_version = '' # undocumented
+        self.role_name = u''
+        self.role_type= u''
+        self.os_version = u'' # undocumented
         self.configuration_sets = ConfigurationSets()
-        self.availability_set_name = ''
+        self.availability_set_name = u''
         self.data_virtual_hard_disks = DataVirtualHardDisks()
         self.os_virtual_hard_disk = OSVirtualHardDisk()
-        self.role_size = ''
+        self.role_size = u''
 
 class ConfigurationSets(WindowsAzureData):
     def __init__(self):
@@ -458,8 +454,8 @@ class ConfigurationSets(WindowsAzureData):
 
 class ConfigurationSet(WindowsAzureData):
     def __init__(self):
-        self.configuration_set_type = ''
-        self.role_type= ''
+        self.configuration_set_type = u''
+        self.role_type= u''
         self.input_endpoints = ConfigurationSetInputEndpoints()
         self.subnet_names = _scalar_list_of(str, 'SubnetName')
 
@@ -487,7 +483,7 @@ class ConfigurationSetInputEndpoint(WindowsAzureData):
     load_balanced_endpoint_set_name: Specifies a name for a set of load-balanced endpoints. Specifying this element for a given endpoint adds it to the set. If you are setting an endpoint to use to connect to the virtual machine via the Remote Desktop, do not set this property.
     enable_direct_server_return: Specifies whether direct server return load balancing is enabled. 
     '''
-    def __init__(self, name='', protocol='', port='', local_port='', load_balanced_endpoint_set_name='', enable_direct_server_return=False):
+    def __init__(self, name=u'', protocol=u'', port=u'', local_port=u'', load_balanced_endpoint_set_name=u'', enable_direct_server_return=False):
         self.enable_direct_server_return = enable_direct_server_return
         self.load_balanced_endpoint_set_name = load_balanced_endpoint_set_name
         self.local_port = local_port
@@ -498,7 +494,7 @@ class ConfigurationSetInputEndpoint(WindowsAzureData):
 
 class WindowsConfigurationSet(WindowsAzureData):
     def __init__(self, computer_name=None, admin_password=None, reset_password_on_first_logon=None, enable_automatic_updates=None, time_zone=None):
-        self.configuration_set_type = 'WindowsProvisioningConfiguration'
+        self.configuration_set_type = u'WindowsProvisioningConfiguration'
         self.computer_name = computer_name
         self.admin_password = admin_password
         self.reset_password_on_first_logon = reset_password_on_first_logon
@@ -510,14 +506,14 @@ class WindowsConfigurationSet(WindowsAzureData):
 class DomainJoin(WindowsAzureData):
     def __init__(self):
         self.credentials = Credentials()
-        self.join_domain = ''
-        self.machine_object_ou = ''
+        self.join_domain = u''
+        self.machine_object_ou = u''
 
 class Credentials(WindowsAzureData):
     def __init(self):
-        self.domain = ''
-        self.username = ''
-        self.password = ''
+        self.domain = u''
+        self.username = u''
+        self.password = u''
 
 class StoredCertificateSettings(WindowsAzureData):
     def __init__(self):
@@ -540,14 +536,14 @@ class CertificateSetting(WindowsAzureData):
     store_name: Specifies the name of the certificate store from which retrieve certificate. 
     store_location: Specifies the target certificate store location on the virtual machine. The only supported value is LocalMachine.
     '''
-    def __init__(self, thumbprint='', store_name='', store_location=''):
+    def __init__(self, thumbprint=u'', store_name=u'', store_location=u''):
         self.thumbprint = thumbprint
         self.store_name = store_name
         self.store_location = store_location
 
 class LinuxConfigurationSet(WindowsAzureData):
     def __init__(self, host_name=None, user_name=None, user_password=None, disable_ssh_password_authentication=None):
-        self.configuration_set_type = 'LinuxProvisioningConfiguration'
+        self.configuration_set_type = u'LinuxProvisioningConfiguration'
         self.host_name = host_name
         self.user_name = user_name
         self.user_password = user_password
@@ -592,14 +588,14 @@ class KeyPairs(WindowsAzureData):
 
 class KeyPair(WindowsAzureData):
     def __init__(self):
-        self.finger_print = ''
-        self.path = ''
+        self.finger_print = u''
+        self.path = u''
 
 class LoadBalancerProbe(WindowsAzureData):
     def __init__(self):
-        self.path = ''
-        self.port = ''
-        self.protocol = ''
+        self.path = u''
+        self.port = u''
+        self.protocol = u''
 
 class DataVirtualHardDisks(WindowsAzureData):
     def __init__(self):
@@ -616,12 +612,12 @@ class DataVirtualHardDisks(WindowsAzureData):
 
 class DataVirtualHardDisk(WindowsAzureData):
     def __init__(self):
-        self.host_caching = ''
-        self.disk_label = ''
-        self.disk_name = ''
+        self.host_caching = u''
+        self.disk_label = u''
+        self.disk_name = u''
         self.lun = 0
         self.logical_disk_size_in_gb = 0
-        self.media_link = ''
+        self.media_link = u''
 
 class OSVirtualHardDisk(WindowsAzureData):
     def __init__(self, source_image_name=None, media_link=None, host_caching=None, disk_label=None, disk_name=None):
@@ -630,7 +626,7 @@ class OSVirtualHardDisk(WindowsAzureData):
         self.host_caching = host_caching
         self.disk_label = disk_label
         self.disk_name = disk_name
-        self.os = '' # undocumented, not used when adding a role
+        self.os = u'' # undocumented, not used when adding a role
 
 class AsynchronousOperationResult(WindowsAzureData):
     def __init__(self, request_id=None):
@@ -1033,9 +1029,9 @@ class _XmlSerializer(object):
 
             if val is not None:
                 if converter is not None:
-                    text = converter(str(val))
+                    text = converter(_str(val))
                 else:
-                    text = str(val)
+                    text = _str(val)
                 xml += ''.join(['<', name, '>', text, '</', name, '>'])
         return xml
 
@@ -1060,7 +1056,7 @@ class _XmlSerializer(object):
         if extended_properties is not None and len(extended_properties) > 0:
             xml += '<ExtendedProperties>'
             for key, val in extended_properties.items():
-                xml += ''.join(['<ExtendedProperty>', '<Name>', str(key), '</Name>', '<Value>', str(val), '</Value>', '</ExtendedProperty>'])
+                xml += ''.join(['<ExtendedProperty>', '<Name>', _str(key), '</Name>', '<Value>', _str(val), '</Value>', '</ExtendedProperty>'])
             xml += '</ExtendedProperties>'
         return xml
 
