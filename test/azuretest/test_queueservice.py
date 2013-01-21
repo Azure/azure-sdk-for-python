@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -375,7 +375,53 @@ class QueueServiceTest(AzureTestCase):
 
         self.assertEqual(called, ['b', 'a'])
 
-        
+    def test_unicode_create_queue_unicode_name(self):
+        #Action
+        self.creatable_queues[0] = u'啊齄丂狛狜'
+
+        with self.assertRaises(WindowsAzureError):
+            # not supported - queue name must be alphanumeric, lowercase
+            self.queue_client.create_queue(self.creatable_queues[0])
+
+        #Asserts
+
+    def test_unicode_get_messages_unicode_data(self):
+        #Action
+        self.queue_client.put_message(self.test_queues[1], u'message1㚈')
+        result = self.queue_client.get_messages(self.test_queues[1])
+
+        #Asserts
+        self.assertIsNotNone(result)
+        self.assertEqual(1, len(result))
+        message = result[0]
+        self.assertIsNotNone(message)
+        self.assertNotEqual('', message.message_id)
+        self.assertEqual(u'message1㚈', message.message_text)
+        self.assertNotEqual('', message.pop_receipt)
+        self.assertEqual('1', message.dequeue_count)
+        self.assertNotEqual('', message.insertion_time)
+        self.assertNotEqual('', message.expiration_time)
+        self.assertNotEqual('', message.time_next_visible)
+
+    def test_unicode_update_message_unicode_data(self):
+        #Action
+        self.queue_client.put_message(self.test_queues[7], 'message1')
+        list_result1 = self.queue_client.get_messages(self.test_queues[7])
+        self.queue_client.update_message(self.test_queues[7], list_result1[0].message_id, u'啊齄丂狛狜', list_result1[0].pop_receipt, visibilitytimeout=0)
+        list_result2 = self.queue_client.get_messages(self.test_queues[7])
+
+        #Asserts
+        self.assertIsNotNone(list_result2)
+        message = list_result2[0]
+        self.assertIsNotNone(message)
+        self.assertNotEqual('', message.message_id)
+        self.assertEqual(u'啊齄丂狛狜', message.message_text)
+        self.assertNotEqual('', message.pop_receipt)
+        self.assertEqual('2', message.dequeue_count)
+        self.assertNotEqual('', message.insertion_time)
+        self.assertNotEqual('', message.expiration_time)
+        self.assertNotEqual('', message.time_next_visible)
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

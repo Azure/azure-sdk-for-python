@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,8 +52,10 @@ DEPLOYMENT_UPDATE_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" 
 CSPKG_PATH = 'azuretest/data/WindowsAzure1.cspkg'
 DATA_VHD_PATH = 'azuretest/data/test.vhd'
 
+# Note that available os images on Azure change regularly
+# If these images get removed, replace with a similar OS image
 LINUX_IMAGE_NAME = 'OpenLogic__OpenLogic-CentOS-62-20120531-en-us-30GB.vhd'
-WINDOWS_IMAGE_NAME = 'MSFT__Win2K8R2SP1-Datacenter-201208.01-en.us-30GB.vhd'
+WINDOWS_IMAGE_NAME = 'MSFT__Win2K8R2SP1-Datacenter-201210.01-en.us-30GB.vhd'
 
 # This blob must be created manually before running the unit tests, 
 # they must be present in the storage account listed in the credentials file.
@@ -1748,6 +1750,49 @@ class ServiceManagementServiceTest(AzureTestCase):
         # Assert
         self.assertIsNone(result)
         self.assertFalse(self._disk_exists(self.disk_name))
+
+    def test_unicode_create_storage_account_unicode_name(self):
+        # Arrange
+        self.storage_account_name = unicode(self.storage_account_name) + u'啊齄丂狛狜'
+        description = 'description'
+        label = 'label'
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            # not supported - queue name must be alphanumeric, lowercase
+            result = self.sms.create_storage_account(self.storage_account_name, description, label, None, 'West US', True, {'ext1':'val1', 'ext2':42})
+            self._wait_for_async(result.request_id)
+
+        # Assert
+
+    def test_unicode_create_storage_account_unicode_description_label(self):
+        # Arrange
+        description = u'啊齄丂狛狜'
+        label = u'丂狛狜'
+
+        # Act
+        result = self.sms.create_storage_account(self.storage_account_name, description, label, None, 'West US', True, {'ext1':'val1', 'ext2':42})
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        result = self.sms.get_storage_account_properties(self.storage_account_name)
+        self.assertEqual(result.storage_service_properties.description, description)
+        self.assertEqual(result.storage_service_properties.label, label)
+
+    def test_unicode_create_storage_account_unicode_property_value(self):
+        # Arrange
+        description = 'description'
+        label = 'label'
+
+        # Act
+        result = self.sms.create_storage_account(self.storage_account_name, description, label, None, 'West US', True, {'ext1':u'丂狛狜', 'ext2':42})
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        result = self.sms.get_storage_account_properties(self.storage_account_name)
+        self.assertEqual(result.storage_service_properties.description, description)
+        self.assertEqual(result.storage_service_properties.label, label)
+        self.assertEqual(result.extended_properties['ext1'], u'丂狛狜')
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

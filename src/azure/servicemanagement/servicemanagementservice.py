@@ -24,7 +24,7 @@ from azure.servicemanagement import (_update_management_header,
                                      _parse_response_for_async_op,
                                      _XmlSerializer)
 from azure.http import HTTPRequest
-from azure import (_validate_not_none,
+from azure import (_validate_not_none, _str,
                     _get_request_body, _update_request_uri_query,
                     WindowsAzureError, _parse_response,
                     MANAGEMENT_HOST)
@@ -208,7 +208,7 @@ class ServiceManagementService:
         service_name: Name of the storage service account.
         '''
         _validate_not_none('service_name', service_name)
-        return self._perform_get(self._get_storage_service_path() + '/operations/isavailable/' + str(service_name) + '',
+        return self._perform_get(self._get_storage_service_path() + '/operations/isavailable/' + _str(service_name) + '',
                                  AvailabilityResponse)
 
     #--Operations for hosted services ------------------------------------
@@ -234,7 +234,7 @@ class ServiceManagementService:
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('embed_detail', embed_detail)
-        return self._perform_get(self._get_hosted_service_path(service_name) + '?embed-detail=' + str(embed_detail).lower(),
+        return self._perform_get(self._get_hosted_service_path(service_name) + '?embed-detail=' + _str(embed_detail).lower(),
                                  HostedService)
 
     def create_hosted_service(self, service_name, label, description=None, location=None, affinity_group=None, extended_properties=None):
@@ -572,7 +572,7 @@ class ServiceManagementService:
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
         _validate_not_none('role_instance_name', role_instance_name)
-        return self._perform_post(self._get_deployment_path_using_name(service_name, deployment_name) + '/roleinstances/' + str(role_instance_name) + '?comp=reboot',
+        return self._perform_post(self._get_deployment_path_using_name(service_name, deployment_name) + '/roleinstances/' + _str(role_instance_name) + '?comp=reboot',
                                   '',
                                   async=True)
 
@@ -587,7 +587,7 @@ class ServiceManagementService:
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
         _validate_not_none('role_instance_name', role_instance_name)
-        return self._perform_post(self._get_deployment_path_using_name(service_name, deployment_name) + '/roleinstances/' + str(role_instance_name) + '?comp=reimage',
+        return self._perform_post(self._get_deployment_path_using_name(service_name, deployment_name) + '/roleinstances/' + _str(role_instance_name) + '?comp=reimage',
                                   '',
                                   async=True)
 
@@ -599,7 +599,7 @@ class ServiceManagementService:
         service_name: Name of the hosted service.
         '''
         _validate_not_none('service_name', service_name)
-        return self._perform_get('/' + self.subscription_id + '/services/hostedservices/operations/isavailable/' + str(service_name) + '',
+        return self._perform_get('/' + self.subscription_id + '/services/hostedservices/operations/isavailable/' + _str(service_name) + '',
                                  AvailabilityResponse)
 
     #--Operations for service certificates -------------------------------
@@ -611,7 +611,7 @@ class ServiceManagementService:
         service_name: Name of the hosted service.
         '''
         _validate_not_none('service_name', service_name)
-        return self._perform_get('/' + self.subscription_id + '/services/hostedservices/' + str(service_name) + '/certificates',
+        return self._perform_get('/' + self.subscription_id + '/services/hostedservices/' + _str(service_name) + '/certificates',
                                  Certificates)
 
     def get_service_certificate(self, service_name, thumbalgorithm, thumbprint):
@@ -626,7 +626,7 @@ class ServiceManagementService:
         _validate_not_none('service_name', service_name)
         _validate_not_none('thumbalgorithm', thumbalgorithm)
         _validate_not_none('thumbprint', thumbprint)
-        return self._perform_get('/' + self.subscription_id + '/services/hostedservices/' + str(service_name) + '/certificates/' + str(thumbalgorithm) + '-' + str(thumbprint) + '',
+        return self._perform_get('/' + self.subscription_id + '/services/hostedservices/' + _str(service_name) + '/certificates/' + _str(thumbalgorithm) + '-' + _str(thumbprint) + '',
                                  Certificate)
 
     def add_service_certificate(self, service_name, data, certificate_format, password):
@@ -643,7 +643,7 @@ class ServiceManagementService:
         _validate_not_none('data', data)
         _validate_not_none('certificate_format', certificate_format)
         _validate_not_none('password', password)
-        return self._perform_post('/' + self.subscription_id + '/services/hostedservices/' + str(service_name) + '/certificates',
+        return self._perform_post('/' + self.subscription_id + '/services/hostedservices/' + _str(service_name) + '/certificates',
                                   _XmlSerializer.certificate_file_to_xml(data, certificate_format, password),
                                   async=True)
 
@@ -659,7 +659,7 @@ class ServiceManagementService:
         _validate_not_none('service_name', service_name)
         _validate_not_none('thumbalgorithm', thumbalgorithm)
         _validate_not_none('thumbprint', thumbprint)
-        return self._perform_delete('/' + self.subscription_id + '/services/hostedservices/' + str(service_name) + '/certificates/' + str(thumbalgorithm) + '-' + str(thumbprint),
+        return self._perform_delete('/' + self.subscription_id + '/services/hostedservices/' + _str(service_name) + '/certificates/' + _str(thumbalgorithm) + '-' + _str(thumbprint),
                                     async=True)
 
     #--Operations for management certificates ----------------------------
@@ -685,7 +685,7 @@ class ServiceManagementService:
         thumbprint: The thumbprint value of the certificate.
         '''
         _validate_not_none('thumbprint', thumbprint)
-        return self._perform_get('/' + self.subscription_id + '/certificates/' + str(thumbprint),
+        return self._perform_get('/' + self.subscription_id + '/certificates/' + _str(thumbprint),
                                  SubscriptionCertificate)
 
     def add_management_certificate(self, public_key, thumbprint, data):
@@ -719,7 +719,7 @@ class ServiceManagementService:
         thumbprint: The thumb print that uniquely identifies the management certificate.
         '''
         _validate_not_none('thumbprint', thumbprint)
-        return self._perform_delete('/' + self.subscription_id + '/certificates/' + str(thumbprint))
+        return self._perform_delete('/' + self.subscription_id + '/certificates/' + _str(thumbprint))
 
     #--Operations for affinity groups ------------------------------------
     def list_affinity_groups(self):
@@ -737,7 +737,7 @@ class ServiceManagementService:
         affinity_group_name: The name of the affinity group.
         '''
         _validate_not_none('affinity_group_name', affinity_group_name)
-        return self._perform_get('/' + self.subscription_id + '/affinitygroups/' + str(affinity_group_name) + '',
+        return self._perform_get('/' + self.subscription_id + '/affinitygroups/' + _str(affinity_group_name) + '',
                                  AffinityGroup)
 
     def create_affinity_group(self, name, label, location, description=None):
@@ -772,7 +772,7 @@ class ServiceManagementService:
         '''
         _validate_not_none('affinity_group_name', affinity_group_name)
         _validate_not_none('label', label)
-        return self._perform_put('/' + self.subscription_id + '/affinitygroups/' + str(affinity_group_name),
+        return self._perform_put('/' + self.subscription_id + '/affinitygroups/' + _str(affinity_group_name),
                                  _XmlSerializer.update_affinity_group_to_xml(label, description))
 
     def delete_affinity_group(self, affinity_group_name):
@@ -782,7 +782,7 @@ class ServiceManagementService:
         affinity_group_name: The name of the affinity group.
         '''
         _validate_not_none('affinity_group_name', affinity_group_name)
-        return self._perform_delete('/' + self.subscription_id + '/affinitygroups/' + str(affinity_group_name))
+        return self._perform_delete('/' + self.subscription_id + '/affinitygroups/' + _str(affinity_group_name))
 
     #--Operations for locations ------------------------------------------
     def list_locations(self):
@@ -803,7 +803,7 @@ class ServiceManagementService:
         request_id: The request ID for the request you wish to track.
         '''
         _validate_not_none('request_id', request_id)
-        return self._perform_get('/' + self.subscription_id + '/operations/' + str(request_id),
+        return self._perform_get('/' + self.subscription_id + '/operations/' + _str(request_id),
                                  Operation)
 
     #--Operations for retrieving operating system information ------------
@@ -1437,7 +1437,7 @@ class ServiceManagementService:
     def _get_path(self, resource, name):
         path = '/' + self.subscription_id + '/' + resource
         if name is not None:
-            path += '/' + str(name)
+            path += '/' + _str(name)
         return path
 
     def _get_storage_service_path(self, service_name=None):
@@ -1447,19 +1447,19 @@ class ServiceManagementService:
         return self._get_path('services/hostedservices', service_name)
 
     def _get_deployment_path_using_slot(self, service_name, slot=None):
-        return self._get_path('services/hostedservices/' + str(service_name) + '/deploymentslots', slot)
+        return self._get_path('services/hostedservices/' + _str(service_name) + '/deploymentslots', slot)
 
     def _get_deployment_path_using_name(self, service_name, deployment_name=None):
-        return self._get_path('services/hostedservices/' + str(service_name) + '/deployments', deployment_name)
+        return self._get_path('services/hostedservices/' + _str(service_name) + '/deployments', deployment_name)
 
     def _get_role_path(self, service_name, deployment_name, role_name=None):
-        return self._get_path('services/hostedservices/' + str(service_name) + '/deployments/' + deployment_name + '/roles', role_name)
+        return self._get_path('services/hostedservices/' + _str(service_name) + '/deployments/' + deployment_name + '/roles', role_name)
 
     def _get_role_instance_operations_path(self, service_name, deployment_name, role_name=None):
-        return self._get_path('services/hostedservices/' + str(service_name) + '/deployments/' + deployment_name + '/roleinstances', role_name) + '/Operations'
+        return self._get_path('services/hostedservices/' + _str(service_name) + '/deployments/' + deployment_name + '/roleinstances', role_name) + '/Operations'
 
     def _get_data_disk_path(self, service_name, deployment_name, role_name, lun=None):
-        return self._get_path('services/hostedservices/' + str(service_name) + '/deployments/' + str(deployment_name) + '/roles/' + str(role_name) + '/DataDisks', lun)
+        return self._get_path('services/hostedservices/' + _str(service_name) + '/deployments/' + _str(deployment_name) + '/roles/' + _str(role_name) + '/DataDisks', lun)
 
     def _get_disk_path(self, disk_name=None):
         return self._get_path('services/disks', disk_name)

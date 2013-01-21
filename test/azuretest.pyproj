@@ -6,7 +6,7 @@
     <ProjectGuid>{c0742a2d-4862-40e4-8a28-036eecdbc614}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>azuretest\test_servicemanagementservice.py</StartupFile>
+    <StartupFile>azuretest\test_servicebusservice.py</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azuretest</Name>
@@ -51,8 +51,8 @@
     <Compile Include="azuretest\test_servicemanagementservice.py" />
     <Compile Include="azuretest\test_queueservice.py" />
     <Compile Include="azuretest\test_sharedaccesssignature.py" />
-    <Compile Include="azuretest\test_tableservice.py" />
     <Compile Include="azuretest\test_servicebusservice.py" />
+    <Compile Include="azuretest\test_tableservice.py" />
     <Compile Include="azuretest\util.py" />
     <Compile Include="azuretest\__init__.py" />
   </ItemGroup>
