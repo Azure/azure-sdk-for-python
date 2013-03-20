@@ -16,11 +16,27 @@
 from azure.storage.blobservice import *
 from azure.storage import Metrics
 from azure.storage.storageclient import AZURE_STORAGE_ACCESS_KEY, AZURE_STORAGE_ACCOUNT, EMULATED, DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY
-from azure import WindowsAzureError
+from azure.storage.sharedaccesssignature import (SharedAccessSignature, 
+                                                 SharedAccessPolicy, 
+                                                 Permission, 
+                                                 WebResource,
+                                                 SIGNED_START,
+                                                 SIGNED_EXPIRY,
+                                                 SIGNED_RESOURCE,
+                                                 SIGNED_PERMISSION,
+                                                 SIGNED_IDENTIFIER,
+                                                 SIGNED_SIGNATURE,
+                                                 RESOURCE_BLOB,
+                                                 RESOURCE_CONTAINER,
+                                                 SIGNED_RESOURCE_TYPE,
+                                                 SHARED_ACCESS_PERMISSION)
+from azure import WindowsAzureError, BLOB_SERVICE_HOST_BASE
 from azuretest.util import *
 from azure.http import HTTPRequest, HTTPResponse
-
+import datetime
 import unittest
+import httplib
+import time
 
 #------------------------------------------------------------------------------
 class BlobServiceTest(AzureTestCase):
@@ -68,6 +84,46 @@ class BlobServiceTest(AzureTestCase):
         self._create_container(container_name)
         resp = self.bc.put_blob(self.container_name, blob_name, '', 'PageBlob', x_ms_blob_content_length=str(content_length))
         self.assertIsNone(resp)
+
+    def _get_permission(self, sas, resource_type, resource_path):
+        date_format = "%Y-%m-%dT%H:%M:%SZ"
+        start = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
+        expiry = start + datetime.timedelta(hours=1)
+        
+        sap = SharedAccessPolicy(AccessPolicy(start.strftime(date_format),
+                                              expiry.strftime(date_format),
+                                              'r'))
+        
+        signed_query = sas.generate_signed_query_string(resource_path, 
+                                                   resource_type, 
+                                                   sap)
+        
+        return Permission('/' + resource_path, signed_query)
+
+    def _get_signed_web_resource(self, sas, resource_type, resource_path):
+        web_rsrc = WebResource()
+        web_rsrc.properties[SIGNED_RESOURCE_TYPE] = resource_type
+        web_rsrc.properties[SHARED_ACCESS_PERMISSION] = 'r'
+        web_rsrc.path = '/' + resource_path
+        web_rsrc.request_url = '/' + resource_path
+        
+        return sas.sign_request(web_rsrc)
+
+    def _get_request(self, host, url):
+        connection = httplib.HTTPConnection(host)
+        connection.putrequest('GET', url)
+        connection.putheader('Content-Type', 'application/octet-stream Charset=UTF-8')
+        connection.endheaders()
+        
+        resp = connection.getresponse()
+        resp.getheaders()
+        respbody = None
+        if resp.length is None:
+            respbody = resp.read()
+        elif resp.length > 0:
+            respbody = resp.read(resp.length)
+
+        return respbody
 
     #--Test cases for blob service --------------------------------------------
     def test_create_blob_service_missing_arguments(self):
@@ -1325,6 +1381,44 @@ class BlobServiceTest(AzureTestCase):
         # Assert
         self.assertIsInstance(blob, BlobResult)
         self.assertEquals(blob, binary_data)
+
+    def test_shared_access_blob(self):
+        # Arrange
+        data = 'hello blob via blob permission'
+        self._create_container_and_block_blob(self.container_name, 'blob1.txt', data)
+        sas = SharedAccessSignature(credentials.getStorageServicesName(), 
+                                    credentials.getStorageServicesKey())
+        res_path = self.container_name + '/blob1.txt'
+        res_type = RESOURCE_BLOB
+
+        # Act
+        sas.permission_set = [self._get_permission(sas, res_type, res_path)]
+        web_rsrc = self._get_signed_web_resource(sas, res_type, res_path)
+
+        # Assert
+        host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
+        url = web_rsrc.request_url
+        respbody = self._get_request(host, url)
+        self.assertEquals(data, respbody)
+
+    def test_shared_access_container(self):
+        # Arrange
+        data = 'hello blob via container permission'
+        self._create_container_and_block_blob(self.container_name, 'blob1.txt', data)
+        sas = SharedAccessSignature(credentials.getStorageServicesName(), 
+                                    credentials.getStorageServicesKey())
+        res_path = self.container_name
+        res_type = RESOURCE_CONTAINER
+
+        # Act
+        sas.permission_set = [self._get_permission(sas, res_type, res_path)]
+        web_rsrc = self._get_signed_web_resource(sas, res_type, res_path + '/blob1.txt')
+
+        # Assert
+        host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
+        url = web_rsrc.request_url
+        respbody = self._get_request(host, url)
+        self.assertEquals(data, respbody)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
