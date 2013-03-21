@@ -123,10 +123,10 @@ class StorageServiceProperties(WindowsAzureData):
 class AccessPolicy(WindowsAzureData):
     ''' Access Policy class in service properties. '''
 
-    def __init__(self):
-        self.start = u''
-        self.expiry = u''
-        self.permission = u''
+    def __init__(self, start=u'', expiry=u'', permission='u'):
+        self.start = start
+        self.expiry = expiry
+        self.permission = permission
 
 class SignedIdentifier(WindowsAzureData):
     ''' Signed Identifier class for service properties. '''

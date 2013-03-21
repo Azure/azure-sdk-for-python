@@ -22,17 +22,40 @@ if "%1%" == "" (
 	set PYTHONDIR=%1%
 )
 
+if "%2%" == "" (
+	set COVERAGEDIR=htmlcov
+) else (
+	set COVERAGEDIR=%2%
+)
+
 if "%PYTHONPATH%" == "" (
 	set PYTHONPATH=..\src
 ) else (
 	set PYTHONPATH=%PYTHONPATH%;..\src
 )
 
-echo Running tests using %PYTHONDIR%
-%PYTHONDIR%\python.exe -m unittest discover -p "test_*.py"
-set UNITTEST_EC=%ERRORLEVEL%
-echo Finished running tests!
+if exist "%PYTHONDIR%\Scripts\coverage.exe" (
+	goto :coverage
+)
 
+
+REM ---------------------------------------------------------------------------
+if not exist "%PYTHONDIR%\Scripts\pip.exe" (
+	echo Cannot do a code coverage run when neither 'coverage' nor 'pip' are installed.
+	goto :exit_door
+)
+
+echo Installing 'coverage' package...
+%PYTHONDIR%\Scripts\pip.exe install coverage
+echo Finished installing 'coverage' package
+
+REM ---------------------------------------------------------------------------
+:coverage
+echo Starting coverage run using %PYTHONDIR%
+%PYTHONDIR%\Scripts\coverage.exe run -m unittest discover -p "test_*.py"
+%PYTHONDIR%\Scripts\coverage.exe html -d %COVERAGEDIR%
+start %CD%\%COVERAGEDIR%\index.html
+echo Finished coverage run!
 
 REM ---------------------------------------------------------------------------
 :exit_door
