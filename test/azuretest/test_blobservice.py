@@ -85,14 +85,14 @@ class BlobServiceTest(AzureTestCase):
         resp = self.bc.put_blob(self.container_name, blob_name, '', 'PageBlob', x_ms_blob_content_length=str(content_length))
         self.assertIsNone(resp)
 
-    def _get_permission(self, sas, resource_type, resource_path):
+    def _get_permission(self, sas, resource_type, resource_path, permission):
         date_format = "%Y-%m-%dT%H:%M:%SZ"
         start = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
         expiry = start + datetime.timedelta(hours=1)
         
         sap = SharedAccessPolicy(AccessPolicy(start.strftime(date_format),
                                               expiry.strftime(date_format),
-                                              'r'))
+                                              permission))
         
         signed_query = sas.generate_signed_query_string(resource_path, 
                                                    resource_type, 
@@ -100,21 +100,34 @@ class BlobServiceTest(AzureTestCase):
         
         return Permission('/' + resource_path, signed_query)
 
-    def _get_signed_web_resource(self, sas, resource_type, resource_path):
+    def _get_signed_web_resource(self, sas, resource_type, resource_path, permission):
         web_rsrc = WebResource()
         web_rsrc.properties[SIGNED_RESOURCE_TYPE] = resource_type
-        web_rsrc.properties[SHARED_ACCESS_PERMISSION] = 'r'
+        web_rsrc.properties[SHARED_ACCESS_PERMISSION] = permission
         web_rsrc.path = '/' + resource_path
         web_rsrc.request_url = '/' + resource_path
         
         return sas.sign_request(web_rsrc)
 
     def _get_request(self, host, url):
+        return self._web_request('GET', host, url, None)
+
+    def _put_request(self, host, url, content):
+        return self._web_request('PUT', host, url, content)
+
+    def _del_request(self, host, url):
+        return self._web_request('DELETE', host, url, None)
+
+    def _web_request(self, method, host, url, content):
         connection = httplib.HTTPConnection(host)
-        connection.putrequest('GET', url)
-        connection.putheader('Content-Type', 'application/octet-stream Charset=UTF-8')
+        connection.putrequest(method, url)
+        connection.putheader('Content-Type', 'application/octet-stream;Charset=UTF-8')
+        if content is not None:
+            connection.putheader('Content-Length', str(len(content)))  
         connection.endheaders()
-        
+        if content is not None:
+            connection.send(content)
+
         resp = connection.getresponse()
         resp.getheaders()
         respbody = None
@@ -1382,9 +1395,39 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsInstance(blob, BlobResult)
         self.assertEquals(blob, binary_data)
 
-    def test_shared_access_blob(self):
+    def test_no_sas_private_blob(self):
         # Arrange
-        data = 'hello blob via blob permission'
+        data = 'a private blob cannot be read without a shared access signature'
+        self._create_container_and_block_blob(self.container_name, 'blob1.txt', data)
+        res_path = self.container_name + '/blob1.txt'
+
+        # Act
+        host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
+        url = '/' + res_path
+        respbody = self._get_request(host, url)
+
+        # Assert
+        self.assertNotEquals(data, respbody)
+        self.assertNotEquals(-1, respbody.find('ResourceNotFound'))
+
+    def test_no_sas_public_blob(self):
+        # Arrange
+        data = 'a public blob can be read without a shared access signature'
+        self.bc.create_container(self.container_name, None, 'blob')
+        self.bc.put_blob(self.container_name, 'blob1.txt', data, 'BlockBlob')
+        res_path = self.container_name + '/blob1.txt'
+
+        # Act
+        host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
+        url = '/' + res_path
+        respbody = self._get_request(host, url)
+
+        # Assert
+        self.assertEquals(data, respbody)
+
+    def test_shared_read_access_blob(self):
+        # Arrange
+        data = 'shared access signature with read permission on blob'
         self._create_container_and_block_blob(self.container_name, 'blob1.txt', data)
         sas = SharedAccessSignature(credentials.getStorageServicesName(), 
                                     credentials.getStorageServicesKey())
@@ -1392,18 +1435,59 @@ class BlobServiceTest(AzureTestCase):
         res_type = RESOURCE_BLOB
 
         # Act
-        sas.permission_set = [self._get_permission(sas, res_type, res_path)]
-        web_rsrc = self._get_signed_web_resource(sas, res_type, res_path)
-
-        # Assert
+        sas.permission_set = [self._get_permission(sas, res_type, res_path, 'r')]
+        web_rsrc = self._get_signed_web_resource(sas, res_type, res_path, 'r')
         host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
         url = web_rsrc.request_url
         respbody = self._get_request(host, url)
+
+        # Assert
         self.assertEquals(data, respbody)
+
+    def test_shared_write_access_blob(self):
+        # Arrange
+        data = 'shared access signature with write permission on blob'
+        updated_data = 'updated blob data'
+        self._create_container_and_block_blob(self.container_name, 'blob1.txt', data)
+        sas = SharedAccessSignature(credentials.getStorageServicesName(), 
+                                    credentials.getStorageServicesKey())
+        res_path = self.container_name + '/blob1.txt'
+        res_type = RESOURCE_BLOB
+
+        # Act
+        sas.permission_set = [self._get_permission(sas, res_type, res_path, 'w')]
+        web_rsrc = self._get_signed_web_resource(sas, res_type, res_path, 'w')
+        host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
+        url = web_rsrc.request_url
+        respbody = self._put_request(host, url, updated_data)
+
+        # Assert
+        blob = self.bc.get_blob(self.container_name, 'blob1.txt')
+        self.assertEquals(updated_data, blob)
+
+    def test_shared_delete_access_blob(self):
+        # Arrange
+        data = 'shared access signature with delete permission on blob'
+        self._create_container_and_block_blob(self.container_name, 'blob1.txt', data)
+        sas = SharedAccessSignature(credentials.getStorageServicesName(), 
+                                    credentials.getStorageServicesKey())
+        res_path = self.container_name + '/blob1.txt'
+        res_type = RESOURCE_BLOB
+
+        # Act
+        sas.permission_set = [self._get_permission(sas, res_type, res_path, 'd')]
+        web_rsrc = self._get_signed_web_resource(sas, res_type, res_path, 'd')
+        host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
+        url = web_rsrc.request_url
+        respbody = self._del_request(host, url)
+
+        # Assert
+        with self.assertRaises(WindowsAzureError):
+            blob = self.bc.get_blob(self.container_name, 'blob1.txt')
 
     def test_shared_access_container(self):
         # Arrange
-        data = 'hello blob via container permission'
+        data = 'shared access signature with read permission on container'
         self._create_container_and_block_blob(self.container_name, 'blob1.txt', data)
         sas = SharedAccessSignature(credentials.getStorageServicesName(), 
                                     credentials.getStorageServicesKey())
@@ -1411,13 +1495,13 @@ class BlobServiceTest(AzureTestCase):
         res_type = RESOURCE_CONTAINER
 
         # Act
-        sas.permission_set = [self._get_permission(sas, res_type, res_path)]
-        web_rsrc = self._get_signed_web_resource(sas, res_type, res_path + '/blob1.txt')
-
-        # Assert
+        sas.permission_set = [self._get_permission(sas, res_type, res_path, 'r')]
+        web_rsrc = self._get_signed_web_resource(sas, res_type, res_path + '/blob1.txt', 'r')
         host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
         url = web_rsrc.request_url
         respbody = self._get_request(host, url)
+
+        # Assert
         self.assertEquals(data, respbody)
 
 #------------------------------------------------------------------------------
