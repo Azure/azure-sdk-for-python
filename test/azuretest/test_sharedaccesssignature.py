@@ -17,23 +17,21 @@ from azure import DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY
 from azure.storage.sharedaccesssignature import (SharedAccessSignature, 
                                                  SharedAccessPolicy, 
                                                  Permission, 
-                                                 WebResource)
+                                                 WebResource,
+                                                 SIGNED_START,
+                                                 SIGNED_EXPIRY,
+                                                 SIGNED_RESOURCE,
+                                                 SIGNED_PERMISSION,
+                                                 SIGNED_IDENTIFIER,
+                                                 SIGNED_SIGNATURE,
+                                                 RESOURCE_BLOB,
+                                                 RESOURCE_CONTAINER,
+                                                 SIGNED_RESOURCE_TYPE,
+                                                 SHARED_ACCESS_PERMISSION)
 from azure.storage import AccessPolicy
 from azuretest.util import AzureTestCase
 
 import unittest
-
-#------------------------------------------------------------------------------
-SIGNED_START = 'st'
-SIGNED_EXPIRY = 'se'
-SIGNED_RESOURCE = 'sr'
-SIGNED_PERMISSION = 'sp'
-SIGNED_IDENTIFIER = 'si'
-SIGNED_SIGNATURE = 'sig'
-RESOURCE_BLOB = 'blob'
-RESOURCE_CONTAINER = 'container'
-SIGNED_RESOURCE_TYPE = 'resource'
-SHARED_ACCESS_PERMISSION = 'permission'
 
 #------------------------------------------------------------------------------
 class SharedAccessSignatureTest(AzureTestCase):

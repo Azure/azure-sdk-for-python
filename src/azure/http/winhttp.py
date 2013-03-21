@@ -54,12 +54,27 @@ _SysAllocString.argtypes = [c_wchar_p]
 _SysFreeString = _oleaut32.SysFreeString
 _SysFreeString.argtypes = [c_void_p]
 
-_CoTaskMemAlloc = _ole32.CoTaskMemAlloc
-_CoTaskMemAlloc.restype = c_void_p
-_CoTaskMemAlloc.argtypes = [c_size_t]
+#SAFEARRAY* 
+#SafeArrayCreateVector(_In_ VARTYPE vt,_In_ LONG lLbound,_In_ ULONG cElements);
+_SafeArrayCreateVector = _oleaut32.SafeArrayCreateVector
+_SafeArrayCreateVector.restype = c_void_p
+_SafeArrayCreateVector.argtypes = [c_ushort, c_long, c_ulong]
 
-_CoTaskMemFree = _ole32.CoTaskMemFree
-_CoTaskMemFree.argtypes = [c_void_p]
+#HRESULT 
+#SafeArrayAccessData(_In_ SAFEARRAY *psa, _Out_ void **ppvData);
+_SafeArrayAccessData = _oleaut32.SafeArrayAccessData
+_SafeArrayAccessData.argtypes = [c_void_p, POINTER(c_void_p)]
+
+#HRESULT 
+#SafeArrayUnaccessData(_In_ SAFEARRAY *psa);
+_SafeArrayUnaccessData = _oleaut32.SafeArrayUnaccessData
+_SafeArrayUnaccessData.argtypes = [c_void_p]
+
+#HRESULT 
+#SafeArrayGetUBound(_In_ SAFEARRAY *psa, _In_ UINT nDim, _Out_ LONG *plUbound);
+_SafeArrayGetUBound = _oleaut32.SafeArrayGetUBound
+_SafeArrayGetUBound.argtypes = [c_void_p, c_ulong, POINTER(c_long)]
+
 
 #------------------------------------------------------------------------------
 
@@ -71,26 +86,6 @@ class BSTR(c_wchar_p):
 
     def __del__(self):
         _SysFreeString(self)
-
-class _tagSAFEARRAY(Structure):
-    ''' 
-    SAFEARRAY structure in python. Does not match the definition in 
-    MSDN exactly & it is only mapping the used fields.  Field names are also 
-    slighty different.
-    '''
-
-    class _tagSAFEARRAYBOUND(Structure):
-        _fields_ = [('c_elements', c_ulong), ('l_lbound', c_long)]
-
-    _fields_ = [('c_dims', c_ushort), 
-                ('f_features', c_ushort),
-                ('cb_elements', c_ulong),
-                ('c_locks', c_ulong),
-                ('pvdata', c_void_p),
-                ('rgsabound', _tagSAFEARRAYBOUND*1)]
-
-    def __del__(self):
-        _CoTaskMemFree(self.pvdata)
 
 class VARIANT(Structure):
     ''' 
@@ -110,7 +105,7 @@ class VARIANT(Structure):
                     ('ival', c_short),
                     ('boolval', c_ushort),
                     ('bstrval', BSTR),
-                    ('parray', POINTER(_tagSAFEARRAY)),
+                    ('parray', c_void_p),
                     ('record', _tagRecord)]
 
     _fields_ = [('vt', c_ushort), 
@@ -118,6 +113,63 @@ class VARIANT(Structure):
                 ('wReserved2', c_ushort),
                 ('wReserved3', c_ushort),
                 ('vdata', _tagData)]
+
+    @staticmethod
+    def create_empty():
+        variant = VARIANT()
+        variant.vt = VT_EMPTY
+        variant.vdata.llval = 0
+        return variant
+
+    @staticmethod
+    def create_safearray_from_str(text):
+        variant = VARIANT()
+        variant.vt = VT_ARRAY | VT_UI1
+
+        length = len(text)
+        variant.vdata.parray = _SafeArrayCreateVector(VT_UI1, 0, length)
+        pvdata = c_void_p()
+        _SafeArrayAccessData(variant.vdata.parray, byref(pvdata))
+        ctypes.memmove(pvdata, text, length)
+        _SafeArrayUnaccessData(variant.vdata.parray)
+
+        return variant
+
+    @staticmethod
+    def create_bstr_from_str(text):
+        variant = VARIANT()
+        variant.vt = VT_BSTR
+        variant.vdata.bstrval = BSTR(text)
+        return variant
+
+    @staticmethod
+    def create_bool_false():
+        variant = VARIANT()
+        variant.vt = VT_BOOL
+        variant.vdata.boolval = 0
+        return variant
+
+    def is_safearray_of_bytes(self):
+        return self.vt == VT_ARRAY | VT_UI1
+
+    def str_from_safearray(self):
+        assert self.vt == VT_ARRAY | VT_UI1
+        pvdata = c_void_p()
+        count = c_long()
+        _SafeArrayGetUBound(self.vdata.parray, 1, byref(count))
+        count = c_long(count.value + 1)
+        _SafeArrayAccessData(self.vdata.parray, byref(pvdata))
+        text = ctypes.string_at(pvdata, count)
+        _SafeArrayUnaccessData(self.vdata.parray)
+        return text
+
+    def __del__(self):
+        _VariantClear(self)
+
+#HRESULT VariantClear(_Inout_ VARIANTARG *pvarg);
+_VariantClear = _oleaut32.VariantClear
+_VariantClear.argtypes = [POINTER(VARIANT)]
+
 
 class GUID(Structure):
     ''' GUID structure in python. '''
@@ -165,10 +217,7 @@ class _WinHttpRequest(c_void_p):
         '''
         _WinHttpRequest._SetTimeouts(self, 0, 65000, 65000, 65000)
         
-        flag = VARIANT()
-        flag.vt = VT_BOOL
-        flag.vdata.boolval = 0
-
+        flag = VARIANT.create_bool_false()
         _method = BSTR(method)
         _url = BSTR(url)
         _WinHttpRequest._Open(self, _method, _url, flag)
@@ -195,24 +244,11 @@ class _WinHttpRequest(c_void_p):
 
         # Sends VT_EMPTY if it is GET, HEAD request. 
         if request is None:
-            var_empty = VARIANT()
-            var_empty.vt = VT_EMPTY
-            var_empty.vdata.llval = 0
+            var_empty = VARIANT.create_empty()
             _WinHttpRequest._Send(self, var_empty)
         else:  # Sends request body as SAFEArray. 
-            _request = VARIANT()
-            _request.vt = VT_ARRAY | VT_UI1
-            safearray = _tagSAFEARRAY()
-            safearray.c_dims = 1
-            safearray.cb_elements = 1
-            safearray.c_locks = 0
-            safearray.f_features = 128
-            safearray.rgsabound[0].c_elements = len(request)
-            safearray.rgsabound[0].l_lbound = 0
-            safearray.pvdata = cast(_CoTaskMemAlloc(len(request)), c_void_p)
-            ctypes.memmove(safearray.pvdata, request, len(request))
-            _request.vdata.parray = cast(byref(safearray), POINTER(_tagSAFEARRAY))
-            _WinHttpRequest._Send(self, _request)            
+            _request = VARIANT.create_safearray_from_str(request)
+            _WinHttpRequest._Send(self, _request)
 
     def status(self):
         ''' Gets status of response. '''
@@ -238,10 +274,8 @@ class _WinHttpRequest(c_void_p):
         '''
         var_respbody = VARIANT()
         _WinHttpRequest._ResponseBody(self, byref(var_respbody))
-        if var_respbody.vt == VT_ARRAY | VT_UI1:
-            safearray = var_respbody.vdata.parray.contents
-            respbody = ctypes.string_at(safearray.pvdata, safearray.rgsabound[0].c_elements)
-
+        if var_respbody.is_safearray_of_bytes():
+            respbody = var_respbody.str_from_safearray()
             if respbody[3:].startswith('<?xml') and respbody.startswith('\xef\xbb\xbf'):
                 respbody = respbody[3:]
             return respbody
@@ -259,17 +293,10 @@ class _WinHttpRequest(c_void_p):
         if port:
             url = url + u':' + port
 
-        var_host = VARIANT()
-        var_host.vt = VT_BSTR
-        var_host.vdata.bstrval = BSTR(url)
-
-        var_empty = VARIANT()
-        var_empty.vt = VT_EMPTY
-        var_empty.vdata.llval = 0
+        var_host = VARIANT.create_bstr_from_str(url)
+        var_empty = VARIANT.create_empty()
 
         _WinHttpRequest._SetProxy(self, HTTPREQUEST_PROXYSETTING_PROXY, var_host, var_empty)
-
-        _SysFreeString(var_host.vdata.bstrval)
 
     def __del__(self):
         if self.value is not None:
