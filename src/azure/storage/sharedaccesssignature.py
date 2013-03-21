@@ -15,6 +15,7 @@
 import base64
 import hmac
 import hashlib
+import urllib2
 
 #-------------------------------------------------------------------------
 # Constants for the share access signature
@@ -24,8 +25,8 @@ SIGNED_RESOURCE = 'sr'
 SIGNED_PERMISSION = 'sp'
 SIGNED_IDENTIFIER = 'si'
 SIGNED_SIGNATURE = 'sig'
-RESOURCE_BLOB = 'blob'
-RESOURCE_CONTAINER = 'container'
+RESOURCE_BLOB = 'b'
+RESOURCE_CONTAINER = 'c'
 SIGNED_RESOURCE_TYPE = 'resource'
 SHARED_ACCESS_PERMISSION = 'permission'
 
@@ -126,11 +127,11 @@ class SharedAccessSignature:
             convert_str += SIGNED_START + '=' + query_string[SIGNED_START] + '&'
         convert_str += SIGNED_EXPIRY + '=' + query_string[SIGNED_EXPIRY] + '&'
         convert_str += SIGNED_PERMISSION + '=' + query_string[SIGNED_PERMISSION] + '&'
-        convert_str += SIGNED_RESOURCE_TYPE + '=' + query_string[SIGNED_RESOURCE] + '&'
+        convert_str += SIGNED_RESOURCE + '=' + query_string[SIGNED_RESOURCE] + '&'
 
         if query_string.has_key(SIGNED_IDENTIFIER):
             convert_str += SIGNED_IDENTIFIER + '=' + query_string[SIGNED_IDENTIFIER] + '&'
-        convert_str += SIGNED_SIGNATURE + '=' + query_string[SIGNED_SIGNATURE] + '&'
+        convert_str += SIGNED_SIGNATURE + '=' + urllib2.quote(query_string[SIGNED_SIGNATURE]) + '&'
         return convert_str
 
     def _generate_signature(self, path, resource_type, shared_access_policy):
@@ -150,7 +151,7 @@ class SharedAccessSignature:
         canonicalized_resource = '/' + self.account_name + path;
 
         #form the string to sign from shared_access_policy and canonicalized resource. 
-        #The order of values is import.
+        #The order of values is important.
         string_to_sign = (get_value_to_append(shared_access_policy.access_policy.permission) + 
                           get_value_to_append(shared_access_policy.access_policy.start) +
                           get_value_to_append(shared_access_policy.access_policy.expiry) + 
@@ -180,11 +181,3 @@ class SharedAccessSignature:
         decode_account_key = base64.b64decode(self.account_key)
         signed_hmac_sha256 = hmac.HMAC(decode_account_key, string_to_sign, hashlib.sha256)
         return base64.b64encode(signed_hmac_sha256.digest())
-        
-
-
-
-
-
-
-
