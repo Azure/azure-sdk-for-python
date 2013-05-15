@@ -900,8 +900,7 @@ class _XmlSerializer(object):
         xml += '<InputEndpoints>'
         for endpoint in configuration.input_endpoints:
             xml += '<InputEndpoint>'
-            xml += _XmlSerializer.data_to_xml([('EnableDirectServerReturn', endpoint.enable_direct_server_return, _lower),
-                                               ('LoadBalancedEndpointSetName', endpoint.load_balanced_endpoint_set_name),
+            xml += _XmlSerializer.data_to_xml([('LoadBalancedEndpointSetName', endpoint.load_balanced_endpoint_set_name),
                                                ('LocalPort', endpoint.local_port),
                                                ('Name', endpoint.name),
                                                ('Port', endpoint.port)])
@@ -913,7 +912,8 @@ class _XmlSerializer(object):
                                                    ('Protocol', endpoint.load_balancer_probe.protocol)])
                 xml += '</LoadBalancerProbe>'
 
-            xml += _XmlSerializer.data_to_xml([('Protocol', endpoint.protocol)])
+            xml += _XmlSerializer.data_to_xml([('Protocol', endpoint.protocol),
+                                               ('EnableDirectServerReturn', endpoint.enable_direct_server_return, _lower)])
             xml += '</InputEndpoint>'
         xml += '</InputEndpoints>'
         xml += '<SubnetNames>'
