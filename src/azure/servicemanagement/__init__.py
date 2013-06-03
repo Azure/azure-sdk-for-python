@@ -880,14 +880,14 @@ class _XmlSerializer(object):
             xml += '<PublicKeys>'
             for key in configuration.ssh.public_keys:
                 xml += '<PublicKey>'
-                xml += _XmlSerializer.data_to_xml([('FingerPrint', key.finger_print),
+                xml += _XmlSerializer.data_to_xml([('Fingerprint', key.finger_print),
                                                    ('Path', key.path)])
                 xml += '</PublicKey>'
             xml += '</PublicKeys>'
             xml += '<KeyPairs>'
             for key in configuration.ssh.key_pairs:
                 xml += '<KeyPair>'
-                xml += _XmlSerializer.data_to_xml([('FingerPrint', key.finger_print),
+                xml += _XmlSerializer.data_to_xml([('Fingerprint', key.finger_print),
                                                    ('Path', key.path)])
                 xml += '</KeyPair>'
             xml += '</KeyPairs>'
