@@ -129,5 +129,5 @@ class _StorageClient(object):
 
         return resp
 
-    def _perform_chunked_request(self, request, output_file):
-        return self._httpclient.perform_chunked_request(request, output_file)
+    def _perform_chunked_request(self, request, path, chunk_size=(16 * 1024)):
+        return self._httpclient.perform_chunked_request(request, path, chunk_size=chunk_size)
