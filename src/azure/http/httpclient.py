@@ -93,6 +93,35 @@ class _HTTPClient:
               not isinstance(connection, httplib.HTTPConnection)):
             connection.send(None)
 
+    def perform_chunked_request(self, request, file):
+        ''' Sends request to cloud service server and return file handler.
+        '''
+
+        connection = self.get_connection(request)
+        connection.putrequest(request.method, request.path)
+        self.send_request_headers(connection, request.headers)
+        self.send_request_body(connection, request.body)
+
+        resp = connection.getresponse()
+        self.status = int(resp.status)
+        self.message = resp.reason
+        self.respheader = headers = resp.getheaders()
+        respbody = None
+        if resp.length is None:
+            respbody = resp.read()
+        elif resp.length > 0:
+            CHUNK = 16 * 1024
+            with open(file, 'wb') as fp:
+                while True:
+                    chunk = resp.read(CHUNK)
+                    if not chunk: break
+                    fp.write(chunk)
+
+        if self.status >= 300:
+            raise HTTPError(self.status, self.message, self.respheader, respbody)
+
+        return fp
+
     def perform_request(self, request):
         ''' Sends request to cloud service server and return the response. '''
 

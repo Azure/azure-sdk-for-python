@@ -128,3 +128,6 @@ class _StorageClient(object):
             _storage_error_handler(e)
 
         return resp
+
+    def _perform_chunked_request(self, request, output_file):
+        return self._httpclient.perform_chunked_request(request, output_file)

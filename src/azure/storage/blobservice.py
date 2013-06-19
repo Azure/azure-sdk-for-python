@@ -381,6 +381,33 @@ class BlobService(_StorageClient):
 
         return _create_blob_result(response)
 
+    def get_blob_chunked(self, container_name, blob_name, path, snapshot=None, x_ms_range=None, x_ms_lease_id=None, x_ms_range_get_content_md5=None):
+        '''
+        Downloads a blob to the filesystem, using chunking (for large files).
+
+        container_name: the name of container to get the blob
+        blob_name: the name of blob
+        path: path to output for download
+
+        x_ms_range: Optional. Return only the bytes of the blob in the specified range.
+        '''
+        _validate_not_none('container_name', container_name)
+        _validate_not_none('blob_name', blob_name)
+        request = HTTPRequest()
+        request.method = 'GET'
+        request.host = self._get_host()
+        request.path = '/' + _str(container_name) + '/' + _str(blob_name) + ''
+        request.headers = [
+            ('x-ms-range', _str_or_none(x_ms_range)),
+            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
+            ('x-ms-range-get-content-md5', _str_or_none(x_ms_range_get_content_md5))
+            ]
+        request.query = [('snapshot', _str_or_none(snapshot))]
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_chunked_request(request)
+
+        return _create_blob_result(response)
     def get_blob_metadata(self, container_name, blob_name, snapshot=None, x_ms_lease_id=None):
         '''
         Returns all user-defined metadata for the specified blob or snapshot.
