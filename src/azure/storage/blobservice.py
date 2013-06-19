@@ -384,6 +384,7 @@ class BlobService(_StorageClient):
     def get_blob_chunked(self, container_name, blob_name, path, snapshot=None, x_ms_range=None, x_ms_lease_id=None, x_ms_range_get_content_md5=None, chunk_size=(16 * 1024)):
         '''
         Downloads a blob to the filesystem, using chunking (for large files).
+        Returns file handle.
 
         container_name: the name of container to get the blob
         blob_name: the name of blob
@@ -407,7 +408,8 @@ class BlobService(_StorageClient):
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_chunked_request(request,path, chunk_size=chunk_size)
 
-        return _create_blob_result(response)
+        return response
+
     def get_blob_metadata(self, container_name, blob_name, snapshot=None, x_ms_lease_id=None):
         '''
         Returns all user-defined metadata for the specified blob or snapshot.
