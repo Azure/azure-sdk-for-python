@@ -15,7 +15,7 @@
 import base64
 import urllib2
 import hmac
-import hashlib 
+import hashlib
 import os
 
 
@@ -52,12 +52,12 @@ class _StorageClient(object):
         self.protocol = protocol
         self.host_base = host_base
         self.dev_host = dev_host
-        
-        #the app is not run in azure emulator or use default development 
-        #storage account and key if app is run in emulator. 
+
+        #the app is not run in azure emulator or use default development
+        #storage account and key if app is run in emulator.
         self.use_local_storage = False
 
-        #check whether it is run in emulator. 
+        #check whether it is run in emulator.
         if os.environ.has_key(EMULATED):
             if os.environ[EMULATED].lower() == 'false':
                 self.is_emulated = False
@@ -66,10 +66,10 @@ class _StorageClient(object):
         else:
             self.is_emulated = False
 
-        #get account_name and account key. If they are not set when constructing, 
+        #get account_name and account key. If they are not set when constructing,
         #get the account and key from environment variables if the app is not run
-        #in azure emulator or use default development storage account and key if 
-        #app is run in emulator. 
+        #in azure emulator or use default development storage account and key if
+        #app is run in emulator.
         if not self.account_name or not self.account_key:
             if self.is_emulated:
                 self.account_name = DEV_ACCOUNT_NAME
@@ -83,11 +83,11 @@ class _StorageClient(object):
 
         if not self.account_name or not self.account_key:
             raise WindowsAzureError(azure._ERROR_STORAGE_MISSING_INFO)
-        
+
         self._httpclient = _HTTPClient(service_instance=self, account_key=self.account_key, account_name=self.account_name, protocol=protocol)
         self._batchclient = None
         self._filter = self._perform_request_worker
-    
+
     def with_filter(self, filter):
         '''Returns a new service which will process requests with the
         specified filter.  Filtering operations can include logging, automatic
@@ -99,7 +99,7 @@ class _StorageClient(object):
         old_filter = self._filter
         def new_filter(request):
             return filter(request, old_filter)
-                    
+
         res._filter = new_filter
         return res
 
