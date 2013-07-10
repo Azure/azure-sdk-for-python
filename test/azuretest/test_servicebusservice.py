@@ -12,14 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-
-from azure import *
-from azure.servicebus import *
-from azuretest.util import *
-
+import base64
+import os
 import random
 import time
 import unittest
+
+from datetime import datetime
+from azure import WindowsAzureError
+from azure.http import HTTPError
+from azure.servicebus import (AZURE_SERVICEBUS_NAMESPACE,
+                              AZURE_SERVICEBUS_ACCESS_KEY,
+                              AZURE_SERVICEBUS_ISSUER,
+                              Message,
+                              Queue,
+                              Rule,
+                              ServiceBusService,
+                              Subscription,
+                              Topic,
+                              )
+from azuretest.util import (AzureTestCase,
+                            credentials,
+                            getUniqueTestRunID,
+                            getUniqueNameBasedOnCurrentTime,
+                            )
 
 #------------------------------------------------------------------------------
 class ServiceBusTest(AzureTestCase):

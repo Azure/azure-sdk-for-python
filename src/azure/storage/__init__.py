@@ -12,27 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import datetime
 import base64
 import hashlib
 import hmac
-import urllib2
-from xml.dom import minidom
 import types
-from datetime import datetime
 
-from azure import (_create_entry, METADATA_NS, _parse_response_for_dict, 
-                          _get_entry_properties, WindowsAzureError,
-                          _get_child_nodes, _get_child_nodesNS, 
-                          WindowsAzureConflictError, _general_error_handler,
-                          WindowsAzureMissingResourceError, _list_of, 
-                          DEV_TABLE_HOST, TABLE_SERVICE_HOST_BASE, DEV_BLOB_HOST, 
-                          BLOB_SERVICE_HOST_BASE, DEV_QUEUE_HOST, 
-                          QUEUE_SERVICE_HOST_BASE, WindowsAzureData, 
-                          _get_children_from_path, xml_escape,
-                          _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY)
-import azure
-                         
+from datetime import datetime
+from xml.dom import minidom
+from azure import (WindowsAzureData,
+                   WindowsAzureError,
+                   METADATA_NS, 
+                   xml_escape,
+                   _create_entry, 
+                   _fill_data_minidom,
+                   _fill_instance_element,
+                   _get_child_nodes, 
+                   _get_child_nodesNS, 
+                   _get_children_from_path, 
+                   _get_entry_properties, 
+                   _general_error_handler,
+                   _list_of, 
+                   _parse_response_for_dict, 
+                   _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY,
+                   )
 
 #x-ms-version for storage service.
 X_MS_VERSION = '2011-08-18'
@@ -156,6 +158,8 @@ class BlobEnumResults(EnumResultsBase):
     def __init__(self):
         EnumResultsBase.__init__(self)
         self.blobs = _list_of(Blob)
+        self.prefixes = _list_of(BlobPrefix)
+        self.delimiter = ''
 
     def __iter__(self):
         return iter(self.blobs)
@@ -183,7 +187,6 @@ class Blob(WindowsAzureData):
         self.url = u''
         self.properties = BlobProperties()
         self.metadata = {}
-        self.blob_prefix = BlobPrefix()
 
 class BlobProperties(WindowsAzureData):
     ''' Blob Properties '''
@@ -307,6 +310,27 @@ class EntityProperty(WindowsAzureData):
 class Table(WindowsAzureData):
     ''' Only for intellicens and telling user the return type. '''
     pass
+
+def _parse_blob_enum_results_list(response):
+    respbody = response.body
+    return_obj = BlobEnumResults()
+    doc = minidom.parseString(respbody)
+
+    for enum_results in _get_child_nodes(doc, 'EnumerationResults'):
+        for child in _get_children_from_path(enum_results, 'Blobs', 'Blob'):
+            return_obj.blobs.append(_fill_instance_element(child, Blob))
+
+        for child in _get_children_from_path(enum_results, 'Blobs', 'BlobPrefix'):
+            return_obj.prefixes.append(_fill_instance_element(child, BlobPrefix))
+
+        for name, value in vars(return_obj).iteritems():
+            if name == 'blobs' or name == 'prefixes':
+                continue
+            value = _fill_data_minidom(enum_results, name, value)
+            if value is not None:
+                setattr(return_obj, name, value)
+
+    return return_obj
 
 def _update_storage_header(request):
     ''' add addtional headers for storage request. '''
@@ -481,10 +505,12 @@ def _from_entity_int(value):
     return int(value)
 
 def _from_entity_datetime(value):
+    format = '%Y-%m-%dT%H:%M:%S'
+    if '.' in value:
+        format = format + '.%f'
     if value.endswith('Z'):
-        return datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')   
-    else:
-        return datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')   
+        format = format + 'Z'
+    return datetime.strptime(value, format)
 
 _ENTITY_TO_PYTHON_CONVERSIONS = {
     'Edm.Int32': _from_entity_int,
@@ -508,7 +534,7 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
     unicode: _to_entity_str,
 }
 
-def convert_entity_to_xml(source):
+def _convert_entity_to_xml(source):
     ''' Converts an entity object to xml to send.
 
     The entity format is:
@@ -572,17 +598,17 @@ def convert_entity_to_xml(source):
     xmlstr = _create_entry(entity_body)
     return xmlstr
 
-def convert_table_to_xml(table_name):
+def _convert_table_to_xml(table_name):
     ''' 
     Create xml to send for a given table name. Since xml format for table is 
     the same as entity and the only difference is that table has only one 
-    property 'TableName', so we just call convert_entity_to_xml.
+    property 'TableName', so we just call _convert_entity_to_xml.
 
     table_name: the name of the table
     '''
-    return convert_entity_to_xml({'TableName': table_name})
+    return _convert_entity_to_xml({'TableName': table_name})
 
-def convert_block_list_to_xml(block_id_list):
+def _convert_block_list_to_xml(block_id_list):
     '''
     Convert a block list to xml to send.
 
@@ -601,7 +627,7 @@ def _create_blob_result(response):
     blob_properties = _parse_response_for_dict(response)
     return BlobResult(response.body, blob_properties)
 
-def convert_response_to_block_list(response):
+def _convert_response_to_block_list(response):
     '''
     Converts xml response to block list class.
     '''

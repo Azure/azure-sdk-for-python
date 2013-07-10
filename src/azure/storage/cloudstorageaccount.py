@@ -17,9 +17,11 @@ from azure.storage.tableservice import TableService
 from azure.storage.queueservice import QueueService
 
 class CloudStorageAccount:
-    """Provides a factory for creating the blob, queue, and table services 
+    """
+    Provides a factory for creating the blob, queue, and table services 
     with a common account name and account key.  Users can either use the 
-    factory or can construct the appropriate service directly."""
+    factory or can construct the appropriate service directly.
+    """
 
     def __init__(self, account_name=None, account_key=None):
         self.account_name = account_name

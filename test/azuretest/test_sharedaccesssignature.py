@@ -12,26 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import unittest
 
-from azure import DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY
-from azure.storage.sharedaccesssignature import (SharedAccessSignature, 
+from azure import (DEV_ACCOUNT_NAME,
+                   DEV_ACCOUNT_KEY,
+                   )
+from azure.storage import AccessPolicy
+from azure.storage.sharedaccesssignature import (Permission, 
                                                  SharedAccessPolicy, 
-                                                 Permission, 
+                                                 SharedAccessSignature, 
                                                  WebResource,
-                                                 SIGNED_START,
-                                                 SIGNED_EXPIRY,
-                                                 SIGNED_RESOURCE,
-                                                 SIGNED_PERMISSION,
-                                                 SIGNED_IDENTIFIER,
-                                                 SIGNED_SIGNATURE,
                                                  RESOURCE_BLOB,
                                                  RESOURCE_CONTAINER,
+                                                 SHARED_ACCESS_PERMISSION,
+                                                 SIGNED_EXPIRY,
+                                                 SIGNED_IDENTIFIER,
+                                                 SIGNED_PERMISSION,
+                                                 SIGNED_RESOURCE,
                                                  SIGNED_RESOURCE_TYPE,
-                                                 SHARED_ACCESS_PERMISSION)
-from azure.storage import AccessPolicy
-from azuretest.util import AzureTestCase
-
-import unittest
+                                                 SIGNED_SIGNATURE,
+                                                 SIGNED_START,
+                                                 )
+from azuretest.util import (AzureTestCase,
+                            credentials,
+                            getUniqueTestRunID,
+                            getUniqueNameBasedOnCurrentTime,
+                            )
 
 #------------------------------------------------------------------------------
 class SharedAccessSignatureTest(AzureTestCase):
