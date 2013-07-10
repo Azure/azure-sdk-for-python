@@ -13,16 +13,27 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
-from azure import *
-from azure.servicemanagement import *
-from azure.storage.blobservice import *
-from azuretest.util import *
-
-import unittest
 import base64
+import os
+import time
+import unittest
 
-MANAGEMENT_CERT_PUBLICKEY = 'MIIBCgKCAQEAsjULNM53WPLkht1rbrDob/e4hZTHzj/hlLoBt2X3cNRc6dOPsMucxbMdchbCqAFa5RIaJvF5NDKqZuUSwq6bttD71twzy9bQ03EySOcRBad1VyqAZQ8DL8nUGSnXIUh+tpz4fDGM5f3Ly9NX8zfGqG3sT635rrFlUp3meJC+secCCwTLOOcIs3KQmuB+pMB5Y9rPhoxcekFfpq1pKtis6pmxnVbiL49kr6UUL6RQRDwik4t1jttatXLZqHETTmXl0Y0wS5AcJUXVAn5AL2kybULoThop2v01/E0NkPtFPAqLVs/kKBahniNn9uwUo+LS9FA8rWGu0FY4CZEYDfhb+QIDAQAB'
-MANAGEMENT_CERT_DATA = 'MIIC9jCCAeKgAwIBAgIQ00IFaqV9VqVJxI+wZka0szAJBgUrDgMCHQUAMBUxEzARBgNVBAMTClB5dGhvblRlc3QwHhcNMTIwODMwMDAyNTMzWhcNMzkxMjMxMjM1OTU5WjAVMRMwEQYDVQQDEwpQeXRob25UZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsjULNM53WPLkht1rbrDob/e4hZTHzj/hlLoBt2X3cNRc6dOPsMucxbMdchbCqAFa5RIaJvF5NDKqZuUSwq6bttD71twzy9bQ03EySOcRBad1VyqAZQ8DL8nUGSnXIUh+tpz4fDGM5f3Ly9NX8zfGqG3sT635rrFlUp3meJC+secCCwTLOOcIs3KQmuB+pMB5Y9rPhoxcekFfpq1pKtis6pmxnVbiL49kr6UUL6RQRDwik4t1jttatXLZqHETTmXl0Y0wS5AcJUXVAn5AL2kybULoThop2v01/E0NkPtFPAqLVs/kKBahniNn9uwUo+LS9FA8rWGu0FY4CZEYDfhb+QIDAQABo0owSDBGBgNVHQEEPzA9gBBS6knRHo54LppngxVCCzZVoRcwFTETMBEGA1UEAxMKUHl0aG9uVGVzdIIQ00IFaqV9VqVJxI+wZka0szAJBgUrDgMCHQUAA4IBAQAnZbP3YV+08wI4YTg6MOVA+j1njd0kVp35FLehripmaMNE6lgk3Vu1MGGl0JnvMr3fNFGFzRske/jVtFxlHE5H/CoUzmyMQ+W06eV/e995AduwTKsS0ZgYn0VoocSXWst/nyhpKOcbJgAOohOYxgsGI1JEqQgjyeqzcCIhw/vlWiA3V8bSiPnrC9vwhH0eB025hBd2VbEGDz2nWCYkwtuOLMTvkmLi/oFw3GOfgagZKk8k/ZPffMCafz+yR3vb1nqAjncrVcJLI8amUfpxhjZYexo8MbxBA432M6w8sjXN+uLCl7ByWZ4xs4vonWgkmjeObtU37SIzolHT4dxIgaP2'
+from azure.servicemanagement import (CertificateSetting,
+                                     ConfigurationSet,
+                                     ConfigurationSetInputEndpoint,
+                                     KeyPair,
+                                     LinuxConfigurationSet,
+                                     OSVirtualHardDisk,
+                                     PublicKey,
+                                     ServiceManagementService,
+                                     WindowsConfigurationSet,
+                                     )
+from azure.storage.blobservice import BlobService
+from azuretest.util import (AzureTestCase,
+                            credentials,
+                            getUniqueTestRunID,
+                            getUniqueNameBasedOnCurrentTime,
+                            )
 
 SERVICE_CERT_FORMAT = 'pfx'
 SERVICE_CERT_PASSWORD = 'Python'
@@ -52,11 +63,6 @@ DEPLOYMENT_UPDATE_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" 
 CSPKG_PATH = 'azuretest/data/WindowsAzure1.cspkg'
 DATA_VHD_PATH = 'azuretest/data/test.vhd'
 
-# Note that available os images on Azure change regularly
-# If these images get removed, replace with a similar OS image
-LINUX_IMAGE_NAME = 'OpenLogic__OpenLogic-CentOS-62-20120531-en-us-30GB.vhd'
-WINDOWS_IMAGE_NAME = 'MSFT__Win2K8R2SP1-Datacenter-201210.01-en.us-30GB.vhd'
-
 # This blob must be created manually before running the unit tests, 
 # they must be present in the storage account listed in the credentials file.
 LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
@@ -68,8 +74,11 @@ LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
 # try to use the VM's VHD directly without making a copy, you will get
 # conflict errors).
 
-#sourceblob = '/%s/%s/%s' % (credentials.getStorageServicesName(), 'vhdcontainername', 'vhdblobname')
-#self.bc.copy_blob('vhdcontainername', 'targetvhdblobname', sourceblob)
+# sourceblob = '/%s/%s/%s' % (credentials.getStorageServicesName(), 'vhdcontainername', 'vhdblobname')
+# self.bc.copy_blob('vhdcontainername', 'targetvhdblobname', sourceblob)
+#
+# in the credentials file, set:
+#    "linuxosvhd" : "http://storageservicesname.blob.core.windows.net/vhdcontainername/targetvhdblobname",
 
 
 #------------------------------------------------------------------------------
@@ -87,14 +96,10 @@ class ServiceManagementServiceTest(AzureTestCase):
         if proxy_host:
             self.bc.set_proxy(proxy_host, proxy_port)
 
-        self.affinity_group_name = getUniqueNameBasedOnCurrentTime('utaffgrp')
-        self.management_certificate_name = getUniqueNameBasedOnCurrentTime('utmgmtcert')
         self.hosted_service_name = getUniqueNameBasedOnCurrentTime('utsvc')
-        self.storage_account_name = getUniqueNameBasedOnCurrentTime('utstorage')
         self.container_name = getUniqueNameBasedOnCurrentTime('utctnr')
         self.disk_name = getUniqueNameBasedOnCurrentTime('utdisk')
         self.os_image_name = getUniqueNameBasedOnCurrentTime('utosimg')
-
         self.data_disk_info = None
 
     def tearDown(self):
@@ -131,18 +136,6 @@ class ServiceManagementServiceTest(AzureTestCase):
         except: pass
 
         try:
-            self.sms.delete_storage_account(self.storage_account_name)
-        except: pass
-
-        try:
-            self.sms.delete_affinity_group(self.affinity_group_name)
-        except: pass
-
-        try:
-            self.sms.delete_management_certificate(self.management_certificate_name)
-        except: pass
-
-        try:
             result = self.sms.delete_os_image(self.os_image_name)
             self._wait_for_async(result.request_id)
         except: pass
@@ -158,27 +151,43 @@ class ServiceManagementServiceTest(AzureTestCase):
 
     #--Helpers-----------------------------------------------------------------
     def _wait_for_async(self, request_id):
+        count = 0
         result = self.sms.get_operation_status(request_id)
         while result.status == 'InProgress':
+            count = count + 1
+            if count > 120:
+                self.assertTrue(False, 'Timed out waiting for async operation to complete.')
             time.sleep(5)
             result = self.sms.get_operation_status(request_id)
         self.assertEqual(result.status, 'Succeeded')
 
     def _wait_for_deployment_status(self, service_name, deployment_name, status):
+        count = 0
         props = self.sms.get_deployment_by_name(service_name, deployment_name)
         while props.status != status:
+            count = count + 1
+            if count > 120:
+                self.assertTrue(False, 'Timed out waiting for deployment status.')
             time.sleep(5)
             props = self.sms.get_deployment_by_name(service_name, deployment_name)
 
     def _wait_for_role_instance_status(self, service_name, deployment_name, role_instance_name, status):
+        count = 0
         props = self.sms.get_deployment_by_name(service_name, deployment_name)
         while self._get_role_instance_status(props, role_instance_name) != status:
+            count = count + 1
+            if count > 120:
+                self.assertTrue(False, 'Timed out waiting for role instance status.')
             time.sleep(5)
             props = self.sms.get_deployment_by_name(service_name, deployment_name)
 
     def _wait_for_rollback_allowed(self, service_name, deployment_name):
+        count = 0
         props = self.sms.get_deployment_by_name(service_name, deployment_name)
         while props.rollback_allowed == False:
+            count = count + 1
+            if count > 120:
+                self.assertTrue(False, 'Timed out waiting for rollback allowed.')
             time.sleep(5)
             props = self.sms.get_deployment_by_name(service_name, deployment_name)
 
@@ -188,8 +197,11 @@ class ServiceManagementServiceTest(AzureTestCase):
                 return role_instance.instance_status
         return None
 
-    def _create_hosted_service(self, name):
-        result = self.sms.create_hosted_service(name, name + 'label', name + 'description', 'West US', None, {'ext1':'val1', 'ext2':42})
+    def _create_hosted_service(self, name, location=None, affinity_group=None):
+        if not location and not affinity_group:
+            location = 'West US'
+
+        result = self.sms.create_hosted_service(name, name + 'label', name + 'description', location, affinity_group, {'ext1':'val1', 'ext2':42})
         self.assertIsNone(result)
 
     def _hosted_service_exists(self, name):
@@ -268,39 +280,6 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._create_hosted_service(service_name)
         self._add_deployment(service_name, deployment_name)
 
-    def _create_affinity_group(self, name):
-        result = self.sms.create_affinity_group(name, 'tstmgmtaffgrp', 'West US', 'tstmgmt affinity group')
-        self.assertIsNone(result)
-
-    def _affinity_group_exists(self, name):
-        try:
-            props = self.sms.get_affinity_group_properties(name)
-            return props is not None
-        except:
-            return False
-
-    def _create_management_certificate(self, thumbprint):
-        result = self.sms.add_management_certificate(MANAGEMENT_CERT_PUBLICKEY, thumbprint, MANAGEMENT_CERT_DATA)
-        self.assertIsNone(result)
-
-    def _management_certificate_exists(self, thumbprint):
-        try:
-            props = self.sms.get_management_certificate(thumbprint)
-            return props is not None
-        except:
-            return False
-
-    def _create_storage_account(self, name):
-        result = self.sms.create_storage_account(name, name + 'description', name + 'label', None, 'West US', False, {'ext1':'val1', 'ext2':42})
-        self._wait_for_async(result.request_id)
-
-    def _storage_account_exists(self, name):
-        try:
-            props = self.sms.get_storage_account_properties(name)
-            return props is not None
-        except:
-            return False
-
     def _role_exists(self, service_name, deployment_name, role_name):
         try:
             props = self.sms.get_role(service_name, deployment_name, role_name)
@@ -349,24 +328,38 @@ class ServiceManagementServiceTest(AzureTestCase):
         result = self.sms.add_data_disk(service_name, deployment_name, role_name, lun, None, None, label, None, None, url)
         self._wait_for_async(result.request_id)
 
+    def _linux_image_name(self):
+        return self._image_from_category('Canonical')
+
+    def _windows_image_name(self):
+        return self._image_from_category('Microsoft Windows Server Group')
+
+    def _image_from_category(self, category):
+        # return the first one listed, which should be the most stable
+        return [i.name for i in self.sms.list_os_images() if category in i.category][0]
+
     def _create_vm_linux(self, service_name, deployment_name, role_name, target_container_name, target_blob_name):
-        image_name = LINUX_IMAGE_NAME
+        image_name = self._linux_image_name()
         media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + target_container_name + '/' + target_blob_name
+        pk = PublicKey(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/authorized_keys')
+        pair = KeyPair(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/id_rsa')
         system = LinuxConfigurationSet('computername', 'unittest', 'u7;9jbp!', True)
-        system.ssh = None
+        system.ssh.public_keys.public_keys.append(pk)
+        system.ssh.key_pairs.key_pairs.append(pair)
         os_hd = OSVirtualHardDisk(image_name, media_link, disk_label = target_blob_name)
         network = ConfigurationSet()
         network.configuration_set_type = 'NetworkConfiguration'
         network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('utendpoint', 'tcp', '59913', '3394'))
 
         self._create_hosted_service(service_name)
+        self._create_service_certificate(service_name, SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
         result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small')
         self._wait_for_async(result.request_id)
         self._wait_for_deployment_status(service_name, deployment_name, 'Running')
 
     def _create_vm_windows(self, service_name, deployment_name, role_name, target_container_name, target_blob_name):
-        image_name = WINDOWS_IMAGE_NAME
+        image_name = self._windows_image_name()
         media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + target_container_name + '/' + target_blob_name
         system = WindowsConfigurationSet('computername', 'u7;9jbp!', False, False, 'Pacific Standard Time')
         system.domain_join = None
@@ -384,7 +377,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._wait_for_deployment_status(service_name, deployment_name, 'Running')
 
     def _add_role_windows(self, service_name, deployment_name, role_name2):
-        image_name = WINDOWS_IMAGE_NAME
+        image_name = self._windows_image_name()
         target_container_name = 'vhds'
         target_blob_name = role_name2 + '.vhd'
         media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + target_container_name + '/' + target_blob_name
@@ -397,170 +390,6 @@ class ServiceManagementServiceTest(AzureTestCase):
         
         result = self.sms.add_role(service_name, deployment_name, role_name2, system, os_hd)
         self._wait_for_async(result.request_id)
-
-    #--Test cases for storage accounts -----------------------------------
-    def test_list_storage_accounts(self):
-        # Arrange
-        self._create_storage_account(self.storage_account_name)
-
-        # Act
-        result = self.sms.list_storage_accounts()
-        
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertTrue(len(result) > 0)
-
-        storage = None
-        for temp in result:
-            if temp.service_name == self.storage_account_name:
-                storage = temp
-                break
-        
-        self.assertIsNotNone(storage)
-        self.assertIsNotNone(storage.service_name)
-        self.assertIsNone(storage.storage_service_keys)
-        self.assertIsNotNone(storage.storage_service_properties)
-        self.assertIsNotNone(storage.storage_service_properties.affinity_group)
-        self.assertIsNotNone(storage.storage_service_properties.description)
-        self.assertIsNotNone(storage.storage_service_properties.geo_primary_region)
-        self.assertIsNotNone(storage.storage_service_properties.geo_replication_enabled)
-        self.assertIsNotNone(storage.storage_service_properties.geo_secondary_region)
-        self.assertIsNotNone(storage.storage_service_properties.label)
-        self.assertIsNotNone(storage.storage_service_properties.last_geo_failover_time)
-        self.assertIsNotNone(storage.storage_service_properties.location)
-        self.assertIsNotNone(storage.storage_service_properties.status)
-        self.assertIsNotNone(storage.storage_service_properties.status_of_primary)
-        self.assertIsNotNone(storage.storage_service_properties.status_of_secondary)
-        self.assertIsNotNone(storage.storage_service_properties.endpoints)
-        self.assertTrue(len(storage.storage_service_properties.endpoints) > 0)
-        self.assertIsNotNone(storage.extended_properties)
-        self.assertTrue(len(storage.extended_properties) > 0)
-
-    def test_get_storage_account_properties(self):
-        # Arrange
-        self._create_storage_account(self.storage_account_name)
-
-        # Act
-        result = self.sms.get_storage_account_properties(self.storage_account_name)
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertEqual(result.service_name, self.storage_account_name)
-        self.assertIsNotNone(result.url)
-        self.assertIsNone(result.storage_service_keys)
-        self.assertIsNotNone(result.storage_service_properties)
-        self.assertIsNotNone(result.storage_service_properties.affinity_group)
-        self.assertIsNotNone(result.storage_service_properties.description)
-        self.assertIsNotNone(result.storage_service_properties.geo_primary_region)
-        self.assertIsNotNone(result.storage_service_properties.geo_replication_enabled)
-        self.assertIsNotNone(result.storage_service_properties.geo_secondary_region)
-        self.assertIsNotNone(result.storage_service_properties.label)
-        self.assertIsNotNone(result.storage_service_properties.last_geo_failover_time)
-        self.assertIsNotNone(result.storage_service_properties.location)
-        self.assertIsNotNone(result.storage_service_properties.status)
-        self.assertIsNotNone(result.storage_service_properties.status_of_primary)
-        self.assertIsNotNone(result.storage_service_properties.status_of_secondary)
-        self.assertIsNotNone(result.storage_service_properties.endpoints)
-        self.assertTrue(len(result.storage_service_properties.endpoints) > 0)
-        self.assertIsNotNone(result.extended_properties)
-        self.assertTrue(len(result.extended_properties) > 0)
-        self.assertIsNotNone(result.capabilities)
-        self.assertTrue(len(result.capabilities) > 0)
-
-    def test_get_storage_account_keys(self):
-        # Arrange
-        self._create_storage_account(self.storage_account_name)
-
-        # Act
-        result = self.sms.get_storage_account_keys(self.storage_account_name)
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertIsNotNone(result.url)
-        self.assertIsNotNone(result.service_name)
-        self.assertIsNotNone(result.storage_service_keys.primary)
-        self.assertIsNotNone(result.storage_service_keys.secondary)
-        self.assertIsNone(result.storage_service_properties)
-
-    def test_regenerate_storage_account_keys(self):
-        # Arrange
-        self._create_storage_account(self.storage_account_name)
-        previous = self.sms.get_storage_account_keys(self.storage_account_name)
-
-        # Act
-        result = self.sms.regenerate_storage_account_keys(self.storage_account_name, 'Secondary')
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertIsNotNone(result.url)
-        self.assertIsNotNone(result.service_name)
-        self.assertIsNotNone(result.storage_service_keys.primary)
-        self.assertIsNotNone(result.storage_service_keys.secondary)
-        self.assertIsNone(result.storage_service_properties)
-        self.assertEqual(result.storage_service_keys.primary, previous.storage_service_keys.primary)
-        self.assertNotEqual(result.storage_service_keys.secondary, previous.storage_service_keys.secondary)
-
-    def test_create_storage_account(self):
-        # Arrange
-        description = self.storage_account_name + 'description'
-        label = self.storage_account_name + 'label'
-
-        # Act
-        result = self.sms.create_storage_account(self.storage_account_name, description, label, None, 'West US', True, {'ext1':'val1', 'ext2':42})
-        self._wait_for_async(result.request_id)
-
-        # Assert
-        self.assertTrue(self._storage_account_exists(self.storage_account_name))
-
-    def test_update_storage_account(self):
-        # Arrange
-        self._create_storage_account(self.storage_account_name)
-        description = self.storage_account_name + 'descriptionupdate'
-        label = self.storage_account_name + 'labelupdate'
-
-        # Act
-        result = self.sms.update_storage_account(self.storage_account_name, description, label, False, {'ext1':'val1update', 'ext2':53, 'ext3':'brandnew'})
-
-        # Assert
-        self.assertIsNone(result)
-        props = self.sms.get_storage_account_properties(self.storage_account_name)
-        self.assertEqual(props.storage_service_properties.description, description)
-        self.assertEqual(props.storage_service_properties.label, label)
-        self.assertEqual(props.extended_properties['ext1'], 'val1update')
-        self.assertEqual(props.extended_properties['ext2'], '53')
-        self.assertEqual(props.extended_properties['ext3'], 'brandnew')
-
-    def test_delete_storage_account(self):
-        # Arrange
-        self._create_storage_account(self.storage_account_name)
-
-        # Act
-        result = self.sms.delete_storage_account(self.storage_account_name)
-
-        # Assert
-        self.assertIsNone(result)
-        self.assertFalse(self._storage_account_exists(self.storage_account_name))
-
-    def test_check_storage_account_name_availability_not_available(self):
-        # Arrange
-        self._create_storage_account(self.storage_account_name)
-
-        # Act
-        result = self.sms.check_storage_account_name_availability(self.storage_account_name)
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertFalse(result.result)
-
-    def test_check_storage_account_name_availability_available(self):
-        # Arrange
-
-        # Act
-        result = self.sms.check_storage_account_name_availability(self.storage_account_name)
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertTrue(result.result)
 
     #--Test cases for hosted services ------------------------------------
     def test_list_hosted_services(self):
@@ -995,167 +824,6 @@ class ServiceManagementServiceTest(AzureTestCase):
         # Assert
         self.assertFalse(self._service_certificate_exists(self.hosted_service_name, SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT))
 
-    #--Test cases for management certificates ----------------------------
-    def test_list_management_certificates(self):
-        # Arrange
-        self._create_management_certificate(self.management_certificate_name)
-
-        # Act
-        result = self.sms.list_management_certificates()
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertTrue(len(result) > 0)
-        
-        cert = None
-        for temp in result:
-            if temp.subscription_certificate_thumbprint == self.management_certificate_name:
-                cert = temp
-                break
-
-        self.assertIsNotNone(cert)
-        self.assertIsNotNone(cert.created)
-        self.assertEqual(cert.subscription_certificate_public_key, MANAGEMENT_CERT_PUBLICKEY)
-        self.assertEqual(cert.subscription_certificate_data, MANAGEMENT_CERT_DATA)
-        self.assertEqual(cert.subscription_certificate_thumbprint, self.management_certificate_name)
-
-    def test_get_management_certificate(self):
-        # Arrange
-        self._create_management_certificate(self.management_certificate_name)
-
-        # Act
-        result = self.sms.get_management_certificate(self.management_certificate_name)
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertIsNotNone(result.created)
-        self.assertEqual(result.subscription_certificate_public_key, MANAGEMENT_CERT_PUBLICKEY)
-        self.assertEqual(result.subscription_certificate_data, MANAGEMENT_CERT_DATA)
-        self.assertEqual(result.subscription_certificate_thumbprint, self.management_certificate_name)
-
-    def test_add_management_certificate(self):
-        # Arrange
-        public_key = MANAGEMENT_CERT_PUBLICKEY
-        data = MANAGEMENT_CERT_DATA
-
-        # Act
-        result = self.sms.add_management_certificate(public_key, self.management_certificate_name, data)
-
-        # Assert
-        self.assertIsNone(result)
-        self.assertTrue(self._management_certificate_exists(self.management_certificate_name))
-
-    def test_delete_management_certificate(self):
-        # Arrange
-        self._create_management_certificate(self.management_certificate_name)
-
-        # Act
-        result = self.sms.delete_management_certificate(self.management_certificate_name)
-
-        # Assert
-        self.assertIsNone(result)
-        self.assertFalse(self._management_certificate_exists(self.management_certificate_name))
-
-    #--Test cases for affinity groups ------------------------------------
-    def test_list_affinity_groups(self):
-        # Arrange
-        self._create_affinity_group(self.affinity_group_name)
-
-        # Act
-        result = self.sms.list_affinity_groups()
-        
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertTrue(len(result) > 0)
-
-        group = None
-        for temp in result:
-            if temp.name == self.affinity_group_name:
-                group = temp
-                break
-
-        self.assertIsNotNone(group)
-        self.assertIsNotNone(group.name)
-        self.assertIsNotNone(group.label)
-        self.assertIsNotNone(group.description)
-        self.assertIsNotNone(group.location)
-        self.assertIsNotNone(group.capabilities)
-        self.assertTrue(len(group.capabilities) > 0)
-
-    def test_get_affinity_group_properties(self):
-        # Arrange
-        self._create_affinity_group(self.affinity_group_name)
-        self.sms.create_hosted_service(self.hosted_service_name, 'affgrptestlabel', 'affgrptestdesc', None, self.affinity_group_name)
-        self.sms.create_storage_account(self.storage_account_name, self.storage_account_name + 'desc', self.storage_account_name + 'label', self.affinity_group_name)
-
-        # Act
-        result = self.sms.get_affinity_group_properties(self.affinity_group_name)
-        
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertEqual(result.name, self.affinity_group_name)
-        self.assertIsNotNone(result.label)
-        self.assertIsNotNone(result.description)
-        self.assertIsNotNone(result.location)
-        self.assertIsNotNone(result.hosted_services[0])
-        self.assertEqual(result.hosted_services[0].service_name, self.hosted_service_name)
-        self.assertEqual(result.hosted_services[0].hosted_service_properties.affinity_group, self.affinity_group_name)
-        # not sure why azure does not return any storage service
-        self.assertTrue(len(result.capabilities) > 0)
-
-    def test_create_affinity_group(self):
-        # Arrange
-        label = 'tstmgmtaffgrp'
-        description = 'tstmgmt affinity group'
-
-        # Act
-        result = self.sms.create_affinity_group(self.affinity_group_name, label, 'West US', description)
-
-        # Assert
-        self.assertIsNone(result)
-        self.assertTrue(self._affinity_group_exists(self.affinity_group_name))
-
-    def test_update_affinity_group(self):
-        # Arrange
-        self._create_affinity_group(self.affinity_group_name)
-        label = 'tstlabelupdate'
-        description = 'testmgmt affinity group update'
-
-        # Act
-        result = self.sms.update_affinity_group(self.affinity_group_name, label, description)
-
-        # Assert
-        self.assertIsNone(result)
-        props = self.sms.get_affinity_group_properties(self.affinity_group_name)
-        self.assertEqual(props.label, label)
-        self.assertEqual(props.description, description)
-
-    def test_delete_affinity_group(self):
-        # Arrange
-        self._create_affinity_group(self.affinity_group_name)
-
-        # Act
-        result = self.sms.delete_affinity_group(self.affinity_group_name)
-
-        # Assert
-        self.assertIsNone(result)
-        self.assertFalse(self._affinity_group_exists(self.affinity_group_name))
-
-    #--Test cases for locations ------------------------------------------
-    def test_list_locations(self):
-        # Arrange
-
-        # Act
-        result = self.sms.list_locations()
-        
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertTrue(len(result) > 0)
-        self.assertIsNotNone(result[0].name)
-        self.assertIsNotNone(result[0].display_name)
-        self.assertIsNotNone(result[0].available_services)
-        self.assertTrue(len(result[0].available_services) > 0)
-
     #--Test cases for retrieving operating system information ------------
     def test_list_operating_systems(self):
         # Arrange
@@ -1215,7 +883,40 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertTrue(result.max_virtual_network_sites > 0)
 
     #--Test cases for virtual machines -----------------------------------
-    def test_get_role(self):
+    def test_get_role_linux(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+
+        self._create_vm_linux(service_name, deployment_name, role_name, self.container_name, role_name + '.vhd')
+
+        # Act
+        result = self.sms.get_role(service_name, deployment_name, role_name)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(result.role_name, role_name)
+        self.assertIsNotNone(result.role_size)
+        self.assertIsNotNone(result.role_type)
+        self.assertIsNotNone(result.os_virtual_hard_disk)
+        self.assertIsNotNone(result.os_virtual_hard_disk.disk_label)
+        self.assertIsNotNone(result.os_virtual_hard_disk.disk_name)
+        self.assertIsNotNone(result.os_virtual_hard_disk.host_caching)
+        self.assertIsNotNone(result.os_virtual_hard_disk.media_link)
+        self.assertIsNotNone(result.os_virtual_hard_disk.os)
+        self.assertIsNotNone(result.os_virtual_hard_disk.source_image_name)
+        self.assertIsNotNone(result.data_virtual_hard_disks)
+        self.assertIsNotNone(result.configuration_sets)
+        self.assertIsNotNone(result.configuration_sets[0])
+        self.assertIsNotNone(result.configuration_sets[0].configuration_set_type)
+        self.assertIsNotNone(result.configuration_sets[0].input_endpoints)
+        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].protocol)
+        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].port)
+        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].name)
+        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].local_port)
+
+    def test_get_role_windows(self):
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
@@ -1253,14 +954,18 @@ class ServiceManagementServiceTest(AzureTestCase):
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
-        image_name = LINUX_IMAGE_NAME
+        image_name = self._linux_image_name()
         media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name + '.vhd'
+        pk = PublicKey(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/authorized_keys')
+        pair = KeyPair(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/id_rsa')
 
         self._create_hosted_service(service_name)
+        self._create_service_certificate(service_name, SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
         # Act
         system = LinuxConfigurationSet('unittest', 'unittest', 'u7;9jbp!', True)
-        system.ssh = None
+        system.ssh.public_keys.public_keys.append(pk)
+        system.ssh.key_pairs.key_pairs.append(pair)
 
         os_hd = OSVirtualHardDisk(image_name, media_link)
         
@@ -1280,7 +985,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
-        image_name = WINDOWS_IMAGE_NAME
+        image_name = self._windows_image_name()
         media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name + '.vhd'
 
         self._create_hosted_service(service_name)
@@ -1304,6 +1009,43 @@ class ServiceManagementServiceTest(AzureTestCase):
         # Assert
         self.assertTrue(self._role_exists(service_name, deployment_name, role_name))
 
+    def test_create_virtual_machine_deployment_windows_virtual_network(self):
+        # this test requires the following manual resources to be created
+        # use the azure portal to create them
+        affinity_group = 'utaffgrpdonotdelete'    # affinity group, any region
+        storage_name = 'utstoragedonotdelete'     # storage account in affinity group
+        virtual_network_name = 'utnetdonotdelete' # virtual network in affinity group
+        subnet_name = 'Subnet-1'                  # subnet in virtual network
+
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+        image_name = self._windows_image_name()
+        media_link = 'http://' + storage_name + '.blob.core.windows.net/' + self.container_name + '/' + role_name + '.vhd'
+
+        self._create_hosted_service(service_name, affinity_group=affinity_group)
+        self._create_service_certificate(service_name, SERVICE_CERT_DATA, 'pfx', SERVICE_CERT_PASSWORD)
+
+        # Act
+        system = WindowsConfigurationSet('unittest', 'u7;9jbp!', False, False, 'Pacific Standard Time')
+        system.domain_join = None
+        system.stored_certificate_settings.stored_certificate_settings.append(CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
+
+        os_hd = OSVirtualHardDisk(image_name, media_link)
+
+        network = ConfigurationSet()
+        network.configuration_set_type = 'NetworkConfiguration'
+        network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('endpnameW', 'tcp', '59917', '3395'))
+        network.subnet_names.append(subnet_name)
+
+        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small', virtual_network_name=virtual_network_name)
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment_status(service_name, deployment_name, 'Running')
+
+        # Assert
+        self.assertTrue(self._role_exists(service_name, deployment_name, role_name))
+
     def test_add_role_linux(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1314,7 +1056,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._create_vm_linux(service_name, deployment_name, role_name1, self.container_name, role_name1 + '.vhd')
         self._wait_for_role_instance_status(service_name, deployment_name, role_name1, 'ReadyRole')
 
-        image_name = LINUX_IMAGE_NAME
+        image_name = self._linux_image_name()
         media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name2 + '.vhd'
 
         # Act
@@ -1340,7 +1082,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._create_vm_windows(service_name, deployment_name, role_name1, self.container_name, role_name1 + '.vhd')
         self._wait_for_role_instance_status(service_name, deployment_name, role_name1, 'ReadyRole')
 
-        image_name = WINDOWS_IMAGE_NAME
+        image_name = self._windows_image_name()
         media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name2 + '.vhd'
     
         # Act
@@ -1751,48 +1493,6 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsNone(result)
         self.assertFalse(self._disk_exists(self.disk_name))
 
-    def test_unicode_create_storage_account_unicode_name(self):
-        # Arrange
-        self.storage_account_name = unicode(self.storage_account_name) + u'啊齄丂狛狜'
-        description = 'description'
-        label = 'label'
-
-        # Act
-        with self.assertRaises(WindowsAzureError):
-            # not supported - queue name must be alphanumeric, lowercase
-            result = self.sms.create_storage_account(self.storage_account_name, description, label, None, 'West US', True, {'ext1':'val1', 'ext2':42})
-            self._wait_for_async(result.request_id)
-
-        # Assert
-
-    def test_unicode_create_storage_account_unicode_description_label(self):
-        # Arrange
-        description = u'啊齄丂狛狜'
-        label = u'丂狛狜'
-
-        # Act
-        result = self.sms.create_storage_account(self.storage_account_name, description, label, None, 'West US', True, {'ext1':'val1', 'ext2':42})
-        self._wait_for_async(result.request_id)
-
-        # Assert
-        result = self.sms.get_storage_account_properties(self.storage_account_name)
-        self.assertEqual(result.storage_service_properties.description, description)
-        self.assertEqual(result.storage_service_properties.label, label)
-
-    def test_unicode_create_storage_account_unicode_property_value(self):
-        # Arrange
-        description = 'description'
-        label = 'label'
-
-        # Act
-        result = self.sms.create_storage_account(self.storage_account_name, description, label, None, 'West US', True, {'ext1':u'丂狛狜', 'ext2':42})
-        self._wait_for_async(result.request_id)
-
-        # Assert
-        result = self.sms.get_storage_account_properties(self.storage_account_name)
-        self.assertEqual(result.storage_service_properties.description, description)
-        self.assertEqual(result.storage_service_properties.label, label)
-        self.assertEqual(result.extended_properties['ext1'], u'丂狛狜')
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

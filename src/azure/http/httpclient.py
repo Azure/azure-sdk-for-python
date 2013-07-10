@@ -54,6 +54,10 @@ class _HTTPClient:
         self.protocol = protocol
         self.proxy_host = None
         self.proxy_port = None
+        if protocol == 'http':  
+            self.port = httplib.HTTP_PORT  
+        else:  
+            self.port = httplib.HTTPS_PORT  
 
     def set_proxy(self, host, port):
         '''Sets the proxy server host and port for the HTTP CONNECT Tunnelling.'''
@@ -69,17 +73,36 @@ class _HTTPClient:
         if sys.platform.lower().startswith('win'):
             import azure.http.winhttp
             _connection = azure.http.winhttp._HTTPConnection(request.host, cert_file=self.cert_file, protocol=self.protocol)
-        elif self.protocol == 'http':
-            _connection = httplib.HTTPConnection(request.host)
+            proxy_host = self.proxy_host
+            proxy_port = self.proxy_port
         else:
-            _connection = httplib.HTTPSConnection(request.host, cert_file=self.cert_file)
+            if self.proxy_host:
+                proxy_host = request.host
+                proxy_port = self.port
+                host = self.proxy_host
+                port = self.proxy_port
+            else:
+                host = request.host
+                port = self.port
+
+            if self.protocol == 'http':
+                _connection = httplib.HTTPConnection(host, int(port))
+            else:
+                _connection = httplib.HTTPSConnection(host, int(port), cert_file=self.cert_file)
 
         if self.proxy_host:
-            _connection.set_tunnel(self.proxy_host, self.proxy_port)
+            _connection.set_tunnel(proxy_host, int(proxy_port))
 
         return _connection
 
     def send_request_headers(self, connection, request_headers):
+        if not sys.platform.lower().startswith('win'):
+            if self.proxy_host:
+                for i in connection._buffer:
+                    if i.startswith("Host: "):
+                        connection._buffer.remove(i)
+                connection.putheader('Host', "%s:%s" % (connection._tunnel_host, connection._tunnel_port))
+
         for name, value in request_headers:
             if value:
                 connection.putheader(name, value)

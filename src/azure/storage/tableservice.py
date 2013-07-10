@@ -12,36 +12,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import base64
-import os
-import urllib2
-
-from azure.storage import *
-from azure.storage.storageclient import _StorageClient
-from azure.storage import (_update_storage_table_header, 
-                                convert_table_to_xml,  _convert_xml_to_table,
-                                convert_entity_to_xml, _convert_response_to_entity, 
-                                _convert_xml_to_entity, _sign_storage_table_request)
+from azure import (WindowsAzureError,
+                   TABLE_SERVICE_HOST_BASE,
+                   DEV_TABLE_HOST,
+                   xml_escape,
+                   _convert_class_to_xml,
+                   _convert_response_to_feeds,
+                   _dont_fail_not_exist,
+                   _dont_fail_on_exist,
+                   _get_request_body,
+                   _int_or_none,
+                   _parse_response,
+                   _parse_response_for_dict,
+                   _parse_response_for_dict_filter,
+                   _str,
+                   _str_or_none,
+                   _update_request_uri_query_local_storage,
+                   _validate_not_none,
+                   )
+from azure.http import HTTPRequest
 from azure.http.batchclient import _BatchClient
-from azure.http import HTTPRequest, HTTP_RESPONSE_NO_CONTENT
-from azure import (_validate_not_none, Feed,
-                                _convert_response_to_feeds, _str, _str_or_none, _int_or_none,
-                                _get_request_body, _update_request_uri_query, 
-                                _dont_fail_on_exist, _dont_fail_not_exist, WindowsAzureConflictError, 
-                                WindowsAzureError, _parse_response, _convert_class_to_xml, 
-                                _parse_response_for_dict, _parse_response_for_dict_prefix, 
-                                _parse_response_for_dict_filter,  
-                                _parse_enum_results_list, _update_request_uri_query_local_storage, 
-                                _parse_simple_list, SERVICE_BUS_HOST_BASE, xml_escape)  
+from azure.storage import (StorageServiceProperties,
+                           _convert_entity_to_xml,
+                           _convert_response_to_entity,
+                           _convert_table_to_xml,
+                           _convert_xml_to_entity,
+                           _convert_xml_to_table,
+                           _sign_storage_table_request,
+                           _update_storage_table_header,
+                           )
+from azure.storage.storageclient import _StorageClient
 
 class TableService(_StorageClient):
     '''
     This is the main class managing Table resources.
-    account_name: your storage account name, required for all operations.
-    account_key: your storage account key, required for all operations.
     '''
 
     def __init__(self, account_name = None, account_key = None, protocol = 'http', host_base = TABLE_SERVICE_HOST_BASE, dev_host = DEV_TABLE_HOST):
+        '''
+        account_name: your storage account name, required for all operations.
+        account_key: your storage account key, required for all operations.
+        protocol: Optional. Protocol. Defaults to http.
+        host_base: 
+            Optional. Live host base url. Defaults to Azure url. Override this 
+            for on-premise.
+        dev_host: Optional. Dev host url. Defaults to localhost. 
+        '''
         return super(TableService, self).__init__(account_name, account_key, protocol, host_base, dev_host)
 
     def begin_batch(self):
@@ -61,8 +77,8 @@ class TableService(_StorageClient):
 
     def get_table_service_properties(self):
         '''
-        Gets the properties of a storage account's Table service, including Windows Azure
-        Storage Analytics.
+        Gets the properties of a storage account's Table service, including 
+        Windows Azure Storage Analytics.
         '''
         request = HTTPRequest()
         request.method = 'GET'
@@ -76,9 +92,10 @@ class TableService(_StorageClient):
 
     def set_table_service_properties(self, storage_service_properties):
         '''
-        Sets the properties of a storage account's Table Service, including Windows Azure Storage Analytics.
+        Sets the properties of a storage account's Table Service, including 
+        Windows Azure Storage Analytics.
         
-        storage_service_properties: a StorageServiceProperties object.
+        storage_service_properties: StorageServiceProperties object.
         '''
         _validate_not_none('storage_service_properties', storage_service_properties)
         request = HTTPRequest()
@@ -96,8 +113,11 @@ class TableService(_StorageClient):
         '''
         Returns a list of tables under the specified account.
         
-        table_name: optional, the specific table to query
-        top: the maximum number of tables to return
+        table_name: Optional.  The specific table to query.
+        top: Optional. Maximum number of tables to return.
+        next_table_name:
+            Optional. When top is used, the next table name is stored in 
+            result.x_ms_continuation['NextTableName']
         '''
         request = HTTPRequest()
         request.method = 'GET'
@@ -121,17 +141,18 @@ class TableService(_StorageClient):
         '''
         Creates a new table in the storage account.
         
-        table: name of the table to create. Table name may contain only alphanumeric characters
-             and cannot begin with a numeric character. It is case-insensitive and must be from 
-        	 3 to 63 characters long.
-        fail_on_exist: specify whether throw exception when table exists.
+        table: 
+            Name of the table to create. Table name may contain only 
+            alphanumeric characters and cannot begin with a numeric character. 
+            It is case-insensitive and must be from 3 to 63 characters long.
+        fail_on_exist: Specify whether throw exception when table exists.
         '''
         _validate_not_none('table', table)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self._get_host()
         request.path = '/Tables'
-        request.body = _get_request_body(convert_table_to_xml(table))
+        request.body = _get_request_body(_convert_table_to_xml(table))
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         if not fail_on_exist:
@@ -147,9 +168,9 @@ class TableService(_StorageClient):
 
     def delete_table(self, table_name, fail_not_exist=False):
         '''
-        table_name: name of the table to delete. 
-        
-        fail_not_exist: specify whether throw exception when table doesn't exist.
+        table_name: Name of the table to delete. 
+        fail_not_exist:
+            Specify whether throw exception when table doesn't exist.
         '''
         _validate_not_none('table_name', table_name)
         request = HTTPRequest()
@@ -175,7 +196,7 @@ class TableService(_StorageClient):
         
         partition_key: PartitionKey of the entity.
         row_key: RowKey of the entity.
-        select: the property names to select.
+        select: Property names to select.
         '''
         _validate_not_none('table_name', table_name)
         _validate_not_none('partition_key', partition_key)
@@ -195,10 +216,18 @@ class TableService(_StorageClient):
         '''
         Get entities in a table; includes the $filter and $select options. 
         
-        table_name: the table to query
-        filter: a filter as described at http://msdn.microsoft.com/en-us/library/windowsazure/dd894031.aspx
-        select: the property names to select from the entities
-        top: the maximum number of entities to return
+        table_name: Table to query.
+        filter: 
+            Optional. Filter as described at 
+            http://msdn.microsoft.com/en-us/library/windowsazure/dd894031.aspx
+        select: Optional. Property names to select from the entities.
+        top: Optional. Maximum number of entities to return.
+        next_partition_key: 
+            Optional. When top is used, the next partition key is stored in
+            result.x_ms_continuation['NextPartitionKey']
+        next_row_key: 
+            Optional. When top is used, the next partition key is stored in
+            result.x_ms_continuation['NextRowKey']
         '''
         _validate_not_none('table_name', table_name)
         request = HTTPRequest()
@@ -222,8 +251,11 @@ class TableService(_StorageClient):
         '''
         Inserts a new entity into a table.
         
-        entity: Required. The entity object to insert. Could be a dict format or entity object.
-        Content-Type: this is required and has to be set to application/atom+xml
+        table_name: Table name.
+        entity:
+            Required. The entity object to insert. Could be a dict format or 
+            entity object.
+        content_type: Required. Must be set to application/atom+xml
         '''
         _validate_not_none('table_name', table_name)
         _validate_not_none('entity', entity)
@@ -233,7 +265,7 @@ class TableService(_StorageClient):
         request.host = self._get_host()
         request.path = '/' + _str(table_name) + ''
         request.headers = [('Content-Type', _str_or_none(content_type))]
-        request.body = _get_request_body(convert_entity_to_xml(entity))
+        request.body = _get_request_body(_convert_entity_to_xml(entity))
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
@@ -242,13 +274,20 @@ class TableService(_StorageClient):
 
     def update_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml', if_match='*'):
         '''
-        Updates an existing entity in a table. The Update Entity operation replaces the entire 
-        entity and can be used to remove properties.
+        Updates an existing entity in a table. The Update Entity operation 
+        replaces the entire entity and can be used to remove properties.
         
-        entity: Required. The entity object to insert. Could be a dict format or entity object.
+        table_name: Table name.
         partition_key: PartitionKey of the entity.
         row_key: RowKey of the entity.
-        Content-Type: this is required and has to be set to application/atom+xml
+        entity:
+            Required. The entity object to insert. Could be a dict format or 
+            entity object.
+        content_type: Required. Must be set to application/atom+xml
+        if_match:
+            Optional. Specifies the condition for which the merge should be 
+            performed. To force an unconditional merge, set to the wildcard 
+            character (*). 
         '''
         _validate_not_none('table_name', table_name)
         _validate_not_none('partition_key', partition_key)
@@ -263,7 +302,7 @@ class TableService(_StorageClient):
             ('Content-Type', _str_or_none(content_type)),
             ('If-Match', _str_or_none(if_match))
             ]
-        request.body = _get_request_body(convert_entity_to_xml(entity))
+        request.body = _get_request_body(_convert_entity_to_xml(entity))
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
@@ -272,13 +311,21 @@ class TableService(_StorageClient):
 
     def merge_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml', if_match='*'):
         '''
-        Updates an existing entity by updating the entity's properties. This operation does 
-        not replace the existing entity as the Update Entity operation does.
+        Updates an existing entity by updating the entity's properties. This 
+        operation does not replace the existing entity as the Update Entity 
+        operation does.
         
-        entity: Required. The entity object to insert. Can be a dict format or entity object.
+        table_name: Table name.
         partition_key: PartitionKey of the entity.
         row_key: RowKey of the entity.
-        Content-Type: this is required and has to be set to application/atom+xml
+        entity: 
+            Required. The entity object to insert. Can be a dict format or 
+            entity object.
+        content_type: Required. Must be set to application/atom+xml
+        if_match:
+            Optional. Specifies the condition for which the merge should be 
+            performed. To force an unconditional merge, set to the wildcard 
+            character (*). 
         '''
         _validate_not_none('table_name', table_name)
         _validate_not_none('partition_key', partition_key)
@@ -293,7 +340,7 @@ class TableService(_StorageClient):
             ('Content-Type', _str_or_none(content_type)),
             ('If-Match', _str_or_none(if_match))
             ]
-        request.body = _get_request_body(convert_entity_to_xml(entity))
+        request.body = _get_request_body(_convert_entity_to_xml(entity))
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
@@ -304,11 +351,14 @@ class TableService(_StorageClient):
         '''
         Deletes an existing entity in a table.
         
+        table_name: Table name.
         partition_key: PartitionKey of the entity.
         row_key: RowKey of the entity.
-        if_match: Required. Specifies the condition for which the delete should be performed.
-        		To force an unconditional delete, set If-Match to the wildcard character (*). 
-        Content-Type: this is required and has to be set to application/atom+xml
+        content_type: Required. Must be set to application/atom+xml
+        if_match:
+            Optional. Specifies the condition for which the delete should be 
+            performed. To force an unconditional delete, set to the wildcard 
+            character (*). 
         '''
         _validate_not_none('table_name', table_name)
         _validate_not_none('partition_key', partition_key)
@@ -329,14 +379,17 @@ class TableService(_StorageClient):
 
     def insert_or_replace_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml'):
         '''
-        Replaces an existing entity or inserts a new entity if it does not exist in the table. 
-        Because this operation can insert or update an entity, it is also known as an "upsert"
-        operation.
+        Replaces an existing entity or inserts a new entity if it does not 
+        exist in the table. Because this operation can insert or update an 
+        entity, it is also known as an "upsert" operation.
         
-        entity: Required. The entity object to insert. Could be a dict format or entity object.
+        table_name: Table name.
         partition_key: PartitionKey of the entity.
         row_key: RowKey of the entity.
-        Content-Type: this is required and has to be set to application/atom+xml
+        entity:
+            Required. The entity object to insert. Could be a dict format or 
+            entity object.
+        content_type: Required. Must be set to application/atom+xml
         '''
         _validate_not_none('table_name', table_name)
         _validate_not_none('partition_key', partition_key)
@@ -348,7 +401,7 @@ class TableService(_StorageClient):
         request.host = self._get_host()
         request.path = '/' + _str(table_name) + '(PartitionKey=\'' + _str(partition_key) + '\',RowKey=\'' + _str(row_key) + '\')'
         request.headers = [('Content-Type', _str_or_none(content_type))]
-        request.body = _get_request_body(convert_entity_to_xml(entity))
+        request.body = _get_request_body(_convert_entity_to_xml(entity))
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
@@ -357,14 +410,17 @@ class TableService(_StorageClient):
 
     def insert_or_merge_entity(self, table_name, partition_key, row_key, entity, content_type='application/atom+xml'):
         '''
-        Merges an existing entity or inserts a new entity if it does not exist in the table. 
-        Because this operation can insert or update an entity, it is also known as an "upsert"
-        operation.
+        Merges an existing entity or inserts a new entity if it does not exist 
+        in the table. Because this operation can insert or update an entity, 
+        it is also known as an "upsert" operation.
         
-        entity: Required. The entity object to insert. Could be a dict format or entity object.
+        table_name: Table name.
         partition_key: PartitionKey of the entity.
         row_key: RowKey of the entity.
-        Content-Type: this is required and has to be set to application/atom+xml
+        entity: 
+            Required. The entity object to insert. Could be a dict format or 
+            entity object.
+        content_type: Required. Must be set to application/atom+xml
         '''
         _validate_not_none('table_name', table_name)
         _validate_not_none('partition_key', partition_key)
@@ -376,13 +432,12 @@ class TableService(_StorageClient):
         request.host = self._get_host()
         request.path = '/' + _str(table_name) + '(PartitionKey=\'' + _str(partition_key) + '\',RowKey=\'' + _str(row_key) + '\')'
         request.headers = [('Content-Type', _str_or_none(content_type))]
-        request.body = _get_request_body(convert_entity_to_xml(entity))
+        request.body = _get_request_body(_convert_entity_to_xml(entity))
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
 
         return _parse_response_for_dict_filter(response, filter=['etag'])
-
 
     def _perform_request_worker(self, request):
         auth = _sign_storage_table_request(request, 

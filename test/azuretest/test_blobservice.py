@@ -12,31 +12,57 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import base64
+import datetime
+import httplib
+import os
+import time
+import unittest
 
-from azure.storage.blobservice import *
-from azure.storage import Metrics
-from azure.storage.storageclient import AZURE_STORAGE_ACCESS_KEY, AZURE_STORAGE_ACCOUNT, EMULATED, DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY
-from azure.storage.sharedaccesssignature import (SharedAccessSignature, 
-                                                 SharedAccessPolicy, 
-                                                 Permission, 
+from azure import (WindowsAzureError,
+                   BLOB_SERVICE_HOST_BASE,
+                   )
+from azure.http import (HTTPRequest,
+                        HTTPResponse,
+                        )
+from azure.storage import (AccessPolicy,
+                           BlobBlockList,
+                           BlobResult,
+                           Logging,
+                           Metrics,
+                           PageList,
+                           PageRange,
+                           SignedIdentifier,
+                           SignedIdentifiers,
+                           StorageServiceProperties,
+                           )
+from azure.storage.blobservice import BlobService
+from azure.storage.storageclient import (AZURE_STORAGE_ACCESS_KEY,
+                                         AZURE_STORAGE_ACCOUNT,
+                                         EMULATED,
+                                         DEV_ACCOUNT_NAME,
+                                         DEV_ACCOUNT_KEY,
+                                         )
+from azure.storage.sharedaccesssignature import (Permission,
+                                                 SharedAccessSignature,
+                                                 SharedAccessPolicy,
                                                  WebResource,
-                                                 SIGNED_START,
-                                                 SIGNED_EXPIRY,
-                                                 SIGNED_RESOURCE,
-                                                 SIGNED_PERMISSION,
-                                                 SIGNED_IDENTIFIER,
-                                                 SIGNED_SIGNATURE,
                                                  RESOURCE_BLOB,
                                                  RESOURCE_CONTAINER,
+                                                 SHARED_ACCESS_PERMISSION,
+                                                 SIGNED_EXPIRY,
+                                                 SIGNED_IDENTIFIER,
+                                                 SIGNED_PERMISSION,
+                                                 SIGNED_RESOURCE,
                                                  SIGNED_RESOURCE_TYPE,
-                                                 SHARED_ACCESS_PERMISSION)
-from azure import WindowsAzureError, BLOB_SERVICE_HOST_BASE
-from azuretest.util import *
-from azure.http import HTTPRequest, HTTPResponse
-import datetime
-import unittest
-import httplib
-import time
+                                                 SIGNED_SIGNATURE,
+                                                 SIGNED_START,
+                                                 )
+from azuretest.util import (AzureTestCase,
+                            credentials,
+                            getUniqueTestRunID,
+                            getUniqueNameBasedOnCurrentTime,
+                            )
 
 #------------------------------------------------------------------------------
 class BlobServiceTest(AzureTestCase):
@@ -402,11 +428,9 @@ class BlobServiceTest(AzureTestCase):
 
         # Assert
         self.assertIsNotNone(md)
+        self.assertEquals(2, len(md))
         self.assertEquals(md['x-ms-meta-hello'], 'world')
         self.assertEquals(md['x-ms-meta-foo'], '42')
-        # TODO:
-        # get_container_properties returns container lease information whereas get_container_metadata doesn't
-        # we should lease the container in the arrange section and verify that we do not receive that info
 
     def test_get_container_metadata_with_non_existing_container(self):
         # Arrange
@@ -661,18 +685,18 @@ class BlobServiceTest(AzureTestCase):
         self.bc.put_blob(self.container_name, 'blob2', data, 'BlockBlob')
 
         # Act
-        blobs = self.bc.list_blobs(self.container_name)
-        for blob in blobs:
+        resp = self.bc.list_blobs(self.container_name)
+        for blob in resp:
             name = blob.name
 
         # Assert
-        self.assertIsNotNone(blobs)
-        self.assertGreaterEqual(len(blobs), 2)
-        self.assertIsNotNone(blobs[0])
-        self.assertNamedItemInContainer(blobs, 'blob1')
-        self.assertNamedItemInContainer(blobs, 'blob2')
-        self.assertEqual(blobs[0].properties.content_length, 11)
-        self.assertEqual(blobs[1].properties.content_type, 'application/octet-stream Charset=UTF-8')
+        self.assertIsNotNone(resp)
+        self.assertGreaterEqual(len(resp), 2)
+        self.assertIsNotNone(resp[0])
+        self.assertNamedItemInContainer(resp, 'blob1')
+        self.assertNamedItemInContainer(resp, 'blob2')
+        self.assertEqual(resp[0].properties.content_length, 11)
+        self.assertEqual(resp[1].properties.content_type, 'application/octet-stream Charset=UTF-8')
 
     def test_list_blobs_with_prefix(self):
         # Arrange
@@ -683,13 +707,46 @@ class BlobServiceTest(AzureTestCase):
         self.bc.put_blob(self.container_name, 'blobb1', data, 'BlockBlob')
 
         # Act
-        blobs = self.bc.list_blobs(self.container_name, 'bloba')
+        resp = self.bc.list_blobs(self.container_name, 'bloba')
 
         # Assert
-        self.assertIsNotNone(blobs)
-        self.assertEqual(len(blobs), 2)
-        self.assertNamedItemInContainer(blobs, 'bloba1')
-        self.assertNamedItemInContainer(blobs, 'bloba2')
+        self.assertIsNotNone(resp)
+        self.assertEqual(len(resp), 2)
+        self.assertEqual(len(resp.blobs), 2)
+        self.assertEqual(len(resp.prefixes), 0)
+        self.assertEqual(resp.prefix, 'bloba')
+        self.assertNamedItemInContainer(resp, 'bloba1')
+        self.assertNamedItemInContainer(resp, 'bloba2')
+
+    def test_list_blobs_with_prefix_and_delimiter(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = 'hello world'
+        self.bc.put_blob(self.container_name, 'documents/music/pop/thriller.mp3', data, 'BlockBlob')
+        self.bc.put_blob(self.container_name, 'documents/music/rock/stairwaytoheaven.mp3', data, 'BlockBlob')
+        self.bc.put_blob(self.container_name, 'documents/music/rock/hurt.mp3', data, 'BlockBlob')
+        self.bc.put_blob(self.container_name, 'documents/music/rock/metallica/one.mp3', data, 'BlockBlob')
+        self.bc.put_blob(self.container_name, 'documents/music/unsorted1.mp3', data, 'BlockBlob')
+        self.bc.put_blob(self.container_name, 'documents/music/unsorted2.mp3', data, 'BlockBlob')
+        self.bc.put_blob(self.container_name, 'documents/pictures/birthday/kid.jpg', data, 'BlockBlob')
+        self.bc.put_blob(self.container_name, 'documents/pictures/birthday/cake.jpg', data, 'BlockBlob')
+
+        # Act
+        resp = self.bc.list_blobs(self.container_name, 'documents/music/', delimiter='/')
+
+        # Assert
+        self.assertIsNotNone(resp)
+        self.assertEqual(len(resp), 2)
+        self.assertEqual(len(resp.blobs), 2)
+        self.assertEqual(len(resp.prefixes), 2)
+        self.assertEqual(resp.prefix, 'documents/music/')
+        self.assertEqual(resp.delimiter, '/')
+        self.assertNamedItemInContainer(resp, 'documents/music/unsorted1.mp3')
+        self.assertNamedItemInContainer(resp, 'documents/music/unsorted2.mp3')
+        self.assertNamedItemInContainer(resp.blobs, 'documents/music/unsorted1.mp3')
+        self.assertNamedItemInContainer(resp.blobs, 'documents/music/unsorted2.mp3')
+        self.assertNamedItemInContainer(resp.prefixes, 'documents/music/pop/')
+        self.assertNamedItemInContainer(resp.prefixes, 'documents/music/rock/')
 
     def test_list_blobs_with_maxresults(self):
         # Arrange
@@ -1072,6 +1129,7 @@ class BlobServiceTest(AzureTestCase):
         # Assert
         self.assertIsNone(resp)
         md = self.bc.get_blob_metadata(self.container_name, 'blob1')
+        self.assertEquals(2, len(md))
         self.assertEquals(md['x-ms-meta-hello'], 'world')
         self.assertEquals(md['x-ms-meta-foo'], '42')
 
