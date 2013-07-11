@@ -37,7 +37,7 @@ class QueueService(_StorageClient):
     account_key: your storage account key, required for all operations.
     '''
 
-    def __init__(self, account_name = None, account_key = None, protocol = 'http', host_base = QUEUE_SERVICE_HOST_BASE, dev_host = DEV_QUEUE_HOST):
+    def __init__(self, account_name = None, account_key = None, protocol = 'https', host_base = QUEUE_SERVICE_HOST_BASE, dev_host = DEV_QUEUE_HOST):
         return super(QueueService, self).__init__(account_name, account_key, protocol, host_base, dev_host)
 
     def get_queue_service_properties(self, timeout=None):
