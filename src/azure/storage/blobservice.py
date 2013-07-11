@@ -38,7 +38,7 @@ class BlobService(_StorageClient):
     account_key: your storage account key, required for all operations.
     '''
 
-    def __init__(self, account_name = None, account_key = None, protocol = 'http', host_base = BLOB_SERVICE_HOST_BASE, dev_host = DEV_BLOB_HOST):
+    def __init__(self, account_name = None, account_key = None, protocol = 'https', host_base = BLOB_SERVICE_HOST_BASE, dev_host = DEV_BLOB_HOST):
         return super(BlobService, self).__init__(account_name, account_key, protocol, host_base, dev_host)
 
     def list_containers(self, prefix=None, marker=None, maxresults=None, include=None):
