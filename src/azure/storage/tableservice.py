@@ -41,7 +41,7 @@ class TableService(_StorageClient):
     account_key: your storage account key, required for all operations.
     '''
 
-    def __init__(self, account_name = None, account_key = None, protocol = 'http', host_base = TABLE_SERVICE_HOST_BASE, dev_host = DEV_TABLE_HOST):
+    def __init__(self, account_name = None, account_key = None, protocol = 'https', host_base = TABLE_SERVICE_HOST_BASE, dev_host = DEV_TABLE_HOST):
         return super(TableService, self).__init__(account_name, account_key, protocol, host_base, dev_host)
 
     def begin_batch(self):
