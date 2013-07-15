@@ -37,6 +37,8 @@
     <Compile Include="azure\http\httpclient.py" />
     <Compile Include="azure\http\winhttp.py" />
     <Compile Include="azure\http\__init__.py" />
+    <Compile Include="azure\servicemanagement\servicebusmanagementservice.py" />
+    <Compile Include="azure\servicemanagement\servicemanagementclient.py" />
     <Compile Include="azure\servicemanagement\servicemanagementservice.py" />
     <Compile Include="azure\servicemanagement\__init__.py" />
     <Compile Include="azure\servicebus\servicebusservice.py" />

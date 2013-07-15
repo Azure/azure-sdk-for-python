@@ -12,41 +12,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import base64
-import os
-import urllib2
-
-from azure.storage import *
-from azure.storage.storageclient import _StorageClient
-from azure.storage import (_update_storage_queue_header)
+from azure import (WindowsAzureConflictError,
+                   WindowsAzureError,
+                   DEV_QUEUE_HOST,
+                   QUEUE_SERVICE_HOST_BASE,
+                   xml_escape,
+                   _convert_class_to_xml,
+                   _dont_fail_not_exist,
+                   _dont_fail_on_exist,
+                   _get_request_body,
+                   _int_or_none,
+                   _parse_enum_results_list,
+                   _parse_response,
+                   _parse_response_for_dict_filter,
+                   _parse_response_for_dict_prefix,
+                   _str,
+                   _str_or_none,
+                   _update_request_uri_query_local_storage,
+                   _validate_not_none,
+                   _ERROR_CONFLICT,
+                   )
 from azure.http import HTTPRequest, HTTP_RESPONSE_NO_CONTENT
-from azure import (_validate_not_none, Feed,
-                                _convert_response_to_feeds, _str, _str_or_none, _int_or_none,
-                                _get_request_body, _update_request_uri_query, 
-                                _dont_fail_on_exist, _dont_fail_not_exist, WindowsAzureConflictError, 
-                                WindowsAzureError, _parse_response, _convert_class_to_xml, 
-                                _parse_response_for_dict, _parse_response_for_dict_prefix, 
-                                _parse_response_for_dict_filter,  
-                                _parse_enum_results_list, _update_request_uri_query_local_storage, 
-                                _parse_simple_list, SERVICE_BUS_HOST_BASE, xml_escape)  
+from azure.storage import (Queue,
+                           QueueEnumResults,
+                           QueueMessagesList,
+                           StorageServiceProperties,
+                           _update_storage_queue_header,
+                           )
+from azure.storage.storageclient import _StorageClient
 
 class QueueService(_StorageClient):
     '''
     This is the main class managing queue resources.
-    account_name: your storage account name, required for all operations.
-    account_key: your storage account key, required for all operations.
     '''
 
     def __init__(self, account_name = None, account_key = None, protocol = 'http', host_base = QUEUE_SERVICE_HOST_BASE, dev_host = DEV_QUEUE_HOST):
+        '''
+        account_name: your storage account name, required for all operations.
+        account_key: your storage account key, required for all operations.
+        protocol: Optional. Protocol. Defaults to http.
+        host_base: 
+            Optional. Live host base url. Defaults to Azure url. Override this 
+            for on-premise.
+        dev_host: Optional. Dev host url. Defaults to localhost. 
+        '''
         return super(QueueService, self).__init__(account_name, account_key, protocol, host_base, dev_host)
 
     def get_queue_service_properties(self, timeout=None):
         '''
-        Gets the properties of a storage account's Queue Service, including Windows Azure 
-        Storage Analytics.
+        Gets the properties of a storage account's Queue Service, including 
+        Windows Azure Storage Analytics.
         
-        timeout: Optional. The timeout parameter is expressed in seconds. For example, the 
-        following value sets a timeout of 30 seconds for the request: timeout=30
+        timeout: Optional. The timeout parameter is expressed in seconds.
         '''
         request = HTTPRequest()
         request.method = 'GET'
@@ -62,6 +79,23 @@ class QueueService(_StorageClient):
     def list_queues(self, prefix=None, marker=None, maxresults=None, include=None):
         '''
         Lists all of the queues in a given storage account.
+
+        prefix:
+            Filters the results to return only queues with names that begin 
+            with the specified prefix.
+        marker:
+            A string value that identifies the portion of the list to be 
+            returned with the next list operation. The operation returns a 
+            NextMarker element within the response body if the list returned 
+            was not complete. This value may then be used as a query parameter 
+            in a subsequent call to request the next portion of the list of 
+            queues. The marker value is opaque to the client.
+        maxresults:
+            Specifies the maximum number of queues to return. If maxresults is 
+            not specified, the server will return up to 5,000 items.
+        include: 
+            Optional. Include this parameter to specify that the container's 
+            metadata be returned as part of the response body. 
         '''
         request = HTTPRequest()
         request.method = 'GET'
@@ -84,9 +118,10 @@ class QueueService(_StorageClient):
         Creates a queue under the given account.
         
         queue_name: name of the queue.
-        x_ms_meta_name_values: Optional. A dict containing name-value pairs to associate 
-        		with the queue as metadata.
-        fail_on_exist: specify whether throw exception when queue exists.
+        x_ms_meta_name_values: 
+            Optional. A dict containing name-value pairs to associate with the 
+            queue as metadata.
+        fail_on_exist: Specify whether throw exception when queue exists.
         '''
         _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
@@ -108,15 +143,16 @@ class QueueService(_StorageClient):
         else:
             response = self._perform_request(request)
             if response.status == HTTP_RESPONSE_NO_CONTENT:
-                raise WindowsAzureConflictError(azure._ERROR_CONFLICT)
+                raise WindowsAzureConflictError(_ERROR_CONFLICT)
             return True
 
     def delete_queue(self, queue_name, fail_not_exist=False):
         '''
         Permanently deletes the specified queue.
         
-        queue_name: name of the queue.
-        fail_not_exist: specify whether throw exception when queue doesn't exist.
+        queue_name: Name of the queue.
+        fail_not_exist:
+            Specify whether throw exception when queue doesn't exist.
         '''
         _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
@@ -138,10 +174,10 @@ class QueueService(_StorageClient):
 
     def get_queue_metadata(self, queue_name):
         '''
-        Retrieves user-defined metadata and queue properties on the specified queue. 
-        Metadata is associated with the queue as name-values pairs.
+        Retrieves user-defined metadata and queue properties on the specified 
+        queue. Metadata is associated with the queue as name-values pairs.
         
-        queue_name: name of the queue.
+        queue_name: Name of the queue.
         '''
         _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
@@ -152,16 +188,17 @@ class QueueService(_StorageClient):
         request.headers = _update_storage_queue_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_response_for_dict_prefix(response, prefix='x-ms-meta')
+        return _parse_response_for_dict_prefix(response, prefixes=['x-ms-meta', 'x-ms-approximate-messages-count'])
 
     def set_queue_metadata(self, queue_name, x_ms_meta_name_values=None):
         '''
-        Sets user-defined metadata on the specified queue. Metadata is associated 
-        with the queue as name-value pairs.
+        Sets user-defined metadata on the specified queue. Metadata is 
+        associated with the queue as name-value pairs.
         
-        queue_name: name of the queue.
-        x_ms_meta_name_values: Optional. A dict containing name-value pairs to associate 
-        		with the queue as metadata.
+        queue_name: Name of the queue.
+        x_ms_meta_name_values:
+            Optional. A dict containing name-value pairs to associate with the 
+            queue as metadata.
         '''
         _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
@@ -175,18 +212,26 @@ class QueueService(_StorageClient):
 
     def put_message(self, queue_name, message_text, visibilitytimeout=None, messagettl=None):
         '''
-        Adds a new message to the back of the message queue. A visibility timeout can 
-        also be specified to make the message invisible until the visibility timeout 
-        expires. A message must be in a format that can be included in an XML request 
-        with UTF-8 encoding. The encoded message can be up to 64KB in size for versions 
-        2011-08-18 and newer, or 8KB in size for previous versions.
+        Adds a new message to the back of the message queue. A visibility 
+        timeout can also be specified to make the message invisible until the 
+        visibility timeout expires. A message must be in a format that can be 
+        included in an XML request with UTF-8 encoding. The encoded message can 
+        be up to 64KB in size for versions 2011-08-18 and newer, or 8KB in size 
+        for previous versions.
         
-        queue_name: name of the queue.
-        visibilitytimeout: Optional. If specified, the request must be made using an 
-        		x-ms-version of 2011-08-18 or newer.
-        messagettl: Optional. Specifies the time-to-live interval for the message, 
-        		in seconds. The maximum time-to-live allowed is 7 days. If this parameter
-        		is omitted, the default time-to-live is 7 days.
+        queue_name: Name of the queue.
+        message_text: Message content.
+        visibilitytimeout:
+            Optional. If not specified, the default value is 0. Specifies the 
+            new visibility timeout value, in seconds, relative to server time. 
+            The new value must be larger than or equal to 0, and cannot be 
+            larger than 7 days. The visibility timeout of a message cannot be 
+            set to a value later than the expiry time. visibilitytimeout 
+            should be set to a value smaller than the time-to-live value.
+        messagettl:
+            Optional. Specifies the time-to-live interval for the message, in 
+            seconds. The maximum time-to-live allowed is 7 days. If this 
+            parameter is omitted, the default time-to-live is 7 days.
         '''
         _validate_not_none('queue_name', queue_name)
         _validate_not_none('message_text', message_text)
@@ -210,16 +255,19 @@ class QueueService(_StorageClient):
         '''
         Retrieves one or more messages from the front of the queue.
         
-        queue_name: name of the queue.
-        numofmessages: Optional. A nonzero integer value that specifies the number of 
-        		messages to retrieve from the queue, up to a maximum of 32. If fewer are
-        		visible, the visible messages are returned. By default, a single message
-        		is retrieved from the queue with this operation.
-        visibilitytimeout: Required. Specifies the new visibility timeout value, in 
-        		seconds, relative to server time. The new value must be larger than or 
-        		equal to 1 second, and cannot be larger than 7 days, or larger than 2 
-        		hours on REST protocol versions prior to version 2011-08-18. The visibility
-        		timeout of a message can be set to a value later than the expiry time.
+        queue_name: Name of the queue.
+        numofmessages:
+            Optional. A nonzero integer value that specifies the number of 
+            messages to retrieve from the queue, up to a maximum of 32. If 
+            fewer are visible, the visible messages are returned. By default, 
+            a single message is retrieved from the queue with this operation.
+        visibilitytimeout:
+            Specifies the new visibility timeout value, in seconds, relative 
+            to server time. The new value must be larger than or equal to 1 
+            second, and cannot be larger than 7 days, or larger than 2 hours 
+            on REST protocol versions prior to version 2011-08-18. The 
+            visibility timeout of a message can be set to a value later than 
+            the expiry time.
         '''
         _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
@@ -241,10 +289,11 @@ class QueueService(_StorageClient):
         Retrieves one or more messages from the front of the queue, but does not alter 
         the visibility of the message. 
         
-        queue_name: name of the queue.
-        numofmessages: Optional. A nonzero integer value that specifies the number of 
-        		messages to peek from the queue, up to a maximum of 32. By default, 
-        		a single message is peeked from the queue with this operation.
+        queue_name: Name of the queue.
+        numofmessages:
+            Optional. A nonzero integer value that specifies the number of 
+            messages to peek from the queue, up to a maximum of 32. By default, 
+            a single message is peeked from the queue with this operation.
         '''
         _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
@@ -262,9 +311,11 @@ class QueueService(_StorageClient):
         '''
         Deletes the specified message.
         
-        queue_name: name of the queue.
-        popreceipt: Required. A valid pop receipt value returned from an earlier call 
-        		to the Get Messages or Update Message operation.
+        queue_name: Name of the queue.
+        message_id: Message to delete.
+        popreceipt:
+            Required. A valid pop receipt value returned from an earlier call 
+            to the Get Messages or Update Message operation.
         '''
         _validate_not_none('queue_name', queue_name)
         _validate_not_none('message_id', message_id)
@@ -282,7 +333,7 @@ class QueueService(_StorageClient):
         '''
         Deletes all messages from the specified queue.
         
-        queue_name: name of the queue.
+        queue_name: Name of the queue.
         '''
         _validate_not_none('queue_name', queue_name)
         request = HTTPRequest()
@@ -298,14 +349,18 @@ class QueueService(_StorageClient):
         Updates the visibility timeout of a message. You can also use this 
         operation to update the contents of a message. 
         
-        queue_name: name of the queue.
-        popreceipt: Required. A valid pop receipt value returned from an earlier call 
-        		to the Get Messages or Update Message operation. 
-        visibilitytimeout: Required. Specifies the new visibility timeout value, in 
-        		seconds, relative to server time. The new value must be larger than or 
-        		equal to 0, and cannot be larger than 7 days. The visibility timeout 
-        		of a message cannot be set to a value later than the expiry time. A 
-        		message can be updated until it has been deleted or has expired.
+        queue_name: Name of the queue.
+        message_id: Message to update.
+        message_text: Content of message.
+        popreceipt:
+            Required. A valid pop receipt value returned from an earlier call 
+            to the Get Messages or Update Message operation. 
+        visibilitytimeout:
+            Required. Specifies the new visibility timeout value, in seconds, 
+            relative to server time. The new value must be larger than or equal 
+            to 0, and cannot be larger than 7 days. The visibility timeout of a 
+            message cannot be set to a value later than the expiry time. A 
+            message can be updated until it has been deleted or has expired.
         '''
         _validate_not_none('queue_name', queue_name)
         _validate_not_none('message_id', message_id)
@@ -335,7 +390,7 @@ class QueueService(_StorageClient):
         Sets the properties of a storage account's Queue service, including Windows Azure 
         Storage Analytics.
         
-        storage_service_properties: a StorageServiceProperties object.
+        storage_service_properties: StorageServiceProperties object.
         timeout: Optional. The timeout parameter is expressed in seconds.
         '''
         _validate_not_none('storage_service_properties', storage_service_properties)

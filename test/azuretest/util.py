@@ -12,22 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-
 import json
 import os
 import time
 import unittest
+
 from exceptions import EnvironmentError
-
-STATUS_OK         = 200
-STATUS_CREATED    = 201
-STATUS_ACCEPTED   = 202
-STATUS_NO_CONTENT = 204
-STATUS_NOT_FOUND  = 404
-STATUS_CONFLICT   = 409
-
-DEFAULT_SLEEP_TIME = 60
-DEFAULT_LEASE_TIME = 65
 
 #------------------------------------------------------------------------------
 class Credentials(object):
