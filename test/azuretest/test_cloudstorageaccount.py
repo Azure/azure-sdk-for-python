@@ -12,11 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-
-from azure.storage import *
-from azuretest.util import *
-
 import unittest
+
+from azure import WindowsAzureError
+from azure.storage import (BlobService,
+                           CloudStorageAccount,
+                           QueueService,
+                           TableService,
+                           )
+from azuretest.util import (AzureTestCase,
+                            credentials,
+                            getUniqueTestRunID,
+                            getUniqueNameBasedOnCurrentTime,
+                            )
 
 #------------------------------------------------------------------------------
 class CloudStorageAccountTest(AzureTestCase):
