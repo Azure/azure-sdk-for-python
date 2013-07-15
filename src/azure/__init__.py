@@ -12,17 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import ast
+import base64
 import sys
 import types
+import urllib2
+
 from datetime import datetime
 from xml.dom import minidom
-import base64
-import urllib2
-import ast
 from xml.sax.saxutils import escape as xml_escape
 
 #--------------------------------------------------------------------------
 # constants
+
+__author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
+__version__ = '0.7.0'
 
 #Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
@@ -60,7 +64,7 @@ _ERROR_ACCESS_POLICY = 'share_access_policy must be either SignedIdentifier or A
 _ERROR_VALUE_SHOULD_NOT_BE_NULL  = '%s should not be None.'
 _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = 'Cannot serialize the specified value (%s) to an entity.  Please use an EntityProperty (which can specify custom types), int, str, bool, or datetime'
 
-_USER_AGENT_STRING = 'pyazure'
+_USER_AGENT_STRING = 'pyazure/' + __version__
 
 METADATA_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
 
@@ -661,7 +665,7 @@ def _parse_response_for_dict(response):
 
     return return_dict
 
-def _parse_response_for_dict_prefix(response, prefix):
+def _parse_response_for_dict_prefix(response, prefixes):
     ''' Extracts name-values for names starting with prefix from response header. Filter out the standard http headers.'''
 
     if response is None:
@@ -670,7 +674,7 @@ def _parse_response_for_dict_prefix(response, prefix):
     orig_dict = _parse_response_for_dict(response)
     if orig_dict:
         for name, value in orig_dict.iteritems():
-            for prefix_value in prefix:
+            for prefix_value in prefixes:
                 if name.lower().startswith(prefix_value.lower()):
                     return_dict[name] = value
                     break

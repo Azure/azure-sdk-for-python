@@ -1,3 +1,19 @@
+2013-07-08 Version 0.7.0
+ * Added service bus management API
+ * Added support for list blobs delimiter (for easier hierarchical listings)
+ * Fixes for bugs:
+   #90  get_blob_metadata returns more than the metadata (also get_container_metadata and get_queue_metadata)
+   #87  Proxy support for *NIX systems
+   #86  Fix capitalization in the 'Fingerprint' tag for XML of serialization of SSH keys configuration 
+   #83  Fixed an issue that prevented the creation of endpoints for a VM
+   #80  Error deserializing datetime value from Table Store
+   #79  Specify VirtualNetworkName when creating Virtual Machine
+ * Cleanup of imports
+ * Renamed some private functions that weren't starting with an underscore
+ * Removed code generator (it's now obsolete, we make changes directly in the Python sources)
+ 
+ Thank you to timanovsky, sebhomengo, pneumee, ogrisel, 0xc0decafe and apatard for their bug reports and fixes.
+
 2013-03-20 Version 0.6.2
  * Fixes for bugs: 
    #75  crash on python 2.7 x64 windows
@@ -14,5 +30,6 @@
  * Added service management API
  * Added ability to specify custom hosts
  * Added proxy server support (HTTP CONNECT tunneling)
+
 2012-06-06 Version 0.5.0
  * Initial Release

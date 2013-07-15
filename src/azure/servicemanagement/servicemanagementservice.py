@@ -12,62 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import base64
-import os
-import urllib2
-
-from azure.http.httpclient import _HTTPClient
-from azure.http import HTTPError
-from azure.servicemanagement import *
-from azure.servicemanagement import (_update_management_header,
+from azure import (WindowsAzureError,
+                   MANAGEMENT_HOST,
+                   _str,
+                   _validate_not_none,
+                   )
+from azure.servicemanagement import (AffinityGroups,
+                                     AffinityGroup,
+                                     AvailabilityResponse,
+                                     Certificate,
+                                     Certificates,
+                                     DataVirtualHardDisk,
+                                     Deployment,
+                                     Disk,
+                                     Disks,
+                                     Locations,
+                                     Operation,
+                                     HostedService,
+                                     HostedServices,
+                                     Images,
+                                     OperatingSystems,
+                                     OperatingSystemFamilies,
+                                     OSImage,
+                                     PersistentVMRole,
+                                     StorageService,
+                                     StorageServices,
+                                     Subscription,
+                                     SubscriptionCertificate,
+                                     SubscriptionCertificates,
                                      _management_error_handler,
+                                     _update_management_header,
                                      _parse_response_for_async_op,
-                                     _XmlSerializer)
-from azure.http import HTTPRequest
-from azure import (_validate_not_none, _str,
-                    _get_request_body, _update_request_uri_query,
-                    WindowsAzureError, _parse_response,
-                    MANAGEMENT_HOST)
+                                     _XmlSerializer,
+                                     )
+from azure.servicemanagement.servicemanagementclient import _ServiceManagementClient
 
-class ServiceManagementService:
+class ServiceManagementService(_ServiceManagementClient):
     def __init__(self, subscription_id=None, cert_file=None, host=MANAGEMENT_HOST):
-        self.requestid = None
-        self.subscription_id = subscription_id
-        self.cert_file = cert_file
-        self.host = host
-    
-        if not self.cert_file:
-            if os.environ.has_key(AZURE_MANAGEMENT_CERTFILE):
-                self.cert_file = os.environ[AZURE_MANAGEMENT_CERTFILE]
-        
-        if not self.subscription_id:
-            if os.environ.has_key(AZURE_MANAGEMENT_SUBSCRIPTIONID):
-                self.subscription_id = os.environ[AZURE_MANAGEMENT_SUBSCRIPTIONID]
-    
-        if not self.cert_file or not self.subscription_id:
-            raise WindowsAzureError('You need to provide subscription id and certificate file')
-        
-        self._httpclient = _HTTPClient(service_instance=self, cert_file=self.cert_file)
-        self._filter = self._httpclient.perform_request
-    
-    def with_filter(self, filter):
-        '''Returns a new service which will process requests with the
-        specified filter.  Filtering operations can include logging, automatic
-        retrying, etc...  The filter is a lambda which receives the HTTPRequest
-        and another lambda.  The filter can perform any pre-processing on the
-        request, pass it off to the next lambda, and then perform any post-processing
-        on the response.'''
-        res = ServiceManagementService(self.subscription_id, self.cert_file)
-        old_filter = self._filter
-        def new_filter(request):
-            return filter(request, old_filter)
-
-        res._filter = new_filter
-        return res
-
-    def set_proxy(self, host, port):
-        '''Sets the proxy server host and port for the HTTP CONNECT Tunnelling.'''
-        self._httpclient.set_proxy(host, port)
+        return super(ServiceManagementService, self).__init__(subscription_id, cert_file, host)
 
     #--Operations for storage accounts -----------------------------------
     def list_storage_accounts(self):
@@ -89,7 +71,8 @@ class ServiceManagementService:
 
     def get_storage_account_keys(self, service_name):
         '''
-        Returns the primary and secondary access keys for the specified storage account.
+        Returns the primary and secondary access keys for the specified 
+        storage account.
 
         service_name: Name of the storage service account.
         '''
@@ -99,10 +82,13 @@ class ServiceManagementService:
 
     def regenerate_storage_account_keys(self, service_name, key_type):
         '''
-        Regenerates the primary or secondary access key for the specified storage account.
+        Regenerates the primary or secondary access key for the specified 
+        storage account.
 
         service_name: Name of the storage service account.
-        key_type: Specifies which key to regenerate. Valid values are: Primary, Secondary
+        key_type: 
+            Specifies which key to regenerate. Valid values are: 
+            Primary, Secondary
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('key_type', key_type)
@@ -114,37 +100,39 @@ class ServiceManagementService:
         '''
         Creates a new storage account in Windows Azure.
 
-        service_name: A name for the storage account that is unique within 
-                      Windows Azure. Storage account names must be between 3 
-                      and 24 characters in length and use numbers and 
-                      lower-case letters only.
-        description: A description for the storage account. The description 
-                     may be up to 1024 characters in length.
-        label: A name for the storage account specified as a base64-encoded 
-               string. The name may be up to 100 characters in length. The 
-               name can be used identify the storage account for your tracking 
-               purposes.
-        affinity_group: The name of an existing affinity group in the 
-                        specified subscription. You can specify either a 
-                        location or affinity_group, but not both.
-        location: The location where the storage account is created. You can 
-                  specify either a location or affinity_group, but not both.
-        geo_replication_enabled: Specifies whether the storage account is 
-                                 created with the geo-replication enabled. If 
-                                 the element is not included in the request 
-                                 body, the default value is true. If set to 
-                                 true, the data in the storage account is 
-                                 replicated across more than one geographic 
-                                 location so as to enable resilience in the 
-                                 face of catastrophic service loss.
-        extended_properties: Dictionary containing name/value pairs of storage 
-                             account properties. You can have a maximum of 50 
-                             extended property name/value pairs. The maximum 
-                             length of the Name element is 64 characters, only 
-                             alphanumeric characters and underscores are valid 
-                             in the Name, and the name must start with a 
-                             letter. The value has a maximum length of 255 
-                             characters.
+        service_name:
+            A name for the storage account that is unique within Windows Azure. 
+            Storage account names must be between 3 and 24 characters in length 
+            and use numbers and lower-case letters only.
+        description:
+            A description for the storage account. The description may be up 
+            to 1024 characters in length.
+        label:
+            A name for the storage account specified as a base64-encoded 
+            string. The name may be up to 100 characters in length. The name 
+            can be used identify the storage account for your tracking 
+            purposes.
+        affinity_group:
+            The name of an existing affinity group in the specified 
+            subscription. You can specify either a location or affinity_group, 
+            but not both.
+        location:
+            The location where the storage account is created. You can specify 
+            either a location or affinity_group, but not both.
+        geo_replication_enabled:
+            Specifies whether the storage account is created with the 
+            geo-replication enabled. If the element is not included in the 
+            request body, the default value is true. If set to true, the data 
+            in the storage account is replicated across more than one 
+            geographic location so as to enable resilience in the face of 
+            catastrophic service loss.
+        extended_properties:
+            Dictionary containing name/value pairs of storage account 
+            properties. You can have a maximum of 50 extended property 
+            name/value pairs. The maximum length of the Name element is 64 
+            characters, only alphanumeric characters and underscores are valid 
+            in the Name, and the name must start with a letter. The value has 
+            a maximum length of 255 characters.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('description', description)
@@ -163,28 +151,27 @@ class ServiceManagementService:
         geo-replication status for a storage account in Windows Azure.
 
         service_name: Name of the storage service account.
-        description: A description for the storage account. The description 
-                     may be up to 1024 characters in length.
-        label: A name for the storage account specified as a base64-encoded 
-               string. The name may be up to 100 characters in length. The 
-               name can be used identify the storage account for your tracking 
-               purposes.
-        geo_replication_enabled: Specifies whether the storage account is 
-                                 created with the geo-replication enabled. If 
-                                 the element is not included in the request 
-                                 body, the default value is true. If set to 
-                                 true, the data in the storage account is 
-                                 replicated across more than one geographic 
-                                 location so as to enable resilience in the 
-                                 face of catastrophic service loss.
-        extended_properties: Dictionary containing name/value pairs of storage 
-                             account properties. You can have a maximum of 50 
-                             extended property name/value pairs. The maximum 
-                             length of the Name element is 64 characters, only 
-                             alphanumeric characters and underscores are valid 
-                             in the Name, and the name must start with a 
-                             letter. The value has a maximum length of 255 
-                             characters.
+        description:
+            A description for the storage account. The description may be up 
+            to 1024 characters in length.
+        label:
+            A name for the storage account specified as a base64-encoded 
+            string. The name may be up to 100 characters in length. The name 
+            can be used identify the storage account for your tracking purposes.
+        geo_replication_enabled:
+            Specifies whether the storage account is created with the 
+            geo-replication enabled. If the element is not included in the 
+            request body, the default value is true. If set to true, the data 
+            in the storage account is replicated across more than one 
+            geographic location so as to enable resilience in the face of 
+            catastrophic service loss.
+        extended_properties:
+            Dictionary containing name/value pairs of storage account 
+            properties. You can have a maximum of 50 extended property 
+            name/value pairs. The maximum length of the Name element is 64 
+            characters, only alphanumeric characters and underscores are valid 
+            in the Name, and the name must start with a letter. The value has 
+            a maximum length of 255 characters.
         '''
         _validate_not_none('service_name', service_name)
         return self._perform_put(self._get_storage_service_path(service_name),
@@ -228,9 +215,9 @@ class ServiceManagementService:
         service's deployments.
 
         service_name: Name of the hosted service.
-        embed_detail: When True, the management service returns properties for 
-                      all deployments of the service, as well as for the 
-                      service itself. 
+        embed_detail:
+            When True, the management service returns properties for all 
+            deployments of the service, as well as for the service itself. 
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('embed_detail', embed_detail)
@@ -241,30 +228,33 @@ class ServiceManagementService:
         '''
         Creates a new hosted service in Windows Azure.
 
-        service_name: A name for the hosted service that is unique within 
-                      Windows Azure. This name is the DNS prefix name and can 
-                      be used to access the hosted service.
-        label: A name for the hosted service that is base-64 encoded. The name 
-               can be up to 100 characters in length. The name can be used 
-               identify the storage account for your tracking purposes.
-        description: A description for the hosted service. The description can 
-                     be up to 1024 characters in length.
-        location: The location where the hosted service will be created. You 
-                  can specify either a location or affinity_group, but not 
-                  both.
-        affinity_group: The name of an existing affinity group associated with 
-                        this subscription. This name is a GUID and can be 
-                        retrieved by examining the name element of the response 
-                        body returned by list_affinity_groups. You can specify 
-                        either a location or affinity_group, but not both.
-        extended_properties: Dictionary containing name/value pairs of 
-                             extended hosted service properties. You can have 
-                             a maximum of 50 extended property name/value 
-                             pairs. The maximum length of the Name element is 
-                             64 characters, only alphanumeric characters and 
-                             underscores are valid in the Name, and the name 
-                             must start with a letter. The value has a maximum 
-                             length of 255 characters.
+        service_name:
+            A name for the hosted service that is unique within Windows Azure. 
+            This name is the DNS prefix name and can be used to access the 
+            hosted service.
+        label:
+            A name for the hosted service that is base-64 encoded. The name can 
+            be up to 100 characters in length. The name can be used identify 
+            the storage account for your tracking purposes.
+        description:
+            A description for the hosted service. The description can be up to 
+            1024 characters in length.
+        location:
+            The location where the hosted service will be created. You can 
+            specify either a location or affinity_group, but not both.
+        affinity_group:
+            The name of an existing affinity group associated with this 
+            subscription. This name is a GUID and can be retrieved by examining 
+            the name element of the response body returned by 
+            list_affinity_groups. You can specify either a location or 
+            affinity_group, but not both.
+        extended_properties:
+            Dictionary containing name/value pairs of storage account 
+            properties. You can have a maximum of 50 extended property 
+            name/value pairs. The maximum length of the Name element is 64 
+            characters, only alphanumeric characters and underscores are valid 
+            in the Name, and the name must start with a letter. The value has 
+            a maximum length of 255 characters.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('label', label)
@@ -281,22 +271,23 @@ class ServiceManagementService:
         Windows Azure.
 
         service_name: Name of the hosted service.
-        label: A name for the hosted service that is base64-encoded. The name 
-               may be up to 100 characters in length. You must specify a value 
-               for either Label or Description, or for both. It is recommended 
-               that the label be unique within the subscription. The name can 
-               be used identify the hosted service for your tracking purposes.
-        description: A description for the hosted service. The description may 
-                     be up to 1024 characters in length. You must specify a 
-                     value for either Label or Description, or for both.
-        extended_properties: Dictionary containing name/value pairs of 
-                             extended hosted service properties. You can have 
-                             a maximum of 50 extended property name/value 
-                             pairs. The maximum length of the Name element is 
-                             64 characters, only alphanumeric characters and 
-                             underscores are valid in the Name, and the name 
-                             must start with a letter. The value has a maximum 
-                             length of 255 characters.
+        label:
+            A name for the hosted service that is base64-encoded. The name may 
+            be up to 100 characters in length. You must specify a value for 
+            either Label or Description, or for both. It is recommended that 
+            the label be unique within the subscription. The name can be used 
+            identify the hosted service for your tracking purposes.
+        description:
+            A description for the hosted service. The description may be up to 
+            1024 characters in length. You must specify a value for either 
+            Label or Description, or for both.
+        extended_properties:
+            Dictionary containing name/value pairs of storage account 
+            properties. You can have a maximum of 50 extended property 
+            name/value pairs. The maximum length of the Name element is 64 
+            characters, only alphanumeric characters and underscores are valid 
+            in the Name, and the name must start with a letter. The value has 
+            a maximum length of 255 characters.
         '''
         _validate_not_none('service_name', service_name)
         return self._perform_put(self._get_hosted_service_path(service_name),
@@ -317,8 +308,9 @@ class ServiceManagementService:
         a deployment.
 
         service_name: Name of the hosted service.
-        deployment_slot: The environment to which the hosted service is 
-                         deployed. Valid values are: staging, production
+        deployment_slot:
+            The environment to which the hosted service is deployed. Valid 
+            values are: staging, production
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_slot', deployment_slot)
@@ -344,42 +336,43 @@ class ServiceManagementService:
         or production.
 
         service_name: Name of the hosted service.
-        deployment_slot: The environment to which the hosted service is 
-                         deployed. Valid values are: staging, production
-        name: The name for the deployment. The deployment name must be unique 
-              among other deployments for the hosted service.
-        package_url: A URL that refers to the location of the service package 
-                     in the Blob service. The service package can be located 
-                     either in a storage account beneath the same subscription 
-                     or a Shared Access Signature (SAS) URI from any storage 
-                     account.
-        label: A name for the hosted service that is base-64 encoded. The name 
-               can be up to 100 characters in length. It is recommended that 
-               the label be unique within the subscription. The name can be 
-               used identify the hosted service for your tracking purposes.
-        configuration: The base-64 encoded service configuration file for the 
-                       deployment. 
-        start_deployment: Indicates whether to start the deployment 
-                          immediately after it is created. If false, the 
-                          service model is still deployed to the virtual 
-                          machines but the code is not run immediately. 
-                          Instead, the service is Suspended until you call 
-                          Update Deployment Status and set the status to 
-                          Running, at which time the service will be started. 
-                          A deployed service still incurs charges, even if it 
-                          is suspended.
-        treat_warnings_as_error: Indicates whether to treat package validation 
-                                 warnings as errors. If set to true, the 
-                                 Created Deployment operation fails if there 
-                                 are validation warnings on the service package.
-        extended_properties: Dictionary containing name/value pairs of 
-                             extended hosted service properties. You can have 
-                             a maximum of 50 extended property name/value 
-                             pairs. The maximum length of the Name element is 
-                             64 characters, only alphanumeric characters and 
-                             underscores are valid in the Name, and the name 
-                             must start with a letter. The value has a maximum 
-                             length of 255 characters.
+        deployment_slot: 
+            The environment to which the hosted service is deployed. Valid 
+            values are: staging, production
+        name:
+            The name for the deployment. The deployment name must be unique 
+            among other deployments for the hosted service.
+        package_url:
+            A URL that refers to the location of the service package in the 
+            Blob service. The service package can be located either in a 
+            storage account beneath the same subscription or a Shared Access 
+            Signature (SAS) URI from any storage account.
+        label:
+            A name for the hosted service that is base-64 encoded. The name 
+            can be up to 100 characters in length. It is recommended that the 
+            label be unique within the subscription. The name can be used 
+            identify the hosted service for your tracking purposes.
+        configuration:
+            The base-64 encoded service configuration file for the deployment. 
+        start_deployment:
+            Indicates whether to start the deployment immediately after it is 
+            created. If false, the service model is still deployed to the 
+            virtual machines but the code is not run immediately. Instead, the 
+            service is Suspended until you call Update Deployment Status and 
+            set the status to Running, at which time the service will be 
+            started. A deployed service still incurs charges, even if it is 
+            suspended.
+        treat_warnings_as_error:
+            Indicates whether to treat package validation warnings as errors. 
+            If set to true, the Created Deployment operation fails if there 
+            are validation warnings on the service package.
+        extended_properties:
+            Dictionary containing name/value pairs of storage account 
+            properties. You can have a maximum of 50 extended property 
+            name/value pairs. The maximum length of the Name element is 64 
+            characters, only alphanumeric characters and underscores are valid 
+            in the Name, and the name must start with a letter. The value has 
+            a maximum length of 255 characters.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_slot', deployment_slot)
@@ -428,25 +421,24 @@ class ServiceManagementService:
 
         service_name: Name of the hosted service.
         deployment_name: The name of the deployment.
-        configuration: The base-64 encoded service configuration file for the 
-                       deployment. 
-        treat_warnings_as_error: Indicates whether to treat package validation 
-                                 warnings as errors. If set to true, the 
-                                 Created Deployment operation fails if there 
-                                 are validation warnings on the service 
-                                 package.
-        mode: If set to Manual, WalkUpgradeDomain must be called to apply the 
-              update. If set to Auto, the Windows Azure platform will 
-              automatically apply the update To each upgrade domain for the 
-              service. Possible values are: Auto, Manual
-        extended_properties: Dictionary containing name/value pairs of 
-                             extended hosted service properties. You can have 
-                             a maximum of 50 extended property name/value 
-                             pairs. The maximum length of the Name element is 
-                             64 characters, only alphanumeric characters and 
-                             underscores are valid in the Name, and the name 
-                             must start with a letter. The value has a maximum 
-                             length of 255 characters.
+        configuration:
+            The base-64 encoded service configuration file for the deployment. 
+        treat_warnings_as_error:
+            Indicates whether to treat package validation warnings as errors. 
+            If set to true, the Created Deployment operation fails if there 
+            are validation warnings on the service package.
+        mode:
+            If set to Manual, WalkUpgradeDomain must be called to apply the 
+            update. If set to Auto, the Windows Azure platform will 
+            automatically apply the update To each upgrade domain for the 
+            service. Possible values are: Auto, Manual
+        extended_properties:
+            Dictionary containing name/value pairs of storage account 
+            properties. You can have a maximum of 50 extended property 
+            name/value pairs. The maximum length of the Name element is 64 
+            characters, only alphanumeric characters and underscores are valid 
+            in the Name, and the name must start with a letter. The value has 
+            a maximum length of 255 characters.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -461,8 +453,9 @@ class ServiceManagementService:
 
         service_name: Name of the hosted service.
         deployment_name: The name of the deployment.
-        status: The change to initiate to the deployment status. Possible 
-                values include: Running, Suspended
+        status:
+            The change to initiate to the deployment status. Possible values 
+            include: Running, Suspended
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -477,34 +470,36 @@ class ServiceManagementService:
 
         service_name: Name of the hosted service.
         deployment_name: The name of the deployment.
-        mode: If set to Manual, WalkUpgradeDomain must be called to apply the 
-              update. If set to Auto, the Windows Azure platform will 
-              automatically apply the update To each upgrade domain for the 
-              service. Possible values are: Auto, Manual
-        package_url: A URL that refers to the location of the service package 
-                     in the Blob service. The service package can be located 
-                     either in a storage account beneath the same subscription 
-                     or a Shared Access Signature (SAS) URI from any storage 
-                     account.
-        configuration: The base-64 encoded service configuration file for the 
-                       deployment.
-        label: A name for the hosted service that is base-64 encoded. The name 
-               can be up to 100 characters in length. It is recommended that 
-               the label be unique within the subscription. The name can be 
-               used identify the hosted service for your tracking purposes.
-        force: Specifies whether the rollback should proceed even when it will 
-               cause local data to be lost from some role instances. True if 
-               the rollback should proceed; otherwise false if the rollback 
-               should fail. 
+        mode:
+            If set to Manual, WalkUpgradeDomain must be called to apply the 
+            update. If set to Auto, the Windows Azure platform will 
+            automatically apply the update To each upgrade domain for the 
+            service. Possible values are: Auto, Manual
+        package_url:
+            A URL that refers to the location of the service package in the 
+            Blob service. The service package can be located either in a 
+            storage account beneath the same subscription or a Shared Access 
+            Signature (SAS) URI from any storage account.
+        configuration:
+            The base-64 encoded service configuration file for the deployment.
+        label:
+            A name for the hosted service that is base-64 encoded. The name 
+            can be up to 100 characters in length. It is recommended that the 
+            label be unique within the subscription. The name can be used 
+            identify the hosted service for your tracking purposes.
+        force:
+            Specifies whether the rollback should proceed even when it will 
+            cause local data to be lost from some role instances. True if the 
+            rollback should proceed; otherwise false if the rollback should 
+            fail. 
         role_to_upgrade: The name of the specific role to upgrade.
-        extended_properties: Dictionary containing name/value pairs of 
-                             extended hosted service properties. You can have 
-                             a maximum of 50 extended property name/value 
-                             pairs. The maximum length of the Name element is 
-                             64 characters, only alphanumeric characters and 
-                             underscores are valid in the Name, and the name 
-                             must start with a letter. The value has a maximum 
-                             length of 255 characters.
+        extended_properties:
+            Dictionary containing name/value pairs of storage account 
+            properties. You can have a maximum of 50 extended property 
+            name/value pairs. The maximum length of the Name element is 64 
+            characters, only alphanumeric characters and underscores are valid 
+            in the Name, and the name must start with a letter. The value has 
+            a maximum length of 255 characters.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -524,10 +519,10 @@ class ServiceManagementService:
 
         service_name: Name of the hosted service.
         deployment_name: The name of the deployment.
-        upgrade_domain: An integer value that identifies the upgrade domain 
-                        to walk. Upgrade domains are identified with a 
-                        zero-based index: the first upgrade domain has an ID 
-                        of 0, the second has an ID of 1, and so on.
+        upgrade_domain:
+            An integer value that identifies the upgrade domain to walk. 
+            Upgrade domains are identified with a zero-based index: the first 
+            upgrade domain has an ID of 0, the second has an ID of 1, and so on.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -544,14 +539,16 @@ class ServiceManagementService:
 
         service_name: Name of the hosted service.
         deployment_name: The name of the deployment.
-        mode: Specifies whether the rollback should proceed automatically. 
+        mode:
+            Specifies whether the rollback should proceed automatically. 
                 auto - The rollback proceeds without further user input.
                 manual - You must call the Walk Upgrade Domain operation to 
                          apply the rollback to each upgrade domain.
-        force: Specifies whether the rollback should proceed even when it will 
-               cause local data to be lost from some role instances. True if 
-               the rollback should proceed; otherwise false if the rollback 
-               should fail. 
+        force:
+            Specifies whether the rollback should proceed even when it will 
+            cause local data to be lost from some role instances. True if the 
+            rollback should proceed; otherwise false if the rollback should 
+            fail.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -635,8 +632,8 @@ class ServiceManagementService:
 
         service_name: Name of the hosted service.
         data: The base-64 encoded form of the pfx file.
-        certificate_format: The service certificate format. The only supported 
-                            value is pfx.
+        certificate_format:
+            The service certificate format. The only supported value is pfx.
         password: The certificate password.
         '''
         _validate_not_none('service_name', service_name)
@@ -696,10 +693,10 @@ class ServiceManagementService:
         attempting to connect to resources associated with your Windows Azure 
         subscription.
 
-        public_key: A base64 representation of the management certificate 
-                    public key.
-        thumbprint: The thumb print that uniquely identifies the management 
-                    certificate.
+        public_key:
+            A base64 representation of the management certificate public key.
+        thumbprint:
+            The thumb print that uniquely identifies the management certificate.
         data: The certificate?s raw data in base-64 encoded .cer format.
         '''
         _validate_not_none('public_key', public_key)
@@ -716,7 +713,8 @@ class ServiceManagementService:
         attempting to connect to resources associated with your Windows Azure 
         subscription.
         
-        thumbprint: The thumb print that uniquely identifies the management certificate.
+        thumbprint:
+            The thumb print that uniquely identifies the management certificate.
         '''
         _validate_not_none('thumbprint', thumbprint)
         return self._perform_delete('/' + self.subscription_id + '/certificates/' + _str(thumbprint))
@@ -745,13 +743,15 @@ class ServiceManagementService:
         Creates a new affinity group for the specified subscription.
 
         name: A name for the affinity group that is unique to the subscription.
-        label: A base-64 encoded name for the affinity group. The name can be 
-               up to 100 characters in length.
-        location: The data center location where the affinity group will be 
-                  created. To list available locations, use the list_location 
-                  function.
-        description: A description for the affinity group. The description can 
-                     be up to 1024 characters in length.
+        label:
+            A base-64 encoded name for the affinity group. The name can be up 
+            to 100 characters in length.
+        location:
+            The data center location where the affinity group will be created. 
+            To list available locations, use the list_location function.
+        description:
+            A description for the affinity group. The description can be up to 
+            1024 characters in length.
         '''
         _validate_not_none('name', name)
         _validate_not_none('label', label)
@@ -765,10 +765,12 @@ class ServiceManagementService:
         specified subscription.
 
         affinity_group_name: The name of the affinity group.
-        label: A name for the affinity specified as a base-64 encoded string. 
-               The label can be up to 100 characters in length.
-        description: A description for the affinity group. The description can 
-                     be up to 1024 characters in length.
+        label:
+            A name for the affinity specified as a base-64 encoded string. 
+            The label can be up to 100 characters in length.
+        description:
+            A description for the affinity group. The description can be up to 
+            1024 characters in length.
         '''
         _validate_not_none('affinity_group_name', affinity_group_name)
         _validate_not_none('label', label)
@@ -847,51 +849,57 @@ class ServiceManagementService:
         return self._perform_get(self._get_role_path(service_name, deployment_name, role_name),
                                  PersistentVMRole)
 
-    def create_virtual_machine_deployment(self, service_name, deployment_name, deployment_slot, label, role_name, system_config, os_virtual_hard_disk, network_config=None, availability_set_name=None, data_virtual_hard_disks=None, role_size=None, role_type='PersistentVMRole'):
+    def create_virtual_machine_deployment(self, service_name, deployment_name, deployment_slot, label, role_name, system_config, os_virtual_hard_disk, network_config=None, availability_set_name=None, data_virtual_hard_disks=None, role_size=None, role_type='PersistentVMRole', virtual_network_name=None):
         '''
         Provisions a virtual machine based on the supplied configuration.
         
         service_name: Name of the hosted service.
-        deployment_name: The name for the deployment. The deployment name must 
-                         be unique among other deployments for the hosted 
-                         service.
-        deployment_slot: The environment to which the hosted service is 
-                         deployed. Valid values are: staging, production
-        label: A name for the hosted service that is base-64 encoded. The name 
-               can be up to 100 characters in length. It is recommended that 
-               the label be unique within the subscription. The name can be 
-               used identify the hosted service for your tracking purposes.
+        deployment_name:
+            The name for the deployment. The deployment name must be unique 
+            among other deployments for the hosted service.
+        deployment_slot:
+            The environment to which the hosted service is deployed. Valid 
+            values are: staging, production
+        label:
+            A name for the hosted service that is base-64 encoded. The name 
+            can be up to 100 characters in length. It is recommended that the 
+            label be unique within the subscription. The name can be used 
+            identify the hosted service for your tracking purposes.
         role_name: The name of the role.
-        system_config: Contains the metadata required to provision a virtual 
-                       machine from a Windows or Linux OS image.  Use an 
-                       instance of WindowsConfigurationSet or 
-                       LinuxConfigurationSet.
-        os_virtual_hard_disk: Contains the parameters Windows Azure uses to 
-                              create the operating system disk for the virtual 
-                              machine.
-        network_config: Encapsulates the metadata required to create the 
-                        virtual network configuration for a virtual machine. 
-                        If you do not include a network configuration set you 
-                        will not be able to access the VM through VIPs over 
-                        the internet. If your virtual machine belongs to a 
-                        virtual network you can not specify which subnet 
-                        address space it resides under.
-        availability_set_name: Specifies the name of an availability set to 
-                               which to add the virtual machine. This value 
-                               controls the virtual machine allocation in the 
-                               Windows Azure environment. Virtual machines 
-                               specified in the same availability set are 
-                               allocated to different nodes to maximize 
-                               availability.
-        data_virtual_hard_disks: Contains the parameters Windows Azure uses to 
-                                 create a data disk for a virtual machine.
-        role_size: The size of the virtual machine to allocate. The default 
-                   value is Small. Possible values are: ExtraSmall, Small, 
-                   Medium, Large, ExtraLarge. The specified value must be 
-                   compatible with the disk selected in the OSVirtualHardDisk 
-                   values.
-        role_type: The type of the role for the virtual machine. The only 
-                   supported value is PersistentVMRole.
+        system_config:
+            Contains the metadata required to provision a virtual machine from 
+            a Windows or Linux OS image.  Use an instance of 
+            WindowsConfigurationSet or LinuxConfigurationSet.
+        os_virtual_hard_disk:
+            Contains the parameters Windows Azure uses to create the operating 
+            system disk for the virtual machine.
+        network_config:
+            Encapsulates the metadata required to create the virtual network 
+            configuration for a virtual machine. If you do not include a 
+            network configuration set you will not be able to access the VM 
+            through VIPs over the internet. If your virtual machine belongs to 
+            a virtual network you can not specify which subnet address space 
+            it resides under.
+        availability_set_name:
+            Specifies the name of an availability set to which to add the 
+            virtual machine. This value controls the virtual machine 
+            allocation in the Windows Azure environment. Virtual machines 
+            specified in the same availability set are allocated to different 
+            nodes to maximize availability.
+        data_virtual_hard_disks:
+            Contains the parameters Windows Azure uses to create a data disk 
+            for a virtual machine.
+        role_size:
+            The size of the virtual machine to allocate. The default value is 
+            Small. Possible values are: ExtraSmall, Small, Medium, Large, 
+            ExtraLarge. The specified value must be compatible with the disk 
+            selected in the OSVirtualHardDisk values.
+        role_type:
+            The type of the role for the virtual machine. The only supported 
+            value is PersistentVMRole.
+        virtual_network_name:
+            Specifies the name of an existing virtual network to which the 
+            deployment will belong.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -901,7 +909,7 @@ class ServiceManagementService:
         _validate_not_none('system_config', system_config)
         _validate_not_none('os_virtual_hard_disk', os_virtual_hard_disk)
         return self._perform_post(self._get_deployment_path_using_name(service_name),
-                                  _XmlSerializer.virtual_machine_deployment_to_xml(deployment_name, deployment_slot, label, role_name, system_config, os_virtual_hard_disk, role_type, network_config, availability_set_name, data_virtual_hard_disks, role_size),
+                                  _XmlSerializer.virtual_machine_deployment_to_xml(deployment_name, deployment_slot, label, role_name, system_config, os_virtual_hard_disk, role_type, network_config, availability_set_name, data_virtual_hard_disks, role_size, virtual_network_name),
                                   async=True)
 
     def add_role(self, service_name, deployment_name, role_name, system_config, os_virtual_hard_disk, network_config=None, availability_set_name=None, data_virtual_hard_disks=None, role_size=None, role_type='PersistentVMRole'):
@@ -911,36 +919,37 @@ class ServiceManagementService:
         service_name: The name of the service.
         deployment_name: The name of the deployment.
         role_name: The name of the role.
-        system_config: Contains the metadata required to provision a virtual 
-                       machine from a Windows or Linux OS image.  Use an 
-                       instance of WindowsConfigurationSet or 
-                       LinuxConfigurationSet.
-        os_virtual_hard_disk: Contains the parameters Windows Azure uses to 
-                              create the operating system disk for the virtual 
-                              machine.
-        network_config: Encapsulates the metadata required to create the 
-                        virtual network configuration for a virtual machine. 
-                        If you do not include a network configuration set you 
-                        will not be able to access the VM through VIPs over 
-                        the internet. If your virtual machine belongs to a 
-                        virtual network you can not specify which subnet 
-                        address space it resides under.
-        availability_set_name: Specifies the name of an availability set to 
-                               which to add the virtual machine. This value 
-                               controls the virtual machine allocation in the 
-                               Windows Azure environment. Virtual machines 
-                               specified in the same availability set are 
-                               allocated to different nodes to maximize 
-                               availability.
-        data_virtual_hard_disks: Contains the parameters Windows Azure uses to 
-                                 create a data disk for a virtual machine.
-        role_size: The size of the virtual machine to allocate. The default 
-                   value is Small. Possible values are: ExtraSmall, Small, 
-                   Medium, Large, ExtraLarge. The specified value must be 
-                   compatible with the disk selected in the OSVirtualHardDisk 
-                   values.
-        role_type: The type of the role for the virtual machine. The only 
-                   supported value is PersistentVMRole.
+        system_config:
+            Contains the metadata required to provision a virtual machine from 
+            a Windows or Linux OS image.  Use an instance of 
+            WindowsConfigurationSet or LinuxConfigurationSet.
+        os_virtual_hard_disk:
+            Contains the parameters Windows Azure uses to create the operating 
+            system disk for the virtual machine.
+        network_config:
+            Encapsulates the metadata required to create the virtual network 
+            configuration for a virtual machine. If you do not include a 
+            network configuration set you will not be able to access the VM 
+            through VIPs over the internet. If your virtual machine belongs to 
+            a virtual network you can not specify which subnet address space 
+            it resides under.
+        availability_set_name:
+            Specifies the name of an availability set to which to add the 
+            virtual machine. This value controls the virtual machine allocation 
+            in the Windows Azure environment. Virtual machines specified in the 
+            same availability set are allocated to different nodes to maximize 
+            availability.
+        data_virtual_hard_disks:
+            Contains the parameters Windows Azure uses to create a data disk 
+            for a virtual machine.
+        role_size:
+            The size of the virtual machine to allocate. The default value is 
+            Small. Possible values are: ExtraSmall, Small, Medium, Large, 
+            ExtraLarge. The specified value must be compatible with the disk 
+            selected in the OSVirtualHardDisk values.
+        role_type:
+            The type of the role for the virtual machine. The only supported 
+            value is PersistentVMRole.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -958,32 +967,33 @@ class ServiceManagementService:
         service_name: The name of the service.
         deployment_name: The name of the deployment.
         role_name: The name of the role.
-        os_virtual_hard_disk: Contains the parameters Windows Azure uses to 
-                              create the operating system disk for the virtual 
-                              machine.
-        network_config: Encapsulates the metadata required to create the 
-                        virtual network configuration for a virtual machine. 
-                        If you do not include a network configuration set you 
-                        will not be able to access the VM through VIPs over 
-                        the internet. If your virtual machine belongs to a 
-                        virtual network you can not specify which subnet 
-                        address space it resides under.
-        availability_set_name: Specifies the name of an availability set to 
-                               which to add the virtual machine. This value 
-                               controls the virtual machine allocation in the 
-                               Windows Azure environment. Virtual machines 
-                               specified in the same availability set are 
-                               allocated to different nodes to maximize 
-                               availability.
-        data_virtual_hard_disks: Contains the parameters Windows Azure uses to 
-                                 create a data disk for a virtual machine.
-        role_size: The size of the virtual machine to allocate. The default 
-                   value is Small. Possible values are: ExtraSmall, Small, 
-                   Medium, Large, ExtraLarge. The specified value must be 
-                   compatible with the disk selected in the OSVirtualHardDisk 
-                   values.
-        role_type: The type of the role for the virtual machine. The only 
-                   supported value is PersistentVMRole.
+        os_virtual_hard_disk:
+            Contains the parameters Windows Azure uses to create the operating 
+            system disk for the virtual machine.
+        network_config:
+            Encapsulates the metadata required to create the virtual network 
+            configuration for a virtual machine. If you do not include a 
+            network configuration set you will not be able to access the VM 
+            through VIPs over the internet. If your virtual machine belongs to 
+            a virtual network you can not specify which subnet address space 
+            it resides under.
+        availability_set_name:
+            Specifies the name of an availability set to which to add the 
+            virtual machine. This value controls the virtual machine allocation 
+            in the Windows Azure environment. Virtual machines specified in the 
+            same availability set are allocated to different nodes to maximize 
+            availability.
+        data_virtual_hard_disks: 
+            Contains the parameters Windows Azure uses to create a data disk 
+            for a virtual machine.
+        role_size:
+            The size of the virtual machine to allocate. The default value is 
+            Small. Possible values are: ExtraSmall, Small, Medium, Large, 
+            ExtraLarge. The specified value must be compatible with the disk 
+            selected in the OSVirtualHardDisk values.
+        role_type:
+            The type of the role for the virtual machine. The only supported 
+            value is PersistentVMRole.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -1015,15 +1025,15 @@ class ServiceManagementService:
         service_name: The name of the service.
         deployment_name: The name of the deployment.
         role_name: The name of the role.
-        post_capture_action: Specifies the action after capture operation 
-                             completes. Possible values are: Delete, 
-                             Reprovision.
-        target_image_name: Specifies the image name of the captured virtual 
-                           machine.
-        target_image_label: Specifies the friendly name of the captured 
-                            virtual machine. 
-        provisioning_configuration: Use an instance of WindowsConfigurationSet 
-                                    or LinuxConfigurationSet.
+        post_capture_action:
+            Specifies the action after capture operation completes. Possible 
+            values are: Delete, Reprovision.
+        target_image_name:
+            Specifies the image name of the captured virtual machine.
+        target_image_label:
+            Specifies the friendly name of the captured virtual machine. 
+        provisioning_configuration:
+            Use an instance of WindowsConfigurationSet or LinuxConfigurationSet.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -1101,15 +1111,17 @@ class ServiceManagementService:
         subscription to the image repository.
 
         label: Specifies the friendly name of the image.
-        media_link: Specifies the location of the blob in Windows Azure blob 
-                    store where the media for the image is located. The blob 
-                    location must belong to a storage account in the 
-                    subscription specified by the <subscription-id> value in 
-                    the operation call. Example: 
-                    http://example.blob.core.windows.net/disks/mydisk.vhd
-        name: Specifies a name for the OS image that Windows Azure uses to 
-              identify the image when creating one or more virtual machines.
-        os: The operating system type of the OS image. Possible values are: 
+        media_link:
+            Specifies the location of the blob in Windows Azure blob store 
+            where the media for the image is located. The blob location must 
+            belong to a storage account in the subscription specified by the 
+            <subscription-id> value in the operation call. Example: 
+            http://example.blob.core.windows.net/disks/mydisk.vhd
+        name:
+            Specifies a name for the OS image that Windows Azure uses to 
+            identify the image when creating one or more virtual machines.
+        os:
+            The operating system type of the OS image. Possible values are: 
             Linux, Windows
         '''
         _validate_not_none('label', label)
@@ -1125,18 +1137,21 @@ class ServiceManagementService:
         Updates an OS image that in your image repository.
 
         image_name: The name of the image to update.
-        label: Specifies the friendly name of the image to be updated. You 
-               cannot use this operation to update images provided by the 
-               Windows Azure platform.
-        media_link: Specifies the location of the blob in Windows Azure blob 
-                    store where the media for the image is located. The blob 
-                    location must belong to a storage account in the 
-                    subscription specified by the <subscription-id> value in 
-                    the operation call. Example: 
-                    http://example.blob.core.windows.net/disks/mydisk.vhd
-        name: Specifies a name for the OS image that Windows Azure uses to 
-              identify the image when creating one or more VM Roles.
-        os: The operating system type of the OS image. Possible values are: 
+        label:
+            Specifies the friendly name of the image to be updated. You cannot 
+            use this operation to update images provided by the Windows Azure 
+            platform.
+        media_link:
+            Specifies the location of the blob in Windows Azure blob store 
+            where the media for the image is located. The blob location must 
+            belong to a storage account in the subscription specified by the 
+            <subscription-id> value in the operation call. Example: 
+            http://example.blob.core.windows.net/disks/mydisk.vhd
+        name:
+            Specifies a name for the OS image that Windows Azure uses to 
+            identify the image when creating one or more VM Roles.
+        os: 
+            The operating system type of the OS image. Possible values are: 
             Linux, Windows
         '''
         _validate_not_none('image_name', image_name)
@@ -1182,37 +1197,38 @@ class ServiceManagementService:
         service_name: The name of the service.
         deployment_name: The name of the deployment.
         role_name: The name of the role.
-        lun: Specifies the Logical Unit Number (LUN) for the disk. The LUN 
-             specifies the slot in which the data drive appears when mounted 
-             for usage by the virtual machine. Valid LUN values are 0 through 
-             15.
-        host_caching: Specifies the platform caching behavior of data disk 
-                      blob for read/write efficiency. The default vault is 
-                      ReadOnly. Possible values are: None, ReadOnly, ReadWrite
-        media_link: Specifies the location of the blob in Windows Azure blob 
-                    store where the media for the disk is located. The blob 
-                    location must belong to the storage account in the 
-                    subscription specified by the <subscription-id> value in 
-                    the operation call. Example: 
-                    http://example.blob.core.windows.net/disks/mydisk.vhd
-        disk_label: Specifies the description of the data disk. When you 
-                    attach a disk, either by directly referencing a media 
-                    using the MediaLink element or specifying the target disk 
-                    size, you can use the DiskLabel element to customize the 
-                    name property of the target data disk.
-        disk_name: Specifies the name of the disk. Windows Azure uses the 
-                   specified disk to create the data disk for the machine and 
-                   populates this field with the disk name.
-        logical_disk_size_in_gb: Specifies the size, in GB, of an empty disk 
-                                 to be attached to the role. The disk can be 
-                                 created as part of disk attach or create VM 
-                                 role call by specifying the value for this 
-                                 property. Windows Azure creates the empty 
-                                 disk based on size preference and attaches 
-                                 the newly created disk to the Role.
-        source_media_link: Specifies the location of a blob in account storage 
-                           which is mounted as a data disk when the virtual 
-                           machine is created.
+        lun:
+            Specifies the Logical Unit Number (LUN) for the disk. The LUN 
+            specifies the slot in which the data drive appears when mounted 
+            for usage by the virtual machine. Valid LUN values are 0 through 15.
+        host_caching:
+            Specifies the platform caching behavior of data disk blob for 
+            read/write efficiency. The default vault is ReadOnly. Possible 
+            values are: None, ReadOnly, ReadWrite
+        media_link:
+            Specifies the location of the blob in Windows Azure blob store 
+            where the media for the disk is located. The blob location must 
+            belong to the storage account in the subscription specified by the 
+            <subscription-id> value in the operation call. Example: 
+            http://example.blob.core.windows.net/disks/mydisk.vhd
+        disk_label:
+            Specifies the description of the data disk. When you attach a disk, 
+            either by directly referencing a media using the MediaLink element 
+            or specifying the target disk size, you can use the DiskLabel 
+            element to customize the name property of the target data disk.
+        disk_name:
+            Specifies the name of the disk. Windows Azure uses the specified 
+            disk to create the data disk for the machine and populates this 
+            field with the disk name.
+        logical_disk_size_in_gb:
+            Specifies the size, in GB, of an empty disk to be attached to the 
+            role. The disk can be created as part of disk attach or create VM 
+            role call by specifying the value for this property. Windows Azure 
+            creates the empty disk based on size preference and attaches the 
+            newly created disk to the Role.
+        source_media_link:
+            Specifies the location of a blob in account storage which is 
+            mounted as a data disk when the virtual machine is created.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -1230,38 +1246,40 @@ class ServiceManagementService:
         service_name: The name of the service.
         deployment_name: The name of the deployment.
         role_name: The name of the role.
-        lun: Specifies the Logical Unit Number (LUN) for the disk. The LUN 
-             specifies the slot in which the data drive appears when mounted 
-             for usage by the virtual machine. Valid LUN values are 0 through 
-             15.
-        host_caching: Specifies the platform caching behavior of data disk 
-                      blob for read/write efficiency. The default vault is 
-                      ReadOnly. Possible values are: None, ReadOnly, ReadWrite
-        media_link: Specifies the location of the blob in Windows Azure blob 
-                    store where the media for the disk is located. The blob 
-                    location must belong to the storage account in the 
-                    subscription specified by the <subscription-id> value in 
-                    the operation call. Example: 
-                    http://example.blob.core.windows.net/disks/mydisk.vhd
-        updated_lun: Specifies the Logical Unit Number (LUN) for the disk. The 
-                     LUN specifies the slot in which the data drive appears 
-                     when mounted for usage by the virtual machine. Valid LUN 
-                     values are 0 through 15.
-        disk_label: Specifies the description of the data disk. When you 
-                    attach a disk, either by directly referencing a media 
-                    using the MediaLink element or specifying the target disk 
-                    size, you can use the DiskLabel element to customize the 
-                    name property of the target data disk.
-        disk_name: Specifies the name of the disk. Windows Azure uses the 
-                   specified disk to create the data disk for the machine and 
-                   populates this field with the disk name.
-        logical_disk_size_in_gb: Specifies the size, in GB, of an empty disk 
-                                 to be attached to the role. The disk can be 
-                                 created as part of disk attach or create VM 
-                                 role call by specifying the value for this 
-                                 property. Windows Azure creates the empty 
-                                 disk based on size preference and attaches 
-                                 the newly created disk to the Role.
+        lun:
+            Specifies the Logical Unit Number (LUN) for the disk. The LUN 
+            specifies the slot in which the data drive appears when mounted 
+            for usage by the virtual machine. Valid LUN values are 0 through 
+            15.
+        host_caching:
+            Specifies the platform caching behavior of data disk blob for 
+            read/write efficiency. The default vault is ReadOnly. Possible 
+            values are: None, ReadOnly, ReadWrite
+        media_link:
+            Specifies the location of the blob in Windows Azure blob store 
+            where the media for the disk is located. The blob location must 
+            belong to the storage account in the subscription specified by 
+            the <subscription-id> value in the operation call. Example: 
+            http://example.blob.core.windows.net/disks/mydisk.vhd
+        updated_lun:
+            Specifies the Logical Unit Number (LUN) for the disk. The LUN 
+            specifies the slot in which the data drive appears when mounted 
+            for usage by the virtual machine. Valid LUN values are 0 through 15.
+        disk_label:
+            Specifies the description of the data disk. When you attach a disk, 
+            either by directly referencing a media using the MediaLink element 
+            or specifying the target disk size, you can use the DiskLabel 
+            element to customize the name property of the target data disk.
+        disk_name:
+            Specifies the name of the disk. Windows Azure uses the specified 
+            disk to create the data disk for the machine and populates this 
+            field with the disk name.
+        logical_disk_size_in_gb: 
+            Specifies the size, in GB, of an empty disk to be attached to the 
+            role. The disk can be created as part of disk attach or create VM 
+            role call by specifying the value for this property. Windows Azure 
+            creates the empty disk based on size preference and attaches the 
+            newly created disk to the Role.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -1307,18 +1325,19 @@ class ServiceManagementService:
         Adds a disk to the user image repository. The disk can be an OS disk 
         or a data disk.
 
-        has_operating_system: Specifies whether the disk contains an operation 
-                              system. Only a disk with an operating system 
-                              installed can be mounted as OS Drive.
+        has_operating_system:
+            Specifies whether the disk contains an operation system. Only a 
+            disk with an operating system installed can be mounted as OS Drive.
         label: Specifies the description of the disk.
-        media_link: Specifies the location of the blob in Windows Azure blob 
-                    store where the media for the disk is located. The blob 
-                    location must belong to the storage account in the current 
-                    subscription specified by the <subscription-id> value in 
-                    the operation call. Example: 
-                    http://example.blob.core.windows.net/disks/mydisk.vhd
-        name: Specifies a name for the disk. Windows Azure uses the name to 
-              identify the disk when creating virtual machines from the disk.
+        media_link:
+            Specifies the location of the blob in Windows Azure blob store 
+            where the media for the disk is located. The blob location must 
+            belong to the storage account in the current subscription specified 
+            by the <subscription-id> value in the operation call. Example: 
+            http://example.blob.core.windows.net/disks/mydisk.vhd
+        name:
+            Specifies a name for the disk. Windows Azure uses the name to 
+            identify the disk when creating virtual machines from the disk.
         os: The OS type of the disk. Possible values are: Linux, Windows
         '''
         _validate_not_none('has_operating_system', has_operating_system)
@@ -1334,18 +1353,19 @@ class ServiceManagementService:
         Updates an existing disk in your image repository.
 
         disk_name: The name of the disk to update.
-        has_operating_system: Specifies whether the disk contains an operation 
-                              system. Only a disk with an operating system 
-                              installed can be mounted as OS Drive.
+        has_operating_system:
+            Specifies whether the disk contains an operation system. Only a 
+            disk with an operating system installed can be mounted as OS Drive.
         label: Specifies the description of the disk.
-        media_link: Specifies the location of the blob in Windows Azure blob 
-                    store where the media for the disk is located. The blob 
-                    location must belong to the storage account in the current 
-                    subscription specified by the <subscription-id> value in 
-                    the operation call. Example: 
-                    http://example.blob.core.windows.net/disks/mydisk.vhd
-        name: Specifies a name for the disk. Windows Azure uses the name to 
-              identify the disk when creating virtual machines from the disk.
+        media_link:
+            Specifies the location of the blob in Windows Azure blob store 
+            where the media for the disk is located. The blob location must 
+            belong to the storage account in the current subscription specified 
+            by the <subscription-id> value in the operation call. Example: 
+            http://example.blob.core.windows.net/disks/mydisk.vhd
+        name:
+            Specifies a name for the disk. Windows Azure uses the name to 
+            identify the disk when creating virtual machines from the disk.
         os: The OS type of the disk. Possible values are: Linux, Windows
         '''
         _validate_not_none('disk_name', disk_name)
@@ -1368,78 +1388,6 @@ class ServiceManagementService:
         return self._perform_delete(self._get_disk_path(disk_name))
 
     #--Helper functions --------------------------------------------------
-    def _perform_request(self, request):
-        try:
-            resp = self._filter(request)
-        except HTTPError as e:
-            return _management_error_handler(e)
-    
-        return resp
-    
-    def _perform_get(self, path, response_type):
-        request = HTTPRequest()
-        request.method = 'GET'
-        request.host = self.host
-        request.path = path
-        request.path, request.query = _update_request_uri_query(request)
-        request.headers = _update_management_header(request)
-        response = self._perform_request(request)
-
-        return _parse_response(response, response_type)
-
-    def _perform_put(self, path, body, async=False):
-        request = HTTPRequest()
-        request.method = 'PUT'
-        request.host = self.host
-        request.path = path
-        request.body = _get_request_body(body)
-        request.path, request.query = _update_request_uri_query(request)
-        request.headers = _update_management_header(request)
-        response = self._perform_request(request)
-
-        if async:
-            return _parse_response_for_async_op(response)
-
-        return None
-
-    def _perform_post(self, path, body, response_type=None, async=False):
-        request = HTTPRequest()
-        request.method = 'POST'
-        request.host = self.host
-        request.path = path
-        request.body = _get_request_body(body)
-        request.path, request.query = _update_request_uri_query(request)
-        request.headers = _update_management_header(request)
-        response = self._perform_request(request)
-
-        if response_type is not None:
-            return _parse_response(response, response_type)
-
-        if async:
-            return _parse_response_for_async_op(response)
-
-        return None
-
-    def _perform_delete(self, path, async=False):
-        request = HTTPRequest()
-        request.method = 'DELETE'
-        request.host = self.host
-        request.path = path
-        request.path, request.query = _update_request_uri_query(request)
-        request.headers = _update_management_header(request)
-        response = self._perform_request(request)
-
-        if async:
-            return _parse_response_for_async_op(response)
-        
-        return None
-
-    def _get_path(self, resource, name):
-        path = '/' + self.subscription_id + '/' + resource
-        if name is not None:
-            path += '/' + _str(name)
-        return path
-
     def _get_storage_service_path(self, service_name=None):
         return self._get_path('services/storageservices', service_name)
 
