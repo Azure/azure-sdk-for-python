@@ -6,7 +6,7 @@
     <ProjectGuid>{c0742a2d-4862-40e4-8a28-036eecdbc614}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>azuretest\test_servicebusservice.py</StartupFile>
+    <StartupFile>azuretest\test_tableservice.py</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azuretest</Name>
@@ -22,7 +22,7 @@
     <InterpreterId>9a7a9026-48c1-4688-9d5d-e5699d47d074</InterpreterId>
     <InterpreterVersion>2.7</InterpreterVersion>
     <SearchPath>..\src\;..\test\</SearchPath>
-    <SccProjectName>$/TCWCS/Python/Main/Open_Source/Incubation/windowsazure/test</SccProjectName>
+    <SccProjectName>$/TCWCS/Python/Open_Source/Feature/azure/test</SccProjectName>
     <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
     <SccAuxPath>http://tcvstf:8080/tfs/tc</SccAuxPath>
     <SccLocalPath>.</SccLocalPath>
@@ -46,12 +46,16 @@
     <Compile Include="azuretest\doctest_servicebusservicequeue.py" />
     <Compile Include="azuretest\doctest_servicebusservicetopic.py" />
     <Compile Include="azuretest\doctest_tableservice.py" />
+    <Compile Include="azuretest\test_managementcertificatemanagementservice.py" />
+    <Compile Include="azuretest\test_servicebusmanagementservice.py" />
     <Compile Include="azuretest\test_blobservice.py" />
     <Compile Include="azuretest\test_cloudstorageaccount.py" />
+    <Compile Include="azuretest\test_affinitygroupmanagementservice.py" />
     <Compile Include="azuretest\test_servicemanagementservice.py" />
     <Compile Include="azuretest\test_queueservice.py" />
     <Compile Include="azuretest\test_sharedaccesssignature.py" />
     <Compile Include="azuretest\test_servicebusservice.py" />
+    <Compile Include="azuretest\test_storagemanagementservice.py" />
     <Compile Include="azuretest\test_tableservice.py" />
     <Compile Include="azuretest\util.py" />
     <Compile Include="azuretest\__init__.py" />
@@ -59,8 +63,11 @@
   <ItemGroup>
     <Content Include="azuretest\data\test.vhd" />
     <Content Include="azuretest\data\WindowsAzure1.cspkg" />
+    <Content Include="coverage.bat" />
+    <Content Include="coverage_x64.bat" />
     <Content Include="run.bash" />
     <Content Include="run.bat" />
+    <Content Include="run_x64.bat" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

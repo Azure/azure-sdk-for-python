@@ -13,10 +13,19 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import base64
-from azure.http import HTTPError
-from azure import (WindowsAzureError, WindowsAzureData, _general_error_handler,
-                          _str, _list_of, _scalar_list_of, _dict_of, _Base64String)
-import azure
+
+from xml.dom import minidom
+from azure import (WindowsAzureData,
+                   _Base64String,
+                   _create_entry,
+                   _dict_of,
+                   _general_error_handler,
+                   _get_children_from_path,
+                   _get_first_child_node_value,
+                   _list_of,
+                   _scalar_list_of,
+                   _str,
+                   )
 
 #-----------------------------------------------------------------------------
 # Constants for Azure app environment settings. 
@@ -569,9 +578,9 @@ class PublicKeys(WindowsAzureData):
         return self.public_keys[index]
 
 class PublicKey(WindowsAzureData):
-    def __init__(self):
-        self.finger_print = ''
-        self.path = ''
+    def __init__(self, fingerprint=u'', path=u''):
+        self.fingerprint = fingerprint
+        self.path = path
 
 class KeyPairs(WindowsAzureData):
     def __init__(self):
@@ -587,9 +596,9 @@ class KeyPairs(WindowsAzureData):
         return self.key_pairs[index]
 
 class KeyPair(WindowsAzureData):
-    def __init__(self):
-        self.finger_print = u''
-        self.path = u''
+    def __init__(self, fingerprint=u'', path=u''):
+        self.fingerprint = fingerprint
+        self.path = path
 
 class LoadBalancerProbe(WindowsAzureData):
     def __init__(self):
@@ -631,6 +640,24 @@ class OSVirtualHardDisk(WindowsAzureData):
 class AsynchronousOperationResult(WindowsAzureData):
     def __init__(self, request_id=None):
         self.request_id = request_id
+
+class ServiceBusRegion(WindowsAzureData):
+    def __init__(self):
+        self.code = u''
+        self.fullname = u''
+
+class ServiceBusNamespace(WindowsAzureData):
+    def __init__(self):
+        self.name = u''
+        self.region = u''
+        self.default_key = u''
+        self.status = u''
+        self.created_at = u''
+        self.acs_management_endpoint = u''
+        self.servicebus_endpoint = u''
+        self.connection_string = u''
+        self.subscription_id = u''
+        self.enabled = False
 
 def _update_management_header(request):
     ''' Add additional headers for management. '''
@@ -880,14 +907,14 @@ class _XmlSerializer(object):
             xml += '<PublicKeys>'
             for key in configuration.ssh.public_keys:
                 xml += '<PublicKey>'
-                xml += _XmlSerializer.data_to_xml([('FingerPrint', key.finger_print),
+                xml += _XmlSerializer.data_to_xml([('Fingerprint', key.fingerprint),
                                                    ('Path', key.path)])
                 xml += '</PublicKey>'
             xml += '</PublicKeys>'
             xml += '<KeyPairs>'
             for key in configuration.ssh.key_pairs:
                 xml += '<KeyPair>'
-                xml += _XmlSerializer.data_to_xml([('FingerPrint', key.finger_print),
+                xml += _XmlSerializer.data_to_xml([('Fingerprint', key.fingerprint),
                                                    ('Path', key.path)])
                 xml += '</KeyPair>'
             xml += '</KeyPairs>'
@@ -912,7 +939,7 @@ class _XmlSerializer(object):
                                                    ('Protocol', endpoint.load_balancer_probe.protocol)])
                 xml += '</LoadBalancerProbe>'
 
-            xml += _XmlSerializer.data_to_xml([('Protocol', endpoint.protocol),
+            xml += _XmlSerializer.data_to_xml([('Protocol', endpoint.protocol),  
                                                ('EnableDirectServerReturn', endpoint.enable_direct_server_return, _lower)])
             xml += '</InputEndpoint>'
         xml += '</InputEndpoints>'
@@ -971,7 +998,7 @@ class _XmlSerializer(object):
         
         if role_size is not None:
             xml += _XmlSerializer.data_to_xml([('RoleSize', role_size)])
-        
+
         return xml
 
     @staticmethod
@@ -1000,7 +1027,7 @@ class _XmlSerializer(object):
         return _XmlSerializer.doc_from_xml('CaptureRoleOperation', xml)
 
     @staticmethod
-    def virtual_machine_deployment_to_xml(deployment_name, deployment_slot, label, role_name, system_configuration_set, os_virtual_hard_disk, role_type, network_configuration_set, availability_set_name, data_virtual_hard_disks, role_size):
+    def virtual_machine_deployment_to_xml(deployment_name, deployment_slot, label, role_name, system_configuration_set, os_virtual_hard_disk, role_type, network_configuration_set, availability_set_name, data_virtual_hard_disks, role_size, virtual_network_name):
         xml = _XmlSerializer.data_to_xml([('Name', deployment_name),
                                           ('DeploymentSlot', deployment_slot),
                                           ('Label', label, base64.b64encode)])
@@ -1009,6 +1036,10 @@ class _XmlSerializer(object):
         xml += _XmlSerializer.role_to_xml(availability_set_name, data_virtual_hard_disks, network_configuration_set, os_virtual_hard_disk, role_name, role_size, role_type, system_configuration_set)
         xml += '</Role>'
         xml += '</RoleList>'
+
+        if virtual_network_name is not None:
+            xml += _XmlSerializer.data_to_xml([('VirtualNetworkName', virtual_network_name)])
+
         return _XmlSerializer.doc_from_xml('Deployment', xml)
 
     @staticmethod
@@ -1060,4 +1091,139 @@ class _XmlSerializer(object):
             xml += '</ExtendedProperties>'
         return xml
 
+def _parse_bool(value):
+    if value.lower() == 'true':
+        return True
+    return False
+
+class _ServiceBusManagementXmlSerializer(object):
+    @staticmethod
+    def namespace_to_xml(name, region):
+        '''Converts a service bus namespace description to xml
+
+        The xml format:
+        <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+        <entry xmlns="http://www.w3.org/2005/Atom">
+            <content type="application/xml">
+                <NamespaceDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">
+                    <Region>West US</Region>
+                </NamespaceDescription>
+            </content>
+        </entry>
+        '''
+        body = '<NamespaceDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
+        body += ''.join(['<Region>', region, '</Region>'])
+        body += '</NamespaceDescription>'
+
+        return _create_entry(body)
+
+    @staticmethod
+    def xml_to_namespace(xmlstr):
+        '''Converts xml response to service bus namespace
+
+        The xml format for namespace:
+          <entry>
+            <id>uuid:00000000-0000-0000-0000-000000000000;id=0000000</id>
+            <title type="text">myunittests</title>
+            <updated>2012-08-22T16:48:10Z</updated>
+            <content type="application/xml">
+              <NamespaceDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                <Name>myunittests</Name>
+                <Region>West US</Region>
+                <DefaultKey>0000000000000000000000000000000000000000000=</DefaultKey>
+                <Status>Active</Status>
+                <CreatedAt>2012-08-22T16:48:10.217Z</CreatedAt>
+                <AcsManagementEndpoint>https://myunittests-sb.accesscontrol.windows.net/</AcsManagementEndpoint>
+                <ServiceBusEndpoint>https://myunittests.servicebus.windows.net/</ServiceBusEndpoint>
+                <ConnectionString>Endpoint=sb://myunittests.servicebus.windows.net/;SharedSecretIssuer=owner;SharedSecretValue=0000000000000000000000000000000000000000000=</ConnectionString>
+                <SubscriptionId>00000000000000000000000000000000</SubscriptionId>
+                <Enabled>true</Enabled>
+              </NamespaceDescription>
+            </content>
+          </entry>
+        '''
+        xmldoc = minidom.parseString(xmlstr)
+        namespace = ServiceBusNamespace()
+
+        mappings = (
+            ('Name', 'name', None),
+            ('Region', 'region', None),
+            ('DefaultKey', 'default_key', None),
+            ('Status', 'status', None),
+            ('CreatedAt', 'created_at', None),
+            ('AcsManagementEndpoint', 'acs_management_endpoint', None),
+            ('ServiceBusEndpoint', 'servicebus_endpoint', None),
+            ('ConnectionString', 'connection_string', None),
+            ('SubscriptionId', 'subscription_id', None),
+            ('Enabled', 'enabled', _parse_bool),
+        )
+
+        for desc in _get_children_from_path(xmldoc, 'entry', 'content', 'NamespaceDescription'):
+            for xml_name, field_name, conversion_func in mappings:
+                node_value = _get_first_child_node_value(desc, xml_name)
+                if node_value is not None:
+                    if conversion_func is not None:
+                        node_value = conversion_func(node_value)
+                    setattr(namespace, field_name, node_value)
+
+        return namespace
+
+    @staticmethod
+    def xml_to_region(xmlstr):
+        '''Converts xml response to service bus region
+
+        The xml format for region:
+          <entry>
+            <id>uuid:157c311f-081f-4b4a-a0ba-a8f990ffd2a3;id=1756759</id>
+            <title type="text"></title>
+            <updated>2013-04-10T18:25:29Z</updated>
+            <content type="application/xml">
+              <RegionCodeDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                <Code>East Asia</Code>
+                <FullName>East Asia</FullName>
+              </RegionCodeDescription>
+            </content>
+          </entry>
+          '''
+        xmldoc = minidom.parseString(xmlstr)
+        region = ServiceBusRegion()
+
+        for desc in _get_children_from_path(xmldoc, 'entry', 'content', 'RegionCodeDescription'):        
+            node_value = _get_first_child_node_value(desc, 'Code')
+            if node_value is not None:
+                region.code = node_value
+            node_value = _get_first_child_node_value(desc, 'FullName')
+            if node_value is not None:
+                region.fullname = node_value
+
+        return region
+
+    @staticmethod
+    def xml_to_namespace_availability(xmlstr):
+        '''Converts xml response to service bus namespace availability
+
+        The xml format:
+        <?xml version="1.0" encoding="utf-8"?>
+        <entry xmlns="http://www.w3.org/2005/Atom">
+            <id>uuid:9fc7c652-1856-47ab-8d74-cd31502ea8e6;id=3683292</id>
+            <title type="text"></title>
+            <updated>2013-04-16T03:03:37Z</updated>
+            <content type="application/xml">
+                <NamespaceAvailability xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                    <Result>false</Result>
+                </NamespaceAvailability>
+            </content>
+        </entry>
+        '''
+        xmldoc = minidom.parseString(xmlstr)
+        availability = AvailabilityResponse()
+
+        for desc in _get_children_from_path(xmldoc, 'entry', 'content', 'NamespaceAvailability'):        
+            node_value = _get_first_child_node_value(desc, 'Result')
+            if node_value is not None:
+                availability.result = _parse_bool(node_value)
+
+        return availability
+
 from azure.servicemanagement.servicemanagementservice import ServiceManagementService
+from azure.servicemanagement.servicebusmanagementservice import ServiceBusManagementService

@@ -12,19 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import base64
-import urllib2
-import hmac
-import hashlib 
 import os
 
-
-from azure.storage import _storage_error_handler
-from azure.http.httpclient import _HTTPClient
+from azure import (WindowsAzureError,
+                   DEV_ACCOUNT_NAME,
+                   DEV_ACCOUNT_KEY,
+                   _ERROR_STORAGE_MISSING_INFO,
+                   )
 from azure.http import HTTPError
-from azure import (_parse_response, WindowsAzureError,
-                          DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY)
-import azure
+from azure.http.httpclient import _HTTPClient
+from azure.storage import _storage_error_handler
 
 #--------------------------------------------------------------------------
 # constants for azure app setting environment variables
@@ -39,6 +36,15 @@ class _StorageClient(object):
     '''
 
     def __init__(self, account_name=None, account_key=None, protocol='http', host_base='', dev_host=''):
+        '''
+        account_name: your storage account name, required for all operations.
+        account_key: your storage account key, required for all operations.
+        protocol: Optional. Protocol. Defaults to http.
+        host_base: 
+            Optional. Live host base url. Defaults to Azure url. Override this 
+            for on-premise.
+        dev_host: Optional. Dev host url. Defaults to localhost. 
+        '''
         if account_name is not None:
             self.account_name = account_name.encode('ascii', 'ignore')
         else:
@@ -82,19 +88,21 @@ class _StorageClient(object):
                     self.account_key = os.environ[AZURE_STORAGE_ACCESS_KEY]
 
         if not self.account_name or not self.account_key:
-            raise WindowsAzureError(azure._ERROR_STORAGE_MISSING_INFO)
+            raise WindowsAzureError(_ERROR_STORAGE_MISSING_INFO)
         
         self._httpclient = _HTTPClient(service_instance=self, account_key=self.account_key, account_name=self.account_name, protocol=protocol)
         self._batchclient = None
         self._filter = self._perform_request_worker
     
     def with_filter(self, filter):
-        '''Returns a new service which will process requests with the
-        specified filter.  Filtering operations can include logging, automatic
-        retrying, etc...  The filter is a lambda which receives the HTTPRequest
-        and another lambda.  The filter can perform any pre-processing on the
-        request, pass it off to the next lambda, and then perform any post-processing
-        on the response.'''
+        '''
+        Returns a new service which will process requests with the specified 
+        filter.  Filtering operations can include logging, automatic retrying, 
+        etc...  The filter is a lambda which receives the HTTPRequest and 
+        another lambda.  The filter can perform any pre-processing on the
+        request, pass it off to the next lambda, and then perform any 
+        post-processing on the response.
+        '''
         res = type(self)(self.account_name, self.account_key, self.protocol)
         old_filter = self._filter
         def new_filter(request):
@@ -104,7 +112,9 @@ class _StorageClient(object):
         return res
 
     def set_proxy(self, host, port):
-        '''Sets the proxy server host and port for the HTTP CONNECT Tunnelling.'''
+        '''
+        Sets the proxy server host and port for the HTTP CONNECT Tunnelling.
+        '''
         self._httpclient.set_proxy(host, port)
 
     def _get_host(self):
@@ -117,8 +127,10 @@ class _StorageClient(object):
         return self._httpclient.perform_request(request)
 
     def _perform_request(self, request):
-        ''' Sends the request and return response. Catches HTTPError and hand it to error handler'''
-
+        '''
+        Sends the request and return response. Catches HTTPError and hand it 
+        to error handler
+        '''
         try:
             if self._batchclient is not None:
                 return self._batchclient.insert_request_to_batch(request)

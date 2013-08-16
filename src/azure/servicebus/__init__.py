@@ -12,23 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import ast
+import httplib
 import sys
 import time
 import urllib2
-from xml.dom import minidom
-import ast
-import httplib
+
 from datetime import datetime
-
-
+from xml.dom import minidom
+from azure import (WindowsAzureData,
+                   WindowsAzureError,
+                   xml_escape,
+                   _create_entry,
+                   _general_error_handler,
+                   _get_entry_properties,
+                   _get_child_nodes,
+                   _get_children_from_path,
+                   _get_first_child_node_value,
+                   _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
+                   _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
+                   _ERROR_QUEUE_NOT_FOUND,
+                   _ERROR_TOPIC_NOT_FOUND,
+                   _USER_AGENT_STRING,
+                   )
 from azure.http import HTTPError
-from azure import (WindowsAzureError, WindowsAzureData, _general_error_handler,
-                          _create_entry, _get_entry_properties, xml_escape,
-                          _get_child_nodes, WindowsAzureMissingResourceError,
-                          WindowsAzureConflictError, _get_serialization_name, 
-                          _get_children_from_path, _get_first_child_node_value,
-                          _USER_AGENT_STRING)
-import azure
 
 #default rule name for subscription
 DEFAULT_RULE_NAME='$Default'
@@ -173,7 +180,7 @@ class Message(WindowsAzureData):
         elif self._topic_name and self._subscription_name:
             self.service_bus_service.delete_subscription_message(self._topic_name, self._subscription_name, self.broker_properties['SequenceNumber'], self.broker_properties['LockToken'])
         else:
-            raise WindowsAzureError(azure._ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE)
+            raise WindowsAzureError(_ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE)
 
     def unlock(self):
         ''' Unlocks itself if find queue name or topic name and subscription name. ''' 
@@ -182,7 +189,7 @@ class Message(WindowsAzureData):
         elif self._topic_name and self._subscription_name:
             self.service_bus_service.unlock_subscription_message(self._topic_name, self._subscription_name, self.broker_properties['SequenceNumber'], self.broker_properties['LockToken'])
         else:
-            raise WindowsAzureError(azure._ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK)
+            raise WindowsAzureError(_ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK)
 
     def add_headers(self, request):
         ''' add addtional headers to request for message request.'''
@@ -452,7 +459,7 @@ def _convert_xml_to_queue(xmlstr):
             invalid_queue = False
 
     if invalid_queue:
-        raise WindowsAzureError(azure._ERROR_QUEUE_NOT_FOUND)
+        raise WindowsAzureError(_ERROR_QUEUE_NOT_FOUND)
 
     #extract id, updated and name value from feed entry and set them of queue.
     for name, value in _get_entry_properties(xmlstr, True).iteritems():
@@ -513,7 +520,7 @@ def _convert_xml_to_topic(xmlstr):
             invalid_topic = False
 
     if invalid_topic:
-        raise WindowsAzureError(azure._ERROR_TOPIC_NOT_FOUND)
+        raise WindowsAzureError(_ERROR_TOPIC_NOT_FOUND)
 
     #extract id, updated and name value from feed entry and set them of topic.
     for name, value in _get_entry_properties(xmlstr, True).iteritems():
@@ -572,7 +579,7 @@ def _convert_xml_to_subscription(xmlstr):
 
     return subscription
 
-def convert_subscription_to_xml(subscription):
+def _convert_subscription_to_xml(subscription):
     ''' 
     Converts a subscription object to xml to send.  The order of each field of subscription 
     in xml is very important so we cann't simple call convert_class_to_xml. 
@@ -602,7 +609,7 @@ def convert_subscription_to_xml(subscription):
     subscription_body += '</SubscriptionDescription>'    
     return _create_entry(subscription_body)
 
-def convert_rule_to_xml(rule):
+def _convert_rule_to_xml(rule):
     ''' 
     Converts a rule object to xml to send.  The order of each field of rule 
     in xml is very important so we cann't simple call convert_class_to_xml. 
@@ -629,7 +636,7 @@ def convert_rule_to_xml(rule):
 
     return _create_entry(rule_body)
 
-def convert_topic_to_xml(topic):    
+def _convert_topic_to_xml(topic):    
     ''' 
     Converts a topic object to xml to send.  The order of each field of topic 
     in xml is very important so we cann't simple call convert_class_to_xml. 
@@ -655,7 +662,7 @@ def convert_topic_to_xml(topic):
 
     return _create_entry(topic_body)
 
-def convert_queue_to_xml(queue):
+def _convert_queue_to_xml(queue):
     ''' 
     Converts a queue object to xml to send.  The order of each field of queue 
     in xml is very important so we cann't simple call convert_class_to_xml. 

@@ -12,12 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-
-from azure.storage.queueservice import *
-
-from azuretest.util import *
-
 import unittest
+
+from azure import WindowsAzureError
+from azure.storage.queueservice import QueueService
+from azuretest.util import (AzureTestCase,
+                            credentials,
+                            getUniqueTestRunID,
+                            getUniqueNameBasedOnCurrentTime,
+                            )
 
 #------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'
@@ -134,6 +137,7 @@ class QueueServiceTest(AzureTestCase):
 
         #Asserts
         self.assertIsNotNone(result)
+        self.assertEqual(3, len(result))
         self.assertEqual(result['x-ms-approximate-messages-count'], '0')
         self.assertEqual('test', result['x-ms-meta-foo'])
         self.assertEqual('blah', result['x-ms-meta-bar'])
@@ -206,6 +210,7 @@ class QueueServiceTest(AzureTestCase):
 
         #Asserts
         self.assertIsNotNone(result)
+        self.assertEqual(3, len(result))
         self.assertEqual('0', result['x-ms-approximate-messages-count'])
         self.assertEqual('test', result['x-ms-meta-foo'])
         self.assertEqual('blah', result['x-ms-meta-bar'])

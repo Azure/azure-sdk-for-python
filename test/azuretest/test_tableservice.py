@@ -12,23 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-
-from azure.storage.tableservice import *
-from azure.storage import EntityProperty, Entity, StorageServiceProperties
-from azure import WindowsAzureError
-
-from azuretest.util import (credentials, 
-                            getUniqueTestRunID,
-                            STATUS_OK,
-                            STATUS_CREATED,
-                            STATUS_ACCEPTED,
-                            STATUS_NO_CONTENT,
-                            getUniqueNameBasedOnCurrentTime,
-                            AzureTestCase)
-
-import unittest
 import time
+import unittest
+
 from datetime import datetime
+from azure import WindowsAzureError
+from azure.storage import (Entity,
+                           EntityProperty,
+                           StorageServiceProperties,
+                           TableService,
+                           )
+from azuretest.util import (AzureTestCase,
+                            credentials,
+                            getUniqueTestRunID,
+                            getUniqueNameBasedOnCurrentTime,
+                            )
 
 #------------------------------------------------------------------------------
 
