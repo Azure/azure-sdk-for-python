@@ -34,6 +34,7 @@ VT_UI8 = 21
 VT_ARRAY = 8192
 
 HTTPREQUEST_PROXYSETTING_PROXY = 2
+HTTPREQUEST_SETCREDENTIALS_FOR_PROXY = 1
 
 HTTPREQUEST_PROXY_SETTING = c_long
 HTTPREQUEST_SETCREDENTIALS_FLAGS = c_long
@@ -298,6 +299,9 @@ class _WinHttpRequest(c_void_p):
 
         _WinHttpRequest._SetProxy(self, HTTPREQUEST_PROXYSETTING_PROXY, var_host, var_empty)
 
+    def set_proxy_credentials(self, user, password):
+        _WinHttpRequest._SetCredentials(self, BSTR(user), BSTR(password), HTTPREQUEST_SETCREDENTIALS_FOR_PROXY)
+
     def __del__(self):
         if self.value is not None:
             _WinHttpRequest._Release(self)
@@ -336,9 +340,12 @@ class _HTTPConnection:
         _CoInitialize(None)
         _CoCreateInstance(byref(clsid), 0, 1, byref(iid), byref(self._httprequest))
         
-    def set_tunnel(self, host, port=None):
+    def set_tunnel(self, host, port=None, headers=None):
         ''' Sets up the host and the port for the HTTP CONNECT Tunnelling. '''
         self._httprequest.set_tunnel(unicode(host), unicode(str(port)))
+
+    def set_proxy_credentials(self, user, password):
+        self._httprequest.set_proxy_credentials(unicode(user), unicode(password))
 
     def putrequest(self, method, uri):
         ''' Connects to host and sends the request. '''

@@ -85,16 +85,21 @@ LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
 class ServiceManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        proxy_host = credentials.getProxyHost()
-        proxy_port = credentials.getProxyPort()
+        self.sms = ServiceManagementService(credentials.getSubscriptionId(),
+                                            credentials.getManagementCertFile())
 
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(), credentials.getManagementCertFile())
-        if proxy_host:
-            self.sms.set_proxy(proxy_host, proxy_port)
+        self.sms.set_proxy(credentials.getProxyHost(),
+                           credentials.getProxyPort(),
+                           credentials.getProxyPort(),
+                           credentials.getProxyPassword())
 
-        self.bc = BlobService(account_name=credentials.getStorageServicesName(), account_key=credentials.getStorageServicesKey())
-        if proxy_host:
-            self.bc.set_proxy(proxy_host, proxy_port)
+        self.bc = BlobService(credentials.getStorageServicesName(),
+                              credentials.getStorageServicesKey())
+        
+        self.bc.set_proxy(credentials.getProxyHost(),
+                          credentials.getProxyPort(),
+                          credentials.getProxyUser(),
+                          credentials.getProxyPassword())
 
         self.hosted_service_name = getUniqueNameBasedOnCurrentTime('utsvc')
         self.container_name = getUniqueNameBasedOnCurrentTime('utctnr')

@@ -68,13 +68,13 @@ from azuretest.util import (AzureTestCase,
 class BlobServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.bc = BlobService(account_name=credentials.getStorageServicesName(), 
-                                  account_key=credentials.getStorageServicesKey())
+        self.bc = BlobService(credentials.getStorageServicesName(), 
+                              credentials.getStorageServicesKey())
 
-        proxy_host = credentials.getProxyHost()
-        proxy_port = credentials.getProxyPort()
-        if proxy_host:
-            self.bc.set_proxy(proxy_host, proxy_port)
+        self.bc.set_proxy(credentials.getProxyHost(),
+                          credentials.getProxyPort(),
+                          credentials.getProxyUser(), 
+                          credentials.getProxyPassword())
 
         __uid = getUniqueTestRunID()
 

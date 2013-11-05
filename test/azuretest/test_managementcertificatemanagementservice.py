@@ -28,12 +28,13 @@ MANAGEMENT_CERT_DATA = 'MIIC9jCCAeKgAwIBAgIQ00IFaqV9VqVJxI+wZka0szAJBgUrDgMCHQUA
 class ManagementCertificateManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        proxy_host = credentials.getProxyHost()
-        proxy_port = credentials.getProxyPort()
+        self.sms = ServiceManagementService(credentials.getSubscriptionId(),
+                                            credentials.getManagementCertFile())
 
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(), credentials.getManagementCertFile())
-        if proxy_host:
-            self.sms.set_proxy(proxy_host, proxy_port)
+        self.sms.set_proxy(credentials.getProxyHost(),
+                           credentials.getProxyPort(),
+                           credentials.getProxyUser(),
+                           credentials.getProxyPassword())
 
         self.management_certificate_name = getUniqueNameBasedOnCurrentTime('utmgmtcert')
 

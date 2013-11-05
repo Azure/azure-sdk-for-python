@@ -13,10 +13,6 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import ast
-import httplib
-import sys
-import time
-import urllib2
 
 from datetime import datetime
 from xml.dom import minidom
@@ -33,7 +29,6 @@ from azure import (WindowsAzureData,
                    _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
                    _ERROR_QUEUE_NOT_FOUND,
                    _ERROR_TOPIC_NOT_FOUND,
-                   _USER_AGENT_STRING,
                    )
 from azure.http import HTTPError
 
@@ -45,9 +40,6 @@ DEFAULT_RULE_NAME='$Default'
 AZURE_SERVICEBUS_NAMESPACE = 'AZURE_SERVICEBUS_NAMESPACE'
 AZURE_SERVICEBUS_ACCESS_KEY = 'AZURE_SERVICEBUS_ACCESS_KEY'
 AZURE_SERVICEBUS_ISSUER = 'AZURE_SERVICEBUS_ISSUER'
-
-#token cache for Authentication
-_tokens = {}
 
 # namespace used for converting rules to objects
 XML_SCHEMA_NAMESPACE = 'http://www.w3.org/2001/XMLSchema-instance'
@@ -214,86 +206,6 @@ class Message(WindowsAzureData):
             request.headers.append(('BrokerProperties', str(self.broker_properties)))
 
         return request.headers
-
-def _update_service_bus_header(request, account_key, issuer): 
-    ''' Add additional headers for service bus. '''
-
-    if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
-        request.headers.append(('Content-Length', str(len(request.body))))  
-        
-    # if it is not GET or HEAD request, must set content-type.            
-    if not request.method in ['GET', 'HEAD']:
-        for name, value in request.headers:
-            if 'content-type' == name.lower():
-                break
-        else:
-            request.headers.append(('Content-Type', 'application/atom+xml;type=entry;charset=utf-8')) 
-
-    # Adds authoriaztion header for authentication.
-    request.headers.append(('Authorization', _sign_service_bus_request(request, account_key, issuer)))
-
-    return request.headers
-
-def _sign_service_bus_request(request, account_key, issuer):
-    ''' return the signed string with token. '''
-
-    return 'WRAP access_token="' + _get_token(request, account_key, issuer) + '"'
-
-def _token_is_expired(token):
-    ''' Check if token expires or not. '''
-    time_pos_begin = token.find('ExpiresOn=') + len('ExpiresOn=')
-    time_pos_end = token.find('&', time_pos_begin)
-    token_expire_time = int(token[time_pos_begin:time_pos_end])
-    time_now = time.mktime(time.localtime())
-
-    #Adding 30 seconds so the token wouldn't be expired when we send the token to server.
-    return (token_expire_time - time_now) < 30
-
-def _get_token(request, account_key, issuer):   
-    ''' 
-    Returns token for the request. 
-    
-    request: the service bus service request.
-    account_key: service bus access key
-    issuer: service bus issuer
-    '''
-    wrap_scope = 'http://' + request.host + request.path + issuer + account_key
-
-    # Check whether has unexpired cache, return cached token if it is still usable. 
-    if _tokens.has_key(wrap_scope):
-        token = _tokens[wrap_scope]
-        if not _token_is_expired(token):
-            return token
-
-    #get token from accessconstrol server
-    request_body = ('wrap_name=' + urllib2.quote(issuer) + '&wrap_password=' +
-                    urllib2.quote(account_key) + '&wrap_scope=' + 
-                    urllib2.quote('http://' + request.host + request.path))
-    host = request.host.replace('.servicebus.', '-sb.accesscontrol.')
-    if sys.platform.lower().startswith('win'):
-        import azure.http.winhttp
-        connection = azure.http.winhttp._HTTPConnection(host, protocol='https')
-    else:
-        connection = httplib.HTTPSConnection(host)
-    connection.putrequest('POST', '/WRAPv0.9')
-    connection.putheader('Content-Length', len(request_body))
-    connection.putheader('User-Agent', _USER_AGENT_STRING)
-    connection.endheaders()
-    connection.send(request_body)
-    resp = connection.getresponse()
-    token = ''
-    if int(resp.status) >= 200 and int(resp.status) < 300:
-        if resp.length:
-            token = resp.read(resp.length)
-        else:
-            raise HTTPError(resp.status, resp.reason, resp.getheaders(), None)
-    else:
-        raise HTTPError(resp.status, resp.reason, resp.getheaders(), None)
-        
-    token = urllib2.unquote(token[token.find('=')+1:token.rfind('&')])
-    _tokens[wrap_scope] = token
-
-    return token
 
 def _create_message(response, service_instance):
     ''' Create message from response. 

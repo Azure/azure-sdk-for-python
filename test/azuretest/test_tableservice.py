@@ -35,13 +35,13 @@ MAX_RETRY = 60
 class TableServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.tc = TableService(account_name=credentials.getStorageServicesName(), 
-                                   account_key=credentials.getStorageServicesKey())
+        self.tc = TableService(credentials.getStorageServicesName(), 
+                               credentials.getStorageServicesKey())
 
-        proxy_host = credentials.getProxyHost()
-        proxy_port = credentials.getProxyPort()
-        if proxy_host:
-            self.tc.set_proxy(proxy_host, proxy_port)
+        self.tc.set_proxy(credentials.getProxyHost(), 
+                          credentials.getProxyPort(), 
+                          credentials.getProxyUser(), 
+                          credentials.getProxyPassword())
 
         __uid = getUniqueTestRunID()
         table_base_name = u'testtable%s' % (__uid)

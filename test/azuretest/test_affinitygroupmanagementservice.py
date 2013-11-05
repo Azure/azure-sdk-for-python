@@ -29,12 +29,13 @@ from azuretest.util import (AzureTestCase,
 class AffinityGroupManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        proxy_host = credentials.getProxyHost()
-        proxy_port = credentials.getProxyPort()
+        self.sms = ServiceManagementService(credentials.getSubscriptionId(), 
+                                            credentials.getManagementCertFile())
 
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(), credentials.getManagementCertFile())
-        if proxy_host:
-            self.sms.set_proxy(proxy_host, proxy_port)
+        self.sms.set_proxy(credentials.getProxyHost(), 
+                           credentials.getProxyPort(), 
+                           credentials.getProxyUser(), 
+                           credentials.getProxyPassword())
 
         self.affinity_group_name = getUniqueNameBasedOnCurrentTime('utaffgrp')
         self.hosted_service_name = None

@@ -53,6 +53,7 @@ class HTTPRequest:
     query: query parameters specified as a list of (name, value) pairs
     headers: header values specified as (name, value) pairs
     body: the body of the request.
+    protocol_override: specify to use this protocol instead of the global one stored in _HTTPClient.
     '''
 
     def __init__(self):
@@ -62,4 +63,4 @@ class HTTPRequest:
         self.query = []      # list of (name, value)
         self.headers = []    # list of (header name, header value)
         self.body = ''
-
+        self.protocol_override = None

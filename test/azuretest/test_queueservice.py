@@ -28,13 +28,13 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 class QueueServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.queue_client = QueueService(account_name=credentials.getStorageServicesName(), 
-                                                account_key=credentials.getStorageServicesKey())
+        self.queue_client = QueueService(credentials.getStorageServicesName(), 
+                                         credentials.getStorageServicesKey())
 
-        proxy_host = credentials.getProxyHost()
-        proxy_port = credentials.getProxyPort()
-        if proxy_host:
-            self.queue_client.set_proxy(proxy_host, proxy_port)
+        self.queue_client.set_proxy(credentials.getProxyHost(),
+                                    credentials.getProxyPort(),
+                                    credentials.getProxyUser(), 
+                                    credentials.getProxyPassword())
 
         __uid = getUniqueTestRunID()
 

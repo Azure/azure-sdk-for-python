@@ -111,11 +111,16 @@ class _StorageClient(object):
         res._filter = new_filter
         return res
 
-    def set_proxy(self, host, port):
+    def set_proxy(self, host, port, user=None, password=None):
         '''
         Sets the proxy server host and port for the HTTP CONNECT Tunnelling.
+
+        host: Address of the proxy. Ex: '192.168.0.100'
+        port: Port of the proxy. Ex: 6000
+        user: User for proxy authorization.
+        password: Password for proxy authorization.
         '''
-        self._httpclient.set_proxy(host, port)
+        self._httpclient.set_proxy(host, port, user, password)
 
     def _get_host(self):
         if self.use_local_storage:

@@ -44,10 +44,10 @@ class ServiceBusTest(AzureTestCase):
                                      credentials.getServiceBusKey(), 
                                      'owner')
 
-        proxy_host = credentials.getProxyHost()
-        proxy_port = credentials.getProxyPort()
-        if proxy_host:
-            self.sbs.set_proxy(proxy_host, proxy_port)
+        self.sbs.set_proxy(credentials.getProxyHost(),
+                           credentials.getProxyPort(),
+                           credentials.getProxyUser(),
+                           credentials.getProxyPassword())
 
         __uid = getUniqueTestRunID()
 

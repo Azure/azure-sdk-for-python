@@ -54,46 +54,60 @@ class _HTTPClient:
         self.protocol = protocol
         self.proxy_host = None
         self.proxy_port = None
-        if protocol == 'http':  
-            self.port = httplib.HTTP_PORT  
-        else:  
-            self.port = httplib.HTTPS_PORT  
+        self.proxy_user = None
+        self.proxy_password = None
 
-    def set_proxy(self, host, port):
-        '''Sets the proxy server host and port for the HTTP CONNECT Tunnelling.'''
+    def set_proxy(self, host, port, user, password):
+        '''
+        Sets the proxy server host and port for the HTTP CONNECT Tunnelling.
+
+        host: Address of the proxy. Ex: '192.168.0.100'
+        port: Port of the proxy. Ex: 6000
+        user: User for proxy authorization.
+        password: Password for proxy authorization.
+        '''
         self.proxy_host = host
         self.proxy_port = port
+        self.proxy_user = user
+        self.proxy_password = password
 
     def get_connection(self, request):
         ''' Create connection for the request. '''
-        
+        protocol = request.protocol_override if request.protocol_override else self.protocol
+        target_host = request.host
+        target_port = httplib.HTTP_PORT if protocol == 'http' else httplib.HTTPS_PORT
+
         # If on Windows then use winhttp HTTPConnection instead of httplib HTTPConnection due to the 
         # bugs in httplib HTTPSConnection. We've reported the issue to the Python 
         # dev team and it's already fixed for 2.7.4 but we'll need to keep this workaround meanwhile.
         if sys.platform.lower().startswith('win'):
             import azure.http.winhttp
-            _connection = azure.http.winhttp._HTTPConnection(request.host, cert_file=self.cert_file, protocol=self.protocol)
+            connection = azure.http.winhttp._HTTPConnection(target_host, cert_file=self.cert_file, protocol=protocol)
             proxy_host = self.proxy_host
             proxy_port = self.proxy_port
         else:
             if self.proxy_host:
-                proxy_host = request.host
-                proxy_port = self.port
+                proxy_host = target_host
+                proxy_port = target_port
                 host = self.proxy_host
                 port = self.proxy_port
             else:
-                host = request.host
-                port = self.port
+                host = target_host
+                port = target_port
 
-            if self.protocol == 'http':
-                _connection = httplib.HTTPConnection(host, int(port))
+            if protocol == 'http':
+                connection = httplib.HTTPConnection(host, int(port))
             else:
-                _connection = httplib.HTTPSConnection(host, int(port), cert_file=self.cert_file)
+                connection = httplib.HTTPSConnection(host, int(port), cert_file=self.cert_file)
 
         if self.proxy_host:
-            _connection.set_tunnel(proxy_host, int(proxy_port))
+            headers = None
+            if self.proxy_user and self.proxy_password:
+                auth = base64.encodestring("%s:%s" % (self.proxy_user, self.proxy_password))
+                headers = {'Proxy-Authorization': 'Basic %s' % auth}
+            connection.set_tunnel(proxy_host, int(proxy_port), headers)
 
-        return _connection
+        return connection
 
     def send_request_headers(self, connection, request_headers):
         if not sys.platform.lower().startswith('win'):
@@ -106,6 +120,7 @@ class _HTTPClient:
         for name, value in request_headers:
             if value:
                 connection.putheader(name, value)
+
         connection.putheader('User-Agent', _USER_AGENT_STRING)
         connection.endheaders()
 
@@ -121,6 +136,11 @@ class _HTTPClient:
 
         connection = self.get_connection(request)
         connection.putrequest(request.method, request.path)
+
+        if sys.platform.lower().startswith('win'):
+            if self.proxy_host and self.proxy_user:
+                connection.set_proxy_credentials(self.proxy_user, self.proxy_password)
+
         self.send_request_headers(connection, request.headers)
         self.send_request_body(connection, request.body)
 

@@ -68,6 +68,12 @@ class Credentials(object):
     def getProxyPort(self):
         return self.ns[u'proxyport']
 
+    def getProxyUser(self):
+        return self.ns[u'proxyuser']
+
+    def getProxyPassword(self):
+        return self.ns[u'proxypassword']
+
 credentials = Credentials()
 
 def getUniqueTestRunID():
