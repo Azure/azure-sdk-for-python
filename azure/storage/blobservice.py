@@ -54,7 +54,7 @@ class BlobService(_StorageClient):
     This is the main class managing Blob resources.
     '''
 
-    def __init__(self, account_name = None, account_key = None, protocol = 'http', host_base = BLOB_SERVICE_HOST_BASE, dev_host = DEV_BLOB_HOST):
+    def __init__(self, account_name = None, account_key = None, protocol = 'https', host_base = BLOB_SERVICE_HOST_BASE, dev_host = DEV_BLOB_HOST):
         '''
         account_name: your storage account name, required for all operations.
         account_key: your storage account key, required for all operations.

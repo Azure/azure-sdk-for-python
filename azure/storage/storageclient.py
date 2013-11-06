@@ -35,7 +35,7 @@ class _StorageClient(object):
     This is the base class for BlobManager, TableManager and QueueManager.
     '''
 
-    def __init__(self, account_name=None, account_key=None, protocol='http', host_base='', dev_host=''):
+    def __init__(self, account_name=None, account_key=None, protocol='https', host_base='', dev_host=''):
         '''
         account_name: your storage account name, required for all operations.
         account_key: your storage account key, required for all operations.

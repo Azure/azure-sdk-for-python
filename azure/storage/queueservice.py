@@ -46,7 +46,7 @@ class QueueService(_StorageClient):
     This is the main class managing queue resources.
     '''
 
-    def __init__(self, account_name = None, account_key = None, protocol = 'http', host_base = QUEUE_SERVICE_HOST_BASE, dev_host = DEV_QUEUE_HOST):
+    def __init__(self, account_name = None, account_key = None, protocol = 'https', host_base = QUEUE_SERVICE_HOST_BASE, dev_host = DEV_QUEUE_HOST):
         '''
         account_name: your storage account name, required for all operations.
         account_key: your storage account key, required for all operations.

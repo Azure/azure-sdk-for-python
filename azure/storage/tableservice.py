@@ -48,7 +48,7 @@ class TableService(_StorageClient):
     This is the main class managing Table resources.
     '''
 
-    def __init__(self, account_name = None, account_key = None, protocol = 'http', host_base = TABLE_SERVICE_HOST_BASE, dev_host = DEV_TABLE_HOST):
+    def __init__(self, account_name = None, account_key = None, protocol = 'https', host_base = TABLE_SERVICE_HOST_BASE, dev_host = DEV_TABLE_HOST):
         '''
         account_name: your storage account name, required for all operations.
         account_key: your storage account key, required for all operations.
