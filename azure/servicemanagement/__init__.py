@@ -868,7 +868,7 @@ class _XmlSerializer(object):
     def windows_configuration_to_xml(configuration):
         xml = _XmlSerializer.data_to_xml([('ConfigurationSetType', configuration.configuration_set_type),
                                           ('ComputerName', configuration.computer_name),
-                                          ('AdminPassword', configuration.admin_password, base64.b64encode),
+                                          ('AdminPassword', configuration.admin_password),
                                           ('ResetPasswordOnFirstLogon', configuration.reset_password_on_first_logon, _lower),
                                           ('EnableAutomaticUpdates', configuration.enable_automatic_updates, _lower),
                                           ('TimeZone', configuration.time_zone)])
