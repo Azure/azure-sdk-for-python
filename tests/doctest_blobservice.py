@@ -55,7 +55,7 @@ True
 True
 
 """
-from azuretest.util import *
+from util import credentials
 
 name = credentials.getStorageServicesName()
 key = credentials.getStorageServicesKey()

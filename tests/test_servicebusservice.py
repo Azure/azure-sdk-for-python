@@ -31,11 +31,11 @@ from azure.servicebus import (AZURE_SERVICEBUS_NAMESPACE,
                               Subscription,
                               Topic,
                               )
-from azuretest.util import (AzureTestCase,
-                            credentials,
-                            getUniqueTestRunID,
-                            getUniqueNameBasedOnCurrentTime,
-                            )
+from util import (AzureTestCase,
+                  credentials,
+                  getUniqueTestRunID,
+                  getUniqueNameBasedOnCurrentTime,
+                  )
 
 #------------------------------------------------------------------------------
 class ServiceBusTest(AzureTestCase):

@@ -54,7 +54,7 @@ True
 True
 
 """
-from azuretest.util import *
+from util import credentials
 
 ns = credentials.getServiceBusNamespace()
 key = credentials.getServiceBusKey()

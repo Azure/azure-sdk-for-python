@@ -19,11 +19,11 @@ from azure import (WindowsAzureError,
                    WindowsAzureMissingResourceError,
                    )
 from azure.servicemanagement import ServiceBusManagementService
-from azuretest.util import (AzureTestCase,
-                            credentials,
-                            getUniqueTestRunID,
-                            getUniqueNameBasedOnCurrentTime,
-                            )
+from util import (AzureTestCase,
+                  credentials,
+                  getUniqueTestRunID,
+                  getUniqueNameBasedOnCurrentTime,
+                  )
 
 #------------------------------------------------------------------------------
 class ServiceBusManagementServiceTest(AzureTestCase):

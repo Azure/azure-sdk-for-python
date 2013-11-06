@@ -22,11 +22,11 @@ from azure.storage import (Entity,
                            StorageServiceProperties,
                            TableService,
                            )
-from azuretest.util import (AzureTestCase,
-                            credentials,
-                            getUniqueTestRunID,
-                            getUniqueNameBasedOnCurrentTime,
-                            )
+from util import (AzureTestCase,
+                  credentials,
+                  getUniqueTestRunID,
+                  getUniqueNameBasedOnCurrentTime,
+                  )
 
 #------------------------------------------------------------------------------
 

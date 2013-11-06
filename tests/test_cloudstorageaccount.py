@@ -20,11 +20,11 @@ from azure.storage import (BlobService,
                            QueueService,
                            TableService,
                            )
-from azuretest.util import (AzureTestCase,
-                            credentials,
-                            getUniqueTestRunID,
-                            getUniqueNameBasedOnCurrentTime,
-                            )
+from util import (AzureTestCase,
+                  credentials,
+                  getUniqueTestRunID,
+                  getUniqueNameBasedOnCurrentTime,
+                  )
 
 #------------------------------------------------------------------------------
 class CloudStorageAccountTest(AzureTestCase):

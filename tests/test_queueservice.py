@@ -16,11 +16,11 @@ import unittest
 
 from azure import WindowsAzureError
 from azure.storage.queueservice import QueueService
-from azuretest.util import (AzureTestCase,
-                            credentials,
-                            getUniqueTestRunID,
-                            getUniqueNameBasedOnCurrentTime,
-                            )
+from util import (AzureTestCase,
+                  credentials,
+                  getUniqueTestRunID,
+                  getUniqueNameBasedOnCurrentTime,
+                  )
 
 #------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'

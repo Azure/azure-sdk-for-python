@@ -17,6 +17,18 @@
 
 from distutils.core import setup
 
+# To build:
+# python setup.py sdist
+#
+# To install:
+# python setup.py install
+#
+# To register (only needed once):
+# python setup.py register
+#
+# To upload:
+# python setup.py sdist upload
+
 setup(name='azure',
       version='0.7.0',
       description='Windows Azure client APIs',

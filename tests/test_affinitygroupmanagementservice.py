@@ -19,11 +19,11 @@ from azure.servicemanagement import (AffinityGroups,
                                      Locations,
                                      ServiceManagementService,
                                      )
-from azuretest.util import (AzureTestCase,
-                            credentials,
-                            getUniqueTestRunID,
-                            getUniqueNameBasedOnCurrentTime,
-                            )
+from util import (AzureTestCase,
+                  credentials,
+                  getUniqueTestRunID,
+                  getUniqueNameBasedOnCurrentTime,
+                  )
 
 #------------------------------------------------------------------------------
 class AffinityGroupManagementServiceTest(AzureTestCase):

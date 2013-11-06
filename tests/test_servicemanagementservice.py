@@ -29,11 +29,11 @@ from azure.servicemanagement import (CertificateSetting,
                                      WindowsConfigurationSet,
                                      )
 from azure.storage.blobservice import BlobService
-from azuretest.util import (AzureTestCase,
-                            credentials,
-                            getUniqueTestRunID,
-                            getUniqueNameBasedOnCurrentTime,
-                            )
+from util import (AzureTestCase,
+                  credentials,
+                  getUniqueTestRunID,
+                  getUniqueNameBasedOnCurrentTime,
+                  )
 
 SERVICE_CERT_FORMAT = 'pfx'
 SERVICE_CERT_PASSWORD = 'Python'

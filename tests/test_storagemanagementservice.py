@@ -17,11 +17,11 @@ import unittest
 
 from azure import WindowsAzureError
 from azure.servicemanagement import ServiceManagementService
-from azuretest.util import (AzureTestCase,
-                            credentials,
-                            getUniqueTestRunID,
-                            getUniqueNameBasedOnCurrentTime,
-                            )
+from util import (AzureTestCase,
+                  credentials,
+                  getUniqueTestRunID,
+                  getUniqueNameBasedOnCurrentTime,
+                  )
 
 #------------------------------------------------------------------------------
 class StorageManagementServiceTest(AzureTestCase):

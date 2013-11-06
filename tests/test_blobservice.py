@@ -58,11 +58,11 @@ from azure.storage.sharedaccesssignature import (Permission,
                                                  SIGNED_SIGNATURE,
                                                  SIGNED_START,
                                                  )
-from azuretest.util import (AzureTestCase,
-                            credentials,
-                            getUniqueTestRunID,
-                            getUniqueNameBasedOnCurrentTime,
-                            )
+from util import (AzureTestCase,
+                  credentials,
+                  getUniqueTestRunID,
+                  getUniqueNameBasedOnCurrentTime,
+                  )
 
 #------------------------------------------------------------------------------
 class BlobServiceTest(AzureTestCase):

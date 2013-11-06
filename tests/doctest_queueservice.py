@@ -71,7 +71,7 @@ How To: Delete a Queue
 True
 
 """
-from azuretest.util import *
+from util import credentials
 
 name = credentials.getStorageServicesName()
 key = credentials.getStorageServicesKey()

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PYTHONPATH=$PYTHONPATH:../src
+export PYTHONPATH=$PYTHONPATH:..
 
 echo "Running tests..."
 python -m unittest discover -p "test_*.py"
