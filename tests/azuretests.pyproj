@@ -64,7 +64,7 @@
     <Content Include="data\WindowsAzure1.cspkg" />
     <Content Include="coverage.bat" />
     <Content Include="coverage_x64.bat" />
-    <Content Include="run.bash" />
+    <Content Include="run" />
     <Content Include="run.bat" />
     <Content Include="run_x64.bat" />
   </ItemGroup>
