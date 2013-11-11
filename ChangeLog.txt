@@ -1,3 +1,11 @@
+2013-11-06 Version 0.7.1
+ * Fixes for bugs:
+   #118 Proxy doesn't support specifying credentials
+   #117 Service bus authorization code doesn't go through the proxy server
+   #108 Create VM, Administrator Password Base-64 Encoding 
+   #106 Why isn't setup.py in the root of the project?
+   #96  Change default connection protocol to https
+
 2013-07-08 Version 0.7.0
  * Added service bus management API
  * Added support for list blobs delimiter (for easier hierarchical listings)

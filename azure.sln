@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "azure", "azure\azure.pyproj", "{25B2C65A-0553-4452-8907-8B5B17544E68}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "azuretests", "tests\azuretests.pyproj", "{C0742A2D-4862-40E4-8A28-036EECDBC614}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A03C4C48-4070-45BC-84E9-B692684879FB}"
+	ProjectSection(SolutionItems) = preProject
+		ChangeLog.txt = ChangeLog.txt
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+		setup.py = setup.py
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://tcvstf:8080/tfs/tc
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = azure\\azure.pyproj
+		SccProjectName1 = azure
+		SccLocalPath1 = azure
+		SccProjectUniqueName2 = tests\\azuretests.pyproj
+		SccProjectName2 = tests
+		SccLocalPath2 = tests
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{25B2C65A-0553-4452-8907-8B5B17544E68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25B2C65A-0553-4452-8907-8B5B17544E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0742A2D-4862-40E4-8A28-036EECDBC614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0742A2D-4862-40E4-8A28-036EECDBC614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
