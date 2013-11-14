@@ -659,6 +659,62 @@ class ServiceBusNamespace(WindowsAzureData):
         self.subscription_id = u''
         self.enabled = False
 
+class WebSpaces(WindowsAzureData):
+    def __init__(self):
+        self.web_spaces = _list_of(WebSpace)
+
+    def __iter__(self):
+        return iter(self.web_spaces)
+
+    def __len__(self):
+        return len(self.web_spaces)
+
+    def __getitem__(self, index):
+        return self.web_spaces[index]
+
+class WebSpace(WindowsAzureData):
+    def __init__(self):
+        self.name = u''
+        self.availability_state = u''
+        self.status = u''
+        self.plan = u''
+        self.geo_location = u''
+        self.geo_region = u''
+        self.number_of_workers = u''
+        self.current_number_of_workers = u''
+        self.compute_mode = u''
+        self.worker_size = u''
+        self.current_worker_size = u''
+
+class Sites(WindowsAzureData):
+    def __init__(self):
+        self.sites = _list_of(Site)
+
+    def __iter__(self):
+        return iter(self.sites)
+
+    def __len__(self):
+        return len(self.sites)
+
+    def __getitem__(self, index):
+        return self.sites[index]
+
+class Site(WindowsAzureData):
+    def __init__(self):
+        self.name = u''
+        self.availability_state = u''
+        self.runtime_availability_state = u''
+        self.admin_enabled = u''
+        self.compute_mode = u''
+        self.enabled = u''
+        self.host_names = _scalar_list_of(str, "a:string")
+        self.enabled_host_names = _scalar_list_of(str, "a:string")
+        self.self_link = u''
+        self.owner = u''
+        self.state = u''
+        self.usage_state = u''
+        self.server_farm = u''
+
 def _update_management_header(request):
     ''' Add additional headers for management. '''
 
