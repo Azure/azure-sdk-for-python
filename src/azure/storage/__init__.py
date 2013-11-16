@@ -37,7 +37,7 @@ from azure import (WindowsAzureData,
                    )
 
 #x-ms-version for storage service.
-X_MS_VERSION = '2011-08-18'
+X_MS_VERSION = '2012-02-12'
 
 class EnumResultsBase:
     ''' base class for EnumResults. '''
