@@ -1498,6 +1498,23 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsNone(result)
         self.assertFalse(self._disk_exists(self.disk_name))
 
+    #--Test cases for retrieving web spaces -----------------------------------
+    def test_list_web_spaces(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_web_spaces()
+
+        # Assert
+        self.assertIsNotNone(result)
+        # TODO: should add add/remove for Site into sms to sheck this
+        # self.assertTrue(len(result) > 0)
+
+        for web_space in result:
+            sites = self.sms.list_sites(web_space.name)
+            self.assertIsNotNone(sites)
+            # TODO: should add add/remove for Site into sms to sheck this
+            # self.assertTrue(len(sites) > 0)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
