@@ -40,6 +40,10 @@ from azure.servicemanagement import (AffinityGroups,
                                      Subscription,
                                      SubscriptionCertificate,
                                      SubscriptionCertificates,
+                                     WebSpace,
+                                     WebSpaces,
+                                     Site,
+                                     Sites,
                                      _management_error_handler,
                                      _update_management_header,
                                      _parse_response_for_async_op,
@@ -1387,6 +1391,38 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('disk_name', disk_name)
         return self._perform_delete(self._get_disk_path(disk_name))
 
+    #--Operations for web spaces ---------------------------------------------
+    def list_web_spaces(self):
+        '''
+        Lists the web spaces available under the current subscription.
+        '''
+        return self._perform_get(self._get_web_space_path(), WebSpaces)
+
+    def get_web_space(self, name):
+        '''
+        Retrieves a web space object
+        '''
+        return self._perform_get(self._get_web_space_path(name), WebSpace)
+
+    def list_sites(self, webspace_name):
+        '''
+        Lists sites under specified web space.
+
+        webspace_name: Name of the web space.
+        '''
+        _validate_not_none('webspace_name', webspace_name)
+        return self._perform_get(self._get_site_path(webspace_name), Sites)
+
+    def get_site(self, webspace_name, site_name):
+        '''
+        Retrieves a site object
+        '''
+        _validate_not_none('webspace_name', webspace_name)
+        _validate_not_none('site_name', site_name)
+        return self._perform_get(
+            self._get_site_path(webspace_name, site_name), Site
+        )
+
     #--Helper functions --------------------------------------------------
     def _get_storage_service_path(self, service_name=None):
         return self._get_path('services/storageservices', service_name)
@@ -1414,3 +1450,12 @@ class ServiceManagementService(_ServiceManagementClient):
 
     def _get_image_path(self, image_name=None):
         return self._get_path('services/images', image_name)
+
+    def _get_web_space_path(self, webspace_name=None):
+        return self._get_path('services/webspaces/', webspace_name)
+
+    def _get_site_path(self, webspace_name, site_name=None):
+        return self._get_path(
+            'services/webspaces/' + _str(webspace_name) + "/sites/",
+            site_name
+        )
