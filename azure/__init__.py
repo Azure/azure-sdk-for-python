@@ -72,6 +72,10 @@ class WindowsAzureData(object):
     ''' This is the base of data class.  It is only used to check whether it is instance or not. '''
     pass
 
+class AsynchronousOperationResult(WindowsAzureData):
+    def __init__(self, request_id=None):
+        self.request_id = request_id
+
 class WindowsAzureError(Exception):
     ''' WindowsAzure Excpetion base class. '''
     def __init__(self, message):
@@ -695,3 +699,28 @@ def _parse_response_for_dict_filter(response, filter):
         return return_dict
     else:
         return None
+
+
+def _parse_response_for_copy_status(response):
+    """
+    Extracts the copy status for an async blob copy from an API response.
+
+    :param response: The API response to parse
+    :return: The status of the of async blob copy. Possible values are 'Success', 'Pending', and 'Failed', or None if
+        the copy status isn't in the response.
+        'success': the copy is already finished
+        'pending': the copy is in progress, and the status can be checked by getting the blob properties of the
+            destination blob
+        'failed': the request failed
+    """
+    if response is None:
+        return None
+
+    if response.status == 202 and response.headers:
+        for name, value in response.headers:
+            if name.lower() == 'x-ms-copy-status':
+                return value
+    else:
+        return 'failed'
+
+    return None

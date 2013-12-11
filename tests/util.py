@@ -74,6 +74,12 @@ class Credentials(object):
     def getProxyPassword(self):
         return self.ns[u'proxypassword']
 
+    def getRemoteStorageServicesKey(self):
+        return self.ns[u'remotestorageserviceskey']
+
+    def getRemoteStorageServicesName(self):
+        return self.ns[u'remotestorageservicesname']
+
 credentials = Credentials()
 
 def getUniqueTestRunID():

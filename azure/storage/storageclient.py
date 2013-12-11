@@ -140,8 +140,6 @@ class _StorageClient(object):
             if self._batchclient is not None:
                 return self._batchclient.insert_request_to_batch(request)
             else:
-                resp = self._filter(request)
+                return self._filter(request)
         except HTTPError as e:
             _storage_error_handler(e)
-
-        return resp
