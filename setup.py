@@ -29,7 +29,7 @@ from distutils.core import setup
 # To upload:
 # python setup.py sdist upload
 
-setup(name='mongolab-azure',
+setup(name='azure',
       version='0.7.1',
       description='Windows Azure client APIs',
       license='Apache License 2.0',
