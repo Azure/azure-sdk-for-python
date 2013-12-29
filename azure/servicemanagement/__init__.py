@@ -16,6 +16,7 @@ import base64
 
 from xml.dom import minidom
 from azure import (WindowsAzureData,
+                   AsynchronousOperationResult,
                    _Base64String,
                    _create_entry,
                    _dict_of,
@@ -637,10 +638,6 @@ class OSVirtualHardDisk(WindowsAzureData):
         self.disk_name = disk_name
         self.os = u'' # undocumented, not used when adding a role
 
-class AsynchronousOperationResult(WindowsAzureData):
-    def __init__(self, request_id=None):
-        self.request_id = request_id
-
 class ServiceBusRegion(WindowsAzureData):
     def __init__(self):
         self.code = u''
@@ -941,7 +938,6 @@ class _XmlSerializer(object):
 
             xml += _XmlSerializer.data_to_xml([('Protocol', endpoint.protocol),  
                                                ('EnableDirectServerReturn', endpoint.enable_direct_server_return, _lower)])
-
             xml += '</InputEndpoint>'
         xml += '</InputEndpoints>'
         xml += '<SubnetNames>'

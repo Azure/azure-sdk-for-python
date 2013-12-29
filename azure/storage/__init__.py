@@ -335,14 +335,17 @@ def _parse_blob_enum_results_list(response):
 def _update_storage_header(request):
     ''' add addtional headers for storage request. '''
 
-    #if it is PUT, POST, MERGE, DELETE, need to add content-lengt to header.
+    # if it is PUT, POST, MERGE, DELETE, need to add content-length to header.
     if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
             request.headers.append(('Content-Length', str(len(request.body))))  
 
-    #append addtional headers base on the service
-    request.headers.append(('x-ms-version', X_MS_VERSION))
+    # append additional headers base on the service
+    # but don't kill it if it's already specified
+    header_keys = [header[0] for header in request.headers]
+    if 'x-ms-version' not in header_keys:
+        request.headers.append(('x-ms-version', X_MS_VERSION))
 
-    #append x-ms-meta name, values to header
+    # append x-ms-meta name, values to header
     for name, value in request.headers:
         if 'x-ms-meta-name-values' in name and value:
             for meta_name, meta_value in value.iteritems():

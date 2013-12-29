@@ -64,12 +64,23 @@ from util import (AzureTestCase,
                   getUniqueNameBasedOnCurrentTime,
                   )
 
+
 #------------------------------------------------------------------------------
 class BlobServiceTest(AzureTestCase):
 
     def setUp(self):
         self.bc = BlobService(credentials.getStorageServicesName(), 
                               credentials.getStorageServicesKey())
+
+        if credentials.getRemoteStorageServicesName() and credentials.getRemoteStorageServicesKey():
+            self.rbc = BlobService(
+                credentials.getRemoteStorageServicesName(),
+                credentials.getRemoteStorageServicesKey()
+            )
+        else:
+            print 'To test cross region async blob copy, add \'remotestorageserviceskey\' and ' \
+                  '\'remotestorageservicesname\' to your windowsazurecredentials.json file. ' \
+                  'These tests will be skipped.'
 
         self.bc.set_proxy(credentials.getProxyHost(),
                           credentials.getProxyPort(),
@@ -90,6 +101,9 @@ class BlobServiceTest(AzureTestCase):
     def cleanup(self):
         try:
             self.bc.delete_container(self.container_name)
+
+            if self.rbc:
+                self.rbc.delete_container(self.container_name)
         except: pass
 
         for name in self.additional_container_names:
@@ -111,7 +125,7 @@ class BlobServiceTest(AzureTestCase):
         resp = self.bc.put_blob(self.container_name, blob_name, '', 'PageBlob', x_ms_blob_content_length=str(content_length))
         self.assertIsNone(resp)
 
-    def _get_permission(self, sas, resource_type, resource_path, permission):
+    def _get_permission(self, sas, resource_type, resource_path, permission, version=None):
         date_format = "%Y-%m-%dT%H:%M:%SZ"
         start = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
         expiry = start + datetime.timedelta(hours=1)
@@ -120,9 +134,10 @@ class BlobServiceTest(AzureTestCase):
                                               expiry.strftime(date_format),
                                               permission))
         
-        signed_query = sas.generate_signed_query_string(resource_path, 
-                                                   resource_type, 
-                                                   sap)
+        signed_query = sas.generate_signed_query_string(resource_path,
+                                                        resource_type,
+                                                        sap,
+                                                        version=version)
         
         return Permission('/' + resource_path, signed_query)
 
@@ -163,6 +178,13 @@ class BlobServiceTest(AzureTestCase):
             respbody = resp.read(resp.length)
 
         return respbody
+
+    def _wait_for_async_blob_copy(self, blob_service, container_name, blob_name):
+
+        blob_properties = blob_service.get_blob_properties(container_name, blob_name)
+        while blob_properties['x-ms-copy-status'] == 'pending':
+            blob_properties = blob_service.get_blob_properties(container_name, blob_name)
+            print 'blob copy progress: %s' % blob_properties['x-ms-copy-progress']
 
     #--Test cases for blob service --------------------------------------------
     def test_create_blob_service_missing_arguments(self):
@@ -1167,6 +1189,88 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsNone(resp)
         copy = self.bc.get_blob(self.container_name, 'blob1copy')
         self.assertEquals(copy, 'hello world')
+
+    def test_async_copy_blob_with_existing_blob(self):
+        # Arrange
+        bunch_of_bytes = ''.join(['0' for x in range(1024 * 1024)])
+        self._create_container_and_block_blob(self.container_name, 'blob1', bunch_of_bytes)
+
+        # Act
+        source_blob = 'http://%s.blob.core.windows.net/%s/%s' % (credentials.getStorageServicesName(),
+                                                                 self.container_name,
+                                                                 'blob1')
+
+        resp = self.bc.copy_blob(self.container_name, 'blob1copy', source_blob, async=True)
+
+        # Assert
+        self.assertIn(resp, ['success', 'pending', 'failed'])
+
+        if resp == 'pending':
+            self._wait_for_async_blob_copy(self.bc, self.container_name, 'blob1copy')
+        elif resp == 'failed':
+            self.fail('async blob copy failed!')
+
+        copy = self.bc.get_blob(self.container_name, 'blob1copy')
+        self.assertEquals(copy, bunch_of_bytes)
+
+    def test_cross_region_async_copy_blob_with_existing_blob(self):
+        # Arrange
+        bunch_of_bytes = ''.join(['0' for x in range(1024 * 1024 )])
+        self._create_container_and_block_blob(self.container_name, 'blob1', bunch_of_bytes)
+
+        #start = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+        #end = datetime.datetime.utcnow() + datetime.timedelta(days=30)
+
+        #access_policy = AccessPolicy()
+        #access_policy.start = start.strftime('%Y-%m-%dT%H:%M:%SZ')
+        #access_policy.expiry = end.strftime('%Y-%m-%dT%H:%M:%SZ')
+        #access_policy.permission = 'r'
+
+        #signed_identifier = SignedIdentifier()
+        #signed_identifier.id = 'read'
+        #   signed_identifier.access_policy = access_policy
+
+        #signed_identifiers = SignedIdentifiers()
+        #signed_identifiers.signed_identifiers.append(signed_identifier)
+
+        #self.bc.set_container_acl(self.container_name, signed_identifiers=signed_identifiers)
+
+        resource = '%s/%s' % (self.container_name, 'blob1')
+
+        # going to need to generated a SAS
+        sas = SharedAccessSignature(account_name=credentials.getStorageServicesName(),
+                                    account_key=credentials.getStorageServicesKey())
+
+        permission = self._get_permission(sas, RESOURCE_BLOB, resource, 'r', version=u'2012-02-12')
+        sas.permission_set = [permission]
+
+        web_rsrc = WebResource()
+        web_rsrc.properties[SIGNED_RESOURCE_TYPE] = RESOURCE_BLOB
+        web_rsrc.properties[SHARED_ACCESS_PERMISSION] = 'r'
+        web_rsrc.path = '/%s' % resource
+        web_rsrc.request_url = 'https://%s.blob.core.windows.net/%s/%s' % (credentials.getStorageServicesName(),
+                                                                           self.container_name,
+                                                                           'blob1')
+
+        web_rsrc = sas.sign_request(web_rsrc)
+
+        dest_blob_service = BlobService(credentials.getRemoteStorageServicesName(),
+                                        credentials.getRemoteStorageServicesKey())
+        dest_blob_service.create_container(self.container_name)
+
+        # Act
+        resp = dest_blob_service.copy_blob(self.container_name, 'blob1copy', web_rsrc.request_url, async=True)
+
+        # Assert
+        self.assertIn(resp, ['success', 'pending', 'failed'])
+
+        if resp == 'pending':
+            self._wait_for_async_blob_copy(dest_blob_service, self.container_name, 'blob1copy')
+        elif resp == 'failed':
+            self.fail('async blob copy failed!')
+
+        copy = dest_blob_service.get_blob(self.container_name, 'blob1copy')
+        self.assertEquals(copy, bunch_of_bytes)
 
     def test_snapshot_blob(self):
         # Arrange

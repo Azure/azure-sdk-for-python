@@ -27,6 +27,7 @@ from azure import (WindowsAzureError,
                    _parse_response_for_dict,
                    _parse_response_for_dict_filter,
                    _parse_response_for_dict_prefix,
+                   _parse_response_for_copy_status,
                    _parse_simple_list,
                    _str,
                    _str_or_none,
@@ -49,6 +50,7 @@ from azure.storage import (Container,
                            )
 from azure.storage.storageclient import _StorageClient
 
+
 class BlobService(_StorageClient):
     '''
     This is the main class managing Blob resources.
@@ -64,7 +66,7 @@ class BlobService(_StorageClient):
             for on-premise.
         dev_host: Optional. Dev host url. Defaults to localhost. 
         '''
-        return super(BlobService, self).__init__(account_name, account_key, protocol, host_base, dev_host)
+        super(BlobService, self).__init__(account_name, account_key, protocol, host_base, dev_host)
 
     def list_containers(self, prefix=None, marker=None, maxresults=None, include=None):
         '''
@@ -372,7 +374,9 @@ class BlobService(_StorageClient):
         request.method = 'HEAD'
         request.host = self._get_host()
         request.path = '/' + _str(container_name) + '/' + _str(blob_name) + ''
-        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
+        # not sure this is the best place to inject the x-ms-version into the header, but it looks like this should
+        # still be backwards compatible
+        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id)), ('x-ms-version', '2012-02-12')]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
@@ -628,38 +632,47 @@ class BlobService(_StorageClient):
 
         return _parse_response_for_dict_filter(response, filter=['x-ms-snapshot', 'etag', 'last-modified'])
 
-    def copy_blob(self, container_name, blob_name, x_ms_copy_source, x_ms_meta_name_values=None, x_ms_source_if_modified_since=None, x_ms_source_if_unmodified_since=None, x_ms_source_if_match=None, x_ms_source_if_none_match=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, x_ms_lease_id=None, x_ms_source_lease_id=None):
-        '''
-        Copies a blob to a destination within the storage account. 
+    def copy_blob(self, container_name, blob_name, x_ms_copy_source, x_ms_meta_name_values=None, x_ms_source_if_modified_since=None, x_ms_source_if_unmodified_since=None, x_ms_source_if_match=None, x_ms_source_if_none_match=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, x_ms_lease_id=None, x_ms_source_lease_id=None, async=False):
+        """
+        Copies a blob to a destination within the storage account.
+
+        If async parameter it set to True, this will use the 2012-02-12 version of the API to do an async blob copy.
+        Otherwise it continues to use pre 2012-02-12 version of the API.
         
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        x_ms_copy_source: the blob to be copied. Should be absolute path format.
-        x_ms_meta_name_values: Optional. Dict containing name and value pairs.
-        x_ms_source_if_modified_since:
+        :param container_name: Name of existing container.
+        :param blob_name: Name of existing blob.
+        :param x_ms_copy_source: the blob to be copied. Should be absolute path format.
+        :param x_ms_meta_name_values: Optional. Dict containing name and value pairs.
+        :param x_ms_source_if_modified_since:
             Optional. An ETag value. Specify this conditional header to copy 
             the source blob only if its ETag matches the value specified.
-        x_ms_source_if_unmodified_since:
+        :param x_ms_source_if_unmodified_since:
             Optional. An ETag value. Specify this conditional header to copy 
             the blob only if its ETag does not match the value specified.
-        x_ms_source_if_match:
+        :param x_ms_source_if_match:
             Optional. A DateTime value. Specify this conditional header to 
             copy the blob only if the source blob has been modified since the 
             specified date/time.
-        x_ms_source_if_none_match:
+        :param x_ms_source_if_none_match:
             Optional. An ETag value. Specify this conditional header to copy 
             the source blob only if its ETag matches the value specified.
-        if_modified_since: Optional. Datetime string.
-        if_unmodified_since: DateTime string.
-        if_match:
+        :param if_modified_since: Optional. Datetime string.
+        :param if_unmodified_since: DateTime string.
+        :param if_match:
             Optional. Snapshot the blob only if its ETag value matches the 
             value specified. 
-        if_none_match: Optional. An ETag value
-        x_ms_lease_id: Required if the blob has an active lease.
-        x_ms_source_lease_id:
+        :param if_none_match: Optional. An ETag value
+        :param x_ms_lease_id: Required if the blob has an active lease.
+        :param x_ms_source_lease_id:
             Optional. Specify this to perform the Copy Blob operation only if 
             the lease ID given matches the active lease ID of the source blob.
-        '''
+        :param async: Starting with version 2012-02-12 of the API, blob copy became async. This flag specifies whether
+            to use the new async blob copy or the old sync copy.
+
+        :return: If async=True, the copy status of the copy will be returned ('success', 'pending', 'failed', or
+            potentially None if x-ms-copy-status was not in the response)
+            If async=False, None is returned.
+        """
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('x_ms_copy_source', x_ms_copy_source)
@@ -680,10 +693,17 @@ class BlobService(_StorageClient):
             ('If-None-Match', _str_or_none(if_none_match)),
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
             ('x-ms-source-lease-id', _str_or_none(x_ms_source_lease_id))
-            ]
+        ]
+        if async:
+            request.headers.append(('x-ms-version', '2012-02-12'))
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
+
+        if async:
+            return _parse_response_for_copy_status(response)
+
+        return None
 
     def delete_blob(self, container_name, blob_name, snapshot=None, x_ms_lease_id=None):
         '''
