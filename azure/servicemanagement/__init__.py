@@ -1031,7 +1031,7 @@ class _XmlSerializer(object):
     def virtual_machine_deployment_to_xml(deployment_name, deployment_slot, label, role_name, system_configuration_set, os_virtual_hard_disk, role_type, network_configuration_set, availability_set_name, data_virtual_hard_disks, role_size, virtual_network_name):
         xml = _XmlSerializer.data_to_xml([('Name', deployment_name),
                                           ('DeploymentSlot', deployment_slot),
-                                          ('Label', label, base64.b64encode)])
+                                          ('Label', label)])
         xml += '<RoleList>'
         xml += '<Role>'
         xml += _XmlSerializer.role_to_xml(availability_set_name, data_virtual_hard_disks, network_configuration_set, os_virtual_hard_disk, role_name, role_size, role_type, system_configuration_set)
