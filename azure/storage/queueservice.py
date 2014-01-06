@@ -143,7 +143,7 @@ class QueueService(_StorageClient):
         else:
             response = self._perform_request(request)
             if response.status == HTTP_RESPONSE_NO_CONTENT:
-                raise WindowsAzureConflictError(_ERROR_CONFLICT)
+                raise WindowsAzureConflictError(_ERROR_CONFLICT % response.message)
             return True
 
     def delete_queue(self, queue_name, fail_not_exist=False):

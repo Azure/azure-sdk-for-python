@@ -55,8 +55,8 @@ _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE = 'Message is not peek locked and canno
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK = 'Message is not peek locked and cannot be unlocked.'
 _ERROR_QUEUE_NOT_FOUND = 'Queue was not found'
 _ERROR_TOPIC_NOT_FOUND = 'Topic was not found'
-_ERROR_CONFLICT = 'Conflict'
-_ERROR_NOT_FOUND = 'Not found'
+_ERROR_CONFLICT = 'Conflict (%s)'
+_ERROR_NOT_FOUND = 'Not found (%s)'
 _ERROR_UNKNOWN = 'Unknown error (%s)'
 _ERROR_SERVICEBUS_MISSING_INFO = 'You need to provide servicebus namespace, access key and Issuer'
 _ERROR_STORAGE_MISSING_INFO = 'You need to provide both account name and access key'
@@ -81,13 +81,13 @@ class WindowsAzureConflictError(WindowsAzureError):
     '''Indicates that the resource could not be created because it already
     exists'''
     def __init__(self, message):
-        self.message = message
+        WindowsAzureError.__init__(self, message)
 
 class WindowsAzureMissingResourceError(WindowsAzureError):
     '''Indicates that a request for a request for a resource (queue, table, 
     container, etc...) failed because the specified resource does not exist'''
     def __init__(self, message):
-        self.message = message
+        WindowsAzureError.__init__(self, message)
 
 class Feed:
     pass
@@ -201,6 +201,7 @@ _KNOWN_SERIALIZATION_XFORMS = {'include_apis':'IncludeAPIs',
                                'logical_size_in_gb':'LogicalSizeInGB',
                                'os':'OS',
                                'persistent_vm_downtime_info':'PersistentVMDowntimeInfo',
+                               'copy_id':'CopyId',
                                }
 
 def _get_serialization_name(element_name):
@@ -641,9 +642,9 @@ def _dont_fail_not_exist(error):
 def _general_error_handler(http_error):
     ''' Simple error handler for azure.'''
     if http_error.status == 409:
-        raise WindowsAzureConflictError(_ERROR_CONFLICT)
+        raise WindowsAzureConflictError(_ERROR_CONFLICT % http_error.message)
     elif http_error.status == 404:
-        raise WindowsAzureMissingResourceError(_ERROR_NOT_FOUND)
+        raise WindowsAzureMissingResourceError(_ERROR_NOT_FOUND % http_error.message)
     else:
         if http_error.respbody is not None:
             raise WindowsAzureError(_ERROR_UNKNOWN % http_error.message + '\n' + http_error.respbody)

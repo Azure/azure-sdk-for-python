@@ -20,6 +20,7 @@ import time
 import unittest
 
 from azure import (WindowsAzureError,
+                   WindowsAzureConflictError,
                    BLOB_SERVICE_HOST_BASE,
                    )
 from azure.http import (HTTPRequest,
@@ -81,6 +82,7 @@ class BlobServiceTest(AzureTestCase):
         container_base_name = u'mytestcontainer%s' % (__uid)
 
         self.container_name = getUniqueNameBasedOnCurrentTime(container_base_name)
+        self.container_lease_id = None
         self.additional_container_names = []
 
     def tearDown(self):
@@ -88,6 +90,10 @@ class BlobServiceTest(AzureTestCase):
         return super(BlobServiceTest, self).tearDown()
 
     def cleanup(self):
+        if self.container_lease_id:
+            try:
+                self.bc.lease_container(self.container_name, 'release', self.container_lease_id)
+            except: pass
         try:
             self.bc.delete_container(self.container_name)
         except: pass
@@ -110,6 +116,23 @@ class BlobServiceTest(AzureTestCase):
         self._create_container(container_name)
         resp = self.bc.put_blob(self.container_name, blob_name, '', 'PageBlob', x_ms_blob_content_length=str(content_length))
         self.assertIsNone(resp)
+
+    def _create_container_and_block_blob_with_random_data(self, container_name, blob_name, block_count, block_size):
+        self._create_container_and_block_blob(container_name, blob_name, '')
+        block_list = []
+        for i in range(0, block_count):
+            block_id = '{0:04d}'.format(i)
+            block_data = os.urandom(block_size)
+            self.bc.put_block(container_name, blob_name, block_data, block_id)
+            block_list.append(block_id)
+        self.bc.put_block_list(container_name, blob_name, block_list)
+
+    def _blob_exists(self, container_name, blob_name):
+        resp = self.bc.list_blobs(container_name)
+        for blob in resp:
+            if blob.name == blob_name:
+                return True
+        return False
 
     def _get_permission(self, sas, resource_type, resource_path, permission):
         date_format = "%Y-%m-%dT%H:%M:%SZ"
@@ -408,6 +431,35 @@ class BlobServiceTest(AzureTestCase):
         self.assertEquals(md['x-ms-meta-hello'], 'world')
         self.assertEquals(md['x-ms-meta-bar'], '43')
 
+    def test_set_container_metadata_with_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        resp = self.bc.set_container_metadata(self.container_name, {'hello':'world', 'bar':'43'}, lease['x-ms-lease-id'])
+
+        # Assert
+        self.assertIsNone(resp)
+        md = self.bc.get_container_metadata(self.container_name)
+        self.assertIsNotNone(md)
+        self.assertEquals(md['x-ms-meta-hello'], 'world')
+        self.assertEquals(md['x-ms-meta-bar'], '43')
+
+    def test_set_container_metadata_with_non_matching_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
+        with self.assertRaises(WindowsAzureError):
+            self.bc.set_container_metadata(self.container_name, {'hello':'world', 'bar':'43'}, non_matching_lease_id)
+
+        # Assert
+
     def test_set_container_metadata_with_non_existing_container(self):
         # Arrange
 
@@ -422,6 +474,8 @@ class BlobServiceTest(AzureTestCase):
         self.bc.create_container(self.container_name)
         self.bc.set_container_acl(self.container_name, None, 'container')
         self.bc.set_container_metadata(self.container_name, {'hello':'world','foo':'42'})
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
 
         # Act
         md = self.bc.get_container_metadata(self.container_name)
@@ -431,6 +485,38 @@ class BlobServiceTest(AzureTestCase):
         self.assertEquals(2, len(md))
         self.assertEquals(md['x-ms-meta-hello'], 'world')
         self.assertEquals(md['x-ms-meta-foo'], '42')
+
+    def test_get_container_metadata_with_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        self.bc.set_container_acl(self.container_name, None, 'container')
+        self.bc.set_container_metadata(self.container_name, {'hello':'world','foo':'42'})
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        md = self.bc.get_container_metadata(self.container_name, lease['x-ms-lease-id'])
+
+        # Assert
+        self.assertIsNotNone(md)
+        self.assertEquals(2, len(md))
+        self.assertEquals(md['x-ms-meta-hello'], 'world')
+        self.assertEquals(md['x-ms-meta-foo'], '42')
+
+    def test_get_container_metadata_with_non_matching_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        self.bc.set_container_acl(self.container_name, None, 'container')
+        self.bc.set_container_metadata(self.container_name, {'hello':'world','foo':'42'})
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
+        with self.assertRaises(WindowsAzureError):
+            self.bc.get_container_metadata(self.container_name, non_matching_lease_id)
+
+        # Assert
 
     def test_get_container_metadata_with_non_existing_container(self):
         # Arrange
@@ -446,6 +532,8 @@ class BlobServiceTest(AzureTestCase):
         self.bc.create_container(self.container_name)
         self.bc.set_container_acl(self.container_name, None, 'container')
         self.bc.set_container_metadata(self.container_name, {'hello':'world','foo':'42'})
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
 
         # Act
         props = self.bc.get_container_properties(self.container_name)
@@ -454,9 +542,43 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsNotNone(props)
         self.assertEquals(props['x-ms-meta-hello'], 'world')
         self.assertEquals(props['x-ms-meta-foo'], '42')
-        # TODO:
-        # get_container_properties returns container lease information whereas get_container_metadata doesn't
-        # we should lease the container in the arrange section and verify that we receive that info
+        self.assertEquals(props['x-ms-lease-duration'], 'fixed')
+        self.assertEquals(props['x-ms-lease-state'], 'leased')
+        self.assertEquals(props['x-ms-lease-status'], 'locked')
+
+    def test_get_container_properties_with_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        self.bc.set_container_acl(self.container_name, None, 'container')
+        self.bc.set_container_metadata(self.container_name, {'hello':'world','foo':'42'})
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        props = self.bc.get_container_properties(self.container_name, lease['x-ms-lease-id'])
+
+        # Assert
+        self.assertIsNotNone(props)
+        self.assertEquals(props['x-ms-meta-hello'], 'world')
+        self.assertEquals(props['x-ms-meta-foo'], '42')
+        self.assertEquals(props['x-ms-lease-duration'], 'fixed')
+        self.assertEquals(props['x-ms-lease-status'], 'locked')
+        self.assertEquals(props['x-ms-lease-state'], 'leased')
+
+    def test_get_container_properties_with_non_matching_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        self.bc.set_container_acl(self.container_name, None, 'container')
+        self.bc.set_container_metadata(self.container_name, {'hello':'world','foo':'42'})
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
+        with self.assertRaises(WindowsAzureError):
+            self.bc.get_container_properties(self.container_name, non_matching_lease_id)
+
+        # Assert
 
     def test_get_container_properties_with_non_existing_container(self):
         # Arrange
@@ -492,6 +614,32 @@ class BlobServiceTest(AzureTestCase):
         self.assertEqual(len(acl.signed_identifiers), 0)
         self.assertEqual(len(acl), 0)
 
+    def test_get_container_acl_with_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        acl = self.bc.get_container_acl(self.container_name, lease['x-ms-lease-id'])
+
+        # Assert
+        self.assertIsNotNone(acl)
+        self.assertEqual(len(acl.signed_identifiers), 0)
+
+    def test_get_container_acl_with_non_matching_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
+        with self.assertRaises(WindowsAzureError):
+            self.bc.get_container_acl(self.container_name, non_matching_lease_id)
+
+        # Assert
+
     def test_get_container_acl_with_non_existing_container(self):
         # Arrange
 
@@ -512,6 +660,33 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsNone(resp)
         acl = self.bc.get_container_acl(self.container_name)
         self.assertIsNotNone(acl)
+
+    def test_set_container_acl_with_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        resp = self.bc.set_container_acl(self.container_name, x_ms_lease_id=lease['x-ms-lease-id'])
+
+        # Assert
+        self.assertIsNone(resp)
+        acl = self.bc.get_container_acl(self.container_name)
+        self.assertIsNotNone(acl)
+
+    def test_set_container_acl_with_non_matching_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
+        with self.assertRaises(WindowsAzureError):
+            self.bc.set_container_acl(self.container_name, x_ms_lease_id=non_matching_lease_id)
+
+        # Assert
 
     def test_set_container_acl_with_public_access_container(self):
         # Arrange
@@ -585,6 +760,121 @@ class BlobServiceTest(AzureTestCase):
 
         # Assert
 
+    def test_lease_container_acquire_and_release(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+
+        # Act
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+        lease = self.bc.lease_container(self.container_name, 'release', x_ms_lease_id=lease['x-ms-lease-id'])
+        self.container_lease_id = None
+
+        # Assert
+
+    def test_lease_container_renew(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire', x_ms_lease_duration=15)
+        self.container_lease_id = lease['x-ms-lease-id']
+        time.sleep(10)
+
+        # Act
+        renewed_lease = self.bc.lease_container(self.container_name, 'renew', x_ms_lease_id=lease['x-ms-lease-id'])
+
+        # Assert
+        self.assertEquals(lease['x-ms-lease-id'], renewed_lease['x-ms-lease-id'])
+        time.sleep(5)
+        with self.assertRaises(WindowsAzureError):
+            self.bc.delete_container(self.container_name)
+        time.sleep(10)
+        self.bc.delete_container(self.container_name)
+
+    def test_lease_container_break_period(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+
+        # Act
+        lease = self.bc.lease_container(self.container_name, 'acquire', x_ms_lease_duration=15)
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Assert
+        self.bc.lease_container(self.container_name, 'break', x_ms_lease_id=lease['x-ms-lease-id'], x_ms_lease_break_period=5)
+        time.sleep(5)
+        with self.assertRaises(WindowsAzureError):
+            self.bc.delete_container(self.container_name, x_ms_lease_id=lease['x-ms-lease-id'])
+
+    def test_lease_container_break_released_lease_fails(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+        self.bc.lease_container(self.container_name, 'release', lease['x-ms-lease-id'])
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.bc.lease_container(self.container_name, 'break', lease['x-ms-lease-id'])
+
+        # Assert
+
+    def test_lease_container_acquire_after_break_fails(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+        self.bc.lease_container(self.container_name, 'break', lease['x-ms-lease-id'])
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.bc.lease_container(self.container_name, 'acquire')
+
+        # Assert
+
+    def test_lease_container_with_duration(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+
+        # Act
+        lease = self.bc.lease_container(self.container_name, 'acquire', x_ms_lease_duration=15)
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Assert
+        with self.assertRaises(WindowsAzureError):
+            self.bc.lease_container(self.container_name, 'acquire')
+        time.sleep(15)
+        lease = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease['x-ms-lease-id']
+
+    def test_lease_container_with_proposed_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+
+        # Act
+        lease_id = '55e97f64-73e8-4390-838d-d9e84a374321'
+        lease = self.bc.lease_container(self.container_name, 'acquire', x_ms_proposed_lease_id=lease_id)
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Assert
+        self.assertIsNotNone(lease)
+        self.assertEquals(lease['x-ms-lease-id'], lease_id)
+
+    def test_lease_container_change_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+
+        # Act
+        lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
+        lease1 = self.bc.lease_container(self.container_name, 'acquire')
+        self.container_lease_id = lease1['x-ms-lease-id']
+        lease2 = self.bc.lease_container(self.container_name, 'change', x_ms_lease_id=lease1['x-ms-lease-id'], x_ms_proposed_lease_id=lease_id)
+        self.container_lease_id = lease2['x-ms-lease-id']
+
+        # Assert
+        self.assertIsNotNone(lease1)
+        self.assertIsNotNone(lease2)
+        self.assertNotEquals(lease1['x-ms-lease-id'], lease_id)
+        self.assertEquals(lease2['x-ms-lease-id'], lease_id)
+
     def test_delete_container_with_existing_container(self):
         # Arrange
         self.bc.create_container(self.container_name)
@@ -624,6 +914,32 @@ class BlobServiceTest(AzureTestCase):
         # Act
         with self.assertRaises(WindowsAzureError):
             self.bc.delete_container(self.container_name, True)
+
+        # Assert
+
+    def test_delete_container_with_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire', x_ms_lease_duration=15)
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        deleted = self.bc.delete_container(self.container_name, x_ms_lease_id=lease['x-ms-lease-id'])
+
+        # Assert
+        self.assertTrue(deleted)
+        containers = self.bc.list_containers()
+        self.assertNamedItemNotInContainer(containers, self.container_name)
+
+    def test_delete_container_without_lease_id(self):
+        # Arrange
+        self.bc.create_container(self.container_name)
+        lease = self.bc.lease_container(self.container_name, 'acquire', x_ms_lease_duration=15)
+        self.container_lease_id = lease['x-ms-lease-id']
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.bc.delete_container(self.container_name)
 
         # Assert
 
@@ -677,6 +993,51 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsInstance(props.metrics, Metrics)
 
     #--Test cases for blobs ----------------------------------------------
+    def test_make_blob_url(self):
+        # Arrange
+
+        # Act
+        res = self.bc.make_blob_url('vhds', 'my.vhd')
+
+        # Assert
+        self.assertEquals(res, 'https://' + credentials.getStorageServicesName() + '.blob.core.windows.net/vhds/my.vhd')
+
+    def test_make_blob_url_with_account_name(self):
+        # Arrange
+
+        # Act
+        res = self.bc.make_blob_url('vhds', 'my.vhd', account_name='myaccount')
+
+        # Assert
+        self.assertEquals(res, 'https://myaccount.blob.core.windows.net/vhds/my.vhd')
+
+    def test_make_blob_url_with_protocol(self):
+        # Arrange
+
+        # Act
+        res = self.bc.make_blob_url('vhds', 'my.vhd', protocol='http')
+
+        # Assert
+        self.assertEquals(res, 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/vhds/my.vhd')
+
+    def test_make_blob_url_with_host_base(self):
+        # Arrange
+
+        # Act
+        res = self.bc.make_blob_url('vhds', 'my.vhd', host_base='.blob.internal.net')
+
+        # Assert
+        self.assertEquals(res, 'https://' + credentials.getStorageServicesName() + '.blob.internal.net/vhds/my.vhd')
+
+    def test_make_blob_url_with_all(self):
+        # Arrange
+
+        # Act
+        res = self.bc.make_blob_url('vhds', 'my.vhd', account_name='myaccount', protocol='http', host_base='.blob.internal.net')
+
+        # Assert
+        self.assertEquals(res, 'http://myaccount.blob.internal.net/vhds/my.vhd')
+
     def test_list_blobs(self):
         # Arrange
         self._create_container(self.container_name)
@@ -697,6 +1058,28 @@ class BlobServiceTest(AzureTestCase):
         self.assertNamedItemInContainer(resp, 'blob2')
         self.assertEqual(resp[0].properties.content_length, 11)
         self.assertEqual(resp[1].properties.content_type, 'application/octet-stream Charset=UTF-8')
+
+    def test_list_blobs_leased_blob(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = 'hello world'
+        self.bc.put_blob(self.container_name, 'blob1', data, 'BlockBlob')
+        lease = self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
+
+        # Act
+        resp = self.bc.list_blobs(self.container_name)
+        for blob in resp:
+            name = blob.name
+
+        # Assert
+        self.assertIsNotNone(resp)
+        self.assertGreaterEqual(len(resp), 1)
+        self.assertIsNotNone(resp[0])
+        self.assertNamedItemInContainer(resp, 'blob1')
+        self.assertEqual(resp[0].properties.content_length, 11)
+        self.assertEqual(resp[0].properties.lease_duration, 'fixed')
+        self.assertEqual(resp[0].properties.lease_status, 'locked')
+        self.assertEqual(resp[0].properties.lease_state, 'leased')
 
     def test_list_blobs_with_prefix(self):
         # Arrange
@@ -844,24 +1227,36 @@ class BlobServiceTest(AzureTestCase):
         self.assertEqual(blobs[0].name, 'blob1')
         self.assertEqual(blobs[1].name, 'blob2')
 
-    #def test_list_blobs_with_include_copy(self):
-    #    # Arrange
-    #    self._create_container(self.container_name)
-    #    data = 'hello world'
-    #    self.bc.put_blob(self.container_name, 'blob1', data, 'BlockBlob', x_ms_meta_name_values={'status':'original'})
-    #    sourceblob = '/%s/%s/%s' % (credentials.getStorageServicesName(),
-    #                                self.container_name,
-    #                                'blob1')
-    #    self.bc.copy_blob(self.container_name, 'blob1copy', sourceblob, {'status':'copy'})
+    def test_list_blobs_with_include_copy(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = 'hello world'
+        self.bc.put_blob(self.container_name, 'blob1', data, 'BlockBlob', x_ms_meta_name_values={'status':'original'})
+        sourceblob = 'https://%s.blob.core.windows.net/%s/%s' % (credentials.getStorageServicesName(),
+                                    self.container_name,
+                                    'blob1')
+        self.bc.copy_blob(self.container_name, 'blob1copy', sourceblob, {'status':'copy'})
 
-    #    # Act
-    #    blobs = self.bc.list_blobs(self.container_name, include='copy')
+        # Act
+        blobs = self.bc.list_blobs(self.container_name, include='copy')
 
-    #    # Assert
-    #    self.assertEqual(len(blobs), 2)
-    #    self.assertEqual(blobs[0].name, 'blob1')
-    #    self.assertEqual(blobs[1].name, 'blob2')
-    #    #TODO: check for metadata related to copy blob
+        # Assert
+        self.assertEqual(len(blobs), 2)
+        self.assertEqual(blobs[0].name, 'blob1')
+        self.assertEqual(blobs[1].name, 'blob1copy')
+        self.assertEqual(blobs[1].properties.content_length, 11)
+        self.assertEqual(blobs[1].properties.content_type, 'application/octet-stream Charset=UTF-8')
+        self.assertEqual(blobs[1].properties.content_encoding, '')
+        self.assertEqual(blobs[1].properties.content_language, '')
+        self.assertNotEqual(blobs[1].properties.content_md5, '')
+        self.assertEqual(blobs[1].properties.blob_type, 'BlockBlob')
+        self.assertEqual(blobs[1].properties.lease_status, 'unlocked')
+        self.assertEqual(blobs[1].properties.lease_state, 'available')
+        self.assertNotEqual(blobs[1].properties.copy_id, '')
+        self.assertEqual(blobs[1].properties.copy_source, sourceblob)
+        self.assertEqual(blobs[1].properties.copy_status, 'success')
+        self.assertEqual(blobs[1].properties.copy_progress, '11/11')
+        self.assertNotEqual(blobs[1].properties.copy_completion_time, '')
 
     def test_list_blobs_with_include_multiple(self):
         # Arrange
@@ -1087,8 +1482,24 @@ class BlobServiceTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertEquals(props['x-ms-blob-type'], 'BlockBlob')
-        self.assertEquals(props['x-ms-lease-status'], 'unlocked')
         self.assertEquals(props['content-length'], '11')
+        self.assertEquals(props['x-ms-lease-status'], 'unlocked')
+
+    def test_get_blob_properties_with_leased_blob(self):
+        # Arrange
+        self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
+        lease = self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
+
+        # Act
+        props = self.bc.get_blob_properties(self.container_name, 'blob1')
+
+        # Assert
+        self.assertIsNotNone(props)
+        self.assertEquals(props['x-ms-blob-type'], 'BlockBlob')
+        self.assertEquals(props['content-length'], '11')
+        self.assertEquals(props['x-ms-lease-status'], 'locked')
+        self.assertEquals(props['x-ms-lease-state'], 'leased')
+        self.assertEquals(props['x-ms-lease-duration'], 'fixed')
 
     def test_get_blob_properties_with_non_existing_container(self):
         # Arrange
@@ -1124,14 +1535,15 @@ class BlobServiceTest(AzureTestCase):
         self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
 
         # Act
-        resp = self.bc.set_blob_metadata(self.container_name, 'blob1', {'hello':'world', 'foo':'42'})
+        resp = self.bc.set_blob_metadata(self.container_name, 'blob1', {'hello':'world', 'foo':'42', 'UP':'UPval'})
 
         # Assert
         self.assertIsNone(resp)
         md = self.bc.get_blob_metadata(self.container_name, 'blob1')
-        self.assertEquals(2, len(md))
+        self.assertEquals(3, len(md))
         self.assertEquals(md['x-ms-meta-hello'], 'world')
         self.assertEquals(md['x-ms-meta-foo'], '42')
+        self.assertEquals(md['x-ms-meta-up'], 'UPval')
 
     def test_delete_blob_with_existing_blob(self):
         # Arrange
@@ -1164,9 +1576,54 @@ class BlobServiceTest(AzureTestCase):
         resp = self.bc.copy_blob(self.container_name, 'blob1copy', sourceblob)
 
         # Assert
-        self.assertIsNone(resp)
+        self.assertIsNotNone(resp)
+        self.assertEquals(resp['x-ms-copy-status'], 'success')
+        self.assertIsNotNone(resp['x-ms-copy-id'])
         copy = self.bc.get_blob(self.container_name, 'blob1copy')
         self.assertEquals(copy, 'hello world')
+
+    # TODO:
+    # We need to find out how to get azure to make the copy asynchronously.
+    # It seems like no matter how big the blob is (60GB), the copy is always 
+    # synchronous - even going cross account and making several consecutive copies.
+
+    #def test_abort_copy_blob(self):
+    #    # Arrange
+    #    self._create_container(self.container_name)
+    #    source_container_name = 'sourcecontainer'
+    #    source_blob_name = 'sourceblob'
+    #    if not self._blob_exists(source_container_name, source_blob_name):
+    #        self._create_container_and_block_blob_with_random_data(source_container_name, source_blob_name, 500, 4 * 1024 * 1024)
+
+    #    source_blob_url = self.bc.make_blob_url(source_container_name, source_blob_name)
+
+    #    # Act
+    #    success = False
+    #    for i in range(0, 50):
+    #        target_blob_name = 'targetblob{0}'.format(i)
+    #        copy_resp = self.bc.copy_blob(self.container_name, target_blob_name, source_blob_url)
+    #        if copy_resp['x-ms-copy-status'] == 'pending':
+    #            self.bc.abort_copy_blob(self.container_name, 'targetblob', copy_resp['x-ms-copy-id'])
+    #            success = True
+    #            break
+
+    #    # Assert
+    #    self.assertTrue(success)
+
+    def test_abort_copy_blob_with_synchronous_copy_fails(self):
+        # Arrange
+        source_blob_name = 'sourceblob'
+        self._create_container_and_block_blob(self.container_name, source_blob_name, 'hello world')
+        source_blob_url = self.bc.make_blob_url(self.container_name, source_blob_name)
+
+        # Act
+        target_blob_name = 'targetblob'
+        copy_resp = self.bc.copy_blob(self.container_name, target_blob_name, source_blob_url)
+        with self.assertRaises(WindowsAzureError):
+            self.bc.abort_copy_blob(self.container_name, target_blob_name, copy_resp['x-ms-copy-id'])
+
+        # Assert
+        self.assertEquals(copy_resp['x-ms-copy-status'], 'success')
 
     def test_snapshot_blob(self):
         # Arrange
@@ -1186,6 +1643,117 @@ class BlobServiceTest(AzureTestCase):
         # Act
         resp1 = self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
         resp2 = self.bc.lease_blob(self.container_name, 'blob1', 'release', resp1['x-ms-lease-id'])
+        resp3 = self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
+
+        # Assert
+        self.assertIsNotNone(resp1)
+        self.assertIsNotNone(resp2)
+        self.assertIsNotNone(resp3)
+
+    def test_lease_blob_with_duration(self):
+        # Arrange
+        self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
+
+        # Act
+        resp1 = self.bc.lease_blob(self.container_name, 'blob1', 'acquire', x_ms_lease_duration=15)
+        resp2 = self.bc.put_blob(self.container_name, 'blob1', 'hello 2', 'BlockBlob', x_ms_lease_id=resp1['x-ms-lease-id'])
+        time.sleep(15)
+        with self.assertRaises(WindowsAzureError):
+            self.bc.put_blob(self.container_name, 'blob1', 'hello 3', 'BlockBlob', x_ms_lease_id=resp1['x-ms-lease-id'])
+
+        # Assert
+        self.assertIsNotNone(resp1)
+        self.assertIsNone(resp2)
+
+    def test_lease_blob_with_proposed_lease_id(self):
+        # Arrange
+        self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
+
+        # Act
+        lease_id = 'a0e6c241-96ea-45a3-a44b-6ae868bc14d0'
+        resp1 = self.bc.lease_blob(self.container_name, 'blob1', 'acquire', x_ms_proposed_lease_id=lease_id)
+
+        # Assert
+        self.assertIsNotNone(resp1)
+        self.assertEquals(resp1['x-ms-lease-id'], lease_id)
+
+    def test_lease_blob_change_lease_id(self):
+        # Arrange
+        self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
+
+        # Act
+        lease_id = 'a0e6c241-96ea-45a3-a44b-6ae868bc14d0'
+        resp1 = self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
+        resp2 = self.bc.lease_blob(self.container_name, 'blob1', 'change', x_ms_lease_id=resp1['x-ms-lease-id'], x_ms_proposed_lease_id=lease_id)
+
+        # Assert
+        self.assertIsNotNone(resp1)
+        self.assertIsNotNone(resp2)
+        self.assertNotEquals(resp1['x-ms-lease-id'], lease_id)
+        self.assertEquals(resp2['x-ms-lease-id'], lease_id)
+
+    def test_lease_blob_renew_released_lease_fails(self):
+        # Arrange
+        self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
+
+        # Act
+        resp1 = self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
+        resp2 = self.bc.lease_blob(self.container_name, 'blob1', 'release', resp1['x-ms-lease-id'])
+        with self.assertRaises(WindowsAzureConflictError):
+            self.bc.lease_blob(self.container_name, 'blob1', 'renew', resp1['x-ms-lease-id'])
+
+        # Assert
+        self.assertIsNotNone(resp1)
+        self.assertIsNotNone(resp2)
+
+    def test_lease_blob_break_period(self):
+        # Arrange
+        self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
+
+        # Act
+        resp1 = self.bc.lease_blob(self.container_name, 'blob1', 'acquire', x_ms_lease_duration=15)
+        resp2 = self.bc.lease_blob(self.container_name, 'blob1', 'break', resp1['x-ms-lease-id'], x_ms_lease_break_period=5)
+        resp3 = self.bc.put_blob(self.container_name, 'blob1', 'hello 2', 'BlockBlob', x_ms_lease_id=resp1['x-ms-lease-id'])
+        time.sleep(5)
+        with self.assertRaises(WindowsAzureError):
+            self.bc.put_blob(self.container_name, 'blob1', 'hello 3', 'BlockBlob', x_ms_lease_id=resp1['x-ms-lease-id'])
+
+        # Assert
+        self.assertIsNotNone(resp1)
+        self.assertIsNotNone(resp2)
+        self.assertIsNone(resp3)
+
+    def test_lease_blob_break_released_lease_fails(self):
+        # Arrange
+        self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
+        lease = self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
+        self.bc.lease_blob(self.container_name, 'blob1', 'release', lease['x-ms-lease-id'])
+
+        # Act
+        with self.assertRaises(WindowsAzureConflictError):
+            self.bc.lease_blob(self.container_name, 'blob1', 'break', lease['x-ms-lease-id'])
+
+        # Assert
+
+    def test_lease_blob_acquire_after_break_fails(self):
+        # Arrange
+        self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
+        lease = self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
+        self.bc.lease_blob(self.container_name, 'blob1', 'break', lease['x-ms-lease-id'])
+
+        # Act
+        with self.assertRaises(WindowsAzureConflictError):
+            self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
+
+        # Assert
+
+    def test_lease_blob_acquire_and_renew(self):
+        # Arrange
+        self._create_container_and_block_blob(self.container_name, 'blob1', 'hello world')
+
+        # Act
+        resp1 = self.bc.lease_blob(self.container_name, 'blob1', 'acquire')
+        resp2 = self.bc.lease_blob(self.container_name, 'blob1', 'renew', resp1['x-ms-lease-id'])
 
         # Assert
         self.assertIsNotNone(resp1)

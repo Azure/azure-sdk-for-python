@@ -37,7 +37,7 @@ from azure import (WindowsAzureData,
                    )
 
 #x-ms-version for storage service.
-X_MS_VERSION = '2011-08-18'
+X_MS_VERSION = '2012-02-12'
 
 class EnumResultsBase:
     ''' base class for EnumResults. '''
@@ -202,6 +202,14 @@ class BlobProperties(WindowsAzureData):
         self.xms_blob_sequence_number = 0
         self.blob_type = u''
         self.lease_status = u''
+        self.lease_state = u''
+        self.lease_duration = u''
+        self.copy_id = u''
+        self.copy_source = u''
+        self.copy_status = u''
+        self.copy_progress = u''
+        self.copy_completion_time = u''
+        self.copy_status_description = u''
 
 class BlobPrefix(WindowsAzureData):
     ''' BlobPrefix in Blob. '''

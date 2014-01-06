@@ -66,6 +66,35 @@ class BlobService(_StorageClient):
         '''
         return super(BlobService, self).__init__(account_name, account_key, protocol, host_base, dev_host)
 
+    def make_blob_url(self, container_name, blob_name, account_name=None, protocol=None, host_base=None):
+        '''
+        Creates the url to access a blob.
+
+        container_name: Name of container.
+        blob_name: Name of blob.
+        account_name: 
+            Name of the storage account. If not specified, uses the account 
+            specified when BlobService was initialized.
+        protocol:
+            Protocol to use: 'http' or 'https'. If not specified, uses the
+            protocol specified when BlobService was initialized.
+        host_base: 
+            Live host base url.  If not specified, uses the host base specified
+            when BlobService was initialized.
+        '''
+        if not account_name:
+            account_name = self.account_name
+        if not protocol:
+            protocol = self.protocol
+        if not host_base:
+            host_base = self.host_base
+
+        return '{0}://{1}{2}/{3}/{4}'.format(protocol, 
+                                             account_name, 
+                                             host_base, 
+                                             container_name, 
+                                             blob_name)
+
     def list_containers(self, prefix=None, marker=None, maxresults=None, include=None):
         '''
         The List Containers operation returns a list of the containers under 
@@ -136,43 +165,51 @@ class BlobService(_StorageClient):
             self._perform_request(request)
             return True
 
-    def get_container_properties(self, container_name):
+    def get_container_properties(self, container_name, x_ms_lease_id=None):
         '''
         Returns all user-defined metadata and system properties for the 
         specified container.
 
         container_name: Name of existing container.
+        x_ms_lease_id:
+            If specified, get_container_properties only succeeds if the 
+            container's lease is active and matches this ID.
         '''
         _validate_not_none('container_name', container_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self._get_host()
         request.path = '/' + _str(container_name) + '?restype=container'
+        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
         return _parse_response_for_dict(response)
 
-    def get_container_metadata(self, container_name):
+    def get_container_metadata(self, container_name, x_ms_lease_id=None):
         '''
         Returns all user-defined metadata for the specified container. The 
         metadata will be in returned dictionary['x-ms-meta-(name)'].
 
         container_name: Name of existing container.
+        x_ms_lease_id:
+            If specified, get_container_metadata only succeeds if the 
+            container's lease is active and matches this ID.
         '''
         _validate_not_none('container_name', container_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self._get_host()
         request.path = '/' + _str(container_name) + '?restype=container&comp=metadata'
+        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
         return _parse_response_for_dict_prefix(response, prefixes=['x-ms-meta'])
 
-    def set_container_metadata(self, container_name, x_ms_meta_name_values=None):
+    def set_container_metadata(self, container_name, x_ms_meta_name_values=None, x_ms_lease_id=None):
         '''
         Sets one or more user-defined name-value pairs for the specified 
         container.
@@ -180,35 +217,45 @@ class BlobService(_StorageClient):
         container_name: Name of existing container.
         x_ms_meta_name_values:
             A dict containing name, value for metadata. Example: {'category':'test'}
+        x_ms_lease_id:
+            If specified, set_container_metadata only succeeds if the 
+            container's lease is active and matches this ID.
         '''
         _validate_not_none('container_name', container_name)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self._get_host()
         request.path = '/' + _str(container_name) + '?restype=container&comp=metadata'
-        request.headers = [('x-ms-meta-name-values', x_ms_meta_name_values)]
+        request.headers = [
+            ('x-ms-meta-name-values', x_ms_meta_name_values),
+            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
+            ]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-    def get_container_acl(self, container_name):
+    def get_container_acl(self, container_name, x_ms_lease_id=None):
         '''
         Gets the permissions for the specified container.
 
         container_name: Name of existing container.
+        x_ms_lease_id:
+            If specified, get_container_acl only succeeds if the 
+            container's lease is active and matches this ID.
         '''
         _validate_not_none('container_name', container_name)
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self._get_host()
         request.path = '/' + _str(container_name) + '?restype=container&comp=acl'
+        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
         return _parse_response(response, SignedIdentifiers)
 
-    def set_container_acl(self, container_name, signed_identifiers=None, x_ms_blob_public_access=None):
+    def set_container_acl(self, container_name, signed_identifiers=None, x_ms_blob_public_access=None, x_ms_lease_id=None):
         '''
         Sets the permissions for the specified container.
         
@@ -216,31 +263,39 @@ class BlobService(_StorageClient):
         signed_identifiers: SignedIdentifers instance
         x_ms_blob_public_access:
             Optional. Possible values include: container, blob 
+        x_ms_lease_id:
+            If specified, set_container_acl only succeeds if the 
+            container's lease is active and matches this ID.
         '''
         _validate_not_none('container_name', container_name)
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self._get_host()
         request.path = '/' + _str(container_name) + '?restype=container&comp=acl'
-        request.headers = [('x-ms-blob-public-access', _str_or_none(x_ms_blob_public_access))]
+        request.headers = [
+            ('x-ms-blob-public-access', _str_or_none(x_ms_blob_public_access)),
+            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
+            ]
         request.body = _get_request_body(_convert_class_to_xml(signed_identifiers))
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-    def delete_container(self, container_name, fail_not_exist=False):
+    def delete_container(self, container_name, fail_not_exist=False, x_ms_lease_id=None):
         '''
         Marks the specified container for deletion.
         
         container_name: Name of container to delete.
         fail_not_exist: 
             Specify whether to throw an exception when the container doesn't exist.
+        x_ms_lease_id: Required if the container has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self._get_host()
         request.path = '/' + _str(container_name) + '?restype=container'
+        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         if not fail_not_exist:
@@ -253,6 +308,54 @@ class BlobService(_StorageClient):
         else:
             self._perform_request(request)
             return True
+
+    def lease_container(self, container_name, x_ms_lease_action, x_ms_lease_id=None, x_ms_lease_duration=60, x_ms_lease_break_period=None, x_ms_proposed_lease_id=None):
+        '''
+        Establishes and manages a lock on a container for delete operations. 
+        The lock duration can be 15 to 60 seconds, or can be infinite.
+        
+        container_name: Name of existing container.
+        x_ms_lease_action:
+            Required. Possible values: acquire|renew|release|break|change
+        x_ms_lease_id: Required if the container has an active lease.
+        x_ms_lease_duration: 
+            Specifies the duration of the lease, in seconds, or negative one 
+            (-1) for a lease that never expires. A non-infinite lease can be 
+            between 15 and 60 seconds. A lease duration cannot be changed 
+            using renew or change. For backwards compatibility, the default is 
+            60, and the value is only used on an acquire operation.
+        x_ms_lease_break_period:
+            Optional. For a break operation, this is the proposed duration of 
+            seconds that the lease should continue before it is broken, between 
+            0 and 60 seconds. This break period is only used if it is shorter 
+            than the time remaining on the lease. If longer, the time remaining 
+            on the lease is used. A new lease will not be available before the 
+            break period has expired, but the lease may be held for longer than 
+            the break period. If this header does not appear with a break 
+            operation, a fixed-duration lease breaks after the remaining lease 
+            period elapses, and an infinite lease breaks immediately.
+        x_ms_proposed_lease_id:
+            Optional for acquire, required for change. Proposed lease ID, in a 
+            GUID string format.
+        '''
+        _validate_not_none('container_name', container_name)
+        _validate_not_none('x_ms_lease_action', x_ms_lease_action)
+        request = HTTPRequest()
+        request.method = 'PUT'
+        request.host = self._get_host()
+        request.path = '/' + _str(container_name) + '?restype=container&comp=lease'
+        request.headers = [
+            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
+            ('x-ms-lease-action', _str_or_none(x_ms_lease_action)),
+            ('x-ms-lease-duration', _str_or_none(x_ms_lease_duration if x_ms_lease_action == 'acquire' else None)),
+            ('x-ms-lease-break-period', _str_or_none(x_ms_lease_break_period)),
+            ('x-ms-proposed-lease-id', _str_or_none(x_ms_proposed_lease_id)),
+            ]
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
+
+        return _parse_response_for_dict_filter(response, filter=['x-ms-lease-id', 'x-ms-lease-time'])
 
     def list_blobs(self, container_name, prefix=None, marker=None, maxresults=None, include=None, delimiter=None):
         '''
@@ -567,14 +670,34 @@ class BlobService(_StorageClient):
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-    def lease_blob(self, container_name, blob_name, x_ms_lease_action, x_ms_lease_id=None):
+    def lease_blob(self, container_name, blob_name, x_ms_lease_action, x_ms_lease_id=None, x_ms_lease_duration=60, x_ms_lease_break_period=None, x_ms_proposed_lease_id=None):
         '''
         Establishes and manages a one-minute lock on a blob for write operations.
         
         container_name: Name of existing container.
         blob_name: Name of existing blob.
-        x_ms_lease_action: Required. Possible values: acquire|renew|release|break
+        x_ms_lease_action:
+            Required. Possible values: acquire|renew|release|break|change
         x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_duration: 
+            Specifies the duration of the lease, in seconds, or negative one 
+            (-1) for a lease that never expires. A non-infinite lease can be 
+            between 15 and 60 seconds. A lease duration cannot be changed 
+            using renew or change. For backwards compatibility, the default is 
+            60, and the value is only used on an acquire operation.
+        x_ms_lease_break_period:
+            Optional. For a break operation, this is the proposed duration of 
+            seconds that the lease should continue before it is broken, between 
+            0 and 60 seconds. This break period is only used if it is shorter 
+            than the time remaining on the lease. If longer, the time remaining 
+            on the lease is used. A new lease will not be available before the 
+            break period has expired, but the lease may be held for longer than 
+            the break period. If this header does not appear with a break 
+            operation, a fixed-duration lease breaks after the remaining lease 
+            period elapses, and an infinite lease breaks immediately.
+        x_ms_proposed_lease_id:
+            Optional for acquire, required for change. Proposed lease ID, in a 
+            GUID string format.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -585,13 +708,16 @@ class BlobService(_StorageClient):
         request.path = '/' + _str(container_name) + '/' + _str(blob_name) + '?comp=lease'
         request.headers = [
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
-            ('x-ms-lease-action', _str_or_none(x_ms_lease_action))
+            ('x-ms-lease-action', _str_or_none(x_ms_lease_action)),
+            ('x-ms-lease-duration', _str_or_none(x_ms_lease_duration if x_ms_lease_action == 'acquire' else None)),
+            ('x-ms-lease-break-period', _str_or_none(x_ms_lease_break_period)),
+            ('x-ms-proposed-lease-id', _str_or_none(x_ms_proposed_lease_id)),
             ]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_response_for_dict_filter(response, filter=['x-ms-lease-id'])
+        return _parse_response_for_dict_filter(response, filter=['x-ms-lease-id', 'x-ms-lease-time'])
 
     def snapshot_blob(self, container_name, blob_name, x_ms_meta_name_values=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, x_ms_lease_id=None):
         '''
@@ -634,7 +760,13 @@ class BlobService(_StorageClient):
         
         container_name: Name of existing container.
         blob_name: Name of existing blob.
-        x_ms_copy_source: the blob to be copied. Should be absolute path format.
+        x_ms_copy_source:
+            URL up to 2 KB in length that specifies a blob. A source blob in 
+            the same account can be private, but a blob in another account 
+            must be public or accept credentials included in this URL, such as 
+            a Shared Access Signature. Examples:
+            https://myaccount.blob.core.windows.net/mycontainer/myblob
+            https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime> 
         x_ms_meta_name_values: Optional. Dict containing name and value pairs.
         x_ms_source_if_modified_since:
             Optional. An ETag value. Specify this conditional header to copy 
@@ -663,6 +795,21 @@ class BlobService(_StorageClient):
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('x_ms_copy_source', x_ms_copy_source)
+
+        if x_ms_copy_source.startswith('/'):
+            # Backwards compatibility for earlier versions of the SDK where
+            # the copy source can be in the following formats:
+            # - Blob in named container:
+            #     /accountName/containerName/blobName
+            # - Snapshot in named container:
+            #     /accountName/containerName/blobName?snapshot=<DateTime>
+            # - Blob in root container: 
+            #     /accountName/blobName
+            # - Snapshot in root container:
+            #     /accountName/blobName?snapshot=<DateTime>
+            account, _, source = x_ms_copy_source.partition('/')[2].partition('/')
+            x_ms_copy_source = self.protocol + '://' + account + self.host_base + '/' + source
+
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self._get_host()
@@ -680,6 +827,36 @@ class BlobService(_StorageClient):
             ('If-None-Match', _str_or_none(if_none_match)),
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
             ('x-ms-source-lease-id', _str_or_none(x_ms_source_lease_id))
+            ]
+        request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
+        request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
+        response = self._perform_request(request)
+        
+        return _parse_response_for_dict(response)
+    
+    def abort_copy_blob(self, container_name, blob_name, x_ms_copy_id, x_ms_lease_id=None):
+        '''
+         Aborts a pending copy_blob operation, and leaves a destination blob 
+         with zero length and full metadata.
+
+         container_name: Name of destination container.
+         blob_name: Name of destination blob.
+         x_ms_copy_id: 
+            Copy identifier provided in the x-ms-copy-id of the original 
+            copy_blob operation.
+         x_ms_lease_id: 
+            Required if the destination blob has an active infinite lease.
+        '''
+        _validate_not_none('container_name', container_name)
+        _validate_not_none('blob_name', blob_name)
+        _validate_not_none('x_ms_copy_id', x_ms_copy_id)
+        request = HTTPRequest()
+        request.method = 'PUT'
+        request.host = self._get_host()
+        request.path = '/' + _str(container_name) + '/' + _str(blob_name) + '?comp=copy&copyid=' + _str(x_ms_copy_id)
+        request.headers = [
+            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
+            ('x-ms-copy-action', 'abort'),
             ]
         request.path, request.query = _update_request_uri_query_local_storage(request, self.use_local_storage)
         request.headers = _update_storage_blob_header(request, self.account_name, self.account_key)
