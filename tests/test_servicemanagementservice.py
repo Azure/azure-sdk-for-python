@@ -959,6 +959,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
+        deployment_label = deployment_name + 'label'
         image_name = self._linux_image_name()
         media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name + '.vhd'
         pk = PublicKey(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/authorized_keys')
@@ -978,18 +979,21 @@ class ServiceManagementServiceTest(AzureTestCase):
         network.configuration_set_type = 'NetworkConfiguration'
         network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('endpnameL', 'tcp', '59913', '3394'))
         
-        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small')
+        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_label, role_name, system, os_hd, network_config=network, role_size='Small')
         self._wait_for_async(result.request_id)
         self._wait_for_deployment_status(service_name, deployment_name, 'Running')
 
         # Assert
         self.assertTrue(self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
 
     def test_create_virtual_machine_deployment_windows(self):
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
+        deployment_label = deployment_name + 'label'
         image_name = self._windows_image_name()
         media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name + '.vhd'
 
@@ -1007,12 +1011,15 @@ class ServiceManagementServiceTest(AzureTestCase):
         network.configuration_set_type = 'NetworkConfiguration'
         network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('endpnameW', 'tcp', '59917', '3395'))
 
-        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small')
+        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_label, role_name, system, os_hd, network_config=network, role_size='Small')
         self._wait_for_async(result.request_id)
         self._wait_for_deployment_status(service_name, deployment_name, 'Running')
 
         # Assert
         self.assertTrue(self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
+
 
     def test_create_virtual_machine_deployment_windows_virtual_network(self):
         # this test requires the following manual resources to be created
@@ -1026,6 +1033,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
+        deployment_label = deployment_name + 'label'
         image_name = self._windows_image_name()
         media_link = 'http://' + storage_name + '.blob.core.windows.net/' + self.container_name + '/' + role_name + '.vhd'
 
@@ -1044,12 +1052,14 @@ class ServiceManagementServiceTest(AzureTestCase):
         network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('endpnameW', 'tcp', '59917', '3395'))
         network.subnet_names.append(subnet_name)
 
-        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small', virtual_network_name=virtual_network_name)
+        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_label, role_name, system, os_hd, network_config=network, role_size='Small', virtual_network_name=virtual_network_name)
         self._wait_for_async(result.request_id)
         self._wait_for_deployment_status(service_name, deployment_name, 'Running')
 
         # Assert
         self.assertTrue(self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
 
     def test_add_role_linux(self):
         # Arrange

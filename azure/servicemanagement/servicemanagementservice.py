@@ -108,10 +108,9 @@ class ServiceManagementService(_ServiceManagementClient):
             A description for the storage account. The description may be up 
             to 1024 characters in length.
         label:
-            A name for the storage account specified as a base64-encoded 
-            string. The name may be up to 100 characters in length. The name 
-            can be used identify the storage account for your tracking 
-            purposes.
+            A name for the storage account. The name may be up to 100 
+            characters in length. The name can be used to identify the storage 
+            account for your tracking purposes.
         affinity_group:
             The name of an existing affinity group in the specified 
             subscription. You can specify either a location or affinity_group, 
@@ -155,9 +154,9 @@ class ServiceManagementService(_ServiceManagementClient):
             A description for the storage account. The description may be up 
             to 1024 characters in length.
         label:
-            A name for the storage account specified as a base64-encoded 
-            string. The name may be up to 100 characters in length. The name 
-            can be used identify the storage account for your tracking purposes.
+            A name for the storage account. The name may be up to 100 
+            characters in length. The name can be used to identify the storage 
+            account for your tracking purposes.
         geo_replication_enabled:
             Specifies whether the storage account is created with the 
             geo-replication enabled. If the element is not included in the 
@@ -233,9 +232,9 @@ class ServiceManagementService(_ServiceManagementClient):
             This name is the DNS prefix name and can be used to access the 
             hosted service.
         label:
-            A name for the hosted service that is base-64 encoded. The name can 
-            be up to 100 characters in length. The name can be used identify 
-            the storage account for your tracking purposes.
+            A name for the hosted service. The name can be up to 100 characters 
+            in length. The name can be used to identify the storage account for 
+            your tracking purposes.
         description:
             A description for the hosted service. The description can be up to 
             1024 characters in length.
@@ -272,10 +271,10 @@ class ServiceManagementService(_ServiceManagementClient):
 
         service_name: Name of the hosted service.
         label:
-            A name for the hosted service that is base64-encoded. The name may 
-            be up to 100 characters in length. You must specify a value for 
-            either Label or Description, or for both. It is recommended that 
-            the label be unique within the subscription. The name can be used 
+            A name for the hosted service. The name may be up to 100 characters 
+            in length. You must specify a value for either Label or 
+            Description, or for both. It is recommended that the label be 
+            unique within the subscription. The name can be used 
             identify the hosted service for your tracking purposes.
         description:
             A description for the hosted service. The description may be up to 
@@ -348,10 +347,10 @@ class ServiceManagementService(_ServiceManagementClient):
             storage account beneath the same subscription or a Shared Access 
             Signature (SAS) URI from any storage account.
         label:
-            A name for the hosted service that is base-64 encoded. The name 
-            can be up to 100 characters in length. It is recommended that the 
-            label be unique within the subscription. The name can be used 
-            identify the hosted service for your tracking purposes.
+            A name for the hosted service. The name can be up to 100 characters 
+            in length. It is recommended that the label be unique within the 
+            subscription. The name can be used to identify the hosted service 
+            for your tracking purposes.
         configuration:
             The base-64 encoded service configuration file for the deployment. 
         start_deployment:
@@ -483,10 +482,10 @@ class ServiceManagementService(_ServiceManagementClient):
         configuration:
             The base-64 encoded service configuration file for the deployment.
         label:
-            A name for the hosted service that is base-64 encoded. The name 
-            can be up to 100 characters in length. It is recommended that the 
-            label be unique within the subscription. The name can be used 
-            identify the hosted service for your tracking purposes.
+            A name for the hosted service. The name can be up to 100 characters 
+            in length. It is recommended that the label be unique within the 
+            subscription. The name can be used to identify the hosted service 
+            for your tracking purposes.
         force:
             Specifies whether the rollback should proceed even when it will 
             cause local data to be lost from some role instances. True if the 
@@ -697,7 +696,7 @@ class ServiceManagementService(_ServiceManagementClient):
             A base64 representation of the management certificate public key.
         thumbprint:
             The thumb print that uniquely identifies the management certificate.
-        data: The certificate?s raw data in base-64 encoded .cer format.
+        data: The certificate's raw data in base-64 encoded .cer format.
         '''
         _validate_not_none('public_key', public_key)
         _validate_not_none('thumbprint', thumbprint)
@@ -744,8 +743,8 @@ class ServiceManagementService(_ServiceManagementClient):
 
         name: A name for the affinity group that is unique to the subscription.
         label:
-            A base-64 encoded name for the affinity group. The name can be up 
-            to 100 characters in length.
+            A name for the affinity group. The name can be up to 100 characters 
+            in length.
         location:
             The data center location where the affinity group will be created. 
             To list available locations, use the list_location function.
@@ -766,8 +765,8 @@ class ServiceManagementService(_ServiceManagementClient):
 
         affinity_group_name: The name of the affinity group.
         label:
-            A name for the affinity specified as a base-64 encoded string. 
-            The label can be up to 100 characters in length.
+            A name for the affinity group. The name can be up to 100 characters 
+            in length.
         description:
             A description for the affinity group. The description can be up to 
             1024 characters in length.
@@ -861,10 +860,8 @@ class ServiceManagementService(_ServiceManagementClient):
             The environment to which the hosted service is deployed. Valid 
             values are: staging, production
         label:
-            A name for the hosted service that is base-64 encoded. The name 
-            can be up to 100 characters in length. It is recommended that the 
-            label be unique within the subscription. The name can be used 
-            identify the hosted service for your tracking purposes.
+            Specifies an identifier for the deployment. The label can be up to 
+            100 characters long. The label can be used for tracking purposes.
         role_name: The name of the role.
         system_config:
             Contains the metadata required to provision a virtual machine from 
