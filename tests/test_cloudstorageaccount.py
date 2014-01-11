@@ -22,8 +22,7 @@ from azure.storage import (BlobService,
                            )
 from util import (AzureTestCase,
                   credentials,
-                  getUniqueTestRunID,
-                  getUniqueNameBasedOnCurrentTime,
+                  getUniqueName,
                   )
 
 #------------------------------------------------------------------------------

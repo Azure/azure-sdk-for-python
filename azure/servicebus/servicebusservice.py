@@ -12,11 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import httplib
 import os
-import sys
 import time
-import urllib2
 
 from azure import (WindowsAzureError,
                    SERVICE_BUS_HOST_BASE,
@@ -24,9 +21,12 @@ from azure import (WindowsAzureError,
                    _dont_fail_not_exist,
                    _dont_fail_on_exist,
                    _get_request_body,
+                   _get_request_body_bytes_only,
                    _int_or_none,
                    _str,
                    _update_request_uri_query,
+                   url_quote,
+                   url_unquote,
                    _validate_not_none,
                    )
 from azure.http import (HTTPError,
@@ -68,20 +68,20 @@ class ServiceBusService:
         
         #get service namespace, account key and issuer. If they are set when constructing, then use them.
         #else find them from environment variables.
-        if not service_namespace:
-            if os.environ.has_key(AZURE_SERVICEBUS_NAMESPACE):
-                self.service_namespace = os.environ[AZURE_SERVICEBUS_NAMESPACE]
-        if not account_key:
-            if os.environ.has_key(AZURE_SERVICEBUS_ACCESS_KEY):
-                self.account_key = os.environ[AZURE_SERVICEBUS_ACCESS_KEY]
-        if not issuer:
-            if os.environ.has_key(AZURE_SERVICEBUS_ISSUER):
-                self.issuer = os.environ[AZURE_SERVICEBUS_ISSUER]
+        if not self.service_namespace:
+            self.service_namespace = os.environ.get(AZURE_SERVICEBUS_NAMESPACE)
+        if not self.account_key:
+            self.account_key = os.environ.get(AZURE_SERVICEBUS_ACCESS_KEY)
+        if not self.issuer:
+            self.issuer = os.environ.get(AZURE_SERVICEBUS_ISSUER)
         
         if not self.service_namespace or not self.account_key or not self.issuer:
             raise WindowsAzureError('You need to provide servicebus namespace, access key and Issuer')
         
-        self._httpclient = _HTTPClient(service_instance=self, service_namespace=service_namespace, account_key=account_key, issuer=issuer)
+        self._httpclient = _HTTPClient(service_instance=self, 
+                                       service_namespace=self.service_namespace, 
+                                       account_key=self.account_key, 
+                                       issuer=self.issuer)
         self._filter = self._httpclient.perform_request
     
     def with_filter(self, filter):
@@ -498,12 +498,13 @@ class ServiceBusService:
         message: Message object containing message body and properties.
         '''
         _validate_not_none('topic_name', topic_name)
+        _validate_not_none('message', message)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self._get_host()
         request.path = '/' + _str(topic_name) + '/messages'
         request.headers = message.add_headers(request)
-        request.body = _get_request_body(message.body)
+        request.body = _get_request_body_bytes_only('message.body', message.body)
         request.path, request.query = _update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
@@ -632,12 +633,13 @@ class ServiceBusService:
         message: Message object containing message body and properties.
         '''
         _validate_not_none('queue_name', queue_name)
+        _validate_not_none('message', message)
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self._get_host()
         request.path = '/' + _str(queue_name) + '/messages'
         request.headers = message.add_headers(request)
-        request.body = _get_request_body(message.body)
+        request.body = _get_request_body_bytes_only('message.body', message.body)
         request.path, request.query = _update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
@@ -829,7 +831,7 @@ class ServiceBusService:
         wrap_scope = 'http://' + host + path + self.issuer + self.account_key
 
         # Check whether has unexpired cache, return cached token if it is still usable. 
-        if _tokens.has_key(wrap_scope):
+        if wrap_scope in _tokens:
             token = _tokens[wrap_scope]
             if not self._token_is_expired(token):
                 return token
@@ -840,14 +842,14 @@ class ServiceBusService:
         request.host = host.replace('.servicebus.', '-sb.accesscontrol.')
         request.method = 'POST'
         request.path = '/WRAPv0.9'
-        request.body = ('wrap_name=' + urllib2.quote(self.issuer) + '&wrap_password=' +
-                        urllib2.quote(self.account_key) + '&wrap_scope=' + 
-                        urllib2.quote('http://' + host + path))
+        request.body = ('wrap_name=' + url_quote(self.issuer) + '&wrap_password=' +
+                        url_quote(self.account_key) + '&wrap_scope=' + 
+                        url_quote('http://' + host + path)).encode('utf-8')
         request.headers.append(('Content-Length', str(len(request.body))))
         resp = self._httpclient.perform_request(request)
 
-        token = resp.body
-        token = urllib2.unquote(token[token.find('=')+1:token.rfind('&')])
+        token = resp.body.decode('utf-8')
+        token = url_unquote(token[token.find('=')+1:token.rfind('&')])
         _tokens[wrap_scope] = token
 
         return token

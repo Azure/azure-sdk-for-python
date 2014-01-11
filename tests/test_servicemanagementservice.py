@@ -31,8 +31,7 @@ from azure.servicemanagement import (CertificateSetting,
 from azure.storage.blobservice import BlobService
 from util import (AzureTestCase,
                   credentials,
-                  getUniqueTestRunID,
-                  getUniqueNameBasedOnCurrentTime,
+                  getUniqueName,
                   )
 
 SERVICE_CERT_FORMAT = 'pfx'
@@ -74,7 +73,7 @@ LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
 # try to use the VM's VHD directly without making a copy, you will get
 # conflict errors).
 
-# sourceblob = '/%s/%s/%s' % (credentials.getStorageServicesName(), 'vhdcontainername', 'vhdblobname')
+# sourceblob = '/{0}/{1}/{2}'.format(credentials.getStorageServicesName(), 'vhdcontainername', 'vhdblobname')
 # self.bc.copy_blob('vhdcontainername', 'targetvhdblobname', sourceblob)
 #
 # in the credentials file, set:
@@ -87,6 +86,9 @@ class ServiceManagementServiceTest(AzureTestCase):
     def setUp(self):
         self.sms = ServiceManagementService(credentials.getSubscriptionId(),
                                             credentials.getManagementCertFile())
+
+        if credentials.getForceUseHttplib():
+            self.sms._httpclient.use_httplib = True
 
         self.sms.set_proxy(credentials.getProxyHost(),
                            credentials.getProxyPort(),
@@ -101,10 +103,10 @@ class ServiceManagementServiceTest(AzureTestCase):
                           credentials.getProxyUser(),
                           credentials.getProxyPassword())
 
-        self.hosted_service_name = getUniqueNameBasedOnCurrentTime('utsvc')
-        self.container_name = getUniqueNameBasedOnCurrentTime('utctnr')
-        self.disk_name = getUniqueNameBasedOnCurrentTime('utdisk')
-        self.os_image_name = getUniqueNameBasedOnCurrentTime('utosimg')
+        self.hosted_service_name = getUniqueName('utsvc')
+        self.container_name = getUniqueName('utctnr')
+        self.disk_name = getUniqueName('utdisk')
+        self.os_image_name = getUniqueName('utosimg')
         self.data_disk_info = None
 
     def tearDown(self):

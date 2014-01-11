@@ -12,10 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import base64
-import hmac
-import hashlib
-import urllib2
+from azure import url_quote
+from azure.storage import _sign_string
 
 #-------------------------------------------------------------------------
 # Constants for the share access signature
@@ -123,15 +121,15 @@ class SharedAccessSignature:
         ''' Converts query string to str. The order of name, values is very import and can't be wrong.'''
 
         convert_str = ''
-        if query_string.has_key(SIGNED_START):
+        if SIGNED_START in query_string:
             convert_str += SIGNED_START + '=' + query_string[SIGNED_START] + '&'
         convert_str += SIGNED_EXPIRY + '=' + query_string[SIGNED_EXPIRY] + '&'
         convert_str += SIGNED_PERMISSION + '=' + query_string[SIGNED_PERMISSION] + '&'
         convert_str += SIGNED_RESOURCE + '=' + query_string[SIGNED_RESOURCE] + '&'
 
-        if query_string.has_key(SIGNED_IDENTIFIER):
+        if SIGNED_IDENTIFIER in query_string:
             convert_str += SIGNED_IDENTIFIER + '=' + query_string[SIGNED_IDENTIFIER] + '&'
-        convert_str += SIGNED_SIGNATURE + '=' + urllib2.quote(query_string[SIGNED_SIGNATURE]) + '&'
+        convert_str += SIGNED_SIGNATURE + '=' + url_quote(query_string[SIGNED_SIGNATURE]) + '&'
         return convert_str
 
     def _generate_signature(self, path, resource_type, shared_access_policy):
@@ -167,7 +165,7 @@ class SharedAccessSignature:
         if required_resource_type == RESOURCE_BLOB:
             required_resource_type += RESOURCE_CONTAINER
 
-        for name, value in shared_access_signature.query_string.iteritems():
+        for name, value in shared_access_signature.query_string.items():
             if name == SIGNED_RESOURCE and required_resource_type.find(value) == -1:
                 return False
             elif name == SIGNED_PERMISSION and required_permission.find(value) == -1:
@@ -178,6 +176,4 @@ class SharedAccessSignature:
     def _sign(self, string_to_sign):
         ''' use HMAC-SHA256 to sign the string and convert it as base64 encoded string. '''
 
-        decode_account_key = base64.b64decode(self.account_key)
-        signed_hmac_sha256 = hmac.HMAC(decode_account_key, string_to_sign, hashlib.sha256)
-        return base64.b64encode(signed_hmac_sha256.digest())
+        return _sign_string(self.account_key, string_to_sign)

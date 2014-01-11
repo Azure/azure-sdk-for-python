@@ -13,6 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import ast
+import sys
 
 from datetime import datetime
 from xml.dom import minidom
@@ -188,8 +189,8 @@ class Message(WindowsAzureData):
 
         # Adds custom properties
         if self.custom_properties:
-            for name, value in self.custom_properties.iteritems():
-                if isinstance(value, unicode):
+            for name, value in self.custom_properties.items():
+                if sys.version_info < (3,) and isinstance(value, unicode):
                     request.headers.append((name, '"' + value.encode('utf-8') + '"'))
                 elif isinstance(value, str):
                     request.headers.append((name, '"' + str(value) + '"'))
@@ -292,7 +293,7 @@ def _convert_xml_to_rule(xmlstr):
                     setattr(rule, 'action_expression', action_expression.nodeValue)
    
     #extract id, updated and name value from feed entry and set them of rule.
-    for name, value in _get_entry_properties(xmlstr, True, '/rules').iteritems():
+    for name, value in _get_entry_properties(xmlstr, True, '/rules').items():
         setattr(rule, name, value)
 
     return rule
@@ -374,7 +375,7 @@ def _convert_xml_to_queue(xmlstr):
         raise WindowsAzureError(_ERROR_QUEUE_NOT_FOUND)
 
     #extract id, updated and name value from feed entry and set them of queue.
-    for name, value in _get_entry_properties(xmlstr, True).iteritems():
+    for name, value in _get_entry_properties(xmlstr, True).items():
         setattr(queue, name, value)
 
     return queue
@@ -435,7 +436,7 @@ def _convert_xml_to_topic(xmlstr):
         raise WindowsAzureError(_ERROR_TOPIC_NOT_FOUND)
 
     #extract id, updated and name value from feed entry and set them of topic.
-    for name, value in _get_entry_properties(xmlstr, True).iteritems():
+    for name, value in _get_entry_properties(xmlstr, True).items():
         setattr(topic, name, value)
     return topic
 
@@ -486,7 +487,7 @@ def _convert_xml_to_subscription(xmlstr):
         if node_value is not None:
             subscription.message_count = int(node_value)
 
-    for name, value in _get_entry_properties(xmlstr, True, '/subscriptions').iteritems():
+    for name, value in _get_entry_properties(xmlstr, True, '/subscriptions').items():
         setattr(subscription, name, value)
 
     return subscription

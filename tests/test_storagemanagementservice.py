@@ -1,4 +1,6 @@
-﻿#-------------------------------------------------------------------------
+﻿# coding: utf-8
+
+#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +21,7 @@ from azure import WindowsAzureError
 from azure.servicemanagement import ServiceManagementService
 from util import (AzureTestCase,
                   credentials,
-                  getUniqueTestRunID,
-                  getUniqueNameBasedOnCurrentTime,
+                  getUniqueName,
                   )
 
 #------------------------------------------------------------------------------
@@ -30,12 +31,15 @@ class StorageManagementServiceTest(AzureTestCase):
         self.sms = ServiceManagementService(credentials.getSubscriptionId(),
                                             credentials.getManagementCertFile())
 
+        if credentials.getForceUseHttplib():
+            self.sms._httpclient.use_httplib = True
+
         self.sms.set_proxy(credentials.getProxyHost(),
                            credentials.getProxyPort(),
                            credentials.getProxyUser(),
                            credentials.getProxyPassword())
 
-        self.storage_account_name = getUniqueNameBasedOnCurrentTime('utstorage')
+        self.storage_account_name = getUniqueName('utstor')
 
     def tearDown(self):
         try:
@@ -231,7 +235,7 @@ class StorageManagementServiceTest(AzureTestCase):
 
     def test_unicode_create_storage_account_unicode_name(self):
         # Arrange
-        self.storage_account_name = unicode(self.storage_account_name) + u'啊齄丂狛狜'
+        self.storage_account_name = self.storage_account_name + u'啊齄丂狛狜'
         description = 'description'
         label = 'label'
 

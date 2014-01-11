@@ -14,10 +14,13 @@
 #--------------------------------------------------------------------------
 import json
 import os
+import random
+import sys
 import time
 import unittest
 
-from exceptions import EnvironmentError
+if sys.version_info < (3,):
+    from exceptions import RuntimeError
 
 #------------------------------------------------------------------------------
 class Credentials(object):
@@ -28,15 +31,15 @@ class Credentials(object):
         credentialsFilename = "windowsazurecredentials.json"
         tmpName = os.path.join(os.getcwd(), credentialsFilename)
         if not os.path.exists(tmpName):
-            if os.environ.has_key("USERPROFILE"):
+            if "USERPROFILE" in os.environ:
                 tmpName = os.path.join(os.environ["USERPROFILE"], 
                                        credentialsFilename)
-            elif os.environ.has_key("HOME"):
+            elif "HOME" in os.environ:
                 tmpName = os.path.join(os.environ["HOME"], 
                                        credentialsFilename)
         if not os.path.exists(tmpName):
             errMsg = "Cannot run Azure tests when the expected config file containing Azure credentials, '%s', does not exist!" % (tmpName)
-            raise EnvironmentError(errMsg)
+            raise RuntimeError(errMsg)
 
         with open(tmpName, "r") as f:
             self.ns = json.load(f)
@@ -74,30 +77,12 @@ class Credentials(object):
     def getProxyPassword(self):
         return self.ns[u'proxypassword']
 
+    def getForceUseHttplib(self):
+        return self.ns[u'forceusehttplib'].lower() == 'true'
+
 credentials = Credentials()
 
-def getUniqueTestRunID():
-    '''
-    Returns a unique identifier for this particular test run so 
-    parallel test runs using the same Azure keys do not interfere
-    with one another.
-
-    TODO:
-    - not really unique now; just machine specific
-    '''
-    from os import environ
-    if environ.has_key("COMPUTERNAME"):
-        ret_val = environ["COMPUTERNAME"]
-    else:
-        import socket
-        ret_val = socket.gethostname()
-    for bad in ["-", "_", " ", "."]:
-        ret_val = ret_val.replace(bad, "")
-    ret_val = ret_val.lower().strip()
-    #only return the first 20 characters so the lenghth of queue, table name will be less than 64. It may not be unique but doesn't really matter for the tests.
-    return ret_val[:20]  
-
-def getUniqueNameBasedOnCurrentTime(base_name):
+def getUniqueName(base_name):
     '''
     Returns a unique identifier for this particular test run so 
     parallel test runs using the same Azure keys do not interfere
@@ -107,7 +92,7 @@ def getUniqueNameBasedOnCurrentTime(base_name):
     for bad in ["-", "_", " ", "."]:
         cur_time = cur_time.replace(bad, "")
     cur_time = cur_time.lower().strip()
-    return base_name + cur_time
+    return base_name + str(random.randint(10,99)) + cur_time[:12]
 
 class AzureTestCase(unittest.TestCase):
     def assertNamedItemInContainer(self, container, item_name, msg=None):
@@ -115,11 +100,11 @@ class AzureTestCase(unittest.TestCase):
             if item.name == item_name:
                 return
 
-        standardMsg = '%s not found in %s' % (repr(item_name), repr(container))
+        standardMsg = '{0} not found in {1}'.format(repr(item_name), repr(container))
         self.fail(self._formatMessage(msg, standardMsg))
 
     def assertNamedItemNotInContainer(self, container, item_name, msg=None):
         for item in container:
             if item.name == item_name:
-                standardMsg = '%s unexpectedly found in %s' % (repr(item_name), repr(container))
+                standardMsg = '{0} unexpectedly found in {1}'.format(repr(item_name), repr(container))
                 self.fail(self._formatMessage(msg, standardMsg))

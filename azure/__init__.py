@@ -16,7 +16,15 @@ import ast
 import base64
 import sys
 import types
-import urllib2
+import warnings
+if sys.version_info < (3,):
+    from urllib2 import quote as url_quote
+    from urllib2 import unquote as url_unquote
+    _strtype = basestring
+else:
+    from urllib.parse import quote as url_quote
+    from urllib.parse import unquote as url_unquote
+    _strtype = str
 
 from datetime import datetime
 from xml.dom import minidom
@@ -26,7 +34,7 @@ from xml.sax.saxutils import escape as xml_escape
 # constants
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.7.1'
+__version__ = '0.8.0'
 
 #Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
@@ -55,14 +63,17 @@ _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE = 'Message is not peek locked and canno
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK = 'Message is not peek locked and cannot be unlocked.'
 _ERROR_QUEUE_NOT_FOUND = 'Queue was not found'
 _ERROR_TOPIC_NOT_FOUND = 'Topic was not found'
-_ERROR_CONFLICT = 'Conflict (%s)'
-_ERROR_NOT_FOUND = 'Not found (%s)'
-_ERROR_UNKNOWN = 'Unknown error (%s)'
+_ERROR_CONFLICT = 'Conflict ({0})'
+_ERROR_NOT_FOUND = 'Not found ({0})'
+_ERROR_UNKNOWN = 'Unknown error ({0})'
 _ERROR_SERVICEBUS_MISSING_INFO = 'You need to provide servicebus namespace, access key and Issuer'
 _ERROR_STORAGE_MISSING_INFO = 'You need to provide both account name and access key'
 _ERROR_ACCESS_POLICY = 'share_access_policy must be either SignedIdentifier or AccessPolicy instance'
-_ERROR_VALUE_SHOULD_NOT_BE_NULL  = '%s should not be None.'
-_ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = 'Cannot serialize the specified value (%s) to an entity.  Please use an EntityProperty (which can specify custom types), int, str, bool, or datetime'
+_WARNING_VALUE_SHOULD_BE_BYTES = 'Warning: {0} must be bytes data type. It will be converted automatically, with utf-8 text encoding.'
+_ERROR_VALUE_SHOULD_BE_BYTES = '{0} should be of type bytes.'
+_ERROR_VALUE_SHOULD_NOT_BE_NULL = '{0} should not be None.'
+_ERROR_VALUE_SHOULD_NOT_BE_NEGATIVE = '{0} should not be negative.'
+_ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = 'Cannot serialize the specified value ({0}) to an entity.  Please use an EntityProperty (which can specify custom types), int, str, bool, or datetime'
 
 _USER_AGENT_STRING = 'pyazure/' + __version__
 
@@ -98,6 +109,21 @@ class _Base64String(str):
 class HeaderDict(dict):
     def __getitem__(self, index):
         return super(HeaderDict, self).__getitem__(index.lower())
+
+def _encode_base64(data):
+    if isinstance(data, _unicode_type):
+        data = data.encode('utf-8')
+    encoded = base64.b64encode(data)
+    return encoded.decode('utf-8')
+
+def _decode_base64_to_bytes(data):
+    if isinstance(data, _unicode_type):
+        data = data.encode('utf-8')
+    return base64.b64decode(data)
+
+def _decode_base64_to_text(data):
+    decoded_bytes = _decode_base64_to_bytes(data)
+    return decoded_bytes.decode('utf-8')
 
 def _get_readable_id(id_name, id_prefix_to_skip):
     """simplified an id to be more friendly for us people"""
@@ -154,7 +180,7 @@ def _get_children_from_path(node, *path):
     not cousins.'''
     cur = node
     for index, child in enumerate(path):    
-        if isinstance(child, basestring):
+        if isinstance(child, _strtype):
             next = _get_child_nodes(cur, child)
         else:
             next = _get_child_nodesNS(cur, *child)
@@ -220,20 +246,23 @@ def _get_serialization_name(element_name):
 
     return ''.join(name.capitalize() for name in element_name.split('_'))
 
-def _str(value):
-    if isinstance(value, unicode):
-        return value.encode('utf-8')
+if sys.version_info < (3,):
+    _unicode_type = unicode
 
-    return str(value)
+    def _str(value):
+        if isinstance(value, unicode):
+            return value.encode('utf-8')
+
+        return str(value)
+else:
+    _str = str
+    _unicode_type = str
 
 def _str_or_none(value):
-    if isinstance(value, unicode):
-        return value.encode('utf-8')
-
     if value is None:
         return None
 
-    return str(value)
+    return _str(value)
 
 def _int_or_none(value):
     if value is None:
@@ -267,7 +296,7 @@ def _convert_class_to_xml(source, xml_prefix = True):
     elif isinstance(source, WindowsAzureData):
         class_name = source.__class__.__name__
         xmlstr += '<' + class_name + '>'
-        for name, value in vars(source).iteritems():
+        for name, value in vars(source).items():
             if value is not None:
                 if isinstance(value, list) or isinstance(value, WindowsAzureData):
                     xmlstr += _convert_class_to_xml(value, False)
@@ -303,7 +332,7 @@ def _find_namespaces(parent, child):
 def _clone_node_with_namespaces(node_to_clone, original_doc):
     clone = node_to_clone.cloneNode(True)
     
-    for key, value in _find_namespaces(original_doc, node_to_clone).iteritems():
+    for key, value in _find_namespaces(original_doc, node_to_clone).items():
         clone.attributes[key] = value
 
     return clone
@@ -331,9 +360,13 @@ def _convert_response_to_feeds(response, convert_func):
 
     return feeds
 
+def _validate_type_bytes(param_name, param):
+    if not isinstance(param, bytes):
+        raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
+
 def _validate_not_none(param_name, param):
     if param is None:
-        raise TypeError(_ERROR_VALUE_SHOULD_NOT_BE_NULL % (param_name))
+        raise TypeError(_ERROR_VALUE_SHOULD_NOT_BE_NULL.format(param_name))
 
 def _fill_list_of(xmldoc, element_type, xml_element_name):
     xmlelements = _get_child_nodes(xmldoc, xml_element_name)
@@ -433,7 +466,7 @@ def _fill_data_minidom(xmldoc, element_name, data_member):
         return value
     elif isinstance(data_member, datetime):
         return _to_datetime(value)
-    elif type(data_member) is types.BooleanType:
+    elif type(data_member) is bool:
         return value.lower() != 'false'
     else:
         return type(data_member)(value)
@@ -442,10 +475,29 @@ def _get_node_value(xmlelement, data_type):
     value = xmlelement.firstChild.nodeValue
     if data_type is datetime:
         return _to_datetime(value)
-    elif data_type is types.BooleanType:
+    elif data_type is bool:
         return value.lower() != 'false'
     else:
         return data_type(value)
+
+def _get_request_body_bytes_only(param_name, param_value):
+    '''Validates the request body passed in and converts it to bytes
+    if our policy allows it.'''
+    if param_value is None:
+        return b''
+
+    if isinstance(param_value, bytes):
+        return param_value
+
+    # Previous versions of the SDK allowed data types other than bytes to be 
+    # passed in, and they would be auto-converted to bytes.  We preserve this
+    # behavior when running under 2.7, but issue a warning.
+    # Python 3 support is new, so we reject anything that's not bytes.
+    if sys.version_info < (3,):
+        warnings.warn(_WARNING_VALUE_SHOULD_BE_BYTES.format(param_name))
+        return _get_request_body(param_value)
+
+    raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
 
 def _get_request_body(request_body):
     '''Converts an object into a request body.  If it's None
@@ -453,11 +505,22 @@ def _get_request_body(request_body):
     convert it to XML and return it.  Otherwise we just use the object
     directly'''
     if request_body is None:
-        return ''
-    elif isinstance(request_body, WindowsAzureData):
-        return _convert_class_to_xml(request_body)
+        return b''
 
-    return _str(request_body)
+    if isinstance(request_body, WindowsAzureData):
+        request_body = _convert_class_to_xml(request_body)
+
+    if isinstance(request_body, bytes):
+        return request_body
+
+    if isinstance(request_body, _unicode_type):
+        return request_body.encode('utf-8')
+
+    request_body = str(request_body)
+    if isinstance(request_body, _unicode_type):
+        return request_body.encode('utf-8')
+
+    return request_body
 
 def _parse_enum_results_list(response, return_type, resp_type, item_type):
     """resp_body is the XML we received
@@ -488,7 +551,7 @@ containers member populated with the results.
         for child in _get_children_from_path(enum_results, resp_type, resp_type[:-1]):
             items.append(_fill_instance_element(child, item_type))
 
-        for name, value in vars(return_obj).iteritems():
+        for name, value in vars(return_obj).items():
             if name == resp_type.lower():   # queues, Queues, this is the list its self which we populated above
                 # the list its self.
                 continue
@@ -520,7 +583,7 @@ def _parse_response(response, return_type):
 
 def _fill_data_to_return_object(node, return_obj):
     members = dict(vars(return_obj))
-    for name, value in members.iteritems():
+    for name, value in members.items():
         if isinstance(value, _list_of):
             setattr(return_obj, name, _fill_list_of(node, value.list_type, value.xml_element_name))
         elif isinstance(value, _scalar_list_of):
@@ -534,10 +597,7 @@ def _fill_data_to_return_object(node, return_obj):
         elif isinstance(value, _Base64String):
             value = _fill_data_minidom(node, name, '')
             if value is not None:
-                value = base64.b64decode(value)
-                try:
-                    value = value.decode('utf-8')
-                except: pass
+                value = _decode_base64_to_text(value)
             #always set the attribute, so we don't end up returning an object with type _Base64String
             setattr(return_obj, name, value)
         else:
@@ -613,14 +673,14 @@ def _update_request_uri_query(request):
                     name, _, value = query.partition('=')
                     request.query.append((name, value))
 
-    request.path = urllib2.quote(request.path, '/()$=\',')
+    request.path = url_quote(request.path, '/()$=\',')
 
     #add encoded queries to request.path. 
     if request.query:
         request.path += '?' 
         for name, value in request.query:
             if value is not None:
-                request.path += name + '=' + urllib2.quote(value, '/()$=\',') + '&'
+                request.path += name + '=' + url_quote(value, '/()$=\',') + '&'
         request.path = request.path[:-1]
 
     return request.path, request.query
@@ -642,14 +702,14 @@ def _dont_fail_not_exist(error):
 def _general_error_handler(http_error):
     ''' Simple error handler for azure.'''
     if http_error.status == 409:
-        raise WindowsAzureConflictError(_ERROR_CONFLICT % http_error.message)
+        raise WindowsAzureConflictError(_ERROR_CONFLICT.format(http_error.message))
     elif http_error.status == 404:
-        raise WindowsAzureMissingResourceError(_ERROR_NOT_FOUND % http_error.message)
+        raise WindowsAzureMissingResourceError(_ERROR_NOT_FOUND.format(http_error.message))
     else:
         if http_error.respbody is not None:
-            raise WindowsAzureError(_ERROR_UNKNOWN % http_error.message + '\n' + http_error.respbody)
+            raise WindowsAzureError(_ERROR_UNKNOWN.format(http_error.message) + '\n' + http_error.respbody.decode('utf-8'))
         else:
-            raise WindowsAzureError(_ERROR_UNKNOWN % http_error.message)
+            raise WindowsAzureError(_ERROR_UNKNOWN.format(http_error.message))
     
 def _parse_response_for_dict(response):
     ''' Extracts name-values from response header. Filter out the standard http headers.'''
@@ -674,7 +734,7 @@ def _parse_response_for_dict_prefix(response, prefixes):
     return_dict = {}    
     orig_dict = _parse_response_for_dict(response)
     if orig_dict:
-        for name, value in orig_dict.iteritems():
+        for name, value in orig_dict.items():
             for prefix_value in prefixes:
                 if name.lower().startswith(prefix_value.lower()):
                     return_dict[name] = value
@@ -690,7 +750,7 @@ def _parse_response_for_dict_filter(response, filter):
     return_dict = {}    
     orig_dict = _parse_response_for_dict(response)
     if orig_dict:
-        for name, value in orig_dict.iteritems():
+        for name, value in orig_dict.items():
             if name.lower() in filter:
                 return_dict[name] = value
         return return_dict

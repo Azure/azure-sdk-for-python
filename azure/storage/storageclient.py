@@ -13,6 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import os
+import sys
 
 from azure import (WindowsAzureError,
                    DEV_ACCOUNT_NAME,
@@ -45,15 +46,8 @@ class _StorageClient(object):
             for on-premise.
         dev_host: Optional. Dev host url. Defaults to localhost. 
         '''
-        if account_name is not None:
-            self.account_name = account_name.encode('ascii', 'ignore')
-        else:
-            self.account_name = None
-        if account_key is not None:
-            self.account_key = account_key.encode('ascii', 'ignore')
-        else:
-            self.account_key = None
-
+        self.account_name = account_name
+        self.account_key = account_key
         self.requestid = None
         self.protocol = protocol
         self.host_base = host_base
@@ -64,11 +58,8 @@ class _StorageClient(object):
         self.use_local_storage = False
 
         #check whether it is run in emulator. 
-        if os.environ.has_key(EMULATED):
-            if os.environ[EMULATED].lower() == 'false':
-                self.is_emulated = False
-            else:
-                self.is_emulated = True
+        if EMULATED in os.environ:
+            self.is_emulated = os.environ[EMULATED].lower() != 'false'
         else:
             self.is_emulated = False
 
@@ -82,10 +73,8 @@ class _StorageClient(object):
                 self.account_key = DEV_ACCOUNT_KEY
                 self.use_local_storage = True
             else:
-                if os.environ.has_key(AZURE_STORAGE_ACCOUNT):
-                    self.account_name = os.environ[AZURE_STORAGE_ACCOUNT]
-                if os.environ.has_key(AZURE_STORAGE_ACCESS_KEY):
-                    self.account_key = os.environ[AZURE_STORAGE_ACCESS_KEY]
+                self.account_name = os.environ.get(AZURE_STORAGE_ACCOUNT)
+                self.account_key = os.environ.get(AZURE_STORAGE_ACCESS_KEY)
 
         if not self.account_name or not self.account_key:
             raise WindowsAzureError(_ERROR_STORAGE_MISSING_INFO)
@@ -131,7 +120,7 @@ class _StorageClient(object):
     def _perform_request_worker(self, request):
         return self._httpclient.perform_request(request)
 
-    def _perform_request(self, request):
+    def _perform_request(self, request, text_encoding='utf-8'):
         '''
         Sends the request and return response. Catches HTTPError and hand it 
         to error handler
@@ -141,6 +130,10 @@ class _StorageClient(object):
                 return self._batchclient.insert_request_to_batch(request)
             else:
                 resp = self._filter(request)
+
+            if sys.version_info >= (3,) and isinstance(resp, bytes) and text_encoding:
+                resp = resp.decode(text_encoding)
+
         except HTTPError as e:
             _storage_error_handler(e)
 

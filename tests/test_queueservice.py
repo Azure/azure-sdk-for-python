@@ -1,4 +1,6 @@
-﻿#-------------------------------------------------------------------------
+﻿# coding: utf-8
+
+#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +20,7 @@ from azure import WindowsAzureError
 from azure.storage.queueservice import QueueService
 from util import (AzureTestCase,
                   credentials,
-                  getUniqueTestRunID,
-                  getUniqueNameBasedOnCurrentTime,
+                  getUniqueName,
                   )
 
 #------------------------------------------------------------------------------
@@ -31,20 +32,20 @@ class QueueServiceTest(AzureTestCase):
         self.queue_client = QueueService(credentials.getStorageServicesName(), 
                                          credentials.getStorageServicesKey())
 
+        if credentials.getForceUseHttplib():
+            self.queue_client._httpclient.use_httplib = True
+
         self.queue_client.set_proxy(credentials.getProxyHost(),
                                     credentials.getProxyPort(),
                                     credentials.getProxyUser(), 
                                     credentials.getProxyPassword())
 
-        __uid = getUniqueTestRunID()
-
-        queue_base_name = u'%s' % (__uid)
         self.test_queues = []
         self.creatable_queues = []
         for i in range(10):
-            self.test_queues.append(TEST_QUEUE_PREFIX + str(i) + getUniqueNameBasedOnCurrentTime(queue_base_name))
+            self.test_queues.append(getUniqueName(TEST_QUEUE_PREFIX + str(i)))
         for i in range(4):
-            self.creatable_queues.append('mycreatablequeue' + str(i) + getUniqueNameBasedOnCurrentTime(queue_base_name))
+            self.creatable_queues.append(getUniqueName('mycreatablequeue' + str(i)))
         for queue_name in self.test_queues:
             self.queue_client.create_queue(queue_name)
 

@@ -21,8 +21,7 @@ from azure.servicemanagement import (AffinityGroups,
                                      )
 from util import (AzureTestCase,
                   credentials,
-                  getUniqueTestRunID,
-                  getUniqueNameBasedOnCurrentTime,
+                  getUniqueName,
                   )
 
 #------------------------------------------------------------------------------
@@ -32,12 +31,15 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
         self.sms = ServiceManagementService(credentials.getSubscriptionId(), 
                                             credentials.getManagementCertFile())
 
+        if credentials.getForceUseHttplib():
+            self.sms._httpclient.use_httplib = True
+
         self.sms.set_proxy(credentials.getProxyHost(), 
                            credentials.getProxyPort(), 
                            credentials.getProxyUser(), 
                            credentials.getProxyPassword())
 
-        self.affinity_group_name = getUniqueNameBasedOnCurrentTime('utaffgrp')
+        self.affinity_group_name = getUniqueName('utaffgrp')
         self.hosted_service_name = None
         self.storage_account_name = None
 
@@ -96,8 +98,8 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
 
     def test_get_affinity_group_properties(self):
         # Arrange
-        self.hosted_service_name = getUniqueNameBasedOnCurrentTime('utsvc')
-        self.storage_account_name = getUniqueNameBasedOnCurrentTime('utstorage')
+        self.hosted_service_name = getUniqueName('utsvc')
+        self.storage_account_name = getUniqueName('utstorage')
         self._create_affinity_group(self.affinity_group_name)
         self.sms.create_hosted_service(self.hosted_service_name, 'affgrptestlabel', 'affgrptestdesc', None, self.affinity_group_name)
         self.sms.create_storage_account(self.storage_account_name, self.storage_account_name + 'desc', self.storage_account_name + 'label', self.affinity_group_name)

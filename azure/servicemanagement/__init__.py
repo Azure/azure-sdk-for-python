@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import base64
-
 from xml.dom import minidom
 from azure import (WindowsAzureData,
                    _Base64String,
                    _create_entry,
                    _dict_of,
+                   _encode_base64,
                    _general_error_handler,
                    _get_children_from_path,
                    _get_first_child_node_value,
@@ -705,7 +704,7 @@ class _XmlSerializer(object):
         return _XmlSerializer.doc_from_data('CreateStorageServiceInput',
                                             [('ServiceName', service_name),
                                              ('Description', description),
-                                             ('Label', label, base64.b64encode),
+                                             ('Label', label, _encode_base64),
                                              ('AffinityGroup', affinity_group),
                                              ('Location', location),
                                              ('GeoReplicationEnabled', geo_replication_enabled, _lower)],
@@ -715,7 +714,7 @@ class _XmlSerializer(object):
     def update_storage_service_input_to_xml(description, label, geo_replication_enabled, extended_properties):
         return _XmlSerializer.doc_from_data('UpdateStorageServiceInput',
                                             [('Description', description),
-                                             ('Label', label, base64.b64encode),
+                                             ('Label', label, _encode_base64),
                                              ('GeoReplicationEnabled', geo_replication_enabled, _lower)],
                                             extended_properties)
 
@@ -727,7 +726,7 @@ class _XmlSerializer(object):
     @staticmethod
     def update_hosted_service_to_xml(label, description, extended_properties):
         return _XmlSerializer.doc_from_data('UpdateHostedService',
-                                            [('Label', label, base64.b64encode),
+                                            [('Label', label, _encode_base64),
                                              ('Description', description)],
                                             extended_properties)
 
@@ -735,7 +734,7 @@ class _XmlSerializer(object):
     def create_hosted_service_to_xml(service_name, label, description, location, affinity_group, extended_properties):
         return _XmlSerializer.doc_from_data('CreateHostedService',
                                             [('ServiceName', service_name),
-                                             ('Label', label, base64.b64encode),
+                                             ('Label', label, _encode_base64),
                                              ('Description', description),
                                              ('Location', location),
                                              ('AffinityGroup', affinity_group)],
@@ -746,7 +745,7 @@ class _XmlSerializer(object):
         return _XmlSerializer.doc_from_data('CreateDeployment',
                                             [('Name', name),
                                              ('PackageUrl', package_url),
-                                             ('Label', label, base64.b64encode),
+                                             ('Label', label, _encode_base64),
                                              ('Configuration', configuration),
                                              ('StartDeployment', start_deployment, _lower),
                                              ('TreatWarningsAsError', treat_warnings_as_error, _lower)],
@@ -777,7 +776,7 @@ class _XmlSerializer(object):
                                             [('Mode', mode),
                                              ('PackageUrl', package_url),
                                              ('Configuration', configuration),
-                                             ('Label', label, base64.b64encode),
+                                             ('Label', label, _encode_base64),
                                              ('RoleToUpgrade', role_to_upgrade),
                                              ('Force', force, _lower)],
                                             extended_properties)
@@ -804,14 +803,14 @@ class _XmlSerializer(object):
     def create_affinity_group_to_xml(name, label, description, location):
         return _XmlSerializer.doc_from_data('CreateAffinityGroup',
                                             [('Name', name),
-                                             ('Label', label, base64.b64encode),
+                                             ('Label', label, _encode_base64),
                                              ('Description', description),
                                              ('Location', location)])
 
     @staticmethod
     def update_affinity_group_to_xml(label, description):
         return _XmlSerializer.doc_from_data('UpdateAffinityGroup',
-                                            [('Label', label, base64.b64encode),
+                                            [('Label', label, _encode_base64),
                                              ('Description', description)])
 
     @staticmethod
@@ -1061,7 +1060,8 @@ class _XmlSerializer(object):
 
             if val is not None:
                 if converter is not None:
-                    text = converter(_str(val))
+                    text = _str(val)
+                    text = converter(text)
                 else:
                     text = _str(val)
                 xml += ''.join(['<', name, '>', text, '</', name, '>'])

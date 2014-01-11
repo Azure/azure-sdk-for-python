@@ -1,4 +1,6 @@
-﻿#-------------------------------------------------------------------------
+﻿# coding: utf-8
+
+#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,8 +26,7 @@ from azure.storage import (Entity,
                            )
 from util import (AzureTestCase,
                   credentials,
-                  getUniqueTestRunID,
-                  getUniqueNameBasedOnCurrentTime,
+                  getUniqueName,
                   )
 
 #------------------------------------------------------------------------------
@@ -38,14 +39,15 @@ class TableServiceTest(AzureTestCase):
         self.tc = TableService(credentials.getStorageServicesName(), 
                                credentials.getStorageServicesKey())
 
+        if credentials.getForceUseHttplib():
+            self.tc._httpclient.use_httplib = True
+
         self.tc.set_proxy(credentials.getProxyHost(), 
                           credentials.getProxyPort(), 
                           credentials.getProxyUser(), 
                           credentials.getProxyPassword())
 
-        __uid = getUniqueTestRunID()
-        table_base_name = u'testtable%s' % (__uid)
-        self.table_name = getUniqueNameBasedOnCurrentTime(table_base_name)     
+        self.table_name = getUniqueName('uttable')
         self.additional_table_names = []
     
     def tearDown(self):
@@ -97,8 +99,8 @@ class TableServiceTest(AzureTestCase):
         entity.optional = None
         entity.ratio = 3.1
         entity.large = 9333111000
-        entity.Birthday = datetime(1973,10,04)
-        entity.birthday = datetime(1970,10,04)
+        entity.Birthday = datetime(1973,10,4)
+        entity.birthday = datetime(1970,10,4)
         entity.binary = None
         entity.other = EntityProperty('Edm.Int64', 20)
         entity.clsid = EntityProperty('Edm.Guid', 'c9da6455-213d-42c9-9a79-3e9149a57833')
@@ -119,8 +121,8 @@ class TableServiceTest(AzureTestCase):
                 'optional':None, 
                 'ratio':3.1, 
                 'large':9333111000, 
-                'Birthday':datetime(1973,10,04),
-                'birthday':datetime(1970,10,04),
+                'Birthday':datetime(1973,10,4),
+                'birthday':datetime(1970,10,4),
                 'binary':EntityProperty('Edm.Binary', None),
                 'other':EntityProperty('Edm.Int64', 20),
                 'clsid':EntityProperty('Edm.Guid', 'c9da6455-213d-42c9-9a79-3e9149a57833')}
@@ -137,40 +139,40 @@ class TableServiceTest(AzureTestCase):
                 'age':'abc',
                 'sex':'female',
                 'sign':'aquarius',
-                'birthday':datetime(1991,10,04)}
+                'birthday':datetime(1991,10,4)}
 
     def _assert_default_entity(self, entity):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEquals(entity.age, 39)
-        self.assertEquals(entity.sex, 'male')
-        self.assertEquals(entity.married, True)
-        self.assertEquals(entity.deceased, False)
+        self.assertEqual(entity.age, 39)
+        self.assertEqual(entity.sex, 'male')
+        self.assertEqual(entity.married, True)
+        self.assertEqual(entity.deceased, False)
         self.assertFalse(hasattr(entity, "aquarius"))
-        self.assertEquals(entity.ratio, 3.1)
-        self.assertEquals(entity.large, 9333111000)
-        self.assertEquals(entity.Birthday, datetime(1973,10,04))
-        self.assertEquals(entity.birthday, datetime(1970,10,04))
-        self.assertEquals(entity.other, 20)
+        self.assertEqual(entity.ratio, 3.1)
+        self.assertEqual(entity.large, 9333111000)
+        self.assertEqual(entity.Birthday, datetime(1973,10,4))
+        self.assertEqual(entity.birthday, datetime(1970,10,4))
+        self.assertEqual(entity.other, 20)
         self.assertIsInstance(entity.clsid, EntityProperty)
-        self.assertEquals(entity.clsid.type, 'Edm.Guid')
-        self.assertEquals(entity.clsid.value, 'c9da6455-213d-42c9-9a79-3e9149a57833')
+        self.assertEqual(entity.clsid.type, 'Edm.Guid')
+        self.assertEqual(entity.clsid.value, 'c9da6455-213d-42c9-9a79-3e9149a57833')
 
     def _assert_updated_entity(self, entity):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        self.assertEquals(entity.age, 'abc')
-        self.assertEquals(entity.sex, 'female')
+        self.assertEqual(entity.age, 'abc')
+        self.assertEqual(entity.sex, 'female')
         self.assertFalse(hasattr(entity, "married"))
         self.assertFalse(hasattr(entity, "deceased"))
-        self.assertEquals(entity.sign, 'aquarius')
+        self.assertEqual(entity.sign, 'aquarius')
         self.assertFalse(hasattr(entity, "optional"))
         self.assertFalse(hasattr(entity, "ratio"))
         self.assertFalse(hasattr(entity, "large"))
         self.assertFalse(hasattr(entity, "Birthday"))
-        self.assertEquals(entity.birthday, datetime(1991,10,04))
+        self.assertEqual(entity.birthday, datetime(1991,10,4))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
 
@@ -179,20 +181,20 @@ class TableServiceTest(AzureTestCase):
         Asserts that the entity passed in matches the default entity 
         merged with the updated entity.
         '''
-        self.assertEquals(entity.age, 'abc')
-        self.assertEquals(entity.sex, 'female')
-        self.assertEquals(entity.sign, 'aquarius')
-        self.assertEquals(entity.married, True)
-        self.assertEquals(entity.deceased, False)
-        self.assertEquals(entity.sign, 'aquarius')
-        self.assertEquals(entity.ratio, 3.1)
-        self.assertEquals(entity.large, 9333111000)
-        self.assertEquals(entity.Birthday, datetime(1973,10,04))
-        self.assertEquals(entity.birthday, datetime(1991,10,04))
-        self.assertEquals(entity.other, 20)
+        self.assertEqual(entity.age, 'abc')
+        self.assertEqual(entity.sex, 'female')
+        self.assertEqual(entity.sign, 'aquarius')
+        self.assertEqual(entity.married, True)
+        self.assertEqual(entity.deceased, False)
+        self.assertEqual(entity.sign, 'aquarius')
+        self.assertEqual(entity.ratio, 3.1)
+        self.assertEqual(entity.large, 9333111000)
+        self.assertEqual(entity.Birthday, datetime(1973,10,4))
+        self.assertEqual(entity.birthday, datetime(1991,10,4))
+        self.assertEqual(entity.other, 20)
         self.assertIsInstance(entity.clsid, EntityProperty)
-        self.assertEquals(entity.clsid.type, 'Edm.Guid')
-        self.assertEquals(entity.clsid.value, 'c9da6455-213d-42c9-9a79-3e9149a57833')
+        self.assertEqual(entity.clsid.type, 'Edm.Guid')
+        self.assertEqual(entity.clsid.value, 'c9da6455-213d-42c9-9a79-3e9149a57833')
 
     #--Test cases for table service -------------------------------------------
     def test_get_set_table_service_properties(self):
@@ -227,7 +229,7 @@ class TableServiceTest(AzureTestCase):
                 time.sleep(1)
                 retry_count += 1
 
-            self.assertEquals(value, cur)
+            self.assertEqual(value, cur)
             
     def test_table_service_retention_single_set(self):
         table_properties = self.tc.get_table_service_properties()
@@ -254,9 +256,9 @@ class TableServiceTest(AzureTestCase):
         table_properties.logging.retention_policy.days = 5
         self.tc.set_table_service_properties(table_properties)
         table_properties = self.tc.get_table_service_properties()
-        self.assertEquals(True, table_properties.logging.retention_policy.enabled)
+        self.assertEqual(True, table_properties.logging.retention_policy.enabled)
 
-        self.assertEquals(5, table_properties.logging.retention_policy.days)
+        self.assertEqual(5, table_properties.logging.retention_policy.days)
 
     #--Test cases for tables --------------------------------------------------
     def test_create_table(self):
@@ -448,8 +450,8 @@ class TableServiceTest(AzureTestCase):
         resp = self.tc.get_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
-        self.assertEquals(resp.PartitionKey, 'MyPartition')
-        self.assertEquals(resp.RowKey, '1')
+        self.assertEqual(resp.PartitionKey, 'MyPartition')
+        self.assertEqual(resp.RowKey, '1')
         self._assert_default_entity(resp)
 
     def test_get_entity_not_existing(self):
@@ -470,8 +472,8 @@ class TableServiceTest(AzureTestCase):
         resp = self.tc.get_entity(self.table_name, 'MyPartition', '1', 'age,sex')
 
         # Assert
-        self.assertEquals(resp.age, 39)
-        self.assertEquals(resp.sex, 'male')
+        self.assertEqual(resp.age, 39)
+        self.assertEqual(resp.sex, 'male')
         self.assertFalse(hasattr(resp, "birthday"))
         self.assertFalse(hasattr(resp, "married"))
         self.assertFalse(hasattr(resp, "deceased"))
@@ -484,12 +486,12 @@ class TableServiceTest(AzureTestCase):
         resp = self.tc.query_entities(self.table_name)
 
         # Assert
-        self.assertEquals(len(resp), 2)
+        self.assertEqual(len(resp), 2)
         for entity in resp:
-            self.assertEquals(entity.PartitionKey, 'MyPartition')
+            self.assertEqual(entity.PartitionKey, 'MyPartition')
             self._assert_default_entity(entity)
-        self.assertEquals(resp[0].RowKey, '1')
-        self.assertEquals(resp[1].RowKey, '2')
+        self.assertEqual(resp[0].RowKey, '1')
+        self.assertEqual(resp[1].RowKey, '2')
 
     def test_query_entities_with_filter(self):
         # Arrange
@@ -500,9 +502,9 @@ class TableServiceTest(AzureTestCase):
         resp = self.tc.query_entities(self.table_name, "PartitionKey eq 'MyPartition'")
 
         # Assert
-        self.assertEquals(len(resp), 2)
+        self.assertEqual(len(resp), 2)
         for entity in resp:
-            self.assertEquals(entity.PartitionKey, 'MyPartition')
+            self.assertEqual(entity.PartitionKey, 'MyPartition')
             self._assert_default_entity(entity)
 
     def test_query_entities_with_select(self):
@@ -513,9 +515,9 @@ class TableServiceTest(AzureTestCase):
         resp = self.tc.query_entities(self.table_name, None, 'age,sex')
 
         # Assert
-        self.assertEquals(len(resp), 2)
-        self.assertEquals(resp[0].age, 39)
-        self.assertEquals(resp[0].sex, 'male')
+        self.assertEqual(len(resp), 2)
+        self.assertEqual(resp[0].age, 39)
+        self.assertEqual(resp[0].sex, 'male')
         self.assertFalse(hasattr(resp[0], "birthday"))
         self.assertFalse(hasattr(resp[0], "married"))
         self.assertFalse(hasattr(resp[0], "deceased"))
@@ -528,7 +530,7 @@ class TableServiceTest(AzureTestCase):
         resp = self.tc.query_entities(self.table_name, None, None, 2)
 
         # Assert
-        self.assertEquals(len(resp), 2)
+        self.assertEqual(len(resp), 2)
 
     def test_query_entities_with_top_and_next(self):
         # Arrange
@@ -540,14 +542,14 @@ class TableServiceTest(AzureTestCase):
         resp3 = self.tc.query_entities(self.table_name, None, None, 2, resp2.x_ms_continuation['NextPartitionKey'], resp2.x_ms_continuation['NextRowKey'])
 
         # Assert
-        self.assertEquals(len(resp1), 2)
-        self.assertEquals(len(resp2), 2)
-        self.assertEquals(len(resp3), 1)
-        self.assertEquals(resp1[0].RowKey, '1')
-        self.assertEquals(resp1[1].RowKey, '2')
-        self.assertEquals(resp2[0].RowKey, '3')
-        self.assertEquals(resp2[1].RowKey, '4')
-        self.assertEquals(resp3[0].RowKey, '5')
+        self.assertEqual(len(resp1), 2)
+        self.assertEqual(len(resp2), 2)
+        self.assertEqual(len(resp3), 1)
+        self.assertEqual(resp1[0].RowKey, '1')
+        self.assertEqual(resp1[1].RowKey, '2')
+        self.assertEqual(resp2[0].RowKey, '3')
+        self.assertEqual(resp2[1].RowKey, '4')
+        self.assertEqual(resp3[0].RowKey, '5')
 
     def test_update_entity(self):
         # Arrange
@@ -1049,9 +1051,9 @@ class TableServiceTest(AzureTestCase):
         self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', 'Description': 'ꀕ'})        
         resp = self.tc.query_entities(self.table_name, "PartitionKey eq 'test'")   
         # Assert
-        self.assertEquals(len(resp), 2)
-        self.assertEquals(resp[0].Description, u'ꀕ')
-        self.assertEquals(resp[1].Description, u'ꀕ')
+        self.assertEqual(len(resp), 2)
+        self.assertEqual(resp[0].Description, u'ꀕ')
+        self.assertEqual(resp[1].Description, u'ꀕ')
 
     def test_unicode_property_name(self):
         # Act
@@ -1060,13 +1062,13 @@ class TableServiceTest(AzureTestCase):
         self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', u'啊齄丂狛狜': 'hello'})        
         resp = self.tc.query_entities(self.table_name, "PartitionKey eq 'test'")   
         # Assert
-        self.assertEquals(len(resp), 2)
-        self.assertEquals(resp[0].__dict__[u'啊齄丂狛狜'], u'ꀕ')
-        self.assertEquals(resp[1].__dict__[u'啊齄丂狛狜'], u'hello')
+        self.assertEqual(len(resp), 2)
+        self.assertEqual(resp[0].__dict__[u'啊齄丂狛狜'], u'ꀕ')
+        self.assertEqual(resp[1].__dict__[u'啊齄丂狛狜'], u'hello')
 
     def test_unicode_create_table_unicode_name(self):
         # Arrange
-        self.table_name = unicode(self.table_name) + u'啊齄丂狛狜'
+        self.table_name = self.table_name + u'啊齄丂狛狜'
 
         # Act
         with self.assertRaises(WindowsAzureError):

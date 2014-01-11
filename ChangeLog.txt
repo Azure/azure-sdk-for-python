@@ -1,3 +1,14 @@
+2013-01-10 Version 0.8.0 (prerelease)
+ * Added high-level functions to upload/download blobs with chunking and progress notifications
+ * Added support for Python 3.3
+ * Updated storage API to 2012-02-12
+   - Adds more lease functionality
+   - Adds cross-storage account copy
+   - Adds a helper function make_blob_url to pass to copy_blob for x_ms_copy_source
+ * Fixes WindowsAzureConflictError and WindowsAzureMissingResourceError to properly set the error message, and use the additional info returned by the server
+ * Fixes for bugs:
+   #125 Label for VM Deployment should not be b64 encoded (thanks to jeffmendoza).
+
 2013-11-06 Version 0.7.1
  * Fixes for bugs:
    #118 Proxy doesn't support specifying credentials

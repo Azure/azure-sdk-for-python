@@ -21,8 +21,7 @@ from azure import (WindowsAzureError,
 from azure.servicemanagement import ServiceBusManagementService
 from util import (AzureTestCase,
                   credentials,
-                  getUniqueTestRunID,
-                  getUniqueNameBasedOnCurrentTime,
+                  getUniqueName,
                   )
 
 #------------------------------------------------------------------------------
@@ -32,12 +31,15 @@ class ServiceBusManagementServiceTest(AzureTestCase):
         self.sms = ServiceBusManagementService(credentials.getSubscriptionId(),
                                                credentials.getManagementCertFile())
 
+        if credentials.getForceUseHttplib():
+            self.sms._httpclient.use_httplib = True
+
         self.sms.set_proxy(credentials.getProxyHost(),
                            credentials.getProxyPort(),
                            credentials.getProxyUser(),
                            credentials.getProxyPassword())
 
-        self.sb_namespace = getUniqueNameBasedOnCurrentTime('uts')
+        self.sb_namespace = getUniqueName('uts')
 
     def tearDown(self):
         try:

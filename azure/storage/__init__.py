@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import base64
 import hashlib
 import hmac
+import sys
 import types
 
 from datetime import datetime
@@ -24,6 +24,9 @@ from azure import (WindowsAzureData,
                    METADATA_NS, 
                    xml_escape,
                    _create_entry, 
+                   _decode_base64_to_text,
+                   _decode_base64_to_bytes,
+                   _encode_base64,
                    _fill_data_minidom,
                    _fill_instance_element,
                    _get_child_nodes, 
@@ -33,6 +36,7 @@ from azure import (WindowsAzureData,
                    _general_error_handler,
                    _list_of, 
                    _parse_response_for_dict, 
+                   _unicode_type,
                    _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY,
                    )
 
@@ -170,10 +174,10 @@ class BlobEnumResults(EnumResultsBase):
     def __getitem__(self, index):
         return self.blobs[index]
 
-class BlobResult(str):
+class BlobResult(bytes):
 
     def __new__(cls, blob, properties):
-        return str.__new__(cls, blob)
+        return bytes.__new__(cls, blob)
 
     def __init__(self, blob, properties):
         self.properties = properties
@@ -331,7 +335,7 @@ def _parse_blob_enum_results_list(response):
         for child in _get_children_from_path(enum_results, 'Blobs', 'BlobPrefix'):
             return_obj.prefixes.append(_fill_instance_element(child, BlobPrefix))
 
-        for name, value in vars(return_obj).iteritems():
+        for name, value in vars(return_obj).items():
             if name == 'blobs' or name == 'prefixes':
                 continue
             value = _fill_data_minidom(enum_results, name, value)
@@ -341,11 +345,13 @@ def _parse_blob_enum_results_list(response):
     return return_obj
 
 def _update_storage_header(request):
-    ''' add addtional headers for storage request. '''
+    ''' add additional headers for storage request. '''
+    if request.body:
+        assert isinstance(request.body, bytes)
 
     #if it is PUT, POST, MERGE, DELETE, need to add content-lengt to header.
     if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
-            request.headers.append(('Content-Length', str(len(request.body))))  
+        request.headers.append(('Content-Length', str(len(request.body))))
 
     #append addtional headers base on the service
     request.headers.append(('x-ms-version', X_MS_VERSION))
@@ -353,7 +359,7 @@ def _update_storage_header(request):
     #append x-ms-meta name, values to header
     for name, value in request.headers:
         if 'x-ms-meta-name-values' in name and value:
-            for meta_name, meta_value in value.iteritems():
+            for meta_name, meta_value in value.items():
                 request.headers.append(('x-ms-meta-' + meta_name, meta_value))
             request.headers.remove((name, value))
             break
@@ -439,9 +445,7 @@ def _sign_storage_blob_request(request, account_name, account_key):
                 string_to_sign += '\n' + ',' + value
 
     #sign the request
-    decode_account_key = base64.b64decode(account_key)
-    signed_hmac_sha256 = hmac.HMAC(decode_account_key, string_to_sign, hashlib.sha256)
-    auth_string = 'SharedKey ' + account_name + ':' + base64.b64encode(signed_hmac_sha256.digest())
+    auth_string = 'SharedKey ' + account_name + ':' + _sign_string(account_key, string_to_sign)
     return auth_string
 
 def _sign_storage_table_request(request, account_name, account_key):
@@ -466,10 +470,17 @@ def _sign_storage_table_request(request, account_name, account_key):
             break
 
     #sign the request
-    decode_account_key = base64.b64decode(account_key)
-    signed_hmac_sha256 = hmac.HMAC(decode_account_key, string_to_sign, hashlib.sha256)
-    auth_string = 'SharedKey ' + account_name + ':' + base64.b64encode(signed_hmac_sha256.digest())
+    auth_string = 'SharedKey ' + account_name + ':' + _sign_string(account_key, string_to_sign)
     return auth_string
+
+def _sign_string(account_key, string_to_sign):
+    decoded_account_key = _decode_base64_to_bytes(account_key)
+    if isinstance(string_to_sign, _unicode_type):
+        string_to_sign = string_to_sign.encode('utf-8')
+    signed_hmac_sha256 = hmac.HMAC(decoded_account_key, string_to_sign, hashlib.sha256)
+    digest = signed_hmac_sha256.digest()
+    encoded_digest = _encode_base64(digest)
+    return encoded_digest
 
 def _to_python_bool(value):
     if value.lower() == 'true':
@@ -532,15 +543,19 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
 # type string and content string.
 _PYTHON_TO_ENTITY_CONVERSIONS = {
     int: _to_entity_int,
-    long: _to_entity_int,
     bool: _to_entity_bool,
     datetime: _to_entity_datetime,
     float: _to_entity_float,
     EntityProperty: _to_entity_property,
-    types.NoneType: _to_entity_none,
     str: _to_entity_str,
-    unicode: _to_entity_str,
 }
+
+if sys.version_info < (3,):
+    _PYTHON_TO_ENTITY_CONVERSIONS.update({
+        long: _to_entity_int,
+        types.NoneType: _to_entity_none,
+        unicode: _to_entity_str,
+    })
 
 def _convert_entity_to_xml(source):
     ''' Converts an entity object to xml to send.
@@ -581,11 +596,13 @@ def _convert_entity_to_xml(source):
     
     #set properties type for types we know if value has no type info.
     #if value has type info, then set the type to value.type
-    for name, value in source.iteritems():
+    for name, value in source.items():
         mtype = ''
         conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
+        if conv is None and sys.version_info >= (3,) and value is None:
+            conv = _to_entity_none
         if conv is None:
-            raise WindowsAzureError(_ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY % type(value).__name__)
+            raise WindowsAzureError(_ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY.format(type(value).__name__))
 
         mtype, value = conv(value)
         
@@ -598,8 +615,9 @@ def _convert_entity_to_xml(source):
                 properties_str += ''.join([' m:type="', mtype, '"'])
             properties_str += ''.join(['>', xml_escape(value), '</d:', name, '>'])
 
-    if isinstance(properties_str, unicode):
-        properties_str = properties_str.encode(encoding='utf-8')
+    if sys.version_info < (3,):
+        if isinstance(properties_str, unicode):
+            properties_str = properties_str.encode(encoding='utf-8')
 
     #generate the entity_body
     entity_body = entity_body.format(properties=properties_str)
@@ -627,7 +645,7 @@ def _convert_block_list_to_xml(block_id_list):
         return ''
     xml = '<?xml version="1.0" encoding="utf-8"?><BlockList>'
     for value in block_id_list:
-        xml += '<Latest>%s</Latest>' % base64.b64encode(value)
+        xml += '<Latest>{0}</Latest>'.format(_encode_base64(value))
  
     return xml+'</BlockList>'
 
@@ -643,12 +661,12 @@ def _convert_response_to_block_list(response):
     
     xmldoc = minidom.parseString(response.body)
     for xml_block in _get_children_from_path(xmldoc, 'BlockList', 'CommittedBlocks', 'Block'):
-        xml_block_id = base64.b64decode(_get_child_nodes(xml_block, 'Name')[0].firstChild.nodeValue)
+        xml_block_id = _decode_base64_to_text(_get_child_nodes(xml_block, 'Name')[0].firstChild.nodeValue)
         xml_block_size = int(_get_child_nodes(xml_block, 'Size')[0].firstChild.nodeValue)
         blob_block_list.committed_blocks.append(BlobBlock(xml_block_id, xml_block_size))  
 
     for xml_block in _get_children_from_path(xmldoc, 'BlockList', 'UncommittedBlocks', 'Block'):
-        xml_block_id = base64.b64decode(_get_child_nodes(xml_block, 'Name')[0].firstChild.nodeValue)
+        xml_block_id = _decode_base64_to_text(_get_child_nodes(xml_block, 'Name')[0].firstChild.nodeValue)
         xml_block_size = int(_get_child_nodes(xml_block, 'Size')[0].firstChild.nodeValue)
         blob_block_list.uncommitted_blocks.append(BlobBlock(xml_block_id, xml_block_size))
 
@@ -735,7 +753,7 @@ def _convert_xml_to_entity(xmlstr):
                 _set_entity_attr(entity, name, property)
 
         #extract id, updated and name value from feed entry and set them of rule.
-    for name, value in _get_entry_properties(xmlstr, True).iteritems():
+    for name, value in _get_entry_properties(xmlstr, True).items():
         if name in ['etag']:
             _set_entity_attr(entity, name, value)
 
@@ -756,7 +774,7 @@ def _convert_xml_to_table(xmlstr):
     table = Table()
     entity = _convert_xml_to_entity(xmlstr)
     setattr(table, 'name', entity.TableName)
-    for name, value in _get_entry_properties(xmlstr, False).iteritems():
+    for name, value in _get_entry_properties(xmlstr, False).items():
        setattr(table, name, value)
     return table
 
@@ -765,8 +783,8 @@ def _storage_error_handler(http_error):
     return _general_error_handler(http_error)
 
 # make these available just from storage.
-from blobservice import BlobService
-from queueservice import QueueService
-from tableservice import TableService
-from cloudstorageaccount import CloudStorageAccount
-from sharedaccesssignature import SharedAccessSignature, SharedAccessPolicy, Permission, WebResource
+from azure.storage.blobservice import BlobService
+from azure.storage.queueservice import QueueService
+from azure.storage.tableservice import TableService
+from azure.storage.cloudstorageaccount import CloudStorageAccount
+from azure.storage.sharedaccesssignature import SharedAccessSignature, SharedAccessPolicy, Permission, WebResource

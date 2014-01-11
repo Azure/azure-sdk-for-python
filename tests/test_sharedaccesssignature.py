@@ -35,8 +35,7 @@ from azure.storage.sharedaccesssignature import (Permission,
                                                  )
 from util import (AzureTestCase,
                   credentials,
-                  getUniqueTestRunID,
-                  getUniqueNameBasedOnCurrentTime,
+                  getUniqueName,
                   )
 
 #------------------------------------------------------------------------------

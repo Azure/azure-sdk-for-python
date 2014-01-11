@@ -38,11 +38,11 @@ class _ServiceManagementClient(object):
         self.host = host
     
         if not self.cert_file:
-            if os.environ.has_key(AZURE_MANAGEMENT_CERTFILE):
+            if AZURE_MANAGEMENT_CERTFILE in os.environ:
                 self.cert_file = os.environ[AZURE_MANAGEMENT_CERTFILE]
         
         if not self.subscription_id:
-            if os.environ.has_key(AZURE_MANAGEMENT_SUBSCRIPTIONID):
+            if AZURE_MANAGEMENT_SUBSCRIPTIONID in os.environ:
                 self.subscription_id = os.environ[AZURE_MANAGEMENT_SUBSCRIPTIONID]
     
         if not self.cert_file or not self.subscription_id:

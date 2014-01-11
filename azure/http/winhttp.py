@@ -15,7 +15,10 @@
 from ctypes import c_void_p, c_long, c_ulong, c_longlong, c_ulonglong, c_short, c_ushort, c_wchar_p, c_byte, c_size_t
 from ctypes import byref, Structure, Union, POINTER, WINFUNCTYPE, HRESULT, oledll, WinDLL, cast, create_string_buffer
 import ctypes
-import urllib2  
+import sys
+if sys.version_info >= (3,):
+    def unicode(text):
+        return text
 
 #------------------------------------------------------------------------------
 #  Constants that are used in COM operations
@@ -277,7 +280,7 @@ class _WinHttpRequest(c_void_p):
         _WinHttpRequest._ResponseBody(self, byref(var_respbody))
         if var_respbody.is_safearray_of_bytes():
             respbody = var_respbody.str_from_safearray()
-            if respbody[3:].startswith('<?xml') and respbody.startswith('\xef\xbb\xbf'):
+            if respbody[3:].startswith(b'<?xml') and respbody.startswith(b'\xef\xbb\xbf'):
                 respbody = respbody[3:]
             return respbody
         else:
@@ -339,7 +342,10 @@ class _HTTPConnection:
         iid = GUID('{016FE2EC-B2C8-45F8-B23B-39E53A75396B}')
         _CoInitialize(None)
         _CoCreateInstance(byref(clsid), 0, 1, byref(iid), byref(self._httprequest))
-        
+
+    def close(self):
+        pass
+
     def set_tunnel(self, host, port=None, headers=None):
         ''' Sets up the host and the port for the HTTP CONNECT Tunnelling. '''
         self._httprequest.set_tunnel(unicode(host), unicode(str(port)))
@@ -360,8 +366,10 @@ class _HTTPConnection:
 
     def putheader(self, name, value):
         ''' Sends the headers of request. '''
-        self._httprequest.set_request_header(str(name).decode('utf-8'),
-                                                str(value).decode('utf-8'))
+        if sys.version_info < (3,):
+            name = str(name).decode('utf-8')
+            value = str(value).decode('utf-8')
+        self._httprequest.set_request_header(name, value)
 
     def endheaders(self):
         ''' No operation. Exists only to provide the same interface of httplib HTTPConnection.'''

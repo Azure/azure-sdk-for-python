@@ -12,15 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import urllib2
-import azure
-from azure.http.httpclient import _HTTPClient
+import sys
+import uuid
+
+from azure import (_update_request_uri_query, 
+                   WindowsAzureError, 
+                   _get_children_from_path,
+                   url_unquote,
+                   _ERROR_CANNOT_FIND_PARTITION_KEY,
+                   _ERROR_CANNOT_FIND_ROW_KEY,
+                   _ERROR_INCORRECT_TABLE_IN_BATCH,
+                   _ERROR_INCORRECT_PARTITION_KEY_IN_BATCH,
+                   _ERROR_DUPLICATE_ROW_KEY_IN_BATCH,
+                   _ERROR_BATCH_COMMIT_FAIL,
+                   )
 from azure.http import HTTPError, HTTPRequest
-from azure import _update_request_uri_query, WindowsAzureError, _get_children_from_path
-from azure.storage import _update_storage_table_header, METADATA_NS, _sign_storage_table_request
+from azure.http.httpclient import _HTTPClient
+from azure.storage import (_update_storage_table_header, 
+                           METADATA_NS, 
+                           _sign_storage_table_request,
+                           )
 from xml.dom import minidom
 
 _DATASERVICES_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices'
+
+if sys.version_info < (3,):
+    def _new_boundary():
+        return str(uuid.uuid1())
+else:
+    def _new_boundary():
+        return str(uuid.uuid1()).encode('utf-8')
 
 class _BatchClient(_HTTPClient):
     '''
@@ -61,14 +82,14 @@ class _BatchClient(_HTTPClient):
             doc = minidom.parseString(request.body)
             part_key = _get_children_from_path(doc, 'entry', 'content', (METADATA_NS, 'properties'), (_DATASERVICES_NS, 'PartitionKey'))
             if not part_key:
-                raise WindowsAzureError(azure._ERROR_CANNOT_FIND_PARTITION_KEY)
+                raise WindowsAzureError(_ERROR_CANNOT_FIND_PARTITION_KEY)
             return part_key[0].firstChild.nodeValue
         else:
-            uri = urllib2.unquote(request.path)
+            uri = url_unquote(request.path)
             pos1 = uri.find('PartitionKey=\'')
             pos2 = uri.find('\',', pos1)
             if pos1 == -1 or pos2 == -1:
-                raise WindowsAzureError(azure._ERROR_CANNOT_FIND_PARTITION_KEY)
+                raise WindowsAzureError(_ERROR_CANNOT_FIND_PARTITION_KEY)
             return uri[pos1 + len('PartitionKey=\''):pos2]
 
     def get_request_row_key(self, request):
@@ -83,14 +104,14 @@ class _BatchClient(_HTTPClient):
             doc = minidom.parseString(request.body)
             row_key = _get_children_from_path(doc, 'entry', 'content', (METADATA_NS, 'properties'), (_DATASERVICES_NS, 'RowKey'))
             if not row_key:
-                raise WindowsAzureError(azure._ERROR_CANNOT_FIND_ROW_KEY)
+                raise WindowsAzureError(_ERROR_CANNOT_FIND_ROW_KEY)
             return row_key[0].firstChild.nodeValue
         else:
-            uri = urllib2.unquote(request.path)
+            uri = url_unquote(request.path)
             pos1 = uri.find('RowKey=\'')
             pos2 = uri.find('\')', pos1)
             if pos1 == -1 or pos2 == -1:
-                raise WindowsAzureError(azure._ERROR_CANNOT_FIND_ROW_KEY)
+                raise WindowsAzureError(_ERROR_CANNOT_FIND_ROW_KEY)
             row_key = uri[pos1 + len('RowKey=\''):pos2]
             return row_key
 
@@ -103,7 +124,7 @@ class _BatchClient(_HTTPClient):
         '''
         if self.batch_table:
             if self.get_request_table(request) != self.batch_table:
-                raise WindowsAzureError(azure._ERROR_INCORRECT_TABLE_IN_BATCH)
+                raise WindowsAzureError(_ERROR_INCORRECT_TABLE_IN_BATCH)
         else:
             self.batch_table = self.get_request_table(request)
 
@@ -116,7 +137,7 @@ class _BatchClient(_HTTPClient):
         '''
         if self.batch_partition_key:
             if self.get_request_partition_key(request) != self.batch_partition_key:
-                raise WindowsAzureError(azure._ERROR_INCORRECT_PARTITION_KEY_IN_BATCH)
+                raise WindowsAzureError(_ERROR_INCORRECT_PARTITION_KEY_IN_BATCH)
         else:
             self.batch_partition_key = self.get_request_partition_key(request)
 
@@ -128,7 +149,7 @@ class _BatchClient(_HTTPClient):
         '''       
         if self.batch_row_keys:
             if self.get_request_row_key(request) in self.batch_row_keys:
-                raise WindowsAzureError(azure._ERROR_DUPLICATE_ROW_KEY_IN_BATCH)
+                raise WindowsAzureError(_ERROR_DUPLICATE_ROW_KEY_IN_BATCH)
         else:
             self.batch_row_keys.append(self.get_request_row_key(request))
 
@@ -164,56 +185,55 @@ class _BatchClient(_HTTPClient):
         if self.is_batch:
             self.is_batch = False
             self.commit_batch_requests()            
-        
 
     def commit_batch_requests(self):
         ''' Commits the batch requests. '''
 
-        batch_boundary = 'batch_a2e9d677-b28b-435e-a89e-87e6a768a431'
-        changeset_boundary = 'changeset_8128b620-b4bb-458c-a177-0959fb14c977'
-        
+        batch_boundary = b'batch_' + _new_boundary()
+        changeset_boundary = b'changeset_' + _new_boundary()
+
         #Commits batch only the requests list is not empty.
         if self.batch_requests:
             request = HTTPRequest()
             request.method = 'POST'
             request.host = self.batch_requests[0].host
             request.path = '/$batch'
-            request.headers = [('Content-Type', 'multipart/mixed; boundary=' + batch_boundary),
+            request.headers = [('Content-Type', 'multipart/mixed; boundary=' + batch_boundary.decode('utf-8')),
                               ('Accept', 'application/atom+xml,application/xml'),
                               ('Accept-Charset', 'UTF-8')]
             
-            request.body = '--' + batch_boundary + '\n'
-            request.body += 'Content-Type: multipart/mixed; boundary=' + changeset_boundary + '\n\n'
+            request.body = b'--' + batch_boundary + b'\n'
+            request.body += b'Content-Type: multipart/mixed; boundary=' + changeset_boundary + b'\n\n'
 
             content_id = 1
 
             # Adds each request body to the POST data.
             for batch_request in self.batch_requests:
-                request.body += '--' + changeset_boundary + '\n'
-                request.body += 'Content-Type: application/http\n'
-                request.body += 'Content-Transfer-Encoding: binary\n\n'
+                request.body += b'--' + changeset_boundary + b'\n'
+                request.body += b'Content-Type: application/http\n'
+                request.body += b'Content-Transfer-Encoding: binary\n\n'
 
-                request.body += batch_request.method + ' http://' + batch_request.host + batch_request.path + ' HTTP/1.1\n'
-                request.body += 'Content-ID: ' + str(content_id) + '\n'
+                request.body += batch_request.method.encode('utf-8') + b' http://' + batch_request.host.encode('utf-8') + batch_request.path.encode('utf-8') + b' HTTP/1.1\n'
+                request.body += b'Content-ID: ' + str(content_id).encode('utf-8') + b'\n'
                 content_id += 1
                 
                 # Add different headers for different type requests.
                 if not batch_request.method == 'DELETE':
-                    request.body += 'Content-Type: application/atom+xml;type=entry\n'
-                    request.body += 'Content-Length: ' + str(len(batch_request.body)) + '\n\n'
-                    request.body += batch_request.body + '\n'
+                    request.body += b'Content-Type: application/atom+xml;type=entry\n'
+                    request.body += b'Content-Length: ' + str(len(batch_request.body)).encode('utf-8') + b'\n\n'
+                    request.body += batch_request.body + b'\n'
                 else:
                     find_if_match = False
                     for name, value in batch_request.headers:
                         #If-Match should be already included in batch_request.headers, but in case it is missing, just add it.
                         if name == 'If-Match':
-                            request.body += name + ': ' + value + '\n\n'
+                            request.body += name.encode('utf-8') + b': ' + value.encode('utf-8') + b'\n\n'
                             break
                     else:
-                        request.body += 'If-Match: *\n\n'
+                        request.body += b'If-Match: *\n\n'
 
-            request.body += '--' + changeset_boundary + '--' + '\n'
-            request.body += '--' + batch_boundary + '--' 
+            request.body += b'--' + changeset_boundary + b'--' + b'\n'
+            request.body += b'--' + batch_boundary + b'--'
 
             request.path, request.query = _update_request_uri_query(request)
             request.headers = _update_storage_table_header(request)
@@ -227,11 +247,9 @@ class _BatchClient(_HTTPClient):
             resp = response.body
 
             if response.status >= 300:
-                raise HTTPError(status, azure._ERROR_BATCH_COMMIT_FAIL, self.respheader, resp)
+                raise HTTPError(status, _ERROR_BATCH_COMMIT_FAIL, self.respheader, resp)
             return resp
 
     def cancel_batch(self):
         ''' Resets the batch flag. '''
         self.is_batch = False
-        
-    
