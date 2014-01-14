@@ -11,6 +11,7 @@
  * Fixes WindowsAzureConflictError and WindowsAzureMissingResourceError to properly set the error message, and use the additional info returned by the server
  * Fixes for bugs:
    #125 Label for VM Deployment should not be b64 encoded (thanks to jeffmendoza).
+   #121 In blob storage, put_page, x-ms-if-sequence-number-lte header should be x-ms-if-sequence-number-le
 
 2013-11-06 Version 0.7.1
  * Fixes for bugs:

@@ -1897,7 +1897,7 @@ class BlobService(_StorageClient):
             ('Content-MD5', _str_or_none(content_md5)),
             ('x-ms-page-write', _str_or_none(x_ms_page_write)),
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
-            ('x-ms-if-sequence-number-lte', _str_or_none(x_ms_if_sequence_number_lte)),
+            ('x-ms-if-sequence-number-le', _str_or_none(x_ms_if_sequence_number_lte)),
             ('x-ms-if-sequence-number-lt', _str_or_none(x_ms_if_sequence_number_lt)),
             ('x-ms-if-sequence-number-eq', _str_or_none(x_ms_if_sequence_number_eq)),
             ('If-Modified-Since', _str_or_none(if_modified_since)),

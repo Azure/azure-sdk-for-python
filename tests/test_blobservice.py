@@ -1983,6 +1983,84 @@ class BlobServiceTest(AzureTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    def test_put_page_if_sequence_number_lt_success(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'ab' * 256
+        start_sequence = 10
+        self.bc.put_blob(self.container_name, 'blob1', None, 'PageBlob', x_ms_blob_content_length=512, x_ms_blob_sequence_number=start_sequence)
+
+        # Act
+        self.bc.put_page(self.container_name, 'blob1', data, 'bytes=0-511', 'update', x_ms_if_sequence_number_lt=start_sequence+1)
+
+        # Assert
+        self.assertBlobEqual(self.container_name, 'blob1', data)
+
+    def test_put_page_if_sequence_number_lt_failure(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'ab' * 256
+        start_sequence = 10
+        self.bc.put_blob(self.container_name, 'blob1', None, 'PageBlob', x_ms_blob_content_length=512, x_ms_blob_sequence_number=start_sequence)
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.bc.put_page(self.container_name, 'blob1', data, 'bytes=0-511', 'update', x_ms_if_sequence_number_lt=start_sequence)
+
+        # Assert
+
+    def test_put_page_if_sequence_number_lte_success(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'ab' * 256
+        start_sequence = 10
+        self.bc.put_blob(self.container_name, 'blob1', None, 'PageBlob', x_ms_blob_content_length=512, x_ms_blob_sequence_number=start_sequence)
+
+        # Act
+        self.bc.put_page(self.container_name, 'blob1', data, 'bytes=0-511', 'update', x_ms_if_sequence_number_lte=start_sequence)
+
+        # Assert
+        self.assertBlobEqual(self.container_name, 'blob1', data)
+
+    def test_put_page_if_sequence_number_lte_failure(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'ab' * 256
+        start_sequence = 10
+        self.bc.put_blob(self.container_name, 'blob1', None, 'PageBlob', x_ms_blob_content_length=512, x_ms_blob_sequence_number=start_sequence)
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.bc.put_page(self.container_name, 'blob1', data, 'bytes=0-511', 'update', x_ms_if_sequence_number_lte=start_sequence-1)
+
+        # Assert
+
+    def test_put_page_if_sequence_number_eq_success(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'ab' * 256
+        start_sequence = 10
+        self.bc.put_blob(self.container_name, 'blob1', None, 'PageBlob', x_ms_blob_content_length=512, x_ms_blob_sequence_number=start_sequence)
+
+        # Act
+        self.bc.put_page(self.container_name, 'blob1', data, 'bytes=0-511', 'update', x_ms_if_sequence_number_eq=start_sequence)
+
+        # Assert
+        self.assertBlobEqual(self.container_name, 'blob1', data)
+
+    def test_put_page_if_sequence_number_eq_failure(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'ab' * 256
+        start_sequence = 10
+        self.bc.put_blob(self.container_name, 'blob1', None, 'PageBlob', x_ms_blob_content_length=512, x_ms_blob_sequence_number=start_sequence)
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.bc.put_page(self.container_name, 'blob1', data, 'bytes=0-511', 'update', x_ms_if_sequence_number_eq=start_sequence-1)
+
+        # Assert
+
     def test_put_page_unicode_python_27(self):
         '''Test for auto-encoding of unicode text (backwards compatibility).'''
         if sys.version_info >= (3,):
