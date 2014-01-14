@@ -1,4 +1,7 @@
 2013-01-10 Version 0.8.0 (prerelease)
+ * Migrate to using httplib on Windows. This is now the default, unless a 
+   Windows Certificate Store management certificate is used. Make sure to use 
+   CPython 2.7.4 or later when using OpenSSL .pem certificates on Windows.
  * Added high-level functions to upload/download blobs with chunking and progress notifications
  * Added support for Python 3.3
  * Updated storage API to 2012-02-12

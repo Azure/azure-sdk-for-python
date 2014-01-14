@@ -69,6 +69,7 @@ from azure.storage.sharedaccesssignature import (Permission,
 from util import (AzureTestCase,
                   credentials,
                   getUniqueName,
+                  set_service_options,
                   )
 
 #------------------------------------------------------------------------------
@@ -77,14 +78,7 @@ class BlobServiceTest(AzureTestCase):
     def setUp(self):
         self.bc = BlobService(credentials.getStorageServicesName(), 
                               credentials.getStorageServicesKey())
-
-        if credentials.getForceUseHttplib():
-            self.bc._httpclient.use_httplib = True
-
-        self.bc.set_proxy(credentials.getProxyHost(),
-                          credentials.getProxyPort(),
-                          credentials.getProxyUser(), 
-                          credentials.getProxyPassword())
+        set_service_options(self.bc)
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise

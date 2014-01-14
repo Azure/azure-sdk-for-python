@@ -37,6 +37,7 @@ from azure.servicebus import (AZURE_SERVICEBUS_NAMESPACE,
 from util import (AzureTestCase,
                   credentials,
                   getUniqueName,
+                  set_service_options,
                   )
 
 #------------------------------------------------------------------------------
@@ -45,14 +46,7 @@ class ServiceBusTest(AzureTestCase):
         self.sbs = ServiceBusService(credentials.getServiceBusNamespace(), 
                                      credentials.getServiceBusKey(), 
                                      'owner')
-
-        if credentials.getForceUseHttplib():
-            self.sbs._httpclient.use_httplib = True
-
-        self.sbs.set_proxy(credentials.getProxyHost(),
-                           credentials.getProxyPort(),
-                           credentials.getProxyUser(),
-                           credentials.getProxyPassword())
+        set_service_options(self.sbs)
 
         self.queue_name = getUniqueName('utqueue')
         self.topic_name = getUniqueName('uttopic')

@@ -20,7 +20,7 @@
     <ClusterTargetPlatform>X86</ClusterTargetPlatform>
     <IsWindowsApplication>False</IsWindowsApplication>
     <InterpreterId>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</InterpreterId>
-    <InterpreterVersion>3.3</InterpreterVersion>
+    <InterpreterVersion>2.7</InterpreterVersion>
     <SearchPath>..\</SearchPath>
     <SccProjectName>$/TCWCS/Python/Open_Source/Feature/azure/tests</SccProjectName>
     <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>

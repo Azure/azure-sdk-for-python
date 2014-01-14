@@ -13,6 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import base64
+import os
 import sys
 
 if sys.version_info < (3,):
@@ -43,19 +44,38 @@ class _HTTPClient:
         self.message = None
         self.cert_file = cert_file
         self.account_name = account_name
-        self.account_key = account_key    
-        self.service_namespace = service_namespace    
+        self.account_key = account_key
+        self.service_namespace = service_namespace
         self.issuer = issuer
         self.protocol = protocol
         self.proxy_host = None
         self.proxy_port = None
         self.proxy_user = None
         self.proxy_password = None
+        self.use_httplib = self.should_use_httplib()
 
-        # If on Windows then use winhttp HTTPConnection instead of httplib HTTPConnection due to the 
-        # bugs in httplib HTTPSConnection. We've reported the issue to the Python 
-        # dev team and it's already fixed for 2.7.4 but we'll need to keep this workaround meanwhile.
-        self.use_httplib = not sys.platform.lower().startswith('win')
+    def should_use_httplib(self):
+        if sys.platform.lower().startswith('win') and self.cert_file:
+            # On Windows, auto-detect between Windows Store Certificate 
+            # (winhttp) and OpenSSL .pem certificate file (httplib).
+            #
+            # We used to only support certificates installed in the Windows 
+            # Certificate Store.
+            #   cert_file example: CURRENT_USER\my\CertificateName
+            #
+            # We now support using an OpenSSL .pem certificate file, 
+            # for a consistent experience across all platforms.
+            #   cert_file example: account\certificate.pem
+            #
+            # When using OpenSSL .pem certificate file on Windows, make sure 
+            # you are on CPython 2.7.4 or later.
+
+            # If it's not an existing file on disk, then treat it as a path in 
+            # the Windows Certificate Store, which means we can't use httplib.
+            if not os.path.isfile(self.cert_file):
+                return False
+
+        return True
 
     def set_proxy(self, host, port, user, password):
         '''

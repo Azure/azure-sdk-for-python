@@ -66,19 +66,39 @@ class Credentials(object):
         return self.ns[u'linuxosvhd']
 
     def getProxyHost(self):
-        return self.ns[u'proxyhost']
+        ''' Optional. Address of the proxy server. '''
+        if u'proxyhost' in self.ns:
+            return self.ns[u'proxyhost']
+        return None
 
     def getProxyPort(self):
-        return self.ns[u'proxyport']
+        ''' Optional. Port of the proxy server. '''
+        if u'proxyport' in self.ns:
+            return self.ns[u'proxyport']
+        return None
 
     def getProxyUser(self):
-        return self.ns[u'proxyuser']
+        ''' Optional. User name for proxy server authentication. '''
+        if u'proxyuser' in self.ns:
+            return self.ns[u'proxyuser']
+        return None
 
     def getProxyPassword(self):
-        return self.ns[u'proxypassword']
+        ''' Optional. Password for proxy server authentication. '''
+        if u'proxypassword' in self.ns:
+            return self.ns[u'proxypassword']
+        return None
 
-    def getForceUseHttplib(self):
-        return self.ns[u'forceusehttplib'].lower() == 'true'
+    def getUseHttplibOverride(self):
+        ''' Optional. When specified, it will override the value of 
+        use_httplib that is set by the auto-detection in httpclient.py.
+        When testing management APIs, make sure to specify a value that is 
+        compatible with the value of 'managementcertfile' ie. True for a .pem 
+        certificate file path, False for a Windows Certificate Store path.
+        '''
+        if u'usehttpliboverride' in self.ns:
+            return self.ns[u'usehttpliboverride'].lower() != 'false'
+        return None
 
 credentials = Credentials()
 
@@ -93,6 +113,18 @@ def getUniqueName(base_name):
         cur_time = cur_time.replace(bad, "")
     cur_time = cur_time.lower().strip()
     return base_name + str(random.randint(10,99)) + cur_time[:12]
+
+def set_service_options(service):
+    useHttplibOverride = credentials.getUseHttplibOverride()
+    if useHttplibOverride is not None:
+        # Override the auto-detection of what type of connection to create.
+        # This allows testing of both httplib and winhttp on Windows.
+        service._httpclient.use_httplib = useHttplibOverride
+
+    service.set_proxy(credentials.getProxyHost(), 
+                      credentials.getProxyPort(), 
+                      credentials.getProxyUser(), 
+                      credentials.getProxyPassword())
 
 class AzureTestCase(unittest.TestCase):
     def assertNamedItemInContainer(self, container, item_name, msg=None):

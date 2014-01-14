@@ -96,25 +96,42 @@ container in which to store a blob:
 ```Python
 from azure.storage import BlobService
 blob_service = BlobService(account_name, account_key)
-blob_service.create_container('taskcontainer')
+blob_service.create_container('images')
 ```
 
-To upload a file (assuming it is called task1-upload.txt, it contains the exact text "hello world" (no quotation marks), and it is placed in the same folder as the script below), the method **put\_blob** can be used:
+To upload a file 'uploads/image.png' from disk to a blob named 'image.png', the method **put\_block\_blob\_from\_path** can be used:
 
 ```Python
 from azure.storage import BlobService
 blob_service = BlobService(account_name, account_key)
-blob_service.put_blob('taskcontainer', 'task1', file('task1-upload.txt').read(), 'BlockBlob')
-
+blob_service.put_block_blob_from_path('images', 'image.png', 'uploads/image.png')
 ```
 
-To download the blob and write it to the file system, the **get\_blob** method can be used:
+To upload an already opened file to a blob named 'image.png', the method **put\_block\_blob\_from\_file** can be used instead:
+
+```Python
+with open('uploads/image.png') as file:
+	blob_service.put_block_blob_from_file('images', 'image.png', file)
+```
+
+To upload unicode text, use **put\_block\_blob\_from\_text** which will do the conversion to bytes using the specified encoding.
+
+To upload bytes, use **put\_block\_blob\_from\_bytes**.
+
+To download a blob named 'image.png' to a file on disk 'downloads/image.png', where the 'downloads' folder already exists, the **get\_blob\_to\_path** method can be used:
 
 ```Python
 from azure.storage import BlobService
 blob_service = BlobService(account_name, account_key)
-blob = blob_service.get_blob('taskcontainer', 'task1')
+blob = blob_service.get_blob_to_path('images', 'image.png', 'downloads/image.png')
 ```
+
+To download to an already opened file, use **get\_blob\_to\_file**.
+
+To download to an array of bytes, use **get\_blob\_to\_bytes**.
+
+To download to unicode text, use **get\_blob\_to\_text**.
+
 
 ## Storage Queues
 
@@ -216,6 +233,17 @@ You  need to create two certificates, one for the server (a .cer file) and one f
 To create the .cer certificate, execute this: 
 
 	openssl x509 -inform pem -in mycert.pem -outform der -out mycert.cer
+
+After you have created the certificate, you will need to upload the .cer file to Windows Azure via the "Upload" action of the "Settings" tab of the [management portal](http://manage.windows.com).
+
+To initialize the management service, pass in your subscription id and the path to the .pem file.
+
+```Python
+from azure.servicemanagement import ServiceManagementService
+subscription_id = '00000000-0000-0000-0000-000000000000'
+cert_file = 'mycert.pem'
+sms = ServiceManagementService(subscription_id, cert_file)
+```
 
 ### List Available Locations
 

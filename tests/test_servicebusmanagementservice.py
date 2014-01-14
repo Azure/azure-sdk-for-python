@@ -22,6 +22,7 @@ from azure.servicemanagement import ServiceBusManagementService
 from util import (AzureTestCase,
                   credentials,
                   getUniqueName,
+                  set_service_options,
                   )
 
 #------------------------------------------------------------------------------
@@ -30,14 +31,7 @@ class ServiceBusManagementServiceTest(AzureTestCase):
     def setUp(self):
         self.sms = ServiceBusManagementService(credentials.getSubscriptionId(),
                                                credentials.getManagementCertFile())
-
-        if credentials.getForceUseHttplib():
-            self.sms._httpclient.use_httplib = True
-
-        self.sms.set_proxy(credentials.getProxyHost(),
-                           credentials.getProxyPort(),
-                           credentials.getProxyUser(),
-                           credentials.getProxyPassword())
+        set_service_options(self.sms)
 
         self.sb_namespace = getUniqueName('uts')
 

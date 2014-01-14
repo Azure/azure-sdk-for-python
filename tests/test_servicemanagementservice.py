@@ -32,6 +32,7 @@ from azure.storage.blobservice import BlobService
 from util import (AzureTestCase,
                   credentials,
                   getUniqueName,
+                  set_service_options,
                   )
 
 SERVICE_CERT_FORMAT = 'pfx'
@@ -86,22 +87,11 @@ class ServiceManagementServiceTest(AzureTestCase):
     def setUp(self):
         self.sms = ServiceManagementService(credentials.getSubscriptionId(),
                                             credentials.getManagementCertFile())
-
-        if credentials.getForceUseHttplib():
-            self.sms._httpclient.use_httplib = True
-
-        self.sms.set_proxy(credentials.getProxyHost(),
-                           credentials.getProxyPort(),
-                           credentials.getProxyPort(),
-                           credentials.getProxyPassword())
+        set_service_options(self.sms)
 
         self.bc = BlobService(credentials.getStorageServicesName(),
                               credentials.getStorageServicesKey())
-        
-        self.bc.set_proxy(credentials.getProxyHost(),
-                          credentials.getProxyPort(),
-                          credentials.getProxyUser(),
-                          credentials.getProxyPassword())
+        set_service_options(self.bc)
 
         self.hosted_service_name = getUniqueName('utsvc')
         self.container_name = getUniqueName('utctnr')

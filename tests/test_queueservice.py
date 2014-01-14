@@ -21,6 +21,7 @@ from azure.storage.queueservice import QueueService
 from util import (AzureTestCase,
                   credentials,
                   getUniqueName,
+                  set_service_options,
                   )
 
 #------------------------------------------------------------------------------
@@ -31,14 +32,7 @@ class QueueServiceTest(AzureTestCase):
     def setUp(self):
         self.queue_client = QueueService(credentials.getStorageServicesName(), 
                                          credentials.getStorageServicesKey())
-
-        if credentials.getForceUseHttplib():
-            self.queue_client._httpclient.use_httplib = True
-
-        self.queue_client.set_proxy(credentials.getProxyHost(),
-                                    credentials.getProxyPort(),
-                                    credentials.getProxyUser(), 
-                                    credentials.getProxyPassword())
+        set_service_options(self.queue_client)
 
         self.test_queues = []
         self.creatable_queues = []

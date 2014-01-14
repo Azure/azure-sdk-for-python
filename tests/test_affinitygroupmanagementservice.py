@@ -22,6 +22,7 @@ from azure.servicemanagement import (AffinityGroups,
 from util import (AzureTestCase,
                   credentials,
                   getUniqueName,
+                  set_service_options,
                   )
 
 #------------------------------------------------------------------------------
@@ -30,14 +31,7 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
     def setUp(self):
         self.sms = ServiceManagementService(credentials.getSubscriptionId(), 
                                             credentials.getManagementCertFile())
-
-        if credentials.getForceUseHttplib():
-            self.sms._httpclient.use_httplib = True
-
-        self.sms.set_proxy(credentials.getProxyHost(), 
-                           credentials.getProxyPort(), 
-                           credentials.getProxyUser(), 
-                           credentials.getProxyPassword())
+        set_service_options(self.sms)
 
         self.affinity_group_name = getUniqueName('utaffgrp')
         self.hosted_service_name = None

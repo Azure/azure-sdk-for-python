@@ -27,6 +27,7 @@ from azure.storage import (Entity,
 from util import (AzureTestCase,
                   credentials,
                   getUniqueName,
+                  set_service_options,
                   )
 
 #------------------------------------------------------------------------------
@@ -38,14 +39,7 @@ class TableServiceTest(AzureTestCase):
     def setUp(self):
         self.tc = TableService(credentials.getStorageServicesName(), 
                                credentials.getStorageServicesKey())
-
-        if credentials.getForceUseHttplib():
-            self.tc._httpclient.use_httplib = True
-
-        self.tc.set_proxy(credentials.getProxyHost(), 
-                          credentials.getProxyPort(), 
-                          credentials.getProxyUser(), 
-                          credentials.getProxyPassword())
+        set_service_options(self.tc)
 
         self.table_name = getUniqueName('uttable')
         self.additional_table_names = []
