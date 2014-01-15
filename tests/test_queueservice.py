@@ -30,9 +30,9 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 class QueueServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.queue_client = QueueService(credentials.getStorageServicesName(), 
-                                         credentials.getStorageServicesKey())
-        set_service_options(self.queue_client)
+        self.qs = QueueService(credentials.getStorageServicesName(), 
+                               credentials.getStorageServicesKey())
+        set_service_options(self.qs)
 
         self.test_queues = []
         self.creatable_queues = []
@@ -41,7 +41,7 @@ class QueueServiceTest(AzureTestCase):
         for i in range(4):
             self.creatable_queues.append(getUniqueName('mycreatablequeue' + str(i)))
         for queue_name in self.test_queues:
-            self.queue_client.create_queue(queue_name)
+            self.qs.create_queue(queue_name)
 
     def tearDown(self):
         self.cleanup()
@@ -50,22 +50,22 @@ class QueueServiceTest(AzureTestCase):
     def cleanup(self):
         for queue_name in self.test_queues:
             try:
-                self.queue_client.delete_queue(queue_name)
+                self.qs.delete_queue(queue_name)
             except:
                 pass
         for queue_name in self.creatable_queues:
             try:
-                self.queue_client.delete_queue(queue_name)
+                self.qs.delete_queue(queue_name)
             except:
                 pass
 
     def test_get_service_properties(self):
         #This api doesn't apply to local storage
-        if self.queue_client.use_local_storage:
+        if self.qs.use_local_storage:
             return
 
         #Action
-        properties = self.queue_client.get_queue_service_properties()
+        properties = self.qs.get_queue_service_properties()
 
         #Asserts
         self.assertIsNotNone(properties)
@@ -78,14 +78,14 @@ class QueueServiceTest(AzureTestCase):
 
     def test_set_service_properties(self):
         #This api doesn't apply to local storage
-        if self.queue_client.use_local_storage:
+        if self.qs.use_local_storage:
             return
 
         #Action
-        queue_properties = self.queue_client.get_queue_service_properties()
+        queue_properties = self.qs.get_queue_service_properties()
         queue_properties.logging.read=True
-        self.queue_client.set_queue_service_properties(queue_properties)
-        properties = self.queue_client.get_queue_service_properties()
+        self.qs.set_queue_service_properties(queue_properties)
+        properties = self.qs.get_queue_service_properties()
 
         #Asserts
         self.assertIsNotNone(properties)
@@ -99,9 +99,9 @@ class QueueServiceTest(AzureTestCase):
 
     def test_create_queue(self):
         #Action
-        self.queue_client.create_queue(self.creatable_queues[0])
-        result = self.queue_client.get_queue_metadata(self.creatable_queues[0])
-        self.queue_client.delete_queue(self.creatable_queues[0])
+        self.qs.create_queue(self.creatable_queues[0])
+        result = self.qs.get_queue_metadata(self.creatable_queues[0])
+        self.qs.delete_queue(self.creatable_queues[0])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -109,8 +109,8 @@ class QueueServiceTest(AzureTestCase):
 
     def test_create_queue_already_exist(self):
         #Action
-        created1 = self.queue_client.create_queue(self.creatable_queues[0])
-        created2 = self.queue_client.create_queue(self.creatable_queues[0])
+        created1 = self.qs.create_queue(self.creatable_queues[0])
+        created2 = self.qs.create_queue(self.creatable_queues[0])
 
         #Asserts
         self.assertTrue(created1)
@@ -118,28 +118,28 @@ class QueueServiceTest(AzureTestCase):
 
     def test_create_queue_fail_on_exist(self):
         #Action
-        created = self.queue_client.create_queue(self.creatable_queues[0], None, True)
+        created = self.qs.create_queue(self.creatable_queues[0], None, True)
         with self.assertRaises(WindowsAzureError):
-            self.queue_client.create_queue(self.creatable_queues[0], None, True)
+            self.qs.create_queue(self.creatable_queues[0], None, True)
 
         #Asserts
         self.assertTrue(created)
 
     def test_create_queue_with_options(self):
         #Action
-        self.queue_client.create_queue(self.creatable_queues[1], x_ms_meta_name_values = {'foo':'test', 'bar':'blah'})
-        result = self.queue_client.get_queue_metadata(self.creatable_queues[1])
+        self.qs.create_queue(self.creatable_queues[1], x_ms_meta_name_values = {'val1':'test', 'val2':'blah'})
+        result = self.qs.get_queue_metadata(self.creatable_queues[1])
 
         #Asserts
         self.assertIsNotNone(result)
         self.assertEqual(3, len(result))
         self.assertEqual(result['x-ms-approximate-messages-count'], '0')
-        self.assertEqual('test', result['x-ms-meta-foo'])
-        self.assertEqual('blah', result['x-ms-meta-bar'])
+        self.assertEqual('test', result['x-ms-meta-val1'])
+        self.assertEqual('blah', result['x-ms-meta-val2'])
 
     def test_delete_queue_not_exist(self):
         #Action
-        deleted = self.queue_client.delete_queue(self.creatable_queues[0])
+        deleted = self.qs.delete_queue(self.creatable_queues[0])
 
         #Asserts
         self.assertFalse(deleted)
@@ -147,14 +147,14 @@ class QueueServiceTest(AzureTestCase):
     def test_delete_queue_fail_not_exist_not_exist(self):
         #Action
         with self.assertRaises(WindowsAzureError):
-            self.queue_client.delete_queue(self.creatable_queues[0], True)
+            self.qs.delete_queue(self.creatable_queues[0], True)
 
         #Asserts
 
     def test_delete_queue_fail_not_exist_already_exist(self):
         #Action
-        created = self.queue_client.create_queue(self.creatable_queues[0])
-        deleted = self.queue_client.delete_queue(self.creatable_queues[0], True)
+        created = self.qs.create_queue(self.creatable_queues[0])
+        deleted = self.qs.delete_queue(self.creatable_queues[0], True)
 
         #Asserts
         self.assertTrue(created)
@@ -162,7 +162,7 @@ class QueueServiceTest(AzureTestCase):
 
     def test_list_queues(self):
         #Action
-        queues = self.queue_client.list_queues()
+        queues = self.qs.list_queues()
         for queue in queues:
             pass
 
@@ -174,8 +174,8 @@ class QueueServiceTest(AzureTestCase):
 
     def test_list_queues_with_options(self):
         #Action
-        queues_1 = self.queue_client.list_queues(prefix=TEST_QUEUE_PREFIX, maxresults=3)
-        queues_2 = self.queue_client.list_queues(prefix=TEST_QUEUE_PREFIX, marker=queues_1.next_marker, include='metadata')
+        queues_1 = self.qs.list_queues(prefix=TEST_QUEUE_PREFIX, maxresults=3)
+        queues_2 = self.qs.list_queues(prefix=TEST_QUEUE_PREFIX, marker=queues_1.next_marker, include='metadata')
 
         #Asserts
         self.assertIsNotNone(queues_1)
@@ -198,32 +198,32 @@ class QueueServiceTest(AzureTestCase):
 
     def test_set_queue_metadata(self):
         #Action
-        self.queue_client.create_queue(self.creatable_queues[2])
-        self.queue_client.set_queue_metadata(self.creatable_queues[2], x_ms_meta_name_values={'foo':'test', 'bar':'blah'})
-        result = self.queue_client.get_queue_metadata(self.creatable_queues[2])
-        self.queue_client.delete_queue(self.creatable_queues[2])
+        self.qs.create_queue(self.creatable_queues[2])
+        self.qs.set_queue_metadata(self.creatable_queues[2], x_ms_meta_name_values={'val1':'test', 'val2':'blah'})
+        result = self.qs.get_queue_metadata(self.creatable_queues[2])
+        self.qs.delete_queue(self.creatable_queues[2])
 
         #Asserts
         self.assertIsNotNone(result)
         self.assertEqual(3, len(result))
         self.assertEqual('0', result['x-ms-approximate-messages-count'])
-        self.assertEqual('test', result['x-ms-meta-foo'])
-        self.assertEqual('blah', result['x-ms-meta-bar'])
+        self.assertEqual('test', result['x-ms-meta-val1'])
+        self.assertEqual('blah', result['x-ms-meta-val2'])
 
     def test_put_message(self):
         #Action.  No exception means pass. No asserts needed.
-        self.queue_client.put_message(self.test_queues[0], 'message1')
-        self.queue_client.put_message(self.test_queues[0], 'message2')
-        self.queue_client.put_message(self.test_queues[0], 'message3')
-        self.queue_client.put_message(self.test_queues[0], 'message4')
+        self.qs.put_message(self.test_queues[0], 'message1')
+        self.qs.put_message(self.test_queues[0], 'message2')
+        self.qs.put_message(self.test_queues[0], 'message3')
+        self.qs.put_message(self.test_queues[0], 'message4')
     
     def test_get_messages(self):
         #Action
-        self.queue_client.put_message(self.test_queues[1], 'message1')
-        self.queue_client.put_message(self.test_queues[1], 'message2')
-        self.queue_client.put_message(self.test_queues[1], 'message3')
-        self.queue_client.put_message(self.test_queues[1], 'message4')
-        result = self.queue_client.get_messages(self.test_queues[1])
+        self.qs.put_message(self.test_queues[1], 'message1')
+        self.qs.put_message(self.test_queues[1], 'message2')
+        self.qs.put_message(self.test_queues[1], 'message3')
+        self.qs.put_message(self.test_queues[1], 'message4')
+        result = self.qs.get_messages(self.test_queues[1])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -240,11 +240,11 @@ class QueueServiceTest(AzureTestCase):
 
     def test_get_messages_with_options(self):
         #Action
-        self.queue_client.put_message(self.test_queues[2], 'message1')
-        self.queue_client.put_message(self.test_queues[2], 'message2')
-        self.queue_client.put_message(self.test_queues[2], 'message3')
-        self.queue_client.put_message(self.test_queues[2], 'message4')
-        result = self.queue_client.get_messages(self.test_queues[2], numofmessages=4, visibilitytimeout=20)
+        self.qs.put_message(self.test_queues[2], 'message1')
+        self.qs.put_message(self.test_queues[2], 'message2')
+        self.qs.put_message(self.test_queues[2], 'message3')
+        self.qs.put_message(self.test_queues[2], 'message4')
+        result = self.qs.get_messages(self.test_queues[2], numofmessages=4, visibilitytimeout=20)
 
         #Asserts
         self.assertIsNotNone(result)
@@ -262,11 +262,11 @@ class QueueServiceTest(AzureTestCase):
 
     def test_peek_messages(self):
         #Action
-        self.queue_client.put_message(self.test_queues[3], 'message1')
-        self.queue_client.put_message(self.test_queues[3], 'message2')
-        self.queue_client.put_message(self.test_queues[3], 'message3')
-        self.queue_client.put_message(self.test_queues[3], 'message4')
-        result = self.queue_client.peek_messages(self.test_queues[3])
+        self.qs.put_message(self.test_queues[3], 'message1')
+        self.qs.put_message(self.test_queues[3], 'message2')
+        self.qs.put_message(self.test_queues[3], 'message3')
+        self.qs.put_message(self.test_queues[3], 'message4')
+        result = self.qs.peek_messages(self.test_queues[3])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -283,11 +283,11 @@ class QueueServiceTest(AzureTestCase):
 
     def test_peek_messages_with_options(self):
         #Action
-        self.queue_client.put_message(self.test_queues[4], 'message1')
-        self.queue_client.put_message(self.test_queues[4], 'message2')
-        self.queue_client.put_message(self.test_queues[4], 'message3')
-        self.queue_client.put_message(self.test_queues[4], 'message4')
-        result = self.queue_client.peek_messages(self.test_queues[4], numofmessages=4)
+        self.qs.put_message(self.test_queues[4], 'message1')
+        self.qs.put_message(self.test_queues[4], 'message2')
+        self.qs.put_message(self.test_queues[4], 'message3')
+        self.qs.put_message(self.test_queues[4], 'message4')
+        result = self.qs.peek_messages(self.test_queues[4], numofmessages=4)
 
         #Asserts
         self.assertIsNotNone(result)
@@ -304,12 +304,12 @@ class QueueServiceTest(AzureTestCase):
 
     def test_clear_messages(self):
         #Action
-        self.queue_client.put_message(self.test_queues[5], 'message1')
-        self.queue_client.put_message(self.test_queues[5], 'message2')
-        self.queue_client.put_message(self.test_queues[5], 'message3')
-        self.queue_client.put_message(self.test_queues[5], 'message4')
-        self.queue_client.clear_messages(self.test_queues[5])
-        result = self.queue_client.peek_messages(self.test_queues[5])
+        self.qs.put_message(self.test_queues[5], 'message1')
+        self.qs.put_message(self.test_queues[5], 'message2')
+        self.qs.put_message(self.test_queues[5], 'message3')
+        self.qs.put_message(self.test_queues[5], 'message4')
+        self.qs.clear_messages(self.test_queues[5])
+        result = self.qs.peek_messages(self.test_queues[5])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -317,13 +317,13 @@ class QueueServiceTest(AzureTestCase):
 
     def test_delete_message(self):
         #Action
-        self.queue_client.put_message(self.test_queues[6], 'message1')
-        self.queue_client.put_message(self.test_queues[6], 'message2')
-        self.queue_client.put_message(self.test_queues[6], 'message3')
-        self.queue_client.put_message(self.test_queues[6], 'message4')
-        result = self.queue_client.get_messages(self.test_queues[6])
-        self.queue_client.delete_message(self.test_queues[6], result[0].message_id, result[0].pop_receipt)
-        result2 = self.queue_client.get_messages(self.test_queues[6], numofmessages=32)
+        self.qs.put_message(self.test_queues[6], 'message1')
+        self.qs.put_message(self.test_queues[6], 'message2')
+        self.qs.put_message(self.test_queues[6], 'message3')
+        self.qs.put_message(self.test_queues[6], 'message4')
+        result = self.qs.get_messages(self.test_queues[6])
+        self.qs.delete_message(self.test_queues[6], result[0].message_id, result[0].pop_receipt)
+        result2 = self.qs.get_messages(self.test_queues[6], numofmessages=32)
         
         #Asserts
         self.assertIsNotNone(result2)
@@ -331,10 +331,10 @@ class QueueServiceTest(AzureTestCase):
 
     def test_update_message(self):
         #Action
-        self.queue_client.put_message(self.test_queues[7], 'message1')
-        list_result1 = self.queue_client.get_messages(self.test_queues[7])
-        self.queue_client.update_message(self.test_queues[7], list_result1[0].message_id, 'new text', list_result1[0].pop_receipt, visibilitytimeout=0)
-        list_result2 = self.queue_client.get_messages(self.test_queues[7])
+        self.qs.put_message(self.test_queues[7], 'message1')
+        list_result1 = self.qs.get_messages(self.test_queues[7])
+        self.qs.update_message(self.test_queues[7], list_result1[0].message_id, 'new text', list_result1[0].pop_receipt, visibilitytimeout=0)
+        list_result2 = self.qs.get_messages(self.test_queues[7])
 
         #Asserts
         self.assertIsNotNone(list_result2)
@@ -354,7 +354,7 @@ class QueueServiceTest(AzureTestCase):
         def my_filter(request, next):
             called.append(True)
             return next(request)
-        qc = self.queue_client.with_filter(my_filter)
+        qc = self.qs.with_filter(my_filter)
         qc.put_message(self.test_queues[7], 'message1')
 
         self.assertTrue(called)
@@ -370,7 +370,7 @@ class QueueServiceTest(AzureTestCase):
             called.append('b')
             return next(request)
 
-        qc = self.queue_client.with_filter(filter_a).with_filter(filter_b)
+        qc = self.qs.with_filter(filter_a).with_filter(filter_b)
         qc.put_message(self.test_queues[7], 'message1')
 
         self.assertEqual(called, ['b', 'a'])
@@ -381,14 +381,14 @@ class QueueServiceTest(AzureTestCase):
 
         with self.assertRaises(WindowsAzureError):
             # not supported - queue name must be alphanumeric, lowercase
-            self.queue_client.create_queue(self.creatable_queues[0])
+            self.qs.create_queue(self.creatable_queues[0])
 
         #Asserts
 
     def test_unicode_get_messages_unicode_data(self):
         #Action
-        self.queue_client.put_message(self.test_queues[1], u'message1㚈')
-        result = self.queue_client.get_messages(self.test_queues[1])
+        self.qs.put_message(self.test_queues[1], u'message1㚈')
+        result = self.qs.get_messages(self.test_queues[1])
 
         #Asserts
         self.assertIsNotNone(result)
@@ -405,10 +405,10 @@ class QueueServiceTest(AzureTestCase):
 
     def test_unicode_update_message_unicode_data(self):
         #Action
-        self.queue_client.put_message(self.test_queues[7], 'message1')
-        list_result1 = self.queue_client.get_messages(self.test_queues[7])
-        self.queue_client.update_message(self.test_queues[7], list_result1[0].message_id, u'啊齄丂狛狜', list_result1[0].pop_receipt, visibilitytimeout=0)
-        list_result2 = self.queue_client.get_messages(self.test_queues[7])
+        self.qs.put_message(self.test_queues[7], 'message1')
+        list_result1 = self.qs.get_messages(self.test_queues[7])
+        self.qs.update_message(self.test_queues[7], list_result1[0].message_id, u'啊齄丂狛狜', list_result1[0].pop_receipt, visibilitytimeout=0)
+        list_result2 = self.qs.get_messages(self.test_queues[7])
 
         #Asserts
         self.assertIsNotNone(list_result2)

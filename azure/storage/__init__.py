@@ -411,13 +411,9 @@ def _sign_storage_blob_request(request, account_name, account_key):
     headers_to_sign = ['content-encoding', 'content-language', 'content-length', 
                         'content-md5', 'content-type', 'date', 'if-modified-since', 
                         'if-match', 'if-none-match', 'if-unmodified-since', 'range']
-    for header in headers_to_sign:
-        for name, value in request.headers:
-            if value and name.lower() == header:
-                string_to_sign += value + '\n'
-                break
-        else:
-            string_to_sign += '\n'
+
+    request_header_dict = dict((name.lower(), value) for name, value in request.headers if value)
+    string_to_sign += '\n'.join(request_header_dict.get(x, '') for x in headers_to_sign) + '\n'
 
     #get x-ms header to sign
     x_ms_headers = []
@@ -453,13 +449,8 @@ def _sign_storage_table_request(request, account_name, account_key):
 
     string_to_sign = request.method + '\n'
     headers_to_sign = ['content-md5', 'content-type', 'date']
-    for header in headers_to_sign:
-        for name, value in request.headers:
-            if value and name.lower() == header:
-                string_to_sign += value + '\n'
-                break
-        else:
-            string_to_sign += '\n'
+    request_header_dict = dict((name.lower(), value) for name, value in request.headers if value)
+    string_to_sign += '\n'.join(request_header_dict.get(x, '') for x in headers_to_sign) + '\n'
 
     #get account_name and uri path to sign     
     string_to_sign += ''.join(['/', account_name, uri_path])

@@ -37,9 +37,9 @@ MAX_RETRY = 60
 class TableServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.tc = TableService(credentials.getStorageServicesName(), 
+        self.ts = TableService(credentials.getStorageServicesName(), 
                                credentials.getStorageServicesKey())
-        set_service_options(self.tc)
+        set_service_options(self.ts)
 
         self.table_name = getUniqueName('uttable')
         self.additional_table_names = []
@@ -50,12 +50,12 @@ class TableServiceTest(AzureTestCase):
 
     def cleanup(self):
         try:
-            self.tc.delete_table(self.table_name)
+            self.ts.delete_table(self.table_name)
         except: pass
 
         for name in self.additional_table_names:
             try:
-                self.tc.delete_table(name)
+                self.ts.delete_table(name)
             except: pass
 
     #--Helpers-----------------------------------------------------------------
@@ -63,7 +63,7 @@ class TableServiceTest(AzureTestCase):
         '''
         Creates a table with the specified name.
         '''
-        self.tc.create_table(table_name, True)
+        self.ts.create_table(table_name, True)
 
     def _create_table_with_default_entities(self, table_name, entity_count):
         '''
@@ -74,7 +74,7 @@ class TableServiceTest(AzureTestCase):
         entities = []
         self._create_table(table_name)
         for i in range(1, entity_count + 1):
-            entities.append(self.tc.insert_entity(table_name, self._create_default_entity_dict('MyPartition', str(i))))
+            entities.append(self.ts.insert_entity(table_name, self._create_default_entity_dict('MyPartition', str(i))))
         return entities
 
     def _create_default_entity_class(self, partition, row):
@@ -192,8 +192,8 @@ class TableServiceTest(AzureTestCase):
 
     #--Test cases for table service -------------------------------------------
     def test_get_set_table_service_properties(self):
-        table_properties = self.tc.get_table_service_properties()
-        self.tc.set_table_service_properties(table_properties)
+        table_properties = self.ts.get_table_service_properties()
+        self.ts.set_table_service_properties(table_properties)
         
         tests = [('logging.delete', True),
                  ('logging.delete', False),
@@ -210,11 +210,11 @@ class TableServiceTest(AzureTestCase):
 
             last_attr = path.split('.')[-1]
             setattr(cur, last_attr, value)
-            self.tc.set_table_service_properties(table_properties)
+            self.ts.set_table_service_properties(table_properties)
 
             retry_count = 0
             while retry_count < MAX_RETRY:
-                table_properties = self.tc.get_table_service_properties()
+                table_properties = self.ts.get_table_service_properties()
                 cur = table_properties
                 for component in path.split('.'):
                     cur = getattr(cur, component)
@@ -226,30 +226,30 @@ class TableServiceTest(AzureTestCase):
             self.assertEqual(value, cur)
             
     def test_table_service_retention_single_set(self):
-        table_properties = self.tc.get_table_service_properties()
+        table_properties = self.ts.get_table_service_properties()
         table_properties.logging.retention_policy.enabled = False
         table_properties.logging.retention_policy.days = 5
 
         # TODO: Better error, ValueError?
         self.assertRaises(WindowsAzureError,
-                         self.tc.set_table_service_properties,
+                         self.ts.set_table_service_properties,
                          table_properties)
 
-        table_properties = self.tc.get_table_service_properties()
+        table_properties = self.ts.get_table_service_properties()
         table_properties.logging.retention_policy.days = None
         table_properties.logging.retention_policy.enabled = True
 
         # TODO: Better error, ValueError?
         self.assertRaises(WindowsAzureError,
-                         self.tc.set_table_service_properties,
+                         self.ts.set_table_service_properties,
                          table_properties)
 
     def test_table_service_set_both(self):
-        table_properties = self.tc.get_table_service_properties()
+        table_properties = self.ts.get_table_service_properties()
         table_properties.logging.retention_policy.enabled = True
         table_properties.logging.retention_policy.days = 5
-        self.tc.set_table_service_properties(table_properties)
-        table_properties = self.tc.get_table_service_properties()
+        self.ts.set_table_service_properties(table_properties)
+        table_properties = self.ts.get_table_service_properties()
         self.assertEqual(True, table_properties.logging.retention_policy.enabled)
 
         self.assertEqual(5, table_properties.logging.retention_policy.days)
@@ -259,7 +259,7 @@ class TableServiceTest(AzureTestCase):
         # Arrange
 
         # Act
-        created = self.tc.create_table(self.table_name)
+        created = self.ts.create_table(self.table_name)
 
         # Assert
         self.assertTrue(created)
@@ -268,7 +268,7 @@ class TableServiceTest(AzureTestCase):
         # Arrange
 
         # Act
-        created = self.tc.create_table(self.table_name, True)
+        created = self.ts.create_table(self.table_name, True)
 
         # Assert
         self.assertTrue(created)
@@ -277,8 +277,8 @@ class TableServiceTest(AzureTestCase):
         # Arrange
 
         # Act
-        created1 = self.tc.create_table(self.table_name)
-        created2 = self.tc.create_table(self.table_name)
+        created1 = self.ts.create_table(self.table_name)
+        created2 = self.ts.create_table(self.table_name)
 
         # Assert
         self.assertTrue(created1)
@@ -288,9 +288,9 @@ class TableServiceTest(AzureTestCase):
         # Arrange
 
         # Act
-        created = self.tc.create_table(self.table_name)
+        created = self.ts.create_table(self.table_name)
         with self.assertRaises(WindowsAzureError):
-            self.tc.create_table(self.table_name, True)
+            self.ts.create_table(self.table_name, True)
 
         # Assert
         self.assertTrue(created)
@@ -300,7 +300,7 @@ class TableServiceTest(AzureTestCase):
         self._create_table(self.table_name)
 
         # Act
-        tables = self.tc.query_tables()
+        tables = self.ts.query_tables()
         for table in tables:
             pass
         
@@ -315,7 +315,7 @@ class TableServiceTest(AzureTestCase):
         self._create_table(self.table_name)
 
         # Act
-        tables = self.tc.query_tables(self.table_name)
+        tables = self.ts.query_tables(self.table_name)
         for table in tables:
             pass
 
@@ -328,7 +328,7 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.tc.query_tables(self.table_name)
+            self.ts.query_tables(self.table_name)
 
         # Assert
 
@@ -336,10 +336,10 @@ class TableServiceTest(AzureTestCase):
         # Arrange
         self.additional_table_names = [self.table_name + suffix for suffix in 'abcd'] 
         for name in self.additional_table_names:
-            self.tc.create_table(name)
+            self.ts.create_table(name)
 
         # Act
-        tables = self.tc.query_tables(None, 3)
+        tables = self.ts.query_tables(None, 3)
         for table in tables:
             pass
 
@@ -350,11 +350,11 @@ class TableServiceTest(AzureTestCase):
         # Arrange
         self.additional_table_names = [self.table_name + suffix for suffix in 'abcd'] 
         for name in self.additional_table_names:
-            self.tc.create_table(name)
+            self.ts.create_table(name)
 
         # Act
-        tables_set1 = self.tc.query_tables(None, 3)
-        tables_set2 = self.tc.query_tables(None, 3, tables_set1.x_ms_continuation['NextTableName'])
+        tables_set1 = self.ts.query_tables(None, 3)
+        tables_set2 = self.ts.query_tables(None, 3, tables_set1.x_ms_continuation['NextTableName'])
 
         # Assert
         self.assertEqual(len(tables_set1), 3)
@@ -366,11 +366,11 @@ class TableServiceTest(AzureTestCase):
         self._create_table(self.table_name)
 
         # Act
-        deleted = self.tc.delete_table(self.table_name)
+        deleted = self.ts.delete_table(self.table_name)
 
         # Assert
         self.assertTrue(deleted)
-        tables = self.tc.query_tables()
+        tables = self.ts.query_tables()
         self.assertNamedItemNotInContainer(tables, self.table_name)
 
     def test_delete_table_with_existing_table_fail_not_exist(self):
@@ -378,18 +378,18 @@ class TableServiceTest(AzureTestCase):
         self._create_table(self.table_name)
 
         # Act
-        deleted = self.tc.delete_table(self.table_name, True)
+        deleted = self.ts.delete_table(self.table_name, True)
 
         # Assert
         self.assertTrue(deleted)
-        tables = self.tc.query_tables()
+        tables = self.ts.query_tables()
         self.assertNamedItemNotInContainer(tables, self.table_name)
 
     def test_delete_table_with_non_existing_table(self):
         # Arrange
 
         # Act
-        deleted = self.tc.delete_table(self.table_name)
+        deleted = self.ts.delete_table(self.table_name)
 
         # Assert
         self.assertFalse(deleted)
@@ -399,7 +399,7 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.tc.delete_table(self.table_name, True)
+            self.ts.delete_table(self.table_name, True)
 
         # Assert
 
@@ -410,7 +410,7 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         dict = self._create_default_entity_dict('MyPartition', '1')
-        resp = self.tc.insert_entity(self.table_name, dict)
+        resp = self.ts.insert_entity(self.table_name, dict)
 
         # Assert
         self.assertIsNotNone(resp)
@@ -421,7 +421,7 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         entity = self._create_default_entity_class('MyPartition', '1')
-        resp = self.tc.insert_entity(self.table_name, entity)
+        resp = self.ts.insert_entity(self.table_name, entity)
 
         # Assert
         self.assertIsNotNone(resp)
@@ -432,7 +432,7 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.tc.insert_entity(self.table_name, self._create_default_entity_dict('MyPartition', '1'))
+            self.ts.insert_entity(self.table_name, self._create_default_entity_dict('MyPartition', '1'))
 
         # Assert
 
@@ -441,7 +441,7 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        resp = self.tc.get_entity(self.table_name, 'MyPartition', '1')
+        resp = self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
         self.assertEqual(resp.PartitionKey, 'MyPartition')
@@ -454,7 +454,7 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.tc.get_entity(self.table_name, 'MyPartition', '1')
+            self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
 
@@ -463,7 +463,7 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        resp = self.tc.get_entity(self.table_name, 'MyPartition', '1', 'age,sex')
+        resp = self.ts.get_entity(self.table_name, 'MyPartition', '1', 'age,sex')
 
         # Assert
         self.assertEqual(resp.age, 39)
@@ -477,7 +477,7 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 2)
 
         # Act
-        resp = self.tc.query_entities(self.table_name)
+        resp = self.ts.query_entities(self.table_name)
 
         # Assert
         self.assertEqual(len(resp), 2)
@@ -490,10 +490,10 @@ class TableServiceTest(AzureTestCase):
     def test_query_entities_with_filter(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 2)
-        self.tc.insert_entity(self.table_name, self._create_default_entity_dict('MyOtherPartition', '3'))
+        self.ts.insert_entity(self.table_name, self._create_default_entity_dict('MyOtherPartition', '3'))
 
         # Act
-        resp = self.tc.query_entities(self.table_name, "PartitionKey eq 'MyPartition'")
+        resp = self.ts.query_entities(self.table_name, "PartitionKey eq 'MyPartition'")
 
         # Assert
         self.assertEqual(len(resp), 2)
@@ -506,7 +506,7 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 2)
 
         # Act
-        resp = self.tc.query_entities(self.table_name, None, 'age,sex')
+        resp = self.ts.query_entities(self.table_name, None, 'age,sex')
 
         # Assert
         self.assertEqual(len(resp), 2)
@@ -521,7 +521,7 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 3)
 
         # Act
-        resp = self.tc.query_entities(self.table_name, None, None, 2)
+        resp = self.ts.query_entities(self.table_name, None, None, 2)
 
         # Assert
         self.assertEqual(len(resp), 2)
@@ -531,9 +531,9 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 5)
 
         # Act
-        resp1 = self.tc.query_entities(self.table_name, None, None, 2)
-        resp2 = self.tc.query_entities(self.table_name, None, None, 2, resp1.x_ms_continuation['NextPartitionKey'], resp1.x_ms_continuation['NextRowKey'])
-        resp3 = self.tc.query_entities(self.table_name, None, None, 2, resp2.x_ms_continuation['NextPartitionKey'], resp2.x_ms_continuation['NextRowKey'])
+        resp1 = self.ts.query_entities(self.table_name, None, None, 2)
+        resp2 = self.ts.query_entities(self.table_name, None, None, 2, resp1.x_ms_continuation['NextPartitionKey'], resp1.x_ms_continuation['NextRowKey'])
+        resp3 = self.ts.query_entities(self.table_name, None, None, 2, resp2.x_ms_continuation['NextPartitionKey'], resp2.x_ms_continuation['NextRowKey'])
 
         # Assert
         self.assertEqual(len(resp1), 2)
@@ -551,11 +551,11 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.tc.update_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        resp = self.ts.update_entity(self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.tc.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_update_entity_with_if_matches(self):
@@ -564,11 +564,11 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.tc.update_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=entities[0].etag)
+        resp = self.ts.update_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=entities[0].etag)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.tc.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_update_entity_with_if_doesnt_match(self):
@@ -578,7 +578,7 @@ class TableServiceTest(AzureTestCase):
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
         with self.assertRaises(WindowsAzureError):
-            self.tc.update_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
+            self.ts.update_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
 
         # Assert
 
@@ -588,11 +588,11 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.tc.insert_or_merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        resp = self.ts.insert_or_merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.tc.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
         self._assert_merged_entity(received_entity)
 
     def test_insert_or_merge_entity_with_non_existing_entity(self):
@@ -601,11 +601,11 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.tc.insert_or_merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        resp = self.ts.insert_or_merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.tc.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_insert_or_replace_entity_with_existing_entity(self):
@@ -614,11 +614,11 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.tc.insert_or_replace_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        resp = self.ts.insert_or_replace_entity(self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.tc.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_insert_or_replace_entity_with_non_existing_entity(self):
@@ -627,11 +627,11 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.tc.insert_or_replace_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        resp = self.ts.insert_or_replace_entity(self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.tc.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_merge_entity(self):
@@ -640,11 +640,11 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.tc.merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        resp = self.ts.merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.tc.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
         self._assert_merged_entity(received_entity)
 
     def test_merge_entity_not_existing(self):
@@ -654,7 +654,7 @@ class TableServiceTest(AzureTestCase):
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
         with self.assertRaises(WindowsAzureError):
-            self.tc.merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
+            self.ts.merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
 
@@ -664,11 +664,11 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.tc.merge_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=entities[0].etag)
+        resp = self.ts.merge_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=entities[0].etag)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.tc.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
         self._assert_merged_entity(received_entity)
 
     def test_merge_entity_with_if_doesnt_match(self):
@@ -678,7 +678,7 @@ class TableServiceTest(AzureTestCase):
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition','1')
         with self.assertRaises(WindowsAzureError):
-            self.tc.merge_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
+            self.ts.merge_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
 
         # Assert
 
@@ -687,12 +687,12 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        resp = self.tc.delete_entity(self.table_name, 'MyPartition', '1')
+        resp = self.ts.delete_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
         self.assertIsNone(resp)
         with self.assertRaises(WindowsAzureError):
-            self.tc.get_entity(self.table_name, 'MyPartition', '1')
+            self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
     def test_delete_entity_not_existing(self):
         # Arrange
@@ -700,7 +700,7 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.tc.delete_entity(self.table_name, 'MyPartition', '1')
+            self.ts.delete_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
 
@@ -709,12 +709,12 @@ class TableServiceTest(AzureTestCase):
         entities = self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        resp = self.tc.delete_entity(self.table_name, 'MyPartition', '1', if_match=entities[0].etag)
+        resp = self.ts.delete_entity(self.table_name, 'MyPartition', '1', if_match=entities[0].etag)
 
         # Assert
         self.assertIsNone(resp)
         with self.assertRaises(WindowsAzureError):
-            self.tc.get_entity(self.table_name, 'MyPartition', '1')
+            self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
     def test_delete_entity_with_if_doesnt_match(self):
         # Arrange
@@ -722,7 +722,7 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.tc.delete_entity(self.table_name, 'MyPartition', '1', if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
+            self.ts.delete_entity(self.table_name, 'MyPartition', '1', if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
 
         # Assert
 
@@ -734,7 +734,7 @@ class TableServiceTest(AzureTestCase):
             called.append(True)
             return next(request)
 
-        tc = self.tc.with_filter(my_filter)
+        tc = self.ts.with_filter(my_filter)
         tc.create_table(self.table_name)
 
         self.assertTrue(called)
@@ -757,7 +757,7 @@ class TableServiceTest(AzureTestCase):
             called.append('b')
             return next(request)
 
-        tc = self.tc.with_filter(filter_a).with_filter(filter_b)
+        tc = self.ts.with_filter(filter_a).with_filter(filter_b)
         tc.create_table(self.table_name)
 
         self.assertEqual(called, ['b', 'a'])
@@ -778,12 +778,12 @@ class TableServiceTest(AzureTestCase):
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
         entity.test5 = datetime.utcnow()
 
-        self.tc.begin_batch()
-        self.tc.insert_entity(self.table_name, entity)
-        self.tc.commit_batch()
+        self.ts.begin_batch()
+        self.ts.insert_entity(self.table_name, entity)
+        self.ts.commit_batch()
 
         # Assert 
-        result = self.tc.get_entity(self.table_name, '001', 'batch_insert')
+        result = self.ts.get_entity(self.table_name, '001', 'batch_insert')
         self.assertIsNotNone(result) 
 
     def test_batch_update(self):
@@ -799,15 +799,15 @@ class TableServiceTest(AzureTestCase):
         entity.test3 = 3
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
         entity.test5 = datetime.utcnow()
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
 
-        entity = self.tc.get_entity(self.table_name, '001', 'batch_update')
+        entity = self.ts.get_entity(self.table_name, '001', 'batch_update')
         self.assertEqual(3, entity.test3)
         entity.test2 = 'value1'
-        self.tc.begin_batch()
-        self.tc.update_entity(self.table_name, '001', 'batch_update', entity)
-        self.tc.commit_batch()
-        entity = self.tc.get_entity(self.table_name, '001', 'batch_update')
+        self.ts.begin_batch()
+        self.ts.update_entity(self.table_name, '001', 'batch_update', entity)
+        self.ts.commit_batch()
+        entity = self.ts.get_entity(self.table_name, '001', 'batch_update')
 
         # Assert
         self.assertEqual('value1', entity.test2)
@@ -825,18 +825,18 @@ class TableServiceTest(AzureTestCase):
         entity.test3 = 3
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
         entity.test5 = datetime.utcnow()
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
 
-        entity = self.tc.get_entity(self.table_name, '001', 'batch_merge')
+        entity = self.ts.get_entity(self.table_name, '001', 'batch_merge')
         self.assertEqual(3, entity.test3)
         entity = Entity()
         entity.PartitionKey = '001'
         entity.RowKey = 'batch_merge'
         entity.test2 = 'value1'
-        self.tc.begin_batch()
-        self.tc.merge_entity(self.table_name, '001', 'batch_merge', entity)
-        self.tc.commit_batch()
-        entity = self.tc.get_entity(self.table_name, '001', 'batch_merge')
+        self.ts.begin_batch()
+        self.ts.merge_entity(self.table_name, '001', 'batch_merge', entity)
+        self.ts.commit_batch()
+        entity = self.ts.get_entity(self.table_name, '001', 'batch_merge')
 
         # Assert
         self.assertEqual('value1', entity.test2)
@@ -855,11 +855,11 @@ class TableServiceTest(AzureTestCase):
         entity.test3 = 3
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
         entity.test5 = datetime.utcnow()
-        self.tc.begin_batch()
-        self.tc.insert_or_replace_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
-        self.tc.commit_batch()
+        self.ts.begin_batch()
+        self.ts.insert_or_replace_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.commit_batch()
 
-        entity = self.tc.get_entity(self.table_name, '001', 'batch_insert_replace')
+        entity = self.ts.get_entity(self.table_name, '001', 'batch_insert_replace')
         
         # Assert
         self.assertIsNotNone(entity)
@@ -879,11 +879,11 @@ class TableServiceTest(AzureTestCase):
         entity.test3 = 3
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
         entity.test5 = datetime.utcnow()
-        self.tc.begin_batch()
-        self.tc.insert_or_merge_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
-        self.tc.commit_batch()
+        self.ts.begin_batch()
+        self.ts.insert_or_merge_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.commit_batch()
 
-        entity = self.tc.get_entity(self.table_name, '001', 'batch_insert_merge')
+        entity = self.ts.get_entity(self.table_name, '001', 'batch_insert_merge')
         
         # Assert
         self.assertIsNotNone(entity)
@@ -903,13 +903,13 @@ class TableServiceTest(AzureTestCase):
         entity.test3 = 3
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
         entity.test5 = datetime.utcnow()
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
 
-        entity = self.tc.get_entity(self.table_name, '001', 'batch_delete')
+        entity = self.ts.get_entity(self.table_name, '001', 'batch_delete')
         #self.assertEqual(3, entity.test3)
-        self.tc.begin_batch()
-        self.tc.delete_entity(self.table_name, '001', 'batch_delete')
-        self.tc.commit_batch()
+        self.ts.begin_batch()
+        self.ts.delete_entity(self.table_name, '001', 'batch_delete')
+        self.ts.commit_batch()
 
     def test_batch_inserts(self):
         # Arrange
@@ -923,13 +923,13 @@ class TableServiceTest(AzureTestCase):
         entity.test3 = 3
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
 
-        self.tc.begin_batch()
+        self.ts.begin_batch()
         for i in range(100):
             entity.RowKey = str(i)
-            self.tc.insert_entity(self.table_name, entity)
-        self.tc.commit_batch()
+            self.ts.insert_entity(self.table_name, entity)
+        self.ts.commit_batch()
         
-        entities = self.tc.query_entities(self.table_name, "PartitionKey eq 'batch_inserts'", '')
+        entities = self.ts.query_entities(self.table_name, "PartitionKey eq 'batch_inserts'", '')
 
         # Assert
         self.assertIsNotNone(entities);
@@ -948,53 +948,53 @@ class TableServiceTest(AzureTestCase):
         entity.test3 = 3
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
         entity.test5 = datetime.utcnow()
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
         entity.RowKey = 'batch_all_operations_together-2'
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
         entity.RowKey = 'batch_all_operations_together-3'
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
         entity.RowKey = 'batch_all_operations_together-4'
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
 
-        self.tc.begin_batch()
+        self.ts.begin_batch()
         entity.RowKey = 'batch_all_operations_together'
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
         entity.RowKey = 'batch_all_operations_together-1'
-        self.tc.delete_entity(self.table_name, entity.PartitionKey, entity.RowKey)
+        self.ts.delete_entity(self.table_name, entity.PartitionKey, entity.RowKey)
         entity.RowKey = 'batch_all_operations_together-2'
         entity.test3 = 10
-        self.tc.update_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.update_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
         entity.RowKey = 'batch_all_operations_together-3'
         entity.test3 = 100
-        self.tc.merge_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.merge_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
         entity.RowKey = 'batch_all_operations_together-4'
         entity.test3 = 10
-        self.tc.insert_or_replace_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.insert_or_replace_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
         entity.RowKey = 'batch_all_operations_together-5'
-        self.tc.insert_or_merge_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
-        self.tc.commit_batch()
+        self.ts.insert_or_merge_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.commit_batch()
 
         # Assert
-        entities = self.tc.query_entities(self.table_name, "PartitionKey eq '003'", '')
+        entities = self.ts.query_entities(self.table_name, "PartitionKey eq '003'", '')
         self.assertEqual(5, len(entities))
 
     def test_batch_same_row_operations_fail(self):
         # Arrange
         self._create_table(self.table_name)
         entity = self._create_default_entity_dict('001', 'batch_negative_1')
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.tc.begin_batch()
+            self.ts.begin_batch()
 
             entity = self._create_updated_entity_dict('001', 'batch_negative_1')
-            self.tc.update_entity(self.table_name, entity['PartitionKey'], entity['RowKey'], entity)
+            self.ts.update_entity(self.table_name, entity['PartitionKey'], entity['RowKey'], entity)
 
             entity = self._create_default_entity_dict('001', 'batch_negative_1')
-            self.tc.merge_entity(self.table_name, entity['PartitionKey'], entity['RowKey'], entity)
+            self.ts.merge_entity(self.table_name, entity['PartitionKey'], entity['RowKey'], entity)
 
-        self.tc.cancel_batch()
+        self.ts.cancel_batch()
 
         # Assert
 
@@ -1002,19 +1002,19 @@ class TableServiceTest(AzureTestCase):
         # Arrange
         self._create_table(self.table_name)
         entity = self._create_default_entity_dict('001', 'batch_negative_1')
-        self.tc.insert_entity(self.table_name, entity)
+        self.ts.insert_entity(self.table_name, entity)
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.tc.begin_batch()
+            self.ts.begin_batch()
 
             entity = self._create_updated_entity_dict('001', 'batch_negative_1')
-            self.tc.update_entity(self.table_name, entity['PartitionKey'], entity['RowKey'], entity)
+            self.ts.update_entity(self.table_name, entity['PartitionKey'], entity['RowKey'], entity)
 
             entity = self._create_default_entity_dict('002', 'batch_negative_1')
-            self.tc.insert_entity(self.table_name, entity) 
+            self.ts.insert_entity(self.table_name, entity) 
 
-        self.tc.cancel_batch()
+        self.ts.cancel_batch()
 
         # Assert
 
@@ -1027,23 +1027,23 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.tc.begin_batch()
+            self.ts.begin_batch()
 
             entity = self._create_default_entity_dict('001', 'batch_negative_1')
-            self.tc.insert_entity(self.table_name, entity) 
+            self.ts.insert_entity(self.table_name, entity) 
 
             entity = self._create_default_entity_dict('001', 'batch_negative_2')
-            self.tc.insert_entity(other_table_name, entity) 
+            self.ts.insert_entity(other_table_name, entity) 
 
-        self.tc.cancel_batch()
+        self.ts.cancel_batch()
 
     def test_unicode_property_value(self):
         ''' regression test for github issue #57'''
         # Act
         self._create_table(self.table_name)
-        self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test1', 'Description': u'ꀕ'}) 
-        self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', 'Description': 'ꀕ'})        
-        resp = self.tc.query_entities(self.table_name, "PartitionKey eq 'test'")   
+        self.ts.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test1', 'Description': u'ꀕ'}) 
+        self.ts.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', 'Description': 'ꀕ'})        
+        resp = self.ts.query_entities(self.table_name, "PartitionKey eq 'test'")   
         # Assert
         self.assertEqual(len(resp), 2)
         self.assertEqual(resp[0].Description, u'ꀕ')
@@ -1052,9 +1052,9 @@ class TableServiceTest(AzureTestCase):
     def test_unicode_property_name(self):
         # Act
         self._create_table(self.table_name)
-        self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test1', u'啊齄丂狛狜': u'ꀕ'}) 
-        self.tc.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', u'啊齄丂狛狜': 'hello'})        
-        resp = self.tc.query_entities(self.table_name, "PartitionKey eq 'test'")   
+        self.ts.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test1', u'啊齄丂狛狜': u'ꀕ'}) 
+        self.ts.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', u'啊齄丂狛狜': 'hello'})        
+        resp = self.ts.query_entities(self.table_name, "PartitionKey eq 'test'")   
         # Assert
         self.assertEqual(len(resp), 2)
         self.assertEqual(resp[0].__dict__[u'啊齄丂狛狜'], u'ꀕ')
@@ -1067,7 +1067,7 @@ class TableServiceTest(AzureTestCase):
         # Act
         with self.assertRaises(WindowsAzureError):
             # not supported - table name must be alphanumeric, lowercase
-            self.tc.create_table(self.table_name)
+            self.ts.create_table(self.table_name)
 
         # Assert
 

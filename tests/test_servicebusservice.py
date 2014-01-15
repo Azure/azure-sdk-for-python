@@ -244,7 +244,7 @@ class ServiceBusTest(AzureTestCase):
         # Arrange
         # Name must start and end with an alphanumeric and can only contain 
         # letters, numbers, periods, hyphens, forward slashes and underscores.
-        other_queue_name = self.queue_name + 'foo/.-_123'
+        other_queue_name = self.queue_name + 'txt/.-_123'
         self.additional_queue_names = [other_queue_name]
         self._create_queue(other_queue_name)
         
@@ -405,7 +405,7 @@ class ServiceBusTest(AzureTestCase):
 
         # Act
         props = {'hello':'world',
-                 'foo':42,
+                 'number':42,
                  'active':True,
                  'deceased':False,
                  'large':8555111000,
@@ -419,7 +419,7 @@ class ServiceBusTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(received_msg)
         self.assertEqual(received_msg.custom_properties['hello'], 'world')
-        self.assertEqual(received_msg.custom_properties['foo'], 42)
+        self.assertEqual(received_msg.custom_properties['number'], 42)
         self.assertEqual(received_msg.custom_properties['active'], True)
         self.assertEqual(received_msg.custom_properties['deceased'], False)
         self.assertEqual(received_msg.custom_properties['large'], 8555111000)
@@ -573,7 +573,7 @@ class ServiceBusTest(AzureTestCase):
         # Arrange
         # Name must start and end with an alphanumeric and can only contain 
         # letters, numbers, periods, hyphens, forward slashes and underscores.
-        other_topic_name = self.topic_name + 'foo/.-_123'
+        other_topic_name = self.topic_name + 'txt/.-_123'
         self.additional_topic_names = [other_topic_name]
         self._create_topic(other_topic_name)
         
@@ -835,7 +835,7 @@ class ServiceBusTest(AzureTestCase):
         # Act
         rule1 = Rule()
         rule1.filter_type = 'SqlFilter'
-        rule1.filter_expression = 'foo > 40'
+        rule1.filter_expression = 'number > 40'
         created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
 
         # Assert
@@ -900,7 +900,7 @@ class ServiceBusTest(AzureTestCase):
         # Act
         rule1 = Rule()
         rule1.action_type = 'SqlRuleAction'
-        rule1.action_expression = "SET foo = 5"
+        rule1.action_expression = "SET number = 5"
         created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
 
         # Assert
@@ -943,9 +943,9 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_rule = Rule()
         sent_rule.filter_type = 'SqlFilter'
-        sent_rule.filter_expression = 'foo > 40'
+        sent_rule.filter_expression = 'number > 40'
         sent_rule.action_type = 'SqlRuleAction'
-        sent_rule.action_expression = 'SET foo = 5'
+        sent_rule.action_expression = 'SET number = 5'
         self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', sent_rule)
 
         # Act
