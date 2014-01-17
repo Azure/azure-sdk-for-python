@@ -213,6 +213,7 @@ class RoleInstance(WindowsAzureData):
         self.ip_address = u''
         self.power_state = u''
         self.fqdn = u''
+        self.host_name = u''
 
 class UpgradeStatus(WindowsAzureData):
     def __init__(self):
