@@ -177,7 +177,7 @@ class BlobEnumResults(EnumResultsBase):
 class BlobResult(bytes):
 
     def __new__(cls, blob, properties):
-        return bytes.__new__(cls, blob)
+        return bytes.__new__(cls, blob if blob else b'')
 
     def __init__(self, blob, properties):
         self.properties = properties

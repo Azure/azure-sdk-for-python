@@ -28,6 +28,7 @@ else:
 
 from azure import (WindowsAzureError,
                    WindowsAzureConflictError,
+                   WindowsAzureMissingResourceError,
                    BLOB_SERVICE_HOST_BASE,
                    )
 from azure.http import (HTTPRequest,
@@ -80,6 +81,10 @@ class BlobServiceTest(AzureTestCase):
                               credentials.getStorageServicesKey())
         set_service_options(self.bs)
 
+        self.bs2 = BlobService(credentials.getRemoteStorageServicesName(), 
+                               credentials.getRemoteStorageServicesKey())
+        set_service_options(self.bs2)
+
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
@@ -89,6 +94,7 @@ class BlobServiceTest(AzureTestCase):
         self.container_name = getUniqueName('utcontainer')
         self.container_lease_id = None
         self.additional_container_names = []
+        self.remote_container_name = None
 
     def tearDown(self):
         self.cleanup()
@@ -106,6 +112,11 @@ class BlobServiceTest(AzureTestCase):
         for name in self.additional_container_names:
             try:
                 self.bs.delete_container(name)
+            except: pass
+
+        if self.remote_container_name:
+            try:
+                self.bs2.delete_container(self.remote_container_name)
             except: pass
 
     #--Helpers-----------------------------------------------------------------
@@ -138,6 +149,41 @@ class BlobServiceTest(AzureTestCase):
             if blob.name == blob_name:
                 return True
         return False
+
+    def _create_remote_container_and_block_blob(self, source_blob_name, data, x_ms_blob_public_access):
+        self.remote_container_name = getUniqueName('remotectnr')
+        self.bs2.create_container(self.remote_container_name, x_ms_blob_public_access=x_ms_blob_public_access)
+        self.bs2.put_block_blob_from_bytes(self.remote_container_name, source_blob_name, data)
+        source_blob_url = self.bs2.make_blob_url(self.remote_container_name, source_blob_name)
+        return source_blob_url
+
+    def _wait_for_async_copy(self, container_name, blob_name):
+        count = 0
+        props = self.bs.get_blob_properties(container_name, blob_name)
+        while props['x-ms-copy-status'] != 'success':
+            count = count + 1
+            if count > 5:
+                self.assertTrue(False, 'Timed out waiting for async copy to complete.')
+            time.sleep(5)
+            props = self.bs.get_blob_properties(container_name, blob_name)
+        self.assertEqual(props['x-ms-copy-status'], 'success')
+
+    def _make_blob_sas_url(self, account_name, account_key, container_name, blob_name):
+        sas = SharedAccessSignature(account_name, account_key)
+        resource = '%s/%s' % (container_name, blob_name)
+        permission = self._get_permission(sas, RESOURCE_BLOB, resource, 'r')
+        sas.permission_set = [permission]
+
+        web_rsrc = WebResource()
+        web_rsrc.properties[SIGNED_RESOURCE_TYPE] = RESOURCE_BLOB
+        web_rsrc.properties[SHARED_ACCESS_PERMISSION] = 'r'
+        web_rsrc.path = '/{0}'.format(resource)
+        web_rsrc.request_url = \
+            'https://{0}.blob.core.windows.net/{1}/{2}'.format(account_name,
+                                                               container_name,
+                                                               blob_name)
+        web_rsrc = sas.sign_request(web_rsrc)
+        return web_rsrc.request_url
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         actual_data = self.bs.get_blob(container_name, blob_name)
@@ -203,15 +249,15 @@ class BlobServiceTest(AzureTestCase):
         return sas.sign_request(web_rsrc)
 
     def _get_request(self, host, url):
-        return self._web_request('GET', host, url, None)
+        return self._web_request('GET', host, url)
 
-    def _put_request(self, host, url, content):
-        return self._web_request('PUT', host, url, content)
+    def _put_request(self, host, url, content, headers):
+        return self._web_request('PUT', host, url, content, headers)
 
     def _del_request(self, host, url):
-        return self._web_request('DELETE', host, url, None)
+        return self._web_request('DELETE', host, url)
 
-    def _web_request(self, method, host, url, content):
+    def _web_request(self, method, host, url, content=None, headers=None):
         if content and not isinstance(content, bytes):
             raise TypeError('content should be bytes')
 
@@ -219,6 +265,9 @@ class BlobServiceTest(AzureTestCase):
         try:
             connection.putrequest(method, url)
             connection.putheader('Content-Type', 'application/octet-stream;Charset=UTF-8')
+            if headers:
+                for name, val in headers.items():
+                    connection.putheader(name, val)
             if content is not None:
                 connection.putheader('Content-Length', str(len(content)))  
             connection.endheaders()
@@ -1663,33 +1712,73 @@ class BlobServiceTest(AzureTestCase):
         copy = self.bs.get_blob(self.container_name, 'blob1copy')
         self.assertEqual(copy, b'hello world')
 
-    # TODO:
-    # We need to find out how to get azure to make the copy asynchronously.
-    # It seems like no matter how big the blob is (60GB), the copy is always 
-    # synchronous - even going cross account and making several consecutive copies.
+    def test_copy_blob_async_public_blob(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'12345678' * 1024 * 1024
+        source_blob_name = 'sourceblob'
+        source_blob_url = self._create_remote_container_and_block_blob(source_blob_name, data, 'container')
 
-    #def test_abort_copy_blob(self):
-    #    # Arrange
-    #    self._create_container(self.container_name)
-    #    source_container_name = 'sourcecontainer'
-    #    source_blob_name = 'sourceblob'
-    #    if not self._blob_exists(source_container_name, source_blob_name):
-    #        self._create_container_and_block_blob_with_random_data(source_container_name, source_blob_name, 500, 4 * 1024 * 1024)
+        # Act
+        target_blob_name = 'targetblob'
+        copy_resp = self.bs.copy_blob(self.container_name, target_blob_name, source_blob_url)
 
-    #    source_blob_url = self.bs.make_blob_url(source_container_name, source_blob_name)
+        # Assert
+        self.assertEqual(copy_resp['x-ms-copy-status'], 'pending')
+        self._wait_for_async_copy(self.container_name, target_blob_name)
+        self.assertBlobEqual(self.container_name, target_blob_name, data)
 
-    #    # Act
-    #    success = False
-    #    for i in range(0, 50):
-    #        target_blob_name = 'targetblob{0}'.format(i)
-    #        copy_resp = self.bs.copy_blob(self.container_name, target_blob_name, source_blob_url)
-    #        if copy_resp['x-ms-copy-status'] == 'pending':
-    #            self.bs.abort_copy_blob(self.container_name, 'targetblob', copy_resp['x-ms-copy-id'])
-    #            success = True
-    #            break
+    def test_copy_blob_async_private_blob(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'12345678' * 1024 * 1024
+        source_blob_name = 'sourceblob'
+        source_blob_url = self._create_remote_container_and_block_blob(source_blob_name, data, None)
 
-    #    # Assert
-    #    self.assertTrue(success)
+        # Act
+        target_blob_name = 'targetblob'
+        with self.assertRaises(WindowsAzureMissingResourceError):
+            self.bs.copy_blob(self.container_name, target_blob_name, source_blob_url)
+
+        # Assert
+
+    def test_copy_blob_async_private_blob_with_sas(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'12345678' * 1024 * 1024
+        source_blob_name = 'sourceblob'
+        self._create_remote_container_and_block_blob(source_blob_name, data, None)
+        source_blob_url = self._make_blob_sas_url(credentials.getRemoteStorageServicesName(),
+                                                  credentials.getRemoteStorageServicesKey(),
+                                                  self.remote_container_name,
+                                                  source_blob_name)
+
+        # Act
+        target_blob_name = 'targetblob'
+        copy_resp = self.bs.copy_blob(self.container_name, target_blob_name, source_blob_url)
+
+        # Assert
+        self.assertEqual(copy_resp['x-ms-copy-status'], 'pending')
+        self._wait_for_async_copy(self.container_name, target_blob_name)
+        self.assertBlobEqual(self.container_name, target_blob_name, data)
+
+    def test_abort_copy_blob(self):
+        # Arrange
+        self._create_container(self.container_name)
+        data = b'12345678' * 1024 * 1024
+        source_blob_name = 'sourceblob'
+        source_blob_url = self._create_remote_container_and_block_blob(source_blob_name, data, 'container')
+
+        # Act
+        target_blob_name = 'targetblob'
+        copy_resp = self.bs.copy_blob(self.container_name, target_blob_name, source_blob_url)
+        self.assertEqual(copy_resp['x-ms-copy-status'], 'pending')
+        self.bs.abort_copy_blob(self.container_name, 'targetblob', copy_resp['x-ms-copy-id'])
+
+        # Assert
+        target_blob = self.bs.get_blob(self.container_name, target_blob_name)
+        self.assertEqual(target_blob, b'')
+        self.assertEqual(target_blob.properties['x-ms-copy-status'], 'aborted')
 
     def test_abort_copy_blob_with_synchronous_copy_fails(self):
         # Arrange
@@ -2328,7 +2417,8 @@ class BlobServiceTest(AzureTestCase):
         web_rsrc = self._get_signed_web_resource(sas, res_type, res_path, 'w')
         host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
         url = web_rsrc.request_url
-        respbody = self._put_request(host, url, updated_data)
+        headers = {'x-ms-blob-type':'BlockBlob'}
+        respbody = self._put_request(host, url, updated_data, headers)
 
         # Assert
         blob = self.bs.get_blob(self.container_name, 'blob1.txt')

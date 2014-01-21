@@ -62,6 +62,14 @@ class Credentials(object):
     def getStorageServicesName(self):
         return self.ns[u'storageservicesname']
 
+    def getRemoteStorageServicesKey(self):
+        ''' Key for remote storage account (different location). '''
+        return self.ns[u'remotestorageserviceskey']
+
+    def getRemoteStorageServicesName(self):
+        ''' Name for remote storage account (different location). '''
+        return self.ns[u'remotestorageservicesname']
+
     def getLinuxOSVHD(self):
         return self.ns[u'linuxosvhd']
 
