@@ -15,22 +15,27 @@
 import unittest
 
 from azure import WindowsAzureError
-from azure.storage import (BlobService,
-                           CloudStorageAccount,
-                           QueueService,
-                           TableService,
-                           )
-from util import (AzureTestCase,
-                  credentials,
-                  getUniqueName,
-                  )
+from azure.storage import (
+    BlobService,
+    CloudStorageAccount,
+    QueueService,
+    TableService,
+    )
+from util import (
+    AzureTestCase,
+    credentials,
+    getUniqueName,
+    )
 
 #------------------------------------------------------------------------------
+
+
 class CloudStorageAccountTest(AzureTestCase):
 
     def setUp(self):
-        self.account = CloudStorageAccount(account_name=credentials.getStorageServicesName(), 
-                                           account_key=credentials.getStorageServicesKey())
+        self.account = CloudStorageAccount(
+            account_name=credentials.getStorageServicesName(),
+            account_key=credentials.getStorageServicesKey())
 
     #--Test cases --------------------------------------------------------
     def test_create_blob_service(self):
@@ -42,8 +47,10 @@ class CloudStorageAccountTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(service)
         self.assertIsInstance(service, BlobService)
-        self.assertEqual(service.account_name, credentials.getStorageServicesName())
-        self.assertEqual(service.account_key, credentials.getStorageServicesKey())
+        self.assertEqual(service.account_name,
+                         credentials.getStorageServicesName())
+        self.assertEqual(service.account_key,
+                         credentials.getStorageServicesKey())
 
     def test_create_blob_service_empty_credentials(self):
         # Arrange
@@ -64,8 +71,10 @@ class CloudStorageAccountTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(service)
         self.assertIsInstance(service, TableService)
-        self.assertEqual(service.account_name, credentials.getStorageServicesName())
-        self.assertEqual(service.account_key, credentials.getStorageServicesKey())
+        self.assertEqual(service.account_name,
+                         credentials.getStorageServicesName())
+        self.assertEqual(service.account_key,
+                         credentials.getStorageServicesKey())
 
     def test_create_queue_service(self):
         # Arrange
@@ -76,8 +85,10 @@ class CloudStorageAccountTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(service)
         self.assertIsInstance(service, QueueService)
-        self.assertEqual(service.account_name, credentials.getStorageServicesName())
-        self.assertEqual(service.account_key, credentials.getStorageServicesKey())
+        self.assertEqual(service.account_name,
+                         credentials.getStorageServicesName())
+        self.assertEqual(service.account_key,
+                         credentials.getStorageServicesKey())
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

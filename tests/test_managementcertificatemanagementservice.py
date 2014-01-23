@@ -15,17 +15,20 @@
 import unittest
 
 from azure.servicemanagement import ServiceManagementService
-from util import (AzureTestCase,
-                  credentials,
-                  getUniqueName,
-                  set_service_options,
-                  )
+from util import (
+    AzureTestCase,
+    credentials,
+    getUniqueName,
+    set_service_options,
+    )
 
 MANAGEMENT_CERT_PUBLICKEY = 'MIIBCgKCAQEAsjULNM53WPLkht1rbrDob/e4hZTHzj/hlLoBt2X3cNRc6dOPsMucxbMdchbCqAFa5RIaJvF5NDKqZuUSwq6bttD71twzy9bQ03EySOcRBad1VyqAZQ8DL8nUGSnXIUh+tpz4fDGM5f3Ly9NX8zfGqG3sT635rrFlUp3meJC+secCCwTLOOcIs3KQmuB+pMB5Y9rPhoxcekFfpq1pKtis6pmxnVbiL49kr6UUL6RQRDwik4t1jttatXLZqHETTmXl0Y0wS5AcJUXVAn5AL2kybULoThop2v01/E0NkPtFPAqLVs/kKBahniNn9uwUo+LS9FA8rWGu0FY4CZEYDfhb+QIDAQAB'
 MANAGEMENT_CERT_DATA = 'MIIC9jCCAeKgAwIBAgIQ00IFaqV9VqVJxI+wZka0szAJBgUrDgMCHQUAMBUxEzARBgNVBAMTClB5dGhvblRlc3QwHhcNMTIwODMwMDAyNTMzWhcNMzkxMjMxMjM1OTU5WjAVMRMwEQYDVQQDEwpQeXRob25UZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsjULNM53WPLkht1rbrDob/e4hZTHzj/hlLoBt2X3cNRc6dOPsMucxbMdchbCqAFa5RIaJvF5NDKqZuUSwq6bttD71twzy9bQ03EySOcRBad1VyqAZQ8DL8nUGSnXIUh+tpz4fDGM5f3Ly9NX8zfGqG3sT635rrFlUp3meJC+secCCwTLOOcIs3KQmuB+pMB5Y9rPhoxcekFfpq1pKtis6pmxnVbiL49kr6UUL6RQRDwik4t1jttatXLZqHETTmXl0Y0wS5AcJUXVAn5AL2kybULoThop2v01/E0NkPtFPAqLVs/kKBahniNn9uwUo+LS9FA8rWGu0FY4CZEYDfhb+QIDAQABo0owSDBGBgNVHQEEPzA9gBBS6knRHo54LppngxVCCzZVoRcwFTETMBEGA1UEAxMKUHl0aG9uVGVzdIIQ00IFaqV9VqVJxI+wZka0szAJBgUrDgMCHQUAA4IBAQAnZbP3YV+08wI4YTg6MOVA+j1njd0kVp35FLehripmaMNE6lgk3Vu1MGGl0JnvMr3fNFGFzRske/jVtFxlHE5H/CoUzmyMQ+W06eV/e995AduwTKsS0ZgYn0VoocSXWst/nyhpKOcbJgAOohOYxgsGI1JEqQgjyeqzcCIhw/vlWiA3V8bSiPnrC9vwhH0eB025hBd2VbEGDz2nWCYkwtuOLMTvkmLi/oFw3GOfgagZKk8k/ZPffMCafz+yR3vb1nqAjncrVcJLI8amUfpxhjZYexo8MbxBA432M6w8sjXN+uLCl7ByWZ4xs4vonWgkmjeObtU37SIzolHT4dxIgaP2'
 MANAGEMENT_CERT_THUMBRINT = 'BEA4B74BD6B915E9DD6A01FB1B8C3C1740F517F2'
 
 #------------------------------------------------------------------------------
+
+
 class ManagementCertificateManagementServiceTest(AzureTestCase):
 
     def setUp(self):
@@ -39,13 +42,14 @@ class ManagementCertificateManagementServiceTest(AzureTestCase):
         for thumbprint in self.certificate_thumbprints:
             try:
                 self.sms.delete_management_certificate(thumbprint)
-            except: pass
+            except:
+                pass
 
     #--Helpers-----------------------------------------------------------------
     def _create_management_certificate(self, cert):
         self.certificate_thumbprints.append(cert.thumbprint)
-        result = self.sms.add_management_certificate(cert.public_key, 
-                                                     cert.thumbprint, 
+        result = self.sms.add_management_certificate(cert.public_key,
+                                                     cert.thumbprint,
                                                      cert.data)
         self.assertIsNone(result)
 
@@ -68,18 +72,21 @@ class ManagementCertificateManagementServiceTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
         self.assertTrue(len(result) > 0)
-        
+
         cert = None
         for temp in result:
-            if temp.subscription_certificate_thumbprint == local_cert.thumbprint:
+            if temp.subscription_certificate_thumbprint == \
+                local_cert.thumbprint:
                 cert = temp
                 break
 
         self.assertIsNotNone(cert)
         self.assertIsNotNone(cert.created)
-        self.assertEqual(cert.subscription_certificate_public_key, local_cert.public_key)
+        self.assertEqual(cert.subscription_certificate_public_key,
+                         local_cert.public_key)
         self.assertEqual(cert.subscription_certificate_data, local_cert.data)
-        self.assertEqual(cert.subscription_certificate_thumbprint, local_cert.thumbprint)
+        self.assertEqual(cert.subscription_certificate_thumbprint,
+                         local_cert.thumbprint)
 
     def test_get_management_certificate(self):
         # Arrange
@@ -92,9 +99,11 @@ class ManagementCertificateManagementServiceTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
         self.assertIsNotNone(result.created)
-        self.assertEqual(result.subscription_certificate_public_key, local_cert.public_key)
+        self.assertEqual(result.subscription_certificate_public_key,
+                         local_cert.public_key)
         self.assertEqual(result.subscription_certificate_data, local_cert.data)
-        self.assertEqual(result.subscription_certificate_thumbprint, local_cert.thumbprint)
+        self.assertEqual(result.subscription_certificate_thumbprint,
+                         local_cert.thumbprint)
 
     def test_add_management_certificate(self):
         # Arrange
@@ -108,7 +117,8 @@ class ManagementCertificateManagementServiceTest(AzureTestCase):
 
         # Assert
         self.assertIsNone(result)
-        self.assertTrue(self._management_certificate_exists(local_cert.thumbprint))
+        self.assertTrue(
+            self._management_certificate_exists(local_cert.thumbprint))
 
     def test_delete_management_certificate(self):
         # Arrange
@@ -120,20 +130,23 @@ class ManagementCertificateManagementServiceTest(AzureTestCase):
 
         # Assert
         self.assertIsNone(result)
-        self.assertFalse(self._management_certificate_exists(local_cert.thumbprint))
+        self.assertFalse(
+            self._management_certificate_exists(local_cert.thumbprint))
 
 
 class LocalCertificate(object):
+
     def __init__(self, thumbprint='', data='', public_key=''):
         self.thumbprint = thumbprint
         self.data = data
         self.public_key = public_key
 
+
 def _local_certificate():
     # It would be nice to dynamically create this data, so that it is unique
     # But for now, we always create the same certificate
-    return LocalCertificate(MANAGEMENT_CERT_THUMBRINT, 
-                            MANAGEMENT_CERT_DATA, 
+    return LocalCertificate(MANAGEMENT_CERT_THUMBRINT,
+                            MANAGEMENT_CERT_DATA,
                             MANAGEMENT_CERT_PUBLICKEY)
 
 #------------------------------------------------------------------------------

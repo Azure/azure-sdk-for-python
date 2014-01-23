@@ -14,39 +14,45 @@
 #--------------------------------------------------------------------------
 import unittest
 
-from azure import (DEV_ACCOUNT_NAME,
-                   DEV_ACCOUNT_KEY,
-                   )
+from azure import (
+    DEV_ACCOUNT_NAME,
+    DEV_ACCOUNT_KEY,
+    )
 from azure.storage import AccessPolicy, X_MS_VERSION
-from azure.storage.sharedaccesssignature import (Permission, 
-                                                 SharedAccessPolicy, 
-                                                 SharedAccessSignature, 
-                                                 WebResource,
-                                                 RESOURCE_BLOB,
-                                                 RESOURCE_CONTAINER,
-                                                 SHARED_ACCESS_PERMISSION,
-                                                 SIGNED_EXPIRY,
-                                                 SIGNED_IDENTIFIER,
-                                                 SIGNED_PERMISSION,
-                                                 SIGNED_RESOURCE,
-                                                 SIGNED_RESOURCE_TYPE,
-                                                 SIGNED_SIGNATURE,
-                                                 SIGNED_START,
-                                                 )
-from util import (AzureTestCase,
-                  credentials,
-                  getUniqueName,
-                  )
+from azure.storage.sharedaccesssignature import (
+    Permission,
+    SharedAccessPolicy,
+    SharedAccessSignature,
+    WebResource,
+    RESOURCE_BLOB,
+    RESOURCE_CONTAINER,
+    SHARED_ACCESS_PERMISSION,
+    SIGNED_EXPIRY,
+    SIGNED_IDENTIFIER,
+    SIGNED_PERMISSION,
+    SIGNED_RESOURCE,
+    SIGNED_RESOURCE_TYPE,
+    SIGNED_SIGNATURE,
+    SIGNED_START,
+    )
+from util import (
+    AzureTestCase,
+    credentials,
+    getUniqueName,
+    )
 
 #------------------------------------------------------------------------------
+
+
 class SharedAccessSignatureTest(AzureTestCase):
 
     def setUp(self):
-        self.sas = SharedAccessSignature(account_name=DEV_ACCOUNT_NAME, 
+        self.sas = SharedAccessSignature(account_name=DEV_ACCOUNT_NAME,
                                          account_key=DEV_ACCOUNT_KEY)
+
     def tearDown(self):
         return super(SharedAccessSignatureTest, self).tearDown()
-        
+
     def test_generate_signature_container(self):
         accss_plcy = AccessPolicy()
         accss_plcy.start = '2011-10-11'
@@ -54,11 +60,11 @@ class SharedAccessSignatureTest(AzureTestCase):
         accss_plcy.permission = 'r'
         signed_identifier = 'YWJjZGVmZw=='
         sap = SharedAccessPolicy(accss_plcy, signed_identifier)
-        signature = self.sas._generate_signature('images', 
-                                                 RESOURCE_CONTAINER, 
+        signature = self.sas._generate_signature('images',
+                                                 RESOURCE_CONTAINER,
                                                  sap,
                                                  X_MS_VERSION)
-        self.assertEqual(signature, 
+        self.assertEqual(signature,
                          '1AWckmWSNrNCjh9krPXoD4exAgZWQQr38gG6z/ymkhQ=')
 
     def test_generate_signature_blob(self):
@@ -68,11 +74,11 @@ class SharedAccessSignatureTest(AzureTestCase):
         accss_plcy.permission = 'r'
         sap = SharedAccessPolicy(accss_plcy)
 
-        signature = self.sas._generate_signature('images/pic1.png', 
-                                                 RESOURCE_BLOB, 
+        signature = self.sas._generate_signature('images/pic1.png',
+                                                 RESOURCE_BLOB,
                                                  sap,
                                                  X_MS_VERSION)
-        self.assertEqual(signature, 
+        self.assertEqual(signature,
                          'ju4tX0G79vPxMOkBb7UfNVEgrj9+ZnSMutpUemVYHLY=')
 
     def test_blob_signed_query_string(self):
@@ -82,13 +88,13 @@ class SharedAccessSignatureTest(AzureTestCase):
         accss_plcy.permission = 'w'
         sap = SharedAccessPolicy(accss_plcy)
         qry_str = self.sas.generate_signed_query_string('images/pic1.png',
-                                                        RESOURCE_BLOB, 
+                                                        RESOURCE_BLOB,
                                                         sap)
         self.assertEqual(qry_str[SIGNED_START], '2011-10-11')
         self.assertEqual(qry_str[SIGNED_EXPIRY], '2011-10-12')
         self.assertEqual(qry_str[SIGNED_RESOURCE], RESOURCE_BLOB)
         self.assertEqual(qry_str[SIGNED_PERMISSION], 'w')
-        self.assertEqual(qry_str[SIGNED_SIGNATURE], 
+        self.assertEqual(qry_str[SIGNED_SIGNATURE],
                          '8I8E8TImfR2TIAcMDq8rF+IhhYyvowXpxSfF1kxnWLQ=')
 
     def test_container_signed_query_string(self):
@@ -98,15 +104,15 @@ class SharedAccessSignatureTest(AzureTestCase):
         accss_plcy.permission = 'r'
         signed_identifier = 'YWJjZGVmZw=='
         sap = SharedAccessPolicy(accss_plcy, signed_identifier)
-        qry_str = self.sas.generate_signed_query_string('images', 
-                                                        RESOURCE_CONTAINER, 
+        qry_str = self.sas.generate_signed_query_string('images',
+                                                        RESOURCE_CONTAINER,
                                                         sap)
         self.assertEqual(qry_str[SIGNED_START], '2011-10-11')
         self.assertEqual(qry_str[SIGNED_EXPIRY], '2011-10-12')
         self.assertEqual(qry_str[SIGNED_RESOURCE], RESOURCE_CONTAINER)
         self.assertEqual(qry_str[SIGNED_PERMISSION], 'r')
         self.assertEqual(qry_str[SIGNED_IDENTIFIER], 'YWJjZGVmZw==')
-        self.assertEqual(qry_str[SIGNED_SIGNATURE], 
+        self.assertEqual(qry_str[SIGNED_SIGNATURE],
                          '1AWckmWSNrNCjh9krPXoD4exAgZWQQr38gG6z/ymkhQ=')
 
     def test_sign_request(self):
@@ -115,10 +121,10 @@ class SharedAccessSignatureTest(AzureTestCase):
         accss_plcy.expiry = '2011-10-12'
         accss_plcy.permission = 'r'
         sap = SharedAccessPolicy(accss_plcy)
-        qry_str = self.sas.generate_signed_query_string('images/pic1.png', 
-                                                   RESOURCE_BLOB, 
-                                                   sap)
-        
+        qry_str = self.sas.generate_signed_query_string('images/pic1.png',
+                                                        RESOURCE_BLOB,
+                                                        sap)
+
         permission = Permission()
         permission.path = '/images/pic1.png'
         permission.query_string = qry_str
@@ -132,11 +138,10 @@ class SharedAccessSignatureTest(AzureTestCase):
 
         web_rsrc = self.sas.sign_request(web_rsrc)
 
-        self.assertEqual(web_rsrc.request_url, 
-                         '/images/pic1.png?comp=metadata&' + 
+        self.assertEqual(web_rsrc.request_url,
+                         '/images/pic1.png?comp=metadata&' +
                          self.sas._convert_query_string(qry_str))
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
-    

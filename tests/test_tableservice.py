@@ -19,31 +19,35 @@ import unittest
 
 from datetime import datetime
 from azure import WindowsAzureError
-from azure.storage import (Entity,
-                           EntityProperty,
-                           StorageServiceProperties,
-                           TableService,
-                           )
-from util import (AzureTestCase,
-                  credentials,
-                  getUniqueName,
-                  set_service_options,
-                  )
+from azure.storage import (
+    Entity,
+    EntityProperty,
+    StorageServiceProperties,
+    TableService,
+    )
+from util import (
+    AzureTestCase,
+    credentials,
+    getUniqueName,
+    set_service_options,
+    )
 
 #------------------------------------------------------------------------------
 
 MAX_RETRY = 60
 #------------------------------------------------------------------------------
+
+
 class TableServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.ts = TableService(credentials.getStorageServicesName(), 
+        self.ts = TableService(credentials.getStorageServicesName(),
                                credentials.getStorageServicesKey())
         set_service_options(self.ts)
 
         self.table_name = getUniqueName('uttable')
         self.additional_table_names = []
-    
+
     def tearDown(self):
         self.cleanup()
         return super(TableServiceTest, self).tearDown()
@@ -51,12 +55,14 @@ class TableServiceTest(AzureTestCase):
     def cleanup(self):
         try:
             self.ts.delete_table(self.table_name)
-        except: pass
+        except:
+            pass
 
         for name in self.additional_table_names:
             try:
                 self.ts.delete_table(name)
-            except: pass
+            except:
+                pass
 
     #--Helpers-----------------------------------------------------------------
     def _create_table(self, table_name):
@@ -67,14 +73,16 @@ class TableServiceTest(AzureTestCase):
 
     def _create_table_with_default_entities(self, table_name, entity_count):
         '''
-        Creates a table with the specified name and adds entities with the 
-        default set of values. PartitionKey is set to 'MyPartition' and RowKey 
+        Creates a table with the specified name and adds entities with the
+        default set of values. PartitionKey is set to 'MyPartition' and RowKey
         is set to a unique counter value starting at 1 (as a string).
         '''
         entities = []
         self._create_table(table_name)
         for i in range(1, entity_count + 1):
-            entities.append(self.ts.insert_entity(table_name, self._create_default_entity_dict('MyPartition', str(i))))
+            entities.append(self.ts.insert_entity(
+                table_name,
+                self._create_default_entity_dict('MyPartition', str(i))))
         return entities
 
     def _create_default_entity_class(self, partition, row):
@@ -93,11 +101,12 @@ class TableServiceTest(AzureTestCase):
         entity.optional = None
         entity.ratio = 3.1
         entity.large = 9333111000
-        entity.Birthday = datetime(1973,10,4)
-        entity.birthday = datetime(1970,10,4)
+        entity.Birthday = datetime(1973, 10, 4)
+        entity.birthday = datetime(1970, 10, 4)
         entity.binary = None
         entity.other = EntityProperty('Edm.Int64', 20)
-        entity.clsid = EntityProperty('Edm.Guid', 'c9da6455-213d-42c9-9a79-3e9149a57833')
+        entity.clsid = EntityProperty(
+            'Edm.Guid', 'c9da6455-213d-42c9-9a79-3e9149a57833')
         return entity
 
     def _create_default_entity_dict(self, partition, row):
@@ -106,20 +115,22 @@ class TableServiceTest(AzureTestCase):
         of the supported data types.
         '''
         # TODO: Edm.Binary and null
-        return {'PartitionKey':partition, 
-                'RowKey':row, 
-                'age':39, 
-                'sex':'male', 
-                'married':True, 
-                'deceased':False, 
-                'optional':None, 
-                'ratio':3.1, 
-                'large':9333111000, 
-                'Birthday':datetime(1973,10,4),
-                'birthday':datetime(1970,10,4),
-                'binary':EntityProperty('Edm.Binary', None),
-                'other':EntityProperty('Edm.Int64', 20),
-                'clsid':EntityProperty('Edm.Guid', 'c9da6455-213d-42c9-9a79-3e9149a57833')}
+        return {'PartitionKey': partition,
+                'RowKey': row,
+                'age': 39,
+                'sex': 'male',
+                'married': True,
+                'deceased': False,
+                'optional': None,
+                'ratio': 3.1,
+                'large': 9333111000,
+                'Birthday': datetime(1973, 10, 4),
+                'birthday': datetime(1970, 10, 4),
+                'binary': EntityProperty('Edm.Binary', None),
+                'other': EntityProperty('Edm.Int64', 20),
+                'clsid': EntityProperty(
+                    'Edm.Guid',
+                    'c9da6455-213d-42c9-9a79-3e9149a57833')}
 
     def _create_updated_entity_dict(self, partition, row):
         '''
@@ -128,12 +139,12 @@ class TableServiceTest(AzureTestCase):
         adds fields, changes field values, changes field types,
         and removes fields when compared to the default entity.
         '''
-        return {'PartitionKey':partition,
-                'RowKey':row,
-                'age':'abc',
-                'sex':'female',
-                'sign':'aquarius',
-                'birthday':datetime(1991,10,4)}
+        return {'PartitionKey': partition,
+                'RowKey': row,
+                'age': 'abc',
+                'sex': 'female',
+                'sign': 'aquarius',
+                'birthday': datetime(1991, 10, 4)}
 
     def _assert_default_entity(self, entity):
         '''
@@ -146,12 +157,13 @@ class TableServiceTest(AzureTestCase):
         self.assertFalse(hasattr(entity, "aquarius"))
         self.assertEqual(entity.ratio, 3.1)
         self.assertEqual(entity.large, 9333111000)
-        self.assertEqual(entity.Birthday, datetime(1973,10,4))
-        self.assertEqual(entity.birthday, datetime(1970,10,4))
+        self.assertEqual(entity.Birthday, datetime(1973, 10, 4))
+        self.assertEqual(entity.birthday, datetime(1970, 10, 4))
         self.assertEqual(entity.other, 20)
         self.assertIsInstance(entity.clsid, EntityProperty)
         self.assertEqual(entity.clsid.type, 'Edm.Guid')
-        self.assertEqual(entity.clsid.value, 'c9da6455-213d-42c9-9a79-3e9149a57833')
+        self.assertEqual(entity.clsid.value,
+                         'c9da6455-213d-42c9-9a79-3e9149a57833')
 
     def _assert_updated_entity(self, entity):
         '''
@@ -166,13 +178,13 @@ class TableServiceTest(AzureTestCase):
         self.assertFalse(hasattr(entity, "ratio"))
         self.assertFalse(hasattr(entity, "large"))
         self.assertFalse(hasattr(entity, "Birthday"))
-        self.assertEqual(entity.birthday, datetime(1991,10,4))
+        self.assertEqual(entity.birthday, datetime(1991, 10, 4))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
 
     def _assert_merged_entity(self, entity):
         '''
-        Asserts that the entity passed in matches the default entity 
+        Asserts that the entity passed in matches the default entity
         merged with the updated entity.
         '''
         self.assertEqual(entity.age, 'abc')
@@ -183,27 +195,28 @@ class TableServiceTest(AzureTestCase):
         self.assertEqual(entity.sign, 'aquarius')
         self.assertEqual(entity.ratio, 3.1)
         self.assertEqual(entity.large, 9333111000)
-        self.assertEqual(entity.Birthday, datetime(1973,10,4))
-        self.assertEqual(entity.birthday, datetime(1991,10,4))
+        self.assertEqual(entity.Birthday, datetime(1973, 10, 4))
+        self.assertEqual(entity.birthday, datetime(1991, 10, 4))
         self.assertEqual(entity.other, 20)
         self.assertIsInstance(entity.clsid, EntityProperty)
         self.assertEqual(entity.clsid.type, 'Edm.Guid')
-        self.assertEqual(entity.clsid.value, 'c9da6455-213d-42c9-9a79-3e9149a57833')
+        self.assertEqual(entity.clsid.value,
+                         'c9da6455-213d-42c9-9a79-3e9149a57833')
 
     #--Test cases for table service -------------------------------------------
     def test_get_set_table_service_properties(self):
         table_properties = self.ts.get_table_service_properties()
         self.ts.set_table_service_properties(table_properties)
-        
+
         tests = [('logging.delete', True),
                  ('logging.delete', False),
                  ('logging.read', True),
                  ('logging.read', False),
                  ('logging.write', True),
                  ('logging.write', False),
-                ]
+                 ]
         for path, value in tests:
-            #print path
+            # print path
             cur = table_properties
             for component in path.split('.')[:-1]:
                 cur = getattr(cur, component)
@@ -224,7 +237,7 @@ class TableServiceTest(AzureTestCase):
                 retry_count += 1
 
             self.assertEqual(value, cur)
-            
+
     def test_table_service_retention_single_set(self):
         table_properties = self.ts.get_table_service_properties()
         table_properties.logging.retention_policy.enabled = False
@@ -232,8 +245,8 @@ class TableServiceTest(AzureTestCase):
 
         # TODO: Better error, ValueError?
         self.assertRaises(WindowsAzureError,
-                         self.ts.set_table_service_properties,
-                         table_properties)
+                          self.ts.set_table_service_properties,
+                          table_properties)
 
         table_properties = self.ts.get_table_service_properties()
         table_properties.logging.retention_policy.days = None
@@ -241,8 +254,8 @@ class TableServiceTest(AzureTestCase):
 
         # TODO: Better error, ValueError?
         self.assertRaises(WindowsAzureError,
-                         self.ts.set_table_service_properties,
-                         table_properties)
+                          self.ts.set_table_service_properties,
+                          table_properties)
 
     def test_table_service_set_both(self):
         table_properties = self.ts.get_table_service_properties()
@@ -250,7 +263,8 @@ class TableServiceTest(AzureTestCase):
         table_properties.logging.retention_policy.days = 5
         self.ts.set_table_service_properties(table_properties)
         table_properties = self.ts.get_table_service_properties()
-        self.assertEqual(True, table_properties.logging.retention_policy.enabled)
+        self.assertEqual(
+            True, table_properties.logging.retention_policy.enabled)
 
         self.assertEqual(5, table_properties.logging.retention_policy.days)
 
@@ -303,7 +317,7 @@ class TableServiceTest(AzureTestCase):
         tables = self.ts.query_tables()
         for table in tables:
             pass
-        
+
         # Assert
         tableNames = [x.name for x in tables]
         self.assertGreaterEqual(len(tableNames), 1)
@@ -334,7 +348,8 @@ class TableServiceTest(AzureTestCase):
 
     def test_query_tables_with_top(self):
         # Arrange
-        self.additional_table_names = [self.table_name + suffix for suffix in 'abcd'] 
+        self.additional_table_names = [
+            self.table_name + suffix for suffix in 'abcd']
         for name in self.additional_table_names:
             self.ts.create_table(name)
 
@@ -348,13 +363,15 @@ class TableServiceTest(AzureTestCase):
 
     def test_query_tables_with_top_and_next_table_name(self):
         # Arrange
-        self.additional_table_names = [self.table_name + suffix for suffix in 'abcd'] 
+        self.additional_table_names = [
+            self.table_name + suffix for suffix in 'abcd']
         for name in self.additional_table_names:
             self.ts.create_table(name)
 
         # Act
         tables_set1 = self.ts.query_tables(None, 3)
-        tables_set2 = self.ts.query_tables(None, 3, tables_set1.x_ms_continuation['NextTableName'])
+        tables_set2 = self.ts.query_tables(
+            None, 3, tables_set1.x_ms_continuation['NextTableName'])
 
         # Assert
         self.assertEqual(len(tables_set1), 3)
@@ -432,7 +449,9 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.ts.insert_entity(self.table_name, self._create_default_entity_dict('MyPartition', '1'))
+            self.ts.insert_entity(
+                self.table_name,
+                self._create_default_entity_dict('MyPartition', '1'))
 
         # Assert
 
@@ -463,7 +482,8 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        resp = self.ts.get_entity(self.table_name, 'MyPartition', '1', 'age,sex')
+        resp = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1', 'age,sex')
 
         # Assert
         self.assertEqual(resp.age, 39)
@@ -490,10 +510,13 @@ class TableServiceTest(AzureTestCase):
     def test_query_entities_with_filter(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 2)
-        self.ts.insert_entity(self.table_name, self._create_default_entity_dict('MyOtherPartition', '3'))
+        self.ts.insert_entity(
+            self.table_name,
+            self._create_default_entity_dict('MyOtherPartition', '3'))
 
         # Act
-        resp = self.ts.query_entities(self.table_name, "PartitionKey eq 'MyPartition'")
+        resp = self.ts.query_entities(
+            self.table_name, "PartitionKey eq 'MyPartition'")
 
         # Assert
         self.assertEqual(len(resp), 2)
@@ -532,8 +555,14 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         resp1 = self.ts.query_entities(self.table_name, None, None, 2)
-        resp2 = self.ts.query_entities(self.table_name, None, None, 2, resp1.x_ms_continuation['NextPartitionKey'], resp1.x_ms_continuation['NextRowKey'])
-        resp3 = self.ts.query_entities(self.table_name, None, None, 2, resp2.x_ms_continuation['NextPartitionKey'], resp2.x_ms_continuation['NextRowKey'])
+        resp2 = self.ts.query_entities(
+            self.table_name, None, None, 2,
+            resp1.x_ms_continuation['NextPartitionKey'],
+            resp1.x_ms_continuation['NextRowKey'])
+        resp3 = self.ts.query_entities(
+            self.table_name, None, None, 2,
+            resp2.x_ms_continuation['NextPartitionKey'],
+            resp2.x_ms_continuation['NextRowKey'])
 
         # Assert
         self.assertEqual(len(resp1), 2)
@@ -550,12 +579,14 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.ts.update_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
+        resp = self.ts.update_entity(
+            self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_update_entity_with_if_matches(self):
@@ -563,12 +594,15 @@ class TableServiceTest(AzureTestCase):
         entities = self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.ts.update_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=entities[0].etag)
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
+        resp = self.ts.update_entity(
+            self.table_name,
+            'MyPartition', '1', sent_entity, if_match=entities[0].etag)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_update_entity_with_if_doesnt_match(self):
@@ -576,9 +610,11 @@ class TableServiceTest(AzureTestCase):
         entities = self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
         with self.assertRaises(WindowsAzureError):
-            self.ts.update_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
+            self.ts.update_entity(
+                self.table_name, 'MyPartition', '1', sent_entity,
+                if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
 
         # Assert
 
@@ -587,12 +623,14 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.ts.insert_or_merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
+        resp = self.ts.insert_or_merge_entity(
+            self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
         self._assert_merged_entity(received_entity)
 
     def test_insert_or_merge_entity_with_non_existing_entity(self):
@@ -600,12 +638,14 @@ class TableServiceTest(AzureTestCase):
         self._create_table(self.table_name)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.ts.insert_or_merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
+        resp = self.ts.insert_or_merge_entity(
+            self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_insert_or_replace_entity_with_existing_entity(self):
@@ -613,12 +653,14 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.ts.insert_or_replace_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
+        resp = self.ts.insert_or_replace_entity(
+            self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_insert_or_replace_entity_with_non_existing_entity(self):
@@ -626,12 +668,14 @@ class TableServiceTest(AzureTestCase):
         self._create_table(self.table_name)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.ts.insert_or_replace_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
+        resp = self.ts.insert_or_replace_entity(
+            self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
     def test_merge_entity(self):
@@ -639,12 +683,14 @@ class TableServiceTest(AzureTestCase):
         self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.ts.merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
+        resp = self.ts.merge_entity(
+            self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
         self._assert_merged_entity(received_entity)
 
     def test_merge_entity_not_existing(self):
@@ -652,9 +698,10 @@ class TableServiceTest(AzureTestCase):
         self._create_table(self.table_name)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
         with self.assertRaises(WindowsAzureError):
-            self.ts.merge_entity(self.table_name, 'MyPartition', '1', sent_entity)
+            self.ts.merge_entity(
+                self.table_name, 'MyPartition', '1', sent_entity)
 
         # Assert
 
@@ -663,12 +710,15 @@ class TableServiceTest(AzureTestCase):
         entities = self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
-        resp = self.ts.merge_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=entities[0].etag)
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
+        resp = self.ts.merge_entity(
+            self.table_name, 'MyPartition', '1',
+            sent_entity, if_match=entities[0].etag)
 
         # Assert
         self.assertIsNotNone(resp)
-        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
         self._assert_merged_entity(received_entity)
 
     def test_merge_entity_with_if_doesnt_match(self):
@@ -676,9 +726,11 @@ class TableServiceTest(AzureTestCase):
         entities = self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        sent_entity = self._create_updated_entity_dict('MyPartition','1')
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
         with self.assertRaises(WindowsAzureError):
-            self.ts.merge_entity(self.table_name, 'MyPartition', '1', sent_entity, if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
+            self.ts.merge_entity(
+                self.table_name, 'MyPartition', '1', sent_entity,
+                if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
 
         # Assert
 
@@ -709,7 +761,8 @@ class TableServiceTest(AzureTestCase):
         entities = self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        resp = self.ts.delete_entity(self.table_name, 'MyPartition', '1', if_match=entities[0].etag)
+        resp = self.ts.delete_entity(
+            self.table_name, 'MyPartition', '1', if_match=entities[0].etag)
 
         # Assert
         self.assertIsNone(resp)
@@ -722,7 +775,9 @@ class TableServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.ts.delete_entity(self.table_name, 'MyPartition', '1', if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
+            self.ts.delete_entity(
+                self.table_name, 'MyPartition', '1',
+                if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
 
         # Assert
 
@@ -739,12 +794,12 @@ class TableServiceTest(AzureTestCase):
 
         self.assertTrue(called)
 
-        del called[:]        
-        
+        del called[:]
+
         tc.delete_table(self.table_name)
 
         self.assertTrue(called)
-        del called[:]        
+        del called[:]
 
     def test_with_filter_chained(self):
         called = []
@@ -752,7 +807,7 @@ class TableServiceTest(AzureTestCase):
         def filter_a(request, next):
             called.append('a')
             return next(request)
-        
+
         def filter_b(request, next):
             called.append('b')
             return next(request)
@@ -782,9 +837,9 @@ class TableServiceTest(AzureTestCase):
         self.ts.insert_entity(self.table_name, entity)
         self.ts.commit_batch()
 
-        # Assert 
+        # Assert
         result = self.ts.get_entity(self.table_name, '001', 'batch_insert')
-        self.assertIsNotNone(result) 
+        self.assertIsNotNone(result)
 
     def test_batch_update(self):
         # Arrange
@@ -856,11 +911,13 @@ class TableServiceTest(AzureTestCase):
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
         entity.test5 = datetime.utcnow()
         self.ts.begin_batch()
-        self.ts.insert_or_replace_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.insert_or_replace_entity(
+            self.table_name, entity.PartitionKey, entity.RowKey, entity)
         self.ts.commit_batch()
 
-        entity = self.ts.get_entity(self.table_name, '001', 'batch_insert_replace')
-        
+        entity = self.ts.get_entity(
+            self.table_name, '001', 'batch_insert_replace')
+
         # Assert
         self.assertIsNotNone(entity)
         self.assertEqual('value', entity.test2)
@@ -880,11 +937,13 @@ class TableServiceTest(AzureTestCase):
         entity.test4 = EntityProperty('Edm.Int64', '1234567890')
         entity.test5 = datetime.utcnow()
         self.ts.begin_batch()
-        self.ts.insert_or_merge_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.insert_or_merge_entity(
+            self.table_name, entity.PartitionKey, entity.RowKey, entity)
         self.ts.commit_batch()
 
-        entity = self.ts.get_entity(self.table_name, '001', 'batch_insert_merge')
-        
+        entity = self.ts.get_entity(
+            self.table_name, '001', 'batch_insert_merge')
+
         # Assert
         self.assertIsNotNone(entity)
         self.assertEqual('value', entity.test2)
@@ -928,11 +987,12 @@ class TableServiceTest(AzureTestCase):
             entity.RowKey = str(i)
             self.ts.insert_entity(self.table_name, entity)
         self.ts.commit_batch()
-        
-        entities = self.ts.query_entities(self.table_name, "PartitionKey eq 'batch_inserts'", '')
+
+        entities = self.ts.query_entities(
+            self.table_name, "PartitionKey eq 'batch_inserts'", '')
 
         # Assert
-        self.assertIsNotNone(entities);
+        self.assertIsNotNone(entities)
         self.assertEqual(100, len(entities))
 
     def test_batch_all_operations_together(self):
@@ -960,22 +1020,28 @@ class TableServiceTest(AzureTestCase):
         entity.RowKey = 'batch_all_operations_together'
         self.ts.insert_entity(self.table_name, entity)
         entity.RowKey = 'batch_all_operations_together-1'
-        self.ts.delete_entity(self.table_name, entity.PartitionKey, entity.RowKey)
+        self.ts.delete_entity(
+            self.table_name, entity.PartitionKey, entity.RowKey)
         entity.RowKey = 'batch_all_operations_together-2'
         entity.test3 = 10
-        self.ts.update_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.update_entity(
+            self.table_name, entity.PartitionKey, entity.RowKey, entity)
         entity.RowKey = 'batch_all_operations_together-3'
         entity.test3 = 100
-        self.ts.merge_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.merge_entity(
+            self.table_name, entity.PartitionKey, entity.RowKey, entity)
         entity.RowKey = 'batch_all_operations_together-4'
         entity.test3 = 10
-        self.ts.insert_or_replace_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.insert_or_replace_entity(
+            self.table_name, entity.PartitionKey, entity.RowKey, entity)
         entity.RowKey = 'batch_all_operations_together-5'
-        self.ts.insert_or_merge_entity(self.table_name, entity.PartitionKey, entity.RowKey, entity)
+        self.ts.insert_or_merge_entity(
+            self.table_name, entity.PartitionKey, entity.RowKey, entity)
         self.ts.commit_batch()
 
         # Assert
-        entities = self.ts.query_entities(self.table_name, "PartitionKey eq '003'", '')
+        entities = self.ts.query_entities(
+            self.table_name, "PartitionKey eq '003'", '')
         self.assertEqual(5, len(entities))
 
     def test_batch_same_row_operations_fail(self):
@@ -988,11 +1054,19 @@ class TableServiceTest(AzureTestCase):
         with self.assertRaises(WindowsAzureError):
             self.ts.begin_batch()
 
-            entity = self._create_updated_entity_dict('001', 'batch_negative_1')
-            self.ts.update_entity(self.table_name, entity['PartitionKey'], entity['RowKey'], entity)
+            entity = self._create_updated_entity_dict(
+                '001', 'batch_negative_1')
+            self.ts.update_entity(
+                self.table_name,
+                entity['PartitionKey'],
+                entity['RowKey'], entity)
 
-            entity = self._create_default_entity_dict('001', 'batch_negative_1')
-            self.ts.merge_entity(self.table_name, entity['PartitionKey'], entity['RowKey'], entity)
+            entity = self._create_default_entity_dict(
+                '001', 'batch_negative_1')
+            self.ts.merge_entity(
+                self.table_name,
+                entity['PartitionKey'],
+                entity['RowKey'], entity)
 
         self.ts.cancel_batch()
 
@@ -1008,11 +1082,15 @@ class TableServiceTest(AzureTestCase):
         with self.assertRaises(WindowsAzureError):
             self.ts.begin_batch()
 
-            entity = self._create_updated_entity_dict('001', 'batch_negative_1')
-            self.ts.update_entity(self.table_name, entity['PartitionKey'], entity['RowKey'], entity)
+            entity = self._create_updated_entity_dict(
+                '001', 'batch_negative_1')
+            self.ts.update_entity(
+                self.table_name, entity['PartitionKey'], entity['RowKey'],
+                entity)
 
-            entity = self._create_default_entity_dict('002', 'batch_negative_1')
-            self.ts.insert_entity(self.table_name, entity) 
+            entity = self._create_default_entity_dict(
+                '002', 'batch_negative_1')
+            self.ts.insert_entity(self.table_name, entity)
 
         self.ts.cancel_batch()
 
@@ -1029,11 +1107,13 @@ class TableServiceTest(AzureTestCase):
         with self.assertRaises(WindowsAzureError):
             self.ts.begin_batch()
 
-            entity = self._create_default_entity_dict('001', 'batch_negative_1')
-            self.ts.insert_entity(self.table_name, entity) 
+            entity = self._create_default_entity_dict(
+                '001', 'batch_negative_1')
+            self.ts.insert_entity(self.table_name, entity)
 
-            entity = self._create_default_entity_dict('001', 'batch_negative_2')
-            self.ts.insert_entity(other_table_name, entity) 
+            entity = self._create_default_entity_dict(
+                '001', 'batch_negative_2')
+            self.ts.insert_entity(other_table_name, entity)
 
         self.ts.cancel_batch()
 
@@ -1041,9 +1121,14 @@ class TableServiceTest(AzureTestCase):
         ''' regression test for github issue #57'''
         # Act
         self._create_table(self.table_name)
-        self.ts.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test1', 'Description': u'ꀕ'}) 
-        self.ts.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', 'Description': 'ꀕ'})        
-        resp = self.ts.query_entities(self.table_name, "PartitionKey eq 'test'")   
+        self.ts.insert_entity(
+            self.table_name,
+            {'PartitionKey': 'test', 'RowKey': 'test1', 'Description': u'ꀕ'})
+        self.ts.insert_entity(
+            self.table_name,
+            {'PartitionKey': 'test', 'RowKey': 'test2', 'Description': 'ꀕ'})
+        resp = self.ts.query_entities(
+            self.table_name, "PartitionKey eq 'test'")
         # Assert
         self.assertEqual(len(resp), 2)
         self.assertEqual(resp[0].Description, u'ꀕ')
@@ -1052,9 +1137,14 @@ class TableServiceTest(AzureTestCase):
     def test_unicode_property_name(self):
         # Act
         self._create_table(self.table_name)
-        self.ts.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test1', u'啊齄丂狛狜': u'ꀕ'}) 
-        self.ts.insert_entity(self.table_name, {'PartitionKey': 'test', 'RowKey': 'test2', u'啊齄丂狛狜': 'hello'})        
-        resp = self.ts.query_entities(self.table_name, "PartitionKey eq 'test'")   
+        self.ts.insert_entity(
+            self.table_name,
+            {'PartitionKey': 'test', 'RowKey': 'test1', u'啊齄丂狛狜': u'ꀕ'})
+        self.ts.insert_entity(
+            self.table_name,
+            {'PartitionKey': 'test', 'RowKey': 'test2', u'啊齄丂狛狜': 'hello'})
+        resp = self.ts.query_entities(
+            self.table_name, "PartitionKey eq 'test'")
         # Assert
         self.assertEqual(len(resp), 2)
         self.assertEqual(resp[0].__dict__[u'啊齄丂狛狜'], u'ꀕ')

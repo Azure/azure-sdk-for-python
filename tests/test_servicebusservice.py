@@ -24,27 +24,32 @@ import unittest
 from datetime import datetime
 from azure import WindowsAzureError
 from azure.http import HTTPError
-from azure.servicebus import (AZURE_SERVICEBUS_NAMESPACE,
-                              AZURE_SERVICEBUS_ACCESS_KEY,
-                              AZURE_SERVICEBUS_ISSUER,
-                              Message,
-                              Queue,
-                              Rule,
-                              ServiceBusService,
-                              Subscription,
-                              Topic,
-                              )
-from util import (AzureTestCase,
-                  credentials,
-                  getUniqueName,
-                  set_service_options,
-                  )
+from azure.servicebus import (
+    AZURE_SERVICEBUS_NAMESPACE,
+    AZURE_SERVICEBUS_ACCESS_KEY,
+    AZURE_SERVICEBUS_ISSUER,
+    Message,
+    Queue,
+    Rule,
+    ServiceBusService,
+    Subscription,
+    Topic,
+    )
+from util import (
+    AzureTestCase,
+    credentials,
+    getUniqueName,
+    set_service_options,
+    )
 
 #------------------------------------------------------------------------------
+
+
 class ServiceBusTest(AzureTestCase):
+
     def setUp(self):
-        self.sbs = ServiceBusService(credentials.getServiceBusNamespace(), 
-                                     credentials.getServiceBusKey(), 
+        self.sbs = ServiceBusService(credentials.getServiceBusNamespace(),
+                                     credentials.getServiceBusKey(),
                                      'owner')
         set_service_options(self.sbs)
 
@@ -57,25 +62,29 @@ class ServiceBusTest(AzureTestCase):
     def tearDown(self):
         self.cleanup()
         return super(ServiceBusTest, self).tearDown()
-    
+
     def cleanup(self):
         try:
             self.sbs.delete_queue(self.queue_name)
-        except: pass
+        except:
+            pass
 
         for name in self.additional_queue_names:
             try:
                 self.sbs.delete_queue(name)
-            except: pass
+            except:
+                pass
 
         try:
             self.sbs.delete_topic(self.topic_name)
-        except: pass
+        except:
+            pass
 
         for name in self.additional_topic_names:
             try:
                 self.sbs.delete_topic(name)
-            except: pass
+            except:
+                pass
 
     #--Helpers-----------------------------------------------------------------
     def _create_queue(self, queue_name):
@@ -113,8 +122,10 @@ class ServiceBusTest(AzureTestCase):
 
     def test_create_service_bus_env_variables(self):
         # Arrange
-        os.environ[AZURE_SERVICEBUS_NAMESPACE] = credentials.getServiceBusNamespace()
-        os.environ[AZURE_SERVICEBUS_ACCESS_KEY] = credentials.getServiceBusKey()
+        os.environ[
+            AZURE_SERVICEBUS_NAMESPACE] = credentials.getServiceBusNamespace()
+        os.environ[
+            AZURE_SERVICEBUS_ACCESS_KEY] = credentials.getServiceBusKey()
         os.environ[AZURE_SERVICEBUS_ISSUER] = 'owner'
 
         # Act
@@ -129,7 +140,8 @@ class ServiceBusTest(AzureTestCase):
 
         # Assert
         self.assertIsNotNone(sbs)
-        self.assertEqual(sbs.service_namespace, credentials.getServiceBusNamespace())
+        self.assertEqual(sbs.service_namespace,
+                         credentials.getServiceBusNamespace())
         self.assertEqual(sbs.account_key, credentials.getServiceBusKey())
         self.assertEqual(sbs.issuer, 'owner')
 
@@ -160,7 +172,7 @@ class ServiceBusTest(AzureTestCase):
         queue_options.default_message_time_to_live = 'PT1M'
         queue_options.duplicate_detection_history_time_window = 'PT5M'
         queue_options.enable_batched_operations = False
-        queue_options.dead_lettering_on_message_expiration = False 
+        queue_options.dead_lettering_on_message_expiration = False
         queue_options.lock_duration = 'PT1M'
         queue_options.max_delivery_count = 15
         queue_options.max_size_in_megabytes = 5120
@@ -242,12 +254,12 @@ class ServiceBusTest(AzureTestCase):
 
     def test_list_queues_with_special_chars(self):
         # Arrange
-        # Name must start and end with an alphanumeric and can only contain 
+        # Name must start and end with an alphanumeric and can only contain
         # letters, numbers, periods, hyphens, forward slashes and underscores.
         other_queue_name = self.queue_name + 'txt/.-_123'
         self.additional_queue_names = [other_queue_name]
         self._create_queue(other_queue_name)
-        
+
         # Act
         queues = self.sbs.list_queues()
 
@@ -378,7 +390,8 @@ class ServiceBusTest(AzureTestCase):
         received_msg.unlock()
 
         # Assert
-        received_again_msg = self.sbs.receive_queue_message(self.queue_name, True)
+        received_again_msg = self.sbs.receive_queue_message(
+            self.queue_name, True)
         received_again_msg.delete()
         self.assertIsNotNone(received_msg)
         self.assertIsNotNone(received_again_msg)
@@ -390,7 +403,9 @@ class ServiceBusTest(AzureTestCase):
         self._create_queue(self.queue_name)
 
         # Act
-        sent_msg = Message(b'<text>peek lock message custom message type</text>', type='text/xml')
+        sent_msg = Message(
+            b'<text>peek lock message custom message type</text>',
+            type='text/xml')
         self.sbs.send_queue_message(self.queue_name, sent_msg)
         received_msg = self.sbs.receive_queue_message(self.queue_name, True, 5)
         received_msg.delete()
@@ -404,13 +419,13 @@ class ServiceBusTest(AzureTestCase):
         self._create_queue(self.queue_name)
 
         # Act
-        props = {'hello':'world',
-                 'number':42,
-                 'active':True,
-                 'deceased':False,
-                 'large':8555111000,
-                 'floating':3.14,
-                 'dob':datetime(2011, 12, 14)}
+        props = {'hello': 'world',
+                 'number': 42,
+                 'active': True,
+                 'deceased': False,
+                 'large': 8555111000,
+                 'floating': 3.14,
+                 'dob': datetime(2011, 12, 14)}
         sent_msg = Message(b'message with properties', custom_properties=props)
         self.sbs.send_queue_message(self.queue_name, sent_msg)
         received_msg = self.sbs.receive_queue_message(self.queue_name, True, 5)
@@ -424,7 +439,8 @@ class ServiceBusTest(AzureTestCase):
         self.assertEqual(received_msg.custom_properties['deceased'], False)
         self.assertEqual(received_msg.custom_properties['large'], 8555111000)
         self.assertEqual(received_msg.custom_properties['floating'], 3.14)
-        self.assertEqual(received_msg.custom_properties['dob'], datetime(2011, 12, 14))
+        self.assertEqual(
+            received_msg.custom_properties['dob'], datetime(2011, 12, 14))
 
     def test_receive_queue_message_timeout_5(self):
         # Arrange
@@ -446,7 +462,8 @@ class ServiceBusTest(AzureTestCase):
 
         # Act
         start = time.clock()
-        received_msg = self.sbs.receive_queue_message(self.queue_name, True, 50)
+        received_msg = self.sbs.receive_queue_message(
+            self.queue_name, True, 50)
         duration = time.clock() - start
 
         # Assert
@@ -481,10 +498,10 @@ class ServiceBusTest(AzureTestCase):
         topic_options.default_message_time_to_live = 'PT1M'
         topic_options.duplicate_detection_history_time_window = 'PT5M'
         topic_options.enable_batched_operations = False
-        topic_options.max_size_in_megabytes = 5120 
+        topic_options.max_size_in_megabytes = 5120
         topic_options.requires_duplicate_detection = False
         topic_options.size_in_bytes = 0
-        #TODO: MaximumNumberOfSubscriptions is not supported?
+        # TODO: MaximumNumberOfSubscriptions is not supported?
         created = self.sbs.create_topic(self.topic_name, topic_options)
 
         # Assert
@@ -571,12 +588,12 @@ class ServiceBusTest(AzureTestCase):
 
     def test_list_topics_with_special_chars(self):
         # Arrange
-        # Name must start and end with an alphanumeric and can only contain 
+        # Name must start and end with an alphanumeric and can only contain
         # letters, numbers, periods, hyphens, forward slashes and underscores.
         other_topic_name = self.topic_name + 'txt/.-_123'
         self.additional_topic_names = [other_topic_name]
         self._create_topic(other_topic_name)
-        
+
         # Act
         topics = self.sbs.list_topics()
 
@@ -631,7 +648,8 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic(self.topic_name)
 
         # Act
-        created = self.sbs.create_subscription(self.topic_name, 'MySubscription')
+        created = self.sbs.create_subscription(
+            self.topic_name, 'MySubscription')
 
         # Assert
         self.assertTrue(created)
@@ -647,21 +665,26 @@ class ServiceBusTest(AzureTestCase):
         subscription_options.default_message_time_to_live = 'PT15M'
         subscription_options.enable_batched_operations = False
         subscription_options.lock_duration = 'PT1M'
-        subscription_options.max_delivery_count = 15 
+        subscription_options.max_delivery_count = 15
         #message_count is read-only
         subscription_options.message_count = 0
         subscription_options.requires_session = False
-        created = self.sbs.create_subscription(self.topic_name, 'MySubscription', subscription_options)
+        created = self.sbs.create_subscription(
+            self.topic_name, 'MySubscription', subscription_options)
 
         # Assert
         self.assertTrue(created)
-        subscription = self.sbs.get_subscription(self.topic_name, 'MySubscription')
-        self.assertEqual(False, subscription.dead_lettering_on_filter_evaluation_exceptions)
-        self.assertEqual(False, subscription.dead_lettering_on_message_expiration)
+        subscription = self.sbs.get_subscription(
+            self.topic_name, 'MySubscription')
+        self.assertEqual(
+            False, subscription.dead_lettering_on_filter_evaluation_exceptions)
+        self.assertEqual(
+            False, subscription.dead_lettering_on_message_expiration)
         self.assertEqual('PT15M', subscription.default_message_time_to_live)
         self.assertEqual(False, subscription.enable_batched_operations)
         self.assertEqual('PT1M', subscription.lock_duration)
-        #self.assertEqual(15, subscription.max_delivery_count) #no idea why max_delivery_count is always 10
+        # self.assertEqual(15, subscription.max_delivery_count) #no idea why
+        # max_delivery_count is always 10
         self.assertEqual(0, subscription.message_count)
         self.assertEqual(False, subscription.requires_session)
 
@@ -670,7 +693,8 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic(self.topic_name)
 
         # Act
-        created = self.sbs.create_subscription(self.topic_name, 'MySubscription', None, True)
+        created = self.sbs.create_subscription(
+            self.topic_name, 'MySubscription', None, True)
 
         # Assert
         self.assertTrue(created)
@@ -680,8 +704,10 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic(self.topic_name)
 
         # Act
-        created1 = self.sbs.create_subscription(self.topic_name, 'MySubscription')
-        created2 = self.sbs.create_subscription(self.topic_name, 'MySubscription')
+        created1 = self.sbs.create_subscription(
+            self.topic_name, 'MySubscription')
+        created2 = self.sbs.create_subscription(
+            self.topic_name, 'MySubscription')
 
         # Assert
         self.assertTrue(created1)
@@ -692,9 +718,11 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic(self.topic_name)
 
         # Act
-        created = self.sbs.create_subscription(self.topic_name, 'MySubscription')
+        created = self.sbs.create_subscription(
+            self.topic_name, 'MySubscription')
         with self.assertRaises(WindowsAzureError):
-            self.sbs.create_subscription(self.topic_name, 'MySubscription', None, True)
+            self.sbs.create_subscription(
+                self.topic_name, 'MySubscription', None, True)
 
         # Assert
         self.assertTrue(created)
@@ -716,7 +744,8 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription3')
 
         # Act
-        subscription = self.sbs.get_subscription(self.topic_name, 'MySubscription3')
+        subscription = self.sbs.get_subscription(
+            self.topic_name, 'MySubscription3')
 
         # Assert
         self.assertIsNotNone(subscription)
@@ -739,7 +768,8 @@ class ServiceBusTest(AzureTestCase):
         self._create_subscription(self.topic_name, 'MySubscription5')
 
         # Act
-        deleted = self.sbs.delete_subscription(self.topic_name, 'MySubscription4')
+        deleted = self.sbs.delete_subscription(
+            self.topic_name, 'MySubscription4')
 
         # Assert
         self.assertTrue(deleted)
@@ -755,7 +785,8 @@ class ServiceBusTest(AzureTestCase):
         self._create_subscription(self.topic_name, 'MySubscription5')
 
         # Act
-        deleted = self.sbs.delete_subscription(self.topic_name, 'MySubscription4', True)
+        deleted = self.sbs.delete_subscription(
+            self.topic_name, 'MySubscription4', True)
 
         # Assert
         self.assertTrue(deleted)
@@ -769,7 +800,8 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic(self.topic_name)
 
         # Act
-        deleted = self.sbs.delete_subscription(self.topic_name, 'MySubscription')
+        deleted = self.sbs.delete_subscription(
+            self.topic_name, 'MySubscription')
 
         # Assert
         self.assertFalse(deleted)
@@ -780,7 +812,8 @@ class ServiceBusTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.sbs.delete_subscription(self.topic_name, 'MySubscription', True)
+            self.sbs.delete_subscription(
+                self.topic_name, 'MySubscription', True)
 
         # Assert
 
@@ -789,7 +822,8 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
         # Act
-        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1')
+        created = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1')
 
         # Assert
         self.assertTrue(created)
@@ -799,7 +833,8 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
         # Act
-        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', None, True)
+        created = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1', None, True)
 
         # Assert
         self.assertTrue(created)
@@ -809,8 +844,10 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
         # Act
-        created1 = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1')
-        created2 = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1')
+        created1 = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1')
+        created2 = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1')
 
         # Assert
         self.assertTrue(created1)
@@ -821,9 +858,11 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
         # Act
-        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1')
+        created = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1')
         with self.assertRaises(WindowsAzureError):
-            self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', None, True)
+            self.sbs.create_rule(
+                self.topic_name, 'MySubscription', 'MyRule1', None, True)
 
         # Assert
         self.assertTrue(created)
@@ -836,7 +875,8 @@ class ServiceBusTest(AzureTestCase):
         rule1 = Rule()
         rule1.filter_type = 'SqlFilter'
         rule1.filter_expression = 'number > 40'
-        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+        created = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1', rule1)
 
         # Assert
         self.assertTrue(created)
@@ -849,7 +889,8 @@ class ServiceBusTest(AzureTestCase):
         rule1 = Rule()
         rule1.filter_type = 'TrueFilter'
         rule1.filter_expression = '1=1'
-        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+        created = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1', rule1)
 
         # Assert
         self.assertTrue(created)
@@ -862,7 +903,8 @@ class ServiceBusTest(AzureTestCase):
         rule1 = Rule()
         rule1.filter_type = 'FalseFilter'
         rule1.filter_expression = '1=0'
-        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+        created = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1', rule1)
 
         # Assert
         self.assertTrue(created)
@@ -875,7 +917,8 @@ class ServiceBusTest(AzureTestCase):
         rule1 = Rule()
         rule1.filter_type = 'CorrelationFilter'
         rule1.filter_expression = 'myid'
-        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+        created = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1', rule1)
 
         # Assert
         self.assertTrue(created)
@@ -888,7 +931,8 @@ class ServiceBusTest(AzureTestCase):
         rule1 = Rule()
         rule1.action_type = 'EmptyRuleAction'
         rule1.action_expression = ''
-        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+        created = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1', rule1)
 
         # Assert
         self.assertTrue(created)
@@ -901,7 +945,8 @@ class ServiceBusTest(AzureTestCase):
         rule1 = Rule()
         rule1.action_type = 'SqlRuleAction'
         rule1.action_expression = "SET number = 5"
-        created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', rule1)
+        created = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1', rule1)
 
         # Assert
         self.assertTrue(created)
@@ -909,7 +954,8 @@ class ServiceBusTest(AzureTestCase):
     def test_list_rules(self):
         # Arrange
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
-        resp = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule2')
+        resp = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule2')
 
         # Act
         rules = self.sbs.list_rules(self.topic_name, 'MySubscription')
@@ -934,7 +980,8 @@ class ServiceBusTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.sbs.get_rule(self.topic_name, 'MySubscription', 'NonExistingRule')
+            self.sbs.get_rule(self.topic_name,
+                              'MySubscription', 'NonExistingRule')
 
         # Assert
 
@@ -946,28 +993,36 @@ class ServiceBusTest(AzureTestCase):
         sent_rule.filter_expression = 'number > 40'
         sent_rule.action_type = 'SqlRuleAction'
         sent_rule.action_expression = 'SET number = 5'
-        self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule1', sent_rule)
+        self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule1', sent_rule)
 
         # Act
-        received_rule = self.sbs.get_rule(self.topic_name, 'MySubscription', 'MyRule1')
+        received_rule = self.sbs.get_rule(
+            self.topic_name, 'MySubscription', 'MyRule1')
 
         # Assert
         self.assertIsNotNone(received_rule)
         self.assertEqual(received_rule.name, 'MyRule1')
         self.assertEqual(received_rule.filter_type, sent_rule.filter_type)
-        self.assertEqual(received_rule.filter_expression, sent_rule.filter_expression)
+        self.assertEqual(received_rule.filter_expression,
+                         sent_rule.filter_expression)
         self.assertEqual(received_rule.action_type, sent_rule.action_type)
-        self.assertEqual(received_rule.action_expression, sent_rule.action_expression)
+        self.assertEqual(received_rule.action_expression,
+                         sent_rule.action_expression)
 
     def test_delete_rule_with_existing_rule(self):
         # Arrange
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
-        resp = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule3')
-        resp = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule4')
+        resp = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule3')
+        resp = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule4')
 
         # Act
-        deleted1 = self.sbs.delete_rule(self.topic_name, 'MySubscription', 'MyRule4')
-        deleted2 = self.sbs.delete_rule(self.topic_name, 'MySubscription', '$Default')
+        deleted1 = self.sbs.delete_rule(
+            self.topic_name, 'MySubscription', 'MyRule4')
+        deleted2 = self.sbs.delete_rule(
+            self.topic_name, 'MySubscription', '$Default')
 
         # Assert
         self.assertTrue(deleted1)
@@ -980,12 +1035,16 @@ class ServiceBusTest(AzureTestCase):
     def test_delete_rule_with_existing_rule_fail_not_exist(self):
         # Arrange
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
-        resp = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule3')
-        resp = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule4')
+        resp = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule3')
+        resp = self.sbs.create_rule(
+            self.topic_name, 'MySubscription', 'MyRule4')
 
         # Act
-        deleted1 = self.sbs.delete_rule(self.topic_name, 'MySubscription', 'MyRule4', True)
-        deleted2 = self.sbs.delete_rule(self.topic_name, 'MySubscription', '$Default', True)
+        deleted1 = self.sbs.delete_rule(
+            self.topic_name, 'MySubscription', 'MyRule4', True)
+        deleted2 = self.sbs.delete_rule(
+            self.topic_name, 'MySubscription', '$Default', True)
 
         # Assert
         self.assertTrue(deleted1)
@@ -1000,39 +1059,42 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
         # Act
-        deleted = self.sbs.delete_rule(self.topic_name, 'MySubscription', 'NonExistingRule')
+        deleted = self.sbs.delete_rule(
+            self.topic_name, 'MySubscription', 'NonExistingRule')
 
         # Assert
         self.assertFalse(deleted)
-        
+
     def test_delete_rule_with_non_existing_rule_fail_not_exist(self):
         # Arrange
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.sbs.delete_rule(self.topic_name, 'MySubscription', 'NonExistingRule', True)
+            self.sbs.delete_rule(
+                self.topic_name, 'MySubscription', 'NonExistingRule', True)
 
         # Assert
-        
+
     def test_send_topic_message(self):
         # Arrange
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_msg = Message(b'subscription message')
-        
+
         # Act
         self.sbs.send_topic_message(self.topic_name, sent_msg)
 
         # Assert
-        
+
     def test_receive_subscription_message_read_delete_mode(self):
         # Arrange
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_msg = Message(b'subscription message')
         self.sbs.send_topic_message(self.topic_name, sent_msg)
-        
+
         # Act
-        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', False)
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', False)
 
         # Assert
         self.assertIsNotNone(received_msg)
@@ -1043,9 +1105,10 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_msg = Message(b'subscription message')
         self.sbs.send_topic_message(self.topic_name, sent_msg)
-        
+
         # Act
-        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', False)
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', False)
         with self.assertRaises(WindowsAzureError):
             received_msg.delete()
 
@@ -1056,9 +1119,10 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_msg = Message(b'subscription message')
         self.sbs.send_topic_message(self.topic_name, sent_msg)
-        
+
         # Act
-        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', False)
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', False)
         with self.assertRaises(WindowsAzureError):
             received_msg.unlock()
 
@@ -1069,9 +1133,10 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_msg = Message(b'subscription message')
         self.sbs.send_topic_message(self.topic_name, sent_msg)
-        
+
         # Act
-        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', True, 5)
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', True, 5)
 
         # Assert
         self.assertIsNotNone(received_msg)
@@ -1082,9 +1147,10 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_msg = Message(b'subscription message')
         self.sbs.send_topic_message(self.topic_name, sent_msg)
-        
+
         # Act
-        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', True, 5)
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', True, 5)
         received_msg.delete()
 
         # Assert
@@ -1096,13 +1162,15 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_msg = Message(b'subscription message')
         self.sbs.send_topic_message(self.topic_name, sent_msg)
-        
+
         # Act
-        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', True)
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', True)
         received_msg.unlock()
 
         # Assert
-        received_again_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', True)
+        received_again_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', True)
         received_again_msg.delete()
         self.assertIsNotNone(received_msg)
         self.assertIsNotNone(received_again_msg)
@@ -1112,6 +1180,7 @@ class ServiceBusTest(AzureTestCase):
     def test_with_filter(self):
          # Single filter
         called = []
+
         def my_filter(request, next):
             called.append(True)
             return next(request)
@@ -1121,18 +1190,18 @@ class ServiceBusTest(AzureTestCase):
 
         self.assertTrue(called)
 
-        del called[:]        
-        
+        del called[:]
+
         sbs.delete_topic(self.topic_name + '0')
 
         self.assertTrue(called)
-        del called[:]        
+        del called[:]
 
         # Chained filters
         def filter_a(request, next):
             called.append('a')
             return next(request)
-        
+
         def filter_b(request, next):
             called.append('b')
             return next(request)
@@ -1147,30 +1216,35 @@ class ServiceBusTest(AzureTestCase):
         self.assertEqual(called, ['b', 'a', 'b', 'a'])
 
     def test_two_identities(self):
-        # In order to run this test, 2 service bus service identities are created using
-        # the sbaztool available at:
+        # In order to run this test, 2 service bus service identities are
+        # created using the sbaztool available at:
         # http://code.msdn.microsoft.com/windowsazure/Authorization-SBAzTool-6fd76d93
         #
-        # Use the following commands to create 2 identities and grant access rights.
-        # Replace <servicebusnamespace> with the namespace specified in the test .json file
+        # Use the following commands to create 2 identities and grant access
+        # rights.
+        # Replace <servicebusnamespace> with the namespace specified in the
+        # test .json file
         # Replace <servicebuskey> with the key specified in the test .json file
-        # This only needs to be executed once, after the service bus namespace is created.
+        # This only needs to be executed once, after the service bus namespace
+        # is created.
         #
         # sbaztool makeid user1 NoHEoD6snlvlhZm7yek9Etxca3l0CYjfc19ICIJZoUg= -n <servicebusnamespace> -k <servicebuskey>
         # sbaztool grant Send /path1 user1 -n <servicebusnamespace> -k <servicebuskey>
         # sbaztool grant Listen /path1 user1 -n <servicebusnamespace> -k <servicebuskey>
-        # sbaztool grant Manage /path1 user1 -n <servicebusnamespace> -k <servicebuskey>
+        # sbaztool grant Manage /path1 user1 -n <servicebusnamespace> -k
+        # <servicebuskey>
 
-        # sbaztool makeid user2 Tb6K5qEgstyRBwp86JEjUezKj/a+fnkLFnibfgvxvdg= -n <servicebusnamespace> -k <servicebuskey> 
+        # sbaztool makeid user2 Tb6K5qEgstyRBwp86JEjUezKj/a+fnkLFnibfgvxvdg= -n <servicebusnamespace> -k <servicebuskey>
         # sbaztool grant Send /path2 user2 -n <servicebusnamespace> -k <servicebuskey>
         # sbaztool grant Listen /path2 user2 -n <servicebusnamespace> -k <servicebuskey>
-        # sbaztool grant Manage /path2 user2 -n <servicebusnamespace> -k <servicebuskey>
+        # sbaztool grant Manage /path2 user2 -n <servicebusnamespace> -k
+        # <servicebuskey>
 
-        sbs1 = ServiceBusService(credentials.getServiceBusNamespace(), 
-                                 'NoHEoD6snlvlhZm7yek9Etxca3l0CYjfc19ICIJZoUg=', 
+        sbs1 = ServiceBusService(credentials.getServiceBusNamespace(),
+                                 'NoHEoD6snlvlhZm7yek9Etxca3l0CYjfc19ICIJZoUg=',
                                  'user1')
-        sbs2 = ServiceBusService(credentials.getServiceBusNamespace(), 
-                                 'Tb6K5qEgstyRBwp86JEjUezKj/a+fnkLFnibfgvxvdg=', 
+        sbs2 = ServiceBusService(credentials.getServiceBusNamespace(),
+                                 'Tb6K5qEgstyRBwp86JEjUezKj/a+fnkLFnibfgvxvdg=',
                                  'user2')
 
         queue1_name = 'path1/queue' + str(random.randint(1, 10000000))
@@ -1199,10 +1273,12 @@ class ServiceBusTest(AzureTestCase):
         finally:
             try:
                 sbs1.delete_queue(queue1_name)
-            except: pass
+            except:
+                pass
             try:
                 sbs2.delete_queue(queue2_name)
-            except: pass
+            except:
+                pass
 
     def test_unicode_create_queue_unicode_name(self):
         # Arrange
@@ -1279,7 +1355,8 @@ class ServiceBusTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            created = self.sbs.create_subscription(self.topic_name, u'MySubscription啊齄丂狛狜')
+            created = self.sbs.create_subscription(
+                self.topic_name, u'MySubscription啊齄丂狛狜')
 
         # Assert
 
@@ -1289,7 +1366,8 @@ class ServiceBusTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            created = self.sbs.create_rule(self.topic_name, 'MySubscription', 'MyRule啊齄丂狛狜')
+            created = self.sbs.create_rule(
+                self.topic_name, 'MySubscription', 'MyRule啊齄丂狛狜')
 
         # Assert
 
@@ -1307,7 +1385,8 @@ class ServiceBusTest(AzureTestCase):
         self.sbs.send_topic_message(self.topic_name, sent_msg)
 
         # Assert
-        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', False)
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', False)
         self.assertIsNotNone(received_msg)
         self.assertEqual(received_msg.body, data.encode('utf-8'))
 
@@ -1331,9 +1410,10 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_msg = Message(u'subscription message啊齄丂狛狜'.encode('utf-8'))
         self.sbs.send_topic_message(self.topic_name, sent_msg)
-        
+
         # Act
-        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', False)
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', False)
 
         # Assert
         self.assertIsNotNone(received_msg)
@@ -1346,9 +1426,10 @@ class ServiceBusTest(AzureTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
         sent_msg = Message(binary_data)
         self.sbs.send_topic_message(self.topic_name, sent_msg)
-        
+
         # Act
-        received_msg = self.sbs.receive_subscription_message(self.topic_name, 'MySubscription', False)
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', False)
 
         # Assert
         self.assertIsNotNone(received_msg)

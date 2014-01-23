@@ -14,22 +14,26 @@
 #--------------------------------------------------------------------------
 import unittest
 
-from azure.servicemanagement import (AffinityGroups,
-                                     AffinityGroup,
-                                     Locations,
-                                     ServiceManagementService,
-                                     )
-from util import (AzureTestCase,
-                  credentials,
-                  getUniqueName,
-                  set_service_options,
-                  )
+from azure.servicemanagement import (
+    AffinityGroups,
+    AffinityGroup,
+    Locations,
+    ServiceManagementService,
+    )
+from util import (
+    AzureTestCase,
+    credentials,
+    getUniqueName,
+    set_service_options,
+    )
 
 #------------------------------------------------------------------------------
+
+
 class AffinityGroupManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(), 
+        self.sms = ServiceManagementService(credentials.getSubscriptionId(),
                                             credentials.getManagementCertFile())
         set_service_options(self.sms)
 
@@ -41,20 +45,24 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
         try:
             if self.hosted_service_name is not None:
                 self.sms.delete_hosted_service(self.hosted_service_name)
-        except: pass
+        except:
+            pass
 
         try:
             if self.storage_account_name is not None:
                 self.sms.delete_storage_account(self.storage_account_name)
-        except: pass
+        except:
+            pass
 
         try:
             self.sms.delete_affinity_group(self.affinity_group_name)
-        except: pass
+        except:
+            pass
 
     #--Helpers-----------------------------------------------------------------
     def _create_affinity_group(self, name):
-        result = self.sms.create_affinity_group(name, 'tstmgmtaffgrp', 'West US', 'tstmgmt affinity group')
+        result = self.sms.create_affinity_group(
+            name, 'tstmgmtaffgrp', 'West US', 'tstmgmt affinity group')
         self.assertIsNone(result)
 
     def _affinity_group_exists(self, name):
@@ -71,7 +79,7 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
 
         # Act
         result = self.sms.list_affinity_groups()
-        
+
         # Assert
         self.assertIsNotNone(result)
         self.assertTrue(len(result) > 0)
@@ -95,12 +103,22 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
         self.hosted_service_name = getUniqueName('utsvc')
         self.storage_account_name = getUniqueName('utstorage')
         self._create_affinity_group(self.affinity_group_name)
-        self.sms.create_hosted_service(self.hosted_service_name, 'affgrptestlabel', 'affgrptestdesc', None, self.affinity_group_name)
-        self.sms.create_storage_account(self.storage_account_name, self.storage_account_name + 'desc', self.storage_account_name + 'label', self.affinity_group_name)
+        self.sms.create_hosted_service(
+            self.hosted_service_name,
+            'affgrptestlabel',
+            'affgrptestdesc',
+            None,
+            self.affinity_group_name)
+        self.sms.create_storage_account(
+            self.storage_account_name,
+            self.storage_account_name + 'desc',
+            self.storage_account_name + 'label',
+            self.affinity_group_name)
 
         # Act
-        result = self.sms.get_affinity_group_properties(self.affinity_group_name)
-        
+        result = self.sms.get_affinity_group_properties(
+            self.affinity_group_name)
+
         # Assert
         self.assertIsNotNone(result)
         self.assertEqual(result.name, self.affinity_group_name)
@@ -108,8 +126,11 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
         self.assertIsNotNone(result.description)
         self.assertIsNotNone(result.location)
         self.assertIsNotNone(result.hosted_services[0])
-        self.assertEqual(result.hosted_services[0].service_name, self.hosted_service_name)
-        self.assertEqual(result.hosted_services[0].hosted_service_properties.affinity_group, self.affinity_group_name)
+        self.assertEqual(
+            result.hosted_services[0].service_name, self.hosted_service_name)
+        self.assertEqual(
+            result.hosted_services[0].hosted_service_properties.affinity_group,
+            self.affinity_group_name)
         # not sure why azure does not return any storage service
         self.assertTrue(len(result.capabilities) > 0)
 
@@ -119,7 +140,8 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
         description = 'tstmgmt affinity group'
 
         # Act
-        result = self.sms.create_affinity_group(self.affinity_group_name, label, 'West US', description)
+        result = self.sms.create_affinity_group(
+            self.affinity_group_name, label, 'West US', description)
 
         # Assert
         self.assertIsNone(result)
@@ -132,11 +154,13 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
         description = 'testmgmt affinity group update'
 
         # Act
-        result = self.sms.update_affinity_group(self.affinity_group_name, label, description)
+        result = self.sms.update_affinity_group(
+            self.affinity_group_name, label, description)
 
         # Assert
         self.assertIsNone(result)
-        props = self.sms.get_affinity_group_properties(self.affinity_group_name)
+        props = self.sms.get_affinity_group_properties(
+            self.affinity_group_name)
         self.assertEqual(props.label, label)
         self.assertEqual(props.description, description)
 
@@ -157,7 +181,7 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
 
         # Act
         result = self.sms.list_locations()
-        
+
         # Assert
         self.assertIsNotNone(result)
         self.assertTrue(len(result) > 0)

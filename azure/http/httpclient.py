@@ -17,24 +17,42 @@ import os
 import sys
 
 if sys.version_info < (3,):
-    from httplib import HTTPSConnection, HTTPConnection, HTTP_PORT, HTTPS_PORT
+    from httplib import (
+        HTTPSConnection,
+        HTTPConnection,
+        HTTP_PORT,
+        HTTPS_PORT,
+        )
 else:
-    from http.client import HTTPSConnection, HTTPConnection, HTTP_PORT, HTTPS_PORT
+    from http.client import (
+        HTTPSConnection,
+        HTTPConnection,
+        HTTP_PORT,
+        HTTPS_PORT,
+        )
 
 from azure.http import HTTPError, HTTPResponse
 from azure import _USER_AGENT_STRING
 
+
 class _HTTPClient:
-    ''' 
+
+    '''
     Takes the request and sends it to cloud service and returns the response.
     '''
 
-    def __init__(self, service_instance, cert_file=None, account_name=None, account_key=None, service_namespace=None, issuer=None, protocol='https'):
+    def __init__(self, service_instance, cert_file=None, account_name=None,
+                 account_key=None, service_namespace=None, issuer=None,
+                 protocol='https'):
         '''
-        service_instance: service client instance. 
-        cert_file: certificate file name/location. This is only used in hosted service management.
+        service_instance: service client instance.
+        cert_file:
+            certificate file name/location. This is only used in hosted
+            service management.
         account_name: the storage account.
-        account_key: the storage account access key for storage services or servicebus access key for service bus service.
+        account_key:
+            the storage account access key for storage services or servicebus
+            access key for service bus service.
         service_namespace: the service namespace for service bus.
         issuer: the issuer for service bus service.
         '''
@@ -56,21 +74,21 @@ class _HTTPClient:
 
     def should_use_httplib(self):
         if sys.platform.lower().startswith('win') and self.cert_file:
-            # On Windows, auto-detect between Windows Store Certificate 
+            # On Windows, auto-detect between Windows Store Certificate
             # (winhttp) and OpenSSL .pem certificate file (httplib).
             #
-            # We used to only support certificates installed in the Windows 
+            # We used to only support certificates installed in the Windows
             # Certificate Store.
             #   cert_file example: CURRENT_USER\my\CertificateName
             #
-            # We now support using an OpenSSL .pem certificate file, 
+            # We now support using an OpenSSL .pem certificate file,
             # for a consistent experience across all platforms.
             #   cert_file example: account\certificate.pem
             #
-            # When using OpenSSL .pem certificate file on Windows, make sure 
+            # When using OpenSSL .pem certificate file on Windows, make sure
             # you are on CPython 2.7.4 or later.
 
-            # If it's not an existing file on disk, then treat it as a path in 
+            # If it's not an existing file on disk, then treat it as a path in
             # the Windows Certificate Store, which means we can't use httplib.
             if not os.path.isfile(self.cert_file):
                 return False
@@ -93,13 +111,15 @@ class _HTTPClient:
 
     def get_connection(self, request):
         ''' Create connection for the request. '''
-        protocol = request.protocol_override if request.protocol_override else self.protocol
+        protocol = request.protocol_override \
+            if request.protocol_override else self.protocol
         target_host = request.host
         target_port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
 
         if not self.use_httplib:
             import azure.http.winhttp
-            connection = azure.http.winhttp._HTTPConnection(target_host, cert_file=self.cert_file, protocol=protocol)
+            connection = azure.http.winhttp._HTTPConnection(
+                target_host, cert_file=self.cert_file, protocol=protocol)
             proxy_host = self.proxy_host
             proxy_port = self.proxy_port
         else:
@@ -115,12 +135,14 @@ class _HTTPClient:
             if protocol == 'http':
                 connection = HTTPConnection(host, int(port))
             else:
-                connection = HTTPSConnection(host, int(port), cert_file=self.cert_file)
+                connection = HTTPSConnection(
+                    host, int(port), cert_file=self.cert_file)
 
         if self.proxy_host:
             headers = None
             if self.proxy_user and self.proxy_password:
-                auth = base64.encodestring("{0}:{1}".format(self.proxy_user, self.proxy_password))
+                auth = base64.encodestring(
+                    "{0}:{1}".format(self.proxy_user, self.proxy_password))
                 headers = {'Proxy-Authorization': 'Basic {0}'.format(auth)}
             connection.set_tunnel(proxy_host, int(proxy_port), headers)
 
@@ -132,7 +154,9 @@ class _HTTPClient:
                 for i in connection._buffer:
                     if i.startswith("Host: "):
                         connection._buffer.remove(i)
-                connection.putheader('Host', "{0}:{1}".format(connection._tunnel_host, connection._tunnel_port))
+                connection.putheader(
+                    'Host', "{0}:{1}".format(connection._tunnel_host,
+                                             connection._tunnel_port))
 
         for name, value in request_headers:
             if value:
@@ -145,10 +169,10 @@ class _HTTPClient:
         if request_body:
             assert isinstance(request_body, bytes)
             connection.send(request_body)
-        elif (not isinstance(connection, HTTPSConnection) and 
+        elif (not isinstance(connection, HTTPSConnection) and
               not isinstance(connection, HTTPConnection)):
             connection.send(None)
-     
+
     def perform_request(self, request):
         ''' Sends request to cloud service server and return the response. '''
         connection = self.get_connection(request)
@@ -157,7 +181,8 @@ class _HTTPClient:
 
             if not self.use_httplib:
                 if self.proxy_host and self.proxy_user:
-                    connection.set_proxy_credentials(self.proxy_user, self.proxy_password)
+                    connection.set_proxy_credentials(
+                        self.proxy_user, self.proxy_password)
 
             self.send_request_headers(connection, request.headers)
             self.send_request_body(connection, request.body)
@@ -177,10 +202,12 @@ class _HTTPClient:
             elif resp.length > 0:
                 respbody = resp.read(resp.length)
 
-            response = HTTPResponse(int(resp.status), resp.reason, headers, respbody)
+            response = HTTPResponse(
+                int(resp.status), resp.reason, headers, respbody)
             if self.status >= 300:
-                raise HTTPError(self.status, self.message, self.respheader, respbody)
-        
+                raise HTTPError(self.status, self.message,
+                                self.respheader, respbody)
+
             return response
         finally:
             connection.close()
