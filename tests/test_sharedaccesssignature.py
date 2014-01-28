@@ -61,7 +61,6 @@ class SharedAccessSignatureTest(AzureTestCase):
         signed_identifier = 'YWJjZGVmZw=='
         sap = SharedAccessPolicy(accss_plcy, signed_identifier)
         signature = self.sas._generate_signature('images',
-                                                 RESOURCE_CONTAINER,
                                                  sap,
                                                  X_MS_VERSION)
         self.assertEqual(signature,
@@ -75,7 +74,6 @@ class SharedAccessSignatureTest(AzureTestCase):
         sap = SharedAccessPolicy(accss_plcy)
 
         signature = self.sas._generate_signature('images/pic1.png',
-                                                 RESOURCE_BLOB,
                                                  sap,
                                                  X_MS_VERSION)
         self.assertEqual(signature,

@@ -23,10 +23,10 @@ class HTTPError(Exception):
     def __init__(self, status, message, respheader, respbody):
         '''Creates a new HTTPError with the specified status, message,
         response headers and body'''
-        self.message = message
         self.status = status
         self.respheader = respheader
         self.respbody = respbody
+        Exception.__init__(self, message)
 
 
 class HTTPResponse(object):
@@ -47,7 +47,7 @@ class HTTPResponse(object):
         self.body = body
 
 
-class HTTPRequest:
+class HTTPRequest(object):
 
     '''Represents an HTTP Request.  An HTTP Request consists of the following
     attributes:

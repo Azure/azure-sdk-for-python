@@ -32,7 +32,7 @@ SHARED_ACCESS_PERMISSION = 'permission'
 #--------------------------------------------------------------------------
 
 
-class WebResource:
+class WebResource(object):
 
     '''
     Class that stands for the resource to get the share access signature
@@ -43,13 +43,13 @@ class WebResource:
     request_url: the url of the webresource include all the queries.
     '''
 
-    def __init__(self, path=None, request_url=None, properties={}):
+    def __init__(self, path=None, request_url=None, properties=None):
         self.path = path
-        self.properties = properties
+        self.properties = properties or {}
         self.request_url = request_url
 
 
-class Permission:
+class Permission(object):
 
     '''
     Permission class. Contains the path and query_string for the path.
@@ -65,7 +65,7 @@ class Permission:
         self.query_string = query_string
 
 
-class SharedAccessPolicy:
+class SharedAccessPolicy(object):
 
     ''' SharedAccessPolicy class. '''
 
@@ -74,7 +74,7 @@ class SharedAccessPolicy:
         self.access_policy = access_policy
 
 
-class SharedAccessSignature:
+class SharedAccessSignature(object):
 
     '''
     The main class used to do the signing and generating the signature.
@@ -122,7 +122,7 @@ class SharedAccessSignature:
             query_string[SIGNED_IDENTIFIER] = shared_access_policy.id
 
         query_string[SIGNED_SIGNATURE] = self._generate_signature(
-            path, resource_type, shared_access_policy, version)
+            path, shared_access_policy, version)
         return query_string
 
     def sign_request(self, web_resource):
@@ -171,10 +171,8 @@ class SharedAccessSignature:
             url_quote(query_string[SIGNED_SIGNATURE]) + '&'
         return convert_str
 
-    def _generate_signature(self, path, resource_type, shared_access_policy,
-                            version):
-        ''' Generates signature for a given path, resource_type and shared
-        access policy. '''
+    def _generate_signature(self, path, shared_access_policy, version):
+        ''' Generates signature for a given path and shared access policy. '''
 
         def get_value_to_append(value, no_new_line=False):
             return_value = ''

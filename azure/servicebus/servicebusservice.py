@@ -60,7 +60,7 @@ from azure.servicebus import (
 _tokens = {}
 
 
-class ServiceBusService:
+class ServiceBusService(object):
 
     def __init__(self, service_namespace=None, account_key=None, issuer=None,
                  x_ms_version='2011-06-01', host_base=SERVICE_BUS_HOST_BASE):
@@ -145,8 +145,8 @@ class ServiceBusService:
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_on_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_on_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -172,8 +172,8 @@ class ServiceBusService:
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_not_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_not_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -232,8 +232,8 @@ class ServiceBusService:
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_on_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_on_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -259,8 +259,8 @@ class ServiceBusService:
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_not_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_not_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -325,8 +325,8 @@ class ServiceBusService:
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_on_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_on_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -360,8 +360,8 @@ class ServiceBusService:
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_not_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_not_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -437,8 +437,8 @@ class ServiceBusService:
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_on_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_on_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -468,8 +468,8 @@ class ServiceBusService:
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_not_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_not_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -535,7 +535,7 @@ class ServiceBusService:
             'message.body', message.body)
         request.path, request.query = _update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def peek_lock_subscription_message(self, topic_name, subscription_name,
                                        timeout='60'):
@@ -602,7 +602,7 @@ class ServiceBusService:
                        '/' + _str(lock_token) + ''
         request.path, request.query = _update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def read_delete_subscription_message(self, topic_name, subscription_name,
                                          timeout='60'):
@@ -661,7 +661,7 @@ class ServiceBusService:
                        '/' + _str(lock_token) + ''
         request.path, request.query = _update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def send_queue_message(self, queue_name, message=None):
         '''
@@ -685,7 +685,7 @@ class ServiceBusService:
                                                     message.body)
         request.path, request.query = _update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def peek_lock_queue_message(self, queue_name, timeout='60'):
         '''
@@ -740,7 +740,7 @@ class ServiceBusService:
                        '/' + _str(lock_token) + ''
         request.path, request.query = _update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def read_delete_queue_message(self, queue_name, timeout='60'):
         '''
@@ -790,7 +790,7 @@ class ServiceBusService:
                        '/' + _str(lock_token) + ''
         request.path, request.query = _update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def receive_queue_message(self, queue_name, peek_lock=True, timeout=60):
         '''
@@ -834,8 +834,8 @@ class ServiceBusService:
     def _perform_request(self, request):
         try:
             resp = self._filter(request)
-        except HTTPError as e:
-            return _service_bus_error_handler(e)
+        except HTTPError as ex:
+            return _service_bus_error_handler(ex)
 
         return resp
 
@@ -847,7 +847,7 @@ class ServiceBusService:
 
         # if it is not GET or HEAD request, must set content-type.
         if not request.method in ['GET', 'HEAD']:
-            for name, value in request.headers:
+            for name, _ in request.headers:
                 if 'content-type' == name.lower():
                     break
             else:

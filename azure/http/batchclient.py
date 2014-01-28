@@ -245,7 +245,6 @@ class _BatchClient(_HTTPClient):
                     request.body += b'\n\n'
                     request.body += batch_request.body + b'\n'
                 else:
-                    find_if_match = False
                     for name, value in batch_request.headers:
                         # If-Match should be already included in
                         # batch_request.headers, but in case it is missing,
@@ -272,7 +271,7 @@ class _BatchClient(_HTTPClient):
             resp = response.body
 
             if response.status >= 300:
-                raise HTTPError(status,
+                raise HTTPError(response.status,
                                 _ERROR_BATCH_COMMIT_FAIL,
                                 self.respheader,
                                 resp)

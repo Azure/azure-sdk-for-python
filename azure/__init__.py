@@ -82,12 +82,15 @@ _WARNING_VALUE_SHOULD_BE_BYTES = \
     'Warning: {0} must be bytes data type. It will be converted ' + \
     'automatically, with utf-8 text encoding.'
 _ERROR_VALUE_SHOULD_BE_BYTES = '{0} should be of type bytes.'
-_ERROR_VALUE_SHOULD_NOT_BE_NULL = '{0} should not be None.'
-_ERROR_VALUE_SHOULD_NOT_BE_NEGATIVE = '{0} should not be negative.'
+_ERROR_VALUE_NONE = '{0} should not be None.'
+_ERROR_VALUE_NEGATIVE = '{0} should not be negative.'
 _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = \
     'Cannot serialize the specified value ({0}) to an entity.  Please use ' + \
     'an EntityProperty (which can specify custom types), int, str, bool, ' + \
     'or datetime.'
+_ERROR_PAGE_BLOB_SIZE_ALIGNMENT = \
+    'Invalid page blob size: {0}. ' + \
+    'The size must be aligned to a 512-byte boundary.'
 
 _USER_AGENT_STRING = 'pyazure/' + __version__
 
@@ -106,7 +109,7 @@ class WindowsAzureError(Exception):
     ''' WindowsAzure Excpetion base class. '''
 
     def __init__(self, message):
-        Exception.__init__(self, message)
+        super(WindowsAzureError, self).__init__(message)
 
 
 class WindowsAzureConflictError(WindowsAzureError):
@@ -115,7 +118,7 @@ class WindowsAzureConflictError(WindowsAzureError):
     exists'''
 
     def __init__(self, message):
-        WindowsAzureError.__init__(self, message)
+        super(WindowsAzureConflictError, self).__init__(message)
 
 
 class WindowsAzureMissingResourceError(WindowsAzureError):
@@ -124,10 +127,10 @@ class WindowsAzureMissingResourceError(WindowsAzureError):
     container, etc...) failed because the specified resource does not exist'''
 
     def __init__(self, message):
-        WindowsAzureError.__init__(self, message)
+        super(WindowsAzureMissingResourceError, self).__init__(message)
 
 
-class Feed:
+class Feed(object):
     pass
 
 
@@ -423,7 +426,7 @@ def _validate_type_bytes(param_name, param):
 
 def _validate_not_none(param_name, param):
     if param is None:
-        raise TypeError(_ERROR_VALUE_SHOULD_NOT_BE_NULL.format(param_name))
+        raise TypeError(_ERROR_VALUE_NONE.format(param_name))
 
 
 def _fill_list_of(xmldoc, element_type, xml_element_name):
@@ -741,6 +744,7 @@ class _dict_of(dict):
         self.pair_xml_element_name = pair_xml_element_name
         self.key_xml_element_name = key_xml_element_name
         self.value_xml_element_name = value_xml_element_name
+        super(_dict_of, self).__init__()
 
 
 class _list_of(list):
@@ -754,6 +758,7 @@ class _list_of(list):
             self.xml_element_name = list_type.__name__
         else:
             self.xml_element_name = xml_element_name
+        super(_list_of, self).__init__()
 
 
 class _scalar_list_of(list):
@@ -765,6 +770,7 @@ class _scalar_list_of(list):
     def __init__(self, list_type, xml_element_name):
         self.list_type = list_type
         self.xml_element_name = xml_element_name
+        super(_scalar_list_of, self).__init__()
 
 
 def _update_request_uri_query_local_storage(request, use_local_storage):

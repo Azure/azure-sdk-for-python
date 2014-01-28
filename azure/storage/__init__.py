@@ -44,7 +44,7 @@ from azure import (WindowsAzureData,
 X_MS_VERSION = '2012-02-12'
 
 
-class EnumResultsBase:
+class EnumResultsBase(object):
 
     ''' base class for EnumResults. '''
 
@@ -281,7 +281,7 @@ class PageRange(WindowsAzureData):
         self.end = 0
 
 
-class PageList:
+class PageList(object):
 
     ''' Page list for page blob. '''
 
@@ -433,7 +433,7 @@ def _update_storage_blob_header(request, account_name, account_key):
     request.headers.append(('x-ms-date', current_time))
     request.headers.append(
         ('Content-Type', 'application/octet-stream Charset=UTF-8'))
-    request.headers.append(('Authorization', 
+    request.headers.append(('Authorization',
                             _sign_storage_blob_request(request,
                                                        account_name,
                                                        account_key)))
@@ -450,7 +450,7 @@ def _update_storage_table_header(request):
     ''' add additional headers for storage table request. '''
 
     request = _update_storage_header(request)
-    for name, value in request.headers:
+    for name, _ in request.headers:
         if name.lower() == 'content-type':
             break
     else:
@@ -559,7 +559,6 @@ def _to_python_bool(value):
 
 def _to_entity_int(data):
     int_max = (2 << 30) - 1
-    import sys
     if data > (int_max) or data < (int_max + 1) * (-1):
         return 'Edm.Int64', str(data)
     else:

@@ -629,7 +629,7 @@ class DomainJoin(WindowsAzureData):
 
 class Credentials(WindowsAzureData):
 
-    def __init(self):
+    def __init__(self):
         self.domain = u''
         self.username = u''
         self.password = u''
@@ -821,7 +821,7 @@ def _update_management_header(request):
 
     # if it is not GET or HEAD request, must set content-type.
     if not request.method in ['GET', 'HEAD']:
-        for name, value in request.headers:
+        for name, _ in request.headers:
             if 'content-type' == name.lower():
                 break
         else:
@@ -1382,7 +1382,7 @@ def _parse_bool(value):
 class _ServiceBusManagementXmlSerializer(object):
 
     @staticmethod
-    def namespace_to_xml(name, region):
+    def namespace_to_xml(region):
         '''Converts a service bus namespace description to xml
 
         The xml format:

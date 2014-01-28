@@ -28,6 +28,8 @@ from azure.http import (
     )
 from azure.http.httpclient import _HTTPClient
 from azure.servicemanagement import (
+    AZURE_MANAGEMENT_CERTFILE,
+    AZURE_MANAGEMENT_SUBSCRIPTIONID,
     _management_error_handler,
     _parse_response_for_async_op,
     _update_management_header,
@@ -67,7 +69,7 @@ class _ServiceManagementClient(object):
         and another lambda.  The filter can perform any pre-processing on the
         request, pass it off to the next lambda, and then perform any
         post-processing on the response.'''
-        res = ServiceManagementService(self.subscription_id, self.cert_file)
+        res = type(self)(self.subscription_id, self.cert_file, self.host)
         old_filter = self._filter
 
         def new_filter(request):
@@ -91,8 +93,8 @@ class _ServiceManagementClient(object):
     def _perform_request(self, request):
         try:
             resp = self._filter(request)
-        except HTTPError as e:
-            return _management_error_handler(e)
+        except HTTPError as ex:
+            return _management_error_handler(ex)
 
         return resp
 

@@ -22,7 +22,6 @@ from ctypes import (
     c_ushort,
     c_wchar_p,
     c_byte,
-    c_size_t,
     byref,
     Structure,
     Union,
@@ -31,8 +30,6 @@ from ctypes import (
     HRESULT,
     oledll,
     WinDLL,
-    cast,
-    create_string_buffer,
     )
 import ctypes
 import sys
@@ -368,7 +365,7 @@ class _WinHttpRequest(c_void_p):
             _WinHttpRequest._Release(self)
 
 
-class _Response:
+class _Response(object):
 
     ''' Response class corresponding to the response returned from httplib
     HTTPConnection. '''
@@ -389,7 +386,7 @@ class _Response:
         return self.respbody[:_length]
 
 
-class _HTTPConnection:
+class _HTTPConnection(object):
 
     ''' Class corresponding to httplib HTTPConnection class. '''
 

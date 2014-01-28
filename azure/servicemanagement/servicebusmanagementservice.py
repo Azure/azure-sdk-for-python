@@ -82,7 +82,7 @@ class ServiceBusManagementService(_ServiceManagementClient):
 
         return self._perform_put(
             self._get_path('services/serviceBus/Namespaces', name),
-            _ServiceBusManagementXmlSerializer.namespace_to_xml(name, region))
+            _ServiceBusManagementXmlSerializer.namespace_to_xml(region))
 
     def delete_namespace(self, name):
         '''

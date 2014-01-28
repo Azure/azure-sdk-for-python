@@ -35,7 +35,7 @@ from azure.http import HTTPError, HTTPResponse
 from azure import _USER_AGENT_STRING
 
 
-class _HTTPClient:
+class _HTTPClient(object):
 
     '''
     Takes the request and sends it to cloud service and returns the response.

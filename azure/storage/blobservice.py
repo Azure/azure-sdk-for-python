@@ -16,7 +16,8 @@ from azure import (
     WindowsAzureError,
     BLOB_SERVICE_HOST_BASE,
     DEV_BLOB_HOST,
-    _ERROR_VALUE_SHOULD_NOT_BE_NEGATIVE,
+    _ERROR_VALUE_NEGATIVE,
+    _ERROR_PAGE_BLOB_SIZE_ALIGNMENT,
     _convert_class_to_xml,
     _dont_fail_not_exist,
     _dont_fail_on_exist,
@@ -35,7 +36,6 @@ from azure import (
     _update_request_uri_query_local_storage,
     _validate_type_bytes,
     _validate_not_none,
-    xml_escape,
     )
 from azure.http import HTTPRequest
 from azure.storage import (
@@ -59,6 +59,8 @@ if sys.version_info >= (3,):
 else:
     from cStringIO import StringIO as BytesIO
 
+# Keep this value sync with _ERROR_PAGE_BLOB_SIZE_ALIGNMENT
+_PAGE_SIZE = 512
 
 class BlobService(_StorageClient):
 
@@ -184,8 +186,8 @@ class BlobService(_StorageClient):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_on_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_on_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -268,7 +270,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def get_container_acl(self, container_name, x_ms_lease_id=None):
         '''
@@ -323,7 +325,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def delete_container(self, container_name, fail_not_exist=False,
                          x_ms_lease_id=None):
@@ -350,8 +352,8 @@ class BlobService(_StorageClient):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as e:
-                _dont_fail_not_exist(e)
+            except WindowsAzureError as ex:
+                _dont_fail_not_exist(ex)
                 return False
         else:
             self._perform_request(request)
@@ -508,7 +510,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def get_blob_service_properties(self, timeout=None):
         '''
@@ -596,7 +598,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def put_blob(self, container_name, blob_name, blob, x_ms_blob_type,
                  content_encoding=None, content_language=None,
@@ -688,7 +690,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def put_block_blob_from_path(self, container_name, blob_name, file_path,
                                  content_encoding=None, content_language=None,
@@ -1000,8 +1002,7 @@ class BlobService(_StorageClient):
         ]
 
         if index < 0:
-            raise TypeError(
-                _ERROR_VALUE_SHOULD_NOT_BE_NEGATIVE.format('index'))
+            raise TypeError(_ERROR_VALUE_NEGATIVE.format('index'))
 
         if count is None or count < 0:
             count = len(blob) - index
@@ -1051,7 +1052,7 @@ class BlobService(_StorageClient):
                                           progress_callback)
 
     def put_block_blob_from_text(self, container_name, blob_name, text,
-                                 text_encoding='utf-8', count=None,
+                                 text_encoding='utf-8',
                                  content_encoding=None, content_language=None,
                                  content_md5=None, cache_control=None,
                                  x_ms_blob_content_type=None,
@@ -1153,7 +1154,6 @@ class BlobService(_StorageClient):
                                 x_ms_blob_cache_control=None,
                                 x_ms_meta_name_values=None,
                                 x_ms_lease_id=None,
-                                x_ms_blob_content_length=None,
                                 x_ms_blob_sequence_number=None,
                                 progress_callback=None):
         '''
@@ -1186,10 +1186,6 @@ class BlobService(_StorageClient):
         x_ms_blob_cache_control: Optional. Sets the blob's cache control.
         x_ms_meta_name_values: A dict containing name, value for metadata.
         x_ms_lease_id: Required if the blob has an active lease.
-        x_ms_blob_content_length:
-            Required for page blobs. This header specifies the maximum size
-            for the page blob, up to 1 TB. The page blob size must be aligned
-            to a 512-byte boundary.
         x_ms_blob_sequence_number:
             Optional. Set for page blobs only. The sequence number is a
             user-controlled value that you can use to track requests. The
@@ -1285,8 +1281,10 @@ class BlobService(_StorageClient):
         _validate_not_none('count', count)
 
         if count < 0:
-            raise TypeError(
-                _ERROR_VALUE_SHOULD_NOT_BE_NEGATIVE.format('count'))
+            raise TypeError(_ERROR_VALUE_NEGATIVE.format('count'))
+
+        if count % _PAGE_SIZE != 0:
+            raise TypeError(_ERROR_PAGE_BLOB_SIZE_ALIGNMENT.format(count))
 
         if progress_callback:
             progress_callback(0, count)
@@ -1395,8 +1393,7 @@ class BlobService(_StorageClient):
         _validate_type_bytes('blob', blob)
 
         if index < 0:
-            raise TypeError(
-                _ERROR_VALUE_SHOULD_NOT_BE_NEGATIVE.format('index'))
+            raise TypeError(_ERROR_VALUE_NEGATIVE.format('index'))
 
         if count is None or count < 0:
             count = len(blob) - index
@@ -1676,7 +1673,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def lease_blob(self, container_name, blob_name, x_ms_lease_action,
                    x_ms_lease_id=None, x_ms_lease_duration=60,
@@ -1904,7 +1901,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def delete_blob(self, container_name, blob_name, snapshot=None,
                     x_ms_lease_id=None):
@@ -1934,7 +1931,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def put_block(self, container_name, blob_name, block, blockid,
                   content_md5=None, x_ms_lease_id=None):
@@ -1973,7 +1970,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def put_block_list(self, container_name, blob_name, block_list,
                        content_md5=None, x_ms_blob_cache_control=None,
@@ -2041,7 +2038,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def get_block_list(self, container_name, blob_name, snapshot=None,
                        blocklisttype=None, x_ms_lease_id=None):
@@ -2181,7 +2178,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
-        response = self._perform_request(request)
+        self._perform_request(request)
 
     def get_page_ranges(self, container_name, blob_name, snapshot=None,
                         range=None, x_ms_range=None, x_ms_lease_id=None):

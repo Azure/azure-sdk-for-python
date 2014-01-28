@@ -145,7 +145,7 @@ class _StorageClient(object):
                 text_encoding:
                 resp = resp.decode(text_encoding)
 
-        except HTTPError as e:
-            _storage_error_handler(e)
+        except HTTPError as ex:
+            _storage_error_handler(ex)
 
         return resp

@@ -17,7 +17,7 @@ from azure.storage.tableservice import TableService
 from azure.storage.queueservice import QueueService
 
 
-class CloudStorageAccount:
+class CloudStorageAccount(object):
 
     """
     Provides a factory for creating the blob, queue, and table services
