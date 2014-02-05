@@ -831,17 +831,17 @@ def _general_error_handler(http_error):
     ''' Simple error handler for azure.'''
     if http_error.status == 409:
         raise WindowsAzureConflictError(
-            _ERROR_CONFLICT.format(http_error.message))
+            _ERROR_CONFLICT.format(str(http_error)))
     elif http_error.status == 404:
         raise WindowsAzureMissingResourceError(
-            _ERROR_NOT_FOUND.format(http_error.message))
+            _ERROR_NOT_FOUND.format(str(http_error)))
     else:
         if http_error.respbody is not None:
             raise WindowsAzureError(
-                _ERROR_UNKNOWN.format(http_error.message) + '\n' + \
+                _ERROR_UNKNOWN.format(str(http_error)) + '\n' + \
                     http_error.respbody.decode('utf-8'))
         else:
-            raise WindowsAzureError(_ERROR_UNKNOWN.format(http_error.message))
+            raise WindowsAzureError(_ERROR_UNKNOWN.format(str(http_error)))
 
 
 def _parse_response_for_dict(response):

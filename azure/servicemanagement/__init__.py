@@ -1329,10 +1329,10 @@ class _XmlSerializer(object):
 
             if val is not None:
                 if converter is not None:
-                    text = _str(val)
-                    text = converter(text)
+                    text = _str(converter(_str(val)))
                 else:
                     text = _str(val)
+
                 xml += ''.join(['<', name, '>', text, '</', name, '>'])
         return xml
 
