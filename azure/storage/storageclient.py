@@ -76,6 +76,7 @@ class _StorageClient(object):
             if self.is_emulated:
                 self.account_name = DEV_ACCOUNT_NAME
                 self.account_key = DEV_ACCOUNT_KEY
+                self.protocol = 'http'
                 self.use_local_storage = True
             else:
                 self.account_name = os.environ.get(AZURE_STORAGE_ACCOUNT)
@@ -88,7 +89,7 @@ class _StorageClient(object):
             service_instance=self,
             account_key=self.account_key,
             account_name=self.account_name,
-            protocol=protocol)
+            protocol=self.protocol)
         self._batchclient = None
         self._filter = self._perform_request_worker
 
