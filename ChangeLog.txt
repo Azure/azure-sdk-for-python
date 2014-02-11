@@ -1,4 +1,4 @@
-2013-01-10 Version 0.8.0 (prerelease)
+2014-02-10 Version 0.8.0pr1
  * Migrate to using httplib on Windows. This is now the default, unless a 
    Windows Certificate Store management certificate is used. Make sure to use 
    CPython 2.7.4 or later when using OpenSSL .pem certificates on Windows.

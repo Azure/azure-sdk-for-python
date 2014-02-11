@@ -30,14 +30,14 @@ from distutils.core import setup
 # python setup.py sdist upload
 
 setup(name='azure',
-      version='0.8.0',
+      version='0.8.0pr1',
       description='Windows Azure client APIs',
       license='Apache License 2.0',
       author='Microsoft Corporation',
       author_email='ptvshelp@microsoft.com',
       url='https://github.com/WindowsAzure/azure-sdk-for-python',
       classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
