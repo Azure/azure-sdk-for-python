@@ -436,6 +436,8 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._wait_for_async(result.request_id)
         self._wait_for_deployment_status(
             service_name, deployment_name, 'Running')
+        self._assert_role_instance_endpoint(
+            service_name, deployment_name, 'utendpoint', 'tcp', '59913', '3394')
 
     def _create_vm_windows(self, service_name, deployment_name, role_name,
                            target_container_name, target_blob_name):
@@ -467,6 +469,22 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._wait_for_async(result.request_id)
         self._wait_for_deployment_status(
             service_name, deployment_name, 'Running')
+        self._assert_role_instance_endpoint(
+            service_name, deployment_name, 'utendpoint', 'tcp', '59913', '3394')
+
+    def _assert_role_instance_endpoint(self, service_name, deployment_name,
+                                       endpoint_name, protocol,
+                                       public_port, local_port):
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(len(deployment.role_instance_list), 1)
+        role_instance = deployment.role_instance_list[0]
+        self.assertEqual(len(role_instance.instance_endpoints), 1)
+        endpoint = role_instance.instance_endpoints[0]
+        self.assertEqual(endpoint.name, endpoint_name)
+        self.assertEqual(endpoint.protocol, protocol)
+        self.assertEqual(endpoint.public_port, public_port)
+        self.assertEqual(endpoint.local_port, local_port)
 
     def _add_role_windows(self, service_name, deployment_name, role_name2):
         image_name = self._windows_image_name()

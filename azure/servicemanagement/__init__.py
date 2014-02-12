@@ -245,8 +245,34 @@ class RoleInstance(WindowsAzureData):
         self.instance_state_details = u''
         self.instance_error_code = u''
         self.ip_address = u''
+        self.instance_endpoints = InstanceEndpoints()
         self.power_state = u''
         self.fqdn = u''
+
+
+class InstanceEndpoints(WindowsAzureData):
+
+    def __init__(self):
+        self.instance_endpoints = _list_of(InstanceEndpoint)
+
+    def __iter__(self):
+        return iter(self.instance_endpoints)
+
+    def __len__(self):
+        return len(self.instance_endpoints)
+
+    def __getitem__(self, index):
+        return self.instance_endpoints[index]
+
+
+class InstanceEndpoint(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.vip = u''
+        self.public_port = u''
+        self.local_port = u''
+        self.protocol = u''
 
 
 class UpgradeStatus(WindowsAzureData):
