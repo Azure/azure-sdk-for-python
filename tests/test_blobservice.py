@@ -1856,9 +1856,29 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         with self.assertRaises(WindowsAzureError):
-            self.bs.delete_blob(self.container_name, 'blob1')
+            self.bs.delete_blob (self.container_name, 'blob1')
 
         # Assert
+
+    def test_delete_blob_snapshot(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = b'hello world'
+        self.bs.put_blob(self.container_name, blob_name, data, 'BlockBlob')
+        res = self.bs.snapshot_blob(self.container_name, blob_name)
+        snapshot = res['x-ms-snapshot']
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 2)
+
+        # Act
+        self.bs.delete_blob(self.container_name, blob_name, snapshot=snapshot)
+
+        # Assert
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 1)
+        self.assertEqual(blobs[0].name, blob_name)
+        self.assertEqual(blobs[0].snapshot, '')
 
     def test_copy_blob_with_existing_blob(self):
         # Arrange
