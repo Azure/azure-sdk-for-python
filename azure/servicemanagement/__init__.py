@@ -248,6 +248,7 @@ class RoleInstance(WindowsAzureData):
         self.instance_endpoints = InstanceEndpoints()
         self.power_state = u''
         self.fqdn = u''
+        self.host_name = u''
 
 
 class InstanceEndpoints(WindowsAzureData):
