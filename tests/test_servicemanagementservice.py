@@ -182,8 +182,8 @@ class ServiceManagementServiceTest(AzureTestCase):
             result = self.sms.get_operation_status(request_id)
         self.assertEqual(result.status, 'Succeeded')
 
-    def _wait_for_deployment_status(self, service_name, deployment_name,
-                                    status):
+    def _wait_for_deployment(self, service_name, deployment_name,
+                             status='Running'):
         count = 0
         props = self.sms.get_deployment_by_name(service_name, deployment_name)
         while props.status != status:
@@ -195,8 +195,8 @@ class ServiceManagementServiceTest(AzureTestCase):
             props = self.sms.get_deployment_by_name(
                 service_name, deployment_name)
 
-    def _wait_for_role_instance_status(self, service_name, deployment_name,
-                                       role_instance_name, status):
+    def _wait_for_role(self, service_name, deployment_name, role_instance_name,
+                       status='ReadyRole'):
         count = 0
         props = self.sms.get_deployment_by_name(service_name, deployment_name)
         while self._get_role_instance_status(props, role_instance_name) != status:
@@ -398,77 +398,102 @@ class ServiceManagementServiceTest(AzureTestCase):
     def _windows_image_name(self):
         return self._image_from_category('Microsoft Windows Server Group')
 
+    def _host_name_from_role_name(self, role_name):
+        return 'hn' + role_name[-13:]
+
     def _image_from_category(self, category):
         # return the first one listed, which should be the most stable
         return [i.name for i in self.sms.list_os_images() \
             if category in i.category][0]
 
-    def _create_vm_linux(self, service_name, deployment_name, role_name,
-                         target_container_name, target_blob_name):
-        image_name = self._linux_image_name()
+    def _windows_role(self, role_name, subnet_name=None, port='59913'):
+        host_name = self._host_name_from_role_name(role_name)
+        system = self._windows_config(host_name)
+        os_hd = self._os_hd(self._windows_image_name(),
+                            self.container_name,
+                            role_name + '.vhd')
+        network = self._network_config(subnet_name, port)
+        return (system, os_hd, network)
+
+    def _linux_role(self, role_name, subnet_name=None, port='59913'):
+        host_name = self._host_name_from_role_name(role_name)
+        system = self._linux_config(host_name)
+        os_hd = self._os_hd(self._linux_image_name(),
+                            self.container_name,
+                            role_name + '.vhd')
+        network = self._network_config(subnet_name, port)
+        return (system, os_hd, network)
+
+    def _windows_config(self, hostname):
+        system = WindowsConfigurationSet(
+            hostname, 'u7;9jbp!', False, False, 'Pacific Standard Time')
+        system.domain_join = None
+        system.stored_certificate_settings.stored_certificate_settings.append(
+            CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
+        return system
+
+    def _linux_config(self, hostname):
+        pk = PublicKey(SERVICE_CERT_THUMBPRINT,
+                       u'/home/unittest/.ssh/authorized_keys')
+        pair = KeyPair(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/id_rsa')
+        system = LinuxConfigurationSet(hostname, 'unittest', 'u7;9jbp!', True)
+        system.ssh.public_keys.public_keys.append(pk)
+        system.ssh.key_pairs.key_pairs.append(pair)
+        return system
+
+    def _network_config(self, subnet_name=None, port='59913'):
+        network = ConfigurationSet()
+        network.configuration_set_type = 'NetworkConfiguration'
+        network.input_endpoints.input_endpoints.append(
+            ConfigurationSetInputEndpoint('utendpoint', 'tcp', port, '3394'))
+        if subnet_name:
+            network.subnet_names.append(subnet_name)
+        return network
+
+    def _os_hd(self, image_name, target_container_name, target_blob_name):
         media_link = 'http://' + \
             credentials.getStorageServicesName() + \
             '.blob.core.windows.net/' + target_container_name + '/' + \
             target_blob_name
-        pk = PublicKey(SERVICE_CERT_THUMBPRINT,
-                       u'/home/unittest/.ssh/authorized_keys')
-        pair = KeyPair(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/id_rsa')
-        system = LinuxConfigurationSet(
-            'computername', 'unittest', 'u7;9jbp!', True)
-        system.ssh.public_keys.public_keys.append(pk)
-        system.ssh.key_pairs.key_pairs.append(pair)
-        os_hd = OSVirtualHardDisk(
-            image_name, media_link, disk_label=target_blob_name)
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(
-            ConfigurationSetInputEndpoint('utendpoint', 'tcp', '59913', '3394'))
+        os_hd = OSVirtualHardDisk(image_name, media_link,
+                                  disk_label=target_blob_name)
+        return os_hd
 
+    def _create_vm_linux(self, service_name, deployment_name, role_name):
         self._create_hosted_service(service_name)
         self._create_service_certificate(
             service_name,
             SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
+        system, os_hd, network = self._linux_role(role_name)
+
         result = self.sms.create_virtual_machine_deployment(
-            service_name, deployment_name, 'staging',
+            service_name, deployment_name, 'production',
             deployment_name + 'label', role_name, system, os_hd,
-            network_config=network, role_size='Small')
+            network, role_size='Small')
+
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(
-            service_name, deployment_name, 'Running')
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
         self._assert_role_instance_endpoint(
             service_name, deployment_name, 'utendpoint', 'tcp', '59913', '3394')
 
-    def _create_vm_windows(self, service_name, deployment_name, role_name,
-                           target_container_name, target_blob_name):
-        image_name = self._windows_image_name()
-        media_link = 'http://' + \
-            credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + target_container_name + '/' + \
-            target_blob_name
-        system = WindowsConfigurationSet(
-            'computername', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(
-            CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
-        os_hd = OSVirtualHardDisk(
-            image_name, media_link, disk_label=target_blob_name)
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(
-            ConfigurationSetInputEndpoint('utendpoint', 'tcp', '59913', '3394'))
-
+    def _create_vm_windows(self, service_name, deployment_name, role_name):
         self._create_hosted_service(service_name)
         self._create_service_certificate(
-            service_name, SERVICE_CERT_DATA, 'pfx', SERVICE_CERT_PASSWORD)
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+
+        system, os_hd, network = self._windows_role(role_name)
 
         result = self.sms.create_virtual_machine_deployment(
-            service_name, deployment_name, 'staging',
+            service_name, deployment_name, 'production',
             deployment_name + 'label', role_name, system, os_hd,
-            network_config=network, role_size='Small')
+            network, role_size='Small')
+
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(
-            service_name, deployment_name, 'Running')
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
         self._assert_role_instance_endpoint(
             service_name, deployment_name, 'utendpoint', 'tcp', '59913', '3394')
 
@@ -486,26 +511,13 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertEqual(endpoint.public_port, public_port)
         self.assertEqual(endpoint.local_port, local_port)
 
-    def _add_role_windows(self, service_name, deployment_name, role_name2):
-        image_name = self._windows_image_name()
-        target_container_name = 'vhds'
-        target_blob_name = role_name2 + '.vhd'
-        media_link = 'http://' + \
-            credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + target_container_name + '/' + \
-            target_blob_name
+    def _add_role_windows(self, service_name, deployment_name, role_name, port):
+        system, os_hd, network = self._windows_role(role_name, port=port)
 
-        system = WindowsConfigurationSet(
-            'computer2', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(
-            CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
-
-        os_hd = OSVirtualHardDisk(image_name, media_link)
-
-        result = self.sms.add_role(
-            service_name, deployment_name, role_name2, system, os_hd)
+        result = self.sms.add_role(service_name, deployment_name, role_name,
+                                   system, os_hd, network)
         self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
     #--Test cases for hosted services ------------------------------------
     def test_list_hosted_services(self):
@@ -901,11 +913,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         result = self.sms.update_deployment_status(
             self.hosted_service_name, deployment_name, 'Running')
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(
-            self.hosted_service_name, deployment_name, 'Running')
-        self._wait_for_role_instance_status(
-            self.hosted_service_name, deployment_name, role_instance_name,
-            'ReadyRole')
+        self._wait_for_deployment(self.hosted_service_name, deployment_name)
+        self._wait_for_role(self.hosted_service_name, deployment_name,
+                            role_instance_name)
 
         # Act
         result = self.sms.reboot_role_instance(
@@ -927,11 +937,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         result = self.sms.update_deployment_status(
             self.hosted_service_name, deployment_name, 'Running')
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(
-            self.hosted_service_name, deployment_name, 'Running')
-        self._wait_for_role_instance_status(
-            self.hosted_service_name, deployment_name, role_instance_name,
-            'ReadyRole')
+        self._wait_for_deployment(self.hosted_service_name, deployment_name)
+        self._wait_for_role(self.hosted_service_name, deployment_name,
+                            role_instance_name)
 
         # Act
         result = self.sms.reimage_role_instance(
@@ -1112,8 +1120,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_linux(service_name, deployment_name,
-                              role_name, self.container_name, role_name + '.vhd')
+        self._create_vm_linux(service_name, deployment_name, role_name)
 
         # Act
         result = self.sms.get_role(service_name, deployment_name, role_name)
@@ -1151,9 +1158,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name,
-                                role_name, self.container_name,
-                                role_name + '.vhd')
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         # Act
         result = self.sms.get_role(service_name, deployment_name, role_name)
@@ -1191,14 +1196,6 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
         deployment_label = deployment_name + 'label'
-        image_name = self._linux_image_name()
-        media_link = 'http://' + \
-            credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + self.container_name + '/' + \
-            role_name + '.vhd'
-        pk = PublicKey(SERVICE_CERT_THUMBPRINT,
-                       u'/home/unittest/.ssh/authorized_keys')
-        pair = KeyPair(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/id_rsa')
 
         self._create_hosted_service(service_name)
         self._create_service_certificate(
@@ -1206,25 +1203,15 @@ class ServiceManagementServiceTest(AzureTestCase):
             SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
         # Act
-        system = LinuxConfigurationSet(
-            'unittest', 'unittest', 'u7;9jbp!', True)
-        system.ssh.public_keys.public_keys.append(pk)
-        system.ssh.key_pairs.key_pairs.append(pair)
-
-        os_hd = OSVirtualHardDisk(image_name, media_link)
-
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(
-            ConfigurationSetInputEndpoint('endpnameL', 'tcp', '59913', '3394'))
+        system, os_hd, network = self._linux_role(role_name)
 
         result = self.sms.create_virtual_machine_deployment(
-            service_name, deployment_name, 'staging', deployment_label,
-            role_name, system, os_hd, network_config=network,
-            role_size='Small')
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network, role_size='Small')
+
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(
-            service_name, deployment_name, 'Running')
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Assert
         self.assertTrue(
@@ -1239,35 +1226,22 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
         deployment_label = deployment_name + 'label'
-        image_name = self._windows_image_name()
-        media_link = 'http://' + credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + self.container_name + '/' + \
-            role_name + '.vhd'
 
         self._create_hosted_service(service_name)
         self._create_service_certificate(
-            service_name, SERVICE_CERT_DATA, 'pfx', SERVICE_CERT_PASSWORD)
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
         # Act
-        system = WindowsConfigurationSet(
-            'unittest', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(
-            CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
-
-        os_hd = OSVirtualHardDisk(image_name, media_link)
-
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(
-            ConfigurationSetInputEndpoint('endpnameW', 'tcp', '59917', '3395'))
+        system, os_hd, network = self._windows_role(role_name)
 
         result = self.sms.create_virtual_machine_deployment(
-            service_name, deployment_name, 'staging', deployment_label,
-            role_name, system, os_hd, network_config=network, role_size='Small')
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network, role_size='Small')
+
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(
-            service_name, deployment_name, 'Running')
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Assert
         self.assertTrue(
@@ -1291,9 +1265,6 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
         deployment_label = deployment_name + 'label'
-        image_name = self._windows_image_name()
-        media_link = 'http://' + storage_name + '.blob.core.windows.net/' + \
-            self.container_name + '/' + role_name + '.vhd'
 
         self._create_hosted_service(
             service_name, affinity_group=affinity_group)
@@ -1301,27 +1272,16 @@ class ServiceManagementServiceTest(AzureTestCase):
             service_name, SERVICE_CERT_DATA, 'pfx', SERVICE_CERT_PASSWORD)
 
         # Act
-        system = WindowsConfigurationSet(
-            'unittest', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(
-            CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
-
-        os_hd = OSVirtualHardDisk(image_name, media_link)
-
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(
-            ConfigurationSetInputEndpoint('endpnameW', 'tcp', '59917', '3395'))
-        network.subnet_names.append(subnet_name)
+        system, os_hd, network = self._windows_role(role_name, subnet_name)
 
         result = self.sms.create_virtual_machine_deployment(
-            service_name, deployment_name, 'staging', deployment_label,
-            role_name, system, os_hd, network_config=network,
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network,
             role_size='Small', virtual_network_name=virtual_network_name)
+
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(
-            service_name, deployment_name, 'Running')
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Assert
         self.assertTrue(
@@ -1337,33 +1297,29 @@ class ServiceManagementServiceTest(AzureTestCase):
         role_name1 = self.hosted_service_name + 'a'
         role_name2 = self.hosted_service_name + 'b'
 
-        self._create_vm_linux(service_name, deployment_name,
-                              role_name1, self.container_name,
-                              role_name1 + '.vhd')
-        self._wait_for_role_instance_status(
-            service_name, deployment_name, role_name1, 'ReadyRole')
-
-        image_name = self._linux_image_name()
-        media_link = 'http://' + credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + self.container_name + '/' + \
-            role_name2 + '.vhd'
+        self._create_vm_linux(service_name, deployment_name, role_name1)
 
         # Act
-        system = LinuxConfigurationSet(
-            'computer2', 'unittest', 'u7;9jbp!', True)
-        system.ssh = None
+        system, os_hd, network = self._linux_role(role_name2, port='59914')
+        network = None
 
-        os_hd = OSVirtualHardDisk(image_name, media_link)
-
-        result = self.sms.add_role(
-            service_name, deployment_name, role_name2, system, os_hd)
+        result = self.sms.add_role(service_name, deployment_name, role_name2,
+                                   system, os_hd, network)
         self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name2)
 
         # Assert
         self.assertTrue(
             self._role_exists(service_name, deployment_name, role_name1))
         self.assertTrue(
             self._role_exists(service_name, deployment_name, role_name2))
+
+        svc = self.sms.get_hosted_service_properties(service_name, True)
+        role_instances = svc.deployments[0].role_instance_list
+        self.assertEqual(role_instances[0].host_name,
+                         self._host_name_from_role_name(role_name1))
+        self.assertEqual(role_instances[1].host_name,
+                         self._host_name_from_role_name(role_name2))
 
     def test_add_role_windows(self):
         # Arrange
@@ -1372,28 +1328,15 @@ class ServiceManagementServiceTest(AzureTestCase):
         role_name1 = self.hosted_service_name + 'a'
         role_name2 = self.hosted_service_name + 'b'
 
-        self._create_vm_windows(service_name, deployment_name,
-                                role_name1, self.container_name, role_name1 + '.vhd')
-        self._wait_for_role_instance_status(
-            service_name, deployment_name, role_name1, 'ReadyRole')
-
-        image_name = self._windows_image_name()
-        media_link = 'http://' + credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + self.container_name + '/' + \
-            role_name2 + '.vhd'
+        self._create_vm_windows(service_name, deployment_name, role_name1)
 
         # Act
-        system = WindowsConfigurationSet(
-            'computer2', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(
-            CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
+        system, os_hd, network = self._windows_role(role_name2, port='59914')
 
-        os_hd = OSVirtualHardDisk(image_name, media_link)
-
-        result = self.sms.add_role(
-            service_name, deployment_name, role_name2, system, os_hd)
+        result = self.sms.add_role(service_name, deployment_name, role_name2, 
+                                   system, os_hd, network)
         self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name2)
 
         # Assert
         self.assertTrue(
@@ -1401,16 +1344,19 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertTrue(
             self._role_exists(service_name, deployment_name, role_name2))
 
+        svc = self.sms.get_hosted_service_properties(service_name, True)
+        role_instances = svc.deployments[0].role_instance_list
+        self.assertEqual(role_instances[0].host_name,
+                         self._host_name_from_role_name(role_name1))
+        self.assertEqual(role_instances[1].host_name,
+                         self._host_name_from_role_name(role_name2))
+
     def test_update_role(self):
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name, 'vhds',
-            self.hosted_service_name)
-        self._wait_for_role_instance_status(
-            service_name, deployment_name, role_name, 'ReadyRole')
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         network = ConfigurationSet()
         network.configuration_set_type = 'NetworkConfiguration'
@@ -1418,10 +1364,11 @@ class ServiceManagementServiceTest(AzureTestCase):
             ConfigurationSetInputEndpoint('endupdate', 'tcp', '50055', '5555'))
 
         # Act
-        result = self.sms.update_role(
-            service_name, deployment_name, role_name, network_config=network,
-            role_size='Medium')
+        result = self.sms.update_role(service_name, deployment_name, role_name,
+                                      network_config=network,
+                                      role_size='Medium')
         self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Assert
         role = self.sms.get_role(service_name, deployment_name, role_name)
@@ -1434,18 +1381,11 @@ class ServiceManagementServiceTest(AzureTestCase):
         role_name1 = self.hosted_service_name + 'a'
         role_name2 = self.hosted_service_name + 'b'
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name1, 'vhds', role_name1)
-        self._wait_for_role_instance_status(
-            service_name, deployment_name, role_name1, 'ReadyRole')
-
-        self._add_role_windows(service_name, deployment_name, role_name2)
-        self._wait_for_role_instance_status(
-            service_name, deployment_name, role_name2, 'ReadyRole')
+        self._create_vm_windows(service_name, deployment_name, role_name1)
+        self._add_role_windows(service_name, deployment_name, role_name2, '59914')
 
         # Act
-        result = self.sms.delete_role(
-            service_name, deployment_name, role_name2)
+        result = self.sms.delete_role(service_name, deployment_name, role_name2)
         self._wait_for_async(result.request_id)
 
         # Assert
@@ -1460,31 +1400,22 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name, 'vhds',
-            self.hosted_service_name)
-        self._wait_for_role_instance_status(
-            service_name, deployment_name, role_name, 'ReadyRole')
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         # Act
-        result = self.sms.shutdown_role(
-            service_name, deployment_name, role_name)
+        result = self.sms.shutdown_role(service_name, deployment_name, role_name)
         self._wait_for_async(result.request_id)
-        self._wait_for_role_instance_status(
-            service_name, deployment_name, role_name, 'StoppedVM')
+        self._wait_for_role(service_name, deployment_name, role_name, 'StoppedVM')
 
         # Act
         result = self.sms.start_role(service_name, deployment_name, role_name)
         self._wait_for_async(result.request_id)
-        self._wait_for_role_instance_status(
-            service_name, deployment_name, role_name, 'ReadyRole')
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Act
-        result = self.sms.restart_role(
-            service_name, deployment_name, role_name)
+        result = self.sms.restart_role(service_name, deployment_name, role_name)
         self._wait_for_async(result.request_id)
-        self._wait_for_role_instance_status(
-            service_name, deployment_name, role_name, 'ReadyRole')
+        self._wait_for_role(service_name, deployment_name, role_name)
 
     def test_capture_role(self):
         # Arrange
@@ -1492,9 +1423,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name, 'vhds',
-            self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         image_name = self.os_image_name
         image_label = role_name + 'captured'
@@ -1606,9 +1535,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name, 'vhds',
-            self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 1
         self._add_data_disk_from_blob_url(
@@ -1634,9 +1561,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name, 'vhds',
-            self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 2
         url = self._upload_disk_to_storage_blob('disk')
@@ -1660,9 +1585,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name, 'vhds',
-            self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 3
         label = 'disk' + str(lun)
@@ -1686,9 +1609,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name, 'vhds',
-            self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 1
         updated_lun = 10
@@ -1718,9 +1639,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name, 'vhds',
-            self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 5
         url = self._upload_disk_to_storage_blob('disk')
@@ -1791,9 +1710,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(
-            service_name, deployment_name, role_name, 'vhds',
-            self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 6
         url = self._upload_disk_to_storage_blob('disk')
