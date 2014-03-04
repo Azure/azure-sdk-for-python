@@ -60,7 +60,7 @@
     <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="data\test.vhd" />
+    <Content Include="data\testhd" />
     <Content Include="data\WindowsAzure1.cspkg" />
     <Content Include="coverage.bat" />
     <Content Include="coverage_x64.bat" />
