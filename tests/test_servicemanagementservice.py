@@ -1382,7 +1382,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         role_name2 = self.hosted_service_name + 'b'
 
         self._create_vm_windows(service_name, deployment_name, role_name1)
-        self._add_role_windows(service_name, deployment_name, role_name2)
+        self._add_role_windows(service_name, deployment_name, role_name2, '59914')
 
         # Act
         result = self.sms.delete_role(service_name, deployment_name, role_name2)
