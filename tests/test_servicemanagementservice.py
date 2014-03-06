@@ -426,7 +426,8 @@ class ServiceManagementServiceTest(AzureTestCase):
 
     def _windows_config(self, hostname):
         system = WindowsConfigurationSet(
-            hostname, 'u7;9jbp!', False, False, 'Pacific Standard Time')
+            hostname, 'u7;9jbp!', False, False, 'Pacific Standard Time',
+            'azureuser')
         system.domain_join = None
         system.stored_certificate_settings.stored_certificate_settings.append(
             CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
@@ -1424,6 +1425,10 @@ class ServiceManagementServiceTest(AzureTestCase):
         role_name = self.hosted_service_name
 
         self._create_vm_windows(service_name, deployment_name, role_name)
+
+        result = self.sms.shutdown_role(service_name, deployment_name, role_name)
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name, 'StoppedVM')
 
         image_name = self.os_image_name
         image_label = role_name + 'captured'

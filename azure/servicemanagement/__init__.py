@@ -33,7 +33,7 @@ AZURE_MANAGEMENT_CERTFILE = 'AZURE_MANAGEMENT_CERTFILE'
 AZURE_MANAGEMENT_SUBSCRIPTIONID = 'AZURE_MANAGEMENT_SUBSCRIPTIONID'
 
 # x-ms-version for service management.
-X_MS_VERSION = '2012-03-01'
+X_MS_VERSION = '2013-06-01'
 
 #-----------------------------------------------------------------------------
 # Data classes
@@ -575,7 +575,7 @@ class ConfigurationSets(WindowsAzureData):
 class ConfigurationSet(WindowsAzureData):
 
     def __init__(self):
-        self.configuration_set_type = u''
+        self.configuration_set_type = u'NetworkConfiguration'
         self.role_type = u''
         self.input_endpoints = ConfigurationSetInputEndpoints()
         self.subnet_names = _scalar_list_of(str, 'SubnetName')
@@ -635,10 +635,12 @@ class WindowsConfigurationSet(WindowsAzureData):
 
     def __init__(self, computer_name=None, admin_password=None,
                  reset_password_on_first_logon=None,
-                 enable_automatic_updates=None, time_zone=None):
+                 enable_automatic_updates=None, time_zone=None,
+                 admin_username=None):
         self.configuration_set_type = u'WindowsProvisioningConfiguration'
         self.computer_name = computer_name
         self.admin_password = admin_password
+        self.admin_username = admin_username
         self.reset_password_on_first_logon = reset_password_on_first_logon
         self.enable_automatic_updates = enable_automatic_updates
         self.time_zone = time_zone
@@ -1120,6 +1122,8 @@ class _XmlSerializer(object):
                      ('Thumbprint', cert.thumbprint)])
                 xml += '</CertificateSetting>'
             xml += '</StoredCertificateSettings>'
+        xml += _XmlSerializer.data_to_xml(
+            [('AdminUsername', configuration.admin_username)])
         return xml
 
     @staticmethod
