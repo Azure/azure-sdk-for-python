@@ -580,11 +580,14 @@ def _to_entity_float(value):
 
 
 def _to_entity_property(value):
+    if value.type == 'Edm.Binary':
+        return value.type, _encode_base64(value.value)
+
     return value.type, str(value.value)
 
 
 def _to_entity_none(value):
-    return '', ''
+    return None, None
 
 
 def _to_entity_str(value):
@@ -594,6 +597,10 @@ def _to_entity_str(value):
 # Tables of conversions to and from entity types.  We support specific
 # datatypes, and beyond that the user can use an EntityProperty to get
 # custom data type support.
+
+def _from_entity_binary(value):
+    return EntityProperty('Edm.Binary', _decode_base64_to_bytes(value))
+
 
 def _from_entity_int(value):
     return int(value)
@@ -608,6 +615,7 @@ def _from_entity_datetime(value):
     return datetime.strptime(value, format)
 
 _ENTITY_TO_PYTHON_CONVERSIONS = {
+    'Edm.Binary': _from_entity_binary,
     'Edm.Int32': _from_entity_int,
     'Edm.Int64': _from_entity_int,
     'Edm.Double': float,
@@ -664,7 +672,7 @@ def _convert_entity_to_xml(source):
     '''
 
     # construct the entity body included in <m:properties> and </m:properties>
-    entity_body = '<m:properties>{properties}</m:properties>'
+    entity_body = '<m:properties xml:space="preserve">{properties}</m:properties>'
 
     if isinstance(source, WindowsAzureData):
         source = vars(source)
@@ -687,7 +695,7 @@ def _convert_entity_to_xml(source):
 
         # form the property node
         properties_str += ''.join(['<d:', name])
-        if value == '':
+        if value is None:
             properties_str += ' m:null="true" />'
         else:
             if mtype:
@@ -826,33 +834,36 @@ def _convert_xml_to_entity(xmlstr):
     entity = Entity()
     # extract each property node and get the type from attribute and node value
     for xml_property in xml_properties[0].childNodes:
+        name = _remove_prefix(xml_property.nodeName)
+        # exclude the Timestamp since it is auto added by azure when
+        # inserting entity. We don't want this to mix with real properties
+        if name in ['Timestamp']:
+            continue
+
         if xml_property.firstChild:
-            name = _remove_prefix(xml_property.nodeName)
-            # exclude the Timestamp since it is auto added by azure when
-            # inserting entity. We don't want this to mix with real properties
-            if name in ['Timestamp']:
-                continue
             value = xml_property.firstChild.nodeValue
+        else:
+            value = ''
 
-            isnull = xml_property.getAttributeNS(METADATA_NS, 'null')
-            mtype = xml_property.getAttributeNS(METADATA_NS, 'type')
+        isnull = xml_property.getAttributeNS(METADATA_NS, 'null')
+        mtype = xml_property.getAttributeNS(METADATA_NS, 'type')
 
-            # if not isnull and no type info, then it is a string and we just
-            # need the str type to hold the property.
-            if not isnull and not mtype:
-                _set_entity_attr(entity, name, value)
-            elif isnull == 'true':
-                if mtype:
-                    property = EntityProperty(mtype, None)
-                else:
-                    property = EntityProperty('Edm.String', None)
-            else:  # need an object to hold the property
-                conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
-                if conv is not None:
-                    property = conv(value)
-                else:
-                    property = EntityProperty(mtype, value)
-                _set_entity_attr(entity, name, property)
+        # if not isnull and no type info, then it is a string and we just
+        # need the str type to hold the property.
+        if not isnull and not mtype:
+            _set_entity_attr(entity, name, value)
+        elif isnull == 'true':
+            if mtype:
+                property = EntityProperty(mtype, None)
+            else:
+                property = EntityProperty('Edm.String', None)
+        else:  # need an object to hold the property
+            conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
+            if conv is not None:
+                property = conv(value)
+            else:
+                property = EntityProperty(mtype, value)
+            _set_entity_attr(entity, name, property)
 
         # extract id, updated and name value from feed entry and set them of
         # rule.
