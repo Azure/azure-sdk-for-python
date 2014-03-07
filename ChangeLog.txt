@@ -1,6 +1,8 @@
 XXXX-XX-XX Version 0.8.0pr2 (not yet released)
  * Fixes for bugs:
    #131 Missing role instance endpoint in get_deployment_by_X
+   #140 Table Service deletes empty strings 
+   #40  Edm.Binary and null support in table storage entities
 
 2014-02-10 Version 0.8.0pr1
  * Migrate to using httplib on Windows. This is now the default, unless a 

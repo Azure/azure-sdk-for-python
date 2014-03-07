@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import base64
 import time
 import unittest
 
@@ -90,7 +91,6 @@ class TableServiceTest(AzureTestCase):
         Creates a class-based entity with fixed values, using all
         of the supported data types.
         '''
-        # TODO: Edm.Binary and null
         entity = Entity()
         entity.PartitionKey = partition
         entity.RowKey = row
@@ -114,7 +114,6 @@ class TableServiceTest(AzureTestCase):
         Creates a dictionary-based entity with fixed values, using all
         of the supported data types.
         '''
-        # TODO: Edm.Binary and null
         return {'PartitionKey': partition,
                 'RowKey': row,
                 'age': 39,
@@ -126,7 +125,6 @@ class TableServiceTest(AzureTestCase):
                 'large': 9333111000,
                 'Birthday': datetime(1973, 10, 4),
                 'birthday': datetime(1970, 10, 4),
-                'binary': EntityProperty('Edm.Binary', None),
                 'other': EntityProperty('Edm.Int64', 20),
                 'clsid': EntityProperty(
                     'Edm.Guid',
@@ -1160,6 +1158,74 @@ class TableServiceTest(AzureTestCase):
             self.ts.create_table(self.table_name)
 
         # Assert
+
+    def test_empty_and_spaces_property_value(self):
+        # Act
+        self._create_table(self.table_name)
+        self.ts.insert_entity(
+            self.table_name,
+            {
+                'PartitionKey': 'test',
+                'RowKey': 'test1',
+                'EmptyByte': '',
+                'EmptyUnicode': u'',
+                'SpacesOnlyByte': '   ',
+                'SpacesOnlyUnicode': u'   ',
+                'SpacesBeforeByte': '   Text',
+                'SpacesBeforeUnicode': u'   Text',
+                'SpacesAfterByte': 'Text   ',
+                'SpacesAfterUnicode': u'Text   ',
+                'SpacesBeforeAndAfterByte': '   Text   ',
+                'SpacesBeforeAndAfterUnicode': u'   Text   ',
+            })
+        resp = self.ts.get_entity(self.table_name, 'test', 'test1')
+        
+        # Assert
+        self.assertIsNotNone(resp)
+        self.assertEqual(resp.EmptyByte, '')
+        self.assertEqual(resp.EmptyUnicode, u'')
+        self.assertEqual(resp.SpacesOnlyByte, '   ')
+        self.assertEqual(resp.SpacesOnlyUnicode, u'   ')
+        self.assertEqual(resp.SpacesBeforeByte, '   Text')
+        self.assertEqual(resp.SpacesBeforeUnicode, u'   Text')
+        self.assertEqual(resp.SpacesAfterByte, 'Text   ')
+        self.assertEqual(resp.SpacesAfterUnicode, u'Text   ')
+        self.assertEqual(resp.SpacesBeforeAndAfterByte, '   Text   ')
+        self.assertEqual(resp.SpacesBeforeAndAfterUnicode, u'   Text   ')
+
+    def test_none_property_value(self):
+        # Act
+        self._create_table(self.table_name)
+        self.ts.insert_entity(
+            self.table_name,
+            {
+                'PartitionKey': 'test',
+                'RowKey': 'test1',
+                'NoneValue': None,
+            })
+        resp = self.ts.get_entity(self.table_name, 'test', 'test1')
+
+        # Assert
+        self.assertIsNotNone(resp)
+        self.assertFalse(hasattr(resp, 'NoneValue'))
+
+    def test_binary_property_value(self):
+        # Act
+        binary_data = b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
+        self._create_table(self.table_name)
+        self.ts.insert_entity(
+            self.table_name,
+            {
+                'PartitionKey': 'test',
+                'RowKey': 'test1',
+                'binary': EntityProperty('Edm.Binary', binary_data)
+            })
+        resp = self.ts.get_entity(self.table_name, 'test', 'test1')
+
+        # Assert
+        self.assertIsNotNone(resp)
+        self.assertEqual(resp.binary.type, 'Edm.Binary')
+        self.assertEqual(resp.binary.value, binary_data)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
