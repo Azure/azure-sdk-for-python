@@ -24,6 +24,7 @@ from azure.servicemanagement import (
     ConfigurationSetInputEndpoint,
     KeyPair,
     LinuxConfigurationSet,
+    Listener,
     OSVirtualHardDisk,
     PublicKey,
     ServiceManagementService,
@@ -431,6 +432,8 @@ class ServiceManagementServiceTest(AzureTestCase):
         system.domain_join = None
         system.stored_certificate_settings.stored_certificate_settings.append(
             CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
+        listener = Listener('Https', SERVICE_CERT_THUMBPRINT)
+        system.win_rm.listeners.listeners.append(listener)
         return system
 
     def _linux_config(self, hostname):
@@ -1190,6 +1193,7 @@ class ServiceManagementServiceTest(AzureTestCase):
             result.configuration_sets[0].input_endpoints[0].name)
         self.assertIsNotNone(
             result.configuration_sets[0].input_endpoints[0].local_port)
+        self.assertTrue(len(result.default_win_rm_certificate_thumbprint) > 0)
 
     def test_create_virtual_machine_deployment_linux(self):
         # Arrange
@@ -1417,6 +1421,39 @@ class ServiceManagementServiceTest(AzureTestCase):
         result = self.sms.restart_role(service_name, deployment_name, role_name)
         self._wait_for_async(result.request_id)
         self._wait_for_role(service_name, deployment_name, role_name)
+
+        # Act
+        result = self.sms.shutdown_role(service_name, deployment_name,
+                                        role_name, 'StoppedDeallocated')
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name,
+                            'StoppedDeallocated')
+
+    def test_shutdown_and_start_roles(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name1 = self.hosted_service_name + 'a'
+        role_name2 = self.hosted_service_name + 'b'
+
+        self._create_vm_windows(service_name, deployment_name, role_name1)
+        self._add_role_windows(service_name, deployment_name, role_name2, '59914')
+
+        # Act
+        result = self.sms.shutdown_roles(service_name, deployment_name,
+                                         [role_name1, role_name2])
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name1,
+                            'StoppedVM')
+        self._wait_for_role(service_name, deployment_name, role_name2,
+                            'StoppedVM')
+
+        # Act
+        result = self.sms.start_roles(service_name, deployment_name,
+                                      [role_name1, role_name2])
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name1)
+        self._wait_for_role(service_name, deployment_name, role_name2)
 
     def test_capture_role(self):
         # Arrange

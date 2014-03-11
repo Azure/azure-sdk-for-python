@@ -555,6 +555,7 @@ class PersistentVMRole(WindowsAzureData):
         self.data_virtual_hard_disks = DataVirtualHardDisks()
         self.os_virtual_hard_disk = OSVirtualHardDisk()
         self.role_size = u''
+        self.default_win_rm_certificate_thumbprint = u''
 
 
 class ConfigurationSets(WindowsAzureData):
@@ -646,6 +647,7 @@ class WindowsConfigurationSet(WindowsAzureData):
         self.time_zone = time_zone
         self.domain_join = DomainJoin()
         self.stored_certificate_settings = StoredCertificateSettings()
+        self.win_rm = WinRM()
 
 
 class DomainJoin(WindowsAzureData):
@@ -699,6 +701,51 @@ class CertificateSetting(WindowsAzureData):
         self.thumbprint = thumbprint
         self.store_name = store_name
         self.store_location = store_location
+
+
+class WinRM(WindowsAzureData):
+
+    '''
+    Contains configuration settings for the Windows Remote Management service on
+    the Virtual Machine.
+    '''
+
+    def __init__(self):
+        self.listeners = Listeners()
+
+
+class Listeners(WindowsAzureData):
+
+    def __init__(self):
+        self.listeners = _list_of(Listener)
+
+    def __iter__(self):
+        return iter(self.listeners)
+
+    def __len__(self):
+        return len(self.listeners)
+
+    def __getitem__(self, index):
+        return self.listeners[index]
+
+
+class Listener(WindowsAzureData):
+
+    '''
+    Specifies the protocol and certificate information for the listener.
+
+    protocol:
+        Specifies the protocol of listener.  Possible values are: Http, Https.
+        The value is case sensitive.
+    certificate_thumbprint:
+        Optional. Specifies the certificate thumbprint for the secure
+        connection. If this value is not specified, a self-signed certificate is
+        generated and used for the Virtual Machine.
+    '''
+
+    def __init__(self, protocol=u'', certificate_thumbprint=u''):
+        self.protocol = protocol
+        self.certificate_thumbprint = certificate_thumbprint
 
 
 class LinuxConfigurationSet(WindowsAzureData):
@@ -1074,16 +1121,39 @@ class _XmlSerializer(object):
             '<OperationType>RestartRoleOperation</OperationType>')
 
     @staticmethod
-    def shutdown_role_operation_to_xml():
-        return _XmlSerializer.doc_from_xml(
-            'ShutdownRoleOperation',
-            '<OperationType>ShutdownRoleOperation</OperationType>')
+    def shutdown_role_operation_to_xml(post_shutdown_action):
+        xml = _XmlSerializer.data_to_xml(
+            [('OperationType', 'ShutdownRoleOperation'),
+             ('PostShutdownAction', post_shutdown_action)])
+        return _XmlSerializer.doc_from_xml('ShutdownRoleOperation', xml)
+
+    @staticmethod
+    def shutdown_roles_operation_to_xml(role_names, post_shutdown_action):
+        xml = _XmlSerializer.data_to_xml(
+            [('OperationType', 'ShutdownRolesOperation')])
+        xml += '<Roles>'
+        for role_name in role_names:
+            xml += _XmlSerializer.data_to_xml([('Name', role_name)])
+        xml += '</Roles>'
+        xml += _XmlSerializer.data_to_xml(
+             [('PostShutdownAction', post_shutdown_action)])
+        return _XmlSerializer.doc_from_xml('ShutdownRolesOperation', xml)
 
     @staticmethod
     def start_role_operation_to_xml():
         return _XmlSerializer.doc_from_xml(
             'StartRoleOperation',
             '<OperationType>StartRoleOperation</OperationType>')
+
+    @staticmethod
+    def start_roles_operation_to_xml(role_names):
+        xml = _XmlSerializer.data_to_xml(
+            [('OperationType', 'StartRolesOperation')])
+        xml += '<Roles>'
+        for role_name in role_names:
+            xml += _XmlSerializer.data_to_xml([('Name', role_name)])
+        xml += '</Roles>'
+        return _XmlSerializer.doc_from_xml('StartRolesOperation', xml)
 
     @staticmethod
     def windows_configuration_to_xml(configuration):
@@ -1122,6 +1192,15 @@ class _XmlSerializer(object):
                      ('Thumbprint', cert.thumbprint)])
                 xml += '</CertificateSetting>'
             xml += '</StoredCertificateSettings>'
+        if configuration.win_rm is not None:
+            xml += '<WinRM><Listeners>'
+            for listener in configuration.win_rm.listeners:
+                xml += '<Listener>'
+                xml += _XmlSerializer.data_to_xml(
+                    [('Protocol', listener.protocol),
+                     ('CertificateThumbprint', listener.certificate_thumbprint)])
+                xml += '</Listener>'
+            xml += '</Listeners></WinRM>'
         xml += _XmlSerializer.data_to_xml(
             [('AdminUsername', configuration.admin_username)])
         return xml
