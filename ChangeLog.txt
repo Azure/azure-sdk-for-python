@@ -1,6 +1,8 @@
 XXXX-XX-XX Version 0.8.0pr2 (not yet released)
  * Existing service management API now targets x-ms-version 2013-06-01
  * Fixes for bugs:
+   #139 How to start "Deallocated" role
+   #127 Add WinRM options to create_virtual_machine_deployment()
    #131 Missing role instance endpoint in get_deployment_by_X
    #128 Update __init__.py for missing host_name attribute on RoleInstance
 
