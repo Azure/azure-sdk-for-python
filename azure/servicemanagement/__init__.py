@@ -257,6 +257,7 @@ class Role(WindowsAzureData):
     def __init__(self):
         self.role_name = u''
         self.os_version = u''
+        self.configuration_sets = ConfigurationSets()
 
 class PersistentVMDowntimeInfo(WindowsAzureData):
     def __init__(self):
