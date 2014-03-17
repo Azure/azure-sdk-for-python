@@ -231,6 +231,7 @@ class Deployment(WindowsAzureData):
         self.rollback_allowed = False
         self.persistent_vm_downtime_info = PersistentVMDowntimeInfo()
         self.created_time = u''
+        self.virtual_network_name = u''
         self.last_modified_time = u''
         self.extended_properties = _dict_of('ExtendedProperty', 'Name', 'Value')
 
