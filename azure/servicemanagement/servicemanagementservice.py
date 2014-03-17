@@ -30,6 +30,7 @@ from azure.servicemanagement import (AffinityGroups,
                                      Operation,
                                      HostedService,
                                      HostedServices,
+                                     VirtualNetworkSites,
                                      Images,
                                      OperatingSystems,
                                      OperatingSystemFamilies,
@@ -1383,8 +1384,17 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         _validate_not_none('disk_name', disk_name)
         return self._perform_delete(self._get_disk_path(disk_name))
+    #--Operations for virtual networks  ------------------------------
+      def list_networks(self):
+          '''
+          Retrieves a list of the virtual networks.
+          '''
+          return self._perform_get(self._get_virtual_network_site_path(), VirtualNetworkSites)
+  
+      #--Helper functions --------------------------------------------------
+    def _get_virtual_network_site_path(self):
+          return self._get_path('services/networking/virtualnetwork', None)
 
-    #--Helper functions --------------------------------------------------
     def _get_storage_service_path(self, service_name=None):
         return self._get_path('services/storageservices', service_name)
 
