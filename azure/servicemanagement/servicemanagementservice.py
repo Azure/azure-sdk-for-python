@@ -1371,15 +1371,18 @@ class ServiceManagementService(_ServiceManagementClient):
                                      label, media_link, name, os),
                                  async=True)
 
-    def delete_os_image(self, image_name):
+    def delete_os_image(self, image_name, delete_vhd=False):
         '''
         Deletes the specified OS image from your image repository.
 
         image_name: The name of the image.
+        delete_vhd: Deletes the underlying vhd blob in Azure storage.
         '''
         _validate_not_none('image_name', image_name)
-        return self._perform_delete(self._get_image_path(image_name),
-                                    async=True)
+        path = self._get_image_path(image_name)
+        if delete_vhd:
+            path += '?comp=media'
+        return self._perform_delete(path, async=True)
 
     #--Operations for virtual machine disks ------------------------------
     def get_data_disk(self, service_name, deployment_name, role_name, lun):
@@ -1522,7 +1525,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 None),
             async=True)
 
-    def delete_data_disk(self, service_name, deployment_name, role_name, lun):
+    def delete_data_disk(self, service_name, deployment_name, role_name, lun, delete_vhd=False):
         '''
         Removes the specified data disk from a virtual machine.
 
@@ -1530,15 +1533,16 @@ class ServiceManagementService(_ServiceManagementClient):
         deployment_name: The name of the deployment.
         role_name: The name of the role.
         lun: The Logical Unit Number (LUN) for the disk.
+        delete_vhd: Deletes the underlying vhd blob in Azure storage.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
         _validate_not_none('role_name', role_name)
         _validate_not_none('lun', lun)
-        return self._perform_delete(
-            self._get_data_disk_path(
-                service_name, deployment_name, role_name, lun),
-            async=True)
+        path = self._get_data_disk_path(service_name, deployment_name, role_name, lun)
+        if delete_vhd:
+            path += '?comp=media'
+        return self._perform_delete(path, async=True)
 
     #--Operations for virtual machine disks ------------------------------
     def list_disks(self):
@@ -1623,15 +1627,19 @@ class ServiceManagementService(_ServiceManagementClient):
                                      name,
                                      os))
 
-    def delete_disk(self, disk_name):
+    def delete_disk(self, disk_name, delete_vhd=False):
         '''
         Deletes the specified data or operating system disk from your image
         repository.
 
         disk_name: The name of the disk to delete.
+        delete_vhd: Deletes the underlying vhd blob in Azure storage.
         '''
         _validate_not_none('disk_name', disk_name)
-        return self._perform_delete(self._get_disk_path(disk_name))
+        path = self._get_disk_path(disk_name)
+        if delete_vhd:
+            path += '?comp=media'
+        return self._perform_delete(path)
 
     #--Helper functions --------------------------------------------------
     def _get_storage_service_path(self, service_name=None):
