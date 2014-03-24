@@ -64,7 +64,7 @@ DEPLOYMENT_UPDATE_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" 
 </ServiceConfiguration>'''
 
 CSPKG_PATH = 'data/WindowsAzure1.cspkg'
-DATA_VHD_PATH = 'data/test.vhd'
+DATA_VHD_PATH = 'data/testhd'
 
 # This blob must be created manually before running the unit tests,
 # they must be present in the storage account listed in the credentials file.
