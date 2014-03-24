@@ -123,6 +123,8 @@ class _HTTPClient(object):
             proxy_host = self.proxy_host
             proxy_port = self.proxy_port
         else:
+            if ':' in target_host:
+                target_host, _, target_port = target_host.rpartition(':')
             if self.proxy_host:
                 proxy_host = target_host
                 proxy_port = target_port

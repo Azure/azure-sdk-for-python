@@ -1260,6 +1260,22 @@ class ServiceManagementService(_ServiceManagementClient):
             _XmlSerializer.start_role_operation_to_xml(),
             async=True)
 
+    def start_roles(self, service_name, deployment_name, role_names):
+        '''
+        Starts the specified virtual machines.
+
+        service_name: The name of the service.
+        deployment_name: The name of the deployment.
+        role_names: The names of the roles, as an enumerable of strings.
+        '''
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        _validate_not_none('role_names', role_names)
+        return self._perform_post(
+            self._get_roles_operations_path(service_name, deployment_name),
+            _XmlSerializer.start_roles_operation_to_xml(role_names),
+            async=True)
+
     def restart_role(self, service_name, deployment_name, role_name):
         '''
         Restarts the specified virtual machine.
@@ -1278,22 +1294,64 @@ class ServiceManagementService(_ServiceManagementClient):
             ),
             async=True)
 
-    def shutdown_role(self, service_name, deployment_name, role_name):
+    def shutdown_role(self, service_name, deployment_name, role_name,
+                      post_shutdown_action='Stopped'):
         '''
         Shuts down the specified virtual machine.
 
         service_name: The name of the service.
         deployment_name: The name of the deployment.
         role_name: The name of the role.
+        post_shutdown_action:
+            Specifies how the Virtual Machine should be shut down. Values are:
+                Stopped
+                    Shuts down the Virtual Machine but retains the compute
+                    resources. You will continue to be billed for the resources
+                    that the stopped machine uses.
+                StoppedDeallocated
+                    Shuts down the Virtual Machine and releases the compute
+                    resources. You are not billed for the compute resources that
+                    this Virtual Machine uses. If a static Virtual Network IP
+                    address is assigned to the Virtual Machine, it is reserved.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
         _validate_not_none('role_name', role_name)
+        _validate_not_none('post_shutdown_action', post_shutdown_action)
         return self._perform_post(
             self._get_role_instance_operations_path(
                 service_name, deployment_name, role_name),
-            _XmlSerializer.shutdown_role_operation_to_xml(
-            ),
+            _XmlSerializer.shutdown_role_operation_to_xml(post_shutdown_action),
+            async=True)
+
+    def shutdown_roles(self, service_name, deployment_name, role_names,
+                       post_shutdown_action='Stopped'):
+        '''
+        Shuts down the specified virtual machines.
+
+        service_name: The name of the service.
+        deployment_name: The name of the deployment.
+        role_names: The names of the roles, as an enumerable of strings.
+        post_shutdown_action:
+            Specifies how the Virtual Machine should be shut down. Values are:
+                Stopped
+                    Shuts down the Virtual Machine but retains the compute
+                    resources. You will continue to be billed for the resources
+                    that the stopped machine uses.
+                StoppedDeallocated
+                    Shuts down the Virtual Machine and releases the compute
+                    resources. You are not billed for the compute resources that
+                    this Virtual Machine uses. If a static Virtual Network IP
+                    address is assigned to the Virtual Machine, it is reserved.
+        '''
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        _validate_not_none('role_names', role_names)
+        _validate_not_none('post_shutdown_action', post_shutdown_action)
+        return self._perform_post(
+            self._get_roles_operations_path(service_name, deployment_name),
+            _XmlSerializer.shutdown_roles_operation_to_xml(
+                role_names, post_shutdown_action),
             async=True)
 
     #--Operations for virtual machine images -----------------------------
@@ -1667,6 +1725,11 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._get_path('services/hostedservices/' + _str(service_name) +
                               '/deployments/' + deployment_name +
                               '/roleinstances', role_name) + '/Operations'
+
+    def _get_roles_operations_path(self, service_name, deployment_name):
+        return self._get_path('services/hostedservices/' + _str(service_name) +
+                              '/deployments/' + deployment_name +
+                              '/roles/Operations', None)
 
     def _get_data_disk_path(self, service_name, deployment_name, role_name,
                             lun=None):

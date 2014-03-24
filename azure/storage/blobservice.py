@@ -73,7 +73,7 @@ class BlobService(_StorageClient):
         '''
         account_name: your storage account name, required for all operations.
         account_key: your storage account key, required for all operations.
-        protocol: Optional. Protocol. Defaults to http.
+        protocol: Optional. Protocol. Defaults to https.
         host_base:
             Optional. Live host base url. Defaults to Azure url. Override this
             for on-premise.
