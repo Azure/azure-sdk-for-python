@@ -42,12 +42,12 @@ from azure.servicemanagement import (
     Subscription,
     SubscriptionCertificate,
     SubscriptionCertificates,
+    VirtualNetworkSites,
     _XmlSerializer,
     )
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
     )
-
 
 class ServiceManagementService(_ServiceManagementClient):
 
@@ -1699,7 +1699,17 @@ class ServiceManagementService(_ServiceManagementClient):
             path += '?comp=media'
         return self._perform_delete(path)
 
-    #--Helper functions --------------------------------------------------
+    #--Operations for virtual networks  ------------------------------
+    def list_virtual_network_sites(self):
+        '''
+        Retrieves a list of the virtual networks.
+        '''
+        return self._perform_get(self._get_virtual_network_site_path(), VirtualNetworkSites)
+  
+      #--Helper functions --------------------------------------------------
+    def _get_virtual_network_site_path(self):
+        return self._get_path('services/networking/virtualnetwork', None)
+
     def _get_storage_service_path(self, service_name=None):
         return self._get_path('services/storageservices', service_name)
 

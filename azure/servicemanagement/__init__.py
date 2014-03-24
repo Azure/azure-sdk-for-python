@@ -178,6 +178,53 @@ class HostedServiceProperties(WindowsAzureData):
             'ExtendedProperty', 'Name', 'Value')
 
 
+class VirtualNetworkSites(WindowsAzureData):
+
+    def __init__(self):
+        self.virtual_network_sites = _list_of(VirtualNetworkSite)
+
+    def __iter__(self):
+        return iter(self.virtual_network_sites)
+
+    def __len__(self):
+        return len(self.virtual_network_sites)
+
+    def __getitem__(self, index):
+        return self.virtual_network_sites[index]
+
+
+class VirtualNetworkSite(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.id = u''
+        self.affinity_group = u''
+        self.subnets = Subnets()
+
+
+class Subnets(WindowsAzureData):
+
+    def __init__(self):
+        self.subnets = _list_of(Subnet)
+
+    def __iter__(self):
+        return iter(self.subnets)
+
+    def __len__(self):
+        return len(self.subnets)
+
+    def __getitem__(self, index):
+        return self.subnets[index]
+
+
+class Subnet(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.address_prefix = u''
+
+
+
 class Deployments(WindowsAzureData):
 
     def __init__(self):
@@ -213,6 +260,7 @@ class Deployment(WindowsAzureData):
         self.rollback_allowed = False
         self.persistent_vm_downtime_info = PersistentVMDowntimeInfo()
         self.created_time = u''
+        self.virtual_network_name = u''
         self.last_modified_time = u''
         self.extended_properties = _dict_of(
             'ExtendedProperty', 'Name', 'Value')
@@ -327,6 +375,7 @@ class Role(WindowsAzureData):
     def __init__(self):
         self.role_name = u''
         self.os_version = u''
+        self.configuration_sets = ConfigurationSets()
 
 
 class PersistentVMDowntimeInfo(WindowsAzureData):
