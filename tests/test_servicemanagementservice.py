@@ -1597,6 +1597,15 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertEqual(result.lun, lun)
         self.assertIsNotNone(result.media_link)
 
+        service_props = self.sms.get_hosted_service_properties(service_name, True)
+        hd = service_props.deployments[0].role_list[0].data_virtual_hard_disks[0]
+        self.assertEqual(result.disk_label, hd.disk_label)
+        self.assertEqual(result.disk_name, hd.disk_name)
+        self.assertEqual(result.host_caching, hd.host_caching)
+        self.assertEqual(result.logical_disk_size_in_gb, hd.logical_disk_size_in_gb)
+        self.assertEqual(result.lun, hd.lun)
+        self.assertEqual(result.media_link, hd.media_link)
+
     def test_add_data_disk_from_disk_name(self):
         # Arrange
         service_name = self.hosted_service_name
