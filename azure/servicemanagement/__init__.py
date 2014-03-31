@@ -374,8 +374,14 @@ class Role(WindowsAzureData):
 
     def __init__(self):
         self.role_name = u''
+        self.role_type = u''
         self.os_version = u''
         self.configuration_sets = ConfigurationSets()
+        self.availability_set_name = u''
+        self.data_virtual_hard_disks = DataVirtualHardDisks()
+        self.os_virtual_hard_disk = OSVirtualHardDisk()
+        self.role_size = u''
+        self.default_win_rm_certificate_thumbprint = u''
 
 
 class PersistentVMDowntimeInfo(WindowsAzureData):
