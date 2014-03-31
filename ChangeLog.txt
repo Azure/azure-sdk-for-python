@@ -1,6 +1,8 @@
-XXXX-XX-XX Version 0.8.0pr2 (not yet released)
+2014-03-31 Version 0.8.0
  * Existing service management API now targets x-ms-version 2013-06-01
  * Fixes for bugs:
+   #145 Missing DataVirtualHardDisks in Cloud Service Properties
+   #144 Added configuration sets for role and added list virtual network function 
    #139 How to start "Deallocated" role
    #127 Add WinRM options to create_virtual_machine_deployment()
    #131 Missing role instance endpoint in get_deployment_by_X

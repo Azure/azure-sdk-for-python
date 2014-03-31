@@ -6,6 +6,8 @@ to host Python applications on Windows Azure, please see the
 [Windows Azure](http://www.windowsazure.com/en-us/develop/python/)
 Python Developer Center.
 
+The SDK supports Python 2.7, 3.3, 3.4.
+
 # Features
 
 * Tables
