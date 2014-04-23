@@ -40,7 +40,7 @@ The SDK supports Python 2.7, 3.3, 3.4.
 
 To get the source code of the SDK via **git** just type:
 
-    git clone https://github.com/WindowsAzure/azure-sdk-for-python.git
+    git clone https://github.com/Azure/azure-sdk-for-python.git
     cd ./azure-sdk-for-python
 
 ## Download Package
@@ -284,7 +284,7 @@ result = sms.create_hosted_service(name, label, desc, location=location)
 
 ### Create a Deployment
 
-To make a new deployment to Azure you must store the package file in a Microsoft Azure Blob Storage account under the same subscription as the hosted service to which the package is being uploaded. You can create a deployment package with the [Microsoft Azure PowerShell cmdlets](https://www.windowsazure.com/en-us/develop/php/how-to-guides/powershell-cmdlets/), or with the [cspack commandline tool](http://msdn.microsoft.com/en-us/library/windowsazure/gg432988.aspx).
+To make a new deployment to Azure you must store the package file in a Microsoft Azure Blob Storage account under the same subscription as the hosted service to which the package is being uploaded. You can create a deployment package with the [Microsoft Azure PowerShell cmdlets](https://www.windowsazure.com/en-us/develop/php/how-to-guides/powershell-cmdlets/), or with the [cspack commandline tool](http://msdn.microsoft.com/en-us/library/wingg432988.aspx).
 
 ```Python
 service_name = "myhostedservice"
