@@ -1,9 +1,9 @@
-# Windows Azure SDK for Python
+# Microsoft Azure SDK for Python
 
 This project provides a set of Python packages that make it easy to access
-the Windows Azure storage and queue services. For documentation on how
-to host Python applications on Windows Azure, please see the
-[Windows Azure](http://www.windowsazure.com/en-us/develop/python/)
+the Microsoft Azure storage and queue services. For documentation on how
+to host Python applications on Microsoft Azure, please see the
+[Microsoft Azure](http://www.windowsazure.com/en-us/develop/python/)
 Python Developer Center.
 
 The SDK supports Python 2.7, 3.3, 3.4.
@@ -49,11 +49,11 @@ Alternatively, to get the source code via the Python Package Index (PyPI), type
 
     %SystemDrive%\Python27\Scripts\pip.exe install azure
 
-You can use these packages against the cloud Windows Azure Services, or against
+You can use these packages against the cloud Microsoft Azure Services, or against
 the local Storage Emulator (with the exception of Service Bus features).
 
-1. To use the cloud services, you need to first create an account with Windows Azure. To use the storage services, you need to set the AZURE_STORAGE_ACCOUNT and the AZURE_STORAGE_ACCESS_KEY environment variables to the storage account name and primary access key you obtain from the Azure Portal. To use Service Bus, you need to set the AZURE_SERVICEBUS_NAMESPACE and the AZURE_SERVICEBUS_ACCESS_KEY environment variables to the service bus namespace and the default key you obtain from the Azure Portal.
-2. To use the Storage Emulator, make sure the latest version of the Windows Azure SDK is installed on the machine, and set the EMULATED environment variable to any value ("true", "1", etc.)
+1. To use the cloud services, you need to first create an account with Microsoft Azure. To use the storage services, you need to set the AZURE_STORAGE_ACCOUNT and the AZURE_STORAGE_ACCESS_KEY environment variables to the storage account name and primary access key you obtain from the Azure Portal. To use Service Bus, you need to set the AZURE_SERVICEBUS_NAMESPACE and the AZURE_SERVICEBUS_ACCESS_KEY environment variables to the service bus namespace and the default key you obtain from the Azure Portal.
+2. To use the Storage Emulator, make sure the latest version of the Microsoft Azure SDK is installed on the machine, and set the EMULATED environment variable to any value ("true", "1", etc.)
 
 # Usage
 ## Table Storage
@@ -113,7 +113,7 @@ To upload an already opened file to a blob named 'image.png', the method **put\_
 
 ```Python
 with open('uploads/image.png') as file:
-	blob_service.put_block_blob_from_file('images', 'image.png', file)
+  blob_service.put_block_blob_from_file('images', 'image.png', file)
 ```
 
 To upload unicode text, use **put\_block\_blob\_from\_text** which will do the conversion to bytes using the specified encoding.
@@ -230,13 +230,13 @@ msg = sbs.receive_subscription_message('taskdiscussion', 'client1')
 
 You  need to create two certificates, one for the server (a .cer file) and one for the client (a .pem file). To create the .pem file using [OpenSSL](http://www.openssl.org), execute this: 
 
-	openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
+  openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
 
 To create the .cer certificate, execute this: 
 
-	openssl x509 -inform pem -in mycert.pem -outform der -out mycert.cer
+  openssl x509 -inform pem -in mycert.pem -outform der -out mycert.cer
 
-After you have created the certificate, you will need to upload the .cer file to Windows Azure via the "Upload" action of the "Settings" tab of the [management portal](http://manage.windows.com).
+After you have created the certificate, you will need to upload the .cer file to Microsoft Azure via the "Upload" action of the "Settings" tab of the [management portal](http://manage.windows.com).
 
 To initialize the management service, pass in your subscription id and the path to the .pem file.
 
@@ -257,7 +257,7 @@ for location in locations:
 
 ### Create a Storage Service
 
-To create a storage service, you need a name for the service (between 3 and 24 lowercase characters and unique within Windows Azure), a label (up to 100 characters, automatically encoded to base-64), and either a location or an affinity group.
+To create a storage service, you need a name for the service (between 3 and 24 lowercase characters and unique within Microsoft Azure), a label (up to 100 characters, automatically encoded to base-64), and either a location or an affinity group.
 
 ```Python
 name = "mystorageservice"
@@ -267,11 +267,11 @@ location = 'West US'
 
 result = sms.create_storage_account(name, desc, label, location=location)
 ```
-	
-	
+  
+  
 ### Create a Cloud Service
 
-A cloud service is also known as a hosted service (from earlier versions of Windows Azure).  The **create_hosted_service** method allows you to create a new hosted service by providing a hosted service name (which must be unique in Windows Azure), a label (automatically encoded to base-64), and the location *or* the affinity group for your service. 
+A cloud service is also known as a hosted service (from earlier versions of Microsoft Azure).  The **create_hosted_service** method allows you to create a new hosted service by providing a hosted service name (which must be unique in Microsoft Azure), a label (automatically encoded to base-64), and the location *or* the affinity group for your service. 
 
 ```Python
 name = "myhostedservice"
@@ -284,7 +284,7 @@ result = sms.create_hosted_service(name, label, desc, location=location)
 
 ### Create a Deployment
 
-To make a new deployment to Azure you must store the package file in a Windows Azure Blob Storage account under the same subscription as the hosted service to which the package is being uploaded. You can create a deployment package with the [Windows Azure PowerShell cmdlets](https://www.windowsazure.com/en-us/develop/php/how-to-guides/powershell-cmdlets/), or with the [cspack commandline tool](http://msdn.microsoft.com/en-us/library/windowsazure/gg432988.aspx).
+To make a new deployment to Azure you must store the package file in a Microsoft Azure Blob Storage account under the same subscription as the hosted service to which the package is being uploaded. You can create a deployment package with the [Microsoft Azure PowerShell cmdlets](https://www.windowsazure.com/en-us/develop/php/how-to-guides/powershell-cmdlets/), or with the [cspack commandline tool](http://msdn.microsoft.com/en-us/library/windowsazure/gg432988.aspx).
 
 ```Python
 service_name = "myhostedservice"
@@ -295,28 +295,28 @@ configuration = base64.b64encode(open(file_path, 'rb').read('path_to_.cscfg_file
 label = service_name
 
 result = sms.create_deployment(service_name,
-										 slot,
-										 deployment_name,
-										 package_url,
-										 label,
-										 configuration)
+                     slot,
+                     deployment_name,
+                     package_url,
+                     label,
+                     configuration)
 
 operation = sms.get_operation_status(result.request_id)
 print('Operation status: ' + operation.status)
 ```
 
 
-** For more examples please see the [Windows Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python) **
+** For more examples please see the [Microsoft Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python) **
 
 # Need Help?
 
-Be sure to check out the Windows Azure [Developer Forums on Stack Overflow](http://go.microsoft.com/fwlink/?LinkId=234489) if you have trouble with the provided code.
+Be sure to check out the Microsoft Azure [Developer Forums on Stack Overflow](http://go.microsoft.com/fwlink/?LinkId=234489) if you have trouble with the provided code.
 
 # Contribute Code or Provide Feedback
 
-If you would like to become an active contributor to this project please follow the instructions provided in [Windows Azure Projects Contribution Guidelines](http://windowsazure.github.com/guidelines.html).
+If you would like to become an active contributor to this project please follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](http://windowsazure.github.com/guidelines.html).
 
 If you encounter any bugs with the library please file an issue in the [Issues](https://github.com/WindowsAzure/azure-sdk-for-python/issues) section of the project.
 
 # Learn More
-[Windows Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python/)
+[Microsoft Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python/)
