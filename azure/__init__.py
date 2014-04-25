@@ -130,6 +130,15 @@ class WindowsAzureMissingResourceError(WindowsAzureError):
         super(WindowsAzureMissingResourceError, self).__init__(message)
 
 
+class WindowsAzureBatchOperationError(WindowsAzureError):
+
+    '''Indicates that a batch operation failed'''
+
+    def __init__(self, message, code):
+        super(WindowsAzureBatchOperationError, self).__init__(message)
+        self.code = code
+
+
 class Feed(object):
     pass
 

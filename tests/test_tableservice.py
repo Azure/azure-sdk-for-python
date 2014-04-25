@@ -19,7 +19,7 @@ import time
 import unittest
 
 from datetime import datetime
-from azure import WindowsAzureError
+from azure import WindowsAzureError, WindowsAzureBatchOperationError
 from azure.storage import (
     Entity,
     EntityProperty,
@@ -894,6 +894,53 @@ class TableServiceTest(AzureTestCase):
         # Assert
         self.assertEqual('value1', entity.test2)
         self.assertEqual(1234567890, entity.test4)
+
+    def test_batch_update_if_match(self):
+        # Arrange
+        entities = self._create_table_with_default_entities(self.table_name, 1)
+
+        # Act
+        sent_entity = self._create_updated_entity_dict('MyPartition', '1')
+        self.ts.begin_batch()
+        resp = self.ts.update_entity(
+            self.table_name,
+            'MyPartition', '1', sent_entity, if_match=entities[0].etag)
+        self.ts.commit_batch()
+
+        # Assert
+        self.assertIsNone(resp)
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
+        self._assert_updated_entity(received_entity)
+
+    def test_batch_update_if_doesnt_match(self):
+        # Arrange
+        entities = self._create_table_with_default_entities(self.table_name, 2)
+
+        # Act
+        sent_entity1 = self._create_updated_entity_dict('MyPartition', '1')
+        sent_entity2 = self._create_updated_entity_dict('MyPartition', '2')
+        self.ts.begin_batch()
+        self.ts.update_entity(
+            self.table_name, 'MyPartition', '1', sent_entity1,
+            if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
+        self.ts.update_entity(
+            self.table_name, 'MyPartition', '2', sent_entity2)
+        try:
+            self.ts.commit_batch()
+        except WindowsAzureBatchOperationError as error:
+            self.assertEqual(error.code, 'UpdateConditionNotSatisfied')
+            self.assertTrue(str(error).startswith('0:The update condition specified in the request was not satisfied.'))
+        else:
+            self.fail('WindowsAzureBatchOperationError was expected')
+
+        # Assert
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '1')
+        self._assert_default_entity(received_entity)
+        received_entity = self.ts.get_entity(
+            self.table_name, 'MyPartition', '2')
+        self._assert_default_entity(received_entity)
 
     def test_batch_insert_replace(self):
         # Arrange
