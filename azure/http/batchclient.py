@@ -18,6 +18,7 @@ import uuid
 from azure import (
     _update_request_uri_query,
     WindowsAzureError,
+    WindowsAzureBatchOperationError,
     _get_children_from_path,
     url_unquote,
     _ERROR_CANNOT_FIND_PARTITION_KEY,
@@ -27,7 +28,7 @@ from azure import (
     _ERROR_DUPLICATE_ROW_KEY_IN_BATCH,
     _ERROR_BATCH_COMMIT_FAIL,
     )
-from azure.http import HTTPError, HTTPRequest
+from azure.http import HTTPError, HTTPRequest, HTTPResponse
 from azure.http.httpclient import _HTTPClient
 from azure.storage import (
     _update_storage_table_header,
@@ -240,6 +241,11 @@ class _BatchClient(_HTTPClient):
                 if not batch_request.method == 'DELETE':
                     request.body += \
                         b'Content-Type: application/atom+xml;type=entry\n'
+                    for name, value in batch_request.headers:
+                        if name == 'If-Match':
+                            request.body += name.encode('utf-8') + b': '
+                            request.body += value.encode('utf-8') + b'\n'
+                            break
                     request.body += b'Content-Length: '
                     request.body += str(len(batch_request.body)).encode('utf-8')
                     request.body += b'\n\n'
@@ -268,15 +274,66 @@ class _BatchClient(_HTTPClient):
 
             # Submit the whole request as batch request.
             response = self.perform_request(request)
-            resp = response.body
-
             if response.status >= 300:
                 raise HTTPError(response.status,
                                 _ERROR_BATCH_COMMIT_FAIL,
                                 self.respheader,
-                                resp)
-            return resp
+                                response.body)
+
+            # http://www.odata.org/documentation/odata-version-2-0/batch-processing/
+            # The body of a ChangeSet response is either a response for all the
+            # successfully processed change request within the ChangeSet,
+            # formatted exactly as it would have appeared outside of a batch, 
+            # or a single response indicating a failure of the entire ChangeSet.
+            responses = self._parse_batch_response(response.body)
+            if responses and responses[0].status >= 300:
+                self._report_batch_error(responses[0])
 
     def cancel_batch(self):
         ''' Resets the batch flag. '''
         self.is_batch = False
+
+    def _parse_batch_response(self, body):
+        parts = body.split(b'--changesetresponse_')
+
+        responses = []
+        for part in parts:
+            httpLocation = part.find(b'HTTP/')
+            if httpLocation > 0:
+                response = self._parse_batch_response_part(part[httpLocation:])
+                responses.append(response)
+
+        return responses
+
+    def _parse_batch_response_part(self, part):
+        lines = part.splitlines();
+
+        # First line is the HTTP status/reason
+        status, _, reason = lines[0].partition(b' ')[2].partition(b' ')
+
+        # Followed by headers and body
+        headers = []
+        body = b''
+        isBody = False
+        for line in lines[1:]:
+            if line == b'' and not isBody:
+                isBody = True
+            elif isBody:
+                body += line
+            else:
+                headerName, _, headerVal = line.partition(b':')
+                headers.append((headerName.lower(), headerVal))
+
+        return HTTPResponse(int(status), reason.strip(), headers, body)
+
+    def _report_batch_error(self, response):
+        xml = response.body.decode('utf-8')
+        doc = minidom.parseString(xml)
+
+        n = _get_children_from_path(doc, (METADATA_NS, 'error'), 'code')
+        code = n[0].firstChild.nodeValue if n and n[0].firstChild else ''
+
+        n = _get_children_from_path(doc, (METADATA_NS, 'error'), 'message')
+        message = n[0].firstChild.nodeValue if n and n[0].firstChild else xml
+
+        raise WindowsAzureBatchOperationError(message, code)
