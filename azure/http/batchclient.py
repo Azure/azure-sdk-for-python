@@ -285,27 +285,27 @@ class _BatchClient(_HTTPClient):
             # successfully processed change request within the ChangeSet,
             # formatted exactly as it would have appeared outside of a batch, 
             # or a single response indicating a failure of the entire ChangeSet.
-            responses = self._parseBatchResponse(response.body)
+            responses = self._parse_batch_response(response.body)
             if responses and responses[0].status >= 300:
-                self._reportBatchError(responses[0])
+                self._report_batch_error(responses[0])
 
     def cancel_batch(self):
         ''' Resets the batch flag. '''
         self.is_batch = False
 
-    def _parseBatchResponse(self, body):
+    def _parse_batch_response(self, body):
         parts = body.split(b'--changesetresponse_')
 
         responses = []
         for part in parts:
             httpLocation = part.find(b'HTTP/')
             if httpLocation > 0:
-                response = self._parseBatchResponsePart(part[httpLocation:])
+                response = self._parse_batch_response_part(part[httpLocation:])
                 responses.append(response)
 
         return responses
 
-    def _parseBatchResponsePart(self, part):
+    def _parse_batch_response_part(self, part):
         status, _, part = part.partition(b' ')[2].partition(b' ')
         reason, _, part = part.partition(b'\n')
         headers = []
@@ -323,7 +323,7 @@ class _BatchClient(_HTTPClient):
 
         return HTTPResponse(int(status), reason.strip(), headers, body)
 
-    def _reportBatchError(self, response):
+    def _report_batch_error(self, response):
         xml = response.body.decode('utf-8')
         doc = minidom.parseString(xml)
 
