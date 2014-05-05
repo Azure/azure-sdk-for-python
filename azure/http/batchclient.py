@@ -306,13 +306,16 @@ class _BatchClient(_HTTPClient):
         return responses
 
     def _parse_batch_response_part(self, part):
-        status, _, part = part.partition(b' ')[2].partition(b' ')
-        reason, _, part = part.partition(b'\n')
+        lines = part.splitlines();
+
+        # First line is the HTTP status/reason
+        status, _, reason = lines[0].partition(b' ')[2].partition(b' ')
+
+        # Followed by headers and body
         headers = []
         body = b''
-
         isBody = False
-        for line in part.splitlines():
+        for line in lines[1:]:
             if line == b'' and not isBody:
                 isBody = True
             elif isBody:
