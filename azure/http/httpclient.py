@@ -212,8 +212,6 @@ class _HTTPClient(object):
                 new_url = urlparse(dict(headers)['location'])
                 request.host = new_url.hostname
                 request.path = new_url.path
-                if new_url.query:
-                    request.path += '?' + new_url.query
                 request.path, request.query = _update_request_uri_query(request)
                 return self.perform_request(request)
             if self.status >= 300:
