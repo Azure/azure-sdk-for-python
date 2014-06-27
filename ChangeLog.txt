@@ -1,3 +1,10 @@
+2014-06-26 Version 0.8.1
+ * Fixes for bugs:
+   #149 Table storage batch client doesn't validate etag
+   #129 Inconsistent WindowsAzure Errors
+
+ Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129).
+
 2014-03-31 Version 0.8.0
  * Existing service management API now targets x-ms-version 2013-06-01
  * Fixes for bugs:
