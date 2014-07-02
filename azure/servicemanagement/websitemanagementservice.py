@@ -14,16 +14,23 @@
 #--------------------------------------------------------------------------
 from azure import (
     MANAGEMENT_HOST,
+    _str,
     )
 from azure.servicemanagement import (
     WebSpaces,
+    WebSpace,
     Sites,
+    Site,
     )
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
     )
 
 class WebsiteManagementService(_ServiceManagementClient):
+    ''' Note that this class is a preliminary work on WebSite
+        management. Since it lack a lot a features, final version
+        can be slightly different from the current one.
+    '''
 
     def __init__(self, subscription_id=None, cert_file=None,
                  host=MANAGEMENT_HOST):
@@ -38,6 +45,13 @@ class WebsiteManagementService(_ServiceManagementClient):
         return self._perform_get(self._get_list_webspaces_path(),
                                  WebSpaces)
 
+    def get_webspace(self, webspace_name):
+        '''
+        Get details of a specific webspace.
+        '''
+        return self._perform_get(self._get_webspace_details_path(webspace_name),
+                                 WebSpace)
+
     def list_sites(self, webspace_name):
         '''
         List the web sites defined on this webspace.
@@ -45,10 +59,25 @@ class WebsiteManagementService(_ServiceManagementClient):
         return self._perform_get(self._get_sites_path(webspace_name),
                                  Sites)
 
+    def get_site(self, webspace_name, website_name):
+        '''
+        List the web sites defined on this webspace.
+        '''
+        return self._perform_get(self._get_sites_details_path(webspace_name,
+                                                              website_name),
+                                 Site)
+
     #--Helper functions --------------------------------------------------
     def _get_list_webspaces_path(self):
         return self._get_path('services/webspaces', None)
 
+    def _get_webspace_details_path(self, webspace_name):
+        return self._get_path('services/webspaces/', webspace_name)
+
     def _get_sites_path(self, webspace_name):
         return self._get_path('services/webspaces/',
                               webspace_name) + '/sites'
+
+    def _get_sites_details_path(self, webspace_name, website_name):
+        return self._get_path('services/webspaces/',
+                              webspace_name) + '/sites/' + _str(website_name) 

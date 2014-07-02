@@ -21,7 +21,9 @@ from azure.servicemanagement.websitemanagementservice import (
 
 from azure.servicemanagement import (
     WebSpaces,
+    WebSpace,
     Sites,
+    Site,
     )
 
 from .util import (
@@ -56,15 +58,26 @@ class WebSiteServiceTest(AzureTestCase):
         
         webspace = None
         for temp in result:
-            if temp.name == 'EastUSwebspace':
+            # I need lower()?
+            if temp.name.lower() == 'eastuswebspace':
                 webspace = temp
                 break
         self.assertEqual(webspace.geo_location, 'BLU')
         self.assertEqual(webspace.geo_region, 'East US')
 
+    def test_get_web_space(self):
+        result = self.wss.get_webspace('eastuswebspace')
+        
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, WebSpace)
+        
+        self.assertEqual(result.geo_location, 'BLU')
+        self.assertEqual(result.geo_region, 'East US')
+
     @unittest.skip
     def test_list_web_sites(self):
-        result = self.wss.list_sites('EastUSwebspace')
+        result = self.wss.list_sites('eastuswebspace')
         
         # Assert
         self.assertIsNotNone(result)
@@ -72,3 +85,13 @@ class WebSiteServiceTest(AzureTestCase):
         
         self.assertTrue(len(result) > 0)
         
+    @unittest.skip
+    def test_get_web_site(self):
+        result = self.wss.get_site('eastuswebspace',
+                                   'mywebsite')
+        
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, Site)
+        
+        self.assertTrue(len(result) > 0)
