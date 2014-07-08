@@ -56,6 +56,7 @@
     <Compile Include="test_servicebusservice.py" />
     <Compile Include="test_storagemanagementservice.py" />
     <Compile Include="test_tableservice.py" />
+    <Compile Include="test_websitemanagementservice.py" />
     <Compile Include="util.py" />
     <Compile Include="__init__.py" />
   </ItemGroup>
