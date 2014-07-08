@@ -940,6 +940,86 @@ class ServiceBusNamespace(WindowsAzureData):
         self.subscription_id = u''
         self.enabled = False
 
+class WebSpaces(WindowsAzureData):
+
+    def __init__(self):
+        self.web_space = _list_of(WebSpace)
+
+    def __iter__(self):
+        return iter(self.web_space)
+
+    def __len__(self):
+        return len(self.web_space)
+
+    def __getitem__(self, index):
+        return self.web_space[index]
+    
+class WebSpace(WindowsAzureData):
+    
+    def __init__(self):
+        self.availability_state = u''
+        self.geo_location = u''
+        self.geo_region = u''
+        self.name = u''
+        self.plan = u''
+        self.status = u''
+        self.subscription = u''
+
+class Sites(WindowsAzureData):
+
+    def __init__(self):
+        self.site = _list_of(Site)
+
+    def __iter__(self):
+        return iter(self.site)
+
+    def __len__(self):
+        return len(self.site)
+
+    def __getitem__(self, index):
+        return self.site[index]
+    
+class Site(WindowsAzureData):
+    
+    def __init__(self):
+        self.admin_enabled = False
+        self.availability_state = ''
+        self.compute_mode = ''
+        self.enabled = False
+        self.enabled_host_names = _scalar_list_of(str, 'a:string')
+        self.host_name_ssl_states = HostNameSslStates()
+        self.host_names = _scalar_list_of(str, 'a:string')
+        self.last_modified_time_utc = ''
+        self.name = ''
+        self.repository_site_name = ''
+        self.self_link = ''
+        self.server_farm = ''
+        self.site_mode = ''
+        self.state = ''
+        self.storage_recovery_default_state = ''
+        self.usage_state = ''
+        self.web_space = ''
+
+class HostNameSslStates(WindowsAzureData):
+
+    def __init__(self):
+        self.host_name_ssl_state = _list_of(HostNameSslState)
+
+    def __iter__(self):
+        return iter(self.host_name_ssl_state)
+
+    def __len__(self):
+        return len(self.host_name_ssl_state)
+
+    def __getitem__(self, index):
+        return self.host_name_ssl_state[index]
+
+class HostNameSslState(WindowsAzureData):
+    
+    def __init__(self):
+        self.name = u''
+        self.ssl_state = u''
+    
 
 def _update_management_header(request):
     ''' Add additional headers for management. '''
