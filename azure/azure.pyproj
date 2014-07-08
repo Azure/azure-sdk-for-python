@@ -40,6 +40,7 @@
     <Compile Include="servicemanagement\servicebusmanagementservice.py" />
     <Compile Include="servicemanagement\servicemanagementclient.py" />
     <Compile Include="servicemanagement\servicemanagementservice.py" />
+    <Compile Include="servicemanagement\websitemanagementservice.py" />
     <Compile Include="servicemanagement\__init__.py" />
     <Compile Include="servicebus\servicebusservice.py" />
     <Compile Include="storage\blobservice.py" />
