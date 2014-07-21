@@ -705,7 +705,7 @@ def _convert_entity_to_xml(source):
 
     if sys.version_info < (3,):
         if isinstance(properties_str, unicode):
-            properties_str = properties_str.encode(encoding='utf-8')
+            properties_str = properties_str.encode('utf-8')
 
     # generate the entity_body
     entity_body = entity_body.format(properties=properties_str)
