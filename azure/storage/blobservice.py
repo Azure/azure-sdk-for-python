@@ -1541,7 +1541,7 @@ class BlobService(_StorageClient):
 
             index = 0
             while index < blob_size:
-                chunk_range = 'bytes={}-{}'.format(
+                chunk_range = 'bytes={0}-{1}'.format(
                     index,
                     index + self._BLOB_MAX_CHUNK_DATA_SIZE - 1)
                 data = self.get_blob(
