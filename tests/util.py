@@ -18,6 +18,7 @@ import random
 import sys
 import time
 import unittest
+from contextlib import contextmanager
 
 if sys.version_info < (3,):
     from exceptions import RuntimeError
@@ -159,3 +160,43 @@ class AzureTestCase(unittest.TestCase):
                 standardMsg = '{0} unexpectedly found in {1}'.format(
                     repr(item_name), repr(container))
                 self.fail(self._formatMessage(msg, standardMsg))
+
+    if sys.version_info < (2,7):
+        def assertIsNone(self, obj):
+            self.assertEqual(obj, None)
+
+        def assertIsNotNone(self, obj):
+            self.assertNotEqual(obj, None)
+
+        def assertIsInstance(self, obj, type):
+            self.assertTrue(isinstance(obj, type))
+
+        def assertGreaterEqual(self, a, b):
+            self.assertTrue(a >= b)
+
+        def assertLessEqual(self, a, b):
+            self.assertTrue(a <= b)
+
+        def assertIn(self, member, container):
+            if member not in container:
+                self.fail('{0} not found in {1}.'.format(
+                    safe_repr(member), safe_repr(container)))
+
+        @contextmanager
+        def _assertRaisesContextManager(self, excClass):
+            try:
+                yield
+                self.fail('{0} was not raised'.format(safe_repr(excClass)))
+            except excClass:
+                pass
+
+        def assertRaises(self, excClass, callableObj=None, *args, **kwargs):
+            if callableObj:
+                super(AzureTestCase, self).assertRaises(
+                    excClass,
+                    callableObj,
+                    *args,
+                    **kwargs
+                )
+            else:
+                return self._assertRaisesContextManager(excClass)
