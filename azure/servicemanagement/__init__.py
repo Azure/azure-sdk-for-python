@@ -1019,7 +1019,46 @@ class HostNameSslState(WindowsAzureData):
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
+
+class Servers(WindowsAzureData):
+
+    def __init__(self):
+        self.server = _list_of(Server)
+
+    def __iter__(self):
+        return iter(self.server)
+
+    def __len__(self):
+        return len(self.server)
+
+    def __getitem__(self, index):
+        return self.server[index]
     
+class Server(WindowsAzureData):
+    
+    def __init__(self):
+        self.name = u''
+        self.administrator_login = u''
+        self.location = u''
+        self.fully_qualified_domain_name = u''
+        self.version = u''
+        
+class Database(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.id = 0
+        self.edition = u''
+        self.collation_name = u''
+        self.creation_date = u''
+        self.is_federation_root = False
+        self.is_system_object = False
+        self.max_size_bytes = 0
+
 
 def _update_management_header(request):
     ''' Add additional headers for management. '''
