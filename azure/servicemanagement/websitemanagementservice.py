@@ -21,6 +21,8 @@ from azure.servicemanagement import (
     WebSpace,
     Sites,
     Site,
+    MetricResponses,
+    MetricDefinitions,
     )
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
@@ -66,6 +68,34 @@ class WebsiteManagementService(_ServiceManagementClient):
         return self._perform_get(self._get_sites_details_path(webspace_name,
                                                               website_name),
                                  Site)
+        
+    def get_historical_usage_metrics(self, webspace_name, website_name,
+                                     metrics = None, start_time=None, end_time=None, time_grain=None):
+        '''
+        Get historical usage metrics
+        metrics is optional and can be a list of metrics name. Otherwise, all metrics returned.
+        start_time is optional and can be a ISO8601 date. Otherwise, current hour is used.
+        end_time is optional and can be a ISO8601 date. Otherwise, current time is used.
+        time_grain is optional and be a rollup name, as P1D. OTherwise, default rollup for the metrics is used.
+        More information and metrics name at:
+        http://msdn.microsoft.com/en-us/library/azure/dn166964.aspx
+        '''        
+        metrics = ('names='+','.join(metrics)) if metrics else ''
+        start_time = ('StartTime='+start_time) if start_time else ''
+        end_time = ('EndTime='+end_time) if end_time else ''
+        time_grain = ('TimeGrain='+time_grain) if time_grain else ''
+        parameters = ('&'.join(v for v in (metrics, start_time, end_time, time_grain) if v))
+        parameters = '?'+parameters if parameters else ''
+        return self._perform_get(self._get_historical_usage_metrics_path(webspace_name, website_name) + parameters,
+                                 MetricResponses)
+
+    def get_metric_definitions(self, webspace_name, website_name):
+        '''
+        Get metric definitions of metrics available of this web site
+        '''
+        return self._perform_get(self._get_metric_definitions_path(webspace_name, website_name),
+                                 MetricDefinitions)
+        
 
     #--Helper functions --------------------------------------------------
     def _get_list_webspaces_path(self):
@@ -80,4 +110,12 @@ class WebsiteManagementService(_ServiceManagementClient):
 
     def _get_sites_details_path(self, webspace_name, website_name):
         return self._get_path('services/webspaces/',
-                              webspace_name) + '/sites/' + _str(website_name) 
+                              webspace_name) + '/sites/' + _str(website_name)
+
+    def _get_historical_usage_metrics_path(self, webspace_name, website_name):
+        return self._get_path('services/webspaces/',
+                              webspace_name) + '/sites/' + _str(website_name) + '/metrics/' 
+                               
+    def _get_metric_definitions_path(self, webspace_name, website_name):
+        return self._get_path('services/webspaces/',
+                              webspace_name) + '/sites/' + _str(website_name) + '/metricdefinitions/' 
