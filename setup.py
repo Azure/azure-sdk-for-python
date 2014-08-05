@@ -30,7 +30,7 @@ from distutils.core import setup
 # python setup.py sdist upload
 
 setup(name='azure',
-      version='0.7.1',
+      version='0.7.1.1',
       description='Windows Azure client APIs',
       license='Apache License 2.0',
       author='Microsoft Corporation',
