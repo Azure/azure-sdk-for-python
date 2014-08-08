@@ -12,19 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from ctypes import c_void_p, c_long, c_ulong, c_longlong, c_ulonglong, c_short, c_ushort, c_wchar_p, c_byte, c_size_t
-from ctypes import byref, Structure, Union, POINTER, WINFUNCTYPE, HRESULT, oledll, WinDLL, cast, create_string_buffer
+from ctypes import (
+    c_void_p,
+    c_long,
+    c_ulong,
+    c_longlong,
+    c_ulonglong,
+    c_short,
+    c_ushort,
+    c_wchar_p,
+    c_byte,
+    byref,
+    Structure,
+    Union,
+    POINTER,
+    WINFUNCTYPE,
+    HRESULT,
+    oledll,
+    WinDLL,
+    )
 import ctypes
-import urllib2  
+import sys
+
+if sys.version_info >= (3,):
+    def unicode(text):
+        return text
 
 #------------------------------------------------------------------------------
 #  Constants that are used in COM operations
 VT_EMPTY = 0
-VT_NULL	= 1
+VT_NULL = 1
 VT_I2 = 2
 VT_I4 = 3
-VT_BSTR	= 8
-VT_BOOL	= 11
+VT_BSTR = 8
+VT_BOOL = 11
 VT_I1 = 16
 VT_UI1 = 17
 VT_UI2 = 18
@@ -55,24 +76,26 @@ _SysAllocString.argtypes = [c_wchar_p]
 _SysFreeString = _oleaut32.SysFreeString
 _SysFreeString.argtypes = [c_void_p]
 
-#SAFEARRAY* 
-#SafeArrayCreateVector(_In_ VARTYPE vt,_In_ LONG lLbound,_In_ ULONG cElements);
+# SAFEARRAY*
+# SafeArrayCreateVector(_In_ VARTYPE vt,_In_ LONG lLbound,_In_ ULONG
+# cElements);
 _SafeArrayCreateVector = _oleaut32.SafeArrayCreateVector
 _SafeArrayCreateVector.restype = c_void_p
 _SafeArrayCreateVector.argtypes = [c_ushort, c_long, c_ulong]
 
-#HRESULT 
-#SafeArrayAccessData(_In_ SAFEARRAY *psa, _Out_ void **ppvData);
+# HRESULT
+# SafeArrayAccessData(_In_ SAFEARRAY *psa, _Out_ void **ppvData);
 _SafeArrayAccessData = _oleaut32.SafeArrayAccessData
 _SafeArrayAccessData.argtypes = [c_void_p, POINTER(c_void_p)]
 
-#HRESULT 
-#SafeArrayUnaccessData(_In_ SAFEARRAY *psa);
+# HRESULT
+# SafeArrayUnaccessData(_In_ SAFEARRAY *psa);
 _SafeArrayUnaccessData = _oleaut32.SafeArrayUnaccessData
 _SafeArrayUnaccessData.argtypes = [c_void_p]
 
-#HRESULT 
-#SafeArrayGetUBound(_In_ SAFEARRAY *psa, _In_ UINT nDim, _Out_ LONG *plUbound);
+# HRESULT
+# SafeArrayGetUBound(_In_ SAFEARRAY *psa, _In_ UINT nDim, _Out_ LONG
+# *plUbound);
 _SafeArrayGetUBound = _oleaut32.SafeArrayGetUBound
 _SafeArrayGetUBound.argtypes = [c_void_p, c_ulong, POINTER(c_long)]
 
@@ -80,6 +103,7 @@ _SafeArrayGetUBound.argtypes = [c_void_p, c_ulong, POINTER(c_long)]
 #------------------------------------------------------------------------------
 
 class BSTR(c_wchar_p):
+
     ''' BSTR class in python. '''
 
     def __init__(self, value):
@@ -88,18 +112,21 @@ class BSTR(c_wchar_p):
     def __del__(self):
         _SysFreeString(self)
 
+
 class VARIANT(Structure):
-    ''' 
-    VARIANT structure in python. Does not match the definition in 
-    MSDN exactly & it is only mapping the used fields.  Field names are also 
+
+    '''
+    VARIANT structure in python. Does not match the definition in
+    MSDN exactly & it is only mapping the used fields.  Field names are also
     slighty different.
     '''
 
     class _tagData(Union):
-        class _tagRecord(Structure):
-            _fields_= [('pvoid', c_void_p), ('precord', c_void_p)]
 
-        _fields_ = [('llval', c_longlong),                    
+        class _tagRecord(Structure):
+            _fields_ = [('pvoid', c_void_p), ('precord', c_void_p)]
+
+        _fields_ = [('llval', c_longlong),
                     ('ullval', c_ulonglong),
                     ('lval', c_long),
                     ('ulval', c_ulong),
@@ -109,7 +136,7 @@ class VARIANT(Structure):
                     ('parray', c_void_p),
                     ('record', _tagRecord)]
 
-    _fields_ = [('vt', c_ushort), 
+    _fields_ = [('vt', c_ushort),
                 ('wReserved1', c_ushort),
                 ('wReserved2', c_ushort),
                 ('wReserved3', c_ushort),
@@ -167,18 +194,19 @@ class VARIANT(Structure):
     def __del__(self):
         _VariantClear(self)
 
-#HRESULT VariantClear(_Inout_ VARIANTARG *pvarg);
+# HRESULT VariantClear(_Inout_ VARIANTARG *pvarg);
 _VariantClear = _oleaut32.VariantClear
 _VariantClear.argtypes = [POINTER(VARIANT)]
 
 
 class GUID(Structure):
+
     ''' GUID structure in python. '''
 
     _fields_ = [("data1", c_ulong),
                 ("data2", c_ushort),
                 ("data3", c_ushort),
-                ("data4", c_byte*8)]
+                ("data4", c_byte * 8)]
 
     def __init__(self, name=None):
         if name is not None:
@@ -186,38 +214,63 @@ class GUID(Structure):
 
 
 class _WinHttpRequest(c_void_p):
-    ''' 
-    Maps the Com API to Python class functions. Not all methods in IWinHttpWebRequest 
-    are mapped - only the methods we use.
+
     '''
-    _AddRef = WINFUNCTYPE(c_long)(1, 'AddRef')
-    _Release = WINFUNCTYPE(c_long)(2, 'Release')
-    _SetProxy = WINFUNCTYPE(HRESULT, HTTPREQUEST_PROXY_SETTING, VARIANT, VARIANT)(7, 'SetProxy')
-    _SetCredentials = WINFUNCTYPE(HRESULT, BSTR, BSTR, HTTPREQUEST_SETCREDENTIALS_FLAGS)(8, 'SetCredentials')
-    _Open = WINFUNCTYPE(HRESULT, BSTR, BSTR, VARIANT)(9, 'Open')
-    _SetRequestHeader = WINFUNCTYPE(HRESULT, BSTR, BSTR)(10, 'SetRequestHeader')
-    _GetResponseHeader = WINFUNCTYPE(HRESULT, BSTR, POINTER(c_void_p))(11, 'GetResponseHeader')
-    _GetAllResponseHeaders = WINFUNCTYPE(HRESULT, POINTER(c_void_p))(12, 'GetAllResponseHeaders')
-    _Send = WINFUNCTYPE(HRESULT, VARIANT)(13, 'Send')
-    _Status = WINFUNCTYPE(HRESULT, POINTER(c_long))(14, 'Status')
-    _StatusText = WINFUNCTYPE(HRESULT, POINTER(c_void_p))(15, 'StatusText')
-    _ResponseText = WINFUNCTYPE(HRESULT, POINTER(c_void_p))(16, 'ResponseText')
-    _ResponseBody = WINFUNCTYPE(HRESULT, POINTER(VARIANT))(17, 'ResponseBody')
-    _ResponseStream = WINFUNCTYPE(HRESULT, POINTER(VARIANT))(18, 'ResponseStream')
-    _WaitForResponse = WINFUNCTYPE(HRESULT, VARIANT, POINTER(c_ushort))(21, 'WaitForResponse')
-    _Abort = WINFUNCTYPE(HRESULT)(22, 'Abort')
-    _SetTimeouts = WINFUNCTYPE(HRESULT, c_long, c_long, c_long, c_long)(23, 'SetTimeouts')
-    _SetClientCertificate = WINFUNCTYPE(HRESULT, BSTR)(24, 'SetClientCertificate')
+    Maps the Com API to Python class functions. Not all methods in
+    IWinHttpWebRequest are mapped - only the methods we use.
+    '''
+    _AddRef = WINFUNCTYPE(c_long) \
+        (1, 'AddRef')
+    _Release = WINFUNCTYPE(c_long) \
+        (2, 'Release')
+    _SetProxy = WINFUNCTYPE(HRESULT,
+                            HTTPREQUEST_PROXY_SETTING,
+                            VARIANT,
+                            VARIANT) \
+        (7, 'SetProxy')
+    _SetCredentials = WINFUNCTYPE(HRESULT,
+                                  BSTR,
+                                  BSTR,
+                                  HTTPREQUEST_SETCREDENTIALS_FLAGS) \
+        (8, 'SetCredentials')
+    _Open = WINFUNCTYPE(HRESULT, BSTR, BSTR, VARIANT) \
+        (9, 'Open')
+    _SetRequestHeader = WINFUNCTYPE(HRESULT, BSTR, BSTR) \
+        (10, 'SetRequestHeader')
+    _GetResponseHeader = WINFUNCTYPE(HRESULT, BSTR, POINTER(c_void_p)) \
+        (11, 'GetResponseHeader')
+    _GetAllResponseHeaders = WINFUNCTYPE(HRESULT, POINTER(c_void_p)) \
+        (12, 'GetAllResponseHeaders')
+    _Send = WINFUNCTYPE(HRESULT, VARIANT) \
+        (13, 'Send')
+    _Status = WINFUNCTYPE(HRESULT, POINTER(c_long)) \
+        (14, 'Status')
+    _StatusText = WINFUNCTYPE(HRESULT, POINTER(c_void_p)) \
+        (15, 'StatusText')
+    _ResponseText = WINFUNCTYPE(HRESULT, POINTER(c_void_p)) \
+        (16, 'ResponseText')
+    _ResponseBody = WINFUNCTYPE(HRESULT, POINTER(VARIANT)) \
+        (17, 'ResponseBody')
+    _ResponseStream = WINFUNCTYPE(HRESULT, POINTER(VARIANT)) \
+        (18, 'ResponseStream')
+    _WaitForResponse = WINFUNCTYPE(HRESULT, VARIANT, POINTER(c_ushort)) \
+        (21, 'WaitForResponse')
+    _Abort = WINFUNCTYPE(HRESULT) \
+        (22, 'Abort')
+    _SetTimeouts = WINFUNCTYPE(HRESULT, c_long, c_long, c_long, c_long) \
+        (23, 'SetTimeouts')
+    _SetClientCertificate = WINFUNCTYPE(HRESULT, BSTR) \
+        (24, 'SetClientCertificate')
 
     def open(self, method, url):
-        ''' 
+        '''
         Opens the request.
-        
+
         method: the request VERB 'GET', 'POST', etc.
         url: the url to connect
         '''
         _WinHttpRequest._SetTimeouts(self, 0, 65000, 65000, 65000)
-        
+
         flag = VARIANT.create_bool_false()
         _method = BSTR(method)
         _url = BSTR(url)
@@ -240,14 +293,14 @@ class _WinHttpRequest(c_void_p):
         _SysFreeString(bstr_headers)
         return headers
 
-    def send(self, request = None):
+    def send(self, request=None):
         ''' Sends the request body. '''
 
-        # Sends VT_EMPTY if it is GET, HEAD request. 
+        # Sends VT_EMPTY if it is GET, HEAD request.
         if request is None:
             var_empty = VARIANT.create_empty()
             _WinHttpRequest._Send(self, var_empty)
-        else:  # Sends request body as SAFEArray. 
+        else:  # Sends request body as SAFEArray.
             _request = VARIANT.create_safearray_from_str(request)
             _WinHttpRequest._Send(self, _request)
 
@@ -267,17 +320,19 @@ class _WinHttpRequest(c_void_p):
         status_text = bstr_status_text.value
         _SysFreeString(bstr_status_text)
         return status_text
- 
+
     def response_body(self):
-        ''' 
-        Gets response body as a SAFEARRAY and converts the SAFEARRAY to str.  If it is an xml 
-        file, it always contains 3 characters before <?xml, so we remove them. 
+        '''
+        Gets response body as a SAFEARRAY and converts the SAFEARRAY to str.
+        If it is an xml file, it always contains 3 characters before <?xml,
+        so we remove them.
         '''
         var_respbody = VARIANT()
         _WinHttpRequest._ResponseBody(self, byref(var_respbody))
         if var_respbody.is_safearray_of_bytes():
             respbody = var_respbody.str_from_safearray()
-            if respbody[3:].startswith('<?xml') and respbody.startswith('\xef\xbb\xbf'):
+            if respbody[3:].startswith(b'<?xml') and\
+               respbody.startswith(b'\xef\xbb\xbf'):
                 respbody = respbody[3:]
             return respbody
         else:
@@ -297,18 +352,23 @@ class _WinHttpRequest(c_void_p):
         var_host = VARIANT.create_bstr_from_str(url)
         var_empty = VARIANT.create_empty()
 
-        _WinHttpRequest._SetProxy(self, HTTPREQUEST_PROXYSETTING_PROXY, var_host, var_empty)
+        _WinHttpRequest._SetProxy(
+            self, HTTPREQUEST_PROXYSETTING_PROXY, var_host, var_empty)
 
     def set_proxy_credentials(self, user, password):
-        _WinHttpRequest._SetCredentials(self, BSTR(user), BSTR(password), HTTPREQUEST_SETCREDENTIALS_FOR_PROXY)
+        _WinHttpRequest._SetCredentials(
+            self, BSTR(user), BSTR(password),
+            HTTPREQUEST_SETCREDENTIALS_FOR_PROXY)
 
     def __del__(self):
         if self.value is not None:
             _WinHttpRequest._Release(self)
 
 
-class _Response:
-    ''' Response class corresponding to the response returned from httplib HTTPConnection. ''' 
+class _Response(object):
+
+    ''' Response class corresponding to the response returned from httplib
+    HTTPConnection. '''
 
     def __init__(self, _status, _status_text, _length, _headers, _respbody):
         self.status = _status
@@ -316,7 +376,7 @@ class _Response:
         self.length = _length
         self.headers = _headers
         self.respbody = _respbody
-        
+
     def getheaders(self):
         '''Returns response headers.'''
         return self.headers
@@ -326,7 +386,8 @@ class _Response:
         return self.respbody[:_length]
 
 
-class _HTTPConnection:
+class _HTTPConnection(object):
+
     ''' Class corresponding to httplib HTTPConnection class. '''
 
     def __init__(self, host, cert_file=None, key_file=None, protocol='http'):
@@ -338,14 +399,19 @@ class _HTTPConnection:
         clsid = GUID('{2087C2F4-2CEF-4953-A8AB-66779B670495}')
         iid = GUID('{016FE2EC-B2C8-45F8-B23B-39E53A75396B}')
         _CoInitialize(None)
-        _CoCreateInstance(byref(clsid), 0, 1, byref(iid), byref(self._httprequest))
-        
+        _CoCreateInstance(byref(clsid), 0, 1, byref(iid),
+                          byref(self._httprequest))
+
+    def close(self):
+        pass
+
     def set_tunnel(self, host, port=None, headers=None):
         ''' Sets up the host and the port for the HTTP CONNECT Tunnelling. '''
         self._httprequest.set_tunnel(unicode(host), unicode(str(port)))
 
     def set_proxy_credentials(self, user, password):
-        self._httprequest.set_proxy_credentials(unicode(user), unicode(password))
+        self._httprequest.set_proxy_credentials(
+            unicode(user), unicode(password))
 
     def putrequest(self, method, uri):
         ''' Connects to host and sends the request. '''
@@ -354,17 +420,20 @@ class _HTTPConnection:
         url = protocol + self.host + unicode(uri)
         self._httprequest.open(unicode(method), url)
 
-        #sets certificate for the connection if cert_file is set.
+        # sets certificate for the connection if cert_file is set.
         if self.cert_file is not None:
             self._httprequest.set_client_certificate(unicode(self.cert_file))
 
     def putheader(self, name, value):
         ''' Sends the headers of request. '''
-        self._httprequest.set_request_header(str(name).decode('utf-8'),
-                                                str(value).decode('utf-8'))
+        if sys.version_info < (3,):
+            name = str(name).decode('utf-8')
+            value = str(value).decode('utf-8')
+        self._httprequest.set_request_header(name, value)
 
     def endheaders(self):
-        ''' No operation. Exists only to provide the same interface of httplib HTTPConnection.'''
+        ''' No operation. Exists only to provide the same interface of httplib
+        HTTPConnection.'''
         pass
 
     def send(self, request_body):
@@ -382,7 +451,8 @@ class _HTTPConnection:
         resp_headers = self._httprequest.get_all_response_headers()
         fixed_headers = []
         for resp_header in resp_headers.split('\n'):
-            if (resp_header.startswith('\t') or resp_header.startswith(' ')) and fixed_headers:
+            if (resp_header.startswith('\t') or\
+                resp_header.startswith(' ')) and fixed_headers:
                 # append to previous header
                 fixed_headers[-1] += resp_header
             else:
@@ -392,9 +462,10 @@ class _HTTPConnection:
         for resp_header in fixed_headers:
             if ':' in resp_header:
                 pos = resp_header.find(':')
-                headers.append((resp_header[:pos].lower(), resp_header[pos+1:].strip()))
+                headers.append(
+                    (resp_header[:pos].lower(), resp_header[pos + 1:].strip()))
 
         body = self._httprequest.response_body()
         length = len(body)
-                
+
         return _Response(status, status_text, length, headers, body)

@@ -20,9 +20,9 @@ from azuretest.util import *
 
 print('WARNING!!!')
 print('')
-print('This program cleans the storage account and the service namespace specified')
-print('by the unit test credentials file (windowsazurecredentials.json) located in')
-print('your home directory.')
+print('This program cleans the storage account and the service namespace')
+print('specified by the unit test credentials file')
+print('(windowsazurecredentials.json) located in your home directory.')
 print('')
 print('You should not run this program while tests are running as this will')
 print('interfere with the tests.')
@@ -43,13 +43,13 @@ input = raw_input('>')
 if input == 'YES':
     print('Cleaning storage account...')
 
-    bc = BlobService(credentials.getStorageServicesName(), 
+    bc = BlobService(credentials.getStorageServicesName(),
                      credentials.getStorageServicesKey())
 
-    ts = TableService(credentials.getStorageServicesName(), 
+    ts = TableService(credentials.getStorageServicesName(),
                       credentials.getStorageServicesKey())
 
-    qs = QueueService(credentials.getStorageServicesName(), 
+    qs = QueueService(credentials.getStorageServicesName(),
                       credentials.getStorageServicesKey())
 
     for container in bc.list_containers():
@@ -63,8 +63,8 @@ if input == 'YES':
 
     print('Cleaning service namespace...')
 
-    sbs = ServiceBusService(credentials.getServiceBusNamespace(), 
-                            credentials.getServiceBusKey(), 
+    sbs = ServiceBusService(credentials.getServiceBusNamespace(),
+                            credentials.getServiceBusKey(),
                             'owner')
 
     for queue in sbs.list_queues():

@@ -14,52 +14,64 @@
 #--------------------------------------------------------------------------
 import os
 
-from azure import (WindowsAzureError,
-                   MANAGEMENT_HOST,
-                   _get_request_body,
-                   _parse_response,
-                   _str,
-                   _update_request_uri_query,
-                   )
-from azure.http import (HTTPError,
-                        HTTPRequest,
-                        )
+from azure import (
+    WindowsAzureError,
+    MANAGEMENT_HOST,
+    _get_request_body,
+    _parse_response,
+    _str,
+    _update_request_uri_query,
+    )
+from azure.http import (
+    HTTPError,
+    HTTPRequest,
+    )
 from azure.http.httpclient import _HTTPClient
-from azure.servicemanagement import (_management_error_handler,
-                                     _parse_response_for_async_op,
-                                     _update_management_header,
-                                     )
+from azure.servicemanagement import (
+    AZURE_MANAGEMENT_CERTFILE,
+    AZURE_MANAGEMENT_SUBSCRIPTIONID,
+    _management_error_handler,
+    _parse_response_for_async_op,
+    _update_management_header,
+    )
+
 
 class _ServiceManagementClient(object):
-    def __init__(self, subscription_id=None, cert_file=None, host=MANAGEMENT_HOST):
+
+    def __init__(self, subscription_id=None, cert_file=None,
+                 host=MANAGEMENT_HOST):
         self.requestid = None
         self.subscription_id = subscription_id
         self.cert_file = cert_file
         self.host = host
-    
+
         if not self.cert_file:
-            if os.environ.has_key(AZURE_MANAGEMENT_CERTFILE):
+            if AZURE_MANAGEMENT_CERTFILE in os.environ:
                 self.cert_file = os.environ[AZURE_MANAGEMENT_CERTFILE]
-        
+
         if not self.subscription_id:
-            if os.environ.has_key(AZURE_MANAGEMENT_SUBSCRIPTIONID):
-                self.subscription_id = os.environ[AZURE_MANAGEMENT_SUBSCRIPTIONID]
-    
+            if AZURE_MANAGEMENT_SUBSCRIPTIONID in os.environ:
+                self.subscription_id = os.environ[
+                    AZURE_MANAGEMENT_SUBSCRIPTIONID]
+
         if not self.cert_file or not self.subscription_id:
-            raise WindowsAzureError('You need to provide subscription id and certificate file')
-        
-        self._httpclient = _HTTPClient(service_instance=self, cert_file=self.cert_file)
+            raise WindowsAzureError(
+                'You need to provide subscription id and certificate file')
+
+        self._httpclient = _HTTPClient(
+            service_instance=self, cert_file=self.cert_file)
         self._filter = self._httpclient.perform_request
-    
+
     def with_filter(self, filter):
         '''Returns a new service which will process requests with the
         specified filter.  Filtering operations can include logging, automatic
         retrying, etc...  The filter is a lambda which receives the HTTPRequest
         and another lambda.  The filter can perform any pre-processing on the
-        request, pass it off to the next lambda, and then perform any post-processing
-        on the response.'''
-        res = ServiceManagementService(self.subscription_id, self.cert_file)
+        request, pass it off to the next lambda, and then perform any
+        post-processing on the response.'''
+        res = type(self)(self.subscription_id, self.cert_file, self.host)
         old_filter = self._filter
+
         def new_filter(request):
             return filter(request, old_filter)
 
@@ -81,11 +93,11 @@ class _ServiceManagementClient(object):
     def _perform_request(self, request):
         try:
             resp = self._filter(request)
-        except HTTPError as e:
-            return _management_error_handler(e)
-    
+        except HTTPError as ex:
+            return _management_error_handler(ex)
+
         return resp
-    
+
     def _perform_get(self, path, response_type):
         request = HTTPRequest()
         request.method = 'GET'
@@ -144,7 +156,7 @@ class _ServiceManagementClient(object):
 
         if async:
             return _parse_response_for_async_op(response)
-        
+
         return None
 
     def _get_path(self, resource, name):

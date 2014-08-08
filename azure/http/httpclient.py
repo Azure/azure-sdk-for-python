@@ -12,33 +12,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import os
-import types
 import base64
-import datetime
-import time
-import hashlib
-import hmac
-import urllib2
-import httplib
-import ast
+import os
 import sys
-from xml.dom import minidom
+
+if sys.version_info < (3,):
+    from httplib import (
+        HTTPSConnection,
+        HTTPConnection,
+        HTTP_PORT,
+        HTTPS_PORT,
+        )
+    from urlparse import urlparse
+else:
+    from http.client import (
+        HTTPSConnection,
+        HTTPConnection,
+        HTTP_PORT,
+        HTTPS_PORT,
+        )
+    from urllib.parse import urlparse
 
 from azure.http import HTTPError, HTTPResponse
-from azure import _USER_AGENT_STRING
+from azure import _USER_AGENT_STRING, _update_request_uri_query
 
-class _HTTPClient:
-    ''' 
+
+class _HTTPClient(object):
+
+    '''
     Takes the request and sends it to cloud service and returns the response.
     '''
 
-    def __init__(self, service_instance, cert_file=None, account_name=None, account_key=None, service_namespace=None, issuer=None, protocol='https'):
+    def __init__(self, service_instance, cert_file=None, account_name=None,
+                 account_key=None, service_namespace=None, issuer=None,
+                 protocol='https'):
         '''
-        service_instance: service client instance. 
-        cert_file: certificate file name/location. This is only used in hosted service management.
+        service_instance: service client instance.
+        cert_file:
+            certificate file name/location. This is only used in hosted
+            service management.
         account_name: the storage account.
-        account_key: the storage account access key for storage services or servicebus access key for service bus service.
+        account_key:
+            the storage account access key for storage services or servicebus
+            access key for service bus service.
         service_namespace: the service namespace for service bus.
         issuer: the issuer for service bus service.
         '''
@@ -48,14 +64,38 @@ class _HTTPClient:
         self.message = None
         self.cert_file = cert_file
         self.account_name = account_name
-        self.account_key = account_key    
-        self.service_namespace = service_namespace    
+        self.account_key = account_key
+        self.service_namespace = service_namespace
         self.issuer = issuer
         self.protocol = protocol
         self.proxy_host = None
         self.proxy_port = None
         self.proxy_user = None
         self.proxy_password = None
+        self.use_httplib = self.should_use_httplib()
+
+    def should_use_httplib(self):
+        if sys.platform.lower().startswith('win') and self.cert_file:
+            # On Windows, auto-detect between Windows Store Certificate
+            # (winhttp) and OpenSSL .pem certificate file (httplib).
+            #
+            # We used to only support certificates installed in the Windows
+            # Certificate Store.
+            #   cert_file example: CURRENT_USER\my\CertificateName
+            #
+            # We now support using an OpenSSL .pem certificate file,
+            # for a consistent experience across all platforms.
+            #   cert_file example: account\certificate.pem
+            #
+            # When using OpenSSL .pem certificate file on Windows, make sure
+            # you are on CPython 2.7.4 or later.
+
+            # If it's not an existing file on disk, then treat it as a path in
+            # the Windows Certificate Store, which means we can't use httplib.
+            if not os.path.isfile(self.cert_file):
+                return False
+
+        return True
 
     def set_proxy(self, host, port, user, password):
         '''
@@ -73,19 +113,20 @@ class _HTTPClient:
 
     def get_connection(self, request):
         ''' Create connection for the request. '''
-        protocol = request.protocol_override if request.protocol_override else self.protocol
+        protocol = request.protocol_override \
+            if request.protocol_override else self.protocol
         target_host = request.host
-        target_port = httplib.HTTP_PORT if protocol == 'http' else httplib.HTTPS_PORT
+        target_port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
 
-        # If on Windows then use winhttp HTTPConnection instead of httplib HTTPConnection due to the 
-        # bugs in httplib HTTPSConnection. We've reported the issue to the Python 
-        # dev team and it's already fixed for 2.7.4 but we'll need to keep this workaround meanwhile.
-        if sys.platform.lower().startswith('win'):
+        if not self.use_httplib:
             import azure.http.winhttp
-            connection = azure.http.winhttp._HTTPConnection(target_host, cert_file=self.cert_file, protocol=protocol)
+            connection = azure.http.winhttp._HTTPConnection(
+                target_host, cert_file=self.cert_file, protocol=protocol)
             proxy_host = self.proxy_host
             proxy_port = self.proxy_port
         else:
+            if ':' in target_host:
+                target_host, _, target_port = target_host.rpartition(':')
             if self.proxy_host:
                 proxy_host = target_host
                 proxy_port = target_port
@@ -96,26 +137,30 @@ class _HTTPClient:
                 port = target_port
 
             if protocol == 'http':
-                connection = httplib.HTTPConnection(host, int(port))
+                connection = HTTPConnection(host, int(port))
             else:
-                connection = httplib.HTTPSConnection(host, int(port), cert_file=self.cert_file)
+                connection = HTTPSConnection(
+                    host, int(port), cert_file=self.cert_file)
 
         if self.proxy_host:
             headers = None
             if self.proxy_user and self.proxy_password:
-                auth = base64.encodestring("%s:%s" % (self.proxy_user, self.proxy_password))
-                headers = {'Proxy-Authorization': 'Basic %s' % auth}
+                auth = base64.encodestring(
+                    "{0}:{1}".format(self.proxy_user, self.proxy_password))
+                headers = {'Proxy-Authorization': 'Basic {0}'.format(auth)}
             connection.set_tunnel(proxy_host, int(proxy_port), headers)
 
         return connection
 
     def send_request_headers(self, connection, request_headers):
-        if not sys.platform.lower().startswith('win'):
+        if self.use_httplib:
             if self.proxy_host:
                 for i in connection._buffer:
                     if i.startswith("Host: "):
                         connection._buffer.remove(i)
-                connection.putheader('Host', "%s:%s" % (connection._tunnel_host, connection._tunnel_port))
+                connection.putheader(
+                    'Host', "{0}:{1}".format(connection._tunnel_host,
+                                             connection._tunnel_port))
 
         for name, value in request_headers:
             if value:
@@ -126,36 +171,53 @@ class _HTTPClient:
 
     def send_request_body(self, connection, request_body):
         if request_body:
+            assert isinstance(request_body, bytes)
             connection.send(request_body)
-        elif (not isinstance(connection, httplib.HTTPSConnection) and 
-              not isinstance(connection, httplib.HTTPConnection)):
+        elif (not isinstance(connection, HTTPSConnection) and
+              not isinstance(connection, HTTPConnection)):
             connection.send(None)
-     
+
     def perform_request(self, request):
         ''' Sends request to cloud service server and return the response. '''
-
         connection = self.get_connection(request)
-        connection.putrequest(request.method, request.path)
+        try:
+            connection.putrequest(request.method, request.path)
 
-        if sys.platform.lower().startswith('win'):
-            if self.proxy_host and self.proxy_user:
-                connection.set_proxy_credentials(self.proxy_user, self.proxy_password)
+            if not self.use_httplib:
+                if self.proxy_host and self.proxy_user:
+                    connection.set_proxy_credentials(
+                        self.proxy_user, self.proxy_password)
 
-        self.send_request_headers(connection, request.headers)
-        self.send_request_body(connection, request.body)
+            self.send_request_headers(connection, request.headers)
+            self.send_request_body(connection, request.body)
 
-        resp = connection.getresponse()
-        self.status = int(resp.status)
-        self.message = resp.reason
-        self.respheader = headers = resp.getheaders()
-        respbody = None
-        if resp.length is None:
-            respbody = resp.read()
-        elif resp.length > 0:
-            respbody = resp.read(resp.length)
-    
-        response = HTTPResponse(int(resp.status), resp.reason, headers, respbody)
-        if self.status >= 300:
-            raise HTTPError(self.status, self.message, self.respheader, respbody)
-        
-        return response
+            resp = connection.getresponse()
+            self.status = int(resp.status)
+            self.message = resp.reason
+            self.respheader = headers = resp.getheaders()
+
+            # for consistency across platforms, make header names lowercase
+            for i, value in enumerate(headers):
+                headers[i] = (value[0].lower(), value[1])
+
+            respbody = None
+            if resp.length is None:
+                respbody = resp.read()
+            elif resp.length > 0:
+                respbody = resp.read(resp.length)
+
+            response = HTTPResponse(
+                int(resp.status), resp.reason, headers, respbody)
+            if self.status == 307:
+                new_url = urlparse(dict(headers)['location'])
+                request.host = new_url.hostname
+                request.path = new_url.path
+                request.path, request.query = _update_request_uri_query(request)
+                return self.perform_request(request)
+            if self.status >= 300:
+                raise HTTPError(self.status, self.message,
+                                self.respheader, respbody)
+
+            return response
+        finally:
+            connection.close()

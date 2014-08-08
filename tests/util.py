@@ -14,41 +14,50 @@
 #--------------------------------------------------------------------------
 import json
 import os
+import random
+import sys
 import time
 import unittest
+from contextlib import contextmanager
 
-from exceptions import EnvironmentError
+if sys.version_info < (3,):
+    from exceptions import RuntimeError
 
 #------------------------------------------------------------------------------
+
+
 class Credentials(object):
+
     '''
     Azure credentials needed to run Azure client tests.
     '''
+
     def __init__(self):
         credentialsFilename = "windowsazurecredentials.json"
         tmpName = os.path.join(os.getcwd(), credentialsFilename)
         if not os.path.exists(tmpName):
-            if os.environ.has_key("USERPROFILE"):
-                tmpName = os.path.join(os.environ["USERPROFILE"], 
+            if "USERPROFILE" in os.environ:
+                tmpName = os.path.join(os.environ["USERPROFILE"],
                                        credentialsFilename)
-            elif os.environ.has_key("HOME"):
-                tmpName = os.path.join(os.environ["HOME"], 
+            elif "HOME" in os.environ:
+                tmpName = os.path.join(os.environ["HOME"],
                                        credentialsFilename)
         if not os.path.exists(tmpName):
-            errMsg = "Cannot run Azure tests when the expected config file containing Azure credentials, '%s', does not exist!" % (tmpName)
-            raise EnvironmentError(errMsg)
+            errMsg = "Cannot run Azure tests when the expected config file containing Azure credentials, '{0}', does not exist!".format(
+                tmpName)
+            raise RuntimeError(errMsg)
 
         with open(tmpName, "r") as f:
             self.ns = json.load(f)
 
     def getManagementCertFile(self):
-        return self.ns[u'managementcertfile'] 
+        return self.ns[u'managementcertfile']
 
     def getSubscriptionId(self):
-        return self.ns[u'subscriptionid'] 
+        return self.ns[u'subscriptionid']
 
     def getServiceBusKey(self):
-        return self.ns[u'servicebuskey'] 
+        return self.ns[u'servicebuskey']
 
     def getServiceBusNamespace(self):
         return self.ns[u'servicebusns']
@@ -59,20 +68,51 @@ class Credentials(object):
     def getStorageServicesName(self):
         return self.ns[u'storageservicesname']
 
+    def getRemoteStorageServicesKey(self):
+        ''' Key for remote storage account (different location). '''
+        return self.ns[u'remotestorageserviceskey']
+
+    def getRemoteStorageServicesName(self):
+        ''' Name for remote storage account (different location). '''
+        return self.ns[u'remotestorageservicesname']
+
     def getLinuxOSVHD(self):
         return self.ns[u'linuxosvhd']
 
     def getProxyHost(self):
-        return self.ns[u'proxyhost']
+        ''' Optional. Address of the proxy server. '''
+        if u'proxyhost' in self.ns:
+            return self.ns[u'proxyhost']
+        return None
 
     def getProxyPort(self):
-        return self.ns[u'proxyport']
+        ''' Optional. Port of the proxy server. '''
+        if u'proxyport' in self.ns:
+            return self.ns[u'proxyport']
+        return None
 
     def getProxyUser(self):
-        return self.ns[u'proxyuser']
+        ''' Optional. User name for proxy server authentication. '''
+        if u'proxyuser' in self.ns:
+            return self.ns[u'proxyuser']
+        return None
 
     def getProxyPassword(self):
-        return self.ns[u'proxypassword']
+        ''' Optional. Password for proxy server authentication. '''
+        if u'proxypassword' in self.ns:
+            return self.ns[u'proxypassword']
+        return None
+
+    def getUseHttplibOverride(self):
+        ''' Optional. When specified, it will override the value of
+        use_httplib that is set by the auto-detection in httpclient.py.
+        When testing management APIs, make sure to specify a value that is
+        compatible with the value of 'managementcertfile' ie. True for a .pem
+        certificate file path, False for a Windows Certificate Store path.
+        '''
+        if u'usehttpliboverride' in self.ns:
+            return self.ns[u'usehttpliboverride'].lower() != 'false'
+        return None
 
     def getRemoteStorageServicesKey(self):
         return self.ns[u'remotestorageserviceskey']
@@ -82,30 +122,10 @@ class Credentials(object):
 
 credentials = Credentials()
 
-def getUniqueTestRunID():
-    '''
-    Returns a unique identifier for this particular test run so 
-    parallel test runs using the same Azure keys do not interfere
-    with one another.
 
-    TODO:
-    - not really unique now; just machine specific
+def getUniqueName(base_name):
     '''
-    from os import environ
-    if environ.has_key("COMPUTERNAME"):
-        ret_val = environ["COMPUTERNAME"]
-    else:
-        import socket
-        ret_val = socket.gethostname()
-    for bad in ["-", "_", " ", "."]:
-        ret_val = ret_val.replace(bad, "")
-    ret_val = ret_val.lower().strip()
-    #only return the first 20 characters so the lenghth of queue, table name will be less than 64. It may not be unique but doesn't really matter for the tests.
-    return ret_val[:20]  
-
-def getUniqueNameBasedOnCurrentTime(base_name):
-    '''
-    Returns a unique identifier for this particular test run so 
+    Returns a unique identifier for this particular test run so
     parallel test runs using the same Azure keys do not interfere
     with one another.
     '''
@@ -113,19 +133,76 @@ def getUniqueNameBasedOnCurrentTime(base_name):
     for bad in ["-", "_", " ", "."]:
         cur_time = cur_time.replace(bad, "")
     cur_time = cur_time.lower().strip()
-    return base_name + cur_time
+    return base_name + str(random.randint(10, 99)) + cur_time[:12]
+
+
+def set_service_options(service):
+    useHttplibOverride = credentials.getUseHttplibOverride()
+    if useHttplibOverride is not None:
+        # Override the auto-detection of what type of connection to create.
+        # This allows testing of both httplib and winhttp on Windows.
+        service._httpclient.use_httplib = useHttplibOverride
+
+    service.set_proxy(credentials.getProxyHost(),
+                      credentials.getProxyPort(),
+                      credentials.getProxyUser(),
+                      credentials.getProxyPassword())
+
 
 class AzureTestCase(unittest.TestCase):
+
     def assertNamedItemInContainer(self, container, item_name, msg=None):
         for item in container:
             if item.name == item_name:
                 return
 
-        standardMsg = '%s not found in %s' % (repr(item_name), repr(container))
+        standardMsg = '{0} not found in {1}'.format(
+            repr(item_name), repr(container))
         self.fail(self._formatMessage(msg, standardMsg))
 
     def assertNamedItemNotInContainer(self, container, item_name, msg=None):
         for item in container:
             if item.name == item_name:
-                standardMsg = '%s unexpectedly found in %s' % (repr(item_name), repr(container))
+                standardMsg = '{0} unexpectedly found in {1}'.format(
+                    repr(item_name), repr(container))
                 self.fail(self._formatMessage(msg, standardMsg))
+
+    if sys.version_info < (2,7):
+        def assertIsNone(self, obj):
+            self.assertEqual(obj, None)
+
+        def assertIsNotNone(self, obj):
+            self.assertNotEqual(obj, None)
+
+        def assertIsInstance(self, obj, type):
+            self.assertTrue(isinstance(obj, type))
+
+        def assertGreaterEqual(self, a, b):
+            self.assertTrue(a >= b)
+
+        def assertLessEqual(self, a, b):
+            self.assertTrue(a <= b)
+
+        def assertIn(self, member, container):
+            if member not in container:
+                self.fail('{0} not found in {1}.'.format(
+                    safe_repr(member), safe_repr(container)))
+
+        @contextmanager
+        def _assertRaisesContextManager(self, excClass):
+            try:
+                yield
+                self.fail('{0} was not raised'.format(safe_repr(excClass)))
+            except excClass:
+                pass
+
+        def assertRaises(self, excClass, callableObj=None, *args, **kwargs):
+            if callableObj:
+                super(AzureTestCase, self).assertRaises(
+                    excClass,
+                    callableObj,
+                    *args,
+                    **kwargs
+                )
+            else:
+                return self._assertRaisesContextManager(excClass)

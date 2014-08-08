@@ -18,22 +18,25 @@ import os
 import time
 import unittest
 
-from azure.servicemanagement import (CertificateSetting,
-                                     ConfigurationSet,
-                                     ConfigurationSetInputEndpoint,
-                                     KeyPair,
-                                     LinuxConfigurationSet,
-                                     OSVirtualHardDisk,
-                                     PublicKey,
-                                     ServiceManagementService,
-                                     WindowsConfigurationSet,
-                                     )
+from azure.servicemanagement import (
+    CertificateSetting,
+    ConfigurationSet,
+    ConfigurationSetInputEndpoint,
+    KeyPair,
+    LinuxConfigurationSet,
+    Listener,
+    OSVirtualHardDisk,
+    PublicKey,
+    ServiceManagementService,
+    WindowsConfigurationSet,
+    )
 from azure.storage.blobservice import BlobService
-from util import (AzureTestCase,
-                  credentials,
-                  getUniqueTestRunID,
-                  getUniqueNameBasedOnCurrentTime,
-                  )
+from util import (
+    AzureTestCase,
+    credentials,
+    getUniqueName,
+    set_service_options,
+    )
 
 SERVICE_CERT_FORMAT = 'pfx'
 SERVICE_CERT_PASSWORD = 'Python'
@@ -61,20 +64,20 @@ DEPLOYMENT_UPDATE_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" 
 </ServiceConfiguration>'''
 
 CSPKG_PATH = 'data/WindowsAzure1.cspkg'
-DATA_VHD_PATH = 'data/test.vhd'
+DATA_VHD_PATH = 'data/testhd'
 
-# This blob must be created manually before running the unit tests, 
+# This blob must be created manually before running the unit tests,
 # they must be present in the storage account listed in the credentials file.
 LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
 
-# The easiest way to create a Linux OS vhd is to use the Azure management 
+# The easiest way to create a Linux OS vhd is to use the Azure management
 # portal to create a Linux VM, and have it store the VHD in the
 # storage account listed in the credentials file.  Then stop the VM,
-# and use the following code to copy the VHD to another blob (if you 
+# and use the following code to copy the VHD to another blob (if you
 # try to use the VM's VHD directly without making a copy, you will get
 # conflict errors).
 
-# sourceblob = '/%s/%s/%s' % (credentials.getStorageServicesName(), 'vhdcontainername', 'vhdblobname')
+# sourceblob = '/{0}/{1}/{2}'.format(credentials.getStorageServicesName(), 'vhdcontainername', 'vhdblobname')
 # self.bc.copy_blob('vhdcontainername', 'targetvhdblobname', sourceblob)
 #
 # in the credentials file, set:
@@ -87,72 +90,85 @@ class ServiceManagementServiceTest(AzureTestCase):
     def setUp(self):
         self.sms = ServiceManagementService(credentials.getSubscriptionId(),
                                             credentials.getManagementCertFile())
-
-        self.sms.set_proxy(credentials.getProxyHost(),
-                           credentials.getProxyPort(),
-                           credentials.getProxyPort(),
-                           credentials.getProxyPassword())
+        set_service_options(self.sms)
 
         self.bc = BlobService(credentials.getStorageServicesName(),
                               credentials.getStorageServicesKey())
-        
-        self.bc.set_proxy(credentials.getProxyHost(),
-                          credentials.getProxyPort(),
-                          credentials.getProxyUser(),
-                          credentials.getProxyPassword())
+        set_service_options(self.bc)
 
-        self.hosted_service_name = getUniqueNameBasedOnCurrentTime('utsvc')
-        self.container_name = getUniqueNameBasedOnCurrentTime('utctnr')
-        self.disk_name = getUniqueNameBasedOnCurrentTime('utdisk')
-        self.os_image_name = getUniqueNameBasedOnCurrentTime('utosimg')
+        self.hosted_service_name = getUniqueName('utsvc')
+        self.container_name = getUniqueName('utctnr')
+        self.disk_name = getUniqueName('utdisk')
+        self.os_image_name = getUniqueName('utosimg')
         self.data_disk_info = None
 
     def tearDown(self):
         if self.data_disk_info is not None:
             try:
-                disk = self.sms.get_data_disk(self.data_disk_info[0], self.data_disk_info[1], self.data_disk_info[2], self.data_disk_info[3])
+                disk = self.sms.get_data_disk(
+                    self.data_disk_info[0], self.data_disk_info[1],
+                    self.data_disk_info[2], self.data_disk_info[3])
                 try:
-                    result = self.sms.delete_data_disk(self.data_disk_info[0], self.data_disk_info[1], self.data_disk_info[2], self.data_disk_info[3])
+                    result = self.sms.delete_data_disk(
+                        self.data_disk_info[0], self.data_disk_info[1],
+                        self.data_disk_info[2], self.data_disk_info[3])
                     self._wait_for_async(result.request_id)
-                except: pass
+                except:
+                    pass
                 try:
                     self.sms.delete_disk(disk.disk_name)
-                except: pass
-            except: pass
+                except:
+                    pass
+            except:
+                pass
 
         disk_names = [self.disk_name]
 
         try:
-            # Can't delete a hosted service if it has deployments, so delete those first
-            props = self.sms.get_hosted_service_properties(self.hosted_service_name, True)
+            # Can't delete a hosted service if it has deployments, so delete
+            # those first
+            props = self.sms.get_hosted_service_properties(
+                self.hosted_service_name, True)
             for deployment in props.deployments:
                 try:
                     for role in deployment.role_list:
-                        role_props = self.sms.get_role(self.hosted_service_name, deployment.name, role.role_name)
-                        if role_props.os_virtual_hard_disk.disk_name not in disk_names:
-                            disk_names.append(role_props.os_virtual_hard_disk.disk_name)
-                except: pass
+                        role_props = self.sms.get_role(
+                            self.hosted_service_name,
+                            deployment.name,
+                            role.role_name)
+                        if role_props.os_virtual_hard_disk.disk_name \
+                            not in disk_names:
+                            disk_names.append(
+                                role_props.os_virtual_hard_disk.disk_name)
+                except:
+                    pass
 
                 try:
-                    result = self.sms.delete_deployment(self.hosted_service_name, deployment.name)
+                    result = self.sms.delete_deployment(
+                        self.hosted_service_name, deployment.name)
                     self._wait_for_async(result.request_id)
-                except: pass
+                except:
+                    pass
             self.sms.delete_hosted_service(self.hosted_service_name)
-        except: pass
+        except:
+            pass
 
         try:
             result = self.sms.delete_os_image(self.os_image_name)
             self._wait_for_async(result.request_id)
-        except: pass
+        except:
+            pass
 
         for disk_name in disk_names:
             try:
                 self.sms.delete_disk(disk_name)
-            except: pass
+            except:
+                pass
 
         try:
             self.bc.delete_container(self.container_name)
-        except: pass
+        except:
+            pass
 
     #--Helpers-----------------------------------------------------------------
     def _wait_for_async(self, request_id):
@@ -161,30 +177,37 @@ class ServiceManagementServiceTest(AzureTestCase):
         while result.status == 'InProgress':
             count = count + 1
             if count > 120:
-                self.assertTrue(False, 'Timed out waiting for async operation to complete.')
+                self.assertTrue(
+                    False, 'Timed out waiting for async operation to complete.')
             time.sleep(5)
             result = self.sms.get_operation_status(request_id)
         self.assertEqual(result.status, 'Succeeded')
 
-    def _wait_for_deployment_status(self, service_name, deployment_name, status):
+    def _wait_for_deployment(self, service_name, deployment_name,
+                             status='Running'):
         count = 0
         props = self.sms.get_deployment_by_name(service_name, deployment_name)
         while props.status != status:
             count = count + 1
             if count > 120:
-                self.assertTrue(False, 'Timed out waiting for deployment status.')
+                self.assertTrue(
+                    False, 'Timed out waiting for deployment status.')
             time.sleep(5)
-            props = self.sms.get_deployment_by_name(service_name, deployment_name)
+            props = self.sms.get_deployment_by_name(
+                service_name, deployment_name)
 
-    def _wait_for_role_instance_status(self, service_name, deployment_name, role_instance_name, status):
+    def _wait_for_role(self, service_name, deployment_name, role_instance_name,
+                       status='ReadyRole'):
         count = 0
         props = self.sms.get_deployment_by_name(service_name, deployment_name)
         while self._get_role_instance_status(props, role_instance_name) != status:
             count = count + 1
             if count > 120:
-                self.assertTrue(False, 'Timed out waiting for role instance status.')
+                self.assertTrue(
+                    False, 'Timed out waiting for role instance status.')
             time.sleep(5)
-            props = self.sms.get_deployment_by_name(service_name, deployment_name)
+            props = self.sms.get_deployment_by_name(
+                service_name, deployment_name)
 
     def _wait_for_rollback_allowed(self, service_name, deployment_name):
         count = 0
@@ -192,9 +215,11 @@ class ServiceManagementServiceTest(AzureTestCase):
         while props.rollback_allowed == False:
             count = count + 1
             if count > 120:
-                self.assertTrue(False, 'Timed out waiting for rollback allowed.')
+                self.assertTrue(
+                    False, 'Timed out waiting for rollback allowed.')
             time.sleep(5)
-            props = self.sms.get_deployment_by_name(service_name, deployment_name)
+            props = self.sms.get_deployment_by_name(
+                service_name, deployment_name)
 
     def _get_role_instance_status(self, deployment, role_instance_name):
         for role_instance in deployment.role_instance_list:
@@ -206,7 +231,13 @@ class ServiceManagementServiceTest(AzureTestCase):
         if not location and not affinity_group:
             location = 'West US'
 
-        result = self.sms.create_hosted_service(name, name + 'label', name + 'description', location, affinity_group, {'ext1':'val1', 'ext2':42})
+        result = self.sms.create_hosted_service(
+            name,
+            name + 'label',
+            name + 'description',
+            location,
+            affinity_group,
+            {'ext1': 'val1', 'ext2': 42})
         self.assertIsNone(result)
 
     def _hosted_service_exists(self, name):
@@ -216,38 +247,51 @@ class ServiceManagementServiceTest(AzureTestCase):
         except:
             return False
 
-    def _create_service_certificate(self, service_name, data, format, password):
-        result = self.sms.add_service_certificate(service_name, data, format, password)
+    def _create_service_certificate(self, service_name, data, format,
+                                    password):
+        result = self.sms.add_service_certificate(service_name, data,
+                                                  format, password)
         self._wait_for_async(result.request_id)
 
-    def _service_certificate_exists(self, service_name, thumbalgorithm, thumbprint):
+    def _service_certificate_exists(self, service_name, thumbalgorithm,
+                                    thumbprint):
         try:
-            props = self.sms.get_service_certificate(service_name, thumbalgorithm, thumbprint)
+            props = self.sms.get_service_certificate(
+                service_name, thumbalgorithm, thumbprint)
             return props is not None
         except:
             return False
 
     def _deployment_exists(self, service_name, deployment_name):
         try:
-            props = self.sms.get_deployment_by_name(service_name, deployment_name)
+            props = self.sms.get_deployment_by_name(
+                service_name, deployment_name)
             return props is not None
         except:
             return False
 
-    def _create_container_and_block_blob(self, container_name, blob_name, blob_data):
+    def _create_container_and_block_blob(self, container_name, blob_name,
+                                         blob_data):
         self.bc.create_container(container_name, None, 'container', False)
-        resp = self.bc.put_blob(container_name, blob_name, blob_data, 'BlockBlob')
+        resp = self.bc.put_blob(
+            container_name, blob_name, blob_data, 'BlockBlob')
         self.assertIsNone(resp)
 
-    def _create_container_and_page_blob(self, container_name, blob_name, content_length):
+    def _create_container_and_page_blob(self, container_name, blob_name,
+                                        content_length):
         self.bc.create_container(container_name, None, 'container', False)
-        resp = self.bc.put_blob(container_name, blob_name, '', 'PageBlob', x_ms_blob_content_length=str(content_length))
+        resp = self.bc.put_blob(container_name, blob_name, '',
+                                'PageBlob',
+                                x_ms_blob_content_length=str(content_length))
         self.assertIsNone(resp)
 
     def _upload_file_to_block_blob(self, file_path, blob_name):
         data = open(file_path, 'rb').read()
-        url = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + blob_name
-        self._create_container_and_block_blob(self.container_name, blob_name, data)
+        url = 'http://' + \
+            credentials.getStorageServicesName() + \
+            '.blob.core.windows.net/' + self.container_name + '/' + blob_name
+        self._create_container_and_block_blob(
+            self.container_name, blob_name, data)
         return url
 
     def _upload_chunks(self, file_path, blob_name, chunk_size):
@@ -257,15 +301,21 @@ class ServiceManagementServiceTest(AzureTestCase):
                 data = f.read(chunk_size)
                 if data:
                     length = len(data)
-                    self.bc.put_page(self.container_name, blob_name, data, 'bytes=' + str(index) + '-' + str(index + length - 1), 'update')
+                    self.bc.put_page(
+                        self.container_name, blob_name, data,
+                        'bytes=' + str(index) + '-' + str(index + length - 1),
+                        'update')
                     index += length
                 else:
                     break
 
     def _upload_file_to_page_blob(self, file_path, blob_name):
-        url = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + blob_name
+        url = 'http://' + \
+            credentials.getStorageServicesName() + \
+            '.blob.core.windows.net/' + self.container_name + '/' + blob_name
         content_length = os.path.getsize(file_path)
-        self._create_container_and_page_blob(self.container_name, blob_name, content_length)
+        self._create_container_and_page_blob(
+            self.container_name, blob_name, content_length)
         self._upload_chunks(file_path, blob_name, 262144)
         return url
 
@@ -275,13 +325,19 @@ class ServiceManagementServiceTest(AzureTestCase):
     def _upload_disk_to_storage_blob(self, blob_name):
         return self._upload_file_to_page_blob(DATA_VHD_PATH, blob_name)
 
-    def _add_deployment(self, service_name, deployment_name, deployment_slot='Production'):
+    def _add_deployment(self, service_name, deployment_name,
+                        deployment_slot='Production'):
         configuration = base64.b64encode(DEPLOYMENT_ORIGINAL_CONFIG)
-        package_url = self._upload_default_package_to_storage_blob(deployment_name + 'Blob')
-        result = self.sms.create_deployment(service_name, deployment_slot, deployment_name, package_url, deployment_name + 'label', configuration, False, False, { 'dep1':'val1', 'dep2':'val2'})
+        package_url = self._upload_default_package_to_storage_blob(
+            deployment_name + 'Blob')
+        result = self.sms.create_deployment(
+            service_name, deployment_slot, deployment_name, package_url,
+            deployment_name + 'label', configuration, False, False,
+            {'dep1': 'val1', 'dep2': 'val2'})
         self._wait_for_async(result.request_id)
 
-    def _create_hosted_service_with_deployment(self, service_name, deployment_name):
+    def _create_hosted_service_with_deployment(self, service_name,
+                                               deployment_name):
         self._create_hosted_service(service_name)
         self._add_deployment(service_name, deployment_name)
 
@@ -323,14 +379,18 @@ class ServiceManagementServiceTest(AzureTestCase):
 
     def _data_disk_exists(self, service_name, deployment_name, role_name, lun):
         try:
-            props = self.sms.get_data_disk(service_name, deployment_name, role_name, lun)
+            props = self.sms.get_data_disk(
+                service_name, deployment_name, role_name, lun)
             return props is not None
         except:
             return False
 
-    def _add_data_disk_from_blob_url(self, service_name, deployment_name, role_name, lun, label):
+    def _add_data_disk_from_blob_url(self, service_name, deployment_name,
+                                     role_name, lun, label):
         url = self._upload_disk_to_storage_blob('disk')
-        result = self.sms.add_data_disk(service_name, deployment_name, role_name, lun, None, None, label, None, None, url)
+        result = self.sms.add_data_disk(
+            service_name, deployment_name, role_name, lun, None, None, label,
+            None, None, url)
         self._wait_for_async(result.request_id)
 
     def _linux_image_name(self):
@@ -339,62 +399,129 @@ class ServiceManagementServiceTest(AzureTestCase):
     def _windows_image_name(self):
         return self._image_from_category('Microsoft Windows Server Group')
 
+    def _host_name_from_role_name(self, role_name):
+        return 'hn' + role_name[-13:]
+
     def _image_from_category(self, category):
         # return the first one listed, which should be the most stable
-        return [i.name for i in self.sms.list_os_images() if category in i.category][0]
+        return [i.name for i in self.sms.list_os_images() \
+            if category in i.category][0]
 
-    def _create_vm_linux(self, service_name, deployment_name, role_name, target_container_name, target_blob_name):
-        image_name = self._linux_image_name()
-        media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + target_container_name + '/' + target_blob_name
-        pk = PublicKey(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/authorized_keys')
+    def _windows_role(self, role_name, subnet_name=None, port='59913'):
+        host_name = self._host_name_from_role_name(role_name)
+        system = self._windows_config(host_name)
+        os_hd = self._os_hd(self._windows_image_name(),
+                            self.container_name,
+                            role_name + '.vhd')
+        network = self._network_config(subnet_name, port)
+        return (system, os_hd, network)
+
+    def _linux_role(self, role_name, subnet_name=None, port='59913'):
+        host_name = self._host_name_from_role_name(role_name)
+        system = self._linux_config(host_name)
+        os_hd = self._os_hd(self._linux_image_name(),
+                            self.container_name,
+                            role_name + '.vhd')
+        network = self._network_config(subnet_name, port)
+        return (system, os_hd, network)
+
+    def _windows_config(self, hostname):
+        system = WindowsConfigurationSet(
+            hostname, 'u7;9jbp!', False, False, 'Pacific Standard Time',
+            'azureuser')
+        system.domain_join = None
+        system.stored_certificate_settings.stored_certificate_settings.append(
+            CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
+        listener = Listener('Https', SERVICE_CERT_THUMBPRINT)
+        system.win_rm.listeners.listeners.append(listener)
+        return system
+
+    def _linux_config(self, hostname):
+        pk = PublicKey(SERVICE_CERT_THUMBPRINT,
+                       u'/home/unittest/.ssh/authorized_keys')
         pair = KeyPair(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/id_rsa')
-        system = LinuxConfigurationSet('computername', 'unittest', 'u7;9jbp!', True)
+        system = LinuxConfigurationSet(hostname, 'unittest', 'u7;9jbp!', True)
         system.ssh.public_keys.public_keys.append(pk)
         system.ssh.key_pairs.key_pairs.append(pair)
-        os_hd = OSVirtualHardDisk(image_name, media_link, disk_label = target_blob_name)
+        return system
+
+    def _network_config(self, subnet_name=None, port='59913'):
         network = ConfigurationSet()
         network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('utendpoint', 'tcp', '59913', '3394'))
+        network.input_endpoints.input_endpoints.append(
+            ConfigurationSetInputEndpoint('utendpoint', 'tcp', port, '3394'))
+        if subnet_name:
+            network.subnet_names.append(subnet_name)
+        return network
 
+    def _os_hd(self, image_name, target_container_name, target_blob_name):
+        media_link = 'http://' + \
+            credentials.getStorageServicesName() + \
+            '.blob.core.windows.net/' + target_container_name + '/' + \
+            target_blob_name
+        os_hd = OSVirtualHardDisk(image_name, media_link,
+                                  disk_label=target_blob_name)
+        return os_hd
+
+    def _create_vm_linux(self, service_name, deployment_name, role_name):
         self._create_hosted_service(service_name)
-        self._create_service_certificate(service_name, SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
-        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small')
+        system, os_hd, network = self._linux_role(role_name)
+
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production',
+            deployment_name + 'label', role_name, system, os_hd,
+            network, role_size='Small')
+
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(service_name, deployment_name, 'Running')
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
+        self._assert_role_instance_endpoint(
+            service_name, deployment_name, 'utendpoint', 'tcp', '59913', '3394')
 
-    def _create_vm_windows(self, service_name, deployment_name, role_name, target_container_name, target_blob_name):
-        image_name = self._windows_image_name()
-        media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + target_container_name + '/' + target_blob_name
-        system = WindowsConfigurationSet('computername', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
-        os_hd = OSVirtualHardDisk(image_name, media_link, disk_label = target_blob_name)
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('utendpoint', 'tcp', '59913', '3394'))
-
+    def _create_vm_windows(self, service_name, deployment_name, role_name):
         self._create_hosted_service(service_name)
-        self._create_service_certificate(service_name, SERVICE_CERT_DATA, 'pfx', SERVICE_CERT_PASSWORD)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
-        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small')
-        self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(service_name, deployment_name, 'Running')
+        system, os_hd, network = self._windows_role(role_name)
 
-    def _add_role_windows(self, service_name, deployment_name, role_name2):
-        image_name = self._windows_image_name()
-        target_container_name = 'vhds'
-        target_blob_name = role_name2 + '.vhd'
-        media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + target_container_name + '/' + target_blob_name
-        
-        system = WindowsConfigurationSet('computer2', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
-        
-        os_hd = OSVirtualHardDisk(image_name, media_link)
-        
-        result = self.sms.add_role(service_name, deployment_name, role_name2, system, os_hd)
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production',
+            deployment_name + 'label', role_name, system, os_hd,
+            network, role_size='Small')
+
         self._wait_for_async(result.request_id)
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
+        self._assert_role_instance_endpoint(
+            service_name, deployment_name, 'utendpoint', 'tcp', '59913', '3394')
+
+    def _assert_role_instance_endpoint(self, service_name, deployment_name,
+                                       endpoint_name, protocol,
+                                       public_port, local_port):
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(len(deployment.role_instance_list), 1)
+        role_instance = deployment.role_instance_list[0]
+        self.assertEqual(len(role_instance.instance_endpoints), 1)
+        endpoint = role_instance.instance_endpoints[0]
+        self.assertEqual(endpoint.name, endpoint_name)
+        self.assertEqual(endpoint.protocol, protocol)
+        self.assertEqual(endpoint.public_port, public_port)
+        self.assertEqual(endpoint.local_port, local_port)
+
+    def _add_role_windows(self, service_name, deployment_name, role_name, port):
+        system, os_hd, network = self._windows_role(role_name, port=port)
+
+        result = self.sms.add_role(service_name, deployment_name, role_name,
+                                   system, os_hd, network)
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
     #--Test cases for hosted services ------------------------------------
     def test_list_hosted_services(self):
@@ -413,20 +540,23 @@ class ServiceManagementServiceTest(AzureTestCase):
             if temp.service_name == self.hosted_service_name:
                 service = temp
                 break
-        
+
         self.assertIsNotNone(service)
         self.assertIsNotNone(service.service_name)
         self.assertIsNotNone(service.url)
         self.assertIsNotNone(service.hosted_service_properties)
         self.assertIsNotNone(service.hosted_service_properties.affinity_group)
         self.assertIsNotNone(service.hosted_service_properties.date_created)
-        self.assertIsNotNone(service.hosted_service_properties.date_last_modified)
+        self.assertIsNotNone(
+            service.hosted_service_properties.date_last_modified)
         self.assertIsNotNone(service.hosted_service_properties.description)
         self.assertIsNotNone(service.hosted_service_properties.label)
         self.assertIsNotNone(service.hosted_service_properties.location)
         self.assertIsNotNone(service.hosted_service_properties.status)
-        self.assertIsNotNone(service.hosted_service_properties.extended_properties['ext1'])
-        self.assertIsNotNone(service.hosted_service_properties.extended_properties['ext2'])
+        self.assertIsNotNone(
+            service.hosted_service_properties.extended_properties['ext1'])
+        self.assertIsNotNone(
+            service.hosted_service_properties.extended_properties['ext2'])
         self.assertIsNone(service.deployments)
 
     def test_get_hosted_service_properties(self):
@@ -434,7 +564,8 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._create_hosted_service(self.hosted_service_name)
 
         # Act
-        result = self.sms.get_hosted_service_properties(self.hosted_service_name)
+        result = self.sms.get_hosted_service_properties(
+            self.hosted_service_name)
 
         # Assert
         self.assertIsNotNone(result)
@@ -443,22 +574,27 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsNotNone(result.hosted_service_properties)
         self.assertIsNotNone(result.hosted_service_properties.affinity_group)
         self.assertIsNotNone(result.hosted_service_properties.date_created)
-        self.assertIsNotNone(result.hosted_service_properties.date_last_modified)
+        self.assertIsNotNone(
+            result.hosted_service_properties.date_last_modified)
         self.assertIsNotNone(result.hosted_service_properties.description)
         self.assertIsNotNone(result.hosted_service_properties.label)
         self.assertIsNotNone(result.hosted_service_properties.location)
         self.assertIsNotNone(result.hosted_service_properties.status)
-        self.assertIsNotNone(result.hosted_service_properties.extended_properties['ext1'])
-        self.assertIsNotNone(result.hosted_service_properties.extended_properties['ext2'])
+        self.assertIsNotNone(
+            result.hosted_service_properties.extended_properties['ext1'])
+        self.assertIsNotNone(
+            result.hosted_service_properties.extended_properties['ext2'])
         self.assertIsNone(result.deployments)
 
     def test_get_hosted_service_properties_with_embed_detail(self):
         # Arrange
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
 
         # Act
-        result = self.sms.get_hosted_service_properties(self.hosted_service_name, True)
+        result = self.sms.get_hosted_service_properties(
+            self.hosted_service_name, True)
 
         # Assert
         self.assertIsNotNone(result)
@@ -467,13 +603,16 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsNotNone(result.hosted_service_properties)
         self.assertIsNotNone(result.hosted_service_properties.affinity_group)
         self.assertIsNotNone(result.hosted_service_properties.date_created)
-        self.assertIsNotNone(result.hosted_service_properties.date_last_modified)
+        self.assertIsNotNone(
+            result.hosted_service_properties.date_last_modified)
         self.assertIsNotNone(result.hosted_service_properties.description)
         self.assertIsNotNone(result.hosted_service_properties.label)
         self.assertIsNotNone(result.hosted_service_properties.location)
         self.assertIsNotNone(result.hosted_service_properties.status)
-        self.assertIsNotNone(result.hosted_service_properties.extended_properties['ext1'])
-        self.assertIsNotNone(result.hosted_service_properties.extended_properties['ext2'])
+        self.assertIsNotNone(
+            result.hosted_service_properties.extended_properties['ext1'])
+        self.assertIsNotNone(
+            result.hosted_service_properties.extended_properties['ext2'])
 
         self.assertIsNotNone(result.deployments)
         self.assertIsNotNone(result.deployments[0].configuration)
@@ -488,7 +627,8 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsNone(result.deployments[0].persistent_vm_downtime_info)
         self.assertIsNotNone(result.deployments[0].private_id)
         self.assertIsNotNone(result.deployments[0].role_list[0].os_version)
-        self.assertEqual(result.deployments[0].role_list[0].role_name, 'WorkerRole1')
+        self.assertEqual(result.deployments[0]
+                         .role_list[0].role_name, 'WorkerRole1')
         self.assertFalse(result.deployments[0].rollback_allowed)
         self.assertIsNotNone(result.deployments[0].sdk_version)
         self.assertIsNotNone(result.deployments[0].status)
@@ -496,16 +636,26 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsNone(result.deployments[0].upgrade_status)
         self.assertIsNotNone(result.deployments[0].url)
         self.assertIsNotNone(result.deployments[0].role_instance_list[0].fqdn)
-        self.assertIsNotNone(result.deployments[0].role_instance_list[0].instance_error_code)
-        self.assertIsNotNone(result.deployments[0].role_instance_list[0].instance_fault_domain)
-        self.assertIsNotNone(result.deployments[0].role_instance_list[0].instance_name)
-        self.assertIsNotNone(result.deployments[0].role_instance_list[0].instance_size)
-        self.assertIsNotNone(result.deployments[0].role_instance_list[0].instance_state_details)
-        self.assertIsNotNone(result.deployments[0].role_instance_list[0].instance_status)
-        self.assertIsNotNone(result.deployments[0].role_instance_list[0].instance_upgrade_domain)
-        self.assertIsNotNone(result.deployments[0].role_instance_list[0].ip_address)
-        self.assertIsNotNone(result.deployments[0].role_instance_list[0].power_state)
-        self.assertEqual(result.deployments[0].role_instance_list[0].role_name, 'WorkerRole1')
+        self.assertIsNotNone(
+            result.deployments[0].role_instance_list[0].instance_error_code)
+        self.assertIsNotNone(
+            result.deployments[0].role_instance_list[0].instance_fault_domain)
+        self.assertIsNotNone(
+            result.deployments[0].role_instance_list[0].instance_name)
+        self.assertIsNotNone(
+            result.deployments[0].role_instance_list[0].instance_size)
+        self.assertIsNotNone(
+            result.deployments[0].role_instance_list[0].instance_state_details)
+        self.assertIsNotNone(
+            result.deployments[0].role_instance_list[0].instance_status)
+        self.assertIsNotNone(
+            result.deployments[0].role_instance_list[0].instance_upgrade_domain)
+        self.assertIsNotNone(
+            result.deployments[0].role_instance_list[0].ip_address)
+        self.assertIsNotNone(
+            result.deployments[0].role_instance_list[0].power_state)
+        self.assertEqual(
+            result.deployments[0].role_instance_list[0].role_name, 'WorkerRole1')
 
     def test_create_hosted_service(self):
         # Arrange
@@ -514,7 +664,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         location = 'West US'
 
         # Act
-        result = self.sms.create_hosted_service(self.hosted_service_name, label, description, location, None, {'ext1':'val1','ext2':'val2'})
+        result = self.sms.create_hosted_service(
+            self.hosted_service_name, label, description, location, None,
+            {'ext1': 'val1', 'ext2': 'val2'})
 
         # Assert
         self.assertIsNone(result)
@@ -527,16 +679,26 @@ class ServiceManagementServiceTest(AzureTestCase):
         description = 'ptvs description update'
 
         # Act
-        result = self.sms.update_hosted_service(self.hosted_service_name, label, description, {'ext1':'val1update','ext2':'val2update','ext3':'brandnew'})
+        result = self.sms.update_hosted_service(
+            self.hosted_service_name, label, description,
+            {'ext1': 'val1update', 'ext2': 'val2update', 'ext3': 'brandnew'})
 
         # Assert
         self.assertIsNone(result)
-        props = self.sms.get_hosted_service_properties(self.hosted_service_name)
+        props = self.sms.get_hosted_service_properties(
+            self.hosted_service_name)
         self.assertEqual(props.hosted_service_properties.label, label)
-        self.assertEqual(props.hosted_service_properties.description, description)
-        self.assertEqual(props.hosted_service_properties.extended_properties['ext1'], 'val1update')
-        self.assertEqual(props.hosted_service_properties.extended_properties['ext2'], 'val2update')
-        self.assertEqual(props.hosted_service_properties.extended_properties['ext3'], 'brandnew')
+        self.assertEqual(
+            props.hosted_service_properties.description, description)
+        self.assertEqual(
+            props.hosted_service_properties.extended_properties['ext1'],
+            'val1update')
+        self.assertEqual(
+            props.hosted_service_properties.extended_properties['ext2'],
+            'val2update')
+        self.assertEqual(
+            props.hosted_service_properties.extended_properties['ext3'],
+            'brandnew')
 
     def test_delete_hosted_service(self):
         # Arrange
@@ -552,10 +714,12 @@ class ServiceManagementServiceTest(AzureTestCase):
     def test_get_deployment_by_slot(self):
         # Arrange
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
 
         # Act
-        result = self.sms.get_deployment_by_slot(self.hosted_service_name, 'Production')
+        result = self.sms.get_deployment_by_slot(
+            self.hosted_service_name, 'Production')
 
         # Assert
         self.assertIsNotNone(result)
@@ -567,10 +731,12 @@ class ServiceManagementServiceTest(AzureTestCase):
     def test_get_deployment_by_name(self):
         # Arrange
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
 
         # Act
-        result = self.sms.get_deployment_by_name(self.hosted_service_name, deployment_name)
+        result = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
 
         # Assert
         self.assertIsNotNone(result)
@@ -583,46 +749,60 @@ class ServiceManagementServiceTest(AzureTestCase):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
         configuration = base64.b64encode(DEPLOYMENT_ORIGINAL_CONFIG)
-        package_url = self._upload_default_package_to_storage_blob('WindowsAzure1Blob')
+        package_url = self._upload_default_package_to_storage_blob(
+            'WindowsAzure1Blob')
 
         # Act
-        result = self.sms.create_deployment(self.hosted_service_name, 'production', 'WindowsAzure1', package_url, 'deploylabel', configuration)
+        result = self.sms.create_deployment(
+            self.hosted_service_name, 'production', 'WindowsAzure1',
+            package_url, 'deploylabel', configuration)
         self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertTrue(self._deployment_exists(self.hosted_service_name, 'WindowsAzure1'))
+        self.assertTrue(
+            self._deployment_exists(self.hosted_service_name, 'WindowsAzure1'))
 
     def test_delete_deployment(self):
         # Arrange
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
 
         # Act
-        result = self.sms.delete_deployment(self.hosted_service_name, deployment_name)
+        result = self.sms.delete_deployment(
+            self.hosted_service_name, deployment_name)
         self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertFalse(self._deployment_exists(self.hosted_service_name, deployment_name))
+        self.assertFalse(
+            self._deployment_exists(self.hosted_service_name, deployment_name))
 
     def test_swap_deployment(self):
         # Arrange
         production_deployment_name = 'utdeployprod'
         staging_deployment_name = 'utdeploystag'
         self._create_hosted_service(self.hosted_service_name)
-        self._add_deployment(self.hosted_service_name, production_deployment_name, 'Production')
-        self._add_deployment(self.hosted_service_name, staging_deployment_name, 'Staging')
+        self._add_deployment(self.hosted_service_name,
+                             production_deployment_name, 'Production')
+        self._add_deployment(self.hosted_service_name,
+                             staging_deployment_name, 'Staging')
 
         # Act
-        result = self.sms.swap_deployment(self.hosted_service_name, production_deployment_name, staging_deployment_name)
+        result = self.sms.swap_deployment(
+            self.hosted_service_name,
+            production_deployment_name,
+            staging_deployment_name)
         self._wait_for_async(result.request_id)
 
         # Assert
-        deploy = self.sms.get_deployment_by_slot(self.hosted_service_name, 'Production')
+        deploy = self.sms.get_deployment_by_slot(
+            self.hosted_service_name, 'Production')
         self.assertIsNotNone(deploy)
         self.assertEqual(deploy.name, staging_deployment_name)
         self.assertEqual(deploy.deployment_slot, 'Production')
-        
-        deploy = self.sms.get_deployment_by_slot(self.hosted_service_name, 'Staging')
+
+        deploy = self.sms.get_deployment_by_slot(
+            self.hosted_service_name, 'Staging')
         self.assertIsNotNone(deploy)
         self.assertEqual(deploy.name, production_deployment_name)
         self.assertEqual(deploy.deployment_slot, 'Staging')
@@ -630,126 +810,159 @@ class ServiceManagementServiceTest(AzureTestCase):
     def test_change_deployment_configuration(self):
         # Arrange
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
         configuration = base64.b64encode(DEPLOYMENT_UPDATE_CONFIG)
 
         # Act
-        result = self.sms.change_deployment_configuration(self.hosted_service_name, deployment_name, configuration)
+        result = self.sms.change_deployment_configuration(
+            self.hosted_service_name, deployment_name, configuration)
         self._wait_for_async(result.request_id)
 
         # Assert
-        props = self.sms.get_deployment_by_name(self.hosted_service_name, deployment_name)
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
         self.assertTrue(props.configuration.find('Instances count="4"') >= 0)
 
     def test_update_deployment_status(self):
         # Arrange
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
 
         # Act
-        result = self.sms.update_deployment_status(self.hosted_service_name, deployment_name, 'Suspended')
+        result = self.sms.update_deployment_status(
+            self.hosted_service_name, deployment_name, 'Suspended')
         self._wait_for_async(result.request_id)
 
         # Assert
-        props = self.sms.get_deployment_by_name(self.hosted_service_name, deployment_name)
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
         self.assertEqual(props.status, 'Suspended')
 
     def test_upgrade_deployment(self):
         # Arrange
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
         package_url = self._upload_default_package_to_storage_blob('updated')
         configuration = base64.b64encode(DEPLOYMENT_UPDATE_CONFIG)
 
         # Act
-        result = self.sms.upgrade_deployment(self.hosted_service_name, deployment_name, 'Auto', package_url, configuration, 'upgraded', True)
+        result = self.sms.upgrade_deployment(
+            self.hosted_service_name, deployment_name, 'Auto',
+            package_url, configuration, 'upgraded', True)
         self._wait_for_async(result.request_id)
 
         # Assert
-        props = self.sms.get_deployment_by_name(self.hosted_service_name, deployment_name)
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
         self.assertEqual(props.label, 'upgraded')
         self.assertTrue(props.configuration.find('Instances count="4"') >= 0)
 
     def test_walk_upgrade_domain(self):
         # Arrange
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
         package_url = self._upload_default_package_to_storage_blob('updated')
         configuration = base64.b64encode(DEPLOYMENT_UPDATE_CONFIG)
-        result = self.sms.upgrade_deployment(self.hosted_service_name, deployment_name, 'Manual', package_url, configuration, 'upgraded', True)
+        result = self.sms.upgrade_deployment(
+            self.hosted_service_name, deployment_name, 'Manual',
+            package_url, configuration, 'upgraded', True)
         self._wait_for_async(result.request_id)
 
         # Act
-        result = self.sms.walk_upgrade_domain(self.hosted_service_name, deployment_name, 0)
+        result = self.sms.walk_upgrade_domain(
+            self.hosted_service_name, deployment_name, 0)
         self._wait_for_async(result.request_id)
 
         # Assert
-        props = self.sms.get_deployment_by_name(self.hosted_service_name, deployment_name)
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
         self.assertEqual(props.label, 'upgraded')
         self.assertTrue(props.configuration.find('Instances count="4"') >= 0)
 
     def test_rollback_update_or_upgrade(self):
         # Arrange
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
-        package_url = self._upload_default_package_to_storage_blob('updated207')
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
+        package_url = self._upload_default_package_to_storage_blob(
+            'updated207')
         configuration = base64.b64encode(DEPLOYMENT_UPDATE_CONFIG)
 
-        self.sms.upgrade_deployment(self.hosted_service_name, deployment_name, 'Auto', package_url, configuration, 'upgraded', True)
-        self._wait_for_rollback_allowed(self.hosted_service_name, deployment_name)
+        self.sms.upgrade_deployment(self.hosted_service_name, deployment_name,
+                                    'Auto', package_url, configuration,
+                                    'upgraded', True)
+        self._wait_for_rollback_allowed(
+            self.hosted_service_name, deployment_name)
 
         # Act
-        result = self.sms.rollback_update_or_upgrade(self.hosted_service_name, deployment_name, 'Auto', True)
+        result = self.sms.rollback_update_or_upgrade(
+            self.hosted_service_name, deployment_name, 'Auto', True)
         self._wait_for_async(result.request_id)
 
         # Assert
-        props = self.sms.get_deployment_by_name(self.hosted_service_name, deployment_name)
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
         self.assertTrue(props.configuration.find('Instances count="2"') >= 0)
 
     def test_reboot_role_instance(self):
         # Arrange
         role_instance_name = 'WorkerRole1_IN_0'
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
-        result = self.sms.update_deployment_status(self.hosted_service_name, deployment_name, 'Running')
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
+        result = self.sms.update_deployment_status(
+            self.hosted_service_name, deployment_name, 'Running')
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(self.hosted_service_name, deployment_name, 'Running')
-        self._wait_for_role_instance_status(self.hosted_service_name, deployment_name, role_instance_name, 'ReadyRole')
+        self._wait_for_deployment(self.hosted_service_name, deployment_name)
+        self._wait_for_role(self.hosted_service_name, deployment_name,
+                            role_instance_name)
 
         # Act
-        result = self.sms.reboot_role_instance(self.hosted_service_name, deployment_name, role_instance_name)
+        result = self.sms.reboot_role_instance(
+            self.hosted_service_name, deployment_name, role_instance_name)
         self._wait_for_async(result.request_id)
 
         # Assert
-        props = self.sms.get_deployment_by_name(self.hosted_service_name, deployment_name)
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
         status = self._get_role_instance_status(props, role_instance_name)
-        self.assertTrue(status == 'StoppedVM' or status =='ReadyRole')
+        self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
 
     def test_reimage_role_instance(self):
         # Arrange
         role_instance_name = 'WorkerRole1_IN_0'
         deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(self.hosted_service_name, deployment_name)
-        result = self.sms.update_deployment_status(self.hosted_service_name, deployment_name, 'Running')
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
+        result = self.sms.update_deployment_status(
+            self.hosted_service_name, deployment_name, 'Running')
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(self.hosted_service_name, deployment_name, 'Running')
-        self._wait_for_role_instance_status(self.hosted_service_name, deployment_name, role_instance_name, 'ReadyRole')
+        self._wait_for_deployment(self.hosted_service_name, deployment_name)
+        self._wait_for_role(self.hosted_service_name, deployment_name,
+                            role_instance_name)
 
         # Act
-        result = self.sms.reimage_role_instance(self.hosted_service_name, deployment_name, role_instance_name)
+        result = self.sms.reimage_role_instance(
+            self.hosted_service_name, deployment_name, role_instance_name)
         self._wait_for_async(result.request_id)
 
         # Assert
-        props = self.sms.get_deployment_by_name(self.hosted_service_name, deployment_name)
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
         status = self._get_role_instance_status(props, role_instance_name)
-        self.assertTrue(status == 'StoppedVM' or status =='ReadyRole')
+        self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
 
     def test_check_hosted_service_name_availability_not_available(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
 
         # Act
-        result = self.sms.check_hosted_service_name_availability(self.hosted_service_name)
+        result = self.sms.check_hosted_service_name_availability(
+            self.hosted_service_name)
 
         # Assert
         self.assertIsNotNone(result)
@@ -759,7 +972,8 @@ class ServiceManagementServiceTest(AzureTestCase):
         # Arrange
 
         # Act
-        result = self.sms.check_hosted_service_name_availability(self.hosted_service_name)
+        result = self.sms.check_hosted_service_name_availability(
+            self.hosted_service_name)
 
         # Assert
         self.assertIsNotNone(result)
@@ -769,7 +983,8 @@ class ServiceManagementServiceTest(AzureTestCase):
     def test_list_service_certificates(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
-        self._create_service_certificate(self.hosted_service_name, SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+        self._create_service_certificate(
+            self.hosted_service_name, SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
         # Act
         result = self.sms.list_service_certificates(self.hosted_service_name)
@@ -794,10 +1009,14 @@ class ServiceManagementServiceTest(AzureTestCase):
     def test_get_service_certificate(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
-        self._create_service_certificate(self.hosted_service_name, SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+        self._create_service_certificate(
+            self.hosted_service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
         # Act
-        result = self.sms.get_service_certificate(self.hosted_service_name, SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT)
+        result = self.sms.get_service_certificate(
+            self.hosted_service_name,
+            SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT)
 
         # Assert
         self.assertIsNotNone(result)
@@ -811,23 +1030,33 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._create_hosted_service(self.hosted_service_name)
 
         # Act
-        result = self.sms.add_service_certificate(self.hosted_service_name, SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+        result = self.sms.add_service_certificate(
+            self.hosted_service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
         self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertTrue(self._service_certificate_exists(self.hosted_service_name, SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT))
+        self.assertTrue(self._service_certificate_exists(
+            self.hosted_service_name,
+            SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT))
 
     def test_delete_service_certificate(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
-        self._create_service_certificate(self.hosted_service_name, SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+        self._create_service_certificate(
+            self.hosted_service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
         # Act
-        result = self.sms.delete_service_certificate(self.hosted_service_name, SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT)
+        result = self.sms.delete_service_certificate(
+            self.hosted_service_name,
+            SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT)
         self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertFalse(self._service_certificate_exists(self.hosted_service_name, SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT))
+        self.assertFalse(self._service_certificate_exists(
+            self.hosted_service_name,
+            SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT))
 
     #--Test cases for retrieving operating system information ------------
     def test_list_operating_systems(self):
@@ -835,7 +1064,7 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         # Act
         result = self.sms.list_operating_systems()
-        
+
         # Assert
         self.assertIsNotNone(result)
         self.assertTrue(len(result) > 20)
@@ -869,10 +1098,11 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         # Act
         result = self.sms.get_subscription()
-        
+
         # Assert
         self.assertIsNotNone(result)
-        self.assertEqual(result.subscription_id, credentials.getSubscriptionId())
+        self.assertEqual(result.subscription_id,
+                         credentials.getSubscriptionId())
         self.assertIsNotNone(result.account_admin_live_email_id)
         self.assertIsNotNone(result.service_admin_live_email_id)
         self.assertIsNotNone(result.subscription_name)
@@ -894,7 +1124,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_linux(service_name, deployment_name, role_name, self.container_name, role_name + '.vhd')
+        self._create_vm_linux(service_name, deployment_name, role_name)
 
         # Act
         result = self.sms.get_role(service_name, deployment_name, role_name)
@@ -914,12 +1144,17 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsNotNone(result.data_virtual_hard_disks)
         self.assertIsNotNone(result.configuration_sets)
         self.assertIsNotNone(result.configuration_sets[0])
-        self.assertIsNotNone(result.configuration_sets[0].configuration_set_type)
+        self.assertIsNotNone(
+            result.configuration_sets[0].configuration_set_type)
         self.assertIsNotNone(result.configuration_sets[0].input_endpoints)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].protocol)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].port)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].name)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].local_port)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].protocol)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].port)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].name)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].local_port)
 
     def test_get_role_windows(self):
         # Arrange
@@ -927,7 +1162,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, self.container_name, role_name + '.vhd')
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         # Act
         result = self.sms.get_role(service_name, deployment_name, role_name)
@@ -947,109 +1182,118 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsNotNone(result.data_virtual_hard_disks)
         self.assertIsNotNone(result.configuration_sets)
         self.assertIsNotNone(result.configuration_sets[0])
-        self.assertIsNotNone(result.configuration_sets[0].configuration_set_type)
+        self.assertIsNotNone(
+            result.configuration_sets[0].configuration_set_type)
         self.assertIsNotNone(result.configuration_sets[0].input_endpoints)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].protocol)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].port)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].name)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints[0].local_port)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].protocol)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].port)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].name)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].local_port)
+        self.assertTrue(len(result.default_win_rm_certificate_thumbprint) > 0)
 
     def test_create_virtual_machine_deployment_linux(self):
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
-        image_name = self._linux_image_name()
-        media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name + '.vhd'
-        pk = PublicKey(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/authorized_keys')
-        pair = KeyPair(SERVICE_CERT_THUMBPRINT, u'/home/unittest/.ssh/id_rsa')
+        deployment_label = deployment_name + 'label'
 
         self._create_hosted_service(service_name)
-        self._create_service_certificate(service_name, SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
         # Act
-        system = LinuxConfigurationSet('unittest', 'unittest', 'u7;9jbp!', True)
-        system.ssh.public_keys.public_keys.append(pk)
-        system.ssh.key_pairs.key_pairs.append(pair)
+        system, os_hd, network = self._linux_role(role_name)
 
-        os_hd = OSVirtualHardDisk(image_name, media_link)
-        
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('endpnameL', 'tcp', '59913', '3394'))
-        
-        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small')
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network, role_size='Small')
+
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(service_name, deployment_name, 'Running')
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Assert
-        self.assertTrue(self._role_exists(service_name, deployment_name, role_name))
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
 
     def test_create_virtual_machine_deployment_windows(self):
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
-        image_name = self._windows_image_name()
-        media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name + '.vhd'
+        deployment_label = deployment_name + 'label'
 
         self._create_hosted_service(service_name)
-        self._create_service_certificate(service_name, SERVICE_CERT_DATA, 'pfx', SERVICE_CERT_PASSWORD)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
 
         # Act
-        system = WindowsConfigurationSet('unittest', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
+        system, os_hd, network = self._windows_role(role_name)
 
-        os_hd = OSVirtualHardDisk(image_name, media_link)
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network, role_size='Small')
 
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('endpnameW', 'tcp', '59917', '3395'))
-
-        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small')
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(service_name, deployment_name, 'Running')
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Assert
-        self.assertTrue(self._role_exists(service_name, deployment_name, role_name))
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
 
     def test_create_virtual_machine_deployment_windows_virtual_network(self):
         # this test requires the following manual resources to be created
         # use the azure portal to create them
         affinity_group = 'utaffgrpdonotdelete'    # affinity group, any region
-        storage_name = 'utstoragedonotdelete'     # storage account in affinity group
-        virtual_network_name = 'utnetdonotdelete' # virtual network in affinity group
+        # storage account in affinity group
+        storage_name = 'utstoragedonotdelete'
+        # virtual network in affinity group
+        virtual_network_name = 'utnetdonotdelete'
         subnet_name = 'Subnet-1'                  # subnet in virtual network
 
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
-        image_name = self._windows_image_name()
-        media_link = 'http://' + storage_name + '.blob.core.windows.net/' + self.container_name + '/' + role_name + '.vhd'
+        deployment_label = deployment_name + 'label'
 
-        self._create_hosted_service(service_name, affinity_group=affinity_group)
-        self._create_service_certificate(service_name, SERVICE_CERT_DATA, 'pfx', SERVICE_CERT_PASSWORD)
+        self._create_hosted_service(
+            service_name, affinity_group=affinity_group)
+        self._create_service_certificate(
+            service_name, SERVICE_CERT_DATA, 'pfx', SERVICE_CERT_PASSWORD)
 
         # Act
-        system = WindowsConfigurationSet('unittest', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
+        system, os_hd, network = self._windows_role(role_name, subnet_name)
 
-        os_hd = OSVirtualHardDisk(image_name, media_link)
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network,
+            role_size='Small', virtual_network_name=virtual_network_name)
 
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('endpnameW', 'tcp', '59917', '3395'))
-        network.subnet_names.append(subnet_name)
-
-        result = self.sms.create_virtual_machine_deployment(service_name, deployment_name, 'staging', deployment_name + 'label', role_name, system, os_hd, network_config=network, role_size='Small', virtual_network_name=virtual_network_name)
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment_status(service_name, deployment_name, 'Running')
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Assert
-        self.assertTrue(self._role_exists(service_name, deployment_name, role_name))
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
 
     def test_add_role_linux(self):
         # Arrange
@@ -1058,24 +1302,29 @@ class ServiceManagementServiceTest(AzureTestCase):
         role_name1 = self.hosted_service_name + 'a'
         role_name2 = self.hosted_service_name + 'b'
 
-        self._create_vm_linux(service_name, deployment_name, role_name1, self.container_name, role_name1 + '.vhd')
-        self._wait_for_role_instance_status(service_name, deployment_name, role_name1, 'ReadyRole')
-
-        image_name = self._linux_image_name()
-        media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name2 + '.vhd'
+        self._create_vm_linux(service_name, deployment_name, role_name1)
 
         # Act
-        system = LinuxConfigurationSet('computer2', 'unittest', 'u7;9jbp!', True)
-        system.ssh = None
-        
-        os_hd = OSVirtualHardDisk(image_name, media_link)
+        system, os_hd, network = self._linux_role(role_name2, port='59914')
+        network = None
 
-        result = self.sms.add_role(service_name, deployment_name, role_name2, system, os_hd)
+        result = self.sms.add_role(service_name, deployment_name, role_name2,
+                                   system, os_hd, network)
         self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name2)
 
         # Assert
-        self.assertTrue(self._role_exists(service_name, deployment_name, role_name1))
-        self.assertTrue(self._role_exists(service_name, deployment_name, role_name2))
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name1))
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name2))
+
+        svc = self.sms.get_hosted_service_properties(service_name, True)
+        role_instances = svc.deployments[0].role_instance_list
+        self.assertEqual(role_instances[0].host_name,
+                         self._host_name_from_role_name(role_name1))
+        self.assertEqual(role_instances[1].host_name,
+                         self._host_name_from_role_name(role_name2))
 
     def test_add_role_windows(self):
         # Arrange
@@ -1084,41 +1333,47 @@ class ServiceManagementServiceTest(AzureTestCase):
         role_name1 = self.hosted_service_name + 'a'
         role_name2 = self.hosted_service_name + 'b'
 
-        self._create_vm_windows(service_name, deployment_name, role_name1, self.container_name, role_name1 + '.vhd')
-        self._wait_for_role_instance_status(service_name, deployment_name, role_name1, 'ReadyRole')
+        self._create_vm_windows(service_name, deployment_name, role_name1)
 
-        image_name = self._windows_image_name()
-        media_link = 'http://' + credentials.getStorageServicesName() + '.blob.core.windows.net/' + self.container_name + '/' + role_name2 + '.vhd'
-    
         # Act
-        system = WindowsConfigurationSet('computer2', 'u7;9jbp!', False, False, 'Pacific Standard Time')
-        system.domain_join = None
-        system.stored_certificate_settings.stored_certificate_settings.append(CertificateSetting(SERVICE_CERT_THUMBPRINT, 'My', 'LocalMachine'))
+        system, os_hd, network = self._windows_role(role_name2, port='59914')
 
-        os_hd = OSVirtualHardDisk(image_name, media_link)
-
-        result = self.sms.add_role(service_name, deployment_name, role_name2, system, os_hd)
+        result = self.sms.add_role(service_name, deployment_name, role_name2, 
+                                   system, os_hd, network)
         self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name2)
 
         # Assert
-        self.assertTrue(self._role_exists(service_name, deployment_name, role_name1))
-        self.assertTrue(self._role_exists(service_name, deployment_name, role_name2))
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name1))
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name2))
+
+        svc = self.sms.get_hosted_service_properties(service_name, True)
+        role_instances = svc.deployments[0].role_instance_list
+        self.assertEqual(role_instances[0].host_name,
+                         self._host_name_from_role_name(role_name1))
+        self.assertEqual(role_instances[1].host_name,
+                         self._host_name_from_role_name(role_name2))
 
     def test_update_role(self):
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, 'vhds', self.hosted_service_name)
-        self._wait_for_role_instance_status(service_name, deployment_name, role_name, 'ReadyRole')
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         network = ConfigurationSet()
         network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(ConfigurationSetInputEndpoint('endupdate', 'tcp', '50055', '5555'))
+        network.input_endpoints.input_endpoints.append(
+            ConfigurationSetInputEndpoint('endupdate', 'tcp', '50055', '5555'))
 
         # Act
-        result = self.sms.update_role(service_name, deployment_name, role_name, network_config=network, role_size='Medium')
+        result = self.sms.update_role(service_name, deployment_name, role_name,
+                                      network_config=network,
+                                      role_size='Medium')
         self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Assert
         role = self.sms.get_role(service_name, deployment_name, role_name)
@@ -1131,19 +1386,18 @@ class ServiceManagementServiceTest(AzureTestCase):
         role_name1 = self.hosted_service_name + 'a'
         role_name2 = self.hosted_service_name + 'b'
 
-        self._create_vm_windows(service_name, deployment_name, role_name1, 'vhds', role_name1)
-        self._wait_for_role_instance_status(service_name, deployment_name, role_name1, 'ReadyRole')
-
-        self._add_role_windows(service_name, deployment_name, role_name2)
-        self._wait_for_role_instance_status(service_name, deployment_name, role_name2, 'ReadyRole')
+        self._create_vm_windows(service_name, deployment_name, role_name1)
+        self._add_role_windows(service_name, deployment_name, role_name2, '59914')
 
         # Act
         result = self.sms.delete_role(service_name, deployment_name, role_name2)
         self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertTrue(self._role_exists(service_name, deployment_name, role_name1))
-        self.assertFalse(self._role_exists(service_name, deployment_name, role_name2))
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name1))
+        self.assertFalse(
+            self._role_exists(service_name, deployment_name, role_name2))
 
     def test_shutdown_start_and_restart_role(self):
         # Arrange
@@ -1151,23 +1405,55 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, 'vhds', self.hosted_service_name)
-        self._wait_for_role_instance_status(service_name, deployment_name, role_name, 'ReadyRole')
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         # Act
         result = self.sms.shutdown_role(service_name, deployment_name, role_name)
         self._wait_for_async(result.request_id)
-        self._wait_for_role_instance_status(service_name, deployment_name, role_name, 'StoppedVM')
+        self._wait_for_role(service_name, deployment_name, role_name, 'StoppedVM')
 
         # Act
         result = self.sms.start_role(service_name, deployment_name, role_name)
         self._wait_for_async(result.request_id)
-        self._wait_for_role_instance_status(service_name, deployment_name, role_name, 'ReadyRole')
+        self._wait_for_role(service_name, deployment_name, role_name)
 
         # Act
         result = self.sms.restart_role(service_name, deployment_name, role_name)
         self._wait_for_async(result.request_id)
-        self._wait_for_role_instance_status(service_name, deployment_name, role_name, 'ReadyRole')
+        self._wait_for_role(service_name, deployment_name, role_name)
+
+        # Act
+        result = self.sms.shutdown_role(service_name, deployment_name,
+                                        role_name, 'StoppedDeallocated')
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name,
+                            'StoppedDeallocated')
+
+    def test_shutdown_and_start_roles(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name1 = self.hosted_service_name + 'a'
+        role_name2 = self.hosted_service_name + 'b'
+
+        self._create_vm_windows(service_name, deployment_name, role_name1)
+        self._add_role_windows(service_name, deployment_name, role_name2, '59914')
+
+        # Act
+        result = self.sms.shutdown_roles(service_name, deployment_name,
+                                         [role_name1, role_name2])
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name1,
+                            'StoppedVM')
+        self._wait_for_role(service_name, deployment_name, role_name2,
+                            'StoppedVM')
+
+        # Act
+        result = self.sms.start_roles(service_name, deployment_name,
+                                      [role_name1, role_name2])
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name1)
+        self._wait_for_role(service_name, deployment_name, role_name2)
 
     def test_capture_role(self):
         # Arrange
@@ -1175,13 +1461,19 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, 'vhds', self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
+
+        result = self.sms.shutdown_role(service_name, deployment_name, role_name)
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name, 'StoppedVM')
 
         image_name = self.os_image_name
         image_label = role_name + 'captured'
 
         # Act
-        result = self.sms.capture_role(service_name, deployment_name, role_name, 'Delete', image_name, image_label)
+        result = self.sms.capture_role(
+            service_name, deployment_name, role_name, 'Delete', image_name,
+            image_label)
         self._wait_for_async(result.request_id)
 
         # Assert
@@ -1245,7 +1537,8 @@ class ServiceManagementServiceTest(AzureTestCase):
         # Arrange
 
         # Act
-        result = self.sms.add_os_image('utcentosimg', LINUX_OS_VHD_URL, self.os_image_name, 'Linux')
+        result = self.sms.add_os_image(
+            'utcentosimg', LINUX_OS_VHD_URL, self.os_image_name, 'Linux')
         self._wait_for_async(result.request_id)
 
         # Assert
@@ -1256,7 +1549,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._create_os_image(self.os_image_name, LINUX_OS_VHD_URL, 'Linux')
 
         # Act
-        result = self.sms.update_os_image(self.os_image_name, 'newlabel', LINUX_OS_VHD_URL, self.os_image_name, 'Linux')
+        result = self.sms.update_os_image(
+            self.os_image_name, 'newlabel', LINUX_OS_VHD_URL,
+            self.os_image_name, 'Linux')
         self._wait_for_async(result.request_id)
 
         # Assert
@@ -1282,14 +1577,16 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, 'vhds', self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 1
-        self._add_data_disk_from_blob_url(service_name, deployment_name, role_name, lun, 'mylabel')
+        self._add_data_disk_from_blob_url(
+            service_name, deployment_name, role_name, lun, 'mylabel')
         self.data_disk_info = (service_name, deployment_name, role_name, lun)
 
         # Act
-        result = self.sms.get_data_disk(service_name, deployment_name, role_name, lun)
+        result = self.sms.get_data_disk(
+            service_name, deployment_name, role_name, lun)
 
         # Assert
         self.assertIsNotNone(result)
@@ -1300,13 +1597,22 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertEqual(result.lun, lun)
         self.assertIsNotNone(result.media_link)
 
+        service_props = self.sms.get_hosted_service_properties(service_name, True)
+        hd = service_props.deployments[0].role_list[0].data_virtual_hard_disks[0]
+        self.assertEqual(result.disk_label, hd.disk_label)
+        self.assertEqual(result.disk_name, hd.disk_name)
+        self.assertEqual(result.host_caching, hd.host_caching)
+        self.assertEqual(result.logical_disk_size_in_gb, hd.logical_disk_size_in_gb)
+        self.assertEqual(result.lun, hd.lun)
+        self.assertEqual(result.media_link, hd.media_link)
+
     def test_add_data_disk_from_disk_name(self):
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, 'vhds', self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 2
         url = self._upload_disk_to_storage_blob('disk')
@@ -1314,11 +1620,15 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.data_disk_info = (service_name, deployment_name, role_name, lun)
 
         # Act
-        result = self.sms.add_data_disk(service_name, deployment_name, role_name, lun, None, None, 'testdisklabel', self.disk_name)
+        result = self.sms.add_data_disk(
+            service_name, deployment_name, role_name, lun, None, None,
+            'testdisklabel', self.disk_name)
         self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertTrue(self._data_disk_exists(service_name, deployment_name, role_name, lun))
+        self.assertTrue(
+            self._data_disk_exists(service_name, deployment_name,
+                                   role_name, lun))
 
     def test_add_data_disk_from_blob_url(self):
         # Arrange
@@ -1326,7 +1636,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, 'vhds', self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 3
         label = 'disk' + str(lun)
@@ -1334,11 +1644,15 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.data_disk_info = (service_name, deployment_name, role_name, lun)
 
         # Act
-        result = self.sms.add_data_disk(service_name, deployment_name, role_name, lun, None, None, label, None, None, url)
+        result = self.sms.add_data_disk(
+            service_name, deployment_name, role_name, lun, None, None, label,
+            None, None, url)
         self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertTrue(self._data_disk_exists(service_name, deployment_name, role_name, lun))
+        self.assertTrue(
+            self._data_disk_exists(service_name, deployment_name,
+                                   role_name, lun))
 
     def test_update_data_disk(self):
         # Arrange
@@ -1346,21 +1660,29 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, 'vhds', self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 1
         updated_lun = 10
-        self._add_data_disk_from_blob_url(service_name, deployment_name, role_name, lun, 'mylabel')
+        self._add_data_disk_from_blob_url(
+            service_name, deployment_name, role_name, lun, 'mylabel')
         self.data_disk_info = (service_name, deployment_name, role_name, lun)
 
         # Act
-        result = self.sms.update_data_disk(service_name, deployment_name, role_name, lun, None, None, updated_lun)
+        result = self.sms.update_data_disk(
+            service_name, deployment_name, role_name, lun, None, None,
+            updated_lun)
         self._wait_for_async(result.request_id)
-        self.data_disk_info = (service_name, deployment_name, role_name, updated_lun)
-        
+        self.data_disk_info = (
+            service_name, deployment_name, role_name, updated_lun)
+
         # Assert
-        self.assertFalse(self._data_disk_exists(service_name, deployment_name, role_name, lun))
-        self.assertTrue(self._data_disk_exists(service_name, deployment_name, role_name, updated_lun))
+        self.assertFalse(
+            self._data_disk_exists(service_name, deployment_name,
+                                   role_name, lun))
+        self.assertTrue(
+            self._data_disk_exists(service_name, deployment_name,
+                                   role_name, updated_lun))
 
     def test_delete_data_disk(self):
         # Arrange
@@ -1368,20 +1690,25 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, 'vhds', self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 5
         url = self._upload_disk_to_storage_blob('disk')
         self._create_disk(self.disk_name, 'Windows', url)
-        result = self.sms.add_data_disk(service_name, deployment_name, role_name, lun, None, None, 'testdisklabel', self.disk_name)
+        result = self.sms.add_data_disk(
+            service_name, deployment_name, role_name, lun, None, None,
+            'testdisklabel', self.disk_name)
         self._wait_for_async(result.request_id)
 
         # Act
-        result = self.sms.delete_data_disk(service_name, deployment_name, role_name, lun)
+        result = self.sms.delete_data_disk(
+            service_name, deployment_name, role_name, lun)
         self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertFalse(self._data_disk_exists(service_name, deployment_name, role_name, lun))
+        self.assertFalse(
+            self._data_disk_exists(service_name, deployment_name,
+                                   role_name, lun))
 
     #--Test cases for virtual machine disks ------------------------------
     def test_list_disks(self):
@@ -1434,13 +1761,15 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name, 'vhds', self.hosted_service_name)
+        self._create_vm_windows(service_name, deployment_name, role_name)
 
         lun = 6
         url = self._upload_disk_to_storage_blob('disk')
         self._create_disk(self.disk_name, 'Windows', url)
         self.data_disk_info = (service_name, deployment_name, role_name, lun)
-        result = self.sms.add_data_disk(service_name, deployment_name, role_name, lun, None, None, 'testdisklabel', self.disk_name)
+        result = self.sms.add_data_disk(
+            service_name, deployment_name, role_name, lun, None, None,
+            'testdisklabel', self.disk_name)
         self._wait_for_async(result.request_id)
 
         # Act
@@ -1464,7 +1793,8 @@ class ServiceManagementServiceTest(AzureTestCase):
         url = self._upload_disk_to_storage_blob('disk')
 
         # Act
-        result = self.sms.add_disk(False, 'ptvslabel', url, self.disk_name, 'Windows')
+        result = self.sms.add_disk(
+            False, 'ptvslabel', url, self.disk_name, 'Windows')
 
         # Assert
         self.assertIsNone(result)
@@ -1477,7 +1807,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._create_disk(self.disk_name, 'Windows', url)
 
         # Act
-        result = self.sms.update_disk(self.disk_name, False, 'ptvslabelupdate', urlupdate, self.disk_name, 'Windows')
+        result = self.sms.update_disk(
+            self.disk_name, False, 'ptvslabelupdate', urlupdate,
+            self.disk_name, 'Windows')
 
         # Assert
         self.assertIsNone(result)
