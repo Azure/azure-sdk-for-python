@@ -33,7 +33,7 @@ AZURE_MANAGEMENT_CERTFILE = 'AZURE_MANAGEMENT_CERTFILE'
 AZURE_MANAGEMENT_SUBSCRIPTIONID = 'AZURE_MANAGEMENT_SUBSCRIPTIONID'
 
 # x-ms-version for service management.
-X_MS_VERSION = '2013-06-01'
+X_MS_VERSION = '2013-10-01'
 
 #-----------------------------------------------------------------------------
 # Data classes
@@ -692,7 +692,7 @@ class WindowsConfigurationSet(WindowsAzureData):
     def __init__(self, computer_name=None, admin_password=None,
                  reset_password_on_first_logon=None,
                  enable_automatic_updates=None, time_zone=None,
-                 admin_username=None):
+                 admin_username=None, custom_data=None):
         self.configuration_set_type = u'WindowsProvisioningConfiguration'
         self.computer_name = computer_name
         self.admin_password = admin_password
@@ -703,6 +703,7 @@ class WindowsConfigurationSet(WindowsAzureData):
         self.domain_join = DomainJoin()
         self.stored_certificate_settings = StoredCertificateSettings()
         self.win_rm = WinRM()
+        self.custom_data = custom_data
 
 
 class DomainJoin(WindowsAzureData):
@@ -806,7 +807,7 @@ class Listener(WindowsAzureData):
 class LinuxConfigurationSet(WindowsAzureData):
 
     def __init__(self, host_name=None, user_name=None, user_password=None,
-                 disable_ssh_password_authentication=None):
+                 disable_ssh_password_authentication=None, custom_data=None):
         self.configuration_set_type = u'LinuxProvisioningConfiguration'
         self.host_name = host_name
         self.user_name = user_name
@@ -814,6 +815,7 @@ class LinuxConfigurationSet(WindowsAzureData):
         self.disable_ssh_password_authentication =\
             disable_ssh_password_authentication
         self.ssh = SSH()
+        self.custom_data = custom_data
 
 
 class SSH(WindowsAzureData):
@@ -893,7 +895,7 @@ class DataVirtualHardDisks(WindowsAzureData):
 class DataVirtualHardDisk(WindowsAzureData):
 
     def __init__(self):
-        self.host_caching = u''
+        self.host_caching = None
         self.disk_label = u''
         self.disk_name = u''
         self.lun = 0
@@ -1338,6 +1340,9 @@ class _XmlSerializer(object):
             xml += '</Listeners></WinRM>'
         xml += _XmlSerializer.data_to_xml(
             [('AdminUsername', configuration.admin_username)])
+        if configuration.custom_data is not None:
+            xml += _XmlSerializer.data_to_xml(
+                [('CustomData', configuration.custom_data, _encode_base64)])
         return xml
 
     @staticmethod
@@ -1370,6 +1375,9 @@ class _XmlSerializer(object):
                 xml += '</KeyPair>'
             xml += '</KeyPairs>'
             xml += '</SSH>'
+        if configuration.custom_data is not None:
+            xml += _XmlSerializer.data_to_xml(
+                [('CustomData', configuration.custom_data, _encode_base64)])
         return xml
 
     @staticmethod
