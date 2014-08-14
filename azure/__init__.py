@@ -675,6 +675,13 @@ def _parse_response(response, return_type):
     '''
     return _parse_response_body_from_xml_text(response.body, return_type)
 
+def _parse_service_resources_response(response, return_type):
+    '''
+    Parse the HTTPResponse's body and fill all the data into a class of
+    return_type.
+    '''
+    return _parse_response_body_from_service_resources_xml_text(response.body, return_type)
+
 
 def _fill_data_to_return_object(node, return_obj):
     members = dict(vars(return_obj))
@@ -742,6 +749,18 @@ def _parse_response_body_from_xml_text(respbody, return_type):
 
     return return_obj
 
+def _parse_response_body_from_service_resources_xml_text(respbody, return_type):
+    '''
+    parse the xml and fill all the data into a class of return_type
+    '''
+    doc = minidom.parseString(respbody)
+    return_obj = _list_of(return_type)
+    for node in _get_children_from_path(doc, "ServiceResources", "ServiceResource"):
+        local_obj = return_type()
+        _fill_data_to_return_object(node, local_obj)
+        return_obj.append(local_obj)
+
+    return return_obj
 
 class _dict_of(dict):
 

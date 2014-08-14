@@ -54,6 +54,7 @@
     <Compile Include="test_queueservice.py" />
     <Compile Include="test_sharedaccesssignature.py" />
     <Compile Include="test_servicebusservice.py" />
+    <Compile Include="test_sqldatabasemanagementservice.py" />
     <Compile Include="test_storagemanagementservice.py" />
     <Compile Include="test_tableservice.py" />
     <Compile Include="test_websitemanagementservice.py" />
