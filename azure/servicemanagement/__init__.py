@@ -1020,7 +1020,104 @@ class HostNameSslState(WindowsAzureData):
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
+        
+class MetricResponses(WindowsAzureData):
     
+    def __init__(self):
+        self.metric_response = _list_of(MetricResponse)
+
+    def __iter__(self):
+        return iter(self.metric_response)
+
+    def __len__(self):
+        return len(self.metric_response)
+
+    def __getitem__(self, index):
+        return self.metric_response[index]
+    
+class MetricResponse(WindowsAzureData):
+    
+    def __init__(self):
+        self.code = u''
+        self.data = Data()
+        self.message = u''
+        
+class Data(WindowsAzureData):
+    
+    def __init__(self):
+        self.display_name = u''
+        self.end_time = u''
+        self.name = u''
+        self.primary_aggregation_type = u''
+        self.start_time = u''
+        self.time_grain = u''
+        self.unit = u''
+        self.values = Values()
+        
+class Values(WindowsAzureData):
+    
+    def __init__(self):
+        self.metric_sample = _list_of(MetricSample)
+
+    def __iter__(self):
+        return iter(self.metric_sample)
+
+    def __len__(self):
+        return len(self.metric_sample)
+
+    def __getitem__(self, index):
+        return self.metric_sample[index]
+        
+class MetricSample(WindowsAzureData):
+    
+    def __init__(self):
+        self.count = 0
+        self.time_created = u''
+        self.total = 0
+
+class MetricDefinitions(WindowsAzureData):
+    
+    def __init__(self):
+        self.metric_definition = _list_of(MetricDefinition)
+
+    def __iter__(self):
+        return iter(self.metric_definition)
+
+    def __len__(self):
+        return len(self.metric_definition)
+
+    def __getitem__(self, index):
+        return self.metric_definition[index]
+    
+class MetricDefinition(WindowsAzureData):
+    
+    def __init__(self):
+        self.display_name = u''
+        self.metric_availabilities = MetricAvailabilities()
+        self.name = u''
+        self.primary_aggregation_type = u''
+        self.unit = u''
+        
+class MetricAvailabilities(WindowsAzureData):
+    
+    def __init__(self):
+        self.metric_availability = _list_of(MetricAvailability)
+
+    def __iter__(self):
+        return iter(self.metric_availability)
+
+    def __len__(self):
+        return len(self.metric_availability)
+
+    def __getitem__(self, index):
+        return self.metric_availability[index]
+    
+class MetricAvailability(WindowsAzureData):
+    
+    def __init__(self):
+        self.retention = u''
+        self.time_grain = u''
+        
 
 def _update_management_header(request):
     ''' Add additional headers for management. '''
