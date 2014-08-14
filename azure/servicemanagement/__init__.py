@@ -81,6 +81,7 @@ class StorageAccountProperties(WindowsAzureData):
         self.geo_secondary_region = u''
         self.status_of_secondary = u''
         self.last_geo_failover_time = u''
+        self.creation_time = u''
 
 
 class StorageServiceKeys(WindowsAzureData):
