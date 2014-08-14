@@ -1101,7 +1101,7 @@ class MetricDefinition(WindowsAzureData):
 class MetricAvailabilities(WindowsAzureData):
     
     def __init__(self):
-        self.metric_availability = _list_of(MetricAvailability)
+        self.metric_availability = _list_of(MetricAvailability, 'MetricAvailabilily')
 
     def __iter__(self):
         return iter(self.metric_availability)
