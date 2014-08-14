@@ -20,6 +20,10 @@ from azure import (
     )
 from azure.servicemanagement import (
     _ServiceBusManagementXmlSerializer,
+    QueueDescription,
+    TopicDescription,
+    NotificationHubDescription,
+    RelayDescription,
     )
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
@@ -111,3 +115,70 @@ class ServiceBusManagementService(_ServiceManagementClient):
 
         return _ServiceBusManagementXmlSerializer.xml_to_namespace_availability(
             response.body)
+
+    def list_queues(self, name):
+        '''
+        Enumerates the queues in the service namespace.
+        
+        name: Name of the service bus namespace.
+        '''
+        _validate_not_none('name', name)
+            
+        response = self._perform_get(
+            self._get_list_queues_path(name),
+            None)
+
+        return _convert_response_to_feeds(response, QueueDescription)    
+
+    def list_topics(self, name):
+        '''
+        Retrieves the topics in the service namespace.
+        
+        name: Name of the service bus namespace.
+        '''
+        response = self._perform_get(
+            self._get_list_topics_path(name),
+            None)
+
+        return _convert_response_to_feeds(response, TopicDescription)
+
+    def list_notification_hubs(self, name):
+        '''
+        Retrieves the notification hubs in the service namespace.
+        
+        name: Name of the service bus namespace.
+        '''
+        response = self._perform_get(
+            self._get_list_notification_hubs_path(name),
+            None)
+
+        return _convert_response_to_feeds(response, NotificationHubDescription)
+
+    def list_relays(self, name):
+        '''
+        Retrieves the relays in the service namespace.
+        
+        name: Name of the service bus namespace.
+        '''
+        response = self._perform_get(
+            self._get_list_relays_path(name),
+            None)
+
+        return _convert_response_to_feeds(response, RelayDescription)
+
+    #--Helper functions --------------------------------------------------
+    def _get_list_queues_path(self, namespace_name):
+        return self._get_path('services/serviceBus/Namespaces/',
+                              namespace_name) + '/Queues'
+
+    def _get_list_topics_path(self, namespace_name):
+        return self._get_path('services/serviceBus/Namespaces/',
+                              namespace_name) + '/Topics'
+
+    def _get_list_notification_hubs_path(self, namespace_name):
+        return self._get_path('services/serviceBus/Namespaces/',
+                              namespace_name) + '/NotificationHubs'
+
+    def _get_list_relays_path(self, namespace_name):
+        return self._get_path('services/serviceBus/Namespaces/',
+                              namespace_name) + '/Relays'

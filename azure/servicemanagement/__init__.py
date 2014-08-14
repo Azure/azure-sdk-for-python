@@ -955,7 +955,7 @@ class WebSpaces(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.web_space[index]
-
+    
 
 class WebSpace(WindowsAzureData):
     
@@ -982,7 +982,7 @@ class Sites(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.site[index]
-
+    
 
 class Site(WindowsAzureData):
     
@@ -1022,10 +1022,105 @@ class HostNameSslStates(WindowsAzureData):
 
 
 class HostNameSslState(WindowsAzureData):
-
+    
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
+    
+class QueueDescription(WindowsAzureData):
+    
+    def __init__(self):
+        self.lock_duration = u''
+        self.max_size_in_megabytes = 0
+        self.requires_duplicate_detection = False
+        self.requires_session = False
+        self.default_message_time_to_live = u''
+        self.dead_lettering_on_message_expiration = False
+        self.duplicate_detection_history_time_window = u''
+        self.max_delivery_count = 0
+        self.enable_batched_operations = False
+        self.size_in_bytes = 0
+        self.message_count = 0
+        self.is_anonymous_accessible = False
+        self.authorization_rules = AuthorizationRules()
+        self.status = u''
+        self.created_at = u''
+        self.updated_at = u''
+        self.accessed_at = u''
+        self.support_ordering = False
+        self.auto_delete_on_idle = u''
+        self.count_details = CountDetails()
+        self.entity_availability_status = u''
+    
+class TopicDescription(WindowsAzureData):
+    
+    def __init__(self):
+        self.default_message_time_to_live = u''
+        self.max_size_in_megabytes = 0
+        self.requires_duplicate_detection = False
+        self.duplicate_detection_history_time_window = u''
+        self.enable_batched_operations = False
+        self.size_in_bytes = 0
+        self.filtering_messages_before_publishing = False
+        self.is_anonymous_accessible = False
+        self.authorization_rules = AuthorizationRules()
+        self.status = u''
+        self.created_at = u''
+        self.updated_at = u''
+        self.accessed_at = u''
+        self.support_ordering = False
+        self.count_details = CountDetails()
+        self.subscription_count = 0
+
+class CountDetails(WindowsAzureData):
+    
+    def __init__(self):
+        self.active_message_count = 0
+        self.dead_letter_message_count = 0
+        self.scheduled_message_count = 0
+        self.transfer_message_count = 0
+        self.transfer_dead_letter_message_count = 0
+
+class NotificationHubDescription(WindowsAzureData):
+    
+    def __init__(self):
+        self.registration_ttl = u''
+        self.authorization_rules = AuthorizationRules()
+
+class AuthorizationRules(WindowsAzureData):
+
+    def __init__(self):
+        self.authorization_rule = _list_of(AuthorizationRule)
+
+    def __iter__(self):
+        return iter(self.authorization_rule)
+
+    def __len__(self):
+        return len(self.authorization_rule)
+
+    def __getitem__(self, index):
+        return self.authorization_rule[index]
+    
+class AuthorizationRule(WindowsAzureData):
+    
+    def __init__(self):
+        self.claim_type = u''
+        self.claim_value = u''
+        self.rights = _scalar_list_of(str, 'AccessRights')
+        self.created_time = u''
+        self.modified_time = u''
+        self.key_name = u''
+        self.primary_key = u''
+        self.secondary_keu = u''
+
+class RelayDescription(WindowsAzureData):
+    
+    def __init__(self):
+        self.path = u''
+        self.listener_type = u''
+        self.listener_count = 0
+        self.created_at = u''
+        self.updated_at = u''
 
 
 class MetricResponses(WindowsAzureData):
