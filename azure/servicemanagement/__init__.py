@@ -941,6 +941,7 @@ class ServiceBusNamespace(WindowsAzureData):
         self.subscription_id = u''
         self.enabled = False
 
+
 class WebSpaces(WindowsAzureData):
 
     def __init__(self):
@@ -954,7 +955,8 @@ class WebSpaces(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.web_space[index]
-    
+
+
 class WebSpace(WindowsAzureData):
     
     def __init__(self):
@@ -965,6 +967,7 @@ class WebSpace(WindowsAzureData):
         self.plan = u''
         self.status = u''
         self.subscription = u''
+
 
 class Sites(WindowsAzureData):
 
@@ -979,7 +982,8 @@ class Sites(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.site[index]
-    
+
+
 class Site(WindowsAzureData):
     
     def __init__(self):
@@ -1001,6 +1005,7 @@ class Site(WindowsAzureData):
         self.usage_state = ''
         self.web_space = ''
 
+
 class HostNameSslStates(WindowsAzureData):
 
     def __init__(self):
@@ -1015,14 +1020,16 @@ class HostNameSslStates(WindowsAzureData):
     def __getitem__(self, index):
         return self.host_name_ssl_state[index]
 
+
 class HostNameSslState(WindowsAzureData):
-    
+
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
-        
+
+
 class MetricResponses(WindowsAzureData):
-    
+
     def __init__(self):
         self.metric_response = _list_of(MetricResponse)
 
@@ -1034,16 +1041,18 @@ class MetricResponses(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.metric_response[index]
-    
+
+
 class MetricResponse(WindowsAzureData):
-    
+
     def __init__(self):
         self.code = u''
         self.data = Data()
         self.message = u''
-        
+
+
 class Data(WindowsAzureData):
-    
+
     def __init__(self):
         self.display_name = u''
         self.end_time = u''
@@ -1053,9 +1062,10 @@ class Data(WindowsAzureData):
         self.time_grain = u''
         self.unit = u''
         self.values = Values()
-        
+
+
 class Values(WindowsAzureData):
-    
+
     def __init__(self):
         self.metric_sample = _list_of(MetricSample)
 
@@ -1067,16 +1077,18 @@ class Values(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.metric_sample[index]
-        
+
+
 class MetricSample(WindowsAzureData):
-    
+
     def __init__(self):
         self.count = 0
         self.time_created = u''
         self.total = 0
 
+
 class MetricDefinitions(WindowsAzureData):
-    
+
     def __init__(self):
         self.metric_definition = _list_of(MetricDefinition)
 
@@ -1088,18 +1100,20 @@ class MetricDefinitions(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.metric_definition[index]
-    
+
+
 class MetricDefinition(WindowsAzureData):
-    
+
     def __init__(self):
         self.display_name = u''
         self.metric_availabilities = MetricAvailabilities()
         self.name = u''
         self.primary_aggregation_type = u''
         self.unit = u''
-        
+
+
 class MetricAvailabilities(WindowsAzureData):
-    
+
     def __init__(self):
         self.metric_availability = _list_of(MetricAvailability, 'MetricAvailabilily')
 
@@ -1111,13 +1125,56 @@ class MetricAvailabilities(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.metric_availability[index]
-    
+
+
 class MetricAvailability(WindowsAzureData):
-    
+
     def __init__(self):
         self.retention = u''
         self.time_grain = u''
-        
+
+
+class Servers(WindowsAzureData):
+
+    def __init__(self):
+        self.server = _list_of(Server)
+
+    def __iter__(self):
+        return iter(self.server)
+
+    def __len__(self):
+        return len(self.server)
+
+    def __getitem__(self, index):
+        return self.server[index]
+
+
+class Server(WindowsAzureData):
+    
+    def __init__(self):
+        self.name = u''
+        self.administrator_login = u''
+        self.location = u''
+        self.fully_qualified_domain_name = u''
+        self.version = u''
+
+
+class Database(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.id = 0
+        self.edition = u''
+        self.collation_name = u''
+        self.creation_date = u''
+        self.is_federation_root = False
+        self.is_system_object = False
+        self.max_size_bytes = 0
+
 
 def _update_management_header(request):
     ''' Add additional headers for management. '''
