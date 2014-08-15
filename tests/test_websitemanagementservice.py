@@ -174,6 +174,46 @@ class WebsiteManagementServiceTest(AzureTestCase):
         self.assertFalse(self._site_exists(self.webspace_name,
                                            self.created_site))
 
+    def test_delete_site_with_empty_farm(self):
+        # Arrange
+        self._create_site()
+
+        # Act
+        result = self.wss.delete_site(self.webspace_name, self.created_site,
+                                      delete_empty_server_farm=True)
+
+        # Assert
+        self.assertIsNone(result)
+        self.assertFalse(self._site_exists(self.webspace_name,
+                                           self.created_site))
+
+    def test_delete_site_with_metrics(self):
+        # Arrange
+        self._create_site()
+
+        # Act
+        result = self.wss.delete_site(self.webspace_name, self.created_site,
+                                      delete_metrics=True)
+
+        # Assert
+        self.assertIsNone(result)
+        self.assertFalse(self._site_exists(self.webspace_name,
+                                           self.created_site))
+
+    def test_delete_site_with_empty_farm_and_metrics(self):
+        # Arrange
+        self._create_site()
+
+        # Act
+        result = self.wss.delete_site(self.webspace_name, self.created_site,
+                                      delete_empty_server_farm=True,
+                                      delete_metrics=True)
+
+        # Assert
+        self.assertIsNone(result)
+        self.assertFalse(self._site_exists(self.webspace_name,
+                                           self.created_site))
+
     def test_restart_site(self):
         # Arrange
         self._create_site()

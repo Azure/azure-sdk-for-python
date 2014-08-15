@@ -129,10 +129,13 @@ class WebsiteManagementService(_ServiceManagementClient):
             can set this to True.
         '''
         path = self._get_sites_details_path(webspace_name, website_name)
+        query = ''
         if delete_empty_server_farm:
-            path += '?deleteEmptyServerFarm=true;'
+            query += '&deleteEmptyServerFarm=true'
         if delete_metrics:
-            path += '?deleteMetrics=true;'
+            query += '&deleteMetrics=true'
+        if query:
+            path = path + '?' + query.lstrip('&')
         return self._perform_delete(path)
 
     def restart_site(self, webspace_name, website_name):
