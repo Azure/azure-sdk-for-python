@@ -171,8 +171,14 @@ class AzureTestCase(unittest.TestCase):
         def assertIsInstance(self, obj, type):
             self.assertTrue(isinstance(obj, type))
 
+        def assertGreater(self, a, b):
+            self.assertTrue(a > b)
+
         def assertGreaterEqual(self, a, b):
             self.assertTrue(a >= b)
+
+        def assertLess(self, a, b):
+            self.assertTrue(a < b)
 
         def assertLessEqual(self, a, b):
             self.assertTrue(a <= b)

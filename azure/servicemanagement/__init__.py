@@ -1807,6 +1807,26 @@ class _XmlSerializer(object):
         return _XmlSerializer.doc_from_xml('Deployment', xml)
 
     @staticmethod
+    def create_website_to_xml(webspace_name, website_name, geo_region, plan,
+                              host_names, compute_mode, server_farm, site_mode):
+        xml = '<HostNames xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">'
+        for host_name in host_names:
+            xml += '<a:string>{0}</a:string>'.format(host_name)
+        xml += '</HostNames>'
+        xml += _XmlSerializer.data_to_xml(
+            [('Name', website_name),
+             ('ComputeMode', compute_mode),
+             ('ServerFarm', server_farm),
+             ('SiteMode', site_mode)])
+        xml += '<WebSpaceToCreate>'
+        xml += _XmlSerializer.data_to_xml(
+            [('GeoRegion', geo_region),
+             ('Name', webspace_name),
+             ('Plan', plan)])
+        xml += '</WebSpaceToCreate>'
+        return _XmlSerializer.doc_from_xml('Site', xml)
+
+    @staticmethod
     def data_to_xml(data):
         '''Creates an xml fragment from the specified data.
            data: Array of tuples, where first: xml element name
@@ -2016,7 +2036,10 @@ class _ServiceBusManagementXmlSerializer(object):
 
         return availability
 
+
 from azure.servicemanagement.servicemanagementservice import (
     ServiceManagementService)
 from azure.servicemanagement.servicebusmanagementservice import (
     ServiceBusManagementService)
+from azure.servicemanagement.websitemanagementservice import (
+    WebsiteManagementService)
