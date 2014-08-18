@@ -13,6 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import ast
+import json
 import sys
 
 from datetime import datetime
@@ -255,7 +256,7 @@ def _create_message(response, service_instance):
     # gets all information from respheaders.
     for name, value in response.headers:
         if name.lower() == 'brokerproperties':
-            broker_properties = ast.literal_eval(value)
+            broker_properties = json.loads(value)
         elif name.lower() == 'content-type':
             message_type = value
         elif name.lower() == 'location':
