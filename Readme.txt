@@ -1,0 +1,1 @@
+The source code for the Azure DocumentDB Python driver will be published shortly.
