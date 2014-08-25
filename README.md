@@ -3,7 +3,7 @@
 This project provides a set of Python packages that make it easy to access
 the Microsoft Azure storage and queue services. For documentation on how
 to host Python applications on Microsoft Azure, please see the
-[Microsoft Azure](http://www.windowsazure.com/en-us/develop/python/)
+[Microsoft Azure](http://azure.microsoft.com/en-us/develop/python/)
 Python Developer Center.
 
 The SDK supports Python 2.7, 3.3, 3.4.
@@ -306,7 +306,7 @@ print('Operation status: ' + operation.status)
 ```
 
 
-** For more examples please see the [Microsoft Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python) **
+** For more examples please see the [Microsoft Azure Python Developer Center](http://azure.microsoft.com/en-us/develop/python/) **
 
 # Need Help?
 
@@ -316,7 +316,7 @@ Be sure to check out the Microsoft Azure [Developer Forums on Stack Overflow](ht
 
 If you would like to become an active contributor to this project please follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](http://windowsazure.github.com/guidelines.html).
 
-If you encounter any bugs with the library please file an issue in the [Issues](https://github.com/WindowsAzure/azure-sdk-for-python/issues) section of the project.
+If you encounter any bugs with the library please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project.
 
 # Learn More
-[Microsoft Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python/)
+[Microsoft Azure Python Developer Center](http://azure.microsoft.com/en-us/develop/python/)
