@@ -7,6 +7,7 @@
    - list/get webspaces
    - list/get/create/delete/restart website
    - get historical usage metrics and metric definitions
+   - get publish profile xml
  * Fixes for bugs:
    #192 Fix deserialization of broker properties for service bus.
    #173 Fix some incompatibilities with Python 2.6
