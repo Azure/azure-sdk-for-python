@@ -272,3 +272,15 @@ class WebsiteManagementServiceTest(AzureTestCase):
         self.assertGreater(len(response.data.time_grain), 0)
         self.assertGreater(len(response.data.unit), 0)
         self.assertIsNotNone(response.data.values)
+
+    def test_get_publish_profile_xml(self):
+        # Arrange
+        self._create_site()
+
+        # Act
+        result = self.wss.get_publish_profile_xml(self.webspace_name,
+                                                  self.created_site)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertTrue(result.startswith(u"<publishData>"))

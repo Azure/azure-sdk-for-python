@@ -182,6 +182,16 @@ class WebsiteManagementService(_ServiceManagementClient):
         return self._perform_get(self._get_metric_definitions_path(webspace_name, website_name),
                                  MetricDefinitions)
 
+    def get_publish_profile_xml(self, webspace_name, website_name):
+        '''
+        Get a site's publish profile as a string
+
+        webspace_name: The name of the webspace.
+        website_name: The name of the website.
+        '''
+        return self._perform_get(self._get_publishxml_path(webspace_name, website_name),
+                                 None).body.decode("utf-8")
+
     #--Helper functions --------------------------------------------------
     def _get_list_webspaces_path(self):
         return self._get_path('services/webspaces', None)
@@ -208,3 +218,7 @@ class WebsiteManagementService(_ServiceManagementClient):
     def _get_metric_definitions_path(self, webspace_name, website_name):
         return self._get_path('services/webspaces/',
                               webspace_name) + '/sites/' + _str(website_name) + '/metricdefinitions/' 
+
+    def _get_publishxml_path(self, webspace_name, website_name):
+        return self._get_path('services/webspaces/',
+                              webspace_name) + '/sites/' + _str(website_name) + '/publishxml/' 
