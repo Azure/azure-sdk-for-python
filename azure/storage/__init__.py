@@ -18,6 +18,8 @@ import sys
 import types
 
 from datetime import datetime
+from dateutil import parser
+from dateutil.tz import tzutc
 from xml.dom import minidom
 from azure import (WindowsAzureData,
                    WindowsAzureError,
@@ -572,7 +574,12 @@ def _to_entity_bool(value):
 
 
 def _to_entity_datetime(value):
-    return 'Edm.DateTime', value.strftime('%Y-%m-%dT%H:%M:%S')
+    # Azure expects the date value passed in to be UTC.
+    # Azure will always return values as UTC.
+    # If a date is passed in without timezone info, it is assumed to be UTC.
+    if value.tzinfo:
+        value = value.astimezone(tzutc())
+    return 'Edm.DateTime', value.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 def _to_entity_float(value):
@@ -607,12 +614,9 @@ def _from_entity_int(value):
 
 
 def _from_entity_datetime(value):
-    format = '%Y-%m-%dT%H:%M:%S'
-    if '.' in value:
-        format = format + '.%f'
-    if value.endswith('Z'):
-        format = format + 'Z'
-    return datetime.strptime(value, format)
+    # Note that Azure always returns UTC datetime, and dateutil parser
+    # will set the tzinfo on the date it returns
+    return parser.parse(value)
 
 _ENTITY_TO_PYTHON_CONVERSIONS = {
     'Edm.Binary': _from_entity_binary,
