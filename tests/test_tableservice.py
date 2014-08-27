@@ -1277,21 +1277,22 @@ class TableServiceTest(AzureTestCase):
 
     def test_timezone(self):
         # Act
-        date = datetime(2003, 9, 27, 9, 52, 43,
-                        tzinfo=tzoffset('BRST', -10800))
+        local_tz = tzoffset('BRST', -10800)
+        local_date = datetime(2003, 9, 27, 9, 52, 43, tzinfo=local_tz)
         self._create_table(self.table_name)
         self.ts.insert_entity(
             self.table_name,
             {
                 'PartitionKey': 'test',
                 'RowKey': 'test1',
-                'date': date,
+                'date': local_date,
             })
         resp = self.ts.get_entity(self.table_name, 'test', 'test1')
 
         # Assert
         self.assertIsNotNone(resp)
-        self.assertEqual(resp.date, date.astimezone(tzutc()))
+        self.assertEqual(resp.date, local_date.astimezone(tzutc()))
+        self.assertEqual(resp.date.astimezone(local_tz), local_date)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
