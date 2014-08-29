@@ -159,7 +159,9 @@ It is then possible to call the **get\_messages** method, process the message an
 from azure.storage import QueueService
 queue_service = QueueService(account_name, account_key)
 messages = queue_service.get_messages('taskqueue')
-queue_service.delete_message('taskqueue', messages[0].message_id, messages[0].pop_receipt)
+for message in messages:
+    print(message.as_text())
+    queue_service.delete_message('taskqueue', message.message_id, message.pop_receipt)
 ```
 
 ## ServiceBus Queues

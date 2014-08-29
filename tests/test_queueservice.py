@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import os
 import unittest
 
 from azure import WindowsAzureError
@@ -242,12 +243,26 @@ class QueueServiceTest(AzureTestCase):
         message = result[0]
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.message_id)
-        self.assertEqual('message1', message.message_text)
+        self.assertEqual('message1', message.as_text())
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual('1', message.dequeue_count)
         self.assertNotEqual('', message.insertion_time)
         self.assertNotEqual('', message.expiration_time)
         self.assertNotEqual('', message.time_next_visible)
+
+    def test_get_messages_binary(self):
+        # Action
+        data = os.urandom(2048)
+        self.qs.put_message(self.test_queues[1], data)
+        result = self.qs.get_messages(self.test_queues[1])
+
+        # Asserts
+        self.assertIsNotNone(result)
+        self.assertEqual(1, len(result))
+        message = result[0]
+        self.assertIsNotNone(message)
+        self.assertNotEqual('', message.message_id)
+        self.assertEqual(data, message.as_bytes())
 
     def test_get_messages_with_options(self):
         # Action
@@ -265,7 +280,8 @@ class QueueServiceTest(AzureTestCase):
         for message in result:
             self.assertIsNotNone(message)
             self.assertNotEqual('', message.message_id)
-            self.assertNotEqual('', message.message_text)
+            self.assertNotEqual('', message.raw_string)
+            self.assertNotEqual('', message.as_text())
             self.assertNotEqual('', message.pop_receipt)
             self.assertEqual('1', message.dequeue_count)
             self.assertNotEqual('', message.insertion_time)
@@ -286,12 +302,27 @@ class QueueServiceTest(AzureTestCase):
         message = result[0]
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.message_id)
-        self.assertNotEqual('', message.message_text)
+        self.assertNotEqual('', message.raw_string)
+        self.assertNotEqual('', message.as_text())
         self.assertEqual('', message.pop_receipt)
         self.assertEqual('0', message.dequeue_count)
         self.assertNotEqual('', message.insertion_time)
         self.assertNotEqual('', message.expiration_time)
         self.assertEqual('', message.time_next_visible)
+
+    def test_peek_messages_binary(self):
+        # Action
+        data = os.urandom(2048)
+        self.qs.put_message(self.test_queues[1], data)
+        result = self.qs.peek_messages(self.test_queues[1])
+
+        # Asserts
+        self.assertIsNotNone(result)
+        self.assertEqual(1, len(result))
+        message = result[0]
+        self.assertIsNotNone(message)
+        self.assertNotEqual('', message.message_id)
+        self.assertEqual(data, message.as_bytes())
 
     def test_peek_messages_with_options(self):
         # Action
@@ -307,7 +338,8 @@ class QueueServiceTest(AzureTestCase):
         for message in result:
             self.assertIsNotNone(message)
             self.assertNotEqual('', message.message_id)
-            self.assertNotEqual('', message.message_text)
+            self.assertNotEqual('', message.raw_string)
+            self.assertNotEqual('', message.as_text())
             self.assertEqual('', message.pop_receipt)
             self.assertEqual('0', message.dequeue_count)
             self.assertNotEqual('', message.insertion_time)
@@ -358,7 +390,7 @@ class QueueServiceTest(AzureTestCase):
         message = list_result2[0]
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.message_id)
-        self.assertEqual('new text', message.message_text)
+        self.assertEqual('new text', message.as_text())
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual('2', message.dequeue_count)
         self.assertNotEqual('', message.insertion_time)
@@ -414,7 +446,7 @@ class QueueServiceTest(AzureTestCase):
         message = result[0]
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.message_id)
-        self.assertEqual(u'message1㚈', message.message_text)
+        self.assertEqual(u'message1㚈', message.as_text())
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual('1', message.dequeue_count)
         self.assertNotEqual('', message.insertion_time)
@@ -437,7 +469,7 @@ class QueueServiceTest(AzureTestCase):
         message = list_result2[0]
         self.assertIsNotNone(message)
         self.assertNotEqual('', message.message_id)
-        self.assertEqual(u'啊齄丂狛狜', message.message_text)
+        self.assertEqual(u'啊齄丂狛狜', message.as_text())
         self.assertNotEqual('', message.pop_receipt)
         self.assertEqual('2', message.dequeue_count)
         self.assertNotEqual('', message.insertion_time)
