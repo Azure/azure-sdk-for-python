@@ -563,6 +563,7 @@ class BlobService(_StorageClient):
                             x_ms_blob_content_md5=None,
                             x_ms_blob_content_encoding=None,
                             x_ms_blob_content_language=None,
+                            x_ms_blob_content_disposition=None,
                             x_ms_lease_id=None):
         '''
         Sets system properties on the blob.
@@ -587,6 +588,8 @@ class BlobService(_StorageClient):
         request.headers = [
             ('x-ms-blob-cache-control', _str_or_none(x_ms_blob_cache_control)),
             ('x-ms-blob-content-type', _str_or_none(x_ms_blob_content_type)),
+            ('x-ms-blob-content-disposition',
+             _str_or_none(x_ms_blob_content_disposition)),
             ('x-ms-blob-content-md5', _str_or_none(x_ms_blob_content_md5)),
             ('x-ms-blob-content-encoding',
              _str_or_none(x_ms_blob_content_encoding)),

@@ -33,7 +33,7 @@ AZURE_MANAGEMENT_CERTFILE = 'AZURE_MANAGEMENT_CERTFILE'
 AZURE_MANAGEMENT_SUBSCRIPTIONID = 'AZURE_MANAGEMENT_SUBSCRIPTIONID'
 
 # x-ms-version for service management.
-X_MS_VERSION = '2013-06-01'
+X_MS_VERSION = '2013-08-15'
 
 #-----------------------------------------------------------------------------
 # Data classes
@@ -955,10 +955,10 @@ class WebSpaces(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.web_space[index]
-    
+
 
 class WebSpace(WindowsAzureData):
-    
+
     def __init__(self):
         self.availability_state = u''
         self.geo_location = u''
@@ -982,10 +982,10 @@ class Sites(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.site[index]
-    
+
 
 class Site(WindowsAzureData):
-    
+
     def __init__(self):
         self.admin_enabled = False
         self.availability_state = ''
@@ -1022,13 +1022,13 @@ class HostNameSslStates(WindowsAzureData):
 
 
 class HostNameSslState(WindowsAzureData):
-    
+
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
-    
+
 class QueueDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.lock_duration = u''
         self.max_size_in_megabytes = 0
@@ -1051,9 +1051,9 @@ class QueueDescription(WindowsAzureData):
         self.auto_delete_on_idle = u''
         self.count_details = CountDetails()
         self.entity_availability_status = u''
-    
+
 class TopicDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.default_message_time_to_live = u''
         self.max_size_in_megabytes = 0
@@ -1073,7 +1073,7 @@ class TopicDescription(WindowsAzureData):
         self.subscription_count = 0
 
 class CountDetails(WindowsAzureData):
-    
+
     def __init__(self):
         self.active_message_count = 0
         self.dead_letter_message_count = 0
@@ -1082,7 +1082,7 @@ class CountDetails(WindowsAzureData):
         self.transfer_dead_letter_message_count = 0
 
 class NotificationHubDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.registration_ttl = u''
         self.authorization_rules = AuthorizationRules()
@@ -1100,9 +1100,9 @@ class AuthorizationRules(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.authorization_rule[index]
-    
+
 class AuthorizationRule(WindowsAzureData):
-    
+
     def __init__(self):
         self.claim_type = u''
         self.claim_value = u''
@@ -1114,7 +1114,7 @@ class AuthorizationRule(WindowsAzureData):
         self.secondary_keu = u''
 
 class RelayDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.path = u''
         self.listener_type = u''
@@ -1245,7 +1245,7 @@ class Servers(WindowsAzureData):
 
 
 class Server(WindowsAzureData):
-    
+
     def __init__(self):
         self.name = u''
         self.administrator_login = u''
