@@ -563,8 +563,8 @@ class BlobService(_StorageClient):
                             x_ms_blob_content_md5=None,
                             x_ms_blob_content_encoding=None,
                             x_ms_blob_content_language=None,
-                            x_ms_blob_content_disposition=None,
-                            x_ms_lease_id=None):
+                            x_ms_lease_id=None,
+                            x_ms_blob_content_disposition=None):
         '''
         Sets system properties on the blob.
 
