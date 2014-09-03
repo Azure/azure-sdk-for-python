@@ -557,6 +557,7 @@ class DocumentClient(object):
             dict
 
         """
+        body = body.copy()
         if (((not 'id' in body) or (not body['id'])) and
             ((not 'disableAutomaticIdGeneration' in options) or
              (not options['disableAutomaticIdGeneration']))):
@@ -642,6 +643,7 @@ class DocumentClient(object):
             dict
 
         """
+        trigger = trigger.copy()
         if 'serverScript' in trigger:
             trigger['body'] = str(trigger['serverScript'])
             trigger.pop('serverScript', None)
@@ -725,6 +727,7 @@ class DocumentClient(object):
             dict
 
         """
+        udf = udf.copy()
         if 'serverScript' in udf:
             udf['body'] = str(udf['serverScript'])
             udf.pop('serverScript', None)
@@ -808,6 +811,7 @@ class DocumentClient(object):
             dict
 
         """
+        sproc = sproc.copy()
         if 'serverScript' in sproc:
             sproc['body'] = str(sproc['serverScript'])
             sproc.pop('serverScript', None)
@@ -1189,6 +1193,7 @@ class DocumentClient(object):
             dict
 
         """
+        trigger = trigger.copy()
         if 'serverScript' in trigger:
             trigger['body'] = str(trigger['serverScript'])
         elif 'body' in trigger:
@@ -1234,6 +1239,7 @@ class DocumentClient(object):
             dict
 
         """
+        udf = udf.copy()
         if 'serverScript' in udf:
             udf['body'] = str(udf['serverScript'])
         elif 'body' in udf:
@@ -1317,6 +1323,7 @@ class DocumentClient(object):
             dict
 
         """
+        sproc = sproc.copy()
         if 'serverScript' in sproc:
             sproc['body'] = str(sproc['serverScript'])
         elif 'body' in sproc:

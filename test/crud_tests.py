@@ -161,12 +161,28 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual(created_document['name'],
                              document_definition['name'])
             self.assertTrue(created_document['id'] != None)
+            # duplicated documents are allowed when 'id' is not provided.
+            duplicated_document = client.CreateDocument(
+                created_collection['_self'],
+                document_definition)
+            self.assertEqual(duplicated_document['name'],
+                             document_definition['name'])
+            self.assertTrue(duplicated_document['id'] != None)
+            self.assertNotEqual(duplicated_document['id'],
+                                created_document['id'])
+            # duplicated documents are not allowed when 'id' is provided.
+            duplicated_definition_with_id = document_definition.copy()
+            duplicated_definition_with_id['id'] = created_document['id']
+            self.__AssertHTTPFailureWithStatus(409,
+                                               client.CreateDocument,
+                                               created_collection['_self'],
+                                               duplicated_definition_with_id)
             # read documents after creation
             documents = client.ReadDocuments(
                 created_collection['_self']).ToArray()
             self.assertEqual(
                 len(documents),
-                before_create_documents_count + 1,
+                before_create_documents_count + 2,
                 'create should increase the number of documents')
             # query documents
             documents = client.QueryDocuments(created_collection['_self'],
@@ -676,7 +692,7 @@ class CRUDTests(unittest.TestCase):
                                      "property " + property + " should match")
                 else:
                         self.assertEqual(trigger['body'],
-                                         'function () {var x = 10;}')
+                                         'function() {var x = 10;}')
 
             # read triggers after creation
             triggers = client.ReadTriggers(collection['_self']).ToArray()
@@ -708,7 +724,7 @@ class CRUDTests(unittest.TestCase):
                                      'property ' + property + ' should match')
                 else:
                     self.assertEqual(replaced_trigger['body'],
-                                     'function () {var x = 20;}')
+                                     'function() {var x = 20;}')
 
             # read trigger
             trigger = client.ReadTrigger(replaced_trigger['_self'])
@@ -798,7 +814,7 @@ class CRUDTests(unittest.TestCase):
             before_create_sprocs_count = len(sprocs)
             sproc_definition = {
                 'id': 'sample sproc',
-                'serverScript': 'function() {var x = 10;}}'
+                'serverScript': 'function() {var x = 10;}'
             }
             sproc = client.CreateStoredProcedure(collection['_self'],
                                                  sproc_definition)
@@ -808,7 +824,7 @@ class CRUDTests(unittest.TestCase):
                                      sproc_definition[property],
                                      'property ' + property + ' should match')
                 else:
-                    self.assertEqual(sproc['body'], 'function () {var x = 10;}')
+                    self.assertEqual(sproc['body'], 'function() {var x = 10;}')
                                 
             # read sprocs after creation
             sprocs = client.ReadStoredProcedures(collection['_self']).ToArray()
@@ -833,7 +849,7 @@ class CRUDTests(unittest.TestCase):
                                      'property ' + property + ' should match')
                 else:
                     self.assertEqual(replaced_sproc['body'],
-                                     "function () {var x = 20;}")
+                                     "function() {var x = 20;}")
             # read sproc
             sproc = client.ReadStoredProcedure(replaced_sproc['_self'])
             self.assertEqual(replaced_sproc['id'], sproc['id'])
