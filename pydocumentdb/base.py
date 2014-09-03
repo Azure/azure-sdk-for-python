@@ -167,16 +167,17 @@ def GetAttachmentIdFromMediaId(media_id):
         str, the attachment id from the media id.
 
     """
-    # Always add extra padding '===' in case media_id can't be parsed as base64.
-    buffer = base64.b64decode(media_id + '===')
+    altchars = '+-'
+    # altchars for '+' and '/'. We keep '+' but replace '/' with '-'
+    buffer = base64.b64decode(str(media_id), altchars)
     resoure_id_length = 20
     attachment_id = ''
     if len(buffer) > resoure_id_length:
         # We are cuting off the storage index.
-        attachment_id = base64.b64encode(buffer[0:resoure_id_length])
+        attachment_id = base64.b64encode(buffer[0:resoure_id_length], altchars)
     else:
         attachment_id = media_id
-        
+
     return attachment_id
 
 
