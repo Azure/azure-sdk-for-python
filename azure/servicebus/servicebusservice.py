@@ -102,23 +102,24 @@ class ServiceBusService(object):
         self._httpclient = _HTTPClient(service_instance=self)
         self._filter = self._httpclient.perform_request
 
-    def get_account_key(self):
+    # Backwards compatibility:
+    # account_key and issuer used to be stored on the service class, they are
+    # now stored on the authentication class.
+    @property
+    def account_key(self):
         return self.authentication.account_key
 
-    def set_account_key(self, value):
+    @account_key.setter
+    def account_key(self, value):
         self.authentication.account_key = value
 
-    def get_issuer(self):
+    @property
+    def issuer(self):
         return self.authentication.issuer
 
-    def set_issuer(self, value):
+    @issuer.setter
+    def issuer(self, value):
         self.authentication.issuer = value
-
-    # Backwards compatibility:
-    # These 2 fields used to be stored on the service class, they are now
-    # stored on the authentication class.
-    account_key = property(fget=get_account_key, fset=set_account_key)
-    issuer = property(fget=get_issuer, fset=set_issuer)
 
     def with_filter(self, filter):
         '''
