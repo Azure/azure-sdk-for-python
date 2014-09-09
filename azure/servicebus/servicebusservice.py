@@ -95,8 +95,6 @@ class ServiceBusService(object):
             Instance of authentication class. If this is specified, then
             ACS and SAS parameters are ignored.
         '''
-        # x_ms_version is not used, but the parameter is kept for backwards
-        # compatibility
         self.requestid = None
         self.service_namespace = service_namespace
         self.host_base = host_base
