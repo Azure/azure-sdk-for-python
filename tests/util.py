@@ -56,11 +56,20 @@ class Credentials(object):
     def getSubscriptionId(self):
         return self.ns[u'subscriptionid']
 
+    def getServiceBusAuthenticationType(self):
+        return self.ns[u'servicebusauthenticationtype']
+
     def getServiceBusKey(self):
         return self.ns[u'servicebuskey']
 
     def getServiceBusNamespace(self):
         return self.ns[u'servicebusns']
+
+    def getServiceBusSasKeyName(self):
+        return self.ns[u'servicebussaskeyname']
+
+    def getServiceBusSasKeyValue(self):
+        return self.ns[u'servicebussaskeyvalue']
 
     def getStorageServicesKey(self):
         return self.ns[u'storageserviceskey']

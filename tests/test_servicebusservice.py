@@ -48,9 +48,18 @@ from util import (
 class ServiceBusTest(AzureTestCase):
 
     def setUp(self):
-        self.sbs = ServiceBusService(credentials.getServiceBusNamespace(),
-                                     credentials.getServiceBusKey(),
-                                     'owner')
+        if credentials.getServiceBusAuthenticationType().lower() == 'sas':
+            self.sbs = ServiceBusService(
+                credentials.getServiceBusNamespace(),
+                shared_access_key_name=credentials.getServiceBusSasKeyName(),
+                shared_access_key_value=credentials.getServiceBusSasKeyValue(),
+                )
+        else:
+            self.sbs = ServiceBusService(
+                credentials.getServiceBusNamespace(),
+                account_key=credentials.getServiceBusKey(),
+                issuer='owner')
+
         set_service_options(self.sbs)
 
         self.queue_name = getUniqueName('utqueue')

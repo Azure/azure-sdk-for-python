@@ -44,8 +44,7 @@ class _HTTPClient(object):
     '''
 
     def __init__(self, service_instance, cert_file=None, account_name=None,
-                 account_key=None, service_namespace=None, issuer=None,
-                 protocol='https'):
+                 account_key=None, protocol='https'):
         '''
         service_instance: service client instance.
         cert_file:
@@ -53,10 +52,7 @@ class _HTTPClient(object):
             service management.
         account_name: the storage account.
         account_key:
-            the storage account access key for storage services or servicebus
-            access key for service bus service.
-        service_namespace: the service namespace for service bus.
-        issuer: the issuer for service bus service.
+            the storage account access key.
         '''
         self.service_instance = service_instance
         self.status = None
@@ -65,8 +61,6 @@ class _HTTPClient(object):
         self.cert_file = cert_file
         self.account_name = account_name
         self.account_key = account_key
-        self.service_namespace = service_namespace
-        self.issuer = issuer
         self.protocol = protocol
         self.proxy_host = None
         self.proxy_port = None
@@ -110,6 +104,13 @@ class _HTTPClient(object):
         self.proxy_port = port
         self.proxy_user = user
         self.proxy_password = password
+
+    def get_uri(self, request):
+        ''' Return the target uri for the request.'''
+        protocol = request.protocol_override \
+            if request.protocol_override else self.protocol
+        port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
+        return protocol + '://' + request.host + ':' + str(port) + request.path
 
     def get_connection(self, request):
         ''' Create connection for the request. '''

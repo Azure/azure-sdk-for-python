@@ -14,6 +14,8 @@
 #--------------------------------------------------------------------------
 import ast
 import base64
+import hashlib
+import hmac
 import sys
 import types
 import warnings
@@ -949,3 +951,17 @@ def _parse_response_for_dict_filter(response, filter):
         return return_dict
     else:
         return None
+
+
+def _sign_string(key, string_to_sign, key_is_base64=True):
+    if key_is_base64:
+        key = _decode_base64_to_bytes(key)
+    else:
+        if isinstance(key, _unicode_type):
+            key = key.encode('utf-8')
+    if isinstance(string_to_sign, _unicode_type):
+        string_to_sign = string_to_sign.encode('utf-8')
+    signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
+    digest = signed_hmac_sha256.digest()
+    encoded_digest = _encode_base64(digest)
+    return encoded_digest
