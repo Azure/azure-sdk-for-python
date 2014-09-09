@@ -66,6 +66,35 @@ class ServiceBusService(object):
                  x_ms_version='2011-06-01', host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None,
                  authentication=None):
+        '''
+        Initializes the service bus service for a namespace with the specified
+        authentication settings (SAS or ACS).
+
+        service_namespace:
+            Service bus namespace, required for all operations. If None,
+            the value is set to the AZURE_SERVICEBUS_NAMESPACE env variable.
+        account_key:
+            ACS authentication account key. If None, the value is set to the
+            AZURE_SERVICEBUS_ACCESS_KEY env variable.
+            Note that if both SAS and ACS settings are specified, SAS is used.
+        issuer:
+            ACS authentication issuer. If None, the value is set to the
+            AZURE_SERVICEBUS_ISSUER env variable.
+            Note that if both SAS and ACS settings are specified, SAS is used.
+        x_ms_version: Unused. Kept for backwards compatibility.
+        host_base:
+            Optional. Live host base url. Defaults to Azure url. Override this
+            for on-premise.
+        shared_access_key_name:
+            SAS authentication key name.
+            Note that if both SAS and ACS settings are specified, SAS is used.
+        shared_access_key_value:
+            SAS authentication key value.
+            Note that if both SAS and ACS settings are specified, SAS is used.
+        authentication:
+            Instance of authentication class. If this is specified, then
+            ACS and SAS parameters are ignored.
+        '''
         # x_ms_version is not used, but the parameter is kept for backwards
         # compatibility
         self.requestid = None
@@ -75,6 +104,9 @@ class ServiceBusService(object):
         if not self.service_namespace:
             self.service_namespace = os.environ.get(AZURE_SERVICEBUS_NAMESPACE)
 
+        if not self.service_namespace:
+            raise WindowsAzureError('You need to provide servicebus namespace')
+
         if authentication:
             self.authentication = authentication
         else:
@@ -82,10 +114,6 @@ class ServiceBusService(object):
                 account_key = os.environ.get(AZURE_SERVICEBUS_ACCESS_KEY)
             if not issuer:
                 issuer = os.environ.get(AZURE_SERVICEBUS_ISSUER)
-
-            if not self.service_namespace:
-                raise WindowsAzureError(
-                    'You need to provide servicebus namespace')
 
             if shared_access_key_name and shared_access_key_value:
                 self.authentication = ServiceBusSASAuthentication(
