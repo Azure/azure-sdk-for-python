@@ -1,3 +1,6 @@
+2014-09-09 Version 0.8.3
+ * Add Shared Access Signature support to Service Bus
+
 2014-08-26 Version 0.8.2
  * Add functionality to Service Bus Management API
    - list queues/topics/notification hubs/relays
