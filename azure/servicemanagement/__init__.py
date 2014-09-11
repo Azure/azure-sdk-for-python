@@ -1040,7 +1040,7 @@ class PublishProfile(WindowsAzureData):
     def __init__(self):
         self.profile_name = _xml_attribute('profileName')
         self.publish_method = _xml_attribute('publishMethod')
-        self.publish_uri = _xml_attribute('publishUrl')
+        self.publish_url = _xml_attribute('publishUrl')
         self.msdeploysite = _xml_attribute('msdeploySite')
         self.user_name = _xml_attribute('userName')
         self.user_pwd = _xml_attribute('userPWD')
