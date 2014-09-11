@@ -598,8 +598,22 @@ def _from_entity_datetime(value):
     format = '%Y-%m-%dT%H:%M:%S'
     if '.' in value:
         format = format + '.%f'
+        
+        # Microseconds must be between 0 and 999999, inclusive
+        _, dec = value.split('.')
+        z = False
+        if dec.endswith('Z'):
+            z = True
+            dec = dec[:-1]
+
+        if int(dec) > 999999:
+            value = _ + '.' + '999999'
+            if z:
+                value = value + 'Z'
+
     if value.endswith('Z'):
         format = format + 'Z'
+
     return datetime.strptime(value, format)
 
 _ENTITY_TO_PYTHON_CONVERSIONS = {
