@@ -25,6 +25,7 @@ from azure import (
     _list_of,
     _scalar_list_of,
     _str,
+    _xml_attribute,
     )
 
 #-----------------------------------------------------------------------------
@@ -1026,6 +1027,28 @@ class HostNameSslState(WindowsAzureData):
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
+        
+
+class PublishData(WindowsAzureData):
+    _xml_name = 'publishData'
+    
+    def __init__(self):
+        self.publish_profiles = _list_of(PublishProfile, 'publishProfile')
+
+class PublishProfile(WindowsAzureData):
+    
+    def __init__(self):
+        self.profile_name = _xml_attribute('profileName')
+        self.publish_method = _xml_attribute('publishMethod')
+        self.publish_uri = _xml_attribute('publishUrl')
+        self.msdeploysite = _xml_attribute('msdeploySite')
+        self.user_name = _xml_attribute('userName')
+        self.user_pwd = _xml_attribute('userPWD')
+        self.destination_app_url = _xml_attribute('destinationAppUrl')
+        self.sql_server_db_connection_string = _xml_attribute('SQLServerDBConnectionString')
+        self.my_sqldb_connection_string = _xml_attribute('mySQLDBConnectionString')
+        self.hosting_provider_forum_link = _xml_attribute('hostingProviderForumLink')
+        self.control_panel_link = _xml_attribute('controlPanelLink')
     
 class QueueDescription(WindowsAzureData):
     
