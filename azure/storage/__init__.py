@@ -606,7 +606,7 @@ def _from_entity_datetime(value):
             z = True
             dec = dec[:-1]
 
-        if int(dec) > 999999:
+        if int(dec) > 999999 or len(dec) > 6:
             value = _ + '.' + '999999'
             if z:
                 value = value + 'Z'
