@@ -922,7 +922,14 @@ class BlobService(_StorageClient):
                 else:
                     break
 
-            self.put_block_list(container_name, blob_name, block_ids)
+            self.put_block_list(container_name, blob_name, block_ids,
+                                content_md5, x_ms_blob_cache_control,
+                                x_ms_blob_content_type,
+                                x_ms_blob_content_encoding,
+                                x_ms_blob_content_language,
+                                x_ms_blob_content_md5,
+                                x_ms_meta_name_values,
+                                x_ms_lease_id)
 
     def put_block_blob_from_bytes(self, container_name, blob_name, blob,
                                   index=0, count=None, content_encoding=None,
