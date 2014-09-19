@@ -1,3 +1,8 @@
+2014-09-19 Version 0.8.3
+ * Fixes for bugs:
+   #216 Daylight saving problem in ServiceBusSASAuthentication
+   #218 Content type incorrect on blob
+
 2014-08-26 Version 0.8.2
  * Add functionality to Service Bus Management API
    - list queues/topics/notification hubs/relays
