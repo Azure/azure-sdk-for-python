@@ -736,6 +736,12 @@ def _fill_data_to_return_object(node, return_obj):
                                   value.pair_xml_element_name,
                                   value.key_xml_element_name,
                                   value.value_xml_element_name))
+        elif isinstance(value, _xml_attribute):
+            real_value = None
+            if node.hasAttribute(value.xml_element_name):
+                real_value = node.getAttribute(value.xml_element_name)
+            if real_value is not None:
+                setattr(return_obj, name, real_value)
         elif isinstance(value, WindowsAzureData):
             setattr(return_obj,
                     name,
@@ -773,7 +779,8 @@ def _parse_response_body_from_xml_text(respbody, return_type):
     '''
     doc = minidom.parseString(respbody)
     return_obj = return_type()
-    for node in _get_child_nodes(doc, return_type.__name__):
+    xml_name = return_type._xml_name if hasattr(return_type, '_xml_name') else return_type.__name__ 
+    for node in _get_child_nodes(doc, xml_name):
         _fill_data_to_return_object(node, return_obj)
 
     return return_obj
@@ -828,6 +835,15 @@ class _scalar_list_of(list):
         self.list_type = list_type
         self.xml_element_name = xml_element_name
         super(_scalar_list_of, self).__init__()
+        
+class _xml_attribute:
+    
+    """a accessor to XML attributes
+    expected to go in it along with its xml element name.
+    Used for deserialization and construction"""
+    
+    def __init__(self, xml_element_name):
+        self.xml_element_name = xml_element_name
 
 
 def _update_request_uri_query_local_storage(request, use_local_storage):

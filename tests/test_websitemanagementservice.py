@@ -26,6 +26,7 @@ from azure.servicemanagement import (
     WebsiteManagementService,
     WebSpaces,
     WebSpace,
+    PublishData
     )
 
 from .util import (
@@ -284,3 +285,17 @@ class WebsiteManagementServiceTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
         self.assertTrue(result.startswith(u"<publishData>"))
+
+    def test_get_publish_profile(self):
+        # Arrange
+        self._create_site()
+
+        # Act
+        result = self.wss.get_publish_profile(self.webspace_name,
+                                              self.created_site)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, PublishData)
+        
+

@@ -23,7 +23,8 @@ from azure.servicemanagement import (
     Site,
     MetricResponses,
     MetricDefinitions,
-    _XmlSerializer
+    PublishData,
+    _XmlSerializer,
     )
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
@@ -191,6 +192,16 @@ class WebsiteManagementService(_ServiceManagementClient):
         '''
         return self._perform_get(self._get_publishxml_path(webspace_name, website_name),
                                  None).body.decode("utf-8")
+
+    def get_publish_profile(self, webspace_name, website_name):
+        '''
+        Get a site's publish profile as an object
+
+        webspace_name: The name of the webspace.
+        website_name: The name of the website.
+        '''
+        return self._perform_get(self._get_publishxml_path(webspace_name, website_name),
+                                 PublishData)
 
     #--Helper functions --------------------------------------------------
     def _get_list_webspaces_path(self):
