@@ -740,26 +740,6 @@ class BlobService(_StorageClient):
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('file_path', file_path)
-        request = HTTPRequest()
-        request.method = 'PUT'
-        request.host = self._get_host()
-        request.path = '/' + _str(container_name) + '/' + _str(blob_name) + ''
-        request.headers = [
-            ('x-ms-blob-type', 'BlockBlob'),
-            ('Content-Encoding', _str_or_none(content_encoding)),
-            ('Content-Language', _str_or_none(content_language)),
-            ('Content-MD5', _str_or_none(content_md5)),
-            ('Cache-Control', _str_or_none(cache_control)),
-            ('x-ms-blob-content-type', _str_or_none(x_ms_blob_content_type)),
-            ('x-ms-blob-content-encoding',
-             _str_or_none(x_ms_blob_content_encoding)),
-            ('x-ms-blob-content-language',
-             _str_or_none(x_ms_blob_content_language)),
-            ('x-ms-blob-content-md5', _str_or_none(x_ms_blob_content_md5)),
-            ('x-ms-blob-cache-control', _str_or_none(x_ms_blob_cache_control)),
-            ('x-ms-meta-name-values', x_ms_meta_name_values),
-            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
-        ]
 
         count = path.getsize(file_path)
         with open(file_path, 'rb') as stream:
@@ -833,26 +813,6 @@ class BlobService(_StorageClient):
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('stream', stream)
-        request = HTTPRequest()
-        request.method = 'PUT'
-        request.host = self._get_host()
-        request.path = '/' + _str(container_name) + '/' + _str(blob_name) + ''
-        request.headers = [
-            ('x-ms-blob-type', 'BlockBlob'),
-            ('Content-Encoding', _str_or_none(content_encoding)),
-            ('Content-Language', _str_or_none(content_language)),
-            ('Content-MD5', _str_or_none(content_md5)),
-            ('Cache-Control', _str_or_none(cache_control)),
-            ('x-ms-blob-content-type', _str_or_none(x_ms_blob_content_type)),
-            ('x-ms-blob-content-encoding',
-             _str_or_none(x_ms_blob_content_encoding)),
-            ('x-ms-blob-content-language',
-             _str_or_none(x_ms_blob_content_language)),
-            ('x-ms-blob-content-md5', _str_or_none(x_ms_blob_content_md5)),
-            ('x-ms-blob-cache-control', _str_or_none(x_ms_blob_cache_control)),
-            ('x-ms-meta-name-values', x_ms_meta_name_values),
-            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
-        ]
 
         if count and count < self._BLOB_MAX_DATA_SIZE:
             if progress_callback:
@@ -922,7 +882,14 @@ class BlobService(_StorageClient):
                 else:
                     break
 
-            self.put_block_list(container_name, blob_name, block_ids)
+            self.put_block_list(container_name, blob_name, block_ids,
+                                content_md5, x_ms_blob_cache_control,
+                                x_ms_blob_content_type,
+                                x_ms_blob_content_encoding,
+                                x_ms_blob_content_language,
+                                x_ms_blob_content_md5,
+                                x_ms_meta_name_values,
+                                x_ms_lease_id)
 
     def put_block_blob_from_bytes(self, container_name, blob_name, blob,
                                   index=0, count=None, content_encoding=None,
@@ -980,26 +947,6 @@ class BlobService(_StorageClient):
         _validate_not_none('blob', blob)
         _validate_not_none('index', index)
         _validate_type_bytes('blob', blob)
-        request = HTTPRequest()
-        request.method = 'PUT'
-        request.host = self._get_host()
-        request.path = '/' + _str(container_name) + '/' + _str(blob_name) + ''
-        request.headers = [
-            ('x-ms-blob-type', 'BlockBlob'),
-            ('Content-Encoding', _str_or_none(content_encoding)),
-            ('Content-Language', _str_or_none(content_language)),
-            ('Content-MD5', _str_or_none(content_md5)),
-            ('Cache-Control', _str_or_none(cache_control)),
-            ('x-ms-blob-content-type', _str_or_none(x_ms_blob_content_type)),
-            ('x-ms-blob-content-encoding',
-             _str_or_none(x_ms_blob_content_encoding)),
-            ('x-ms-blob-content-language',
-             _str_or_none(x_ms_blob_content_language)),
-            ('x-ms-blob-content-md5', _str_or_none(x_ms_blob_content_md5)),
-            ('x-ms-blob-cache-control', _str_or_none(x_ms_blob_cache_control)),
-            ('x-ms-meta-name-values', x_ms_meta_name_values),
-            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
-        ]
 
         if index < 0:
             raise TypeError(_ERROR_VALUE_NEGATIVE.format('index'))
@@ -1101,26 +1048,6 @@ class BlobService(_StorageClient):
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('text', text)
-        request = HTTPRequest()
-        request.method = 'PUT'
-        request.host = self._get_host()
-        request.path = '/' + _str(container_name) + '/' + _str(blob_name) + ''
-        request.headers = [
-            ('x-ms-blob-type', 'BlockBlob'),
-            ('Content-Encoding', _str_or_none(content_encoding)),
-            ('Content-Language', _str_or_none(content_language)),
-            ('Content-MD5', _str_or_none(content_md5)),
-            ('Cache-Control', _str_or_none(cache_control)),
-            ('x-ms-blob-content-type', _str_or_none(x_ms_blob_content_type)),
-            ('x-ms-blob-content-encoding',
-             _str_or_none(x_ms_blob_content_encoding)),
-            ('x-ms-blob-content-language',
-             _str_or_none(x_ms_blob_content_language)),
-            ('x-ms-blob-content-md5', _str_or_none(x_ms_blob_content_md5)),
-            ('x-ms-blob-cache-control', _str_or_none(x_ms_blob_cache_control)),
-            ('x-ms-meta-name-values', x_ms_meta_name_values),
-            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
-        ]
 
         if not isinstance(text, bytes):
             _validate_not_none('text_encoding', text_encoding)
