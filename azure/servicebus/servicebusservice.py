@@ -1008,4 +1008,4 @@ class ServiceBusSASAuthentication:
     def _get_expiry(self):
         '''Returns the UTC datetime, in seconds since Epoch, when this signed 
         request expires (5 minutes from now).'''
-        return int(round(time.mktime(time.gmtime(time.time() + 300))))
+        return int(round(time.time() + 300))
