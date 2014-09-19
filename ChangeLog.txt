@@ -1,3 +1,9 @@
+2014-09-19 Version 0.8.4
+ * Add ability to get website publish data as an object (thanks lmazuel)
+ * Fixes for bugs:
+   #216 Daylight saving problem in ServiceBusSASAuthentication
+   #218 Content type incorrect on blob
+
 2014-09-09 Version 0.8.3
  * Add Shared Access Signature support to Service Bus
 
