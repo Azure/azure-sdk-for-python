@@ -14,6 +14,7 @@
 #--------------------------------------------------------------------------
 import sys
 import types
+import iso8601
 
 from datetime import datetime
 from xml.dom import minidom
@@ -595,12 +596,7 @@ def _from_entity_int(value):
 
 
 def _from_entity_datetime(value):
-    format = '%Y-%m-%dT%H:%M:%S'
-    if '.' in value:
-        format = format + '.%f'
-    if value.endswith('Z'):
-        format = format + 'Z'
-    return datetime.strptime(value, format)
+    return iso8601.parse_date(value)
 
 _ENTITY_TO_PYTHON_CONVERSIONS = {
     'Edm.Binary': _from_entity_binary,
