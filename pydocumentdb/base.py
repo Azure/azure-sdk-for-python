@@ -13,21 +13,6 @@ import pydocumentdb.http_constants as http_constants
 import pydocumentdb.runtime_constants as runtime_constants
 
 
-def Extend(obj, extent):
-    """Extends `obj` with contents in `extent`.
-
-    :Parameters:
-        - `obj`: dict, the content to be extended
-        - `extent`: dict, the content used to extend `obj`
-
-    """
-    for property in extent:
-        if not hasattr(extent[property], '__call__'):
-            # type is not 'function'.
-            obj[property] = extent[property]
-    return obj
-
-
 def GetHeaders(document_client,
                default_headers,
                verb,
@@ -50,51 +35,52 @@ def GetHeaders(document_client,
         dict, the HTTP request headers.
 
     """
-    headers = Extend({}, default_headers)
+    headers = dict(default_headers)
     options = options or {}
 
-    if 'continuation' in options and options['continuation']:
+    if options.get('continuation'):
         headers[http_constants.HttpHeaders.Continuation] = (
             options['continuation'])
 
-    if 'preTriggerInclude' in options and options['preTriggerInclude']:
+    pre_trigger_include = options.get('preTriggerInclude')
+    if pre_trigger_include:
         headers[http_constants.HttpHeaders.PreTriggerInclude] = (
-            (',').join(options['preTriggerInclude'])
-            if type(options['preTriggerInclude']) is list
-            else options['preTriggerInclude'])
+            pre_trigger_include
+            if isinstance(pre_trigger_include, str)
+            else (',').join(pre_trigger_include))
 
-    if 'postTriggerInclude' in options and options['postTriggerInclude']:
+    post_trigger_include = options.get('postTriggerInclude')
+    if post_trigger_include:
         headers[http_constants.HttpHeaders.PostTriggerInclude] = (
-            (',').join(options['postTriggerInclude'])
-            if type(options['postTriggerInclude']) is list
-            else options['postTriggerInclude'])
+            post_trigger_include
+            if isinstance(post_trigger_include, str)
+            else (',').join(post_trigger_include))
 
-    if 'maxItemCount' in options and options['maxItemCount']:
+    if options.get('maxItemCount'):
         headers[http_constants.HttpHeaders.PageSize] = options['maxItemCount']
 
-    if 'accessCondition'in options and options['accessCondition']:
-        if options['accessCondition']['type'] == 'IfMatch':
-            headers[http_constants.HttpHeaders.IfMatch] = (
-                options['accessCondition']['condition'])
+    access_condition = options.get('accessCondition')
+    if access_condition:
+        if access_condition['type'] == 'IfMatch':
+            headers[http_constants.HttpHeaders.IfMatch] = access_condition['condition']
         else:
-            headers[http_constants.HttpHeaders.IfNoneMatch] = (
-                options['accessCondition']['condition'])
+            headers[http_constants.HttpHeaders.IfNoneMatch] = access_condition['condition']
 
-    if 'indexingDirective' in options and options['indexingDirective']:
+    if options.get('indexingDirective'):
         headers[http_constants.HttpHeaders.IndexingDirective] = (
             options['indexingDirective'])
 
     # TODO: add consistency level validation.
-    if 'consistencyLevel' in options and options.consistency_level:
+    if options.get('consistencyLevel'):
         headers[http_constants.HttpHeaders.ConsistencyLevel] = (
             options['consistencyLevel'])
 
     # TODO: add session token automatic handling in case of session consistency.
-    if 'sessionToken' in options and options['sessionToken']:
+    if options.get('sessionToken'):
         headers[http_constants.HttpHeaders.SessionToken] = (
             options['sessionToken'])
 
-    if 'resourceTokenExpirySeconds' in options and options['resourceTokenExpirySeconds']:
+    if options.get('resourceTokenExpirySeconds'):
         headers[http_constants.HttpHeaders.ResourceTokenExpiry] = (
             options['resourceTokenExpirySeconds'])
 
@@ -114,10 +100,10 @@ def GetHeaders(document_client,
             '-_.!~*\'()')
 
     if verb == 'post' or verb == 'put':
-        if not http_constants.HttpHeaders.ContentType in headers:
+        if not headers.get(http_constants.HttpHeaders.ContentType):
             headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.Json
 
-    if not http_constants.HttpHeaders.Accept in headers:
+    if not headers.get(http_constants.HttpHeaders.Accept):
         headers[http_constants.HttpHeaders.Accept] = runtime_constants.MediaTypes.Json
 
     return headers

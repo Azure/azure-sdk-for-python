@@ -13,7 +13,7 @@ import pydocumentdb.errors as errors
 import pydocumentdb.http_constants as http_constants
 
 
-def __IsReadableStream(obj):
+def _IsReadableStream(obj):
     """Checks whether obj is a file-like readable stream.
 
     :Returns:
@@ -25,7 +25,13 @@ def __IsReadableStream(obj):
     return False
 
 
-def __RequestBodyFromData(data):
+try:
+    basestring
+except NameError:
+    basestring = (str, bytes)
+
+
+def _RequestBodyFromData(data):
     """Gets requestion body from data.
 
     When `data` is dict and list into unicode string; otherwise return `data`
@@ -38,31 +44,14 @@ def __RequestBodyFromData(data):
         str, unicode, file-like stream object, or None
 
     """
-    data_type = type(data)
-    if data_type is str or data_type is unicode or __IsReadableStream(data):
+    if isinstance(data, basestring) or _IsReadableStream(data):
         return data
-    elif data_type is dict or data_type is list:
+    elif isinstance(data, (dict, list, tuple)):
         return json.dumps(data, separators=(',',':')).decode('utf8')
     return None
 
 
-def __ConvertHeadersToDict(headers):
-    """Coverts `headers` to a dict.
-
-    :Parameters:
-        - `headers`: list of (name, value) tuples.
-
-    :Returns:
-        dict
-
-    """
-    result = {}
-    for (name, value) in headers:
-        result[name] = value
-    return result
-
-
-def __InternalRequest(connection_policy, request_options, request_body):
+def _InternalRequest(connection_policy, request_options, request_body):
     """Makes one http request.
 
     :Parameters:
@@ -93,7 +82,7 @@ def __InternalRequest(connection_policy, request_options, request_body):
     # will need to handle reading the response.
     if (is_media and
         connection_policy.MediaReadMode == documents.MediaReadMode.Streamed):
-        return  (response, __ConvertHeadersToDict(headers))
+        return  (response, dict(headers))
 
     data = response.read()
     if response.status >= 300:
@@ -109,7 +98,7 @@ def __InternalRequest(connection_policy, request_options, request_body):
             except:
                 raise errors.JSONParseFailure(data)
 
-    return (result, __ConvertHeadersToDict(headers))
+    return (result, dict(headers))
 
 
 def SynchronizedRequest(connection_policy,
@@ -138,7 +127,7 @@ def SynchronizedRequest(connection_policy,
     """
     request_body = None
     if request_data:
-        request_body = __RequestBodyFromData(request_data)
+        request_body = _RequestBodyFromData(request_data)
         if not request_body:
            raise errors.UnexpectedDataType(
                'parameter data must be a JSON object, string or' +
@@ -160,4 +149,4 @@ def SynchronizedRequest(connection_policy,
             len(request_body))
     elif request_body == None:
         request_options['headers'][http_constants.HttpHeaders.ContentLength] = 0
-    return __InternalRequest(connection_policy, request_options, request_body)
+    return _InternalRequest(connection_policy, request_options, request_body)

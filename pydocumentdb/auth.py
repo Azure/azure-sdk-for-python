@@ -60,14 +60,13 @@ def __GetAuthorizationTokenUsingMasterKey(verb,
     """
     key = master_key.decode('base64')
 
-    text = ((verb or '') + '\n' +
-            (resource_type or '') + '\n' +
-            (resource_id or '') + '\n' +
-            (headers[http_constants.HttpHeaders.XDate]
-             if http_constants.HttpHeaders.XDate in headers else '') + '\n' +
-            (headers[http_constants.HttpHeaders.HttpDate]
-             if http_constants.HttpHeaders.HttpDate in headers else '') + '\n')
-
+    text = '{verb}\n{resource_type}\n{resource_id}\n{x_date}\n{http_date}\n'.format(
+        verb=(verb or ''),
+        resource_type=(resource_type or ''),
+        resource_id=(resource_id or ''),
+        x_date=headers.get(http_constants.HttpHeaders.XDate, ''),
+        http_date=headers.get(http_constants.HttpHeaders.HttpDate, ''))
+   
     body = text.lower().decode('utf8')
 
     hm = hmac.new(key, body, sha256)
@@ -75,7 +74,9 @@ def __GetAuthorizationTokenUsingMasterKey(verb,
 
     master_token = 'master'
     token_version = '1.0'
-    return 'type=' + master_token +'&ver=' + token_version + '&sig=' + signature[:-1]
+    return 'type={type}&ver={ver}&sig={sig}'.format(type=master_token,
+                                                    ver=token_version,
+                                                    sig=signature[:-1])
 
 
 def __GetAuthorizationTokenUsingResourceTokens(resource_tokens,
@@ -92,7 +93,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens,
         dict
 
     """
-    if resource_id in resource_tokens and resource_tokens[resource_id]:
+    if resource_tokens.get(resource_id):
         return resource_tokens[resource_id]
     else:
         path_parts = path.split('/')
