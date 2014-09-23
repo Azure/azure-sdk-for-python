@@ -7,7 +7,7 @@
 import pydocumentdb.base as base
 import pydocumentdb.documents as documents
 import pydocumentdb.http_constants as http_constants
-import pydocumentdb.query_iterator as query_iterator
+import pydocumentdb.query_iterable as query_iterable
 import pydocumentdb.runtime_constants as runtime_constants
 import pydocumentdb.synchronized_request as synchronized_request
 
@@ -46,12 +46,10 @@ class DocumentClient(object):
         self.master_key = None
         self.resource_tokens = None
         if auth != None:
-            self.master_key = (auth['masterKey']
-                               if 'masterKey' in auth else None)
-            self.resource_tokens = (auth['resourceTokens']
-                                    if 'resourceTokens' in auth else None)
+            self.master_key = auth.get('masterKey')
+            self.resource_tokens = auth.get('resourceTokens')
 
-            if 'permissionFeed' in auth and auth['permissionFeed']:
+            if auth.get('permissionFeed'):
                 self.resource_tokens = {}
                 for permission_feed in auth['permissionFeed']:
                     resource_parts = permission_feed['resource'].split('/')
@@ -111,7 +109,7 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         return self.QueryDatabases(None, options)
@@ -124,22 +122,18 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         def fetch_fn(options):
-            def result_fn(result):
-                return result['Databases']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed('/dbs',
                                     'dbs',
                                     '',
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['Databases'],
+                                    lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
     def ReadCollections(self, database_link, options={}):
         """Reads all collections in a database.
@@ -149,7 +143,7 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         return self.QueryCollections(database_link, None, options)
@@ -163,24 +157,20 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         path = '/' + database_link + 'colls/'
         database_id = base.GetIdFromLink(database_link)
         def fetch_fn(options):
-            def result_fn(result):
-                return result['DocumentCollections']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed(path,
                                     'colls',
                                     database_id,
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['DocumentCollections'],
+                                    lambda _, body: body,
                                     query,
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
     def CreateCollection(self, database_link, body, options={}):
         """Creates a collection in a database.
@@ -265,7 +255,7 @@ class DocumentClient(object):
             - `database_link`: str, the link to the database.
             - `options`: dict, the request options for the request.
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         return self.QueryUsers(database_link, None, options)
@@ -279,24 +269,20 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         path = '/' + database_link + 'users/'
         database_id = base.GetIdFromLink(database_link)
         def fetch_fn(options):
-            def result_fn(result):
-                return result['Users']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed(path,
                                     'users',
                                     database_id,
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['Users'],
+                                    lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
     def ReplaceDatabase(self, database_link, db, options={}):
         """Replaces a database and returns it.
@@ -386,7 +372,7 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         return self.QueryPermissions(user_link, None, options)
@@ -400,24 +386,20 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         path = '/' + user_link + 'permissions/'
         user_id = base.GetIdFromLink(user_link)
         def fetch_fn(options):
-            def result_fn(result):
-                return result['Permissions']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed(path,
                                     'permissions',
                                     user_id,
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['Permissions'],
+                                    lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
     def ReplaceUser(self, user_link, user, options={}):
         """Replaces a user and return it.
@@ -507,7 +489,7 @@ class DocumentClient(object):
             - `feed_options`: dict
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         return self.QueryDocuments(collection_link, None, feed_options)
@@ -521,24 +503,20 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         path = '/' + collection_link + 'docs/'
         collection_id = base.GetIdFromLink(collection_link)
         def fetch_fn(options):
-            def result_fn(result):
-                return result['Documents']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed(path,
                                     'docs',
                                     collection_id,
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['Documents'],
+                                    lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
     def CreateDocument(self, collection_link, body, options={}):
         """Creates a document in a collection.
@@ -558,9 +536,8 @@ class DocumentClient(object):
 
         """
         body = body.copy()
-        if (((not 'id' in body) or (not body['id'])) and
-            ((not 'disableAutomaticIdGeneration' in options) or
-             (not options['disableAutomaticIdGeneration']))):
+        if (not body.get('id') and
+            not options.get('disableAutomaticIdGeneration')):
             body['id'] = base.GenerateGuidId()
         path = '/' + collection_link + 'docs/'
         collection_id = base.GetIdFromLink(collection_link)
@@ -598,7 +575,7 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         return self.QueryTriggers(collection_link, None, options)
@@ -612,24 +589,20 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         path = '/' + collection_link + 'triggers/'
         collection_id = base.GetIdFromLink(collection_link)
         def fetch_fn(options):
-            def result_fn(result):
-                return result['Triggers']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed(path,
                                     'triggers',
                                     collection_id,
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['Triggers'],
+                                    lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
     def CreateTrigger(self, collection_link, trigger, options={}):
         """Creates a trigger in a collection.
@@ -644,10 +617,9 @@ class DocumentClient(object):
 
         """
         trigger = trigger.copy()
-        if 'serverScript' in trigger:
-            trigger['body'] = str(trigger['serverScript'])
-            trigger.pop('serverScript', None)
-        elif 'body' in trigger:
+        if  trigger.get('serverScript'):
+            trigger['body'] = str(trigger.pop('serverScript', ''))
+        elif trigger.get('body'):
             trigger['body'] = str(trigger['body'])
  
         path = '/' + collection_link + 'triggers/'
@@ -682,7 +654,7 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         return self.QueryUserDefinedFunctions(collection_link, None, options)
@@ -696,24 +668,20 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         path = '/' + collection_link + 'udfs/'
         collection_id = base.GetIdFromLink(collection_link)
         def fetch_fn(options):
-            def result_fn(result):
-                return result['UserDefinedFunctions']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed(path,
                                     'udfs',
                                     collection_id,
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['UserDefinedFunctions'],
+                                    lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
     def CreateUserDefinedFunction(self, collection_link, udf, options={}):
         """Creates a user defined function in a collection.
@@ -728,10 +696,9 @@ class DocumentClient(object):
 
         """
         udf = udf.copy()
-        if 'serverScript' in udf:
-            udf['body'] = str(udf['serverScript'])
-            udf.pop('serverScript', None)
-        elif 'body' in udf:
+        if udf.get('serverScript'):
+            udf['body'] = str(udf.pop('serverScript', ''))
+        elif udf.get('body'):
             udf['body'] = str(udf['body'])
 
         path = '/' + collection_link + 'udfs/'
@@ -766,7 +733,7 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         return self.QueryStoredProcedures(collection_link, None, options)
@@ -780,24 +747,20 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         path = '/' + collection_link + 'sprocs/'
         collection_id = base.GetIdFromLink(collection_link)
         def fetch_fn(options):
-            def result_fn(result):
-                return result['StoredProcedures']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed(path,
                                     'sprocs',
                                     collection_id,
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['StoredProcedures'],
+                                    lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
     def CreateStoredProcedure(self, collection_link, sproc, options={}):
         """Creates a stored procedure in a collection.
@@ -812,10 +775,9 @@ class DocumentClient(object):
 
         """
         sproc = sproc.copy()
-        if 'serverScript' in sproc:
-            sproc['body'] = str(sproc['serverScript'])
-            sproc.pop('serverScript', None)
-        elif 'body' in sproc:
+        if sproc.get('serverScript'):
+            sproc['body'] = str(sproc.pop('serverScript', ''))
+        elif sproc.get('body'):
             sproc['body'] = str(sproc['body'])
         path = '/' + collection_link + 'sprocs/'
         collection_id = base.GetIdFromLink(collection_link)
@@ -849,24 +811,20 @@ class DocumentClient(object):
             - `feed_options`: dict
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         path = '/' + collection_link + 'conflicts/'
         collection_id = base.GetIdFromLink(collection_link)
         def fetch_fn(options):
-            def result_fn(result):
-                return result['Conflicts']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed(path,
                                     'conflicts',
                                     collection_id,
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['Conflicts'],
+                                    lambda _, b: b,
                                     '',
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
     def ReadConflict(self, conflict_link, options={}):
         """Reads a conflict.
@@ -982,13 +940,13 @@ class DocumentClient(object):
             dict
 
         """
-        initial_headers = base.Extend({}, self.default_headers)
+        initial_headers = dict(self.default_headers)
 
         # Add required headers slug and content-type.
-        if 'slug' in options:
+        if options.get('slug'):
             initial_headers[http_constants.HttpHeaders.Slug] = options['slug']
 
-        if 'contentType' in options:
+        if options.get('contentType'):
             initial_headers[http_constants.HttpHeaders.ContentType] = (
                 options['contentType'])
         else:
@@ -1031,7 +989,7 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         return self.QueryAttachments(document_link, None, options)
@@ -1045,25 +1003,21 @@ class DocumentClient(object):
             - `options`: dict, the request options for the request.
 
         :Returns:
-            query_iterator.QueryIterator
+            query_iterable.QueryIterable
 
         """
         path = '/' + document_link + 'attachments/'
         document_id = base.GetIdFromLink(document_link)
 
         def fetch_fn(options):
-            def result_fn(result):
-                return result['Attachments']
-            def create_fn(parent, body):
-                return body
             return self.__QueryFeed(path,
                                     'attachments',
                                     document_id,
-                                    result_fn,
-                                    create_fn,
+                                    lambda r: r['Attachments'],
+                                    lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterator.QueryIterator(options, fetch_fn)
+        return query_iterable.QueryIterable(options, fetch_fn)
 
 
     def ReadMedia(self, media_link):
@@ -1077,7 +1031,7 @@ class DocumentClient(object):
             - `media_link`: str, the link to the media.
 
         :Returns:
-            str or file-link stream object
+            str or file-like stream object
 
         """
         default_headers = self.default_headers
@@ -1110,14 +1064,13 @@ class DocumentClient(object):
             str or file-like stream object
 
         """
-        default_headers = self.default_headers
-        initial_headers = base.Extend({}, default_headers)
+        initial_headers = dict(self.default_headers)
 
         # Add required headers slug and content-type in case the body is a stream
-        if 'slug' in options:
+        if options.get('slug'):
             initial_headers[http_constants.HttpHeaders.Slug] = options['slug']
 
-        if 'contentType' in options:
+        if options.get('contentType'):
             initial_headers[http_constants.HttpHeaders.ContentType] = (
                 options['contentType'])
         else:
@@ -1194,9 +1147,9 @@ class DocumentClient(object):
 
         """
         trigger = trigger.copy()
-        if 'serverScript' in trigger:
+        if trigger.get('serverScript'):
             trigger['body'] = str(trigger['serverScript'])
-        elif 'body' in trigger:
+        elif trigger.get('body'):
             trigger['body'] = str(trigger['body'])
             
         path = '/' + trigger_link
@@ -1240,9 +1193,9 @@ class DocumentClient(object):
 
         """
         udf = udf.copy()
-        if 'serverScript' in udf:
+        if udf.get('serverScript'):
             udf['body'] = str(udf['serverScript'])
-        elif 'body' in udf:
+        elif udf.get('body'):
             udf['body'] = str(udf['body'])
 
         path = '/' + udf_link
@@ -1284,13 +1237,12 @@ class DocumentClient(object):
             dict
 
         """
-        default_headers = self.default_headers
-        initial_headers = {
+        initial_headers = dict(self.default_headers)
+        initial_headers.update({
             http_constants.HttpHeaders.Accept: (
                 runtime_constants.MediaTypes.Json)
-        }
+        })
 
-        initial_headers = base.Extend(initial_headers, default_headers)
         if params and not type(params) is list:
             params = [params]
 
@@ -1324,9 +1276,9 @@ class DocumentClient(object):
 
         """
         sproc = sproc.copy()
-        if 'serverScript' in sproc:
+        if sproc.get('serverScript'):
             sproc['body'] = str(sproc['serverScript'])
-        elif 'body' in sproc:
+        elif sproc.get('body'):
             sproc['body'] = str(sproc['body'])
 
         path = '/' + sproc_link
@@ -1381,8 +1333,7 @@ class DocumentClient(object):
         :Returns:
             documents.DatabaseAccount
         """
-        default_headers = self.default_headers
-        initial_headers = base.Extend({ }, default_headers)
+        initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self,
                                   initial_headers,
                                   'get',
@@ -1662,14 +1613,11 @@ class DocumentClient(object):
             list
 
         """
-        def __GetBodiesFromQueryResult(result):
-            bodies = []
-            if query:
-                bodies = result_fn(result)
-            else:
-                for body in result_fn(result):
-                    bodies.append(create_fn(self, body))
-            return bodies
+        if query:
+            __GetBodiesFromQueryResult = result_fn
+        else:
+            def __GetBodiesFromQueryResult(result):
+                return [create_fn(self, body) for body in result_fn(result)]
 
         url_connection = self.url_connection
         initial_headers = self.default_headers.copy()
@@ -1688,7 +1636,7 @@ class DocumentClient(object):
             return __GetBodiesFromQueryResult(result)
         else:
             initial_headers[http_constants.HttpHeaders.IsQuery] = 'true'
-            if 'jpath' in options and options['jpath']:
+            if options.get('jpath'):
                 initial_headers[http_constants.HttpHeaders.Query] = query
                 headers = base.GetHeaders(self,
                                           initial_headers,
@@ -1716,23 +1664,3 @@ class DocumentClient(object):
                                                                  query,
                                                                  headers)
                 return __GetBodiesFromQueryResult(result)
-
-    def __enter__(self):
-        """To support `with` operator.
-
-        :Returns:
-            document_client.DocumentClient
-
-        """
-        return self
-
-    def __exit__(self, e_type, e_value, e_trace):
-        """To support `with` operator.
-
-        :Parameters:
-            - `e_type`: the type of exception
-            - `e_value`: the exception instance raised.
-            - `e_trance`: a traceback instance.
-
-        """
-        pass
