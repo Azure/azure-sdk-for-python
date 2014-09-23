@@ -168,10 +168,9 @@ class Message(WindowsAzureData):
         # extracts the topic and subscriptions name if it is topic message.
         if location:
             if '/subscriptions/' in location:
-                pos = location.find('.net/')
+                pos = location.find(service_bus_service.host_base)+1
                 pos1 = location.find('/subscriptions/')
-                self._topic_name = location[pos+len('.net/'):pos1]
-
+                self._topic_name = location[pos+len(service_bus_service.host_base):pos1]
                 pos = pos1 + len('/subscriptions/')
                 pos1 = location.find('/', pos)
                 self._subscription_name = location[pos:pos1]
