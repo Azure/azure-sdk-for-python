@@ -20,7 +20,7 @@
     <Content Include="README" />
     <Compile Include="pydocumentdb\errors.py" />
     <Compile Include="pydocumentdb\http_constants.py" />
-    <Compile Include="pydocumentdb\query_iterator.py" />
+    <Compile Include="pydocumentdb\query_iterable.py" />
     <Compile Include="pydocumentdb\runtime_constants.py" />
     <Compile Include="setup.py" />
     <Compile Include="test\crud_tests.py" />

@@ -1080,11 +1080,12 @@ class DocumentClient(object):
         url_connection = self.url_connection
         path = '/' + media_link
         media_id = base.GetIdFromLink(media_link)
+        attachment_id = base.GetAttachmentIdFromMediaId(media_id)
         headers = base.GetHeaders(self,
                                   initial_headers,
                                   'put',
                                   path,
-                                  media_id,
+                                  attachment_id,
                                   'media',
                                   options)
 
@@ -1636,31 +1637,17 @@ class DocumentClient(object):
             return __GetBodiesFromQueryResult(result)
         else:
             initial_headers[http_constants.HttpHeaders.IsQuery] = 'true'
-            if options.get('jpath'):
-                initial_headers[http_constants.HttpHeaders.Query] = query
-                headers = base.GetHeaders(self,
-                                          initial_headers,
-                                          'get',
-                                          path,
-                                          id,
-                                          type,
-                                          options)
-                result, self.last_response_headers = self.__Get(url_connection,
-                                                                path,
-                                                                headers)
-                return __GetBodiesFromQueryResult(result)
-            else:
-                initial_headers[http_constants.HttpHeaders.ContentType] = (
-                    runtime_constants.MediaTypes.SQL)
-                headers = base.GetHeaders(self,
-                                          initial_headers,
-                                          'post',
-                                          path,
-                                          id,
-                                          type,
-                                          options)
-                result, self.last_response_headers = self.__Post(url_connection,
-                                                                 path,
-                                                                 query,
-                                                                 headers)
-                return __GetBodiesFromQueryResult(result)
+            initial_headers[http_constants.HttpHeaders.ContentType] = (
+                runtime_constants.MediaTypes.SQL)
+            headers = base.GetHeaders(self,
+                                      initial_headers,
+                                      'post',
+                                      path,
+                                      id,
+                                      type,
+                                      options)
+            result, self.last_response_headers = self.__Post(url_connection,
+                                                             path,
+                                                             query,
+                                                             headers)
+            return __GetBodiesFromQueryResult(result)

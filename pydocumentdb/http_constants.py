@@ -88,6 +88,8 @@ class HttpHeaders:
     RetryAfterInMilliseconds = 'x-ms-retry-after-ms'
     IsFeedUnfiltered = 'x-ms-is-feed-unfiltered'
     ResourceTokenExpiry = 'x-ms-documentdb-expiry-seconds'
+    EnableScanInQuery = 'x-ms-documentdb-query-enable-scan'
+    EmitVerboseTracesInQuery = 'x-ms-documentdb-query-emit-traces'
 
     # Quota Info
     MaxEntityCount = 'x-ms-root-entity-max-count'
