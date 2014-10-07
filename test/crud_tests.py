@@ -59,14 +59,11 @@ class CRUDTests(unittest.TestCase):
                          before_create_databases_count + 1,
                          'create should increase the number of databases')
         # query databases.
-        databases = list(client.QueryDatabases('^/?', {'jpath': True}))
-        self.assertTrue(len(databases) > 0,
-                        'number of databases for the query should be > 0')
         databases = list(client.QueryDatabases(
             'SELECT * FROM root r WHERE r.id="{id}"'.format(
                 id=database_definition['id'])))
-        self.assertTrue(len(databases) > 0,
-                        'number of results for the query should be > 0')
+        self.assert_(databases,
+                     'number of results for the query should be > 0')
         # replace database.
         created_db['id'] = 'replaced db'
         replaced_db = client.ReplaceDatabase(created_db['_self'], created_db)
@@ -105,10 +102,6 @@ class CRUDTests(unittest.TestCase):
                          before_create_collections_count + 1,
                          'create should increase the number of collections')
         # query collections
-        collections = list(client.QueryCollections(created_db['_self'],
-                                                   '^/?',
-                                                   {'jpath': True}))
-        self.assert_(collections)
         collections = list(client.QueryCollections(
             created_db['_self'],
             'SELECT * FROM root r WHERE r.id="{id}"'.format(
@@ -158,7 +151,7 @@ class CRUDTests(unittest.TestCase):
             document_definition)
         self.assertEqual(duplicated_document['name'],
                          document_definition['name'])
-        self.assertTrue(duplicated_document['id'] != None)
+        self.assert_(duplicated_document['id'])
         self.assertNotEqual(duplicated_document['id'],
                             created_document['id'])
         # duplicated documents are not allowed when 'id' is provided.
@@ -176,14 +169,16 @@ class CRUDTests(unittest.TestCase):
             before_create_documents_count + 2,
             'create should increase the number of documents')
         # query documents
-        documents = list(client.QueryDocuments(created_collection['_self'],
-                                               '^/?',
-                                               {'jpath': True}))
-        self.assert_(documents)
         documents = list(client.QueryDocuments(
             created_collection['_self'],
             'SELECT * FROM root r WHERE r.name="{name}"'.format(
                 name=document_definition['name'])))
+        self.assert_(documents)
+        documents = list(client.QueryDocuments(
+            created_collection['_self'],
+            'SELECT * FROM root r WHERE r.name="{name}"'.format(
+                name=document_definition['name']),
+            { 'enableScanInQuery': True}))
         self.assert_(documents)
         # replace document.
         created_document['name'] = 'replaced document'
@@ -264,7 +259,7 @@ class CRUDTests(unittest.TestCase):
         # list all attachments
         attachments = list(client.ReadAttachments(document['_self']))
         initial_count = len(attachments)
-        valid_media_options = { 'slug': 'attachment id',
+        valid_media_options = { 'slug': 'attachment name',
                                 'contentType': 'application/text' }
         invalid_media_options = { 'slug': 'attachment name',
                                   'contentType': 'junt/test' }
@@ -281,7 +276,7 @@ class CRUDTests(unittest.TestCase):
         valid_attachment = client.CreateAttachmentAndUploadMedia(
             document['_self'], content_stream, valid_media_options)
         self.assertEqual(valid_attachment['id'],
-                         'attachment id',
+                         'attachment name',
                          'id of created attachment should be the'
                          ' same as the one in the request')
         content_stream = ReadableStream()
@@ -386,9 +381,6 @@ class CRUDTests(unittest.TestCase):
         users = list(client.ReadUsers(db['_self']))
         self.assertEqual(len(users), before_create_count + 1)
         # query users
-        users = list(client.QueryUsers(db['_self'], '^/?',
-                                       {'jpath': True}))
-        self.assert_(users)
         results = list(client.QueryUsers(
             db['_self'],
             'SELECT * FROM root r WHERE r.id="new user"'))
@@ -438,10 +430,6 @@ class CRUDTests(unittest.TestCase):
         permissions = list(client.ReadPermissions(user['_self']))
         self.assertEqual(len(permissions), before_create_count + 1)
         # query permissions
-        permissions = list(client.QueryPermissions(
-            user['_self'], '^/?', {'jpath': True}))
-        self.assert_(permissions)
-
         results = list(client.QueryPermissions(
             user['_self'],
             'SELECT * FROM root r WHERE r.id="{id}"'.format(
@@ -649,8 +637,8 @@ class CRUDTests(unittest.TestCase):
         # query triggers
         triggers = list(client.QueryTriggers(
             collection['_self'],
-            '(^/"id"/"{id}")/"_rid"!?'.format(id=trigger_definition['id']),
-            {'jpath': True}))
+            'SELECT * FROM root r WHERE r.id="{id}"'.format(
+                id=trigger_definition['id'])))
         self.assert_(triggers)
 
         results = list(client.QueryTriggers(
@@ -713,11 +701,6 @@ class CRUDTests(unittest.TestCase):
                          before_create_udfs_count + 1,
                          'create should increase the number of udfs')
         # query udfs
-        udfs = list(client.QueryUserDefinedFunctions(
-            collection['_self'],
-            '(^/"id"/"{id}")/"_rid"!?'.format(id=udf_definition['id']),
-            {'jpath': True}))
-        self.assert_(udfs)
         results = list(client.QueryUserDefinedFunctions(
             collection['_self'],
             'SELECT * FROM root r WHERE r.id="{id}"'.format(
@@ -777,10 +760,9 @@ class CRUDTests(unittest.TestCase):
         # query sprocs
         sprocs = list(client.QueryStoredProcedures(
             collection['_self'],
-            '(^/"id"/"{id}")/"_rid"!?'.format(id=sproc_definition['id']),
-            {'jpath': True}))
-        self.assert_(len(sprocs),
-                     'number of sprocs for the query should be > 0')
+            'SELECT * FROM root r WHERE r.id="{id}"'.format(
+                id=sproc_definition['id'])))
+        self.assert_(sprocs)
         # replace sproc
         sproc['body'] = 'function() {var x = 20;}'
         replaced_sproc = client.ReplaceStoredProcedure(sproc['_self'],

@@ -80,6 +80,10 @@ def GetHeaders(document_client,
         headers[http_constants.HttpHeaders.SessionToken] = (
             options['sessionToken'])
 
+    if options.get('enableScanInQuery'):
+        headers[http_constants.HttpHeaders.EnableScanInQuery] = (
+            options['enableScanInQuery'])
+
     if options.get('resourceTokenExpirySeconds'):
         headers[http_constants.HttpHeaders.ResourceTokenExpiry] = (
             options['resourceTokenExpirySeconds'])
