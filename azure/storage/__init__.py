@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-import hashlib
-import hmac
 import sys
 import types
 
@@ -36,6 +34,7 @@ from azure import (WindowsAzureData,
                    _general_error_handler,
                    _list_of,
                    _parse_response_for_dict,
+                   _sign_string,
                    _unicode_type,
                    _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY,
                    )
@@ -538,17 +537,6 @@ def _sign_storage_table_request(request, account_name, account_key):
     auth_string = 'SharedKey ' + account_name + ':' + \
         _sign_string(account_key, string_to_sign)
     return auth_string
-
-
-def _sign_string(account_key, string_to_sign):
-    decoded_account_key = _decode_base64_to_bytes(account_key)
-    if isinstance(string_to_sign, _unicode_type):
-        string_to_sign = string_to_sign.encode('utf-8')
-    signed_hmac_sha256 = hmac.HMAC(
-        decoded_account_key, string_to_sign, hashlib.sha256)
-    digest = signed_hmac_sha256.digest()
-    encoded_digest = _encode_base64(digest)
-    return encoded_digest
 
 
 def _to_python_bool(value):

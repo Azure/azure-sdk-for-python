@@ -48,9 +48,18 @@ from util import (
 class ServiceBusTest(AzureTestCase):
 
     def setUp(self):
-        self.sbs = ServiceBusService(credentials.getServiceBusNamespace(),
-                                     credentials.getServiceBusKey(),
-                                     'owner')
+        if credentials.getServiceBusAuthenticationType().lower() == 'sas':
+            self.sbs = ServiceBusService(
+                credentials.getServiceBusNamespace(),
+                shared_access_key_name=credentials.getServiceBusSasKeyName(),
+                shared_access_key_value=credentials.getServiceBusSasKeyValue(),
+                )
+        else:
+            self.sbs = ServiceBusService(
+                credentials.getServiceBusNamespace(),
+                account_key=credentials.getServiceBusKey(),
+                issuer='owner')
+
         set_service_options(self.sbs)
 
         self.queue_name = getUniqueName('utqueue')
@@ -330,6 +339,22 @@ class ServiceBusTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(received_msg)
         self.assertEqual(sent_msg.body, received_msg.body)
+
+    def test_receive_queue_message_with_broker_properties(self):
+        # Assert
+        sent_msg = Message(b'receive message')
+        sent_msg.broker_properties = \
+            '{"ForcePersistence": false, "Label": "My label" }'
+        self._create_queue_and_send_msg(self.queue_name, sent_msg)
+
+        # Act
+        received_msg = self.sbs.receive_queue_message(self.queue_name, False)
+
+        # Assert
+        self.assertIsNotNone(received_msg)
+        self.assertEqual(sent_msg.body, received_msg.body)
+        self.assertEqual("My label", received_msg.broker_properties['Label'])
+        self.assertEqual(False, received_msg.broker_properties['ForcePersistence'])
 
     def test_receive_queue_message_read_delete_mode_throws_on_delete(self):
         # Assert

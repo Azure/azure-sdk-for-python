@@ -1,3 +1,29 @@
+2014-09-19 Version 0.8.4
+ * Add ability to get website publish data as an object (thanks lmazuel)
+ * Fixes for bugs:
+   #216 Daylight saving problem in ServiceBusSASAuthentication
+   #218 Content type incorrect on blob
+
+2014-09-09 Version 0.8.3
+ * Add Shared Access Signature support to Service Bus
+
+2014-08-26 Version 0.8.2
+ * Add functionality to Service Bus Management API
+   - list queues/topics/notification hubs/relays
+ * Add CreationTime to StorageAccountProperties
+ * Preliminary SQL Database Management API
+ * Preliminary Website Management API
+   - list/get webspaces
+   - list/get/create/delete/restart website
+   - get historical usage metrics and metric definitions
+   - get publish profile xml
+ * Fixes for bugs:
+   #192 Fix deserialization of broker properties for service bus.
+   #173 Fix some incompatibilities with Python 2.6
+
+ Thank you to lmazuel for the contributions to SQL Database, Service Bus and
+ Website management.
+
 2014-06-26 Version 0.8.1
  * Fixes for bugs:
    #149 Table storage batch client doesn't validate etag

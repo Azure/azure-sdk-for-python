@@ -3,7 +3,7 @@
 This project provides a set of Python packages that make it easy to access
 the Microsoft Azure storage and queue services. For documentation on how
 to host Python applications on Microsoft Azure, please see the
-[Microsoft Azure](http://www.windowsazure.com/en-us/develop/python/)
+[Microsoft Azure](http://azure.microsoft.com/en-us/develop/python/)
 Python Developer Center.
 
 The SDK supports Python 2.7, 3.3, 3.4.
@@ -166,19 +166,53 @@ queue_service.delete_message('taskqueue', messages[0].message_id, messages[0].po
 
 ServiceBus Queues are an alternative to Storage Queues that might be useful in scenarios where more advanced messaging features are needed (larger message sizes, message ordering, single-operaiton destructive reads, scheduled delivery) using push-style delivery (using long polling).
 
-The **create\_queue** method can be used to ensure a queue exists:
+The service can use Shared Access Signature authentication, or ACS authentication.
+
+Service bus namespaces created using the Azure portal after August 2014 no
+longer support ACS authentication.  You can create ACS compatible namespaces with
+the Azure SDK.
+
+### Shared Access Signature Authentication
+
+To use Shared Access Signature authentication, create the service bus service with:
 
 ```Python
 from azure.servicebus import ServiceBusService
-sbs = ServiceBusService(service_namespace, account_key, 'owner')
+
+key_name = 'RootManageSharedAccessKey' # SharedAccessKeyName from Azure portal
+key_value = '' # SharedAccessKey from Azure portal
+sbs = ServiceBusService(service_namespace,
+                        shared_access_key_name=key_name,
+                        shared_access_key_value=key_value)
+```
+
+### ACS Authentication
+
+To use ACS authentication, create the service bus service with:
+
+```Python
+from azure.servicebus import ServiceBusService
+
+account_key = '' # DEFAULT KEY from Azure portal
+issuer = 'owner' # DEFAULT ISSUER from Azure portal
+sbs = ServiceBusService(service_namespace,
+                        account_key=account_key,
+                        issuer=issuer)
+```
+
+### Sending and Receiving Messages
+
+The **create\_queue** method can be used to ensure a queue exists:
+
+```Python
 sbs.create_queue('taskqueue')
 ```
 
 The **send\_queue\_message** method can then be called to insert the message into the queue:
 
 ```Python
-from azure.servicebus import ServiceBusService, Message
-sbs = ServiceBusService(service_namespace, account_key, 'owner')
+from azure.servicebus import Message
+
 msg = Message('Hello World!')
 sbs.send_queue_message('taskqueue', msg)
 ```
@@ -186,8 +220,6 @@ sbs.send_queue_message('taskqueue', msg)
 It is then possible to call the **receive\_queue\_message** method to dequeue the message.
 
 ```Python
-from azure.servicebus import ServiceBusService
-sbs = ServiceBusService(service_namespace, account_key, 'owner')
 msg = sbs.receive_queue_message('taskqueue')
 ```
 
@@ -198,16 +230,14 @@ ServiceBus topics are an abstraction on top of ServiceBus Queues that make pub/s
 The **create\_topic** method can be used to create a server-side topic:
 
 ```Python
-from azure.servicebus import ServiceBusService
-sbs = ServiceBusService(service_namespace, account_key, 'owner')
 sbs.create_topic('taskdiscussion')
 ```
 
 The **send\_topic\_message** method can be used to send a message to a topic:
 
 ```Python
-from azure.servicebus import ServiceBusService, Message
-sbs = ServiceBusService(service_namespace, account_key, 'owner')
+from azure.servicebus import Message
+
 msg = Message('Hello World!')
 sbs.send_topic_message('taskdiscussion', msg)
 ```
@@ -215,8 +245,8 @@ sbs.send_topic_message('taskdiscussion', msg)
 A client can then create a subscription and start consuming messages by calling the **create\_subscription** method followed by the **receive\_subscription\_message** method. Please note that any messages sent before the subscription is created will not be received.
 
 ```Python
-from azure.servicebus import ServiceBusService, Message
-sbs = ServiceBusService(service_namespace, account_key, 'owner')
+from azure.servicebus import Message
+
 sbs.create_subscription('taskdiscussion', 'client1')
 msg = Message('Hello World!')
 sbs.send_topic_message('taskdiscussion', msg)
@@ -284,7 +314,7 @@ result = sms.create_hosted_service(name, label, desc, location=location)
 
 ### Create a Deployment
 
-To make a new deployment to Azure you must store the package file in a Microsoft Azure Blob Storage account under the same subscription as the hosted service to which the package is being uploaded. You can create a deployment package with the [Microsoft Azure PowerShell cmdlets](https://www.windowsazure.com/en-us/develop/php/how-to-guides/powershell-cmdlets/), or with the [cspack commandline tool](http://msdn.microsoft.com/en-us/library/wingg432988.aspx).
+To make a new deployment to Azure you must store the package file in a Microsoft Azure Blob Storage account under the same subscription as the hosted service to which the package is being uploaded. You can create a deployment package with the [Microsoft Azure PowerShell cmdlets](https://www.windowsazure.com/en-us/develop/php/how-to-guides/powershell-cmdlets/), or with the [cspack commandline tool](http://msdn.microsoft.com/en-us/library/gg432988.aspx).
 
 ```Python
 service_name = "myhostedservice"
@@ -306,7 +336,7 @@ print('Operation status: ' + operation.status)
 ```
 
 
-** For more examples please see the [Microsoft Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python) **
+** For more examples please see the [Microsoft Azure Python Developer Center](http://azure.microsoft.com/en-us/develop/python/) **
 
 # Need Help?
 
@@ -316,7 +346,7 @@ Be sure to check out the Microsoft Azure [Developer Forums on Stack Overflow](ht
 
 If you would like to become an active contributor to this project please follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](http://windowsazure.github.com/guidelines.html).
 
-If you encounter any bugs with the library please file an issue in the [Issues](https://github.com/WindowsAzure/azure-sdk-for-python/issues) section of the project.
+If you encounter any bugs with the library please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project.
 
 # Learn More
-[Microsoft Azure Python Developer Center](http://www.windowsazure.com/en-us/develop/python/)
+[Microsoft Azure Python Developer Center](http://azure.microsoft.com/en-us/develop/python/)
