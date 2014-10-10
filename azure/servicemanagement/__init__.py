@@ -26,6 +26,9 @@ from azure import (
     _scalar_list_of,
     _str,
     _xml_attribute,
+    _get_entry_properties_from_node,
+    _get_child_nodes,
+    _get_serialization_name,
     )
 
 #-----------------------------------------------------------------------------
@@ -941,6 +944,32 @@ class ServiceBusNamespace(WindowsAzureData):
         self.connection_string = u''
         self.subscription_id = u''
         self.enabled = False
+
+
+class MetricProperties(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.primary_aggregation = u''
+        self.unit = u''
+        self.display_name = u''
+
+
+class MetricValues(WindowsAzureData):
+
+    def __init__(self):
+        self.timestamp = u''
+        self.min = 0
+        self.max = 0
+        self.average = 0
+        self.total = 0
+
+
+class MetricRollups(WindowsAzureData):
+
+    def __init__(self):
+        self.time_grain = u''
+        self.retention = u''
 
 
 class WebSpaces(WindowsAzureData):
@@ -2059,6 +2088,90 @@ class _ServiceBusManagementXmlSerializer(object):
 
         return availability
 
+    @staticmethod
+    def odata_converter(data, str_type):
+        ''' Convert odata type
+        http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem
+        To be completed
+        '''
+        if not str_type:
+            return _str(data)
+        if str_type in ["Edm.Single", "Edm.Double"]:
+            return float(data)
+        elif "Edm.Int" in str_type:
+            return int(data)
+        else:
+            return _str(data)
+
+    @staticmethod
+    def xml_to_metrics(xmlstr, object_type):
+        '''Converts xml response to service bus metrics objects
+
+        The xml format for MetricProperties
+<entry>
+    <id>https://sbgm.windows.net/Metrics(\'listeners.active\')</id>
+    <title/>
+    <updated>2014-10-09T11:56:50Z</updated>
+    <author>
+        <name/>
+    </author>
+    <content type="application/xml">
+        <m:properties>
+            <d:Name>listeners.active</d:Name>
+            <d:PrimaryAggregation>Average</d:PrimaryAggregation>
+            <d:Unit>Count</d:Unit>
+            <d:DisplayName>Active listeners</d:DisplayName>
+        </m:properties>
+    </content>
+</entry>
+
+        The xml format for MetricValues
+    <entry>
+        <id>https://sbgm.windows.net/MetricValues(datetime\'2014-10-02T00:00:00Z\')</id>
+        <title/>
+        <updated>2014-10-09T18:38:28Z</updated>
+        <author>
+            <name/>
+        </author>
+        <content type="application/xml">
+            <m:properties>
+                <d:Timestamp m:type="Edm.DateTime">2014-10-02T00:00:00Z</d:Timestamp>
+                <d:Min m:type="Edm.Int64">-118</d:Min>
+                <d:Max m:type="Edm.Int64">15</d:Max>
+                <d:Average m:type="Edm.Single">-78.44444</d:Average>
+                <d:Total m:type="Edm.Int64">0</d:Total>
+            </m:properties>
+        </content>
+    </entry>
+        '''
+
+        xmldoc = minidom.parseString(xmlstr)
+        return_obj = object_type()
+
+        members = dict(vars(return_obj))
+
+        # Only one entry here
+        for xml_entry in _get_children_from_path(xmldoc,
+                                                 'entry'):
+            for node in _get_children_from_path(xml_entry,
+                                                'content',
+                                                'm:properties'):
+                for name in members:
+                    xml_name = "d:" + _get_serialization_name(name)
+                    children = _get_child_nodes(node, xml_name)
+                    if not children:
+                        continue
+                    child = children[0]
+                    node_type = child.getAttributeNS("http://schemas.microsoft.com/ado/2007/08/dataservices/metadata", 'type')
+                    node_value = _ServiceBusManagementXmlSerializer.odata_converter(child.firstChild.nodeValue, node_type)
+                    setattr(return_obj, name, node_value)
+            for name, value in _get_entry_properties_from_node(xml_entry,
+                                                               include_id=True,
+                                                               use_title_as_id=False).items():
+                if name in members:
+                    continue  # Do not override if already members
+                setattr(return_obj, name, value)
+        return return_obj
 
 from azure.servicemanagement.servicemanagementservice import (
     ServiceManagementService)

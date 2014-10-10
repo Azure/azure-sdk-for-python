@@ -19,7 +19,6 @@ import hmac
 import sys
 import types
 import warnings
-import inspect
 if sys.version_info < (3,):
     from urllib2 import quote as url_quote
     from urllib2 import unquote as url_unquote
@@ -419,7 +418,7 @@ def _clone_node_with_namespaces(node_to_clone, original_doc):
     return clone
 
 
-def _convert_response_to_feeds(response, convert_callback):
+def _convert_response_to_feeds(response, convert_func):
     if response is None:
         return None
 
@@ -437,24 +436,30 @@ def _convert_response_to_feeds(response, convert_callback):
     if not xml_entries:
         # in some cases, response contains only entry but no feed
         xml_entries = _get_children_from_path(xmldoc, 'entry')
-    if inspect.isclass(convert_callback) and issubclass(convert_callback, WindowsAzureData):
-        for xml_entry in xml_entries:
-            return_obj = convert_callback()
-            for node in _get_children_from_path(xml_entry,
-                                                'content',
-                                                convert_callback.__name__):
-                _fill_data_to_return_object(node, return_obj)
-            for name, value in _get_entry_properties_from_node(xml_entry,
-                                                               include_id=True,
-                                                               use_title_as_id=True).items():
-                setattr(return_obj, name, value)
-            feeds.append(return_obj)
-    else:
-        for xml_entry in xml_entries:
-            new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
-            feeds.append(convert_callback(new_node.toxml('utf-8')))
+    for xml_entry in xml_entries:
+        new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
+        feeds.append(convert_func(new_node.toxml('utf-8')))
 
     return feeds
+
+
+def _convert_xml_to_windows_azure_object(xmlstr, azure_type, include_id=True, use_title_as_id=True):
+    xmldoc = minidom.parseString(xmlstr)
+    return_obj = azure_type()
+    xml_name = azure_type._xml_name if hasattr(azure_type, '_xml_name') else azure_type.__name__
+
+    # Only one entry here
+    for xml_entry in _get_children_from_path(xmldoc,
+                                             'entry'):
+        for node in _get_children_from_path(xml_entry,
+                                            'content',
+                                            xml_name):
+            _fill_data_to_return_object(node, return_obj)
+        for name, value in _get_entry_properties_from_node(xml_entry,
+                                                           include_id=include_id,
+                                                           use_title_as_id=use_title_as_id).items():
+            setattr(return_obj, name, value)
+    return return_obj
 
 
 def _validate_type_bytes(param_name, param):
