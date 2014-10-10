@@ -90,9 +90,17 @@ class BlobServiceTest(AzureTestCase):
                               credentials.getStorageServicesKey())
         set_service_options(self.bs)
 
-        self.bs2 = BlobService(credentials.getRemoteStorageServicesName(),
-                               credentials.getRemoteStorageServicesKey())
-        set_service_options(self.bs2)
+        remote_storage_service_name = credentials.getRemoteStorageServicesName()
+        remote_storage_service_key = credentials.getRemoteStorageServicesKey()
+        if remote_storage_service_key and remote_storage_service_name:
+            self.bs2 = BlobService(credentials.getRemoteStorageServicesName(),
+                                   credentials.getRemoteStorageServicesKey())
+            set_service_options(self.bs2)
+        else:
+            print "Remote Storage Account not configured. Add " \
+                  "'remotestorageserviceskey' and 'remotestorageservicesname'" \
+                  " to windowsazurecredentials.json to test functionality " \
+                  "involving multiple storage accounts."
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
@@ -1886,6 +1894,43 @@ class BlobServiceTest(AzureTestCase):
         self.assertEqual(len(blobs), 1)
         self.assertEqual(blobs[0].name, blob_name)
         self.assertEqual(blobs[0].snapshot, '')
+
+    def test_delete_blob_snapshots(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = b'hello world'
+        self.bs.put_blob(self.container_name, blob_name, data, 'BlockBlob')
+        self.bs.snapshot_blob(self.container_name, blob_name)
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 2)
+
+        # Act
+        self.bs.delete_blob(self.container_name, blob_name,
+                            x_ms_delete_snapshots='only')
+
+        # Assert
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 1)
+        self.assertEqual(blobs[0].snapshot, '')
+
+    def test_delete_blob_with_snapshots(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = b'hello world'
+        self.bs.put_blob(self.container_name, blob_name, data, 'BlockBlob')
+        self.bs.snapshot_blob(self.container_name, blob_name)
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 2)
+
+        # Act
+        self.bs.delete_blob(self.container_name, blob_name,
+                            x_ms_delete_snapshots='include')
+
+        # Assert
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 0)
 
     def test_copy_blob_with_existing_blob(self):
         # Arrange

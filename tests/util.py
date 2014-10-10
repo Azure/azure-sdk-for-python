@@ -79,11 +79,15 @@ class Credentials(object):
 
     def getRemoteStorageServicesKey(self):
         ''' Key for remote storage account (different location). '''
-        return self.ns[u'remotestorageserviceskey']
+        if u'remotestorageserviceskey' in self.ns:
+            return self.ns[u'remotestorageserviceskey']
+        return None
 
     def getRemoteStorageServicesName(self):
         ''' Name for remote storage account (different location). '''
-        return self.ns[u'remotestorageservicesname']
+        if u'remotestorageservicesname' in self.ns:
+            return self.ns[u'remotestorageservicesname']
+        return None
 
     def getLinuxOSVHD(self):
         return self.ns[u'linuxosvhd']
@@ -123,11 +127,6 @@ class Credentials(object):
             return self.ns[u'usehttpliboverride'].lower() != 'false'
         return None
 
-    def getRemoteStorageServicesKey(self):
-        return self.ns[u'remotestorageserviceskey']
-
-    def getRemoteStorageServicesName(self):
-        return self.ns[u'remotestorageservicesname']
 
 credentials = Credentials()
 
