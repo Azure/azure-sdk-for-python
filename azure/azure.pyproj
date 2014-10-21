@@ -37,6 +37,7 @@
     <Compile Include="http\httpclient.py" />
     <Compile Include="http\winhttp.py" />
     <Compile Include="http\__init__.py" />
+    <Compile Include="servicemanagement\schedulermanagementservice.py" />
     <Compile Include="servicemanagement\servicebusmanagementservice.py" />
     <Compile Include="servicemanagement\servicemanagementclient.py" />
     <Compile Include="servicemanagement\servicemanagementservice.py" />
