@@ -405,6 +405,20 @@ class ServiceBusTest(AzureTestCase):
         self.assertIsNotNone(received_msg)
         self.assertEqual(sent_msg.body, received_msg.body)
 
+    def test_receive_queue_message_delete_with_slash(self):
+        # Arrange
+        self.queue_name = getUniqueName('ut/queue')
+        sent_msg = Message(b'peek lock message delete')
+        self._create_queue_and_send_msg(self.queue_name, sent_msg)
+
+        # Act
+        received_msg = self.sbs.receive_queue_message(self.queue_name, True)
+        received_msg.delete()
+
+        # Assert
+        self.assertIsNotNone(received_msg)
+        self.assertEqual(sent_msg.body, received_msg.body)
+
     def test_receive_queue_message_unlock(self):
         # Arrange
         sent_msg = Message(b'peek lock message unlock')

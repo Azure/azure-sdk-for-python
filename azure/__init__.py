@@ -109,7 +109,7 @@ class WindowsAzureData(object):
 
 class WindowsAzureError(Exception):
 
-    ''' WindowsAzure Excpetion base class. '''
+    ''' WindowsAzure Exception base class. '''
 
     def __init__(self, message):
         super(WindowsAzureError, self).__init__(message)
