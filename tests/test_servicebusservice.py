@@ -1182,6 +1182,22 @@ class ServiceBusTest(AzureTestCase):
         self.assertIsNotNone(received_msg)
         self.assertEqual(sent_msg.body, received_msg.body)
 
+    def test_receive_subscription_message_delete_with_slash(self):
+        # Arrange
+        self.topic_name = getUniqueName('ut/topic')
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+        sent_msg = Message(b'subscription message')
+        self.sbs.send_topic_message(self.topic_name, sent_msg)
+
+        # Act
+        received_msg = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', True, 5)
+        received_msg.delete()
+
+        # Assert
+        self.assertIsNotNone(received_msg)
+        self.assertEqual(sent_msg.body, received_msg.body)
+
     def test_receive_subscription_message_unlock(self):
         # Arrange
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
