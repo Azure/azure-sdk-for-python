@@ -407,7 +407,7 @@ def _update_storage_header(request):
     if request.body:
         assert isinstance(request.body, bytes)
 
-    # if it is PUT, POST, MERGE, DELETE, need to add content-lengt to header.
+    # if it is PUT, POST, MERGE, DELETE, need to add content-length to header.
     if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
         request.headers.append(('Content-Length', str(len(request.body))))
 

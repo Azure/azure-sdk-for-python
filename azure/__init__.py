@@ -106,7 +106,6 @@ class WindowsAzureData(object):
     It is only used to check whether it is instance or not. '''
     pass
 
-
 class WindowsAzureError(Exception):
 
     ''' WindowsAzure Exception base class. '''
