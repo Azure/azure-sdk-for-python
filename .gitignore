@@ -1,0 +1,28 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# PTVS analysis
+.ptvs/
+
+# Build results
+/bin/
+/obj/
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Mac desktop service store files
+.DS_Store
