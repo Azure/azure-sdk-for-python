@@ -79,6 +79,7 @@ from util import (
     set_service_options,
     )
 
+
 #------------------------------------------------------------------------------
 
 
@@ -89,9 +90,17 @@ class BlobServiceTest(AzureTestCase):
                               credentials.getStorageServicesKey())
         set_service_options(self.bs)
 
-        self.bs2 = BlobService(credentials.getRemoteStorageServicesName(),
-                               credentials.getRemoteStorageServicesKey())
-        set_service_options(self.bs2)
+        remote_storage_service_name = credentials.getRemoteStorageServicesName()
+        remote_storage_service_key = credentials.getRemoteStorageServicesKey()
+        if remote_storage_service_key and remote_storage_service_name:
+            self.bs2 = BlobService(credentials.getRemoteStorageServicesName(),
+                                   credentials.getRemoteStorageServicesKey())
+            set_service_options(self.bs2)
+        else:
+            print("Remote Storage Account not configured. Add " \
+                  "'remotestorageserviceskey' and 'remotestorageservicesname'" \
+                  " to windowsazurecredentials.json to test functionality " \
+                  "involving multiple storage accounts.")
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
@@ -131,6 +140,13 @@ class BlobServiceTest(AzureTestCase):
                 self.bs2.delete_container(self.remote_container_name)
             except:
                 pass
+
+        for tmp_file in ['blob_input.temp.dat', 'blob_output.temp.dat']:
+            if os.path.isfile(tmp_file):
+                try:
+                    os.remove(tmp_file)
+                except:
+                    pass
 
     #--Helpers-----------------------------------------------------------------
     def _create_container(self, container_name):
@@ -263,7 +279,6 @@ class BlobServiceTest(AzureTestCase):
         sap = SharedAccessPolicy(AccessPolicy(start.strftime(date_format),
                                               expiry.strftime(date_format),
                                               permission))
-
         signed_query = sas.generate_signed_query_string(resource_path,
                                                         resource_type,
                                                         sap)
@@ -1880,6 +1895,43 @@ class BlobServiceTest(AzureTestCase):
         self.assertEqual(blobs[0].name, blob_name)
         self.assertEqual(blobs[0].snapshot, '')
 
+    def test_delete_blob_snapshots(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = b'hello world'
+        self.bs.put_blob(self.container_name, blob_name, data, 'BlockBlob')
+        self.bs.snapshot_blob(self.container_name, blob_name)
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 2)
+
+        # Act
+        self.bs.delete_blob(self.container_name, blob_name,
+                            x_ms_delete_snapshots='only')
+
+        # Assert
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 1)
+        self.assertEqual(blobs[0].snapshot, '')
+
+    def test_delete_blob_with_snapshots(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = b'hello world'
+        self.bs.put_blob(self.container_name, blob_name, data, 'BlockBlob')
+        self.bs.snapshot_blob(self.container_name, blob_name)
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 2)
+
+        # Act
+        self.bs.delete_blob(self.container_name, blob_name,
+                            x_ms_delete_snapshots='include')
+
+        # Assert
+        blobs = self.bs.list_blobs(self.container_name, include='snapshots')
+        self.assertEqual(len(blobs), 0)
+
     def test_copy_blob_with_existing_blob(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -3189,6 +3241,25 @@ class BlobServiceTest(AzureTestCase):
         self.assertEqual(
             b'defgh', self.bs.get_blob(self.container_name, 'blob1'))
 
+    def test_put_block_blob_from_bytes_with_index_and_count_and_properties(self):
+        # Arrange
+        self._create_container(self.container_name)
+
+        # Act
+        data = b'abcdefghijklmnopqrstuvwxyz'
+        resp = self.bs.put_block_blob_from_bytes(
+            self.container_name, 'blob1', data, 3, 5,
+            x_ms_blob_content_type='image/png',
+            x_ms_blob_content_language='spanish')
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertEqual(
+            b'defgh', self.bs.get_blob(self.container_name, 'blob1'))
+        props = self.bs.get_blob_properties(self.container_name, 'blob1')
+        self.assertEqual(props['content-type'], 'image/png')
+        self.assertEqual(props['content-language'], 'spanish')
+
     def test_put_block_blob_from_bytes_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3203,6 +3274,26 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsNone(resp)
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
+
+    def test_put_block_blob_from_bytes_chunked_upload_with_properties(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+
+        # Act
+        resp = self.bs.put_block_blob_from_bytes(
+            self.container_name, blob_name, data,
+            x_ms_blob_content_type='image/png',
+            x_ms_blob_content_language='spanish')
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+        props = self.bs.get_blob_properties(self.container_name, 'blob1')
+        self.assertEqual(props['content-type'], 'image/png')
+        self.assertEqual(props['content-language'], 'spanish')
 
     def test_put_block_blob_from_bytes_with_progress_chunked_upload(self):
         # Arrange
@@ -3286,6 +3377,29 @@ class BlobServiceTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    def test_put_block_blob_from_path_chunked_upload_with_properties(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        resp = self.bs.put_block_blob_from_path(
+            self.container_name, blob_name, file_path,
+            x_ms_blob_content_type='image/png',
+            x_ms_blob_content_language='spanish')
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+        props = self.bs.get_blob_properties(self.container_name, blob_name)
+        self.assertEqual(props['content-type'], 'image/png')
+        self.assertEqual(props['content-language'], 'spanish')
+
     def test_put_block_blob_from_file_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3352,6 +3466,55 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsNone(resp)
         self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+
+    def test_put_block_blob_from_file_chunked_upload_with_count_and_properties(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        blob_size = len(data) - 301
+        with open(file_path, 'rb') as stream:
+            resp = self.bs.put_block_blob_from_file(
+                self.container_name, blob_name, stream, blob_size,
+                x_ms_blob_content_type='image/png',
+                x_ms_blob_content_language='spanish')
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
+        self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+        props = self.bs.get_blob_properties(self.container_name, blob_name)
+        self.assertEqual(props['content-type'], 'image/png')
+        self.assertEqual(props['content-language'], 'spanish')
+
+    def test_put_block_blob_from_file_chunked_upload_with_properties(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        with open(file_path, 'rb') as stream:
+            resp = self.bs.put_block_blob_from_file(
+                self.container_name, blob_name, stream,
+                x_ms_blob_content_type='image/png',
+                x_ms_blob_content_language='spanish')
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+        props = self.bs.get_blob_properties(self.container_name, blob_name)
+        self.assertEqual(props['content-type'], 'image/png')
+        self.assertEqual(props['content-language'], 'spanish')
 
     def test_put_block_blob_from_text(self):
         # Arrange

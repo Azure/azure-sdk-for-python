@@ -18,6 +18,7 @@ import unittest
 from azure import (
     WindowsAzureError,
     WindowsAzureMissingResourceError,
+    Feed,
     )
 from azure.servicemanagement import ServiceBusManagementService
 from util import (
@@ -157,6 +158,50 @@ class ServiceBusManagementServiceTest(AzureTestCase):
         # Assert
         self.assertIsNone(result)
         self.assertTrue(self._namespace_exists(name))
+        
+    def test_list_topics(self):
+        # Arrange
+        name = credentials.getServiceBusNamespace()
+
+        # Act
+        result = self.sms.list_topics(name)
+        
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, list)
+
+    def test_list_queues(self):
+        # Arrange
+        name = credentials.getServiceBusNamespace()
+
+        # Act
+        result = self.sms.list_queues(name)
+        
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, list)
+
+    def test_list_notification_hubs(self):
+        # Arrange
+        name = credentials.getServiceBusNamespace()
+
+        # Act
+        result = self.sms.list_notification_hubs(name)
+        
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, list)
+
+    def test_list_relays(self):
+        # Arrange
+        name = credentials.getServiceBusNamespace()
+
+        # Act
+        result = self.sms.list_relays(name)
+        
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, list)
 
     def test_create_namespace_with_existing_namespace(self):
         # Arrange

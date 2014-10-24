@@ -46,6 +46,7 @@
     <Compile Include="doctest_servicebusservicetopic.py" />
     <Compile Include="doctest_tableservice.py" />
     <Compile Include="test_managementcertificatemanagementservice.py" />
+    <Compile Include="test_schedulermanagementservice.py" />
     <Compile Include="test_servicebusmanagementservice.py" />
     <Compile Include="test_blobservice.py" />
     <Compile Include="test_cloudstorageaccount.py" />
@@ -54,6 +55,7 @@
     <Compile Include="test_queueservice.py" />
     <Compile Include="test_sharedaccesssignature.py" />
     <Compile Include="test_servicebusservice.py" />
+    <Compile Include="test_sqldatabasemanagementservice.py" />
     <Compile Include="test_storagemanagementservice.py" />
     <Compile Include="test_tableservice.py" />
     <Compile Include="test_websitemanagementservice.py" />

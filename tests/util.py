@@ -56,11 +56,20 @@ class Credentials(object):
     def getSubscriptionId(self):
         return self.ns[u'subscriptionid']
 
+    def getServiceBusAuthenticationType(self):
+        return self.ns[u'servicebusauthenticationtype']
+
     def getServiceBusKey(self):
         return self.ns[u'servicebuskey']
 
     def getServiceBusNamespace(self):
         return self.ns[u'servicebusns']
+
+    def getServiceBusSasKeyName(self):
+        return self.ns[u'servicebussaskeyname']
+
+    def getServiceBusSasKeyValue(self):
+        return self.ns[u'servicebussaskeyvalue']
 
     def getStorageServicesKey(self):
         return self.ns[u'storageserviceskey']
@@ -70,11 +79,15 @@ class Credentials(object):
 
     def getRemoteStorageServicesKey(self):
         ''' Key for remote storage account (different location). '''
-        return self.ns[u'remotestorageserviceskey']
+        if u'remotestorageserviceskey' in self.ns:
+            return self.ns[u'remotestorageserviceskey']
+        return None
 
     def getRemoteStorageServicesName(self):
         ''' Name for remote storage account (different location). '''
-        return self.ns[u'remotestorageservicesname']
+        if u'remotestorageservicesname' in self.ns:
+            return self.ns[u'remotestorageservicesname']
+        return None
 
     def getLinuxOSVHD(self):
         return self.ns[u'linuxosvhd']
@@ -113,6 +126,7 @@ class Credentials(object):
         if u'usehttpliboverride' in self.ns:
             return self.ns[u'usehttpliboverride'].lower() != 'false'
         return None
+
 
 credentials = Credentials()
 
@@ -171,8 +185,14 @@ class AzureTestCase(unittest.TestCase):
         def assertIsInstance(self, obj, type):
             self.assertTrue(isinstance(obj, type))
 
+        def assertGreater(self, a, b):
+            self.assertTrue(a > b)
+
         def assertGreaterEqual(self, a, b):
             self.assertTrue(a >= b)
+
+        def assertLess(self, a, b):
+            self.assertTrue(a < b)
 
         def assertLessEqual(self, a, b):
             self.assertTrue(a <= b)

@@ -14,9 +14,12 @@
 #--------------------------------------------------------------------------
 import ast
 import base64
+import hashlib
+import hmac
 import sys
 import types
 import warnings
+import inspect
 if sys.version_info < (3,):
     from urllib2 import quote as url_quote
     from urllib2 import unquote as url_unquote
@@ -34,7 +37,7 @@ from xml.sax.saxutils import escape as xml_escape
 # constants
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.8.1'
+__version__ = '0.8.4'
 
 # Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
@@ -103,10 +106,9 @@ class WindowsAzureData(object):
     It is only used to check whether it is instance or not. '''
     pass
 
-
 class WindowsAzureError(Exception):
 
-    ''' WindowsAzure Excpetion base class. '''
+    ''' WindowsAzure Exception base class. '''
 
     def __init__(self, message):
         super(WindowsAzureError, self).__init__(message)
@@ -188,25 +190,38 @@ def _get_readable_id(id_name, id_prefix_to_skip):
     return id_name
 
 
+def _get_entry_properties_from_node(entry, include_id, id_prefix_to_skip=None, use_title_as_id=False):
+    ''' get properties from entry xml '''
+    properties = {}
+
+    etag = entry.getAttributeNS(METADATA_NS, 'etag')
+    if etag:
+        properties['etag'] = etag
+    for updated in _get_child_nodes(entry, 'updated'):
+        properties['updated'] = updated.firstChild.nodeValue
+    for name in _get_children_from_path(entry, 'author', 'name'):
+        if name.firstChild is not None:
+            properties['author'] = name.firstChild.nodeValue
+
+    if include_id:
+        if use_title_as_id:
+            for title in _get_child_nodes(entry, 'title'):
+                properties['name'] = title.firstChild.nodeValue
+        else:
+            for id in _get_child_nodes(entry, 'id'):
+                properties['name'] = _get_readable_id(
+                    id.firstChild.nodeValue, id_prefix_to_skip)
+
+    return properties
+
+
 def _get_entry_properties(xmlstr, include_id, id_prefix_to_skip=None):
     ''' get properties from entry xml '''
     xmldoc = minidom.parseString(xmlstr)
     properties = {}
 
     for entry in _get_child_nodes(xmldoc, 'entry'):
-        etag = entry.getAttributeNS(METADATA_NS, 'etag')
-        if etag:
-            properties['etag'] = etag
-        for updated in _get_child_nodes(entry, 'updated'):
-            properties['updated'] = updated.firstChild.nodeValue
-        for name in _get_children_from_path(entry, 'author', 'name'):
-            if name.firstChild is not None:
-                properties['author'] = name.firstChild.nodeValue
-
-        if include_id:
-            for id in _get_child_nodes(entry, 'id'):
-                properties['name'] = _get_readable_id(
-                    id.firstChild.nodeValue, id_prefix_to_skip)
+        properties.update(_get_entry_properties_from_node(entry, include_id, id_prefix_to_skip))
 
     return properties
 
@@ -403,7 +418,7 @@ def _clone_node_with_namespaces(node_to_clone, original_doc):
     return clone
 
 
-def _convert_response_to_feeds(response, convert_func):
+def _convert_response_to_feeds(response, convert_callback):
     if response is None:
         return None
 
@@ -421,9 +436,22 @@ def _convert_response_to_feeds(response, convert_func):
     if not xml_entries:
         # in some cases, response contains only entry but no feed
         xml_entries = _get_children_from_path(xmldoc, 'entry')
-    for xml_entry in xml_entries:
-        new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
-        feeds.append(convert_func(new_node.toxml('utf-8')))
+    if inspect.isclass(convert_callback) and issubclass(convert_callback, WindowsAzureData):
+        for xml_entry in xml_entries:
+            return_obj = convert_callback()
+            for node in _get_children_from_path(xml_entry,
+                                                'content',
+                                                convert_callback.__name__):
+                _fill_data_to_return_object(node, return_obj)
+            for name, value in _get_entry_properties_from_node(xml_entry,
+                                                               include_id=True,
+                                                               use_title_as_id=True).items():
+                setattr(return_obj, name, value)
+            feeds.append(return_obj)
+    else:
+        for xml_entry in xml_entries:
+            new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
+            feeds.append(convert_callback(new_node.toxml('utf-8')))
 
     return feeds
 
@@ -675,6 +703,13 @@ def _parse_response(response, return_type):
     '''
     return _parse_response_body_from_xml_text(response.body, return_type)
 
+def _parse_service_resources_response(response, return_type):
+    '''
+    Parse the HTTPResponse's body and fill all the data into a class of
+    return_type.
+    '''
+    return _parse_response_body_from_service_resources_xml_text(response.body, return_type)
+
 
 def _fill_data_to_return_object(node, return_obj):
     members = dict(vars(return_obj))
@@ -700,6 +735,12 @@ def _fill_data_to_return_object(node, return_obj):
                                   value.pair_xml_element_name,
                                   value.key_xml_element_name,
                                   value.value_xml_element_name))
+        elif isinstance(value, _xml_attribute):
+            real_value = None
+            if node.hasAttribute(value.xml_element_name):
+                real_value = node.getAttribute(value.xml_element_name)
+            if real_value is not None:
+                setattr(return_obj, name, real_value)
         elif isinstance(value, WindowsAzureData):
             setattr(return_obj,
                     name,
@@ -737,11 +778,24 @@ def _parse_response_body_from_xml_text(respbody, return_type):
     '''
     doc = minidom.parseString(respbody)
     return_obj = return_type()
-    for node in _get_child_nodes(doc, return_type.__name__):
+    xml_name = return_type._xml_name if hasattr(return_type, '_xml_name') else return_type.__name__ 
+    for node in _get_child_nodes(doc, xml_name):
         _fill_data_to_return_object(node, return_obj)
 
     return return_obj
 
+def _parse_response_body_from_service_resources_xml_text(respbody, return_type):
+    '''
+    parse the xml and fill all the data into a class of return_type
+    '''
+    doc = minidom.parseString(respbody)
+    return_obj = _list_of(return_type)
+    for node in _get_children_from_path(doc, "ServiceResources", "ServiceResource"):
+        local_obj = return_type()
+        _fill_data_to_return_object(node, local_obj)
+        return_obj.append(local_obj)
+
+    return return_obj
 
 class _dict_of(dict):
 
@@ -780,6 +834,15 @@ class _scalar_list_of(list):
         self.list_type = list_type
         self.xml_element_name = xml_element_name
         super(_scalar_list_of, self).__init__()
+        
+class _xml_attribute:
+    
+    """a accessor to XML attributes
+    expected to go in it along with its xml element name.
+    Used for deserialization and construction"""
+    
+    def __init__(self, xml_element_name):
+        self.xml_element_name = xml_element_name
 
 
 def _update_request_uri_query_local_storage(request, use_local_storage):
@@ -903,3 +966,17 @@ def _parse_response_for_dict_filter(response, filter):
         return return_dict
     else:
         return None
+
+
+def _sign_string(key, string_to_sign, key_is_base64=True):
+    if key_is_base64:
+        key = _decode_base64_to_bytes(key)
+    else:
+        if isinstance(key, _unicode_type):
+            key = key.encode('utf-8')
+    if isinstance(string_to_sign, _unicode_type):
+        string_to_sign = string_to_sign.encode('utf-8')
+    signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
+    digest = signed_hmac_sha256.digest()
+    encoded_digest = _encode_base64(digest)
+    return encoded_digest

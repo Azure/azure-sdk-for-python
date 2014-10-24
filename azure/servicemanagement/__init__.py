@@ -25,6 +25,7 @@ from azure import (
     _list_of,
     _scalar_list_of,
     _str,
+    _xml_attribute,
     )
 
 #-----------------------------------------------------------------------------
@@ -81,6 +82,7 @@ class StorageAccountProperties(WindowsAzureData):
         self.geo_secondary_region = u''
         self.status_of_secondary = u''
         self.last_geo_failover_time = u''
+        self.creation_time = u''
 
 
 class StorageServiceKeys(WindowsAzureData):
@@ -940,6 +942,7 @@ class ServiceBusNamespace(WindowsAzureData):
         self.subscription_id = u''
         self.enabled = False
 
+
 class WebSpaces(WindowsAzureData):
 
     def __init__(self):
@@ -954,6 +957,7 @@ class WebSpaces(WindowsAzureData):
     def __getitem__(self, index):
         return self.web_space[index]
     
+
 class WebSpace(WindowsAzureData):
     
     def __init__(self):
@@ -964,6 +968,7 @@ class WebSpace(WindowsAzureData):
         self.plan = u''
         self.status = u''
         self.subscription = u''
+
 
 class Sites(WindowsAzureData):
 
@@ -979,6 +984,7 @@ class Sites(WindowsAzureData):
     def __getitem__(self, index):
         return self.site[index]
     
+
 class Site(WindowsAzureData):
     
     def __init__(self):
@@ -1000,6 +1006,7 @@ class Site(WindowsAzureData):
         self.usage_state = ''
         self.web_space = ''
 
+
 class HostNameSslStates(WindowsAzureData):
 
     def __init__(self):
@@ -1014,12 +1021,359 @@ class HostNameSslStates(WindowsAzureData):
     def __getitem__(self, index):
         return self.host_name_ssl_state[index]
 
+
 class HostNameSslState(WindowsAzureData):
     
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
+        
+
+class PublishData(WindowsAzureData):
+    _xml_name = 'publishData'
     
+    def __init__(self):
+        self.publish_profiles = _list_of(PublishProfile, 'publishProfile')
+
+class PublishProfile(WindowsAzureData):
+    
+    def __init__(self):
+        self.profile_name = _xml_attribute('profileName')
+        self.publish_method = _xml_attribute('publishMethod')
+        self.publish_url = _xml_attribute('publishUrl')
+        self.msdeploysite = _xml_attribute('msdeploySite')
+        self.user_name = _xml_attribute('userName')
+        self.user_pwd = _xml_attribute('userPWD')
+        self.destination_app_url = _xml_attribute('destinationAppUrl')
+        self.sql_server_db_connection_string = _xml_attribute('SQLServerDBConnectionString')
+        self.my_sqldb_connection_string = _xml_attribute('mySQLDBConnectionString')
+        self.hosting_provider_forum_link = _xml_attribute('hostingProviderForumLink')
+        self.control_panel_link = _xml_attribute('controlPanelLink')
+    
+class QueueDescription(WindowsAzureData):
+    
+    def __init__(self):
+        self.lock_duration = u''
+        self.max_size_in_megabytes = 0
+        self.requires_duplicate_detection = False
+        self.requires_session = False
+        self.default_message_time_to_live = u''
+        self.dead_lettering_on_message_expiration = False
+        self.duplicate_detection_history_time_window = u''
+        self.max_delivery_count = 0
+        self.enable_batched_operations = False
+        self.size_in_bytes = 0
+        self.message_count = 0
+        self.is_anonymous_accessible = False
+        self.authorization_rules = AuthorizationRules()
+        self.status = u''
+        self.created_at = u''
+        self.updated_at = u''
+        self.accessed_at = u''
+        self.support_ordering = False
+        self.auto_delete_on_idle = u''
+        self.count_details = CountDetails()
+        self.entity_availability_status = u''
+    
+class TopicDescription(WindowsAzureData):
+    
+    def __init__(self):
+        self.default_message_time_to_live = u''
+        self.max_size_in_megabytes = 0
+        self.requires_duplicate_detection = False
+        self.duplicate_detection_history_time_window = u''
+        self.enable_batched_operations = False
+        self.size_in_bytes = 0
+        self.filtering_messages_before_publishing = False
+        self.is_anonymous_accessible = False
+        self.authorization_rules = AuthorizationRules()
+        self.status = u''
+        self.created_at = u''
+        self.updated_at = u''
+        self.accessed_at = u''
+        self.support_ordering = False
+        self.count_details = CountDetails()
+        self.subscription_count = 0
+
+class CountDetails(WindowsAzureData):
+    
+    def __init__(self):
+        self.active_message_count = 0
+        self.dead_letter_message_count = 0
+        self.scheduled_message_count = 0
+        self.transfer_message_count = 0
+        self.transfer_dead_letter_message_count = 0
+
+class NotificationHubDescription(WindowsAzureData):
+    
+    def __init__(self):
+        self.registration_ttl = u''
+        self.authorization_rules = AuthorizationRules()
+
+class AuthorizationRules(WindowsAzureData):
+
+    def __init__(self):
+        self.authorization_rule = _list_of(AuthorizationRule)
+
+    def __iter__(self):
+        return iter(self.authorization_rule)
+
+    def __len__(self):
+        return len(self.authorization_rule)
+
+    def __getitem__(self, index):
+        return self.authorization_rule[index]
+    
+class AuthorizationRule(WindowsAzureData):
+    
+    def __init__(self):
+        self.claim_type = u''
+        self.claim_value = u''
+        self.rights = _scalar_list_of(str, 'AccessRights')
+        self.created_time = u''
+        self.modified_time = u''
+        self.key_name = u''
+        self.primary_key = u''
+        self.secondary_keu = u''
+
+class RelayDescription(WindowsAzureData):
+    
+    def __init__(self):
+        self.path = u''
+        self.listener_type = u''
+        self.listener_count = 0
+        self.created_at = u''
+        self.updated_at = u''
+
+
+class MetricResponses(WindowsAzureData):
+
+    def __init__(self):
+        self.metric_response = _list_of(MetricResponse)
+
+    def __iter__(self):
+        return iter(self.metric_response)
+
+    def __len__(self):
+        return len(self.metric_response)
+
+    def __getitem__(self, index):
+        return self.metric_response[index]
+
+
+class MetricResponse(WindowsAzureData):
+
+    def __init__(self):
+        self.code = u''
+        self.data = Data()
+        self.message = u''
+
+
+class Data(WindowsAzureData):
+
+    def __init__(self):
+        self.display_name = u''
+        self.end_time = u''
+        self.name = u''
+        self.primary_aggregation_type = u''
+        self.start_time = u''
+        self.time_grain = u''
+        self.unit = u''
+        self.values = Values()
+
+
+class Values(WindowsAzureData):
+
+    def __init__(self):
+        self.metric_sample = _list_of(MetricSample)
+
+    def __iter__(self):
+        return iter(self.metric_sample)
+
+    def __len__(self):
+        return len(self.metric_sample)
+
+    def __getitem__(self, index):
+        return self.metric_sample[index]
+
+
+class MetricSample(WindowsAzureData):
+
+    def __init__(self):
+        self.count = 0
+        self.time_created = u''
+        self.total = 0
+
+
+class MetricDefinitions(WindowsAzureData):
+
+    def __init__(self):
+        self.metric_definition = _list_of(MetricDefinition)
+
+    def __iter__(self):
+        return iter(self.metric_definition)
+
+    def __len__(self):
+        return len(self.metric_definition)
+
+    def __getitem__(self, index):
+        return self.metric_definition[index]
+
+
+class MetricDefinition(WindowsAzureData):
+
+    def __init__(self):
+        self.display_name = u''
+        self.metric_availabilities = MetricAvailabilities()
+        self.name = u''
+        self.primary_aggregation_type = u''
+        self.unit = u''
+
+
+class MetricAvailabilities(WindowsAzureData):
+
+    def __init__(self):
+        self.metric_availability = _list_of(MetricAvailability, 'MetricAvailabilily')
+
+    def __iter__(self):
+        return iter(self.metric_availability)
+
+    def __len__(self):
+        return len(self.metric_availability)
+
+    def __getitem__(self, index):
+        return self.metric_availability[index]
+
+
+class MetricAvailability(WindowsAzureData):
+
+    def __init__(self):
+        self.retention = u''
+        self.time_grain = u''
+
+
+class Servers(WindowsAzureData):
+
+    def __init__(self):
+        self.server = _list_of(Server)
+
+    def __iter__(self):
+        return iter(self.server)
+
+    def __len__(self):
+        return len(self.server)
+
+    def __getitem__(self, index):
+        return self.server[index]
+
+
+class Server(WindowsAzureData):
+    
+    def __init__(self):
+        self.name = u''
+        self.administrator_login = u''
+        self.location = u''
+        self.fully_qualified_domain_name = u''
+        self.version = u''
+
+
+class Database(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.id = 0
+        self.edition = u''
+        self.collation_name = u''
+        self.creation_date = u''
+        self.is_federation_root = False
+        self.is_system_object = False
+        self.max_size_bytes = 0
+
+
+class CloudServices(WindowsAzureData):
+
+    def __init__(self):
+        self.cloud_service = _list_of(CloudService)
+
+    def __iter__(self):
+        return iter(self.cloud_service)
+
+    def __len__(self):
+        return len(self.cloud_service)
+
+    def __getitem__(self, index):
+        return self.cloud_service[index]
+
+
+class CloudService(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.label = u''
+        self.description = u''
+        self.geo_region = u''
+        self.resources = Resources()
+
+
+class Resources(WindowsAzureData):
+
+    def __init__(self):
+        self.resource = _list_of(Resource)
+
+    def __iter__(self):
+        return iter(self.resource)
+
+    def __len__(self):
+        return len(self.resource)
+
+    def __getitem__(self, index):
+        return self.resource[index]
+
+
+class Resource(WindowsAzureData):
+
+    def __init__(self):
+        self.resource_provider_namespace = u''
+        self.type = u''
+        self.name = u''
+        self.schema_version = u''
+        self.e_tag = u''
+        self.state = u''
+        self.intrinsic_settings = IntrinsicSettings()
+        self.operation_status = OperationStatus()
+
+
+class IntrinsicSettings(WindowsAzureData):
+
+    def __init__(self):
+        self.plan = u''
+        self.quota = Quota()
+
+
+class Quota(WindowsAzureData):
+
+    def __init__(self):
+        self.max_job_count = 0
+        self.max_recurrence = MaxRecurrence()
+
+
+class MaxRecurrence(WindowsAzureData):
+
+    def __init__(self):
+        self.frequency = u''
+        self.interval = 0
+
+
+class OperationStatus(WindowsAzureData):
+
+    def __init__(self):
+        self.type = u''
+        self.result = u''
+
 
 def _update_management_header(request):
     ''' Add additional headers for management. '''
@@ -1557,6 +1911,26 @@ class _XmlSerializer(object):
         return _XmlSerializer.doc_from_xml('Deployment', xml)
 
     @staticmethod
+    def create_website_to_xml(webspace_name, website_name, geo_region, plan,
+                              host_names, compute_mode, server_farm, site_mode):
+        xml = '<HostNames xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">'
+        for host_name in host_names:
+            xml += '<a:string>{0}</a:string>'.format(host_name)
+        xml += '</HostNames>'
+        xml += _XmlSerializer.data_to_xml(
+            [('Name', website_name),
+             ('ComputeMode', compute_mode),
+             ('ServerFarm', server_farm),
+             ('SiteMode', site_mode)])
+        xml += '<WebSpaceToCreate>'
+        xml += _XmlSerializer.data_to_xml(
+            [('GeoRegion', geo_region),
+             ('Name', webspace_name),
+             ('Plan', plan)])
+        xml += '</WebSpaceToCreate>'
+        return _XmlSerializer.doc_from_xml('Site', xml)
+
+    @staticmethod
     def data_to_xml(data):
         '''Creates an xml fragment from the specified data.
            data: Array of tuples, where first: xml element name
@@ -1766,7 +2140,10 @@ class _ServiceBusManagementXmlSerializer(object):
 
         return availability
 
+
 from azure.servicemanagement.servicemanagementservice import (
     ServiceManagementService)
 from azure.servicemanagement.servicebusmanagementservice import (
     ServiceBusManagementService)
+from azure.servicemanagement.websitemanagementservice import (
+    WebsiteManagementService)
