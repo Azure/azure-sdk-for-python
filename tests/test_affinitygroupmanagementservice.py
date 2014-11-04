@@ -189,6 +189,8 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
         self.assertIsNotNone(result[0].display_name)
         self.assertIsNotNone(result[0].available_services)
         self.assertTrue(len(result[0].available_services) > 0)
+        self.assertTrue(len(result[0].compute_capabilities.web_worker_role_sizes) > 0)
+        self.assertTrue(len(result[0].compute_capabilities.virtual_machines_role_sizes) > 0)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

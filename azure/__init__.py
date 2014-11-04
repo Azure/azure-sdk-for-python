@@ -300,6 +300,7 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'os': 'OS',
     'persistent_vm_downtime_info': 'PersistentVMDowntimeInfo',
     'copy_id': 'CopyId',
+    'os_state': 'OSState',
     }
 
 

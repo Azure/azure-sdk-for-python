@@ -37,6 +37,8 @@ from azure.servicemanagement import (
     OperatingSystemFamilies,
     OSImage,
     PersistentVMRole,
+    RoleSize,
+    RoleSizes,
     StorageService,
     StorageServices,
     Subscription,
@@ -55,6 +57,15 @@ class ServiceManagementService(_ServiceManagementClient):
                  host=MANAGEMENT_HOST):
         super(ServiceManagementService, self).__init__(
             subscription_id, cert_file, host)
+
+    #--Operations for subscriptions --------------------------------------
+    def list_role_sizes(self):
+        '''
+        Lists the role sizes that are available under the specified
+        subscription.
+        '''
+        return self._perform_get(self._get_role_sizes_path(),
+                                 RoleSizes)
 
     #--Operations for storage accounts -----------------------------------
     def list_storage_accounts(self):
@@ -1707,6 +1718,9 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_get(self._get_virtual_network_site_path(), VirtualNetworkSites)
   
       #--Helper functions --------------------------------------------------
+    def _get_role_sizes_path(self):
+        return self._get_path('rolesizes', None)
+
     def _get_virtual_network_site_path(self):
         return self._get_path('services/networking/virtualnetwork', None)
 

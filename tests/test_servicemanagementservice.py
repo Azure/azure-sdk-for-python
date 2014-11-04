@@ -394,18 +394,18 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._wait_for_async(result.request_id)
 
     def _linux_image_name(self):
-        return self._image_from_category('Canonical')
+        return self._image_from_publisher_name('Canonical')
 
     def _windows_image_name(self):
-        return self._image_from_category('Microsoft Windows Server Group')
+        return self._image_from_publisher_name('Microsoft Windows Server Group')
 
     def _host_name_from_role_name(self, role_name):
         return 'hn' + role_name[-13:]
 
-    def _image_from_category(self, category):
+    def _image_from_publisher_name(self, publisher):
         # return the first one listed, which should be the most stable
         return [i.name for i in self.sms.list_os_images() \
-            if category in i.category][0]
+            if publisher in i.publisher_name][0]
 
     def _windows_role(self, role_name, subnet_name=None, port='59913'):
         host_name = self._host_name_from_role_name(role_name)
@@ -522,6 +522,29 @@ class ServiceManagementServiceTest(AzureTestCase):
                                    system, os_hd, network)
         self._wait_for_async(result.request_id)
         self._wait_for_role(service_name, deployment_name, role_name)
+
+    #--Test cases for subscriptions --------------------------------------
+    def test_list_role_sizes(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_role_sizes()
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertTrue(len(result) > 0)
+
+        role_size = result[0]
+        self.assertTrue(len(role_size.name) > 0)
+        self.assertTrue(len(role_size.label) > 0)
+        self.assertTrue(role_size.cores > 0)
+        self.assertTrue(role_size.max_data_disk_count > 0)
+        self.assertTrue(role_size.memory_in_mb > 0)
+        self.assertTrue(role_size.virtual_machine_resource_disk_size_in_mb > 0)
+        self.assertTrue(role_size.web_worker_resource_disk_size_in_mb > 0)
+        self.assertIsInstance(role_size.supported_by_virtual_machines, bool)
+        self.assertIsInstance(role_size.supported_by_web_worker_roles, bool)
+
 
     #--Test cases for hosted services ------------------------------------
     def test_list_hosted_services(self):
@@ -1510,6 +1533,43 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertEqual(image.media_link, media_url)
         self.assertEqual(image.name, self.os_image_name)
         self.assertEqual(image.os, os)
+
+    def test_list_os_images_public(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_os_images()
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertTrue(len(result) > 0)
+
+        image = None
+        for temp in result:
+            self.assertIn(temp.category, ['User', 'Public', 'Private', 'MSDN'])
+            if temp.category == 'Public':
+                image = temp
+                break
+
+        self.assertIsNotNone(image)
+        self.assertGreater(len(image.category), 0)
+        self.assertGreater(len(image.label), 0)
+        self.assertGreater(len(image.location), 0)
+        self.assertIsNotNone(image.logical_size_in_gb)
+        self.assertGreaterEqual(image.logical_size_in_gb, 0)
+        self.assertGreater(len(image.name), 0)
+        self.assertGreater(len(image.os), 0)
+        self.assertIsNotNone(image.eula)
+        self.assertGreater(len(image.description), 0)
+        self.assertGreater(len(image.image_family), 0)
+        self.assertIsNotNone(image.show_in_gui)
+        self.assertGreater(len(image.published_date), 0)
+        self.assertIsNotNone(image.is_premium)
+        self.assertIsNotNone(image.icon_uri)
+        self.assertIsNotNone(image.privacy_uri)
+        self.assertGreaterEqual(len(image.recommended_vm_size), 0)
+        self.assertGreater(len(image.publisher_name), 0)
+        self.assertIsNotNone(image.small_icon_uri)
 
     def test_get_os_image(self):
         # Arrange

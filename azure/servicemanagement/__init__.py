@@ -34,7 +34,7 @@ AZURE_MANAGEMENT_CERTFILE = 'AZURE_MANAGEMENT_CERTFILE'
 AZURE_MANAGEMENT_SUBSCRIPTIONID = 'AZURE_MANAGEMENT_SUBSCRIPTIONID'
 
 # x-ms-version for service management.
-X_MS_VERSION = '2013-06-01'
+X_MS_VERSION = '2014-05-01'
 
 #-----------------------------------------------------------------------------
 # Data classes
@@ -113,6 +113,14 @@ class Location(WindowsAzureData):
         self.name = u''
         self.display_name = u''
         self.available_services = _scalar_list_of(str, 'AvailableService')
+        self.compute_capabilities = ComputeCapabilities()
+
+
+class ComputeCapabilities(WindowsAzureData):
+
+    def __init__(self):
+        self.web_worker_role_sizes = _scalar_list_of(str, 'RoleSize')
+        self.virtual_machines_role_sizes = _scalar_list_of(str, 'RoleSize')
 
 
 class AffinityGroup(WindowsAzureData):
@@ -532,6 +540,35 @@ class SubscriptionCertificate(WindowsAzureData):
         self.created = u''
 
 
+class RoleSizes(WindowsAzureData):
+
+    def __init__(self):
+        self.role_sizes = _list_of(RoleSize)
+
+    def __iter__(self):
+        return iter(self.role_sizes)
+
+    def __len__(self):
+        return len(self.role_sizes)
+
+    def __getitem__(self, index):
+        return self.role_sizes[index]
+
+
+class RoleSize(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.label = u''
+        self.cores = 0
+        self.memory_in_mb = 0
+        self.supported_by_web_worker_roles = False
+        self.supported_by_virtual_machines = False
+        self.max_data_disk_count = 0
+        self.web_worker_resource_disk_size_in_mb = 0
+        self.virtual_machine_resource_disk_size_in_mb = 0
+
+
 class Images(WindowsAzureData):
 
     def __init__(self):
@@ -560,6 +597,18 @@ class OSImage(WindowsAzureData):
         self.os = u''
         self.eula = u''
         self.description = u''
+        self.image_family = u''
+        self.show_in_gui = True
+        self.published_date = u''
+        self.is_premium = True
+        self.icon_uri = u''
+        self.privacy_uri = u''
+        self.recommended_vm_size = u''
+        self.publisher_name = u''
+        self.pricing_detail_link = u''
+        self.small_icon_uri = u''
+        self.os_state = u''
+        self.language = u''
 
 
 class Disks(WindowsAzureData):
@@ -694,7 +743,7 @@ class WindowsConfigurationSet(WindowsAzureData):
     def __init__(self, computer_name=None, admin_password=None,
                  reset_password_on_first_logon=None,
                  enable_automatic_updates=None, time_zone=None,
-                 admin_username=None):
+                 admin_username=None, custom_data=None):
         self.configuration_set_type = u'WindowsProvisioningConfiguration'
         self.computer_name = computer_name
         self.admin_password = admin_password
@@ -705,6 +754,7 @@ class WindowsConfigurationSet(WindowsAzureData):
         self.domain_join = DomainJoin()
         self.stored_certificate_settings = StoredCertificateSettings()
         self.win_rm = WinRM()
+        self.custom_data = custom_data
 
 
 class DomainJoin(WindowsAzureData):
@@ -808,7 +858,7 @@ class Listener(WindowsAzureData):
 class LinuxConfigurationSet(WindowsAzureData):
 
     def __init__(self, host_name=None, user_name=None, user_password=None,
-                 disable_ssh_password_authentication=None):
+                 disable_ssh_password_authentication=None, custom_data=None):
         self.configuration_set_type = u'LinuxProvisioningConfiguration'
         self.host_name = host_name
         self.user_name = user_name
@@ -816,6 +866,7 @@ class LinuxConfigurationSet(WindowsAzureData):
         self.disable_ssh_password_authentication =\
             disable_ssh_password_authentication
         self.ssh = SSH()
+        self.custom_data = custom_data
 
 
 class SSH(WindowsAzureData):
@@ -895,7 +946,7 @@ class DataVirtualHardDisks(WindowsAzureData):
 class DataVirtualHardDisk(WindowsAzureData):
 
     def __init__(self):
-        self.host_caching = u''
+        self.host_caching = None
         self.disk_label = u''
         self.disk_name = u''
         self.lun = 0
@@ -1027,7 +1078,7 @@ class HostNameSslState(WindowsAzureData):
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
-        
+    
 
 class PublishData(WindowsAzureData):
     _xml_name = 'publishData'
@@ -1611,6 +1662,9 @@ class _XmlSerializer(object):
             xml += '</Listeners></WinRM>'
         xml += _XmlSerializer.data_to_xml(
             [('AdminUsername', configuration.admin_username)])
+        if configuration.custom_data is not None:
+            xml += _XmlSerializer.data_to_xml(
+                [('CustomData', configuration.custom_data, _encode_base64)])
         return xml
 
     @staticmethod
@@ -1643,6 +1697,9 @@ class _XmlSerializer(object):
                 xml += '</KeyPair>'
             xml += '</KeyPairs>'
             xml += '</SSH>'
+        if configuration.custom_data is not None:
+            xml += _XmlSerializer.data_to_xml(
+                [('CustomData', configuration.custom_data, _encode_base64)])
         return xml
 
     @staticmethod
