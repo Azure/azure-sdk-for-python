@@ -491,6 +491,21 @@ class OperatingSystemFamilies(WindowsAzureData):
         return self.operating_system_families[index]
 
 
+class Subscriptions(WindowsAzureData):
+
+    def __init__(self):
+        self.subscriptions = _list_of(Subscription)
+
+    def __iter__(self):
+        return iter(self.subscriptions)
+
+    def __len__(self):
+        return len(self.subscriptions)
+
+    def __getitem__(self, index):
+        return self.subscriptions[index]
+
+
 class Subscription(WindowsAzureData):
 
     def __init__(self):

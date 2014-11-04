@@ -545,6 +545,15 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsInstance(role_size.supported_by_virtual_machines, bool)
         self.assertIsInstance(role_size.supported_by_web_worker_roles, bool)
 
+    def test_list_subscriptions(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_subscriptions()
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertTrue(len(result) > 0)
 
     #--Test cases for hosted services ------------------------------------
     def test_list_hosted_services(self):

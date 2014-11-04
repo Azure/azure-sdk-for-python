@@ -42,6 +42,7 @@ from azure.servicemanagement import (
     StorageService,
     StorageServices,
     Subscription,
+    Subscriptions,
     SubscriptionCertificate,
     SubscriptionCertificates,
     VirtualNetworkSites,
@@ -66,6 +67,16 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         return self._perform_get(self._get_role_sizes_path(),
                                  RoleSizes)
+
+    def list_subscriptions(self):
+        '''
+        Returns a list of subscriptions that you can access.
+
+        You must make sure that the request that is made to the management
+        service is secure using an Active Directory access token.
+        '''
+        return self._perform_get(self._get_subscriptions_path(),
+                                 Subscriptions)
 
     #--Operations for storage accounts -----------------------------------
     def list_storage_accounts(self):
@@ -1720,6 +1731,9 @@ class ServiceManagementService(_ServiceManagementClient):
       #--Helper functions --------------------------------------------------
     def _get_role_sizes_path(self):
         return self._get_path('rolesizes', None)
+
+    def _get_subscriptions_path(self):
+        return '/subscriptions'
 
     def _get_virtual_network_site_path(self):
         return self._get_path('services/networking/virtualnetwork', None)
