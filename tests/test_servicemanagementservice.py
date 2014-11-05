@@ -1257,6 +1257,40 @@ class ServiceManagementServiceTest(AzureTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    def test_create_virtual_machine_deployment_linux_remote_source_image(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+        deployment_label = deployment_name + 'label'
+
+        self._create_hosted_service(service_name)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+
+        # Act
+        system, os_hd, network = self._linux_role(role_name)
+        os_hd.remote_source_image_link = 'https://portalvhds1w66jvn5gxbq1.blob.core.windows.net/vhds/hackfest-202505-208684-os-2014-11-05.vhd'
+        os_hd.os = 'Linux'
+        os_hd.disk_name = role_name
+        os_hd.source_image_name = None
+
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network, role_size='Small')
+
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
+
+        # Assert
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
+
     def test_create_virtual_machine_deployment_windows(self):
         # Arrange
         service_name = self.hosted_service_name

@@ -972,14 +972,15 @@ class DataVirtualHardDisk(WindowsAzureData):
 class OSVirtualHardDisk(WindowsAzureData):
 
     def __init__(self, source_image_name=None, media_link=None,
-                 host_caching=None, disk_label=None, disk_name=None):
+                 host_caching=None, disk_label=None, disk_name=None,
+                 os=None, remote_source_image_link=None):
         self.source_image_name = source_image_name
         self.media_link = media_link
         self.host_caching = host_caching
         self.disk_label = disk_label
         self.disk_name = disk_name
-        self.os = u''  # undocumented, not used when adding a role
-
+        self.os = os
+        self.remote_source_image_link = remote_source_image_link
 
 class AsynchronousOperationResult(WindowsAzureData):
 
@@ -1807,7 +1808,9 @@ class _XmlSerializer(object):
                  ('DiskLabel', os_virtual_hard_disk.disk_label),
                  ('DiskName', os_virtual_hard_disk.disk_name),
                  ('MediaLink', os_virtual_hard_disk.media_link),
-                 ('SourceImageName', os_virtual_hard_disk.source_image_name)])
+                 ('SourceImageName', os_virtual_hard_disk.source_image_name),
+                 ('OS', os_virtual_hard_disk.os),
+                 ('RemoteSourceImageLink', os_virtual_hard_disk.remote_source_image_link)])
             xml += '</OSVirtualHardDisk>'
 
         if role_size is not None:
