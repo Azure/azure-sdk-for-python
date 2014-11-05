@@ -39,13 +39,14 @@ from azure.servicemanagement import (
 class _ServiceManagementClient(object):
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST):
+                 host=MANAGEMENT_HOST, requests_session=None):
         self.requestid = None
         self.subscription_id = subscription_id
         self.cert_file = cert_file
         self.host = host
+        self.requests_session = requests_session
 
-        if not self.cert_file:
+        if not self.cert_file and not requests_session:
             if AZURE_MANAGEMENT_CERTFILE in os.environ:
                 self.cert_file = os.environ[AZURE_MANAGEMENT_CERTFILE]
 
@@ -54,12 +55,14 @@ class _ServiceManagementClient(object):
                 self.subscription_id = os.environ[
                     AZURE_MANAGEMENT_SUBSCRIPTIONID]
 
-        if not self.cert_file or not self.subscription_id:
-            raise WindowsAzureError(
-                'You need to provide subscription id and certificate file')
+        if not self.requests_session:
+            if not self.cert_file or not self.subscription_id:
+                raise WindowsAzureError(
+                    'You need to provide subscription id and certificate file')
 
         self._httpclient = _HTTPClient(
-            service_instance=self, cert_file=self.cert_file)
+            service_instance=self, cert_file=self.cert_file,
+            requests_session=self.requests_session)
         self._filter = self._httpclient.perform_request
 
     def with_filter(self, filter):
