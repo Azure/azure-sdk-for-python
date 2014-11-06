@@ -94,6 +94,16 @@ class Credentials(object):
             return self.ns[u'proxyhost']
         return None
 
+    def getUseRequestsLibrary(self):
+        if u'userequestslibrary' in self.ns:
+            return self.ns[u'userequestslibrary'].lower() == 'true'
+        return None
+
+    def getRemoteSourceImageLink(self):
+        if u'remotesourceimagelink' in self.ns:
+            return self.ns[u'remotesourceimagelink']
+        return None
+
     def getProxyPort(self):
         ''' Optional. Port of the proxy server. '''
         if u'proxyport' in self.ns:

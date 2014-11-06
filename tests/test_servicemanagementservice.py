@@ -181,7 +181,13 @@ class ServiceManagementServiceTest(AzureTestCase):
                     False, 'Timed out waiting for async operation to complete.')
             time.sleep(5)
             result = self.sms.get_operation_status(request_id)
-        self.assertEqual(result.status, 'Succeeded')
+
+        if result.status != 'Succeeded':
+            print(vars(result))
+            if result.error:
+                print(result.error.code)
+                print(vars(result.error))
+            self.assertTrue(False, 'Asynchronous operation did not succeed.')
 
     def _wait_for_deployment(self, service_name, deployment_name,
                              status='Running'):
@@ -443,6 +449,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         system = LinuxConfigurationSet(hostname, 'unittest', 'u7;9jbp!', True)
         system.ssh.public_keys.public_keys.append(pk)
         system.ssh.key_pairs.key_pairs.append(pair)
+        system.disable_ssh_password_authentication = False
         return system
 
     def _network_config(self, subnet_name=None, port='59913'):
@@ -1258,6 +1265,13 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertEqual(deployment.label, deployment_label)
 
     def test_create_virtual_machine_deployment_linux_remote_source_image(self):
+        # Test requires a link to a .vhd in a separate storage account
+        # Make sure to use a storage account in West US to avoid timeout
+        source_image_link = credentials.getRemoteSourceImageLink()
+        if not source_image_link:
+            self.assertTrue(False,
+                'Missing remotesourceimagelink entry in credentials file.')
+
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
@@ -1271,7 +1285,7 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         # Act
         system, os_hd, network = self._linux_role(role_name)
-        os_hd.remote_source_image_link = 'https://portalvhds1w66jvn5gxbq1.blob.core.windows.net/vhds/hackfest-202505-208684-os-2014-11-05.vhd'
+        os_hd.remote_source_image_link = source_image_link
         os_hd.os = 'Linux'
         os_hd.disk_name = role_name
         os_hd.source_image_name = None
