@@ -46,6 +46,7 @@ from azure.servicemanagement import (
     SubscriptionCertificate,
     SubscriptionCertificates,
     VirtualNetworkSites,
+    VMImages,
     _XmlSerializer,
     )
 from azure.servicemanagement.servicemanagementclient import (
@@ -1377,6 +1378,231 @@ class ServiceManagementService(_ServiceManagementClient):
             async=True)
 
     #--Operations for virtual machine images -----------------------------
+    def capture_vm_image(self, service_name, deployment_name, role_name, options):
+        '''
+        Creates a copy of the operating system virtual hard disk (VHD) and all
+        of the data VHDs that are associated with the Virtual Machine, saves
+        the VHD copies in the same storage location as the original VHDs, and
+        registers the copies as a VM Image in the image repository that is
+        associated with the specified subscription.
+
+        service_name: The name of the service.
+        deployment_name: The name of the deployment.
+        role_name: The name of the role.
+        options: An instance of CaptureRoleAsVMImage class.
+        options.os_state:
+            Required. Specifies the state of the operating system in the image.
+            Possible values are: Generalized, Specialized 
+            A Virtual Machine that is fully configured and running contains a
+            Specialized operating system. A Virtual Machine on which the
+            Sysprep command has been run with the generalize option contains a
+            Generalized operating system. If you capture an image from a
+            generalized Virtual Machine, the machine is deleted after the image
+            is captured. It is recommended that all Virtual Machines are shut
+            down before capturing an image.
+        options.vm_image_name:
+            Required. Specifies the name of the VM Image.
+        options.vm_image_name:
+            Required. Specifies the label of the VM Image.
+        options.description:
+            Optional. Specifies the description of the VM Image.
+        options.language:
+            Optional. Specifies the language of the VM Image.
+        options.image_family:
+            Optional. Specifies a value that can be used to group VM Images.
+        options.recommended_vm_size:
+            Optional. Specifies the size to use for the Virtual Machine that
+            is created from the VM Image.
+        '''
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        _validate_not_none('role_name', role_name)
+        _validate_not_none('options', options)
+        _validate_not_none('options.os_state', options.os_state)
+        _validate_not_none('options.vm_image_name', options.vm_image_name)
+        _validate_not_none('options.vm_image_label', options.vm_image_label)
+        return self._perform_post(
+            self._get_capture_vm_image_path(service_name, deployment_name, role_name),
+            _XmlSerializer.capture_vm_image_to_xml(options),
+            async=True)
+
+    def create_vm_image(self, vm_image):
+        '''
+        Creates a VM Image in the image repository that is associated with the
+        specified subscription using a specified set of virtual hard disks.
+
+        vm_image: An instance of VMImage class.
+        vm_image.name: Required. Specifies the name of the image.
+        vm_image.label: Required. Specifies an identifier for the image.
+        vm_image.description: Optional. Specifies the description of the image.
+        vm_image.os_disk_configuration:
+            Required. Specifies configuration information for the operating 
+            system disk that is associated with the image.
+        vm_image.os_disk_configuration.host_caching:
+            Optional. Specifies the caching behavior of the operating system disk.
+            Possible values are: None, ReadOnly, ReadWrite 
+        vm_image.os_disk_configuration.os_state:
+            Required. Specifies the state of the operating system in the image.
+            Possible values are: Generalized, Specialized
+            A Virtual Machine that is fully configured and running contains a
+            Specialized operating system. A Virtual Machine on which the
+            Sysprep command has been run with the generalize option contains a
+            Generalized operating system.
+        vm_image.os_disk_configuration.os:
+            Required. Specifies the operating system type of the image.
+        vm_image.os_disk_configuration.media_link:
+            Required. Specifies the location of the blob in Windows Azure
+            storage. The blob location belongs to a storage account in the
+            subscription specified by the <subscription-id> value in the
+            operation call.
+        vm_image.data_disk_configurations:
+            Optional. Specifies configuration information for the data disks
+            that are associated with the image. A VM Image might not have data
+            disks associated with it.
+        vm_image.data_disk_configurations[].host_caching:
+            Optional. Specifies the caching behavior of the data disk.
+            Possible values are: None, ReadOnly, ReadWrite 
+        vm_image.data_disk_configurations[].lun:
+            Optional if the lun for the disk is 0. Specifies the Logical Unit
+            Number (LUN) for the data disk.
+        vm_image.data_disk_configurations[].media_link:
+            Required. Specifies the location of the blob in Windows Azure
+            storage. The blob location belongs to a storage account in the
+            subscription specified by the <subscription-id> value in the
+            operation call.
+        vm_image.data_disk_configurations[].logical_size_in_gb:
+            Required. Specifies the size, in GB, of the data disk.
+        vm_image.language: Optional. Specifies the language of the image.
+        vm_image.image_family:
+            Optional. Specifies a value that can be used to group VM Images.
+        vm_image.recommended_vm_size:
+            Optional. Specifies the size to use for the Virtual Machine that
+            is created from the VM Image.
+        vm_image.eula:
+            Optional. Specifies the End User License Agreement that is
+            associated with the image. The value for this element is a string,
+            but it is recommended that the value be a URL that points to a EULA.
+        vm_image.icon_uri:
+            Optional. Specifies the URI to the icon that is displayed for the
+            image in the Management Portal.
+        vm_image.small_icon_uri:
+            Optional. Specifies the URI to the small icon that is displayed for
+            the image in the Management Portal.
+        vm_image.privacy_uri:
+            Optional. Specifies the URI that points to a document that contains
+            the privacy policy related to the image.
+        vm_image.published_date:
+            Optional. Specifies the date when the image was added to the image
+            repository.
+        vm_image.show_in_gui:
+            Optional. Indicates whether the VM Images should be listed in the
+            portal.
+        '''
+        _validate_not_none('vm_image', vm_image)
+        _validate_not_none('vm_image.name', vm_image.name)
+        _validate_not_none('vm_image.label', vm_image.label)
+        _validate_not_none('vm_image.os_disk_configuration.os_state',
+                           vm_image.os_disk_configuration.os_state)
+        _validate_not_none('vm_image.os_disk_configuration.os',
+                           vm_image.os_disk_configuration.os)
+        _validate_not_none('vm_image.os_disk_configuration.media_link',
+                           vm_image.os_disk_configuration.media_link)
+        return self._perform_post(
+            self._get_vm_image_path(),
+            _XmlSerializer.create_vm_image_to_xml(vm_image),
+            async=True)
+
+    def delete_vm_image(self, vm_image_name, delete_vhd=False):
+        '''
+        Deletes the specified VM Image from the image repository that is
+        associated with the specified subscription.
+
+        vm_image_name: The name of the image.
+        delete_vhd: Deletes the underlying vhd blob in Azure storage.
+        '''
+        _validate_not_none('vm_image_name', vm_image_name)
+        path = self._get_vm_image_path(vm_image_name)
+        if delete_vhd:
+            path += '?comp=media'
+        return self._perform_delete(path, async=True)
+
+    def list_vm_images(self, location=None, publisher=None, category=None):
+        '''
+        Retrieves a list of the VM Images from the image repository that is
+        associated with the specified subscription.
+        '''
+        path = self._get_vm_image_path()
+        query = ''
+        if location:
+            query += '&location=' + location
+        if publisher:
+            query += '&publisher=' + publisher
+        if category:
+            query += '&category=' + category
+        if query:
+            path = path + '?' + query.lstrip('&')
+        return self._perform_get(path, VMImages)
+
+    def update_vm_image(self, vm_image_name, vm_image):
+        '''
+        Updates a VM Image in the image repository that is associated with the
+        specified subscription.
+
+        vm_image_name: Name of image to update.
+        vm_image: An instance of VMImage class.
+        vm_image.label: Optional. Specifies an identifier for the image.
+        vm_image.os_disk_configuration:
+            Required. Specifies configuration information for the operating 
+            system disk that is associated with the image.
+        vm_image.os_disk_configuration.host_caching:
+            Optional. Specifies the caching behavior of the operating system disk.
+            Possible values are: None, ReadOnly, ReadWrite 
+        vm_image.data_disk_configurations:
+            Optional. Specifies configuration information for the data disks
+            that are associated with the image. A VM Image might not have data
+            disks associated with it.
+        vm_image.data_disk_configurations[].name:
+            Required. Specifies the name of the data disk.
+        vm_image.data_disk_configurations[].host_caching:
+            Optional. Specifies the caching behavior of the data disk.
+            Possible values are: None, ReadOnly, ReadWrite 
+        vm_image.data_disk_configurations[].lun:
+            Optional if the lun for the disk is 0. Specifies the Logical Unit
+            Number (LUN) for the data disk.
+        vm_image.description: Optional. Specifies the description of the image.
+        vm_image.language: Optional. Specifies the language of the image.
+        vm_image.image_family:
+            Optional. Specifies a value that can be used to group VM Images.
+        vm_image.recommended_vm_size:
+            Optional. Specifies the size to use for the Virtual Machine that
+            is created from the VM Image.
+        vm_image.eula:
+            Optional. Specifies the End User License Agreement that is
+            associated with the image. The value for this element is a string,
+            but it is recommended that the value be a URL that points to a EULA.
+        vm_image.icon_uri:
+            Optional. Specifies the URI to the icon that is displayed for the
+            image in the Management Portal.
+        vm_image.small_icon_uri:
+            Optional. Specifies the URI to the small icon that is displayed for
+            the image in the Management Portal.
+        vm_image.privacy_uri:
+            Optional. Specifies the URI that points to a document that contains
+            the privacy policy related to the image.
+        vm_image.published_date:
+            Optional. Specifies the date when the image was added to the image
+            repository.
+        vm_image.show_in_gui:
+            Optional. Indicates whether the VM Images should be listed in the
+            portal.
+        '''
+        _validate_not_none('vm_image_name', vm_image_name)
+        _validate_not_none('vm_image', vm_image)
+        return self._perform_put(self._get_vm_image_path(vm_image_name),
+                                 _XmlSerializer.update_vm_image_to_xml(vm_image),
+                                 async=True)
+
+    #--Operations for operating system images ----------------------------
     def list_os_images(self):
         '''
         Retrieves a list of the OS images from the image repository.
@@ -1768,6 +1994,15 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._get_path('services/hostedservices/' + _str(service_name) +
                               '/deployments/' + deployment_name +
                               '/roles/Operations', None)
+
+    def _get_capture_vm_image_path(self, service_name, deployment_name, role_name):
+        return self._get_path('services/hostedservices/' + _str(service_name) +
+                              '/deployments/' + _str(deployment_name) +
+                              '/roleinstances/' + _str(role_name) + '/Operations',
+                              None)
+
+    def _get_vm_image_path(self, image_name=None):
+        return self._get_path('services/vmimages', image_name)
 
     def _get_data_disk_path(self, service_name, deployment_name, role_name,
                             lun=None):

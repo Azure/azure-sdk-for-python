@@ -19,6 +19,7 @@ import time
 import unittest
 
 from azure.servicemanagement import (
+    CaptureRoleAsVMImage,
     CertificateSetting,
     ConfigurationSet,
     ConfigurationSetInputEndpoint,
@@ -28,6 +29,7 @@ from azure.servicemanagement import (
     OSVirtualHardDisk,
     PublicKey,
     ServiceManagementService,
+    VMImage,
     WindowsConfigurationSet,
     )
 from azure.storage.blobservice import BlobService
@@ -1560,6 +1562,201 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertTrue(self._os_image_exists(self.os_image_name))
 
     #--Test cases for virtual machine images -----------------------------
+    def test_capture_vm_image(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+
+        self._create_vm_linux(service_name, deployment_name, role_name)
+
+        # Act
+        image_name = role_name + 'image'
+        image = CaptureRoleAsVMImage('Specialized',
+                                     image_name,
+                                     image_name + 'label',
+                                     image_name + 'description',
+                                     'english',
+                                     'mygroup')
+
+        result = self.sms.capture_vm_image(
+            service_name,
+            deployment_name,
+            role_name,
+            image)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        self.assertIsNotNone(result)
+        images = self.sms.list_vm_images()
+        found_image = [im for im in images if im.name == image_name][0]
+        self.assertEqual(found_image.category, 'User')
+        self.assertEqual(found_image.label, image.vm_image_label)
+        self.assertEqual(found_image.description, image.description)
+        self.assertEqual(found_image.language, image.language)
+        self.assertEqual(found_image.image_family, image.image_family)
+        self.assertEqual(found_image.os_disk_configuration.os_state, image.os_state)
+        self.assertEqual(found_image.os_disk_configuration.os, 'Linux')
+
+    @unittest.skip("functionality not ready")
+    def test_create_vm_image(self):
+        # Arrange
+        image_name = self.hosted_service_name + 'image'
+
+        # Act
+        img = VMImage()
+        img.name = image_name
+        img.label = image_name + 'label'
+        img.description = image_name + 'description'
+        img.os_disk_configuration.os_state = 'Specialized'
+        img.os_disk_configuration.os = 'Linux'
+        img.os_disk_configuration.media_link = credentials.getLinuxOSVHD()
+        img.language = 'english'
+        img.show_in_gui = None
+
+        result = self.sms.create_vm_image(img)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        self.assertIsNotNone(result)
+        images = self.sms.list_vm_images()
+        found_image = [im for im in images if im.name == image_name][0]
+        self.assertEqual(found_image.category, 'User')
+        self.assertEqual(found_image.label, img.vm_image_label)
+        self.assertEqual(found_image.description, img.description)
+        self.assertEqual(found_image.language, img.language)
+        self.assertEqual(found_image.os_disk_configuration.os_state, 'Specialized')
+        self.assertEqual(found_image.os_disk_configuration.os, 'Linux')
+
+    @unittest.skip("test not ready")
+    def test_delete_vm_image(self):
+        # Arrange
+        image_name = 'utsvc83141531953252image'
+
+        # Act
+        result = self.sms.delete_vm_image(image_name, True)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        images = self.sms.list_vm_images()
+        found_images = [im for im in images if im.name == image_name]
+        self.assertEqual(len(found_images), 0)
+
+    def test_list_vm_images(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_vm_images()
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            if image.category == 'Public':
+                self.assertGreater(len(image.name), 0)
+                self.assertGreater(len(image.category), 0)
+                self.assertGreater(len(image.description), 0)
+                self.assertGreater(len(image.label), 0)
+                self.assertGreater(len(image.location), 0)
+                self.assertGreater(len(image.publisher_name), 0)
+                self.assertIsNone(image.deployment_name)
+                self.assertIsNone(image.role_name)
+                self.assertIsNone(image.service_name)
+
+    def test_list_vm_images_location(self):
+        # Arrange
+        loc = 'West US'
+
+        # Act
+        result = self.sms.list_vm_images(location=loc)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            regions = image.location.split(';')
+            self.assertIn(loc, regions)
+
+    def test_list_vm_images_location_publisher(self):
+        # Arrange
+        pub = 'Cloudera'
+
+        # Act
+        result = self.sms.list_vm_images(publisher=pub)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            self.assertEqual(image.publisher_name, pub)
+
+    def test_list_vm_images_location_category(self):
+        # Arrange
+        cat = 'Public'
+
+        # Act
+        result = self.sms.list_vm_images(category=cat)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            self.assertEqual(image.category, cat)
+
+    def test_list_vm_images_location_publisher_and_category(self):
+        # Arrange
+        pub = 'Cloudera'
+        cat = 'Public'
+
+        # Act
+        result = self.sms.list_vm_images(publisher=pub, category=cat)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            self.assertEqual(image.category, cat)
+            self.assertEqual(image.publisher_name, pub)
+
+    @unittest.skip("functionality not ready")
+    def test_update_vm_image(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+
+        self._create_vm_linux(service_name, deployment_name, role_name)
+
+        image_name = role_name + 'image'
+        image = CaptureRoleAsVMImage('Specialized',
+                                     image_name,
+                                     image_name + 'label',
+                                     image_name + 'description',
+                                     'english',
+                                     'mygroup')
+
+        result = self.sms.capture_vm_image(
+            service_name,
+            deployment_name,
+            role_name,
+            image)
+        self._wait_for_async(result.request_id)
+
+        # Act
+        updated_image = VMImage()
+        updated_image.label = 'Updated label'
+        updated_image.description = 'Updated description'
+        updated_image.eula = 'Updated eula'
+        updated_image.os_disk_configuration.host_caching = 'ReadOnly'
+        result = self.sms.update_vm_image(image_name, updated_image)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        self.assertIsNotNone(result)
+        images = self.sms.list_vm_images()
+        found_image = [im for im in images if im.name == image_name][0]
+        self.assertEqual(found_image.label, updated_image.label)
+        self.assertEqual(found_image.description, updated_image.description)
+        self.assertEqual(found_image.eula, updated_image.eula)
+        self.assertEqual(found_image.os_disk_configuration.host_caching,
+                         updated_image.os_disk_configuration.host_caching)
+
+    #--Test cases for operating system images ----------------------------
     def test_list_os_images(self):
         # Arrange
         media_url = LINUX_OS_VHD_URL
