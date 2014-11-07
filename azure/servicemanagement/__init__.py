@@ -1456,28 +1456,6 @@ class Database(WindowsAzureData):
         self.max_size_bytes = 0
 
 
-def _update_management_header(request):
-    ''' Add additional headers for management. '''
-
-    if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
-        request.headers.append(('Content-Length', str(len(request.body))))
-
-    # append additional headers base on the service
-    request.headers.append(('x-ms-version', X_MS_VERSION))
-
-    # if it is not GET or HEAD request, must set content-type.
-    if not request.method in ['GET', 'HEAD']:
-        for name, _ in request.headers:
-            if 'content-type' == name.lower():
-                break
-        else:
-            request.headers.append(
-                ('Content-Type',
-                 'application/atom+xml;type=entry;charset=utf-8'))
-
-    return request.headers
-
-
 def _parse_response_for_async_op(response):
     ''' Extracts request id from response header. '''
 

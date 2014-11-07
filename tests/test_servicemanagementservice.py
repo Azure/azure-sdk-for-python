@@ -35,9 +35,9 @@ from azure.servicemanagement import (
 from azure.storage.blobservice import BlobService
 from util import (
     AzureTestCase,
+    create_service_management,
     credentials,
     getUniqueName,
-    set_service_options,
     )
 
 SERVICE_CERT_FORMAT = 'pfx'
@@ -90,9 +90,7 @@ LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
 class ServiceManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(),
-                                            credentials.getManagementCertFile())
-        set_service_options(self.sms)
+        self.sms = create_service_management(ServiceManagementService)
 
         self.bc = BlobService(credentials.getStorageServicesName(),
                               credentials.getStorageServicesKey())

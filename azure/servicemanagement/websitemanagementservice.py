@@ -37,9 +37,9 @@ class WebsiteManagementService(_ServiceManagementClient):
     '''
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST):
+                 host=MANAGEMENT_HOST, requests_session=None):
         super(WebsiteManagementService, self).__init__(
-            subscription_id, cert_file, host)
+            subscription_id, cert_file, host, requests_session)
 
     #--Operations for web sites ----------------------------------------
     def list_webspaces(self):

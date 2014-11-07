@@ -149,6 +149,19 @@ def getUniqueName(base_name):
     return base_name + str(random.randint(10, 99)) + cur_time[:12]
 
 
+def create_service_management(service_class):
+    if credentials.getUseRequestsLibrary():
+        from requests import Session
+        session = Session()
+        session.cert = credentials.getManagementCertFile()
+        service = service_class(credentials.getSubscriptionId(),
+                            requests_session=session)
+    else:
+        service = service_class(credentials.getSubscriptionId(),
+                            credentials.getManagementCertFile())
+    set_service_options(service)
+    return service
+
 def set_service_options(service):
     useHttplibOverride = credentials.getUseHttplibOverride()
     if useHttplibOverride is not None:

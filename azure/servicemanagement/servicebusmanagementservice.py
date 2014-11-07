@@ -29,13 +29,15 @@ from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
     )
 
+X_MS_VERSION = '2012-03-01'
 
 class ServiceBusManagementService(_ServiceManagementClient):
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST):
+                 host=MANAGEMENT_HOST, requests_session=None):
         super(ServiceBusManagementService, self).__init__(
-            subscription_id, cert_file, host)
+            subscription_id, cert_file, host, requests_session)
+        self.x_ms_version = X_MS_VERSION
 
     #--Operations for service bus ----------------------------------------
     def get_regions(self):
