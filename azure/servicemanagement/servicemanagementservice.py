@@ -130,8 +130,9 @@ class ServiceManagementService(_ServiceManagementClient):
 
     def create_storage_account(self, service_name, description, label,
                                affinity_group=None, location=None,
-                               geo_replication_enabled=True,
-                               extended_properties=None):
+                               geo_replication_enabled=None,
+                               extended_properties=None,
+                               account_type='Standard_GRS'):
         '''
         Creates a new storage account in Windows Azure.
 
@@ -154,12 +155,7 @@ class ServiceManagementService(_ServiceManagementClient):
             The location where the storage account is created. You can specify
             either a location or affinity_group, but not both.
         geo_replication_enabled:
-            Specifies whether the storage account is created with the
-            geo-replication enabled. If the element is not included in the
-            request body, the default value is true. If set to true, the data
-            in the storage account is replicated across more than one
-            geographic location so as to enable resilience in the face of
-            catastrophic service loss.
+            Deprecated. Replaced by the account_type parameter.
         extended_properties:
             Dictionary containing name/value pairs of storage account
             properties. You can have a maximum of 50 extended property
@@ -167,6 +163,12 @@ class ServiceManagementService(_ServiceManagementClient):
             characters, only alphanumeric characters and underscores are valid
             in the Name, and the name must start with a letter. The value has
             a maximum length of 255 characters.
+        account_type:
+            Specifies whether the account supports locally-redundant storage,
+            geo-redundant storage, zone-redundant storage, or read access
+            geo-redundant storage.
+            Possible values are:
+                Standard_LRS, Standard_ZRS, Standard_GRS, Standard_RAGRS
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('description', description)
@@ -177,6 +179,8 @@ class ServiceManagementService(_ServiceManagementClient):
         if affinity_group is not None and location is not None:
             raise WindowsAzureError(
                 'Only one of location or affinity_group needs to be specified')
+        if geo_replication_enabled == False:
+            account_type = 'Standard_LRS'
         return self._perform_post(
             self._get_storage_service_path(),
             _XmlSerializer.create_storage_service_input_to_xml(
@@ -185,13 +189,14 @@ class ServiceManagementService(_ServiceManagementClient):
                 label,
                 affinity_group,
                 location,
-                geo_replication_enabled,
+                account_type,
                 extended_properties),
             async=True)
 
     def update_storage_account(self, service_name, description=None,
                                label=None, geo_replication_enabled=None,
-                               extended_properties=None):
+                               extended_properties=None,
+                               account_type='Standard_GRS'):
         '''
         Updates the label, the description, and enables or disables the
         geo-replication status for a storage account in Windows Azure.
@@ -205,12 +210,7 @@ class ServiceManagementService(_ServiceManagementClient):
             characters in length. The name can be used to identify the storage
             account for your tracking purposes.
         geo_replication_enabled:
-            Specifies whether the storage account is created with the
-            geo-replication enabled. If the element is not included in the
-            request body, the default value is true. If set to true, the data
-            in the storage account is replicated across more than one
-            geographic location so as to enable resilience in the face of
-            catastrophic service loss.
+            Deprecated. Replaced by the account_type parameter.
         extended_properties:
             Dictionary containing name/value pairs of storage account
             properties. You can have a maximum of 50 extended property
@@ -218,14 +218,22 @@ class ServiceManagementService(_ServiceManagementClient):
             characters, only alphanumeric characters and underscores are valid
             in the Name, and the name must start with a letter. The value has
             a maximum length of 255 characters.
+        account_type:
+            Specifies whether the account supports locally-redundant storage,
+            geo-redundant storage, zone-redundant storage, or read access
+            geo-redundant storage.
+            Possible values are:
+                Standard_LRS, Standard_ZRS, Standard_GRS, Standard_RAGRS
         '''
         _validate_not_none('service_name', service_name)
+        if geo_replication_enabled == False:
+            account_type = 'Standard_LRS'
         return self._perform_put(
             self._get_storage_service_path(service_name),
             _XmlSerializer.update_storage_service_input_to_xml(
                 description,
                 label,
-                geo_replication_enabled,
+                account_type,
                 extended_properties))
 
     def delete_storage_account(self, service_name):

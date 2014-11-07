@@ -148,6 +148,7 @@ class StorageManagementServiceTest(AzureTestCase):
             result.storage_service_properties.status_of_primary)
         self.assertIsNotNone(
             result.storage_service_properties.status_of_secondary)
+        self.assertEqual(result.storage_service_properties.account_type, 'Standard_LRS')
         self.assertIsNotNone(result.storage_service_properties.endpoints)
         self.assertTrue(len(result.storage_service_properties.endpoints) > 0)
         self.assertIsNotNone(result.extended_properties)

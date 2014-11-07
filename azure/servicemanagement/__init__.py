@@ -83,6 +83,7 @@ class StorageAccountProperties(WindowsAzureData):
         self.status_of_secondary = u''
         self.last_geo_failover_time = u''
         self.creation_time = u''
+        self.account_type = u''
 
 
 class StorageServiceKeys(WindowsAzureData):
@@ -1485,28 +1486,32 @@ class _XmlSerializer(object):
     @staticmethod
     def create_storage_service_input_to_xml(service_name, description, label,
                                             affinity_group, location,
-                                            geo_replication_enabled,
+                                            account_type,
                                             extended_properties):
-        return _XmlSerializer.doc_from_data(
-            'CreateStorageServiceInput',
+        xml = _XmlSerializer.data_to_xml(
             [('ServiceName', service_name),
              ('Description', description),
              ('Label', label, _encode_base64),
              ('AffinityGroup', affinity_group),
-             ('Location', location),
-             ('GeoReplicationEnabled', geo_replication_enabled, _lower)],
-            extended_properties)
+             ('Location', location)])
+        if extended_properties is not None:
+            xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(
+                extended_properties)
+        xml += _XmlSerializer.data_to_xml([('AccountType', account_type)])
+        return _XmlSerializer.doc_from_xml('CreateStorageServiceInput', xml)
 
     @staticmethod
     def update_storage_service_input_to_xml(description, label,
-                                            geo_replication_enabled,
+                                            account_type,
                                             extended_properties):
-        return _XmlSerializer.doc_from_data(
-            'UpdateStorageServiceInput',
+        xml = _XmlSerializer.data_to_xml(
             [('Description', description),
-             ('Label', label, _encode_base64),
-             ('GeoReplicationEnabled', geo_replication_enabled, _lower)],
-            extended_properties)
+             ('Label', label, _encode_base64)])
+        if extended_properties is not None:
+            xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(
+                extended_properties)
+        xml += _XmlSerializer.data_to_xml([('AccountType', account_type)])
+        return _XmlSerializer.doc_from_xml('UpdateStorageServiceInput', xml)
 
     @staticmethod
     def regenerate_keys_to_xml(key_type):
