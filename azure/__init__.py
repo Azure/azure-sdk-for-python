@@ -301,9 +301,8 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'persistent_vm_downtime_info': 'PersistentVMDowntimeInfo',
     'copy_id': 'CopyId',
     'os_state': 'OSState',
-    'vm_image': 'VMImage',
-    'vm_images': 'VMImages',
-    'os_disk_configuration': 'OSDiskConfiguration',
+    'public_ips': 'PublicIPs',
+    'public_ip': 'PublicIP',
     }
 
 

@@ -83,7 +83,6 @@ class StorageAccountProperties(WindowsAzureData):
         self.status_of_secondary = u''
         self.last_geo_failover_time = u''
         self.creation_time = u''
-        self.account_type = u''
 
 
 class StorageServiceKeys(WindowsAzureData):
@@ -395,101 +394,6 @@ class Role(WindowsAzureData):
         self.default_win_rm_certificate_thumbprint = u''
 
 
-class CaptureRoleAsVMImage:
-
-    def __init__(self, os_state=None, vm_image_name=None, vm_image_label=None,
-                 description=None, language=None, image_family=None,
-                 recommended_vm_size=None):
-        self.os_state = os_state
-        self.vm_image_name = vm_image_name
-        self.vm_image_label = vm_image_label
-        self.description = description
-        self.language = language
-        self.image_family = image_family
-        self.recommended_vm_size = recommended_vm_size
-
-
-class OSDiskConfiguration(WindowsAzureData):
-
-    def __init__(self):
-        self.name = None
-        self.host_caching = None
-        self.os_state = None
-        self.os = None
-        self.media_link = None
-        self.logical_disk_size_in_gb = -1
-
-
-class DataDiskConfigurations(WindowsAzureData):
-
-    def __init__(self):
-        self.data_disk_configurations = _list_of(DataDiskConfiguration)
-
-    def __iter__(self):
-        return iter(self.data_disk_configurations)
-
-    def __len__(self):
-        return len(self.data_disk_configurations)
-
-    def __getitem__(self, index):
-        return self.data_disk_configurations[index]
-
-
-class DataDiskConfiguration(WindowsAzureData):
-
-    def __init__(self):
-        self.name = None
-        self.host_caching = None
-        self.lun = -1
-        self.media_link = None
-        self.logical_disk_size_in_gb = -1
-
-
-class VMImages(WindowsAzureData):
-
-    def __init__(self):
-        self.vm_images = _list_of(VMImage)
-
-    def __iter__(self):
-        return iter(self.vm_images)
-
-    def __len__(self):
-        return len(self.vm_images)
-
-    def __getitem__(self, index):
-        return self.vm_images[index]
-
-
-class VMImage(WindowsAzureData):
-
-    def __init__(self, name=None, label=None, description=None):
-        self.name = name
-        self.label = label
-        self.category = None # read-only
-        self.description = description
-        self.os_disk_configuration = OSDiskConfiguration()
-        self.data_disk_configurations = DataDiskConfigurations()
-        self.service_name = None # read-only
-        self.deployment_name = None # read-only
-        self.role_name = None # read-only
-        self.location = None # read-only
-        self.affinity_group = None # read-only
-        self.created_time = None # read-only
-        self.modified_time = None # read-only
-        self.language = None
-        self.image_family = None
-        self.recommended_vm_size = None
-        self.is_premium = False # read-only
-        self.eula = None
-        self.icon_uri = None
-        self.small_icon_uri = None
-        self.privacy_uri = None
-        self.publisher_name = None # read-only
-        self.published_date = None
-        self.show_in_gui = False
-        self.pricing_detail_link = None # read-only
-
-
 class PersistentVMDowntimeInfo(WindowsAzureData):
 
     def __init__(self):
@@ -797,7 +701,27 @@ class ConfigurationSet(WindowsAzureData):
         self.role_type = u''
         self.input_endpoints = ConfigurationSetInputEndpoints()
         self.subnet_names = _scalar_list_of(str, 'SubnetName')
+        self.public_ips = PublicIPs()
+        
+class PublicIPs(WindowsAzureData):
 
+    def __init__(self):
+        self.public_ips = _list_of(PublicIP)
+
+    def __iter__(self):
+        return iter(self.public_ips)
+
+    def __len__(self):
+        return len(self.public_ips)
+
+    def __getitem__(self, index):
+        return self.public_ips[index]
+
+class PublicIP(WindowsAzureData):
+
+    def __init__(self, name=u''):
+        self.name = name
+        self.idle_timeout_in_minutes = 4
 
 class ConfigurationSetInputEndpoints(WindowsAzureData):
 
@@ -1457,6 +1381,28 @@ class Database(WindowsAzureData):
         self.max_size_bytes = 0
 
 
+def _update_management_header(request):
+    ''' Add additional headers for management. '''
+
+    if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
+        request.headers.append(('Content-Length', str(len(request.body))))
+
+    # append additional headers base on the service
+    request.headers.append(('x-ms-version', X_MS_VERSION))
+
+    # if it is not GET or HEAD request, must set content-type.
+    if not request.method in ['GET', 'HEAD']:
+        for name, _ in request.headers:
+            if 'content-type' == name.lower():
+                break
+        else:
+            request.headers.append(
+                ('Content-Type',
+                 'application/atom+xml;type=entry;charset=utf-8'))
+
+    return request.headers
+
+
 def _parse_response_for_async_op(response):
     ''' Extracts request id from response header. '''
 
@@ -1486,32 +1432,28 @@ class _XmlSerializer(object):
     @staticmethod
     def create_storage_service_input_to_xml(service_name, description, label,
                                             affinity_group, location,
-                                            account_type,
+                                            geo_replication_enabled,
                                             extended_properties):
-        xml = _XmlSerializer.data_to_xml(
+        return _XmlSerializer.doc_from_data(
+            'CreateStorageServiceInput',
             [('ServiceName', service_name),
              ('Description', description),
              ('Label', label, _encode_base64),
              ('AffinityGroup', affinity_group),
-             ('Location', location)])
-        if extended_properties is not None:
-            xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(
-                extended_properties)
-        xml += _XmlSerializer.data_to_xml([('AccountType', account_type)])
-        return _XmlSerializer.doc_from_xml('CreateStorageServiceInput', xml)
+             ('Location', location),
+             ('GeoReplicationEnabled', geo_replication_enabled, _lower)],
+            extended_properties)
 
     @staticmethod
     def update_storage_service_input_to_xml(description, label,
-                                            account_type,
+                                            geo_replication_enabled,
                                             extended_properties):
-        xml = _XmlSerializer.data_to_xml(
+        return _XmlSerializer.doc_from_data(
+            'UpdateStorageServiceInput',
             [('Description', description),
-             ('Label', label, _encode_base64)])
-        if extended_properties is not None:
-            xml += _XmlSerializer.extended_properties_dict_to_xml_fragment(
-                extended_properties)
-        xml += _XmlSerializer.data_to_xml([('AccountType', account_type)])
-        return _XmlSerializer.doc_from_xml('UpdateStorageServiceInput', xml)
+             ('Label', label, _encode_base64),
+             ('GeoReplicationEnabled', geo_replication_enabled, _lower)],
+            extended_properties)
 
     @staticmethod
     def regenerate_keys_to_xml(key_type):
@@ -1832,6 +1774,15 @@ class _XmlSerializer(object):
         for name in configuration.subnet_names:
             xml += _XmlSerializer.data_to_xml([('SubnetName', name)])
         xml += '</SubnetNames>'
+        if configuration.public_ips:
+            xml += '<PublicIPs>'
+            for public_ip in configuration.public_ips:
+                xml += '<PublicIP>'
+                xml += _XmlSerializer.data_to_xml(
+                    [('Name', public_ip.name),
+                     ('IdleTimeoutInMinutes', public_ip.idle_timeout_in_minutes)])
+                xml += '</PublicIP>'
+            xml += '</PublicIPs>'
         return xml
 
     @staticmethod
@@ -1981,99 +1932,6 @@ class _XmlSerializer(object):
                 [('VirtualNetworkName', virtual_network_name)])
 
         return _XmlSerializer.doc_from_xml('Deployment', xml)
-
-    @staticmethod
-    def capture_vm_image_to_xml(options):
-        return _XmlSerializer.doc_from_data(
-            'CaptureRoleAsVMImageOperation ',
-            [('OperationType', 'CaptureRoleAsVMImageOperation'),
-             ('OSState', options.os_state),
-             ('VMImageName', options.vm_image_name),
-             ('VMImageLabel', options.vm_image_label),
-             ('Description', options.description),
-             ('Language', options.language),
-             ('ImageFamily', options.image_family),
-             ('RecommendedVMSize', options.recommended_vm_size)])
-
-    @staticmethod
-    def create_vm_image_to_xml(image):
-        xml = '<VMImage>'
-
-        xml += _XmlSerializer.data_to_xml(
-            [('Name', image.name),
-            ('Label', image.label),
-            ('Description', image.description)])
-
-        os_disk = image.os_disk_configuration
-        xml += '<OSDiskConfiguration>'
-        xml += _XmlSerializer.data_to_xml(
-            [('HostCaching', os_disk.host_caching),
-            ('OSState', os_disk.os_state),
-            ('OS', os_disk.os),
-            ('MediaLink', os_disk.media_link)])
-        xml += '</OSDiskConfiguration>'
-
-        if image.data_disk_configurations:
-            xml += '<DataDiskConfigurations>'
-            for data_disk in image.data_disk_configurations:
-                xml += '<DataDiskConfiguration>'
-                xml += _XmlSerializer.data_to_xml(
-                    [('HostCaching', data_disk.host_caching),
-                    ('Lun', data_disk.lun),
-                    ('MediaLink', data_disk.media_link),
-                    ('LogicalDiskSizeInGB', data_disk.logical_disk_size_in_gb)])
-                xml += '</DataDiskConfiguration>'
-            xml += '</DataDiskConfigurations>'
-
-        xml += _XmlSerializer.data_to_xml(
-            [('Language', image.language),
-            ('ImageFamily', image.image_family),
-            ('RecommendedVMSize', image.recommended_vm_size),
-            ('Eula', image.eula),
-            ('IconUri', image.icon_uri),
-            ('SmallIconUri', image.small_icon_uri),
-            ('PrivacyUri', image.privacy_uri),
-            ('PublishedDate', image.published_date),
-            ('ShowInGui', image.show_in_gui)])
-
-        xml += '</VMImage>'
-
-        return _XmlSerializer.doc_from_xml('VMImages', xml)
-
-    @staticmethod
-    def update_vm_image_to_xml(image):
-        xml = _XmlSerializer.data_to_xml(
-            [('Label', image.label)])
-
-        os_disk = image.os_disk_configuration
-        xml += '<OSDiskConfiguration>'
-        xml += _XmlSerializer.data_to_xml(
-            [('HostCaching', os_disk.host_caching)])
-        xml += '</OSDiskConfiguration>'
-
-        xml += '<DataDiskConfigurations>'
-        for data_disk in image.data_disk_configurations:
-            xml += '<DataDiskConfiguration>'
-            xml += _XmlSerializer.data_to_xml(
-                [('Name', data_disk.name),
-                ('HostCaching', data_disk.host_caching),
-                ('Lun', data_disk.lun)])
-            xml += '</DataDiskConfiguration>'
-        xml += '</DataDiskConfigurations>'
-
-        xml += _XmlSerializer.data_to_xml(
-            [('Description', image.description),
-            ('Language', image.language),
-            ('ImageFamily', image.image_family),
-            ('RecommendedVMSize', image.recommended_vm_size),
-            ('Eula', image.eula),
-            ('IconUri', image.icon_uri),
-            ('SmallIconUri', image.small_icon_uri),
-            ('PrivacyUri', image.privacy_uri),
-            ('PublishedDate', image.published_date),
-            ('ShowInGui', image.show_in_gui)])
-
-        return _XmlSerializer.doc_from_xml('VMImage', xml)
 
     @staticmethod
     def create_website_to_xml(webspace_name, website_name, geo_region, plan,
