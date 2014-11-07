@@ -22,9 +22,9 @@ from azure.servicemanagement import (
     )
 from util import (
     AzureTestCase,
+    create_service_management,
     credentials,
     getUniqueName,
-    set_service_options,
     )
 
 #------------------------------------------------------------------------------
@@ -33,9 +33,7 @@ from util import (
 class AffinityGroupManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(),
-                                            credentials.getManagementCertFile())
-        set_service_options(self.sms)
+        self.sms = create_service_management(ServiceManagementService)
 
         self.affinity_group_name = getUniqueName('utaffgrp')
         self.hosted_service_name = None

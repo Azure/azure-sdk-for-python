@@ -38,6 +38,7 @@ from util import (
     create_service_management,
     credentials,
     getUniqueName,
+    set_service_options,
     )
 
 SERVICE_CERT_FORMAT = 'pfx'
@@ -552,6 +553,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsInstance(role_size.supported_by_virtual_machines, bool)
         self.assertIsInstance(role_size.supported_by_web_worker_roles, bool)
 
+    @unittest.skip('Can only be used with oauth')
     def test_list_subscriptions(self):
         # Arrange
 
