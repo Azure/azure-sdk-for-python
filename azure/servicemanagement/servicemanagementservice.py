@@ -37,6 +37,7 @@ from azure.servicemanagement import (
     OperatingSystemFamilies,
     OSImage,
     PersistentVMRole,
+    ResourceExtensions,
     RoleSize,
     RoleSizes,
     StorageService,
@@ -1385,6 +1386,26 @@ class ServiceManagementService(_ServiceManagementClient):
                 role_names, post_shutdown_action),
             async=True)
 
+    def list_resource_extensions(self):
+        '''
+        Lists the resource extensions that are available to add to a
+        Virtual Machine.
+        '''
+        return self._perform_get(self._get_resource_extensions_path(),
+                                 ResourceExtensions)
+
+    def list_resource_extension_versions(self, publisher_name, extension_name):
+        '''
+        Lists the versions of a resource extension that are available to add
+        to a Virtual Machine.
+
+        publisher_name: Name of the resource extension publisher.
+        extension_name: Name of the resource extension.
+        '''
+        return self._perform_get(self._get_resource_extension_versions_path(
+                                    publisher_name, extension_name),
+                                 ResourceExtensions)
+
     #--Operations for virtual machine images -----------------------------
     def capture_vm_image(self, service_name, deployment_name, role_name, options):
         '''
@@ -2002,6 +2023,13 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._get_path('services/hostedservices/' + _str(service_name) +
                               '/deployments/' + deployment_name +
                               '/roles/Operations', None)
+
+    def _get_resource_extensions_path(self):
+        return self._get_path('services/resourceextensions', None)
+
+    def _get_resource_extension_versions_path(self, publisher_name, extension_name):
+        return self._get_path('services/resourceextensions',
+                              publisher_name + '/' + extension_name)
 
     def _get_capture_vm_image_path(self, service_name, deployment_name, role_name):
         return self._get_path('services/hostedservices/' + _str(service_name) +

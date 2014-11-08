@@ -1561,6 +1561,39 @@ class ServiceManagementServiceTest(AzureTestCase):
         # Assert
         self.assertTrue(self._os_image_exists(self.os_image_name))
 
+    def test_list_resource_extensions(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_resource_extensions()
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for ext in result:
+            self.assertGreater(len(ext.description), 0)
+            self.assertGreater(len(ext.label), 0)
+            self.assertGreater(len(ext.name), 0)
+            self.assertGreater(len(ext.publisher), 0)
+            self.assertGreater(len(ext.version), 0)
+
+    def test_list_resource_extension_versions(self):
+        # Arrange
+        publisher = 'Chef.Bootstrap.WindowsAzure'
+        name = 'ChefClient'
+
+        # Act
+        result = self.sms.list_resource_extension_versions(
+            publisher, name)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for ext in result:
+            self.assertEqual(ext.name, name)
+            self.assertEqual(ext.publisher, publisher)
+            self.assertGreater(len(ext.description), 0)
+            self.assertGreater(len(ext.label), 0)
+            self.assertGreater(len(ext.version), 0)
+
     #--Test cases for virtual machine images -----------------------------
     def test_capture_vm_image(self):
         # Arrange

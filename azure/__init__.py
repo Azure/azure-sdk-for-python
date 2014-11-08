@@ -304,6 +304,9 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'vm_image': 'VMImage',
     'vm_images': 'VMImages',
     'os_disk_configuration': 'OSDiskConfiguration',
+    'public_ips': 'PublicIPs', 
+    'public_ip': 'PublicIP', 
+    'supported_os': 'SupportedOS',
     }
 
 

@@ -490,6 +490,93 @@ class VMImage(WindowsAzureData):
         self.pricing_detail_link = None # read-only
 
 
+class ResourceExtensions(WindowsAzureData):
+
+    def __init__(self):
+        self.resource_extensions = _list_of(ResourceExtension)
+
+    def __iter__(self):
+        return iter(self.resource_extensions)
+
+    def __len__(self):
+        return len(self.resource_extensions)
+
+    def __getitem__(self, index):
+        return self.resource_extensions[index]
+
+
+class ResourceExtension(WindowsAzureData):
+
+    def __init__(self):
+        self.publisher = u''
+        self.name = u''
+        self.version = u''
+        self.label = u''
+        self.description = u''
+        self.public_configuration_schema = u''
+        self.private_configuration_schema = u''
+        self.sample_config = u''
+        self.replication_completed = False
+        self.eula = u''
+        self.privacy_uri = u''
+        self.homepage_uri = u''
+        self.is_json_extension = False
+        self.is_internal_extension = False
+        self.disallow_major_version_upgrade = False
+        self.company_name = u''
+        self.supported_os = u''
+        self.published_date = u''
+
+
+class ResourceExtensionParameterValues(WindowsAzureData):
+
+    def __init__(self):
+        self.resource_extension_parameter_values = _list_of(ResourceExtensionParameterValue)
+
+    def __iter__(self):
+        return iter(self.resource_extension_parameter_values)
+
+    def __len__(self):
+        return len(self.resource_extension_parameter_values)
+
+    def __getitem__(self, index):
+        return self.resource_extension_parameter_values[index]
+
+
+class ResourceExtensionParameterValue(WindowsAzureData):
+
+    def __init__(self):
+        self.key = u''
+        self.value = u''
+        self.type = u''
+
+
+class ResourceExtensionReferences(WindowsAzureData):
+
+    def __init__(self):
+        self.resource_extension_references = _list_of(ResourceExtensionReference)
+
+    def __iter__(self):
+        return iter(self.resource_extension_references)
+
+    def __len__(self):
+        return len(self.resource_extension_references)
+
+    def __getitem__(self, index):
+        return self.resource_extension_references[index]
+
+
+class ResourceExtensionReference(WindowsAzureData):
+
+    def __init__(self):
+        self.reference_name = u''
+        self.publisher = u''
+        self.version = u''
+        self.resource_extension_parameter_values = ResourceExtensionParameterValues()
+        self.state = u''
+        self.certificates = Certificates()
+
+
 class PersistentVMDowntimeInfo(WindowsAzureData):
 
     def __init__(self):
@@ -790,6 +877,28 @@ class ConfigurationSets(WindowsAzureData):
         return self.configuration_sets[index]
 
 
+class PublicIPs(WindowsAzureData):
+
+    def __init__(self):
+        self.public_ips = _list_of(PublicIP)
+
+    def __iter__(self):
+        return iter(self.public_ips)
+
+    def __len__(self):
+        return len(self.public_ips)
+
+    def __getitem__(self, index):
+        return self.public_ips[index]
+
+
+class PublicIP(WindowsAzureData):
+
+    def __init__(self, name=u''):
+        self.name = name
+        self.idle_timeout_in_minutes = 4
+
+
 class ConfigurationSet(WindowsAzureData):
 
     def __init__(self):
@@ -797,6 +906,7 @@ class ConfigurationSet(WindowsAzureData):
         self.role_type = u''
         self.input_endpoints = ConfigurationSetInputEndpoints()
         self.subnet_names = _scalar_list_of(str, 'SubnetName')
+        self.public_ips = PublicIPs()
 
 
 class ConfigurationSetInputEndpoints(WindowsAzureData):
@@ -1832,6 +1942,17 @@ class _XmlSerializer(object):
         for name in configuration.subnet_names:
             xml += _XmlSerializer.data_to_xml([('SubnetName', name)])
         xml += '</SubnetNames>'
+
+        if configuration.public_ips:
+            xml += '<PublicIPs>'
+            for public_ip in configuration.public_ips:
+                xml += '<PublicIP>'
+                xml += _XmlSerializer.data_to_xml(
+                    [('Name', public_ip.name),
+                     ('IdleTimeoutInMinutes', public_ip.idle_timeout_in_minutes)])
+                xml += '</PublicIP>'
+            xml += '</PublicIPs>'
+
         return xml
 
     @staticmethod
