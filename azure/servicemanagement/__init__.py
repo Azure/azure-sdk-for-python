@@ -308,7 +308,7 @@ class RoleInstance(WindowsAzureData):
         self.power_state = u''
         self.fqdn = u''
         self.host_name = u''
-
+        self.public_ips = PublicIPs()
 
 class InstanceEndpoints(WindowsAzureData):
 
@@ -897,7 +897,7 @@ class PublicIP(WindowsAzureData):
     def __init__(self, name=u''):
         self.name = name
         self.idle_timeout_in_minutes = 4
-
+        self.address = None
 
 class ConfigurationSet(WindowsAzureData):
 
