@@ -1036,7 +1036,9 @@ class ServiceManagementService(_ServiceManagementClient):
                                           data_virtual_hard_disks=None,
                                           role_size=None,
                                           role_type='PersistentVMRole',
-                                          virtual_network_name=None):
+                                          virtual_network_name=None,
+                                          resource_extension_references=None,
+                                          provision_guest_agent=None):
         '''
         Provisions a virtual machine based on the supplied configuration.
 
@@ -1085,6 +1087,14 @@ class ServiceManagementService(_ServiceManagementClient):
         virtual_network_name:
             Specifies the name of an existing virtual network to which the
             deployment will belong.
+        resource_extension_references:
+            Optional. Contains a collection of resource extensions that are to
+            be installed on the Virtual Machine. This element is used if
+            provision_guest_agent is set to True.
+        provision_guest_agent:
+            Optional. Indicates whether the VM Agent is installed on the
+            Virtual Machine. To run a resource extension in a Virtual Machine,
+            this service must be installed.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -1107,13 +1117,17 @@ class ServiceManagementService(_ServiceManagementClient):
                 availability_set_name,
                 data_virtual_hard_disks,
                 role_size,
-                virtual_network_name),
+                virtual_network_name,
+                resource_extension_references,
+                provision_guest_agent),
             async=True)
 
     def add_role(self, service_name, deployment_name, role_name, system_config,
                  os_virtual_hard_disk, network_config=None,
                  availability_set_name=None, data_virtual_hard_disks=None,
-                 role_size=None, role_type='PersistentVMRole'):
+                 role_size=None, role_type='PersistentVMRole',
+                 resource_extension_references=None,
+                 provision_guest_agent=None):
         '''
         Adds a virtual machine to an existing deployment.
 
@@ -1151,6 +1165,14 @@ class ServiceManagementService(_ServiceManagementClient):
         role_type:
             The type of the role for the virtual machine. The only supported
             value is PersistentVMRole.
+        resource_extension_references:
+            Optional. Contains a collection of resource extensions that are to
+            be installed on the Virtual Machine. This element is used if
+            provision_guest_agent is set to True.
+        provision_guest_agent:
+            Optional. Indicates whether the VM Agent is installed on the
+            Virtual Machine. To run a resource extension in a Virtual Machine,
+            this service must be installed.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -1167,13 +1189,17 @@ class ServiceManagementService(_ServiceManagementClient):
                 network_config,
                 availability_set_name,
                 data_virtual_hard_disks,
-                role_size),
+                role_size,
+                resource_extension_references,
+                provision_guest_agent),
             async=True)
 
     def update_role(self, service_name, deployment_name, role_name,
                     os_virtual_hard_disk=None, network_config=None,
                     availability_set_name=None, data_virtual_hard_disks=None,
-                    role_size=None, role_type='PersistentVMRole'):
+                    role_size=None, role_type='PersistentVMRole',
+                    resource_extension_references=None,
+                    provision_guest_agent=None):
         '''
         Updates the specified virtual machine.
 
@@ -1207,6 +1233,14 @@ class ServiceManagementService(_ServiceManagementClient):
         role_type:
             The type of the role for the virtual machine. The only supported
             value is PersistentVMRole.
+        resource_extension_references:
+            Optional. Contains a collection of resource extensions that are to
+            be installed on the Virtual Machine. This element is used if
+            provision_guest_agent is set to True.
+        provision_guest_agent:
+            Optional. Indicates whether the VM Agent is installed on the
+            Virtual Machine. To run a resource extension in a Virtual Machine,
+            this service must be installed.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -1220,7 +1254,9 @@ class ServiceManagementService(_ServiceManagementClient):
                 network_config,
                 availability_set_name,
                 data_virtual_hard_disks,
-                role_size),
+                role_size,
+                resource_extension_references,
+                provision_guest_agent),
             async=True)
 
     def delete_role(self, service_name, deployment_name, role_name):

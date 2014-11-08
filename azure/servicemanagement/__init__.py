@@ -568,10 +568,11 @@ class ResourceExtensionReferences(WindowsAzureData):
 
 class ResourceExtensionReference(WindowsAzureData):
 
-    def __init__(self):
-        self.reference_name = u''
-        self.publisher = u''
-        self.version = u''
+    def __init__(self, reference_name=u'', publisher=u'', name=u'', version=u''):
+        self.reference_name = reference_name
+        self.publisher = publisher
+        self.name = name
+        self.version = version
         self.resource_extension_parameter_values = ResourceExtensionParameterValues()
         self.state = u''
         self.certificates = Certificates()
@@ -1958,7 +1959,9 @@ class _XmlSerializer(object):
     @staticmethod
     def role_to_xml(availability_set_name, data_virtual_hard_disks,
                     network_configuration_set, os_virtual_hard_disk, role_name,
-                    role_size, role_type, system_configuration_set):
+                    role_size, role_type, system_configuration_set,
+                    resource_extension_references,
+                    provision_guest_agent):
         xml = _XmlSerializer.data_to_xml([('RoleName', role_name),
                                           ('RoleType', role_type)])
 
@@ -1981,6 +1984,28 @@ class _XmlSerializer(object):
             xml += '</ConfigurationSet>'
 
         xml += '</ConfigurationSets>'
+
+        if resource_extension_references:
+            xml += '<ResourceExtensionReferences>'
+            for ext in resource_extension_references:
+                xml += '<ResourceExtensionReference>'
+                xml += _XmlSerializer.data_to_xml(
+                    [('ReferenceName', ext.reference_name),
+                     ('Publisher', ext.publisher),
+                     ('Name', ext.name),
+                     ('Version', ext.version)])
+                if ext.resource_extension_parameter_values:
+                    xml += '<ResourceExtensionParameterValues>'
+                    for val in ext.resource_extension_parameter_values:
+                        xml += '<ResourceExtensionParameterValue>'
+                        xml += _XmlSerializer.data_to_xml(
+                            [('Key', val.key),
+                             ('Value', val.value),
+                             ('Type', val.type)])
+                        xml += '</ResourceExtensionParameterValue>'
+                    xml += '</ResourceExtensionParameterValues>'
+                xml += '</ResourceExtensionReference>'
+            xml += '</ResourceExtensionReferences>'
 
         if availability_set_name is not None:
             xml += _XmlSerializer.data_to_xml(
@@ -2015,13 +2040,17 @@ class _XmlSerializer(object):
         if role_size is not None:
             xml += _XmlSerializer.data_to_xml([('RoleSize', role_size)])
 
+        if provision_guest_agent is not None:
+            xml += _XmlSerializer.data_to_xml([('ProvisionGuestAgent', provision_guest_agent, _lower)])
+
         return xml
 
     @staticmethod
     def add_role_to_xml(role_name, system_configuration_set,
                         os_virtual_hard_disk, role_type,
                         network_configuration_set, availability_set_name,
-                        data_virtual_hard_disks, role_size):
+                        data_virtual_hard_disks, role_size,
+                        resource_extension_references, provision_guest_agent):
         xml = _XmlSerializer.role_to_xml(
             availability_set_name,
             data_virtual_hard_disks,
@@ -2030,13 +2059,17 @@ class _XmlSerializer(object):
             role_name,
             role_size,
             role_type,
-            system_configuration_set)
+            system_configuration_set,
+            resource_extension_references,
+            provision_guest_agent)
         return _XmlSerializer.doc_from_xml('PersistentVMRole', xml)
 
     @staticmethod
     def update_role_to_xml(role_name, os_virtual_hard_disk, role_type,
                            network_configuration_set, availability_set_name,
-                           data_virtual_hard_disks, role_size):
+                           data_virtual_hard_disks, role_size,
+                           resource_extension_references,
+                           provision_guest_agent):
         xml = _XmlSerializer.role_to_xml(
             availability_set_name,
             data_virtual_hard_disks,
@@ -2045,7 +2078,9 @@ class _XmlSerializer(object):
             role_name,
             role_size,
             role_type,
-            None)
+            None,
+            resource_extension_references,
+            provision_guest_agent)
         return _XmlSerializer.doc_from_xml('PersistentVMRole', xml)
 
     @staticmethod
@@ -2079,7 +2114,9 @@ class _XmlSerializer(object):
                                           network_configuration_set,
                                           availability_set_name,
                                           data_virtual_hard_disks, role_size,
-                                          virtual_network_name):
+                                          virtual_network_name,
+                                          resource_extension_references,
+                                          provision_guest_agent):
         xml = _XmlSerializer.data_to_xml([('Name', deployment_name),
                                           ('DeploymentSlot', deployment_slot),
                                           ('Label', label)])
@@ -2093,7 +2130,9 @@ class _XmlSerializer(object):
             role_name,
             role_size,
             role_type,
-            system_configuration_set)
+            system_configuration_set,
+            resource_extension_references,
+            provision_guest_agent)
         xml += '</Role>'
         xml += '</RoleList>'
 

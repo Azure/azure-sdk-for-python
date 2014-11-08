@@ -28,6 +28,8 @@ from azure.servicemanagement import (
     Listener,
     OSVirtualHardDisk,
     PublicKey,
+    ResourceExtensionReference,
+    ResourceExtensionReferences,
     ServiceManagementService,
     VMImage,
     WindowsConfigurationSet,
@@ -1254,6 +1256,45 @@ class ServiceManagementServiceTest(AzureTestCase):
         result = self.sms.create_virtual_machine_deployment(
             service_name, deployment_name, 'production', deployment_label,
             role_name, system, os_hd, network, role_size='Small')
+
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
+
+        # Assert
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
+
+    def test_create_virtual_machine_deployment_linux_resource_extension(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+        deployment_label = deployment_name + 'label'
+
+        self._create_hosted_service(service_name)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+
+        # Act
+        system, os_hd, network = self._linux_role(role_name)
+        extensions = ResourceExtensionReferences()
+        extensions.resource_extension_references.append(
+            ResourceExtensionReference('LinuxChefClientReference',
+                                       'Chef.Bootstrap.WindowsAzure',
+                                       'LinuxChefClient',
+                                       '11.16'))
+
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network, role_size='Small',
+            resource_extension_references=extensions,
+            provision_guest_agent=True
+            )
 
         self._wait_for_async(result.request_id)
         self._wait_for_deployment(service_name, deployment_name)
