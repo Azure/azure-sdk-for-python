@@ -899,7 +899,6 @@ class PublicIP(WindowsAzureData):
         self.idle_timeout_in_minutes = 4
         self.address = None
 
-
 class ConfigurationSet(WindowsAzureData):
 
     def __init__(self):
