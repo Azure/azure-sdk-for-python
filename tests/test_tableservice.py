@@ -19,6 +19,7 @@ import time
 import unittest
 
 from datetime import datetime
+from dateutil.tz import tzutc, tzoffset
 from azure import WindowsAzureError, WindowsAzureBatchOperationError
 from azure.storage import (
     Entity,
@@ -155,8 +156,8 @@ class TableServiceTest(AzureTestCase):
         self.assertFalse(hasattr(entity, "aquarius"))
         self.assertEqual(entity.ratio, 3.1)
         self.assertEqual(entity.large, 9333111000)
-        self.assertEqual(entity.Birthday, datetime(1973, 10, 4))
-        self.assertEqual(entity.birthday, datetime(1970, 10, 4))
+        self.assertEqual(entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc()))
+        self.assertEqual(entity.birthday, datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity.other, 20)
         self.assertIsInstance(entity.clsid, EntityProperty)
         self.assertEqual(entity.clsid.type, 'Edm.Guid')
@@ -176,7 +177,7 @@ class TableServiceTest(AzureTestCase):
         self.assertFalse(hasattr(entity, "ratio"))
         self.assertFalse(hasattr(entity, "large"))
         self.assertFalse(hasattr(entity, "Birthday"))
-        self.assertEqual(entity.birthday, datetime(1991, 10, 4))
+        self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
 
@@ -193,8 +194,8 @@ class TableServiceTest(AzureTestCase):
         self.assertEqual(entity.sign, 'aquarius')
         self.assertEqual(entity.ratio, 3.1)
         self.assertEqual(entity.large, 9333111000)
-        self.assertEqual(entity.Birthday, datetime(1973, 10, 4))
-        self.assertEqual(entity.birthday, datetime(1991, 10, 4))
+        self.assertEqual(entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc()))
+        self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity.other, 20)
         self.assertIsInstance(entity.clsid, EntityProperty)
         self.assertEqual(entity.clsid.type, 'Edm.Guid')
@@ -1273,6 +1274,25 @@ class TableServiceTest(AzureTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(resp.binary.type, 'Edm.Binary')
         self.assertEqual(resp.binary.value, binary_data)
+
+    def test_timezone(self):
+        # Act
+        local_tz = tzoffset('BRST', -10800)
+        local_date = datetime(2003, 9, 27, 9, 52, 43, tzinfo=local_tz)
+        self._create_table(self.table_name)
+        self.ts.insert_entity(
+            self.table_name,
+            {
+                'PartitionKey': 'test',
+                'RowKey': 'test1',
+                'date': local_date,
+            })
+        resp = self.ts.get_entity(self.table_name, 'test', 'test1')
+
+        # Assert
+        self.assertIsNotNone(resp)
+        self.assertEqual(resp.date, local_date.astimezone(tzutc()))
+        self.assertEqual(resp.date.astimezone(local_tz), local_date)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
