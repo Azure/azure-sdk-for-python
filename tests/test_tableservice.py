@@ -163,6 +163,7 @@ class TableServiceTest(AzureTestCase):
         self.assertEqual(entity.clsid.type, 'Edm.Guid')
         self.assertEqual(entity.clsid.value,
                          'c9da6455-213d-42c9-9a79-3e9149a57833')
+        self.assertTrue(hasattr(entity, "Timestamp"))
 
     def _assert_updated_entity(self, entity):
         '''
@@ -180,6 +181,7 @@ class TableServiceTest(AzureTestCase):
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
+        self.assertTrue(hasattr(entity, "Timestamp"))
 
     def _assert_merged_entity(self, entity):
         '''
@@ -201,6 +203,7 @@ class TableServiceTest(AzureTestCase):
         self.assertEqual(entity.clsid.type, 'Edm.Guid')
         self.assertEqual(entity.clsid.value,
                          'c9da6455-213d-42c9-9a79-3e9149a57833')
+        self.assertTrue(hasattr(entity, "Timestamp"))
 
     #--Test cases for table service -------------------------------------------
     def test_get_set_table_service_properties(self):
