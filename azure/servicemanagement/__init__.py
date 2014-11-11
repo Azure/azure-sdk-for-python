@@ -578,6 +578,78 @@ class ResourceExtensionReference(WindowsAzureData):
         self.certificates = Certificates()
 
 
+class AdditionalUnattendContent(WindowsAzureData):
+
+    def __init__(self):
+        self.passes = Passes()
+
+
+class Passes(WindowsAzureData):
+
+    def __init__(self):
+        self.passes = _list_of(UnattendPass)
+
+    def __iter__(self):
+        return iter(self.passes)
+
+    def __len__(self):
+        return len(self.passes)
+
+    def __getitem__(self, index):
+        return self.passes[index]
+
+
+class UnattendPass(WindowsAzureData):
+
+    def __init__(self):
+        self.pass_name = u''
+        self.components = Components()
+
+
+class Components(WindowsAzureData):
+
+    def __init__(self):
+        self.components = _list_of(UnattendComponent)
+
+    def __iter__(self):
+        return iter(self.components)
+
+    def __len__(self):
+        return len(self.components)
+
+    def __getitem__(self, index):
+        return self.components[index]
+
+
+class UnattendComponent(WindowsAzureData):
+
+    def __init__(self):
+        self.component_name = u''
+        self.component_settings = ComponentSettings()
+
+
+class ComponentSettings(WindowsAzureData):
+
+    def __init__(self):
+        self.component_settings = _list_of(ComponentSetting)
+
+    def __iter__(self):
+        return iter(self.component_settings)
+
+    def __len__(self):
+        return len(self.component_settings)
+
+    def __getitem__(self, index):
+        return self.component_settings[index]
+
+
+class ComponentSetting(WindowsAzureData):
+
+    def __init__(self):
+        self.setting_name = u''
+        self.content = u''
+
+
 class PersistentVMDowntimeInfo(WindowsAzureData):
 
     def __init__(self):
@@ -977,6 +1049,7 @@ class WindowsConfigurationSet(WindowsAzureData):
         self.stored_certificate_settings = StoredCertificateSettings()
         self.win_rm = WinRM()
         self.custom_data = custom_data
+        self.additional_unattend_content = AdditionalUnattendContent()
 
 
 class DomainJoin(WindowsAzureData):
@@ -1947,10 +2020,8 @@ class _XmlSerializer(object):
                 xml += '</Listener>'
             xml += '</Listeners></WinRM>'
         xml += _XmlSerializer.data_to_xml(
-            [('AdminUsername', configuration.admin_username)])
-        if configuration.custom_data is not None:
-            xml += _XmlSerializer.data_to_xml(
-                [('CustomData', configuration.custom_data, _encode_base64)])
+            [('AdminUsername', configuration.admin_username),
+             ('CustomData', configuration.custom_data, _encode_base64)])
         return xml
 
     @staticmethod
@@ -1983,9 +2054,10 @@ class _XmlSerializer(object):
                 xml += '</KeyPair>'
             xml += '</KeyPairs>'
             xml += '</SSH>'
-        if configuration.custom_data is not None:
-            xml += _XmlSerializer.data_to_xml(
-                [('CustomData', configuration.custom_data, _encode_base64)])
+
+        xml += _XmlSerializer.data_to_xml(
+            [('CustomData', configuration.custom_data, _encode_base64)])
+
         return xml
 
     @staticmethod
@@ -2042,29 +2114,30 @@ class _XmlSerializer(object):
                     network_configuration_set, os_virtual_hard_disk, role_name,
                     role_size, role_type, system_configuration_set,
                     resource_extension_references,
-                    provision_guest_agent):
+                    provision_guest_agent, vm_image_name, media_location):
         xml = _XmlSerializer.data_to_xml([('RoleName', role_name),
                                           ('RoleType', role_type)])
 
-        xml += '<ConfigurationSets>'
+        if system_configuration_set or network_configuration_set:
+            xml += '<ConfigurationSets>'
 
-        if system_configuration_set is not None:
-            xml += '<ConfigurationSet>'
-            if isinstance(system_configuration_set, WindowsConfigurationSet):
-                xml += _XmlSerializer.windows_configuration_to_xml(
-                    system_configuration_set)
-            elif isinstance(system_configuration_set, LinuxConfigurationSet):
-                xml += _XmlSerializer.linux_configuration_to_xml(
-                    system_configuration_set)
-            xml += '</ConfigurationSet>'
+            if system_configuration_set is not None:
+                xml += '<ConfigurationSet>'
+                if isinstance(system_configuration_set, WindowsConfigurationSet):
+                    xml += _XmlSerializer.windows_configuration_to_xml(
+                        system_configuration_set)
+                elif isinstance(system_configuration_set, LinuxConfigurationSet):
+                    xml += _XmlSerializer.linux_configuration_to_xml(
+                        system_configuration_set)
+                xml += '</ConfigurationSet>'
 
-        if network_configuration_set is not None:
-            xml += '<ConfigurationSet>'
-            xml += _XmlSerializer.network_configuration_to_xml(
-                network_configuration_set)
-            xml += '</ConfigurationSet>'
+            if network_configuration_set is not None:
+                xml += '<ConfigurationSet>'
+                xml += _XmlSerializer.network_configuration_to_xml(
+                    network_configuration_set)
+                xml += '</ConfigurationSet>'
 
-        xml += '</ConfigurationSets>'
+            xml += '</ConfigurationSets>'
 
         if resource_extension_references:
             xml += '<ResourceExtensionReferences>'
@@ -2088,9 +2161,10 @@ class _XmlSerializer(object):
                 xml += '</ResourceExtensionReference>'
             xml += '</ResourceExtensionReferences>'
 
-        if availability_set_name is not None:
-            xml += _XmlSerializer.data_to_xml(
-                [('AvailabilitySetName', availability_set_name)])
+        xml += _XmlSerializer.data_to_xml(
+            [('VMImageName', vm_image_name),
+             ('MediaLocation', media_location),
+             ('AvailabilitySetName', availability_set_name)])
 
         if data_virtual_hard_disks is not None:
             xml += '<DataVirtualHardDisks>'
@@ -2118,11 +2192,9 @@ class _XmlSerializer(object):
                  ('RemoteSourceImageLink', os_virtual_hard_disk.remote_source_image_link)])
             xml += '</OSVirtualHardDisk>'
 
-        if role_size is not None:
-            xml += _XmlSerializer.data_to_xml([('RoleSize', role_size)])
-
-        if provision_guest_agent is not None:
-            xml += _XmlSerializer.data_to_xml([('ProvisionGuestAgent', provision_guest_agent, _lower)])
+        xml += _XmlSerializer.data_to_xml(
+            [('RoleSize', role_size),
+             ('ProvisionGuestAgent', provision_guest_agent, _lower)])
 
         return xml
 
@@ -2131,7 +2203,8 @@ class _XmlSerializer(object):
                         os_virtual_hard_disk, role_type,
                         network_configuration_set, availability_set_name,
                         data_virtual_hard_disks, role_size,
-                        resource_extension_references, provision_guest_agent):
+                        resource_extension_references, provision_guest_agent,
+                        vm_image_name, media_location):
         xml = _XmlSerializer.role_to_xml(
             availability_set_name,
             data_virtual_hard_disks,
@@ -2142,7 +2215,9 @@ class _XmlSerializer(object):
             role_type,
             system_configuration_set,
             resource_extension_references,
-            provision_guest_agent)
+            provision_guest_agent,
+            vm_image_name,
+            media_location)
         return _XmlSerializer.doc_from_xml('PersistentVMRole', xml)
 
     @staticmethod
@@ -2161,7 +2236,9 @@ class _XmlSerializer(object):
             role_type,
             None,
             resource_extension_references,
-            provision_guest_agent)
+            provision_guest_agent,
+            None,
+            None)
         return _XmlSerializer.doc_from_xml('PersistentVMRole', xml)
 
     @staticmethod
@@ -2197,7 +2274,9 @@ class _XmlSerializer(object):
                                           data_virtual_hard_disks, role_size,
                                           virtual_network_name,
                                           resource_extension_references,
-                                          provision_guest_agent):
+                                          provision_guest_agent,
+                                          vm_image_name,
+                                          media_location):
         xml = _XmlSerializer.data_to_xml([('Name', deployment_name),
                                           ('DeploymentSlot', deployment_slot),
                                           ('Label', label)])
@@ -2213,13 +2292,14 @@ class _XmlSerializer(object):
             role_type,
             system_configuration_set,
             resource_extension_references,
-            provision_guest_agent)
+            provision_guest_agent,
+            vm_image_name,
+            media_location)
         xml += '</Role>'
         xml += '</RoleList>'
 
-        if virtual_network_name is not None:
-            xml += _XmlSerializer.data_to_xml(
-                [('VirtualNetworkName', virtual_network_name)])
+        xml += _XmlSerializer.data_to_xml(
+            [('VirtualNetworkName', virtual_network_name)])
 
         return _XmlSerializer.doc_from_xml('Deployment', xml)
 

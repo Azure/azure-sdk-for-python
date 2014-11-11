@@ -1038,7 +1038,9 @@ class ServiceManagementService(_ServiceManagementClient):
                                           role_type='PersistentVMRole',
                                           virtual_network_name=None,
                                           resource_extension_references=None,
-                                          provision_guest_agent=None):
+                                          provision_guest_agent=None,
+                                          vm_image_name=None,
+                                          media_location=None):
         '''
         Provisions a virtual machine based on the supplied configuration.
 
@@ -1095,13 +1097,20 @@ class ServiceManagementService(_ServiceManagementClient):
             Optional. Indicates whether the VM Agent is installed on the
             Virtual Machine. To run a resource extension in a Virtual Machine,
             this service must be installed.
+        vm_image_name:
+            Optional. Specifies the name of the VM Image that is to be used to
+            create the Virtual Machine. If this is specified, the
+            system_config and network_config parameters are not used.
+        media_location:
+            Optional. Required if the Virtual Machine is being created from a
+            published VM Image. Specifies the location of the VHD file that is
+            created when VMImageName specifies a published VM Image.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
         _validate_not_none('deployment_slot', deployment_slot)
         _validate_not_none('label', label)
         _validate_not_none('role_name', role_name)
-        _validate_not_none('system_config', system_config)
         _validate_not_none('os_virtual_hard_disk', os_virtual_hard_disk)
         return self._perform_post(
             self._get_deployment_path_using_name(service_name),
@@ -1119,7 +1128,9 @@ class ServiceManagementService(_ServiceManagementClient):
                 role_size,
                 virtual_network_name,
                 resource_extension_references,
-                provision_guest_agent),
+                provision_guest_agent,
+                vm_image_name,
+                media_location),
             async=True)
 
     def add_role(self, service_name, deployment_name, role_name, system_config,
@@ -1127,7 +1138,8 @@ class ServiceManagementService(_ServiceManagementClient):
                  availability_set_name=None, data_virtual_hard_disks=None,
                  role_size=None, role_type='PersistentVMRole',
                  resource_extension_references=None,
-                 provision_guest_agent=None):
+                 provision_guest_agent=None, vm_image_name=None,
+                 media_location=None):
         '''
         Adds a virtual machine to an existing deployment.
 
@@ -1173,11 +1185,18 @@ class ServiceManagementService(_ServiceManagementClient):
             Optional. Indicates whether the VM Agent is installed on the
             Virtual Machine. To run a resource extension in a Virtual Machine,
             this service must be installed.
+        vm_image_name:
+            Optional. Specifies the name of the VM Image that is to be used to
+            create the Virtual Machine. If this is specified, the
+            system_config and network_config parameters are not used.
+        media_location:
+            Optional. Required if the Virtual Machine is being created from a
+            published VM Image. Specifies the location of the VHD file that is
+            created when VMImageName specifies a published VM Image.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
         _validate_not_none('role_name', role_name)
-        _validate_not_none('system_config', system_config)
         _validate_not_none('os_virtual_hard_disk', os_virtual_hard_disk)
         return self._perform_post(
             self._get_role_path(service_name, deployment_name),
@@ -1191,7 +1210,9 @@ class ServiceManagementService(_ServiceManagementClient):
                 data_virtual_hard_disks,
                 role_size,
                 resource_extension_references,
-                provision_guest_agent),
+                provision_guest_agent,
+                vm_image_name,
+                media_location),
             async=True)
 
     def update_role(self, service_name, deployment_name, role_name,
