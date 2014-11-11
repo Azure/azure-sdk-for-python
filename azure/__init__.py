@@ -37,7 +37,7 @@ from xml.sax.saxutils import escape as xml_escape
 # constants
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.8.3'
+__version__ = '0.8.4'
 
 # Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
@@ -106,10 +106,9 @@ class WindowsAzureData(object):
     It is only used to check whether it is instance or not. '''
     pass
 
-
 class WindowsAzureError(Exception):
 
-    ''' WindowsAzure Excpetion base class. '''
+    ''' WindowsAzure Exception base class. '''
 
     def __init__(self, message):
         super(WindowsAzureError, self).__init__(message)

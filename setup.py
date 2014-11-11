@@ -30,7 +30,7 @@ from distutils.core import setup
 # python setup.py sdist upload
 
 setup(name='azure',
-      version='0.8.3',
+      version='0.8.4',
       description='Windows Azure client APIs',
       license='Apache License 2.0',
       author='Microsoft Corporation',
@@ -49,5 +49,6 @@ setup(name='azure',
                 'azure.http',
                 'azure.servicebus',
                 'azure.storage',
-                'azure.servicemanagement']
+                'azure.servicemanagement'],
+      install_requires=['python-dateutil']
      )
