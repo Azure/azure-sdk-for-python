@@ -827,10 +827,6 @@ def _convert_xml_to_entity(xmlstr):
     # extract each property node and get the type from attribute and node value
     for xml_property in xml_properties[0].childNodes:
         name = _remove_prefix(xml_property.nodeName)
-        # exclude the Timestamp since it is auto added by azure when
-        # inserting entity. We don't want this to mix with real properties
-        if name in ['Timestamp']:
-            continue
 
         if xml_property.firstChild:
             value = xml_property.firstChild.nodeValue
