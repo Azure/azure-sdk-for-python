@@ -35,9 +35,7 @@
   <ItemGroup>
     <Compile Include="http\batchclient.py" />
     <Compile Include="http\httpclient.py" />
-    <Compile Include="http\requestsclient.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="http\requestsclient.py" />
     <Compile Include="http\winhttp.py" />
     <Compile Include="http\__init__.py" />
     <Compile Include="servicemanagement\schedulermanagementservice.py" />
@@ -61,7 +59,7 @@
   <ItemGroup>
     <Folder Include="http" />
     <Folder Include="servicemanagement" />
-    <Folder Include="servicebus\" />
+    <Folder Include="servicebus" />
     <Folder Include="storage" />
   </ItemGroup>
   <ItemGroup>
