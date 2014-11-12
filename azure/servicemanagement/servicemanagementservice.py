@@ -1504,6 +1504,61 @@ class ServiceManagementService(_ServiceManagementClient):
                 role_names, post_shutdown_action),
             async=True)
 
+    def add_dns_server(self, service_name, deployment_name, dns_server_name, address):
+        '''
+        Adds a DNS server definition to an existing deployment.
+
+        service_name: The name of the service.
+        deployment_name: The name of the deployment.
+        dns_server_name: Specifies the name of the DNS server.
+        address: Specifies the IP address of the DNS server.
+        '''
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        _validate_not_none('dns_server_name', dns_server_name)
+        _validate_not_none('address', address)
+        return self._perform_post(
+            self._get_dns_server_path(service_name, deployment_name),
+            _XmlSerializer.dns_server_to_xml(dns_server_name, address),
+            async=True)
+
+    def update_dns_server(self, service_name, deployment_name, dns_server_name, address):
+        '''
+        Updates the ip address of a DNS server.
+
+        service_name: The name of the service.
+        deployment_name: The name of the deployment.
+        dns_server_name: Specifies the name of the DNS server.
+        address: Specifies the IP address of the DNS server.
+        '''
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        _validate_not_none('dns_server_name', dns_server_name)
+        _validate_not_none('address', address)
+        return self._perform_put(
+            self._get_dns_server_path(service_name,
+                                      deployment_name,
+                                      dns_server_name),
+            _XmlSerializer.dns_server_to_xml(dns_server_name, address),
+            async=True)
+
+    def delete_dns_server(self, service_name, deployment_name, dns_server_name):
+        '''
+        Deletes a DNS server from a deployment.
+
+        service_name: The name of the service.
+        deployment_name: The name of the deployment.
+        dns_server_name: Name of the DNS server that you want to delete.
+        '''
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        _validate_not_none('dns_server_name', dns_server_name)
+        return self._perform_delete(
+            self._get_dns_server_path(service_name,
+                                      deployment_name,
+                                      dns_server_name),
+            async=True)
+
     def list_resource_extensions(self):
         '''
         Lists the resource extensions that are available to add to a
@@ -2148,6 +2203,12 @@ class ServiceManagementService(_ServiceManagementClient):
     def _get_resource_extension_versions_path(self, publisher_name, extension_name):
         return self._get_path('services/resourceextensions',
                               publisher_name + '/' + extension_name)
+
+    def _get_dns_server_path(self, service_name, deployment_name,
+                             dns_server_name=None):
+        return self._get_path('services/hostedservices/' + _str(service_name) +
+                              '/deployments/' + deployment_name +
+                              '/dnsservers', dns_server_name)
 
     def _get_capture_vm_image_path(self, service_name, deployment_name, role_name):
         return self._get_path('services/hostedservices/' + _str(service_name) +

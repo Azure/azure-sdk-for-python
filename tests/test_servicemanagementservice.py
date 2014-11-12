@@ -185,7 +185,6 @@ class ServiceManagementServiceTest(AzureTestCase):
             except:
                 pass
 
-
     #--Helpers-----------------------------------------------------------------
     def _wait_for_async(self, request_id):
         count = 0
@@ -1783,6 +1782,34 @@ class ServiceManagementServiceTest(AzureTestCase):
             self.assertGreater(len(ext.description), 0)
             self.assertGreater(len(ext.label), 0)
             self.assertGreater(len(ext.version), 0)
+
+    def test_add_update_delete_dns_server(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+
+        self._create_vm_windows(service_name, deployment_name, role_name)
+
+        # Act
+        result = self.sms.add_dns_server(service_name,
+                                         deployment_name,
+                                         'mydnsserver',
+                                         '192.168.144.1')
+        self._wait_for_async(result.request_id)
+
+        result = self.sms.update_dns_server(service_name,
+                                         deployment_name,
+                                         'mydnsserver',
+                                         '192.168.144.2')
+        self._wait_for_async(result.request_id)
+
+        result = self.sms.delete_dns_server(service_name,
+                                         deployment_name,
+                                         'mydnsserver')
+        self._wait_for_async(result.request_id)
+
+        # Assert
 
     #--Test cases for virtual machine images -----------------------------
     def test_capture_vm_image(self):

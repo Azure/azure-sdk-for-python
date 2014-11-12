@@ -2500,6 +2500,13 @@ class _XmlSerializer(object):
              ('Location', location)])
 
     @staticmethod
+    def dns_server_to_xml(name, address):
+        return _XmlSerializer.doc_from_data(
+            'DnsServer',
+            [('Name', name),
+             ('Address', address)])
+
+    @staticmethod
     def data_to_xml(data):
         '''Creates an xml fragment from the specified data.
            data: Array of tuples, where first: xml element name
