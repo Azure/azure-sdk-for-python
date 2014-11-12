@@ -38,6 +38,8 @@ from azure.servicemanagement import (
     OSImage,
     PersistentVMRole,
     ResourceExtensions,
+    ReservedIP,
+    ReservedIPs,
     RoleSize,
     RoleSizes,
     StorageService,
@@ -1012,6 +1014,53 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_get('/' + self.subscription_id + '',
                                  Subscription)
 
+    #--Operations for reserved ip addresses  -----------------------------
+    def create_reserved_ip_address(self, name, label=None, location=None):
+        '''
+        Reserves an IPv4 address for the specified subscription.
+
+        name:
+            Required. Specifies the name for the reserved IP address.
+        label:
+            Optional. Specifies a label for the reserved IP address. The label
+            can be up to 100 characters long and can be used for your tracking
+            purposes.
+        location:
+            Required. Specifies the location of the reserved IP address. This
+            should be the same location that is assigned to the cloud service
+            containing the deployment that will use the reserved IP address.
+            To see the available locations, you can use list_locations.
+        '''
+        _validate_not_none('name', name)
+        return self._perform_post(
+            self._get_reserved_ip_path(),
+            _XmlSerializer.create_reserved_ip_to_xml(name, label, location))
+
+    def delete_reserved_ip_address(self, name):
+        '''
+        Deletes a reserved IP address from the specified subscription.
+
+        name: Required. Name of the reserved IP address.
+        '''
+        _validate_not_none('name', name)
+        return self._perform_delete(self._get_reserved_ip_path(name))
+
+    def get_reserved_ip_address(self, name):
+        '''
+        Retrieves information about the specified reserved IP address.
+
+        name: Required. Name of the reserved IP address.
+        '''
+        _validate_not_none('name', name)
+        return self._perform_get(self._get_reserved_ip_path(name), ReservedIP)
+
+    def list_reserved_ip_addresses(self):
+        '''
+        Lists the IP addresses that have been reserved for the specified
+        subscription.
+        '''
+        return self._perform_get(self._get_reserved_ip_path(), ReservedIPs)
+
     #--Operations for virtual machines -----------------------------------
     def get_role(self, service_name, deployment_name, role_name):
         '''
@@ -1040,7 +1089,9 @@ class ServiceManagementService(_ServiceManagementClient):
                                           resource_extension_references=None,
                                           provision_guest_agent=None,
                                           vm_image_name=None,
-                                          media_location=None):
+                                          media_location=None,
+                                          dns_servers=None,
+                                          reserved_ip_name=None):
         '''
         Provisions a virtual machine based on the supplied configuration.
 
@@ -1106,6 +1157,14 @@ class ServiceManagementService(_ServiceManagementClient):
             Optional. Required if the Virtual Machine is being created from a
             published VM Image. Specifies the location of the VHD file that is
             created when VMImageName specifies a published VM Image.
+        dns_servers:
+            Optional. List of DNS servers (use DnsServer class) to associate
+            with the Virtual Machine.
+        reserved_ip_name:
+            Optional. Specifies the name of a reserved IP address that is to be
+            assigned to the deployment. You must run create_reserved_ip_address
+            before you can assign the address to the deployment using this
+            element.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
@@ -1130,7 +1189,9 @@ class ServiceManagementService(_ServiceManagementClient):
                 resource_extension_references,
                 provision_guest_agent,
                 vm_image_name,
-                media_location),
+                media_location,
+                dns_servers,
+                reserved_ip_name),
             async=True)
 
     def add_role(self, service_name, deployment_name, role_name, system_config,
@@ -2096,6 +2157,9 @@ class ServiceManagementService(_ServiceManagementClient):
 
     def _get_vm_image_path(self, image_name=None):
         return self._get_path('services/vmimages', image_name)
+
+    def _get_reserved_ip_path(self, name=None):
+        return self._get_path('services/networking/reservedips', name)
 
     def _get_data_disk_path(self, service_name, deployment_name, role_name,
                             lun=None):

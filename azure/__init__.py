@@ -306,6 +306,8 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'public_ips': 'PublicIPs', 
     'public_ip': 'PublicIP', 
     'supported_os': 'SupportedOS',
+    'reserved_ip': 'ReservedIP',
+    'reserved_ips': 'ReservedIPs',
     }
 
 

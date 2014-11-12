@@ -650,6 +650,42 @@ class ComponentSetting(WindowsAzureData):
         self.content = u''
 
 
+class DnsServer(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.address = u''
+
+
+class ReservedIPs(WindowsAzureData):
+
+    def __init__(self):
+        self.reserved_ips = _list_of(ReservedIP)
+
+    def __iter__(self):
+        return iter(self.reserved_ips)
+
+    def __len__(self):
+        return len(self.reserved_ips)
+
+    def __getitem__(self, index):
+        return self.reserved_ips[index]
+
+
+class ReservedIP(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.address = u''
+        self.id = u''
+        self.label = u''
+        self.state = u''
+        self.in_use = False
+        self.service_name = u''
+        self.deployment_name = u''
+        self.location = u''
+
+
 class PersistentVMDowntimeInfo(WindowsAzureData):
 
     def __init__(self):
@@ -2300,7 +2336,9 @@ class _XmlSerializer(object):
                                           resource_extension_references,
                                           provision_guest_agent,
                                           vm_image_name,
-                                          media_location):
+                                          media_location,
+                                          dns_servers,
+                                          reserved_ip_name):
         xml = _XmlSerializer.data_to_xml([('Name', deployment_name),
                                           ('DeploymentSlot', deployment_slot),
                                           ('Label', label)])
@@ -2324,6 +2362,19 @@ class _XmlSerializer(object):
 
         xml += _XmlSerializer.data_to_xml(
             [('VirtualNetworkName', virtual_network_name)])
+
+        if dns_servers:
+            xml += '<Dns><DnsServers>'
+            for dns_server in dns_servers:
+                xml += '<DnsServer>'
+                xml += _XmlSerializer.data_to_xml(
+                    [('Name', dns_server.name),
+                     ('Address', dns_server.address)])
+                xml += '</DnsServer>'
+            xml += '</DnsServers></Dns>'
+
+        xml += _XmlSerializer.data_to_xml(
+            [('ReservedIPName', reserved_ip_name)])
 
         return _XmlSerializer.doc_from_xml('Deployment', xml)
 
@@ -2439,6 +2490,14 @@ class _XmlSerializer(object):
              ('Plan', plan)])
         xml += '</WebSpaceToCreate>'
         return _XmlSerializer.doc_from_xml('Site', xml)
+
+    @staticmethod
+    def create_reserved_ip_to_xml(name, label, location):
+        return _XmlSerializer.doc_from_data(
+            'ReservedIP',
+            [('Name', name),
+             ('Label', label),
+             ('Location', location)])
 
     @staticmethod
     def data_to_xml(data):

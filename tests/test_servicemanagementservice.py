@@ -109,6 +109,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.disk_name = getUniqueName('utdisk')
         self.os_image_name = getUniqueName('utosimg')
         self.data_disk_info = None
+        self.reserved_ip_address = None
 
     def tearDown(self):
         if self.data_disk_info is not None:
@@ -177,6 +178,13 @@ class ServiceManagementServiceTest(AzureTestCase):
             self.bc.delete_container(self.container_name)
         except:
             pass
+
+        if self.reserved_ip_address:
+            try:
+                self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+            except:
+                pass
+
 
     #--Helpers-----------------------------------------------------------------
     def _wait_for_async(self, request_id):
@@ -541,6 +549,40 @@ class ServiceManagementServiceTest(AzureTestCase):
                                    system, os_hd, network)
         self._wait_for_async(result.request_id)
         self._wait_for_role(service_name, deployment_name, role_name)
+
+    def _wait_for_reserved_ip_address(self, name, state='Created'):
+        count = 0
+        try:
+            props = self.sms.get_reserved_ip_address(name)
+        except:
+            props = None
+
+        while props is None or props.state != state:
+            count = count + 1
+            if count > 120:
+                self.assertTrue(
+                    False, 'Timed out waiting for ip address state.')
+            time.sleep(5)
+
+            try:
+                props = self.sms.get_reserved_ip_address(name)
+            except:
+                props = None
+
+    def _create_reserved_ip_address(self):
+        self.reserved_ip_address = getUniqueName('ip')
+        result = self.sms.create_reserved_ip_address(
+            self.reserved_ip_address,
+            'mylabel',
+            'West US')
+        self._wait_for_reserved_ip_address(self.reserved_ip_address)
+
+    def _reserved_ip_address_exists(self, name):
+        try:
+            result = self.sms.get_reserved_ip_address(name)
+            return result is not None
+        except:
+            return False
 
     #--Test cases for subscriptions --------------------------------------
     def test_list_role_sizes(self):
@@ -1168,6 +1210,68 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertTrue(result.max_local_network_sites > 0)
         self.assertTrue(result.max_storage_accounts > 0)
         self.assertTrue(result.max_virtual_network_sites > 0)
+
+    #--Test cases for reserved ip addresses  -----------------------------
+    def test_create_reserved_ip_address(self):
+        # Arrange
+        self.reserved_ip_address = getUniqueName('ip')
+
+        # Act
+        result = self.sms.create_reserved_ip_address(
+            self.reserved_ip_address,
+            'mylabel',
+            'West US')
+        self._wait_for_reserved_ip_address(self.reserved_ip_address)
+
+        # Assert
+        self.assertTrue(
+            self._reserved_ip_address_exists(self.reserved_ip_address))
+
+    def test_delete_reserved_ip_address(self):
+        # Arrange
+        self._create_reserved_ip_address()
+
+        # Act
+        result = self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+        self.reserved_ip_address = None
+
+        # Assert
+        self.assertIsNone(result)
+        self.assertFalse(
+            self._reserved_ip_address_exists(self.reserved_ip_address))
+
+    def test_get_reserved_ip_address(self):
+        # Arrange
+        self._create_reserved_ip_address()
+
+        # Act
+        result = self.sms.get_reserved_ip_address(self.reserved_ip_address)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(result.name, self.reserved_ip_address)
+        self.assertEqual(result.label, 'mylabel')
+        self.assertEqual(result.location, 'West US')
+        self.assertGreater(len(result.address), 0)
+        self.assertGreater(len(result.id), 0)
+        self.assertGreater(len(result.state), 0)
+        self.assertFalse(result.in_use)
+        self.assertEqual(len(result.service_name), 0)
+        self.assertEqual(len(result.deployment_name), 0)
+
+    def test_list_reserved_ip_addresses(self):
+        # Arrange
+        self._create_reserved_ip_address()
+
+        # Act
+        result = self.sms.list_reserved_ip_addresses()
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertGreater(len(result), 0)
+
+        found = [ip for ip in result if ip.name == self.reserved_ip_address]
+        self.assertEqual(len(found), 1)
 
     #--Test cases for virtual machines -----------------------------------
     def test_get_role_linux(self):
