@@ -2022,6 +2022,30 @@ class _XmlSerializer(object):
         xml += _XmlSerializer.data_to_xml(
             [('AdminUsername', configuration.admin_username),
              ('CustomData', configuration.custom_data, _encode_base64)])
+        if configuration.additional_unattend_content and configuration.additional_unattend_content.passes:
+            xml += '<AdditionalUnattendContent><Passes>'
+            for unattend_pass in configuration.additional_unattend_content.passes:
+                xml += _XmlSerializer.data_to_xml(
+                    [('PassName', unattend_pass.pass_name)])
+                if unattend_pass.components:
+                    xml += '<Components>'
+                    for comp in unattend_pass.components:
+                        xml += '<UnattendComponent>'
+                        xml += _XmlSerializer.data_to_xml(
+                            [('ComponentName', comp.component_name)])
+                        if comp.component_settings:
+                            xml += '<ComponentSettings>'
+                            for setting in comp.component_settings:
+                                xml += '<ComponentSetting>'
+                                xml += _XmlSerializer.data_to_xml(
+                                    [('SettingName', setting.setting_name),
+                                     ('Content', setting.content)])
+                                xml += '</ComponentSetting>'
+                            xml += '</ComponentSettings>'
+                        xml += '</UnattendComponent>'
+                    xml += '</Components>'
+            xml += '</Passes></AdditionalUnattendContent>'
+
         return xml
 
     @staticmethod

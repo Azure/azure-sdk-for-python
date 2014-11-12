@@ -18,6 +18,8 @@ import os
 import time
 import unittest
 
+import azure.http.httpclient
+
 from azure.servicemanagement import (
     CaptureRoleAsVMImage,
     CertificateSetting,
@@ -42,6 +44,9 @@ from util import (
     getUniqueName,
     set_service_options,
     )
+
+azure.http.httpclient.DEBUG_REQUESTS = True
+azure.http.httpclient.DEBUG_RESPONSES = True
 
 SERVICE_CERT_FORMAT = 'pfx'
 SERVICE_CERT_PASSWORD = 'Python'
@@ -279,6 +284,13 @@ class ServiceManagementServiceTest(AzureTestCase):
         except:
             return False
 
+    def _make_blob_url(self, storage_account_name, container_name, blob_name):
+        return 'http://{0}.blob.core.windows.net/{1}/{2}.vhd'.format(
+            storage_account_name,
+            container_name,
+            blob_name
+        )
+
     def _create_container_and_block_blob(self, container_name, blob_name,
                                          blob_data):
         self.bc.create_container(container_name, None, 'container', False)
@@ -296,9 +308,8 @@ class ServiceManagementServiceTest(AzureTestCase):
 
     def _upload_file_to_block_blob(self, file_path, blob_name):
         data = open(file_path, 'rb').read()
-        url = 'http://' + \
-            credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + self.container_name + '/' + blob_name
+        url = self._make_blob_url(credentials.getStorageServicesName(),
+                                  self.container_name, blob_name)
         self._create_container_and_block_blob(
             self.container_name, blob_name, data)
         return url
@@ -319,9 +330,8 @@ class ServiceManagementServiceTest(AzureTestCase):
                     break
 
     def _upload_file_to_page_blob(self, file_path, blob_name):
-        url = 'http://' + \
-            credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + self.container_name + '/' + blob_name
+        url = self._make_blob_url(credentials.getStorageServicesName(),
+                                  self.container_name, blob_name)
         content_length = os.path.getsize(file_path)
         self._create_container_and_page_blob(
             self.container_name, blob_name, content_length)
@@ -465,10 +475,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         return network
 
     def _os_hd(self, image_name, target_container_name, target_blob_name):
-        media_link = 'http://' + \
-            credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + target_container_name + '/' + \
-            target_blob_name
+        media_link = self._make_blob_url(
+            credentials.getStorageServicesName(),
+            target_container_name, target_blob_name)
         os_hd = OSVirtualHardDisk(image_name, media_link,
                                   disk_label=target_blob_name)
         return os_hd
@@ -1256,6 +1265,42 @@ class ServiceManagementServiceTest(AzureTestCase):
         result = self.sms.create_virtual_machine_deployment(
             service_name, deployment_name, 'production', deployment_label,
             role_name, system, os_hd, network, role_size='Small')
+
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
+
+        # Assert
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
+
+    def test_create_virtual_machine_deployment_linux_vm_image(self):
+        vm_image_name = credentials.getLinuxVMImageName()
+        if not vm_image_name:
+            self.assertTrue(False, 'Missing linuxvmimagename entry in credentials file.')
+
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+        deployment_label = deployment_name + 'label'
+
+        self._create_hosted_service(service_name)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+
+        # Act
+        host_name = self._host_name_from_role_name(role_name)
+        system = self._linux_config(host_name)
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system_config=system, os_virtual_hard_disk=None,
+            role_size='Small', vm_image_name=vm_image_name
+            )
 
         self._wait_for_async(result.request_id)
         self._wait_for_deployment(service_name, deployment_name)

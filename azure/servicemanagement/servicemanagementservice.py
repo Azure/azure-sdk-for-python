@@ -1061,7 +1061,8 @@ class ServiceManagementService(_ServiceManagementClient):
             WindowsConfigurationSet or LinuxConfigurationSet.
         os_virtual_hard_disk:
             Contains the parameters Windows Azure uses to create the operating
-            system disk for the virtual machine.
+            system disk for the virtual machine. If you are creating a Virtual
+            Machine by using a VM Image, this parameter is not used.
         network_config:
             Encapsulates the metadata required to create the virtual network
             configuration for a virtual machine. If you do not include a
@@ -1111,7 +1112,6 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('deployment_slot', deployment_slot)
         _validate_not_none('label', label)
         _validate_not_none('role_name', role_name)
-        _validate_not_none('os_virtual_hard_disk', os_virtual_hard_disk)
         return self._perform_post(
             self._get_deployment_path_using_name(service_name),
             _XmlSerializer.virtual_machine_deployment_to_xml(
@@ -1152,7 +1152,8 @@ class ServiceManagementService(_ServiceManagementClient):
             WindowsConfigurationSet or LinuxConfigurationSet.
         os_virtual_hard_disk:
             Contains the parameters Windows Azure uses to create the operating
-            system disk for the virtual machine.
+            system disk for the virtual machine. If you are creating a Virtual
+            Machine by using a VM Image, this parameter is not used.
         network_config:
             Encapsulates the metadata required to create the virtual network
             configuration for a virtual machine. If you do not include a
@@ -1197,7 +1198,6 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
         _validate_not_none('role_name', role_name)
-        _validate_not_none('os_virtual_hard_disk', os_virtual_hard_disk)
         return self._perform_post(
             self._get_role_path(service_name, deployment_name),
             _XmlSerializer.add_role_to_xml(

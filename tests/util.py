@@ -103,6 +103,11 @@ class Credentials(object):
             return self.ns[u'userequestslibrary'].lower() == 'true'
         return None
 
+    def getLinuxVMImageName(self):
+        if u'linuxvmimagename' in self.ns:
+            return self.ns[u'linuxvmimagename']
+        return None
+
     def getRemoteSourceImageLink(self):
         if u'remotesourceimagelink' in self.ns:
             return self.ns[u'remotesourceimagelink']
