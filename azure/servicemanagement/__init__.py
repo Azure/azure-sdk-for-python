@@ -821,6 +821,7 @@ class AvailabilityResponse(WindowsAzureData):
 
     def __init__(self):
         self.result = False
+        self.reason = False
 
 
 class SubscriptionCertificates(WindowsAzureData):
@@ -2505,6 +2506,13 @@ class _XmlSerializer(object):
             'DnsServer',
             [('Name', name),
              ('Address', address)])
+
+    @staticmethod
+    def role_instances_to_xml(role_instances):
+        xml = ''
+        for name in role_instances:
+            xml += _XmlSerializer.data_to_xml([('Name', name)])
+        return _XmlSerializer.doc_from_xml('RoleInstances ', xml)
 
     @staticmethod
     def data_to_xml(data):

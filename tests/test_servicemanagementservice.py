@@ -45,8 +45,9 @@ from util import (
     set_service_options,
     )
 
-azure.http.httpclient.DEBUG_REQUESTS = True
-azure.http.httpclient.DEBUG_RESPONSES = True
+# Enable these to view requests and responses
+azure.http.httpclient.DEBUG_REQUESTS = False
+azure.http.httpclient.DEBUG_RESPONSES = False
 
 SERVICE_CERT_FORMAT = 'pfx'
 SERVICE_CERT_PASSWORD = 'Python'
@@ -55,7 +56,7 @@ SERVICE_CERT_DATA_PUBLIC = 'MIIC9jCCAeKgAwIBAgIQ00IFaqV9VqVJxI+wZka0szAJBgUrDgMC
 SERVICE_CERT_THUMBPRINT = 'BEA4B74BD6B915E9DD6A01FB1B8C3C1740F517F2'
 SERVICE_CERT_THUMBALGO = 'sha1'
 
-DEPLOYMENT_ORIGINAL_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="1" osVersion="*" schemaVersion="2012-05.1.7">
+DEPLOYMENT_ORIGINAL_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="2" osVersion="*" schemaVersion="2012-05.1.7">
   <Role name="WorkerRole1">
     <Instances count="2" />
     <ConfigurationSettings>
@@ -64,7 +65,7 @@ DEPLOYMENT_ORIGINAL_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1
   </Role>
 </ServiceConfiguration>'''
 
-DEPLOYMENT_UPDATE_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="1" osVersion="*" schemaVersion="2012-05.1.7">
+DEPLOYMENT_UPDATE_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="2" osVersion="*" schemaVersion="2012-05.1.7">
   <Role name="WorkerRole1">
     <Instances count="4" />
     <ConfigurationSettings>
@@ -292,7 +293,7 @@ class ServiceManagementServiceTest(AzureTestCase):
             return False
 
     def _make_blob_url(self, storage_account_name, container_name, blob_name):
-        return 'http://{0}.blob.core.windows.net/{1}/{2}.vhd'.format(
+        return 'http://{0}.blob.core.windows.net/{1}/{2}'.format(
             storage_account_name,
             container_name,
             blob_name
@@ -1048,6 +1049,54 @@ class ServiceManagementServiceTest(AzureTestCase):
             self.hosted_service_name, deployment_name)
         status = self._get_role_instance_status(props, role_instance_name)
         self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
+
+    def test_rebuild_role_instance(self):
+        # Arrange
+        role_instance_name = 'WorkerRole1_IN_0'
+        deployment_name = 'utdeployment'
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
+        result = self.sms.update_deployment_status(
+            self.hosted_service_name, deployment_name, 'Running')
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(self.hosted_service_name, deployment_name)
+        self._wait_for_role(self.hosted_service_name, deployment_name,
+                            role_instance_name)
+
+        # Act
+        result = self.sms.rebuild_role_instance(
+            self.hosted_service_name, deployment_name, role_instance_name)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
+        status = self._get_role_instance_status(props, role_instance_name)
+        self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
+
+    def test_delete_role_instances(self):
+        # Arrange
+        role_instance_name = 'WorkerRole1_IN_0'
+        deployment_name = 'utdeployment'
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
+        result = self.sms.update_deployment_status(
+            self.hosted_service_name, deployment_name, 'Running')
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(self.hosted_service_name, deployment_name)
+        self._wait_for_role(self.hosted_service_name, deployment_name,
+                            role_instance_name)
+
+        # Act
+        result = self.sms.delete_role_instances(
+            self.hosted_service_name, deployment_name, [role_instance_name])
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
+        status = self._get_role_instance_status(props, role_instance_name)
+        self.assertIsNone(status)
 
     def test_check_hosted_service_name_availability_not_available(self):
         # Arrange

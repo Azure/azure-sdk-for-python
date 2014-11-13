@@ -731,6 +731,50 @@ class ServiceManagementService(_ServiceManagementClient):
             '',
             async=True)
 
+    def rebuild_role_instance(self, service_name, deployment_name,
+                             role_instance_name):
+        '''
+        Reinstalls the operating system on instances of web roles or worker
+        roles and initializes the storage resources that are used by them. If
+        you do not want to initialize storage resources, you can use
+        reimage_role_instance.
+
+        service_name: Name of the hosted service.
+        deployment_name: The name of the deployment.
+        role_instance_name: The name of the role instance.
+        '''
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        _validate_not_none('role_instance_name', role_instance_name)
+        return self._perform_post(
+            self._get_deployment_path_using_name(
+                service_name, deployment_name) + \
+                    '/roleinstances/' + _str(role_instance_name) + \
+                    '?comp=rebuild&resources=allLocalDrives',
+            '',
+            async=True)
+
+    def delete_role_instances(self, service_name, deployment_name,
+                             role_instance_names):
+        '''
+        Reinstalls the operating system on instances of web roles or worker
+        roles and initializes the storage resources that are used by them. If
+        you do not want to initialize storage resources, you can use
+        reimage_role_instance.
+
+        service_name: Name of the hosted service.
+        deployment_name: The name of the deployment.
+        role_instance_names: List of role instance names.
+        '''
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        _validate_not_none('role_instance_names', role_instance_names)
+        return self._perform_post(
+            self._get_deployment_path_using_name(
+                service_name, deployment_name) + '/roleinstances/?comp=delete',
+            _XmlSerializer.role_instances_to_xml(role_instance_names),
+            async=True)
+
     def check_hosted_service_name_availability(self, service_name):
         '''
         Checks to see if the specified hosted service name is available, or if
