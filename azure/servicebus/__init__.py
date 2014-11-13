@@ -168,16 +168,16 @@ class Message(WindowsAzureData):
         # extracts the topic and subscriptions name if it is topic message.
         if location:
             if '/subscriptions/' in location:
-                pos = location.find('/subscriptions/')
-                pos1 = location.rfind('/', 0, pos - 1)
-                self._topic_name = location[pos1 + 1:pos]
-                pos += len('/subscriptions/')
+                pos = location.find(service_bus_service.host_base.lower())+1
+                pos1 = location.find('/subscriptions/')
+                self._topic_name = location[pos+len(service_bus_service.host_base):pos1]
+                pos = pos1 + len('/subscriptions/')
                 pos1 = location.find('/', pos)
                 self._subscription_name = location[pos:pos1]
             elif '/messages/' in location:
-                pos = location.find('/messages/')
-                pos1 = location.rfind('/', 0, pos - 1)
-                self._queue_name = location[pos1 + 1:pos]
+                pos = location.find(service_bus_service.host_base.lower())+1
+                pos1 = location.find('/messages/')
+                self._queue_name = location[pos+len(service_bus_service.host_base):pos1]
 
     def delete(self):
         ''' Deletes itself if find queue name or topic name and subscription

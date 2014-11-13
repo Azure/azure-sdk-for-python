@@ -49,5 +49,6 @@ setup(name='azure',
                 'azure.http',
                 'azure.servicebus',
                 'azure.storage',
-                'azure.servicemanagement']
+                'azure.servicemanagement'],
+      install_requires=['python-dateutil']
      )

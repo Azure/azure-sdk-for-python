@@ -16,6 +16,8 @@ import sys
 import types
 
 from datetime import datetime
+from dateutil import parser
+from dateutil.tz import tzutc
 from xml.dom import minidom
 from azure import (WindowsAzureData,
                    WindowsAzureError,
@@ -407,7 +409,7 @@ def _update_storage_header(request):
     if request.body:
         assert isinstance(request.body, bytes)
 
-    # if it is PUT, POST, MERGE, DELETE, need to add content-lengt to header.
+    # if it is PUT, POST, MERGE, DELETE, need to add content-length to header.
     if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
         request.headers.append(('Content-Length', str(len(request.body))))
 
@@ -560,7 +562,12 @@ def _to_entity_bool(value):
 
 
 def _to_entity_datetime(value):
-    return 'Edm.DateTime', value.strftime('%Y-%m-%dT%H:%M:%S')
+    # Azure expects the date value passed in to be UTC.
+    # Azure will always return values as UTC.
+    # If a date is passed in without timezone info, it is assumed to be UTC.
+    if value.tzinfo:
+        value = value.astimezone(tzutc())
+    return 'Edm.DateTime', value.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 def _to_entity_float(value):
@@ -595,12 +602,9 @@ def _from_entity_int(value):
 
 
 def _from_entity_datetime(value):
-    format = '%Y-%m-%dT%H:%M:%S'
-    if '.' in value:
-        format = format + '.%f'
-    if value.endswith('Z'):
-        format = format + 'Z'
-    return datetime.strptime(value, format)
+    # Note that Azure always returns UTC datetime, and dateutil parser
+    # will set the tzinfo on the date it returns
+    return parser.parse(value)
 
 _ENTITY_TO_PYTHON_CONVERSIONS = {
     'Edm.Binary': _from_entity_binary,
@@ -823,10 +827,6 @@ def _convert_xml_to_entity(xmlstr):
     # extract each property node and get the type from attribute and node value
     for xml_property in xml_properties[0].childNodes:
         name = _remove_prefix(xml_property.nodeName)
-        # exclude the Timestamp since it is auto added by azure when
-        # inserting entity. We don't want this to mix with real properties
-        if name in ['Timestamp']:
-            continue
 
         if xml_property.firstChild:
             value = xml_property.firstChild.nodeValue

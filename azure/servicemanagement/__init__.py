@@ -1323,6 +1323,87 @@ class Database(WindowsAzureData):
         self.max_size_bytes = 0
 
 
+class CloudServices(WindowsAzureData):
+
+    def __init__(self):
+        self.cloud_service = _list_of(CloudService)
+
+    def __iter__(self):
+        return iter(self.cloud_service)
+
+    def __len__(self):
+        return len(self.cloud_service)
+
+    def __getitem__(self, index):
+        return self.cloud_service[index]
+
+
+class CloudService(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.label = u''
+        self.description = u''
+        self.geo_region = u''
+        self.resources = Resources()
+
+
+class Resources(WindowsAzureData):
+
+    def __init__(self):
+        self.resource = _list_of(Resource)
+
+    def __iter__(self):
+        return iter(self.resource)
+
+    def __len__(self):
+        return len(self.resource)
+
+    def __getitem__(self, index):
+        return self.resource[index]
+
+
+class Resource(WindowsAzureData):
+
+    def __init__(self):
+        self.resource_provider_namespace = u''
+        self.type = u''
+        self.name = u''
+        self.schema_version = u''
+        self.e_tag = u''
+        self.state = u''
+        self.intrinsic_settings = IntrinsicSettings()
+        self.operation_status = OperationStatus()
+
+
+class IntrinsicSettings(WindowsAzureData):
+
+    def __init__(self):
+        self.plan = u''
+        self.quota = Quota()
+
+
+class Quota(WindowsAzureData):
+
+    def __init__(self):
+        self.max_job_count = 0
+        self.max_recurrence = MaxRecurrence()
+
+
+class MaxRecurrence(WindowsAzureData):
+
+    def __init__(self):
+        self.frequency = u''
+        self.interval = 0
+
+
+class OperationStatus(WindowsAzureData):
+
+    def __init__(self):
+        self.type = u''
+        self.result = u''
+
+
 def _update_management_header(request):
     ''' Add additional headers for management. '''
 

@@ -46,6 +46,7 @@
     <Compile Include="doctest_servicebusservicetopic.py" />
     <Compile Include="doctest_tableservice.py" />
     <Compile Include="test_managementcertificatemanagementservice.py" />
+    <Compile Include="test_schedulermanagementservice.py" />
     <Compile Include="test_servicebusmanagementservice.py" />
     <Compile Include="test_blobservice.py" />
     <Compile Include="test_cloudstorageaccount.py" />

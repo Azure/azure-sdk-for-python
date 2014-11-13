@@ -17,6 +17,7 @@ from azure.storage import X_MS_VERSION
 
 #-------------------------------------------------------------------------
 # Constants for the share access signature
+SIGNED_VERSION = 'sv'
 SIGNED_START = 'st'
 SIGNED_EXPIRY = 'se'
 SIGNED_RESOURCE = 'sr'

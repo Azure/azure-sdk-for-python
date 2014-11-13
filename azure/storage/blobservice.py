@@ -62,6 +62,7 @@ else:
 # Keep this value sync with _ERROR_PAGE_BLOB_SIZE_ALIGNMENT
 _PAGE_SIZE = 512
 
+
 class BlobService(_StorageClient):
 
     '''
@@ -101,6 +102,7 @@ class BlobService(_StorageClient):
             Live host base url.  If not specified, uses the host base specified
             when BlobService was initialized.
         '''
+
         if not account_name:
             account_name = self.account_name
         if not protocol:
@@ -553,6 +555,7 @@ class BlobService(_StorageClient):
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
             request, self.account_name, self.account_key)
+
         response = self._perform_request(request)
 
         return _parse_response_for_dict(response)
@@ -1789,6 +1792,7 @@ class BlobService(_StorageClient):
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
             ('x-ms-source-lease-id', _str_or_none(x_ms_source_lease_id))
         ]
+
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
@@ -1831,7 +1835,8 @@ class BlobService(_StorageClient):
         self._perform_request(request)
 
     def delete_blob(self, container_name, blob_name, snapshot=None,
-                    x_ms_lease_id=None):
+                    timeout=None, x_ms_lease_id=None,
+                    x_ms_delete_snapshots=None):
         '''
         Marks the specified blob or snapshot for deletion. The blob is later
         deleted during garbage collection.
@@ -1844,7 +1849,22 @@ class BlobService(_StorageClient):
         snapshot:
             Optional. The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to delete.
+        timeout:
+            Optional. The timeout parameter is expressed in seconds.
+            The Blob service returns an error when the timeout interval elapses
+            while processing the request.
         x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_delete_snapshots:
+            Required if the blob has associated snapshots. Specify one of the
+            following two options:
+                include: Delete the base blob and all of its snapshots.
+                only: Delete only the blob's snapshots and not the blob itself.
+            This header should be specified only for a request against the base
+            blob resource. If this header is specified on a request to delete
+            an individual snapshot, the Blob service returns status code 400
+            (Bad Request). If this header is not specified on the request and
+            the blob has associated snapshots, the Blob service returns status
+            code 409 (Conflict).
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1852,8 +1872,14 @@ class BlobService(_StorageClient):
         request.method = 'DELETE'
         request.host = self._get_host()
         request.path = '/' + _str(container_name) + '/' + _str(blob_name) + ''
-        request.headers = [('x-ms-lease-id', _str_or_none(x_ms_lease_id))]
-        request.query = [('snapshot', _str_or_none(snapshot))]
+        request.headers = [
+            ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
+            ('x-ms-delete-snapshots', _str_or_none(x_ms_delete_snapshots))
+        ]
+        request.query = [
+            ('snapshot', _str_or_none(snapshot)),
+            ('timeout', _int_or_none(timeout))
+        ]
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
