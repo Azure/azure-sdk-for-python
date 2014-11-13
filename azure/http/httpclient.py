@@ -46,7 +46,7 @@ class _HTTPClient(object):
     '''
 
     def __init__(self, service_instance, cert_file=None, account_name=None,
-                 account_key=None, protocol='https', requests_session=None):
+                 account_key=None, protocol='https', request_session=None):
         '''
         service_instance: service client instance.
         cert_file:
@@ -55,8 +55,8 @@ class _HTTPClient(object):
         account_name: the storage account.
         account_key:
             the storage account access key.
-        requests_session:
-            session object to use with requests library.
+        request_session:
+            session object created with requests library (or compatible).
         '''
         self.service_instance = service_instance
         self.status = None
@@ -70,8 +70,8 @@ class _HTTPClient(object):
         self.proxy_port = None
         self.proxy_user = None
         self.proxy_password = None
-        self.requests_session = requests_session
-        if requests_session:
+        self.request_session = request_session
+        if request_session:
             self.use_httplib = True
         else:
             self.use_httplib = self.should_use_httplib()
@@ -127,10 +127,10 @@ class _HTTPClient(object):
         target_host = request.host
         target_port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
 
-        if self.requests_session:
+        if self.request_session:
             import azure.http.requestsclient
             connection = azure.http.requestsclient._RequestsConnection(
-                target_host, protocol, self.requests_session)
+                target_host, protocol, self.request_session)
             #TODO: proxy stuff
         elif not self.use_httplib:
             import azure.http.winhttp

@@ -165,7 +165,7 @@ def create_service_management(service_class):
         session = Session()
         session.cert = credentials.getManagementCertFile()
         service = service_class(credentials.getSubscriptionId(),
-                            requests_session=session)
+                            request_session=session)
     else:
         service = service_class(credentials.getSubscriptionId(),
                             credentials.getManagementCertFile())
