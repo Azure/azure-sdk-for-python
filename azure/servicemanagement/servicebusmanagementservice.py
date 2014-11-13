@@ -29,13 +29,36 @@ from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
     )
 
+X_MS_VERSION = '2012-03-01'
 
 class ServiceBusManagementService(_ServiceManagementClient):
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST):
+                 host=MANAGEMENT_HOST, request_session=None):
+        '''
+        Initializes the service bus management service.
+
+        subscription_id: Subscription to manage.
+        cert_file:
+            Path to .pem certificate file (httplib), or location of the
+            certificate in your Personal certificate store (winhttp) in the
+            CURRENT_USER\my\CertificateName format.
+            If a request_session is specified, then this is unused.
+        host: Live ServiceClient URL. Defaults to Azure public cloud.
+        request_session:
+            Session object to use for http requests. If this is specified, it
+            replaces the default use of httplib or winhttp. Also, the cert_file
+            parameter is unused when a session is passed in.
+            The session object handles authentication, and as such can support
+            multiple types of authentication: .pem certificate, oauth.
+            For example, you can pass in a Session instance from the requests
+            library. To use .pem certificate authentication with requests
+            library, set the path to the .pem file on the session.cert
+            attribute.
+        '''
         super(ServiceBusManagementService, self).__init__(
-            subscription_id, cert_file, host)
+            subscription_id, cert_file, host, request_session)
+        self.x_ms_version = X_MS_VERSION
 
     #--Operations for service bus ----------------------------------------
     def get_regions(self):

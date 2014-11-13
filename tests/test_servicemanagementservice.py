@@ -18,7 +18,10 @@ import os
 import time
 import unittest
 
+import azure.http.httpclient
+
 from azure.servicemanagement import (
+    CaptureRoleAsVMImage,
     CertificateSetting,
     ConfigurationSet,
     ConfigurationSetInputEndpoint,
@@ -27,16 +30,24 @@ from azure.servicemanagement import (
     Listener,
     OSVirtualHardDisk,
     PublicKey,
+    ResourceExtensionReference,
+    ResourceExtensionReferences,
     ServiceManagementService,
+    VMImage,
     WindowsConfigurationSet,
     )
 from azure.storage.blobservice import BlobService
 from util import (
     AzureTestCase,
+    create_service_management,
     credentials,
     getUniqueName,
     set_service_options,
     )
+
+# Enable these to view requests and responses
+azure.http.httpclient.DEBUG_REQUESTS = False
+azure.http.httpclient.DEBUG_RESPONSES = False
 
 SERVICE_CERT_FORMAT = 'pfx'
 SERVICE_CERT_PASSWORD = 'Python'
@@ -45,7 +56,7 @@ SERVICE_CERT_DATA_PUBLIC = 'MIIC9jCCAeKgAwIBAgIQ00IFaqV9VqVJxI+wZka0szAJBgUrDgMC
 SERVICE_CERT_THUMBPRINT = 'BEA4B74BD6B915E9DD6A01FB1B8C3C1740F517F2'
 SERVICE_CERT_THUMBALGO = 'sha1'
 
-DEPLOYMENT_ORIGINAL_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="1" osVersion="*" schemaVersion="2012-05.1.7">
+DEPLOYMENT_ORIGINAL_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="2" osVersion="*" schemaVersion="2012-05.1.7">
   <Role name="WorkerRole1">
     <Instances count="2" />
     <ConfigurationSettings>
@@ -54,7 +65,7 @@ DEPLOYMENT_ORIGINAL_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1
   </Role>
 </ServiceConfiguration>'''
 
-DEPLOYMENT_UPDATE_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="1" osVersion="*" schemaVersion="2012-05.1.7">
+DEPLOYMENT_UPDATE_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="2" osVersion="*" schemaVersion="2012-05.1.7">
   <Role name="WorkerRole1">
     <Instances count="4" />
     <ConfigurationSettings>
@@ -88,9 +99,7 @@ LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
 class ServiceManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(),
-                                            credentials.getManagementCertFile())
-        set_service_options(self.sms)
+        self.sms = create_service_management(ServiceManagementService)
 
         self.bc = BlobService(credentials.getStorageServicesName(),
                               credentials.getStorageServicesKey())
@@ -101,6 +110,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.disk_name = getUniqueName('utdisk')
         self.os_image_name = getUniqueName('utosimg')
         self.data_disk_info = None
+        self.reserved_ip_address = None
 
     def tearDown(self):
         if self.data_disk_info is not None:
@@ -170,6 +180,12 @@ class ServiceManagementServiceTest(AzureTestCase):
         except:
             pass
 
+        if self.reserved_ip_address:
+            try:
+                self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+            except:
+                pass
+
     #--Helpers-----------------------------------------------------------------
     def _wait_for_async(self, request_id):
         count = 0
@@ -181,7 +197,13 @@ class ServiceManagementServiceTest(AzureTestCase):
                     False, 'Timed out waiting for async operation to complete.')
             time.sleep(5)
             result = self.sms.get_operation_status(request_id)
-        self.assertEqual(result.status, 'Succeeded')
+
+        if result.status != 'Succeeded':
+            print(vars(result))
+            if result.error:
+                print(result.error.code)
+                print(vars(result.error))
+            self.assertTrue(False, 'Asynchronous operation did not succeed.')
 
     def _wait_for_deployment(self, service_name, deployment_name,
                              status='Running'):
@@ -270,6 +292,13 @@ class ServiceManagementServiceTest(AzureTestCase):
         except:
             return False
 
+    def _make_blob_url(self, storage_account_name, container_name, blob_name):
+        return 'http://{0}.blob.core.windows.net/{1}/{2}'.format(
+            storage_account_name,
+            container_name,
+            blob_name
+        )
+
     def _create_container_and_block_blob(self, container_name, blob_name,
                                          blob_data):
         self.bc.create_container(container_name, None, 'container', False)
@@ -287,9 +316,8 @@ class ServiceManagementServiceTest(AzureTestCase):
 
     def _upload_file_to_block_blob(self, file_path, blob_name):
         data = open(file_path, 'rb').read()
-        url = 'http://' + \
-            credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + self.container_name + '/' + blob_name
+        url = self._make_blob_url(credentials.getStorageServicesName(),
+                                  self.container_name, blob_name)
         self._create_container_and_block_blob(
             self.container_name, blob_name, data)
         return url
@@ -310,9 +338,8 @@ class ServiceManagementServiceTest(AzureTestCase):
                     break
 
     def _upload_file_to_page_blob(self, file_path, blob_name):
-        url = 'http://' + \
-            credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + self.container_name + '/' + blob_name
+        url = self._make_blob_url(credentials.getStorageServicesName(),
+                                  self.container_name, blob_name)
         content_length = os.path.getsize(file_path)
         self._create_container_and_page_blob(
             self.container_name, blob_name, content_length)
@@ -394,18 +421,18 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._wait_for_async(result.request_id)
 
     def _linux_image_name(self):
-        return self._image_from_category('Canonical')
+        return self._image_from_publisher_name('Canonical')
 
     def _windows_image_name(self):
-        return self._image_from_category('Microsoft Windows Server Group')
+        return self._image_from_publisher_name('Microsoft Windows Server Group')
 
     def _host_name_from_role_name(self, role_name):
         return 'hn' + role_name[-13:]
 
-    def _image_from_category(self, category):
+    def _image_from_publisher_name(self, publisher):
         # return the first one listed, which should be the most stable
         return [i.name for i in self.sms.list_os_images() \
-            if category in i.category][0]
+            if publisher in i.publisher_name][0]
 
     def _windows_role(self, role_name, subnet_name=None, port='59913'):
         host_name = self._host_name_from_role_name(role_name)
@@ -443,6 +470,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         system = LinuxConfigurationSet(hostname, 'unittest', 'u7;9jbp!', True)
         system.ssh.public_keys.public_keys.append(pk)
         system.ssh.key_pairs.key_pairs.append(pair)
+        system.disable_ssh_password_authentication = False
         return system
 
     def _network_config(self, subnet_name=None, port='59913'):
@@ -455,10 +483,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         return network
 
     def _os_hd(self, image_name, target_container_name, target_blob_name):
-        media_link = 'http://' + \
-            credentials.getStorageServicesName() + \
-            '.blob.core.windows.net/' + target_container_name + '/' + \
-            target_blob_name
+        media_link = self._make_blob_url(
+            credentials.getStorageServicesName(),
+            target_container_name, target_blob_name)
         os_hd = OSVirtualHardDisk(image_name, media_link,
                                   disk_label=target_blob_name)
         return os_hd
@@ -522,6 +549,73 @@ class ServiceManagementServiceTest(AzureTestCase):
                                    system, os_hd, network)
         self._wait_for_async(result.request_id)
         self._wait_for_role(service_name, deployment_name, role_name)
+
+    def _wait_for_reserved_ip_address(self, name, state='Created'):
+        count = 0
+        try:
+            props = self.sms.get_reserved_ip_address(name)
+        except:
+            props = None
+
+        while props is None or props.state != state:
+            count = count + 1
+            if count > 120:
+                self.assertTrue(
+                    False, 'Timed out waiting for ip address state.')
+            time.sleep(5)
+
+            try:
+                props = self.sms.get_reserved_ip_address(name)
+            except:
+                props = None
+
+    def _create_reserved_ip_address(self):
+        self.reserved_ip_address = getUniqueName('ip')
+        result = self.sms.create_reserved_ip_address(
+            self.reserved_ip_address,
+            'mylabel',
+            'West US')
+        self._wait_for_reserved_ip_address(self.reserved_ip_address)
+
+    def _reserved_ip_address_exists(self, name):
+        try:
+            result = self.sms.get_reserved_ip_address(name)
+            return result is not None
+        except:
+            return False
+
+    #--Test cases for subscriptions --------------------------------------
+    def test_list_role_sizes(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_role_sizes()
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertTrue(len(result) > 0)
+
+        role_size = result[0]
+        self.assertTrue(len(role_size.name) > 0)
+        self.assertTrue(len(role_size.label) > 0)
+        self.assertTrue(role_size.cores > 0)
+        self.assertTrue(role_size.max_data_disk_count > 0)
+        self.assertTrue(role_size.memory_in_mb > 0)
+        self.assertTrue(role_size.virtual_machine_resource_disk_size_in_mb > 0)
+        self.assertTrue(role_size.web_worker_resource_disk_size_in_mb > 0)
+        self.assertIsInstance(role_size.supported_by_virtual_machines, bool)
+        self.assertIsInstance(role_size.supported_by_web_worker_roles, bool)
+
+    @unittest.skip('Can only be used with oauth')
+    def test_list_subscriptions(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_subscriptions()
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertTrue(len(result) > 0)
 
     #--Test cases for hosted services ------------------------------------
     def test_list_hosted_services(self):
@@ -956,6 +1050,54 @@ class ServiceManagementServiceTest(AzureTestCase):
         status = self._get_role_instance_status(props, role_instance_name)
         self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
 
+    def test_rebuild_role_instance(self):
+        # Arrange
+        role_instance_name = 'WorkerRole1_IN_0'
+        deployment_name = 'utdeployment'
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
+        result = self.sms.update_deployment_status(
+            self.hosted_service_name, deployment_name, 'Running')
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(self.hosted_service_name, deployment_name)
+        self._wait_for_role(self.hosted_service_name, deployment_name,
+                            role_instance_name)
+
+        # Act
+        result = self.sms.rebuild_role_instance(
+            self.hosted_service_name, deployment_name, role_instance_name)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
+        status = self._get_role_instance_status(props, role_instance_name)
+        self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
+
+    def test_delete_role_instances(self):
+        # Arrange
+        role_instance_name = 'WorkerRole1_IN_0'
+        deployment_name = 'utdeployment'
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
+        result = self.sms.update_deployment_status(
+            self.hosted_service_name, deployment_name, 'Running')
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(self.hosted_service_name, deployment_name)
+        self._wait_for_role(self.hosted_service_name, deployment_name,
+                            role_instance_name)
+
+        # Act
+        result = self.sms.delete_role_instances(
+            self.hosted_service_name, deployment_name, [role_instance_name])
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
+        status = self._get_role_instance_status(props, role_instance_name)
+        self.assertIsNone(status)
+
     def test_check_hosted_service_name_availability_not_available(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -1117,6 +1259,68 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertTrue(result.max_storage_accounts > 0)
         self.assertTrue(result.max_virtual_network_sites > 0)
 
+    #--Test cases for reserved ip addresses  -----------------------------
+    def test_create_reserved_ip_address(self):
+        # Arrange
+        self.reserved_ip_address = getUniqueName('ip')
+
+        # Act
+        result = self.sms.create_reserved_ip_address(
+            self.reserved_ip_address,
+            'mylabel',
+            'West US')
+        self._wait_for_reserved_ip_address(self.reserved_ip_address)
+
+        # Assert
+        self.assertTrue(
+            self._reserved_ip_address_exists(self.reserved_ip_address))
+
+    def test_delete_reserved_ip_address(self):
+        # Arrange
+        self._create_reserved_ip_address()
+
+        # Act
+        result = self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+        self.reserved_ip_address = None
+
+        # Assert
+        self.assertIsNone(result)
+        self.assertFalse(
+            self._reserved_ip_address_exists(self.reserved_ip_address))
+
+    def test_get_reserved_ip_address(self):
+        # Arrange
+        self._create_reserved_ip_address()
+
+        # Act
+        result = self.sms.get_reserved_ip_address(self.reserved_ip_address)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(result.name, self.reserved_ip_address)
+        self.assertEqual(result.label, 'mylabel')
+        self.assertEqual(result.location, 'West US')
+        self.assertGreater(len(result.address), 0)
+        self.assertGreater(len(result.id), 0)
+        self.assertGreater(len(result.state), 0)
+        self.assertFalse(result.in_use)
+        self.assertEqual(len(result.service_name), 0)
+        self.assertEqual(len(result.deployment_name), 0)
+
+    def test_list_reserved_ip_addresses(self):
+        # Arrange
+        self._create_reserved_ip_address()
+
+        # Act
+        result = self.sms.list_reserved_ip_addresses()
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertGreater(len(result), 0)
+
+        found = [ip for ip in result if ip.name == self.reserved_ip_address]
+        self.assertEqual(len(found), 1)
+
     #--Test cases for virtual machines -----------------------------------
     def test_get_role_linux(self):
         # Arrange
@@ -1209,6 +1413,122 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         # Act
         system, os_hd, network = self._linux_role(role_name)
+
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network, role_size='Small')
+
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
+
+        # Assert
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
+
+    def test_create_virtual_machine_deployment_linux_vm_image(self):
+        vm_image_name = credentials.getLinuxVMImageName()
+        if not vm_image_name:
+            self.assertTrue(False, 'Missing linuxvmimagename entry in credentials file.')
+
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+        deployment_label = deployment_name + 'label'
+
+        self._create_hosted_service(service_name)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+
+        # Act
+        host_name = self._host_name_from_role_name(role_name)
+        system = self._linux_config(host_name)
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system_config=system, os_virtual_hard_disk=None,
+            role_size='Small', vm_image_name=vm_image_name
+            )
+
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
+
+        # Assert
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
+
+    def test_create_virtual_machine_deployment_linux_resource_extension(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+        deployment_label = deployment_name + 'label'
+
+        self._create_hosted_service(service_name)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+
+        # Act
+        system, os_hd, network = self._linux_role(role_name)
+        extensions = ResourceExtensionReferences()
+        extensions.resource_extension_references.append(
+            ResourceExtensionReference('LinuxChefClientReference',
+                                       'Chef.Bootstrap.WindowsAzure',
+                                       'LinuxChefClient',
+                                       '11.16'))
+
+        result = self.sms.create_virtual_machine_deployment(
+            service_name, deployment_name, 'production', deployment_label,
+            role_name, system, os_hd, network, role_size='Small',
+            resource_extension_references=extensions,
+            provision_guest_agent=True
+            )
+
+        self._wait_for_async(result.request_id)
+        self._wait_for_deployment(service_name, deployment_name)
+        self._wait_for_role(service_name, deployment_name, role_name)
+
+        # Assert
+        self.assertTrue(
+            self._role_exists(service_name, deployment_name, role_name))
+        deployment = self.sms.get_deployment_by_name(
+            service_name, deployment_name)
+        self.assertEqual(deployment.label, deployment_label)
+
+    def test_create_virtual_machine_deployment_linux_remote_source_image(self):
+        # Test requires a link to a .vhd in a separate storage account
+        # Make sure to use a storage account in West US to avoid timeout
+        source_image_link = credentials.getRemoteSourceImageLink()
+        if not source_image_link:
+            self.assertTrue(False,
+                'Missing remotesourceimagelink entry in credentials file.')
+
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+        deployment_label = deployment_name + 'label'
+
+        self._create_hosted_service(service_name)
+        self._create_service_certificate(
+            service_name,
+            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
+
+        # Act
+        system, os_hd, network = self._linux_role(role_name)
+        os_hd.remote_source_image_link = source_image_link
+        os_hd.os = 'Linux'
+        os_hd.disk_name = role_name
+        os_hd.source_image_name = None
 
         result = self.sms.create_virtual_machine_deployment(
             service_name, deployment_name, 'production', deployment_label,
@@ -1479,7 +1799,263 @@ class ServiceManagementServiceTest(AzureTestCase):
         # Assert
         self.assertTrue(self._os_image_exists(self.os_image_name))
 
+    def test_list_resource_extensions(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_resource_extensions()
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for ext in result:
+            self.assertGreater(len(ext.description), 0)
+            self.assertGreater(len(ext.label), 0)
+            self.assertGreater(len(ext.name), 0)
+            self.assertGreater(len(ext.publisher), 0)
+            self.assertGreater(len(ext.version), 0)
+
+    def test_list_resource_extension_versions(self):
+        # Arrange
+        publisher = 'Chef.Bootstrap.WindowsAzure'
+        name = 'ChefClient'
+
+        # Act
+        result = self.sms.list_resource_extension_versions(
+            publisher, name)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for ext in result:
+            self.assertEqual(ext.name, name)
+            self.assertEqual(ext.publisher, publisher)
+            self.assertGreater(len(ext.description), 0)
+            self.assertGreater(len(ext.label), 0)
+            self.assertGreater(len(ext.version), 0)
+
+    def test_add_update_delete_dns_server(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+
+        self._create_vm_windows(service_name, deployment_name, role_name)
+
+        # Act
+        result = self.sms.add_dns_server(service_name,
+                                         deployment_name,
+                                         'mydnsserver',
+                                         '192.168.144.1')
+        self._wait_for_async(result.request_id)
+
+        result = self.sms.update_dns_server(service_name,
+                                         deployment_name,
+                                         'mydnsserver',
+                                         '192.168.144.2')
+        self._wait_for_async(result.request_id)
+
+        result = self.sms.delete_dns_server(service_name,
+                                         deployment_name,
+                                         'mydnsserver')
+        self._wait_for_async(result.request_id)
+
+        # Assert
+
     #--Test cases for virtual machine images -----------------------------
+    def test_capture_vm_image(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+
+        self._create_vm_linux(service_name, deployment_name, role_name)
+
+        # Act
+        image_name = role_name + 'image'
+        image = CaptureRoleAsVMImage('Specialized',
+                                     image_name,
+                                     image_name + 'label',
+                                     image_name + 'description',
+                                     'english',
+                                     'mygroup')
+
+        result = self.sms.capture_vm_image(
+            service_name,
+            deployment_name,
+            role_name,
+            image)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        self.assertIsNotNone(result)
+        images = self.sms.list_vm_images()
+        found_image = [im for im in images if im.name == image_name][0]
+        self.assertEqual(found_image.category, 'User')
+        self.assertEqual(found_image.label, image.vm_image_label)
+        self.assertEqual(found_image.description, image.description)
+        self.assertEqual(found_image.language, image.language)
+        self.assertEqual(found_image.image_family, image.image_family)
+        self.assertEqual(found_image.os_disk_configuration.os_state, image.os_state)
+        self.assertEqual(found_image.os_disk_configuration.os, 'Linux')
+
+    @unittest.skip("functionality not ready")
+    def test_create_vm_image(self):
+        # Arrange
+        image_name = self.hosted_service_name + 'image'
+
+        # Act
+        img = VMImage()
+        img.name = image_name
+        img.label = image_name + 'label'
+        img.description = image_name + 'description'
+        img.os_disk_configuration.os_state = 'Specialized'
+        img.os_disk_configuration.os = 'Linux'
+        img.os_disk_configuration.media_link = credentials.getLinuxOSVHD()
+        img.language = 'english'
+        img.show_in_gui = None
+
+        result = self.sms.create_vm_image(img)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        self.assertIsNotNone(result)
+        images = self.sms.list_vm_images()
+        found_image = [im for im in images if im.name == image_name][0]
+        self.assertEqual(found_image.category, 'User')
+        self.assertEqual(found_image.label, img.vm_image_label)
+        self.assertEqual(found_image.description, img.description)
+        self.assertEqual(found_image.language, img.language)
+        self.assertEqual(found_image.os_disk_configuration.os_state, 'Specialized')
+        self.assertEqual(found_image.os_disk_configuration.os, 'Linux')
+
+    @unittest.skip("test not ready")
+    def test_delete_vm_image(self):
+        # Arrange
+        image_name = 'utsvc83141531953252image'
+
+        # Act
+        result = self.sms.delete_vm_image(image_name, True)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        images = self.sms.list_vm_images()
+        found_images = [im for im in images if im.name == image_name]
+        self.assertEqual(len(found_images), 0)
+
+    def test_list_vm_images(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_vm_images()
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            if image.category == 'Public':
+                self.assertGreater(len(image.name), 0)
+                self.assertGreater(len(image.category), 0)
+                self.assertGreater(len(image.description), 0)
+                self.assertGreater(len(image.label), 0)
+                self.assertGreater(len(image.location), 0)
+                self.assertGreater(len(image.publisher_name), 0)
+                self.assertIsNone(image.deployment_name)
+                self.assertIsNone(image.role_name)
+                self.assertIsNone(image.service_name)
+
+    def test_list_vm_images_location(self):
+        # Arrange
+        loc = 'West US'
+
+        # Act
+        result = self.sms.list_vm_images(location=loc)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            regions = image.location.split(';')
+            self.assertIn(loc, regions)
+
+    def test_list_vm_images_location_publisher(self):
+        # Arrange
+        pub = 'Cloudera'
+
+        # Act
+        result = self.sms.list_vm_images(publisher=pub)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            self.assertEqual(image.publisher_name, pub)
+
+    def test_list_vm_images_location_category(self):
+        # Arrange
+        cat = 'Public'
+
+        # Act
+        result = self.sms.list_vm_images(category=cat)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            self.assertEqual(image.category, cat)
+
+    def test_list_vm_images_location_publisher_and_category(self):
+        # Arrange
+        pub = 'Cloudera'
+        cat = 'Public'
+
+        # Act
+        result = self.sms.list_vm_images(publisher=pub, category=cat)
+
+        # Assert
+        self.assertGreater(len(result), 0)
+        for image in result:
+            self.assertEqual(image.category, cat)
+            self.assertEqual(image.publisher_name, pub)
+
+    @unittest.skip("functionality not ready")
+    def test_update_vm_image(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+
+        self._create_vm_linux(service_name, deployment_name, role_name)
+
+        image_name = role_name + 'image'
+        image = CaptureRoleAsVMImage('Specialized',
+                                     image_name,
+                                     image_name + 'label',
+                                     image_name + 'description',
+                                     'english',
+                                     'mygroup')
+
+        result = self.sms.capture_vm_image(
+            service_name,
+            deployment_name,
+            role_name,
+            image)
+        self._wait_for_async(result.request_id)
+
+        # Act
+        updated_image = VMImage()
+        updated_image.label = 'Updated label'
+        updated_image.description = 'Updated description'
+        updated_image.eula = 'Updated eula'
+        updated_image.os_disk_configuration.host_caching = 'ReadOnly'
+        result = self.sms.update_vm_image(image_name, updated_image)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        self.assertIsNotNone(result)
+        images = self.sms.list_vm_images()
+        found_image = [im for im in images if im.name == image_name][0]
+        self.assertEqual(found_image.label, updated_image.label)
+        self.assertEqual(found_image.description, updated_image.description)
+        self.assertEqual(found_image.eula, updated_image.eula)
+        self.assertEqual(found_image.os_disk_configuration.host_caching,
+                         updated_image.os_disk_configuration.host_caching)
+
+    #--Test cases for operating system images ----------------------------
     def test_list_os_images(self):
         # Arrange
         media_url = LINUX_OS_VHD_URL
@@ -1510,6 +2086,43 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertEqual(image.media_link, media_url)
         self.assertEqual(image.name, self.os_image_name)
         self.assertEqual(image.os, os)
+
+    def test_list_os_images_public(self):
+        # Arrange
+
+        # Act
+        result = self.sms.list_os_images()
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertTrue(len(result) > 0)
+
+        image = None
+        for temp in result:
+            self.assertIn(temp.category, ['User', 'Public', 'Private', 'MSDN'])
+            if temp.category == 'Public':
+                image = temp
+                break
+
+        self.assertIsNotNone(image)
+        self.assertGreater(len(image.category), 0)
+        self.assertGreater(len(image.label), 0)
+        self.assertGreater(len(image.location), 0)
+        self.assertIsNotNone(image.logical_size_in_gb)
+        self.assertGreaterEqual(image.logical_size_in_gb, 0)
+        self.assertGreater(len(image.name), 0)
+        self.assertGreater(len(image.os), 0)
+        self.assertIsNotNone(image.eula)
+        self.assertGreater(len(image.description), 0)
+        self.assertGreater(len(image.image_family), 0)
+        self.assertIsNotNone(image.show_in_gui)
+        self.assertGreater(len(image.published_date), 0)
+        self.assertIsNotNone(image.is_premium)
+        self.assertIsNotNone(image.icon_uri)
+        self.assertIsNotNone(image.privacy_uri)
+        self.assertGreaterEqual(len(image.recommended_vm_size), 0)
+        self.assertGreater(len(image.publisher_name), 0)
+        self.assertIsNotNone(image.small_icon_uri)
 
     def test_get_os_image(self):
         # Arrange

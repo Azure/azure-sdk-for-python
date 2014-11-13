@@ -32,20 +32,22 @@ from azure.servicemanagement import (
     AZURE_MANAGEMENT_SUBSCRIPTIONID,
     _management_error_handler,
     _parse_response_for_async_op,
-    _update_management_header,
+    X_MS_VERSION,
     )
 
 
 class _ServiceManagementClient(object):
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST):
+                 host=MANAGEMENT_HOST, request_session=None):
         self.requestid = None
         self.subscription_id = subscription_id
         self.cert_file = cert_file
         self.host = host
+        self.request_session = request_session
+        self.x_ms_version = X_MS_VERSION
 
-        if not self.cert_file:
+        if not self.cert_file and not request_session:
             if AZURE_MANAGEMENT_CERTFILE in os.environ:
                 self.cert_file = os.environ[AZURE_MANAGEMENT_CERTFILE]
 
@@ -54,12 +56,14 @@ class _ServiceManagementClient(object):
                 self.subscription_id = os.environ[
                     AZURE_MANAGEMENT_SUBSCRIPTIONID]
 
-        if not self.cert_file or not self.subscription_id:
-            raise WindowsAzureError(
-                'You need to provide subscription id and certificate file')
+        if not self.request_session:
+            if not self.cert_file or not self.subscription_id:
+                raise WindowsAzureError(
+                    'You need to provide subscription id and certificate file')
 
         self._httpclient = _HTTPClient(
-            service_instance=self, cert_file=self.cert_file)
+            service_instance=self, cert_file=self.cert_file,
+            request_session=self.request_session)
         self._filter = self._httpclient.perform_request
 
     def with_filter(self, filter):
@@ -98,13 +102,34 @@ class _ServiceManagementClient(object):
 
         return resp
 
-    def _perform_get(self, path, response_type):
+    def _update_management_header(self, request, x_ms_version):
+        ''' Add additional headers for management. '''
+
+        if request.method in ['PUT', 'POST', 'MERGE', 'DELETE']:
+            request.headers.append(('Content-Length', str(len(request.body))))
+
+        # append additional headers base on the service
+        request.headers.append(('x-ms-version', x_ms_version or self.x_ms_version))
+
+        # if it is not GET or HEAD request, must set content-type.
+        if not request.method in ['GET', 'HEAD']:
+            for name, _ in request.headers:
+                if 'content-type' == name.lower():
+                    break
+            else:
+                request.headers.append(
+                    ('Content-Type',
+                     'application/atom+xml;type=entry;charset=utf-8'))
+
+        return request.headers
+
+    def _perform_get(self, path, response_type, x_ms_version=None):
         request = HTTPRequest()
         request.method = 'GET'
         request.host = self.host
         request.path = path
         request.path, request.query = _update_request_uri_query(request)
-        request.headers = _update_management_header(request)
+        request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
         if response_type is not None:
@@ -112,14 +137,14 @@ class _ServiceManagementClient(object):
 
         return response
 
-    def _perform_put(self, path, body, async=False):
+    def _perform_put(self, path, body, async=False, x_ms_version=None):
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self.host
         request.path = path
         request.body = _get_request_body(body)
         request.path, request.query = _update_request_uri_query(request)
-        request.headers = _update_management_header(request)
+        request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
         if async:
@@ -127,14 +152,15 @@ class _ServiceManagementClient(object):
 
         return None
 
-    def _perform_post(self, path, body, response_type=None, async=False):
+    def _perform_post(self, path, body, response_type=None, async=False,
+                      x_ms_version=None):
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.host
         request.path = path
         request.body = _get_request_body(body)
         request.path, request.query = _update_request_uri_query(request)
-        request.headers = _update_management_header(request)
+        request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
         if response_type is not None:
@@ -145,13 +171,13 @@ class _ServiceManagementClient(object):
 
         return None
 
-    def _perform_delete(self, path, async=False):
+    def _perform_delete(self, path, async=False, x_ms_version=None):
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self.host
         request.path = path
         request.path, request.query = _update_request_uri_query(request)
-        request.headers = _update_management_header(request)
+        request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
         if async:

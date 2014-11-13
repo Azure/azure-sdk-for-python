@@ -27,17 +27,15 @@ from azure.servicemanagement import (
 
 from .util import (
     AzureTestCase,
+    create_service_management,
     credentials,
-    set_service_options,
 )
 
 
 class SchedulerManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.sms = SchedulerManagementService(credentials.getSubscriptionId(),
-                                              credentials.getManagementCertFile())
-        set_service_options(self.sms)
+        self.sqlms = create_service_management(SchedulerManagementService)
 
     def tearDown(self):
         self.cleanup()

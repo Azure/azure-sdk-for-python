@@ -98,6 +98,21 @@ class Credentials(object):
             return self.ns[u'proxyhost']
         return None
 
+    def getUseRequestsLibrary(self):
+        if u'userequestslibrary' in self.ns:
+            return self.ns[u'userequestslibrary'].lower() == 'true'
+        return None
+
+    def getLinuxVMImageName(self):
+        if u'linuxvmimagename' in self.ns:
+            return self.ns[u'linuxvmimagename']
+        return None
+
+    def getRemoteSourceImageLink(self):
+        if u'remotesourceimagelink' in self.ns:
+            return self.ns[u'remotesourceimagelink']
+        return None
+
     def getProxyPort(self):
         ''' Optional. Port of the proxy server. '''
         if u'proxyport' in self.ns:
@@ -143,6 +158,19 @@ def getUniqueName(base_name):
     cur_time = cur_time.lower().strip()
     return base_name + str(random.randint(10, 99)) + cur_time[:12]
 
+
+def create_service_management(service_class):
+    if credentials.getUseRequestsLibrary():
+        from requests import Session
+        session = Session()
+        session.cert = credentials.getManagementCertFile()
+        service = service_class(credentials.getSubscriptionId(),
+                            request_session=session)
+    else:
+        service = service_class(credentials.getSubscriptionId(),
+                            credentials.getManagementCertFile())
+    set_service_options(service)
+    return service
 
 def set_service_options(service):
     useHttplibOverride = credentials.getUseHttplibOverride()

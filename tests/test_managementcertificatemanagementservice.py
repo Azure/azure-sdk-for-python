@@ -17,9 +17,9 @@ import unittest
 from azure.servicemanagement import ServiceManagementService
 from util import (
     AzureTestCase,
+    create_service_management,
     credentials,
     getUniqueName,
-    set_service_options,
     )
 
 MANAGEMENT_CERT_PUBLICKEY = 'MIIBCgKCAQEAsjULNM53WPLkht1rbrDob/e4hZTHzj/hlLoBt2X3cNRc6dOPsMucxbMdchbCqAFa5RIaJvF5NDKqZuUSwq6bttD71twzy9bQ03EySOcRBad1VyqAZQ8DL8nUGSnXIUh+tpz4fDGM5f3Ly9NX8zfGqG3sT635rrFlUp3meJC+secCCwTLOOcIs3KQmuB+pMB5Y9rPhoxcekFfpq1pKtis6pmxnVbiL49kr6UUL6RQRDwik4t1jttatXLZqHETTmXl0Y0wS5AcJUXVAn5AL2kybULoThop2v01/E0NkPtFPAqLVs/kKBahniNn9uwUo+LS9FA8rWGu0FY4CZEYDfhb+QIDAQAB'
@@ -32,9 +32,7 @@ MANAGEMENT_CERT_THUMBRINT = 'BEA4B74BD6B915E9DD6A01FB1B8C3C1740F517F2'
 class ManagementCertificateManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(),
-                                            credentials.getManagementCertFile())
-        set_service_options(self.sms)
+        self.sms = create_service_management(ServiceManagementService)
 
         self.certificate_thumbprints = []
 

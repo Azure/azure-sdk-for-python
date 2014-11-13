@@ -6,7 +6,8 @@
     <ProjectGuid>{c0742a2d-4862-40e4-8a28-036eecdbc614}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>test_blobservice.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azuretests</Name>
@@ -19,8 +20,8 @@
     <ClusterRunEnvironment>localhost/1/Core/</ClusterRunEnvironment>
     <ClusterTargetPlatform>X86</ClusterTargetPlatform>
     <IsWindowsApplication>False</IsWindowsApplication>
-    <InterpreterId>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</InterpreterId>
-    <InterpreterVersion>3.4</InterpreterVersion>
+    <InterpreterId>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</InterpreterId>
+    <InterpreterVersion>2.7</InterpreterVersion>
     <SearchPath>..\</SearchPath>
     <SccProjectName>$/TCWCS/Python/Open_Source/Feature/azure/tests</SccProjectName>
     <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>

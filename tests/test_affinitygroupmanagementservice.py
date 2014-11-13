@@ -22,9 +22,9 @@ from azure.servicemanagement import (
     )
 from util import (
     AzureTestCase,
+    create_service_management,
     credentials,
     getUniqueName,
-    set_service_options,
     )
 
 #------------------------------------------------------------------------------
@@ -33,9 +33,7 @@ from util import (
 class AffinityGroupManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(),
-                                            credentials.getManagementCertFile())
-        set_service_options(self.sms)
+        self.sms = create_service_management(ServiceManagementService)
 
         self.affinity_group_name = getUniqueName('utaffgrp')
         self.hosted_service_name = None
@@ -189,6 +187,8 @@ class AffinityGroupManagementServiceTest(AzureTestCase):
         self.assertIsNotNone(result[0].display_name)
         self.assertIsNotNone(result[0].available_services)
         self.assertTrue(len(result[0].available_services) > 0)
+        self.assertTrue(len(result[0].compute_capabilities.web_worker_role_sizes) > 0)
+        self.assertTrue(len(result[0].compute_capabilities.virtual_machines_role_sizes) > 0)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

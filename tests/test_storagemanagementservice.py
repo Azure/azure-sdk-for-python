@@ -21,9 +21,9 @@ from azure import WindowsAzureError
 from azure.servicemanagement import ServiceManagementService
 from util import (
     AzureTestCase,
+    create_service_management,
     credentials,
     getUniqueName,
-    set_service_options,
     )
 
 #------------------------------------------------------------------------------
@@ -32,9 +32,7 @@ from util import (
 class StorageManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.sms = ServiceManagementService(credentials.getSubscriptionId(),
-                                            credentials.getManagementCertFile())
-        set_service_options(self.sms)
+        self.sms = create_service_management(ServiceManagementService)
 
         self.storage_account_name = getUniqueName('utstor')
 
@@ -150,6 +148,7 @@ class StorageManagementServiceTest(AzureTestCase):
             result.storage_service_properties.status_of_primary)
         self.assertIsNotNone(
             result.storage_service_properties.status_of_secondary)
+        self.assertEqual(result.storage_service_properties.account_type, 'Standard_LRS')
         self.assertIsNotNone(result.storage_service_properties.endpoints)
         self.assertTrue(len(result.storage_service_properties.endpoints) > 0)
         self.assertIsNotNone(result.extended_properties)

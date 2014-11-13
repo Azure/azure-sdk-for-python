@@ -27,17 +27,15 @@ from azure.servicemanagement import (
 
 from .util import (
     AzureTestCase,
+    create_service_management,
     credentials,
-    set_service_options,
     )
 import unittest
 
 class SqlDatabaseServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.sqlms = SqlDatabaseManagementService(credentials.getSubscriptionId(),
-                                                  credentials.getManagementCertFile())
-        set_service_options(self.sqlms)
+        self.sqlms = create_service_management(SqlDatabaseManagementService)
 
     def tearDown(self):
         self.cleanup()

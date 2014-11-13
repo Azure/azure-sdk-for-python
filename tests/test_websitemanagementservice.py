@@ -31,17 +31,15 @@ from azure.servicemanagement import (
 
 from .util import (
     AzureTestCase,
+    create_service_management,
     credentials,
     getUniqueName,
-    set_service_options,
     )
 
 class WebsiteManagementServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.wss = WebsiteManagementService(credentials.getSubscriptionId(),
-                                            credentials.getManagementCertFile())
-        set_service_options(self.wss)
+        self.wss = create_service_management(WebsiteManagementService)
 
         self.created_site = None
         self.webspace_name = 'eastuswebspace'
