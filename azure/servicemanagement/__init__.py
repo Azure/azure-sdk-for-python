@@ -813,8 +813,11 @@ class Subscription(WindowsAzureData):
         self.current_hosted_services = 0
         self.current_storage_accounts = 0
         self.max_virtual_network_sites = 0
+        self.current_virtual_network_sites = 0
         self.max_local_network_sites = 0
         self.max_dns_servers = 0
+        self.aad_tenant_id = u''
+        self.created_time = u''
 
 
 class AvailabilityResponse(WindowsAzureData):

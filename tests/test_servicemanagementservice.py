@@ -1252,12 +1252,14 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertTrue(result.current_core_count >= 0)
         self.assertTrue(result.current_hosted_services >= 0)
         self.assertTrue(result.current_storage_accounts >= 0)
+        self.assertTrue(result.current_virtual_network_sites >= 0)
         self.assertTrue(result.max_core_count > 0)
         self.assertTrue(result.max_dns_servers > 0)
         self.assertTrue(result.max_hosted_services > 0)
         self.assertTrue(result.max_local_network_sites > 0)
         self.assertTrue(result.max_storage_accounts > 0)
         self.assertTrue(result.max_virtual_network_sites > 0)
+        self.assertGreater(len(result.aad_tenant_id), 0)
 
     #--Test cases for reserved ip addresses  -----------------------------
     def test_create_reserved_ip_address(self):

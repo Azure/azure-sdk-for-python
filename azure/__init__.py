@@ -308,6 +308,7 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'supported_os': 'SupportedOS',
     'reserved_ip': 'ReservedIP',
     'reserved_ips': 'ReservedIPs',
+    'aad_tenant_id': 'AADTenantID',
     }
 
 
