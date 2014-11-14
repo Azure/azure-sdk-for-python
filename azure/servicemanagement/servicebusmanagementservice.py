@@ -17,17 +17,23 @@ from azure import (
     _convert_response_to_feeds,
     _str,
     _validate_not_none,
-    )
+    _convert_xml_to_windows_azure_object,
+)
 from azure.servicemanagement import (
     _ServiceBusManagementXmlSerializer,
     QueueDescription,
     TopicDescription,
     NotificationHubDescription,
     RelayDescription,
-    )
+    MetricProperties,
+    MetricValues,
+    MetricRollups,
+)
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
-    )
+)
+
+from functools import partial
 
 X_MS_VERSION = '2012-03-01'
 
@@ -60,7 +66,7 @@ class ServiceBusManagementService(_ServiceManagementClient):
             subscription_id, cert_file, host, request_session)
         self.x_ms_version = X_MS_VERSION
 
-    #--Operations for service bus ----------------------------------------
+    # Operations for service bus ----------------------------------------
     def get_regions(self):
         '''
         Get list of available service bus regions.
@@ -142,54 +148,267 @@ class ServiceBusManagementService(_ServiceManagementClient):
     def list_queues(self, name):
         '''
         Enumerates the queues in the service namespace.
-        
+
         name: Name of the service bus namespace.
         '''
         _validate_not_none('name', name)
-            
+
         response = self._perform_get(
             self._get_list_queues_path(name),
             None)
 
-        return _convert_response_to_feeds(response, QueueDescription)    
+        return _convert_response_to_feeds(response,
+                                          partial(_convert_xml_to_windows_azure_object,
+                                                  azure_type=QueueDescription))
 
     def list_topics(self, name):
         '''
         Retrieves the topics in the service namespace.
-        
+
         name: Name of the service bus namespace.
         '''
         response = self._perform_get(
             self._get_list_topics_path(name),
             None)
 
-        return _convert_response_to_feeds(response, TopicDescription)
+        return _convert_response_to_feeds(response,
+                                          partial(_convert_xml_to_windows_azure_object,
+                                                  azure_type=TopicDescription))
 
     def list_notification_hubs(self, name):
         '''
         Retrieves the notification hubs in the service namespace.
-        
+
         name: Name of the service bus namespace.
         '''
         response = self._perform_get(
             self._get_list_notification_hubs_path(name),
             None)
 
-        return _convert_response_to_feeds(response, NotificationHubDescription)
+        return _convert_response_to_feeds(response,
+                                          partial(_convert_xml_to_windows_azure_object,
+                                                  azure_type=NotificationHubDescription))
 
     def list_relays(self, name):
         '''
         Retrieves the relays in the service namespace.
-        
+
         name: Name of the service bus namespace.
         '''
         response = self._perform_get(
             self._get_list_relays_path(name),
             None)
 
-        return _convert_response_to_feeds(response, RelayDescription)
+        return _convert_response_to_feeds(response,
+                                          partial(_convert_xml_to_windows_azure_object,
+                                                  azure_type=RelayDescription))
 
-    #--Helper functions --------------------------------------------------
+    def get_supported_metrics_queue(self, name, queue_name):
+        '''
+        Retrieves the list of supported metrics for this namespace and queue
+
+        name: Name of the service bus namespace.
+        queue_name: Name of the service bus queue in this namespace.
+        '''
+        response = self._perform_get(
+            self._get_get_supported_metrics_queue_path(name, queue_name),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricProperties))
+
+    def get_supported_metrics_topic(self, name, topic_name):
+        '''
+        Retrieves the list of supported metrics for this namespace and topic
+
+        name: Name of the service bus namespace.
+        topic_name: Name of the service bus queue in this namespace.
+        '''
+        response = self._perform_get(
+            self._get_get_supported_metrics_topic_path(name, topic_name),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricProperties))
+
+    def get_supported_metrics_notification_hub(self, name, hub_name):
+        '''
+        Retrieves the list of supported metrics for this namespace and topic
+
+        name: Name of the service bus namespace.
+        hub_name: Name of the service bus notification hub in this namespace.
+        '''
+        response = self._perform_get(
+            self._get_get_supported_metrics_hub_path(name, hub_name),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricProperties))
+
+    def get_supported_metrics_relay(self, name, relay_name):
+        '''
+        Retrieves the list of supported metrics for this namespace and relay
+
+        name: Name of the service bus namespace.
+        relay_name: Name of the service bus relay in this namespace.
+        '''
+        response = self._perform_get(
+            self._get_get_supported_metrics_relay_path(name, relay_name),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricProperties))
+
+    def get_metrics_data_queue(self, name, queue_name, metric, rollup, filter_expresssion):
+        '''
+        Retrieves the list of supported metrics for this namespace and queue
+
+        name: Name of the service bus namespace.
+        queue_name: Name of the service bus queue in this namespace.
+        metric: name of a supported metric
+        rollup: name of a supported rollup
+        filter_expression: filter, for instance "$filter=Timestamp gt datetime'2014-10-01T00:00:00Z'"
+        '''
+        response = self._perform_get(
+            self._get_get_metrics_data_queue_path(name, queue_name, metric, rollup, filter_expresssion),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricValues))
+
+    def get_metrics_data_topic(self, name, topic_name, metric, rollup, filter_expresssion):
+        '''
+        Retrieves the list of supported metrics for this namespace and topic
+
+        name: Name of the service bus namespace.
+        topic_name: Name of the service bus queue in this namespace.
+        metric: name of a supported metric
+        rollup: name of a supported rollup
+        filter_expression: filter, for instance "$filter=Timestamp gt datetime'2014-10-01T00:00:00Z'"
+        '''
+        response = self._perform_get(
+            self._get_get_metrics_data_topic_path(name, topic_name, metric, rollup, filter_expresssion),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricValues))
+
+    def get_metrics_data_notification_hub(self, name, hub_name, metric, rollup, filter_expresssion):
+        '''
+        Retrieves the list of supported metrics for this namespace and topic
+
+        name: Name of the service bus namespace.
+        hub_name: Name of the service bus notification hub in this namespace.
+        metric: name of a supported metric
+        rollup: name of a supported rollup
+        filter_expression: filter, for instance "$filter=Timestamp gt datetime'2014-10-01T00:00:00Z'"
+        '''
+        response = self._perform_get(
+            self._get_get_metrics_data_hub_path(name, hub_name, metric, rollup, filter_expresssion),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricValues))
+
+    def get_metrics_data_relay(self, name, relay_name, metric, rollup, filter_expresssion):
+        '''
+        Retrieves the list of supported metrics for this namespace and relay
+
+        name: Name of the service bus namespace.
+        relay_name: Name of the service bus relay in this namespace.
+        metric: name of a supported metric
+        rollup: name of a supported rollup
+        filter_expression: filter, for instance "$filter=Timestamp gt datetime'2014-10-01T00:00:00Z'"
+        '''
+        response = self._perform_get(
+            self._get_get_metrics_data_relay_path(name, relay_name, metric, rollup, filter_expresssion),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricValues))
+
+    def get_metrics_rollups_queue(self, name, queue_name, metric):
+        '''
+        This operation gets rollup data for Service Bus metrics queue.
+        Rollup data includes the time granularity for the telemetry aggregation as well as
+        the retention settings for each time granularity.
+
+        name: Name of the service bus namespace.
+        queue_name: Name of the service bus queue in this namespace.
+        metric: name of a supported metric
+        '''
+        response = self._perform_get(
+            self._get_get_metrics_rollup_queue_path(name, queue_name, metric),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricRollups))
+
+    def get_metrics_rollups_topic(self, name, topic_name, metric):
+        '''
+        This operation gets rollup data for Service Bus metrics topic.
+        Rollup data includes the time granularity for the telemetry aggregation as well as
+        the retention settings for each time granularity.
+
+        name: Name of the service bus namespace.
+        topic_name: Name of the service bus queue in this namespace.
+        metric: name of a supported metric
+        '''
+        response = self._perform_get(
+            self._get_get_metrics_rollup_topic_path(name, topic_name, metric),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricRollups))
+
+    def get_metrics_rollups_notification_hub(self, name, hub_name, metric):
+        '''
+        This operation gets rollup data for Service Bus metrics notification hub.
+        Rollup data includes the time granularity for the telemetry aggregation as well as
+        the retention settings for each time granularity.
+
+        name: Name of the service bus namespace.
+        hub_name: Name of the service bus notification hub in this namespace.
+        metric: name of a supported metric
+        '''
+        response = self._perform_get(
+            self._get_get_metrics_rollup_hub_path(name, hub_name, metric),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricRollups))
+
+    def get_metrics_rollups_relay(self, name, relay_name, metric):
+        '''
+        This operation gets rollup data for Service Bus metrics relay.
+        Rollup data includes the time granularity for the telemetry aggregation as well as
+        the retention settings for each time granularity.
+
+        name: Name of the service bus namespace.
+        relay_name: Name of the service bus relay in this namespace.
+        metric: name of a supported metric
+        '''
+        response = self._perform_get(
+            self._get_get_metrics_rollup_relay_path(name, relay_name, metric),
+            None)
+
+        return _convert_response_to_feeds(response,
+                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
+                                                  object_type=MetricRollups))
+
+
+    # Helper functions --------------------------------------------------
     def _get_list_queues_path(self, namespace_name):
         return self._get_path('services/serviceBus/Namespaces/',
                               namespace_name) + '/Queues'
@@ -205,3 +424,111 @@ class ServiceBusManagementService(_ServiceManagementClient):
     def _get_list_relays_path(self, namespace_name):
         return self._get_path('services/serviceBus/Namespaces/',
                               namespace_name) + '/Relays'
+
+    def _get_get_supported_metrics_queue_path(self, namespace_name, queue_name):
+        return self._get_path('services/serviceBus/Namespaces/',
+                              namespace_name) + '/Queues/' + _str(queue_name) + '/Metrics'
+
+    def _get_get_supported_metrics_topic_path(self, namespace_name, topic_name):
+        return self._get_path('services/serviceBus/Namespaces/',
+                              namespace_name) + '/Topics/' + _str(topic_name) + '/Metrics'
+
+    def _get_get_supported_metrics_hub_path(self, namespace_name, hub_name):
+        return self._get_path('services/serviceBus/Namespaces/',
+                              namespace_name) + '/NotificationHubs/' + _str(hub_name) + '/Metrics'
+
+    def _get_get_supported_metrics_relay_path(self, namespace_name, queue_name):
+        return self._get_path('services/serviceBus/Namespaces/',
+                              namespace_name) + '/Relays/' + _str(queue_name) + '/Metrics'
+
+    def _get_get_metrics_data_queue_path(self, namespace_name, queue_name, metric, rollup, filter_expr):
+        return "".join([
+            self._get_path('services/serviceBus/Namespaces/', namespace_name),
+            '/Queues/',
+            _str(queue_name),
+            '/Metrics/',
+            _str(metric),
+            '/Rollups/',
+            _str(rollup),
+            '/Values?',
+            filter_expr
+        ])
+
+    def _get_get_metrics_data_topic_path(self, namespace_name, queue_name, metric, rollup, filter_expr):
+        return "".join([
+            self._get_path('services/serviceBus/Namespaces/', namespace_name),
+            '/Topics/',
+            _str(queue_name),
+            '/Metrics/',
+            _str(metric),
+            '/Rollups/',
+            _str(rollup),
+            '/Values?',
+            filter_expr
+        ])
+
+    def _get_get_metrics_data_hub_path(self, namespace_name, queue_name, metric, rollup, filter_expr):
+        return "".join([
+            self._get_path('services/serviceBus/Namespaces/', namespace_name),
+            '/NotificationHubs/',
+            _str(queue_name),
+            '/Metrics/',
+            _str(metric),
+            '/Rollups/',
+            _str(rollup),
+            '/Values?',
+            filter_expr
+        ])
+
+    def _get_get_metrics_data_relay_path(self, namespace_name, queue_name, metric, rollup, filter_expr):
+        return "".join([
+            self._get_path('services/serviceBus/Namespaces/', namespace_name),
+            '/Relays/',
+            _str(queue_name),
+            '/Metrics/',
+            _str(metric),
+            '/Rollups/',
+            _str(rollup),
+            '/Values?',
+            filter_expr
+        ])
+
+    def _get_get_metrics_rollup_queue_path(self, namespace_name, queue_name, metric):
+        return "".join([
+            self._get_path('services/serviceBus/Namespaces/', namespace_name),
+            '/Queues/',
+            _str(queue_name),
+            '/Metrics/',
+            _str(metric),
+            '/Rollups',
+        ])
+
+    def _get_get_metrics_rollup_topic_path(self, namespace_name, queue_name, metric):
+        return "".join([
+            self._get_path('services/serviceBus/Namespaces/', namespace_name),
+            '/Topics/',
+            _str(queue_name),
+            '/Metrics/',
+            _str(metric),
+            '/Rollups',
+        ])
+
+    def _get_get_metrics_rollup_hub_path(self, namespace_name, queue_name, metric):
+        return "".join([
+            self._get_path('services/serviceBus/Namespaces/', namespace_name),
+            '/NotificationHubs/',
+            _str(queue_name),
+            '/Metrics/',
+            _str(metric),
+            '/Rollups',
+        ])
+
+    def _get_get_metrics_rollup_relay_path(self, namespace_name, queue_name, metric):
+        return "".join([
+            self._get_path('services/serviceBus/Namespaces/', namespace_name),
+            '/Relays/',
+            _str(queue_name),
+            '/Metrics/',
+            _str(metric),
+            '/Rollups',
+        ])
