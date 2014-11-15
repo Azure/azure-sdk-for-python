@@ -1,3 +1,64 @@
+XXXX-XX-XX Version 0.9.0
+
+IMPORTANT CHANGE IN BEHAVIOR THAT AFFECTS TABLE STORAGE USERS:
+
+The library now converts any datetime object in an entity to UTC before writing
+the value to Azure, and it sets the timezone (tzinfo) to UTC on the entities
+it reads from Azure. On a related note, python-dateutil is now an external
+dependency.
+
+The other changes in this release are:
+
+  * Ability to pass in to management APIs a Session object from the requests
+    library (or any compatible). This allows more flexibility for authentication,
+    including oauth.
+  * New service management APIs
+    - list_role_sizes
+    - list_subscriptions (oauth only)
+    - rebuild_role_instance
+    - delete_role_instances
+    - create_reserved_ip_address
+    - delete_reserved_ip_address
+    - get_reserved_ip_address
+    - list_reserved_ip_addresses
+    - add_dns_server
+    - update_dns_server
+    - delete_dns_server
+    - list_resource_extensions
+    - list_resource_extension_versions
+    - capture_vm_image
+    - delete_vm_image
+    - list_vm_images
+    - create_vm_image (wip)
+    - update_vm_image (wip)
+  * Enhanced service management APIs
+    - create_virtual_machine_deployment / add_role
+      - custom data
+      - additional windows unattend content
+      - create from a vm image
+      - public ips
+      - resource extensions
+      - create from remote os image
+      - provision guest agent
+      - dns servers
+      - reserved ip
+    - update_role
+      - resource extensions
+      - provision guest agent
+    - create_storage_service
+      - account_type replaces geo_replication_enabled (preserved for backwards compat)
+ * Preliminary Scheduler management API
+ * Add metrics to Service Bus management API
+ * Delete Blob - support for x-ms-delete-snapshots header 
+ * Fixes for bugs:
+   #221 Topic names containing slash
+   #234 AttributeError on Timestamp property
+   #212 Storage: Timstamp's microseconds value out of range
+   #116 def _from_entity_datetime(value) in __init__.py returns 7 for seconds
+   #114 Timezone information 'Z' is ignored during parsing of datetime of table entity
+
+Thank you to Costeijn, lmazuel, pneumee, nicbon, bndw, troyanov for their contributions.
+
 2014-09-19 Version 0.8.4
  * Add ability to get website publish data as an object (thanks lmazuel)
  * Fixes for bugs:
