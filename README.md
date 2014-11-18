@@ -40,14 +40,18 @@ The SDK supports Python 2.7, 3.3, 3.4.
 
 To get the source code of the SDK via **git** just type:
 
-    git clone https://github.com/Azure/azure-sdk-for-python.git
-    cd ./azure-sdk-for-python
+```Shell
+git clone https://github.com/Azure/azure-sdk-for-python.git
+cd azure-sdk-for-python
+```
 
 ## Download Package
 
 Alternatively, to get the source code via the Python Package Index (PyPI), type
 
-    %SystemDrive%\Python27\Scripts\pip.exe install azure
+```Shell
+%SystemDrive%\Python27\Scripts\pip.exe install azure
+```
 
 You can use these packages against the cloud Microsoft Azure Services, or against
 the local Storage Emulator (with the exception of Service Bus features).
@@ -259,12 +263,14 @@ msg = sbs.receive_subscription_message('taskdiscussion', 'client1')
 ### Set-up certificates
 
 You  need to create two certificates, one for the server (a .cer file) and one for the client (a .pem file). To create the .pem file using [OpenSSL](http://www.openssl.org), execute this: 
-
-  openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
+```shell
+openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out mycert.pem
+```
 
 To create the .cer certificate, execute this: 
-
+```shell
   openssl x509 -inform pem -in mycert.pem -outform der -out mycert.cer
+```
 
 After you have created the certificate, you will need to upload the .cer file to Microsoft Azure via the "Upload" action of the "Settings" tab of the [management portal](http://manage.windows.com).
 
