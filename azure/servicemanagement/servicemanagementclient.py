@@ -31,7 +31,7 @@ from azure.servicemanagement import (
     AZURE_MANAGEMENT_CERTFILE,
     AZURE_MANAGEMENT_SUBSCRIPTIONID,
     _management_error_handler,
-    _parse_response_for_async_op,
+    parse_response_for_async_op,
     X_MS_VERSION,
     )
 
@@ -73,7 +73,8 @@ class _ServiceManagementClient(object):
         and another lambda.  The filter can perform any pre-processing on the
         request, pass it off to the next lambda, and then perform any
         post-processing on the response.'''
-        res = type(self)(self.subscription_id, self.cert_file, self.host)
+        res = type(self)(self.subscription_id, self.cert_file, self.host,
+                         self.request_session)
         old_filter = self._filter
 
         def new_filter(request):
@@ -92,6 +93,96 @@ class _ServiceManagementClient(object):
         password: Password for proxy authorization.
         '''
         self._httpclient.set_proxy(host, port, user, password)
+
+    def perform_get(self, path, x_ms_version=None):
+        '''
+        Performs a GET request and returns the response.
+
+        path:
+            Path to the resource.
+            Ex: '/<subscription-id>/services/hostedservices/<service-name>'
+        x_ms_version:
+            If specified, this is used for the x-ms-version header.
+            Otherwise, self.x_ms_version is used.
+        '''
+        request = HTTPRequest()
+        request.method = 'GET'
+        request.host = self.host
+        request.path = path
+        request.path, request.query = _update_request_uri_query(request)
+        request.headers = self._update_management_header(request, x_ms_version)
+        response = self._perform_request(request)
+
+        return response
+
+    def perform_put(self, path, body, x_ms_version=None):
+        '''
+        Performs a PUT request and returns the response.
+
+        path:
+            Path to the resource.
+            Ex: '/<subscription-id>/services/hostedservices/<service-name>'
+        body:
+            Body for the PUT request.
+        x_ms_version:
+            If specified, this is used for the x-ms-version header.
+            Otherwise, self.x_ms_version is used.
+        '''
+        request = HTTPRequest()
+        request.method = 'PUT'
+        request.host = self.host
+        request.path = path
+        request.body = _get_request_body(body)
+        request.path, request.query = _update_request_uri_query(request)
+        request.headers = self._update_management_header(request, x_ms_version)
+        response = self._perform_request(request)
+
+        return response
+
+    def perform_post(self, path, body, x_ms_version=None):
+        '''
+        Performs a POST request and returns the response.
+
+        path:
+            Path to the resource.
+            Ex: '/<subscription-id>/services/hostedservices/<service-name>'
+        body:
+            Body for the POST request.
+        x_ms_version:
+            If specified, this is used for the x-ms-version header.
+            Otherwise, self.x_ms_version is used.
+        '''
+        request = HTTPRequest()
+        request.method = 'POST'
+        request.host = self.host
+        request.path = path
+        request.body = _get_request_body(body)
+        request.path, request.query = _update_request_uri_query(request)
+        request.headers = self._update_management_header(request, x_ms_version)
+        response = self._perform_request(request)
+
+        return response
+
+    def perform_delete(self, path, x_ms_version=None):
+        '''
+        Performs a DELETE request and returns the response.
+
+        path:
+            Path to the resource.
+            Ex: '/<subscription-id>/services/hostedservices/<service-name>'
+        x_ms_version:
+            If specified, this is used for the x-ms-version header.
+            Otherwise, self.x_ms_version is used.
+        '''
+        request = HTTPRequest()
+        request.method = 'DELETE'
+        request.host = self.host
+        request.path = path
+        request.path, request.query = _update_request_uri_query(request)
+        request.headers = self._update_management_header(request, x_ms_version)
+        response = self._perform_request(request)
+
+        return response
 
     #--Helper functions --------------------------------------------------
     def _perform_request(self, request):
@@ -124,13 +215,7 @@ class _ServiceManagementClient(object):
         return request.headers
 
     def _perform_get(self, path, response_type, x_ms_version=None):
-        request = HTTPRequest()
-        request.method = 'GET'
-        request.host = self.host
-        request.path = path
-        request.path, request.query = _update_request_uri_query(request)
-        request.headers = self._update_management_header(request, x_ms_version)
-        response = self._perform_request(request)
+        response = self.perform_get(path, x_ms_version)
 
         if response_type is not None:
             return _parse_response(response, response_type)
@@ -138,50 +223,30 @@ class _ServiceManagementClient(object):
         return response
 
     def _perform_put(self, path, body, async=False, x_ms_version=None):
-        request = HTTPRequest()
-        request.method = 'PUT'
-        request.host = self.host
-        request.path = path
-        request.body = _get_request_body(body)
-        request.path, request.query = _update_request_uri_query(request)
-        request.headers = self._update_management_header(request, x_ms_version)
-        response = self._perform_request(request)
+        response = self.perform_put(path, body, x_ms_version)
 
         if async:
-            return _parse_response_for_async_op(response)
+            return parse_response_for_async_op(response)
 
         return None
 
     def _perform_post(self, path, body, response_type=None, async=False,
                       x_ms_version=None):
-        request = HTTPRequest()
-        request.method = 'POST'
-        request.host = self.host
-        request.path = path
-        request.body = _get_request_body(body)
-        request.path, request.query = _update_request_uri_query(request)
-        request.headers = self._update_management_header(request, x_ms_version)
-        response = self._perform_request(request)
+        response = self.perform_post(path, body, x_ms_version)
 
         if response_type is not None:
             return _parse_response(response, response_type)
 
         if async:
-            return _parse_response_for_async_op(response)
+            return parse_response_for_async_op(response)
 
         return None
 
     def _perform_delete(self, path, async=False, x_ms_version=None):
-        request = HTTPRequest()
-        request.method = 'DELETE'
-        request.host = self.host
-        request.path = path
-        request.path, request.query = _update_request_uri_query(request)
-        request.headers = self._update_management_header(request, x_ms_version)
-        response = self._perform_request(request)
+        response = self.perform_delete(path, x_ms_version)
 
         if async:
-            return _parse_response_for_async_op(response)
+            return parse_response_for_async_op(response)
 
         return None
 

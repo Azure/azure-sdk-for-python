@@ -1791,7 +1791,7 @@ class OperationStatus(WindowsAzureData):
         self.result = u''
 
 
-def _parse_response_for_async_op(response):
+def parse_response_for_async_op(response):
     ''' Extracts request id from response header. '''
 
     if response is None:

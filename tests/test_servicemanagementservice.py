@@ -20,6 +20,9 @@ import unittest
 
 import azure.http.httpclient
 
+from azure import (
+    _encode_base64,
+    )
 from azure.servicemanagement import (
     CaptureRoleAsVMImage,
     CertificateSetting,
@@ -35,6 +38,7 @@ from azure.servicemanagement import (
     ServiceManagementService,
     VMImage,
     WindowsConfigurationSet,
+    parse_response_for_async_op,
     )
 from azure.storage.blobservice import BlobService
 from util import (
@@ -583,6 +587,108 @@ class ServiceManagementServiceTest(AzureTestCase):
             return result is not None
         except:
             return False
+
+    #--Test cases for http passthroughs --------------------------------------
+    def test_perform_get(self):
+        # Arrange
+        self._create_hosted_service(self.hosted_service_name)
+
+        # Act
+        response = self.sms.perform_get(
+            '/{0}/services/hostedservices/{1}'.format(
+                credentials.getSubscriptionId(),
+                self.hosted_service_name
+            )
+        )
+
+        # Assert
+        self.assertEqual(response.status, 200)
+        self.assertEqual(response.message, 'OK')
+        self.assertGreater(len(response.body), 0)
+        self.assertNotEqual(
+            response.body.decode().find(self.hosted_service_name), -1)
+
+    def test_perform_post(self):
+        # Arrange
+
+        # Act
+        xml = '''<?xml version="1.0" encoding="utf-8"?>
+<CreateHostedService xmlns="http://schemas.microsoft.com/windowsazure">
+  <ServiceName>{0}</ServiceName>
+  <Label>{1}</Label>
+  <Description>{2}</Description>
+  <Location>{3}</Location>
+</CreateHostedService>'''
+
+        response = self.sms.perform_post(
+            '/{0}/services/hostedservices'.format(
+                credentials.getSubscriptionId()
+            ),
+            xml.format(
+                self.hosted_service_name,
+                _encode_base64(self.hosted_service_name + 'label'),
+                'mydescription',
+                'West US'
+            )
+        )
+
+        async = parse_response_for_async_op(response)
+        self._wait_for_async(async.request_id)
+
+        # Assert
+        self.assertEqual(response.status, 201)
+        self.assertEqual(response.message, 'Created')
+        self.assertTrue(self._hosted_service_exists(self.hosted_service_name))
+
+    def test_perform_put(self):
+        # Arrange
+        self._create_hosted_service(self.hosted_service_name)
+
+        # Act
+        xml = '''<?xml version="1.0" encoding="utf-8"?>
+<UpdateHostedService xmlns="http://schemas.microsoft.com/windowsazure">
+  <Label>{0}</Label>
+</UpdateHostedService>'''
+
+        response = self.sms.perform_put(
+            '/{0}/services/hostedservices/{1}'.format(
+                credentials.getSubscriptionId(),
+                self.hosted_service_name
+            ),
+            xml.format(
+                _encode_base64(self.hosted_service_name + 'new')
+            )
+        )
+
+        async = parse_response_for_async_op(response)
+        self._wait_for_async(async.request_id)
+
+        # Assert
+        self.assertEqual(response.status, 200)
+        self.assertEqual(response.message, 'OK')
+        props = self.sms.get_hosted_service_properties(self.hosted_service_name)
+        self.assertEqual(props.hosted_service_properties.label,
+                         self.hosted_service_name + 'new')
+
+    def test_perform_delete(self):
+        # Arrange
+        self._create_hosted_service(self.hosted_service_name)
+
+        # Act
+        response = self.sms.perform_delete(
+            '/{0}/services/hostedservices/{1}'.format(
+                credentials.getSubscriptionId(),
+                self.hosted_service_name
+            )
+        )
+
+        async = parse_response_for_async_op(response)
+        self._wait_for_async(async.request_id)
+
+        # Assert
+        self.assertEqual(response.status, 200)
+        self.assertEqual(response.message, 'OK')
+        self.assertFalse(self._hosted_service_exists(self.hosted_service_name))
 
     #--Test cases for subscriptions --------------------------------------
     def test_list_role_sizes(self):
