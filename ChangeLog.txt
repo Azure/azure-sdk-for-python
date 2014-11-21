@@ -29,8 +29,8 @@ The other changes in this release are:
     - capture_vm_image
     - delete_vm_image
     - list_vm_images
-    - create_vm_image (wip)
-    - update_vm_image (wip)
+    - create_vm_image
+    - update_vm_image
   * Enhanced service management APIs
     - create_virtual_machine_deployment / add_role
       - custom data
