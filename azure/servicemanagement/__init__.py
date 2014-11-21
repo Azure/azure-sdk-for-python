@@ -2426,9 +2426,7 @@ class _XmlSerializer(object):
 
     @staticmethod
     def create_vm_image_to_xml(image):
-        xml = '<VMImage>'
-
-        xml += _XmlSerializer.data_to_xml(
+        xml = _XmlSerializer.data_to_xml(
             [('Name', image.name),
             ('Label', image.label),
             ('Description', image.description)])
@@ -2463,16 +2461,15 @@ class _XmlSerializer(object):
             ('SmallIconUri', image.small_icon_uri),
             ('PrivacyUri', image.privacy_uri),
             ('PublishedDate', image.published_date),
-            ('ShowInGui', image.show_in_gui)])
+            ('ShowInGui', image.show_in_gui, _lower)])
 
-        xml += '</VMImage>'
-
-        return _XmlSerializer.doc_from_xml('VMImages', xml)
+        return _XmlSerializer.doc_from_xml('VMImage', xml)
 
     @staticmethod
     def update_vm_image_to_xml(image):
         xml = _XmlSerializer.data_to_xml(
-            [('Label', image.label)])
+            [('Label', image.label),
+            ('Description', image.description)])
 
         os_disk = image.os_disk_configuration
         xml += '<OSDiskConfiguration>'
@@ -2491,8 +2488,7 @@ class _XmlSerializer(object):
         xml += '</DataDiskConfigurations>'
 
         xml += _XmlSerializer.data_to_xml(
-            [('Description', image.description),
-            ('Language', image.language),
+            [('Language', image.language),
             ('ImageFamily', image.image_family),
             ('RecommendedVMSize', image.recommended_vm_size),
             ('Eula', image.eula),
@@ -2500,7 +2496,7 @@ class _XmlSerializer(object):
             ('SmallIconUri', image.small_icon_uri),
             ('PrivacyUri', image.privacy_uri),
             ('PublishedDate', image.published_date),
-            ('ShowInGui', image.show_in_gui)])
+            ('ShowInGui', image.show_in_gui, _lower)])
 
         return _XmlSerializer.doc_from_xml('VMImage', xml)
 

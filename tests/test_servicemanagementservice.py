@@ -584,6 +584,30 @@ class ServiceManagementServiceTest(AzureTestCase):
         except:
             return False
 
+    def _create_vm_image(self, image_name):
+        media_link = self._copy_linux_os_vhd_to_container()
+
+        img = VMImage()
+        img.name = image_name
+        img.label = image_name + 'label'
+        img.description = image_name + 'description'
+        img.os_disk_configuration.os_state = 'Specialized'
+        img.os_disk_configuration.os = 'Linux'
+        img.os_disk_configuration.media_link = media_link
+        img.language = 'English'
+        img.show_in_gui = True
+
+        result = self.sms.create_vm_image(img)
+        self._wait_for_async(result.request_id)
+
+    def _copy_linux_os_vhd_to_container(self):
+        blob_name = 'imagecopy.vhd'
+        self.bc.create_container(self.container_name,
+                                 x_ms_blob_public_access='blob')
+        resp = self.bc.copy_blob(self.container_name, blob_name,
+                                 credentials.getLinuxOSVHD())
+        return self.bc.make_blob_url(self.container_name, blob_name)
+
     #--Test cases for subscriptions --------------------------------------
     def test_list_role_sizes(self):
         # Arrange
@@ -1899,10 +1923,10 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertEqual(found_image.os_disk_configuration.os_state, image.os_state)
         self.assertEqual(found_image.os_disk_configuration.os, 'Linux')
 
-    @unittest.skip("functionality not ready")
     def test_create_vm_image(self):
         # Arrange
         image_name = self.hosted_service_name + 'image'
+        media_link = self._copy_linux_os_vhd_to_container()
 
         # Act
         img = VMImage()
@@ -1911,9 +1935,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         img.description = image_name + 'description'
         img.os_disk_configuration.os_state = 'Specialized'
         img.os_disk_configuration.os = 'Linux'
-        img.os_disk_configuration.media_link = credentials.getLinuxOSVHD()
-        img.language = 'english'
-        img.show_in_gui = None
+        img.os_disk_configuration.media_link = media_link
+        img.language = 'English'
+        img.show_in_gui = True
 
         result = self.sms.create_vm_image(img)
         self._wait_for_async(result.request_id)
@@ -1923,16 +1947,17 @@ class ServiceManagementServiceTest(AzureTestCase):
         images = self.sms.list_vm_images()
         found_image = [im for im in images if im.name == image_name][0]
         self.assertEqual(found_image.category, 'User')
-        self.assertEqual(found_image.label, img.vm_image_label)
+        self.assertEqual(found_image.label, img.label)
         self.assertEqual(found_image.description, img.description)
         self.assertEqual(found_image.language, img.language)
+        self.assertEqual(found_image.show_in_gui, img.show_in_gui)
         self.assertEqual(found_image.os_disk_configuration.os_state, 'Specialized')
         self.assertEqual(found_image.os_disk_configuration.os, 'Linux')
 
-    @unittest.skip("test not ready")
     def test_delete_vm_image(self):
         # Arrange
-        image_name = 'utsvc83141531953252image'
+        image_name = self.hosted_service_name + 'image'
+        self._create_vm_image(image_name)
 
         # Act
         result = self.sms.delete_vm_image(image_name, True)
@@ -2014,29 +2039,10 @@ class ServiceManagementServiceTest(AzureTestCase):
             self.assertEqual(image.category, cat)
             self.assertEqual(image.publisher_name, pub)
 
-    @unittest.skip("functionality not ready")
     def test_update_vm_image(self):
         # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-
-        self._create_vm_linux(service_name, deployment_name, role_name)
-
-        image_name = role_name + 'image'
-        image = CaptureRoleAsVMImage('Specialized',
-                                     image_name,
-                                     image_name + 'label',
-                                     image_name + 'description',
-                                     'english',
-                                     'mygroup')
-
-        result = self.sms.capture_vm_image(
-            service_name,
-            deployment_name,
-            role_name,
-            image)
-        self._wait_for_async(result.request_id)
+        image_name = self.hosted_service_name + 'image'
+        self._create_vm_image(image_name)
 
         # Act
         updated_image = VMImage()
