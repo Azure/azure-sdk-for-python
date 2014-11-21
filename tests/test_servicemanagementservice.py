@@ -1637,9 +1637,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertEqual(deployment.label, deployment_label)
 
     def test_create_virtual_machine_deployment_linux_remote_source_image(self):
-        # Test requires a link to a .vhd in a separate storage account
-        # Make sure to use a storage account in West US to avoid timeout
-        source_image_link = credentials.getRemoteSourceImageLink()
+        source_image_link = credentials.getLinuxVMRemoteSourceImageLink()
         if not source_image_link:
             self.assertTrue(False,
                 'Missing remotesourceimagelink entry in credentials file.')
