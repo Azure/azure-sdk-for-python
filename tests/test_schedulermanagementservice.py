@@ -25,7 +25,7 @@ from azure.servicemanagement import (
     CloudService,
 )
 
-from .util import (
+from util import (
     AzureTestCase,
     create_service_management,
     credentials,
@@ -49,7 +49,7 @@ class SchedulerManagementServiceTest(AzureTestCase):
         # Arrange
 
         # Act
-        result = self.sms.list_cloud_services()
+        result = self.sqlms.list_cloud_services()
 
         # Assert
         self.assertIsNotNone(result)

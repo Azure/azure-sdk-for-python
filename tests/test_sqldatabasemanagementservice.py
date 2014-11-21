@@ -25,7 +25,7 @@ from azure.servicemanagement import (
     Database,
     )
 
-from .util import (
+from util import (
     AzureTestCase,
     create_service_management,
     credentials,
