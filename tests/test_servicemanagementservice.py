@@ -2337,11 +2337,11 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name)
+        self._create_vm_linux(service_name, deployment_name, role_name)
 
-        lun = 2
+        lun = 0
         url = self._upload_disk_to_storage_blob('disk')
-        self._create_disk(self.disk_name, 'Windows', url)
+        self._create_disk(self.disk_name, 'Linux', url)
         self.data_disk_info = (service_name, deployment_name, role_name, lun)
 
         # Act
@@ -2361,9 +2361,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name)
+        self._create_vm_linux(service_name, deployment_name, role_name)
 
-        lun = 3
+        lun = 0
         label = 'disk' + str(lun)
         url = self._upload_disk_to_storage_blob('disk')
         self.data_disk_info = (service_name, deployment_name, role_name, lun)
