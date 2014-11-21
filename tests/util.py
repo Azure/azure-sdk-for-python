@@ -33,7 +33,7 @@ class Credentials(object):
     '''
 
     def __init__(self):
-        credentialsFilename = "windowsazurecredentials.json"
+        credentialsFilename = "azurecredentials.json"
         tmpName = os.path.join(os.getcwd(), credentialsFilename)
         if not os.path.exists(tmpName):
             if "USERPROFILE" in os.environ:
@@ -90,6 +90,7 @@ class Credentials(object):
         return None
 
     def getLinuxOSVHD(self):
+        ''' URL to a blob of a linux .vhd in storageservicesname account'''
         return self.ns[u'linuxosvhd']
 
     def getProxyHost(self):
@@ -104,13 +105,16 @@ class Credentials(object):
         return None
 
     def getLinuxVMImageName(self):
+        ''' Name of a Linux VM image in the current subscription.'''
         if u'linuxvmimagename' in self.ns:
             return self.ns[u'linuxvmimagename']
         return None
 
-    def getRemoteSourceImageLink(self):
-        if u'remotesourceimagelink' in self.ns:
-            return self.ns[u'remotesourceimagelink']
+    def getLinuxVMRemoteSourceImageLink(self):
+        ''' Link to a .vhd in a public blob in separate storage account
+        Make sure to use a storage account in West US to avoid timeout'''
+        if u'linuxvmremotesourceimagelink' in self.ns:
+            return self.ns[u'linuxvmremotesourceimagelink']
         return None
 
     def getProxyPort(self):
