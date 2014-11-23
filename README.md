@@ -269,7 +269,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mycert.pem -out myce
 
 To create the .cer certificate, execute this: 
 ```shell
-  openssl x509 -inform pem -in mycert.pem -outform der -out mycert.cer
+openssl x509 -inform pem -in mycert.pem -outform der -out mycert.cer
 ```
 
 After you have created the certificate, you will need to upload the .cer file to Microsoft Azure via the "Upload" action of the "Settings" tab of the [management portal](http://manage.windows.com).
