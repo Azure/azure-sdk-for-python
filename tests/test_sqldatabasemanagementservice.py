@@ -36,7 +36,7 @@ from util import (
     )
 import unittest
 
-class SqlDatabaseServiceTest(AzureTestCase):
+class SqlDatabaseManagementServiceTest(AzureTestCase):
 
     def setUp(self):
         self.sqlms = create_service_management(SqlDatabaseManagementService)
@@ -44,7 +44,7 @@ class SqlDatabaseServiceTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(SqlDatabaseServiceTest, self).tearDown()
+        return super(SqlDatabaseManagementServiceTest, self).tearDown()
 
     def cleanup(self):
         if self.created_server:
