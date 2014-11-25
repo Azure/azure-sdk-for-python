@@ -825,31 +825,31 @@ class CRUDTests(unittest.TestCase):
                          documents.IndexingMode.Consistent,
                          'indexing mode should be consistent')
         collection_definition = {
-            'id': 'TestQueryDocumentsSecondaryIndexCollection',
+            'id': 'CollectionWithIndexingPolicy',
             'indexingPolicy': {
                 'automatic': True,
                 'indexingMode': 'Lazy',
-                'paths': {
-                    'Frequent': ['/'],
-                    'InFrequent': ['/"A"/"B"', '/"A"/"D"'],
-                    'Excluded': ['/"X"/"D"']
-                }
+                'IncludedPaths': [
+                    {
+                        'IndexType': 'Hash',
+                        'Path': '/'
+                    }
+                ],
+                'ExcludedPaths': [
+                    '/"systemMetadata"/*'
+                ]
             }
         }
-        coll = client.DeleteCollection(consistent_collection['_self'])
-        collection_with_secondary_index = client.CreateCollection(
+        client.DeleteCollection(consistent_collection['_self'])
+        collectio_with_indexing_policy = client.CreateCollection(
             db['_self'], collection_definition)
-        self.assertEqual(len(collection_with_secondary_index[
-                             'indexingPolicy']['paths']['Frequent']),
-                         1,
-                         'Unexpected frequent path count')
-        self.assertEqual(len(collection_with_secondary_index[
-                             'indexingPolicy']['paths']['InFrequent']),
-                         2,
-                         'Unexpected infrequent path count')
-        self.assertEqual(len(collection_with_secondary_index[
-                             'indexingPolicy']['paths']['Excluded']),
-                         1,
+        self.assertEqual(2,
+                         len(collectio_with_indexing_policy[
+                             'indexingPolicy']['IncludedPaths']),
+                         'Unexpected includedPaths length')
+        self.assertEqual(1,
+                         len(collectio_with_indexing_policy[
+                             'indexingPolicy']['ExcludedPaths']),
                          'Unexpected excluded path count')
 
     def test_client_request_timeout(self):
