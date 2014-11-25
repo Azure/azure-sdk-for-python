@@ -12,7 +12,7 @@ class DocumentDBError(Exception):
 class HTTPFailure(DocumentDBError):
     """Raised when a HTTP request to the DocumentDB has failed.
     """
-    def __init__(self, status_code, message=''):
+    def __init__(self, status_code, message='', headers={}):
         """
         :Parameters:
             status_code: int
@@ -20,6 +20,7 @@ class HTTPFailure(DocumentDBError):
 
         """
         self.status_code = status_code
+        self.headers = headers
         DocumentDBError.__init__(self,
                                  'Status code: %d\n%s' % (status_code, message))
 

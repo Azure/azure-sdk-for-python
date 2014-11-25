@@ -85,8 +85,8 @@ def _InternalRequest(connection_policy, request_options, request_body):
         return  (response, dict(headers))
 
     data = response.read()
-    if response.status >= 300:
-        raise errors.HTTPFailure(response.status, data)
+    if response.status >= 400:
+        raise errors.HTTPFailure(response.status, data, headers)
 
     result = None
     if is_media:
