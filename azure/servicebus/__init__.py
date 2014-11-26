@@ -22,12 +22,12 @@ from azure import (
     WindowsAzureData,
     WindowsAzureError,
     xml_escape,
-    _create_entry,
     _general_error_handler,
     _get_entry_properties,
     _get_child_nodes,
     _get_children_from_path,
     _get_first_child_node_value,
+    _lower,
     _str,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
@@ -47,8 +47,14 @@ AZURE_SERVICEBUS_NAMESPACE = 'AZURE_SERVICEBUS_NAMESPACE'
 AZURE_SERVICEBUS_ACCESS_KEY = 'AZURE_SERVICEBUS_ACCESS_KEY'
 AZURE_SERVICEBUS_ISSUER = 'AZURE_SERVICEBUS_ISSUER'
 
-# namespace used for converting rules to objects
-XML_SCHEMA_NAMESPACE = 'http://www.w3.org/2001/XMLSchema-instance'
+
+class _XmlSchemas:
+    SchemaInstance = 'http://www.w3.org/2001/XMLSchema-instance'
+    SerializationArrays = 'http://schemas.microsoft.com/2003/10/Serialization/Arrays'
+    ServiceBus = 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    DataServices = 'http://schemas.microsoft.com/ado/2007/08/dataservices'
+    DataServicesMetadata = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
+    Atom = 'http://www.w3.org/2005/Atom'
 
 
 class Queue(WindowsAzureData):
@@ -155,6 +161,7 @@ class EventHub(WindowsAzureData):
         self.user_metadata = user_metadata
         self.partition_count = partition_count
         self.authorization_rules = []
+        self.partition_ids = []
 
 
 class AuthorizationRule(WindowsAzureData):
@@ -357,7 +364,7 @@ def _convert_xml_to_rule(xmlstr):
                                              'RuleDescription'):
         for xml_filter in _get_child_nodes(rule_desc, 'Filter'):
             filter_type = xml_filter.getAttributeNS(
-                XML_SCHEMA_NAMESPACE, 'type')
+                _XmlSchemas.SchemaInstance, 'type')
             setattr(rule, 'filter_type', str(filter_type))
             if xml_filter.childNodes:
 
@@ -367,7 +374,7 @@ def _convert_xml_to_rule(xmlstr):
 
         for xml_action in _get_child_nodes(rule_desc, 'Action'):
             action_type = xml_action.getAttributeNS(
-                XML_SCHEMA_NAMESPACE, 'type')
+                _XmlSchemas.SchemaInstance, 'type')
             setattr(rule, 'action_type', str(action_type))
             if xml_action.childNodes:
                 action_expression = xml_action.childNodes[0].firstChild
@@ -677,6 +684,14 @@ def _convert_xml_to_event_hub(xmlstr):
             hub.partition_count = int(node_value)
             invalid_event_hub = False
 
+        ids = desc.getElementsByTagName('PartitionIds')
+        if ids:
+            for id_node in ids[0].getElementsByTagNameNS(_XmlSchemas.SerializationArrays, 'string'):
+                if id_node.firstChild:
+                    value = id_node.firstChild.nodeValue
+                    if value is not None:
+                        hub.partition_ids.append(value)
+
         node_value = _get_first_child_node_value(desc, 'EntityAvailableStatus')
         if node_value is not None:
             hub.entity_available_status = node_value
@@ -739,28 +754,47 @@ def _convert_xml_to_event_hub(xmlstr):
     return hub
 
 
-def _lower(val):
-    return val.lower()
+def _convert_object_to_feed_entry(obj, rootName, content_writer):
+    updated_str = datetime.utcnow().isoformat()
+    if datetime.utcnow().utcoffset() is None:
+        updated_str += '+00:00'
+
+    writer = _XmlWriter()
+    writer.preprocessor('<?xml version="1.0" encoding="utf-8" standalone="yes"?>')
+    writer.start('entry', [
+        ('xmlns:d', _XmlSchemas.DataServices, None),
+        ('xmlns:m', _XmlSchemas.DataServicesMetadata, None),
+        ('xmlns', _XmlSchemas.Atom, None),
+        ])
+
+    writer.element('title', '')
+    writer.element('updated', updated_str)
+    writer.start('author')
+    writer.element('name', '')
+    writer.end('author')
+    writer.element('id', '')
+    writer.start('content', [('type', 'application/xml', None)])
+    writer.start(rootName, [
+        ('xmlns:i', _XmlSchemas.SchemaInstance, None),
+        ('xmlns', _XmlSchemas.ServiceBus, None),
+        ])
+
+    if obj:
+        content_writer(writer, obj)
+
+    writer.end(rootName)
+    writer.end('content')
+    writer.end('entry')
+
+    xml = writer.xml()
+    writer.close()
+
+    return xml
 
 
 def _convert_subscription_to_xml(sub):
-    '''
-    Converts a subscription object to xml to send.  The order of each field of
-    subscription in xml is very important so we can't simple call
-    convert_class_to_xml.
 
-    sub: the subsciption object to be converted.
-    '''
-    writer = _XmlWriter()
-    writer.start(
-        'SubscriptionDescription',
-        [
-            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
-            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
-        ]
-    )
-
-    if sub:
+    def _subscription_to_xml(writer, sub):
         writer.elements([
             ('LockDuration', sub.lock_duration, None),
             ('RequiresSession', sub.requires_session, _lower),
@@ -772,31 +806,13 @@ def _convert_subscription_to_xml(sub):
             ('MessageCount', sub.message_count, None),
             ])
 
-    writer.end('SubscriptionDescription')
-
-    xml = writer.xml()
-    writer.close()
-
-    return _create_entry(xml)
+    return _convert_object_to_feed_entry(
+        sub, 'SubscriptionDescription', _subscription_to_xml)
 
 
 def _convert_rule_to_xml(rule):
-    '''
-    Converts a rule object to xml to send.  The order of each field of rule
-    in xml is very important so we cann't simple call convert_class_to_xml.
 
-    rule: the rule object to be converted.
-    '''
-    writer = _XmlWriter()
-    writer.start(
-        'RuleDescription',
-        [
-            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
-            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
-        ]
-    )
-
-    if rule:
+    def _rule_to_xml(writer, rule):
         if rule.filter_type:
             writer.start('Filter', [('i:type', rule.filter_type, None)])
             if rule.filter_type == 'CorrelationFilter':
@@ -814,31 +830,13 @@ def _convert_rule_to_xml(rule):
             writer.end('Action')
             pass
 
-    writer.end('RuleDescription')
-
-    xml = writer.xml()
-    writer.close()
-
-    return _create_entry(xml)
+    return _convert_object_to_feed_entry(
+        rule, 'RuleDescription', _rule_to_xml)
 
 
 def _convert_topic_to_xml(topic):
-    '''
-    Converts a topic object to xml to send.  The order of each field of topic
-    in xml is very important so we cann't simple call convert_class_to_xml.
 
-    topic: the topic object to be converted.
-    '''
-    writer = _XmlWriter()
-    writer.start(
-        'TopicDescription',
-        [
-            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
-            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
-        ]
-    )
-
-    if topic:
+    def _topic_to_xml(writer, topic):
         writer.elements([
             ('DefaultMessageTimeToLive', topic.default_message_time_to_live, None),
             ('MaxSizeInMegabytes', topic.max_size_in_megabytes, None),
@@ -848,31 +846,13 @@ def _convert_topic_to_xml(topic):
             ('SizeInBytes', topic.size_in_bytes, None),
             ])
 
-    writer.end('TopicDescription')
-
-    xml = writer.xml()
-    writer.close()
-
-    return _create_entry(xml)
+    return _convert_object_to_feed_entry(
+        topic, 'TopicDescription', _topic_to_xml)
 
 
 def _convert_queue_to_xml(queue):
-    '''
-    Converts a queue object to xml to send.  The order of each field of queue
-    in xml is very important so we cann't simple call convert_class_to_xml.
 
-    queue: the queue object to be converted.
-    '''
-    writer = _XmlWriter()
-    writer.start(
-        'QueueDescription',
-        [
-            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
-            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
-        ]
-    )
-
-    if queue:
+    def _queue_to_xml(writer, queue):
         writer.elements([
             ('LockDuration', queue.lock_duration, None),
             ('MaxSizeInMegabytes', queue.max_size_in_megabytes, None),
@@ -887,31 +867,13 @@ def _convert_queue_to_xml(queue):
             ('MessageCount', queue.message_count, None),
             ])
 
-    writer.end('QueueDescription')
-
-    xml = writer.xml()
-    writer.close()
-
-    return _create_entry(xml)
+    return _convert_object_to_feed_entry(
+        queue, 'QueueDescription', _queue_to_xml)
 
 
 def _convert_event_hub_to_xml(hub):
-    '''
-    Converts an event hub to xml to send.  The order of each field
-    in xml is very important so we can't simply call convert_class_to_xml.
 
-    hub: the event hub object to be converted.
-    '''
-    writer = _XmlWriter()
-    writer.start(
-        'EventHubDescription',
-        [
-            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
-            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
-        ]
-    )
-
-    if hub:
+    def _hub_to_xml(writer, hub):
         writer.elements(
             [('MessageRetentionInDays', hub.message_retention_in_days, None)])
         if hub.authorization_rules:
@@ -938,12 +900,8 @@ def _convert_event_hub_to_xml(hub):
              ('UserMetadata', hub.user_metadata, None),
              ('PartitionCount', hub.partition_count, None)])
 
-    writer.end('EventHubDescription')
-
-    xml = writer.xml()
-    writer.close()
-
-    return _create_entry(xml)
+    return _convert_object_to_feed_entry(
+        hub, 'EventHubDescription', _hub_to_xml)
 
 
 def _service_bus_error_handler(http_error):

@@ -1001,23 +1001,26 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     return encoded_digest
 
 
+def _lower(text):
+    return text.lower()
+
+
 class _XmlWriter(object):
 
-    def __init__(self, pretty=False, indent_string='  '):
+    def __init__(self, indent_string=None):
         self.file = StringIO()
-        self.pretty = pretty
-        self.indent_count = 0
+        self.indent_level = 0
         self.indent_string = indent_string
 
     def _before_element(self, indent_change):
-        if self.pretty:
-            self.indent_count += indent_change
-            self.file.write(self.indent_string * self.indent_count)
+        if self.indent_string:
+            self.indent_level += indent_change
+            self.file.write(self.indent_string * self.indent_level)
 
     def _after_element(self, indent_change):
-        if self.pretty:
+        if self.indent_string:
             self.file.write('\n')
-            self.indent_count += indent_change
+            self.indent_level += indent_change
 
     def _write_attrs(self, attrs):
         for attr_name, attr_val, attr_conv in attrs:
@@ -1049,6 +1052,11 @@ class _XmlWriter(object):
         for name, val, conv in name_val_convs:
             if val is not None:
                 self.element(name, val, conv)
+
+    def preprocessor(self, text):
+        self._before_element(0)
+        self.file.write(text)
+        self._after_element(0)
 
     def start(self, name, attrs=None):
         self._before_element(0)

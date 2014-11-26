@@ -105,6 +105,7 @@ class EventHubServiceTest(AzureTestCase):
         self.assertEqual(created_hub.status, hub.status)
         self.assertEqual(created_hub.partition_count, hub.partition_count)
         self.assertEqual(created_hub.user_metadata, hub.user_metadata)
+        self.assertEqual(len(created_hub.partition_ids), hub.partition_count)
 
     def test_create_event_hub_with_authorization(self):
         # Arrange

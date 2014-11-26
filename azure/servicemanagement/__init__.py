@@ -23,6 +23,7 @@ from azure import (
     _get_children_from_path,
     _get_first_child_node_value,
     _list_of,
+    _lower,
     _scalar_list_of,
     _str,
     _xml_attribute,
@@ -1809,10 +1810,6 @@ def parse_response_for_async_op(response):
 def _management_error_handler(http_error):
     ''' Simple error handler for management service. '''
     return _general_error_handler(http_error)
-
-
-def _lower(text):
-    return text.lower()
 
 
 class _XmlSerializer(object):
