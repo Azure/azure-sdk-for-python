@@ -28,11 +28,13 @@ from azure import (
     _get_child_nodes,
     _get_children_from_path,
     _get_first_child_node_value,
+    _str,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
     _ERROR_EVENT_HUB_NOT_FOUND,
     _ERROR_QUEUE_NOT_FOUND,
     _ERROR_TOPIC_NOT_FOUND,
+    _XmlWriter,
     )
 from azure.http import HTTPError
 
@@ -737,67 +739,45 @@ def _convert_xml_to_event_hub(xmlstr):
     return hub
 
 
-def _convert_subscription_to_xml(subscription):
+def _lower(val):
+    return val.lower()
+
+
+def _convert_subscription_to_xml(sub):
     '''
     Converts a subscription object to xml to send.  The order of each field of
     subscription in xml is very important so we can't simple call
     convert_class_to_xml.
 
-    subscription: the subsciption object to be converted.
+    sub: the subsciption object to be converted.
     '''
+    writer = _XmlWriter()
+    writer.start(
+        'SubscriptionDescription',
+        [
+            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
+            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
+        ]
+    )
 
-    subscription_body = '<SubscriptionDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
-    if subscription:
-        if subscription.lock_duration is not None:
-            subscription_body += ''.join(
-                ['<LockDuration>',
-                 str(subscription.lock_duration),
-                 '</LockDuration>'])
+    if sub:
+        writer.elements([
+            ('LockDuration', sub.lock_duration, None),
+            ('RequiresSession', sub.requires_session, _lower),
+            ('DefaultMessageTimeToLive', sub.default_message_time_to_live, None),
+            ('DeadLetteringOnMessageExpiration', sub.dead_lettering_on_message_expiration, _lower),
+            ('DeadLetteringOnFilterEvaluationExceptions', sub.dead_lettering_on_filter_evaluation_exceptions, _lower),
+            ('EnableBatchedOperations', sub.enable_batched_operations, _lower),
+            ('MaxDeliveryCount', sub.max_delivery_count, None),
+            ('MessageCount', sub.message_count, None),
+            ])
 
-        if subscription.requires_session is not None:
-            subscription_body += ''.join(
-                ['<RequiresSession>',
-                 str(subscription.requires_session).lower(),
-                 '</RequiresSession>'])
+    writer.end('SubscriptionDescription')
 
-        if subscription.default_message_time_to_live is not None:
-            subscription_body += ''.join(
-                ['<DefaultMessageTimeToLive>',
-                 str(subscription.default_message_time_to_live),
-                 '</DefaultMessageTimeToLive>'])
+    xml = writer.xml()
+    writer.close()
 
-        if subscription.dead_lettering_on_message_expiration is not None:
-            subscription_body += ''.join(
-                ['<DeadLetteringOnMessageExpiration>',
-                 str(subscription.dead_lettering_on_message_expiration).lower(),
-                 '</DeadLetteringOnMessageExpiration>'])
-
-        if subscription.dead_lettering_on_filter_evaluation_exceptions is not None:
-            subscription_body += ''.join(
-                ['<DeadLetteringOnFilterEvaluationExceptions>',
-                 str(subscription.dead_lettering_on_filter_evaluation_exceptions).lower(),
-                 '</DeadLetteringOnFilterEvaluationExceptions>'])
-
-        if subscription.enable_batched_operations is not None:
-            subscription_body += ''.join(
-                ['<EnableBatchedOperations>',
-                 str(subscription.enable_batched_operations).lower(),
-                 '</EnableBatchedOperations>'])
-
-        if subscription.max_delivery_count is not None:
-            subscription_body += ''.join(
-                ['<MaxDeliveryCount>',
-                 str(subscription.max_delivery_count),
-                 '</MaxDeliveryCount>'])
-
-        if subscription.message_count is not None:
-            subscription_body += ''.join(
-                ['<MessageCount>',
-                 str(subscription.message_count),
-                 '</MessageCount>'])
-
-    subscription_body += '</SubscriptionDescription>'
-    return _create_entry(subscription_body)
+    return _create_entry(xml)
 
 
 def _convert_rule_to_xml(rule):
@@ -807,40 +787,39 @@ def _convert_rule_to_xml(rule):
 
     rule: the rule object to be converted.
     '''
-    rule_body = '<RuleDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
+    writer = _XmlWriter()
+    writer.start(
+        'RuleDescription',
+        [
+            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
+            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
+        ]
+    )
+
     if rule:
         if rule.filter_type:
-            rule_body += ''.join(
-                ['<Filter i:type="',
-                 xml_escape(rule.filter_type),
-                 '">'])
+            writer.start('Filter', [('i:type', rule.filter_type, None)])
             if rule.filter_type == 'CorrelationFilter':
-                rule_body += ''.join(
-                    ['<CorrelationId>',
-                     xml_escape(rule.filter_expression),
-                     '</CorrelationId>'])
+                writer.element('CorrelationId', rule.filter_expression)
             else:
-                rule_body += ''.join(
-                    ['<SqlExpression>',
-                     xml_escape(rule.filter_expression),
-                     '</SqlExpression>'])
-                rule_body += '<CompatibilityLevel>20</CompatibilityLevel>'
-            rule_body += '</Filter>'
+                writer.element('SqlExpression', rule.filter_expression)
+                writer.element('CompatibilityLevel', '20')
+            writer.end('Filter')
+            pass
         if rule.action_type:
-            rule_body += ''.join(
-                ['<Action i:type="',
-                 xml_escape(rule.action_type),
-                 '">'])
+            writer.start('Action', [('i:type', rule.action_type, None)])
             if rule.action_type == 'SqlRuleAction':
-                rule_body += ''.join(
-                    ['<SqlExpression>',
-                     xml_escape(rule.action_expression),
-                     '</SqlExpression>'])
-                rule_body += '<CompatibilityLevel>20</CompatibilityLevel>'
-            rule_body += '</Action>'
-    rule_body += '</RuleDescription>'
+                writer.element('SqlExpression', rule.action_expression)
+                writer.element('CompatibilityLevel', '20')
+            writer.end('Action')
+            pass
 
-    return _create_entry(rule_body)
+    writer.end('RuleDescription')
+
+    xml = writer.xml()
+    writer.close()
+
+    return _create_entry(xml)
 
 
 def _convert_topic_to_xml(topic):
@@ -850,48 +829,31 @@ def _convert_topic_to_xml(topic):
 
     topic: the topic object to be converted.
     '''
+    writer = _XmlWriter()
+    writer.start(
+        'TopicDescription',
+        [
+            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
+            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
+        ]
+    )
 
-    topic_body = '<TopicDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
     if topic:
-        if topic.default_message_time_to_live is not None:
-            topic_body += ''.join(
-                ['<DefaultMessageTimeToLive>',
-                 str(topic.default_message_time_to_live),
-                 '</DefaultMessageTimeToLive>'])
+        writer.elements([
+            ('DefaultMessageTimeToLive', topic.default_message_time_to_live, None),
+            ('MaxSizeInMegabytes', topic.max_size_in_megabytes, None),
+            ('RequiresDuplicateDetection', topic.requires_duplicate_detection, _lower),
+            ('DuplicateDetectionHistoryTimeWindow', topic.duplicate_detection_history_time_window, None),
+            ('EnableBatchedOperations', topic.enable_batched_operations, _lower),
+            ('SizeInBytes', topic.size_in_bytes, None),
+            ])
 
-        if topic.max_size_in_megabytes is not None:
-            topic_body += ''.join(
-                ['<MaxSizeInMegabytes>',
-                 str(topic.max_size_in_megabytes),
-                 '</MaxSizeInMegabytes>'])
+    writer.end('TopicDescription')
 
-        if topic.requires_duplicate_detection is not None:
-            topic_body += ''.join(
-                ['<RequiresDuplicateDetection>',
-                 str(topic.requires_duplicate_detection).lower(),
-                 '</RequiresDuplicateDetection>'])
+    xml = writer.xml()
+    writer.close()
 
-        if topic.duplicate_detection_history_time_window is not None:
-            topic_body += ''.join(
-                ['<DuplicateDetectionHistoryTimeWindow>',
-                 str(topic.duplicate_detection_history_time_window),
-                 '</DuplicateDetectionHistoryTimeWindow>'])
-
-        if topic.enable_batched_operations is not None:
-            topic_body += ''.join(
-                ['<EnableBatchedOperations>',
-                 str(topic.enable_batched_operations).lower(),
-                 '</EnableBatchedOperations>'])
-
-        if topic.size_in_bytes is not None:
-            topic_body += ''.join(
-                ['<SizeInBytes>',
-                 str(topic.size_in_bytes),
-                 '</SizeInBytes>'])
-
-    topic_body += '</TopicDescription>'
-
-    return _create_entry(topic_body)
+    return _create_entry(xml)
 
 
 def _convert_queue_to_xml(queue):
@@ -901,76 +863,36 @@ def _convert_queue_to_xml(queue):
 
     queue: the queue object to be converted.
     '''
-    queue_body = '<QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
+    writer = _XmlWriter()
+    writer.start(
+        'QueueDescription',
+        [
+            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
+            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
+        ]
+    )
+
     if queue:
-        if queue.lock_duration:
-            queue_body += ''.join(
-                ['<LockDuration>',
-                 str(queue.lock_duration),
-                 '</LockDuration>'])
+        writer.elements([
+            ('LockDuration', queue.lock_duration, None),
+            ('MaxSizeInMegabytes', queue.max_size_in_megabytes, None),
+            ('RequiresDuplicateDetection', queue.requires_duplicate_detection, _lower),
+            ('RequiresSession', queue.requires_session, _lower),
+            ('DefaultMessageTimeToLive', queue.default_message_time_to_live, None),
+            ('DeadLetteringOnMessageExpiration', queue.dead_lettering_on_message_expiration, _lower),
+            ('DuplicateDetectionHistoryTimeWindow', queue.duplicate_detection_history_time_window, None),
+            ('MaxDeliveryCount', queue.max_delivery_count, None),
+            ('EnableBatchedOperations', queue.enable_batched_operations, _lower),
+            ('SizeInBytes', queue.size_in_bytes, None),
+            ('MessageCount', queue.message_count, None),
+            ])
 
-        if queue.max_size_in_megabytes is not None:
-            queue_body += ''.join(
-                ['<MaxSizeInMegabytes>',
-                 str(queue.max_size_in_megabytes),
-                 '</MaxSizeInMegabytes>'])
+    writer.end('QueueDescription')
 
-        if queue.requires_duplicate_detection is not None:
-            queue_body += ''.join(
-                ['<RequiresDuplicateDetection>',
-                 str(queue.requires_duplicate_detection).lower(),
-                 '</RequiresDuplicateDetection>'])
+    xml = writer.xml()
+    writer.close()
 
-        if queue.requires_session is not None:
-            queue_body += ''.join(
-                ['<RequiresSession>',
-                 str(queue.requires_session).lower(),
-                 '</RequiresSession>'])
-
-        if queue.default_message_time_to_live is not None:
-            queue_body += ''.join(
-                ['<DefaultMessageTimeToLive>',
-                 str(queue.default_message_time_to_live),
-                 '</DefaultMessageTimeToLive>'])
-
-        if queue.dead_lettering_on_message_expiration is not None:
-            queue_body += ''.join(
-                ['<DeadLetteringOnMessageExpiration>',
-                 str(queue.dead_lettering_on_message_expiration).lower(),
-                 '</DeadLetteringOnMessageExpiration>'])
-
-        if queue.duplicate_detection_history_time_window is not None:
-            queue_body += ''.join(
-                ['<DuplicateDetectionHistoryTimeWindow>',
-                 str(queue.duplicate_detection_history_time_window),
-                 '</DuplicateDetectionHistoryTimeWindow>'])
-
-        if queue.max_delivery_count is not None:
-            queue_body += ''.join(
-                ['<MaxDeliveryCount>',
-                 str(queue.max_delivery_count),
-                 '</MaxDeliveryCount>'])
-
-        if queue.enable_batched_operations is not None:
-            queue_body += ''.join(
-                ['<EnableBatchedOperations>',
-                 str(queue.enable_batched_operations).lower(),
-                 '</EnableBatchedOperations>'])
-
-        if queue.size_in_bytes is not None:
-            queue_body += ''.join(
-                ['<SizeInBytes>',
-                 str(queue.size_in_bytes),
-                 '</SizeInBytes>'])
-
-        if queue.message_count is not None:
-            queue_body += ''.join(
-                ['<MessageCount>',
-                 str(queue.message_count),
-                 '</MessageCount>'])
-
-    queue_body += '</QueueDescription>'
-    return _create_entry(queue_body)
+    return _create_entry(xml)
 
 
 def _convert_event_hub_to_xml(hub):
@@ -980,74 +902,48 @@ def _convert_event_hub_to_xml(hub):
 
     hub: the event hub object to be converted.
     '''
-    body = '<EventHubDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
+    writer = _XmlWriter()
+    writer.start(
+        'EventHubDescription',
+        [
+            ('xmlns:i', 'http://www.w3.org/2001/XMLSchema-instance', None),
+            ('xmlns', 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', None)
+        ]
+    )
+
     if hub:
-        if hub.message_retention_in_days is not None:
-            body += ''.join(
-                ['<MessageRetentionInDays>',
-                 str(hub.message_retention_in_days),
-                 '</MessageRetentionInDays>'])
-
+        writer.elements(
+            [('MessageRetentionInDays', hub.message_retention_in_days, None)])
         if hub.authorization_rules:
-            body += '<AuthorizationRules>'
+            writer.start('AuthorizationRules')
             for rule in hub.authorization_rules:
-                body += '<AuthorizationRule i:type="SharedAccessAuthorizationRule">'
-                if rule.claim_type is not None:
-                    body += ''.join(
-                        ['<ClaimType>',
-                         rule.claim_type,
-                         '</ClaimType>'])
-                if rule.claim_value is not None:
-                    body += ''.join(
-                        ['<ClaimValue>',
-                         rule.claim_value,
-                         '</ClaimValue>'])
+                writer.start('AuthorizationRule',
+                             [('i:type', 'SharedAccessAuthorizationRule', None)])
+                writer.elements(
+                    [('ClaimType', rule.claim_type, None),
+                     ('ClaimValue', rule.claim_value, None)])
                 if rule.rights:
-                    body += '<Rights>'
+                    writer.start('Rights')
                     for right in rule.rights:
-                        body += ''.join(
-                            ['<AccessRights>',
-                             right,
-                             '</AccessRights>'])
-                    body += '</Rights>'
-                if rule.key_name is not None:
-                    body += ''.join(
-                        ['<KeyName>',
-                         rule.key_name,
-                         '</KeyName>'])
-                if rule.primary_key is not None:
-                    body += ''.join(
-                        ['<PrimaryKey>',
-                         xml_escape(rule.primary_key),
-                         '</PrimaryKey>'])
-                if rule.secondary_key is not None:
-                    body += ''.join(
-                        ['<SecondaryKey>',
-                         xml_escape(rule.secondary_key),
-                         '</SecondaryKey>'])
-                body += '</AuthorizationRule>'
-            body += '</AuthorizationRules>'
+                        writer.element('AccessRights', right)
+                    writer.end('Rights')
+                writer.elements(
+                    [('KeyName', rule.key_name, None),
+                     ('PrimaryKey', rule.primary_key, None),
+                     ('SecondaryKey', rule.secondary_key, None)])
+                writer.end('AuthorizationRule')
+            writer.end('AuthorizationRules')
+        writer.elements(
+            [('Status', hub.status, None),
+             ('UserMetadata', hub.user_metadata, None),
+             ('PartitionCount', hub.partition_count, None)])
 
-        if hub.status is not None:
-            body += ''.join(
-                ['<Status>',
-                 str(hub.status),
-                 '</Status>'])
+    writer.end('EventHubDescription')
 
-        if hub.user_metadata is not None:
-            body += ''.join(
-                ['<UserMetadata>',
-                 str(hub.user_metadata),
-                 '</UserMetadata>'])
+    xml = writer.xml()
+    writer.close()
 
-        if hub.partition_count is not None:
-            body += ''.join(
-                ['<PartitionCount>',
-                 str(hub.partition_count),
-                 '</PartitionCount>'])
-
-    body += '</EventHubDescription>'
-    return _create_entry(body)
+    return _create_entry(xml)
 
 
 def _service_bus_error_handler(http_error):
