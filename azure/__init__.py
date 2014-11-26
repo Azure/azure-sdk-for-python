@@ -68,6 +68,7 @@ _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE = \
     'Message is not peek locked and cannot be deleted.'
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK = \
     'Message is not peek locked and cannot be unlocked.'
+_ERROR_EVENT_HUB_NOT_FOUND = 'Event hub was not found'
 _ERROR_QUEUE_NOT_FOUND = 'Queue was not found'
 _ERROR_TOPIC_NOT_FOUND = 'Topic was not found'
 _ERROR_CONFLICT = 'Conflict ({0})'

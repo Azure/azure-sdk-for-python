@@ -52,6 +52,7 @@
     <Compile Include="test_blobservice.py" />
     <Compile Include="test_cloudstorageaccount.py" />
     <Compile Include="test_affinitygroupmanagementservice.py" />
+    <Compile Include="test_eventhubservice.py" />
     <Compile Include="test_servicemanagementservice.py" />
     <Compile Include="test_queueservice.py" />
     <Compile Include="test_sharedaccesssignature.py" />

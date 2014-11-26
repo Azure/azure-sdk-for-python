@@ -71,6 +71,15 @@ class Credentials(object):
     def getServiceBusSasKeyValue(self):
         return self.ns[u'servicebussaskeyvalue']
 
+    def getEventHubNamespace(self):
+        return self.ns[u'eventhubns']
+
+    def getEventHubSasKeyName(self):
+        return self.ns[u'eventhubsaskeyname']
+
+    def getEventHubSasKeyValue(self):
+        return self.ns[u'eventhubsaskeyvalue']
+
     def getStorageServicesKey(self):
         return self.ns[u'storageserviceskey']
 

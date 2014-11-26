@@ -30,6 +30,7 @@ from azure import (
     _get_first_child_node_value,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
+    _ERROR_EVENT_HUB_NOT_FOUND,
     _ERROR_QUEUE_NOT_FOUND,
     _ERROR_TOPIC_NOT_FOUND,
     )
@@ -141,6 +142,31 @@ class Rule(WindowsAzureData):
         self.filter_expression = filter_expression
         self.action_type = action_type
         self.action_expression = action_type
+
+
+class EventHub(WindowsAzureData):
+
+    def __init__(self, message_retention_in_days=None, status=None,
+                 user_metadata=None, partition_count=None):
+        self.message_retention_in_days = message_retention_in_days
+        self.status = status
+        self.user_metadata = user_metadata
+        self.partition_count = partition_count
+        self.authorization_rules = []
+
+
+class AuthorizationRule(WindowsAzureData):
+
+    def __init__(self, claim_type=None, claim_value=None, rights=None,
+                 key_name=None, primary_key=None, secondary_key=None):
+        self.claim_type = claim_type
+        self.claim_value = claim_value
+        self.rights = rights or []
+        self.created_time = None
+        self.modified_time = None
+        self.key_name = key_name
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
 
 
 class Message(WindowsAzureData):
@@ -356,6 +382,10 @@ def _convert_xml_to_rule(xmlstr):
 
 def _convert_response_to_queue(response):
     return _convert_xml_to_queue(response.body)
+
+
+def _convert_response_to_event_hub(response):
+    return _convert_xml_to_event_hub(response.body)
 
 
 def _parse_bool(value):
@@ -609,6 +639,104 @@ def _convert_xml_to_subscription(xmlstr):
     return subscription
 
 
+def _convert_xml_to_event_hub(xmlstr):
+    xmldoc = minidom.parseString(xmlstr)
+    hub = EventHub()
+
+    invalid_event_hub = True
+    # get node for each attribute in EventHub class, if nothing found then the
+    # response is not valid xml for EventHub.
+    for desc in _get_children_from_path(xmldoc,
+                                        'entry',
+                                        'content',
+                                        'EventHubDescription'):
+        node_value = _get_first_child_node_value(desc, 'SizeInBytes')
+        if node_value is not None:
+            hub.size_in_bytes = int(node_value)
+            invalid_event_hub = False
+
+        node_value = _get_first_child_node_value(desc, 'MessageRetentionInDays')
+        if node_value is not None:
+            hub.message_retention_in_days = int(node_value)
+            invalid_event_hub = False
+
+        node_value = _get_first_child_node_value(desc, 'Status')
+        if node_value is not None:
+            hub.status = node_value
+            invalid_event_hub = False
+
+        node_value = _get_first_child_node_value(desc, 'UserMetadata')
+        if node_value is not None:
+            hub.user_metadata = node_value
+            invalid_event_hub = False
+
+        node_value = _get_first_child_node_value(desc, 'PartitionCount')
+        if node_value is not None:
+            hub.partition_count = int(node_value)
+            invalid_event_hub = False
+
+        node_value = _get_first_child_node_value(desc, 'EntityAvailableStatus')
+        if node_value is not None:
+            hub.entity_available_status = node_value
+            invalid_event_hub = False
+
+        rules_children = _get_children_from_path(desc, 'AuthorizationRules', 'Authorization')
+
+        rules_nodes = desc.getElementsByTagName('AuthorizationRules')
+        if rules_nodes:
+            invalid_event_hub = False
+            for rule_node in rules_nodes[0].getElementsByTagName('AuthorizationRule'):
+                rule = AuthorizationRule()
+
+                node_value = _get_first_child_node_value(rule_node, 'ClaimType')
+                if node_value is not None:
+                    rule.claim_type = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'ClaimValue')
+                if node_value is not None:
+                    rule.claim_value = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'ModifiedTime')
+                if node_value is not None:
+                    rule.modified_time = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'CreatedTime')
+                if node_value is not None:
+                    rule.created_time = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'KeyName')
+                if node_value is not None:
+                    rule.key_name = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'PrimaryKey')
+                if node_value is not None:
+                    rule.primary_key = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'SecondaryKey')
+                if node_value is not None:
+                    rule.secondary_key = node_value
+
+                rights_nodes = rule_node.getElementsByTagName('Rights')
+                if rights_nodes:
+                    for access_rights_node in rights_nodes[0].getElementsByTagName('AccessRights'):
+                        if access_rights_node.firstChild:
+                            node_value = access_rights_node.firstChild.nodeValue
+                            rule.rights.append(node_value)
+
+                hub.authorization_rules.append(rule)
+
+    if invalid_event_hub:
+        raise WindowsAzureError(_ERROR_EVENT_HUB_NOT_FOUND)
+
+    # extract id, updated and name value from feed entry and set them of queue.
+    for name, value in _get_entry_properties(xmlstr, True).items():
+        if name == 'name':
+            value = value.partition('?')[0]
+        setattr(hub, name, value)
+
+    return hub
+
+
 def _convert_subscription_to_xml(subscription):
     '''
     Converts a subscription object to xml to send.  The order of each field of
@@ -843,6 +971,83 @@ def _convert_queue_to_xml(queue):
 
     queue_body += '</QueueDescription>'
     return _create_entry(queue_body)
+
+
+def _convert_event_hub_to_xml(hub):
+    '''
+    Converts an event hub to xml to send.  The order of each field
+    in xml is very important so we can't simply call convert_class_to_xml.
+
+    hub: the event hub object to be converted.
+    '''
+    body = '<EventHubDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
+    if hub:
+        if hub.message_retention_in_days is not None:
+            body += ''.join(
+                ['<MessageRetentionInDays>',
+                 str(hub.message_retention_in_days),
+                 '</MessageRetentionInDays>'])
+
+        if hub.authorization_rules:
+            body += '<AuthorizationRules>'
+            for rule in hub.authorization_rules:
+                body += '<AuthorizationRule i:type="SharedAccessAuthorizationRule">'
+                if rule.claim_type is not None:
+                    body += ''.join(
+                        ['<ClaimType>',
+                         rule.claim_type,
+                         '</ClaimType>'])
+                if rule.claim_value is not None:
+                    body += ''.join(
+                        ['<ClaimValue>',
+                         rule.claim_value,
+                         '</ClaimValue>'])
+                if rule.rights:
+                    body += '<Rights>'
+                    for right in rule.rights:
+                        body += ''.join(
+                            ['<AccessRights>',
+                             right,
+                             '</AccessRights>'])
+                    body += '</Rights>'
+                if rule.key_name is not None:
+                    body += ''.join(
+                        ['<KeyName>',
+                         rule.key_name,
+                         '</KeyName>'])
+                if rule.primary_key is not None:
+                    body += ''.join(
+                        ['<PrimaryKey>',
+                         xml_escape(rule.primary_key),
+                         '</PrimaryKey>'])
+                if rule.secondary_key is not None:
+                    body += ''.join(
+                        ['<SecondaryKey>',
+                         xml_escape(rule.secondary_key),
+                         '</SecondaryKey>'])
+                body += '</AuthorizationRule>'
+            body += '</AuthorizationRules>'
+
+        if hub.status is not None:
+            body += ''.join(
+                ['<Status>',
+                 str(hub.status),
+                 '</Status>'])
+
+        if hub.user_metadata is not None:
+            body += ''.join(
+                ['<UserMetadata>',
+                 str(hub.user_metadata),
+                 '</UserMetadata>'])
+
+        if hub.partition_count is not None:
+            body += ''.join(
+                ['<PartitionCount>',
+                 str(hub.partition_count),
+                 '</PartitionCount>'])
+
+    body += '</EventHubDescription>'
+    return _create_entry(body)
 
 
 def _service_bus_error_handler(http_error):
