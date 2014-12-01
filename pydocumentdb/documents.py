@@ -247,7 +247,7 @@ class ConnectionPolicy(object):
 
     __defaultMaxConnections = 20
     __defaultMaxConcurrentCallsPerConnection = 50
-    __defaultRequestTimeout = 10000  # milliseconds
+    __defaultRequestTimeout = 60000  # milliseconds
     # defaultMediaRequestTimeout is based upon the blob client timeout and the
     # retry policy.
     __defaultMediaRequestTimeout = 300000  # milliseconds
