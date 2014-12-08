@@ -1689,8 +1689,48 @@ class Server(WindowsAzureData):
         self.name = u''
         self.administrator_login = u''
         self.location = u''
+        self.geo_paired_region = u''
         self.fully_qualified_domain_name = u''
         self.version = u''
+
+
+class ServerQuota(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.value = 0
+
+
+class EventLog(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.database_name = u''
+        self.name = u''
+        self.start_time_utc = u''
+        self.interval_size_in_minutes = 0
+        self.event_category = u''
+        self.event_type = u''
+        self.event_subtype = 0
+        self.event_subtype_description = u''
+        self.number_of_events = 0
+        self.severity = 0
+        self.description = u''
+        self.additional_data = u''
+
+
+class CreateServerResponse(WindowsAzureData):
+    
+    def __init__(self):
+        self.server_name = u''
 
 
 class Database(WindowsAzureData):
@@ -1708,6 +1748,33 @@ class Database(WindowsAzureData):
         self.is_federation_root = False
         self.is_system_object = False
         self.max_size_bytes = 0
+
+
+class FirewallRule(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.start_ip_address = u''
+        self.end_ip_address = u''
+
+
+class ServiceObjective(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.id = u''
+        self.is_default = False
+        self.is_system = False
+        self.description = u''
+        self.enabled = False
 
 
 class CloudServices(WindowsAzureData):
@@ -1813,6 +1880,31 @@ def _management_error_handler(http_error):
 
 def _lower(text):
     return text.lower()
+
+
+def _data_to_xml(data):
+    '''Creates an xml fragment from the specified data.
+        data: Array of tuples, where first: xml element name
+                                    second: xml element text
+                                    third: conversion function
+    '''
+    xml = ''
+    for element in data:
+        name = element[0]
+        val = element[1]
+        if len(element) > 2:
+            converter = element[2]
+        else:
+            converter = None
+
+        if val is not None:
+            if converter is not None:
+                text = _str(converter(_str(val)))
+            else:
+                text = _str(val)
+
+            xml += ''.join(['<', name, '>', text, '</', name, '>'])
+    return xml
 
 
 class _XmlSerializer(object):
@@ -2544,28 +2636,7 @@ class _XmlSerializer(object):
 
     @staticmethod
     def data_to_xml(data):
-        '''Creates an xml fragment from the specified data.
-           data: Array of tuples, where first: xml element name
-                                        second: xml element text
-                                        third: conversion function
-        '''
-        xml = ''
-        for element in data:
-            name = element[0]
-            val = element[1]
-            if len(element) > 2:
-                converter = element[2]
-            else:
-                converter = None
-
-            if val is not None:
-                if converter is not None:
-                    text = _str(converter(_str(val)))
-                else:
-                    text = _str(val)
-
-                xml += ''.join(['<', name, '>', text, '</', name, '>'])
-        return xml
+        return _data_to_xml(data)
 
     @staticmethod
     def doc_from_xml(document_element_name, inner_xml):
@@ -2602,6 +2673,94 @@ class _XmlSerializer(object):
                                '</ExtendedProperty>'])
             xml += '</ExtendedProperties>'
         return xml
+
+
+class _SqlManagementXmlSerializer(object):
+
+    @staticmethod
+    def create_server_to_xml(admin_login, admin_password, location):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'Server',
+            [('AdministratorLogin', admin_login),
+             ('AdministratorLoginPassword', admin_password),
+             ('Location', location)],
+             'http://schemas.microsoft.com/sqlazure/2010/12/')
+
+    @staticmethod
+    def set_server_admin_password_to_xml(admin_password):
+        return _SqlManagementXmlSerializer.doc_from_xml(
+            'AdministratorLoginPassword', admin_password,
+            'http://schemas.microsoft.com/sqlazure/2010/12/')
+
+    @staticmethod
+    def create_firewall_rule_to_xml(name, start_ip_address, end_ip_address):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'ServiceResource',
+            [('Name', name),
+             ('StartIPAddress', start_ip_address),
+             ('EndIPAddress', end_ip_address)])
+
+    @staticmethod
+    def update_firewall_rule_to_xml(name, start_ip_address, end_ip_address):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'ServiceResource',
+            [('Name', name),
+             ('StartIPAddress', start_ip_address),
+             ('EndIPAddress', end_ip_address)])
+
+    @staticmethod
+    def create_database_to_xml(name, service_objective_id, edition, collation_name,
+                max_size_bytes):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'ServiceResource',
+            [('Name', name),
+             ('Edition', edition),
+             ('CollationName', collation_name),
+             ('MaxSizeBytes', max_size_bytes),
+             ('ServiceObjectiveId', service_objective_id)])
+
+    @staticmethod
+    def update_database_to_xml(name, service_objective_id, edition,
+                               max_size_bytes):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'ServiceResource',
+            [('Name', name),
+             ('Edition', edition),
+             ('MaxSizeBytes', max_size_bytes),
+             ('ServiceObjectiveId', service_objective_id)])
+
+    @staticmethod
+    def xml_to_create_server_response(xmlstr):
+        xmldoc = minidom.parseString(xmlstr)
+        element = xmldoc.documentElement
+
+        response = CreateServerResponse()
+        response.server_name = element.firstChild.nodeValue
+        response.fully_qualified_domain_name = element.getAttribute('FullyQualifiedDomainName')
+
+        return response
+
+    @staticmethod
+    def data_to_xml(data):
+        return _data_to_xml(data)
+
+    @staticmethod
+    def doc_from_xml(document_element_name, inner_xml,
+                     xmlns='http://schemas.microsoft.com/windowsazure'):
+        '''Wraps the specified xml in an xml root element with default azure
+        namespaces'''
+        xml = ''.join(['<', document_element_name,
+                      ' xmlns="{0}">'.format(xmlns)])
+        xml += inner_xml
+        xml += ''.join(['</', document_element_name, '>'])
+        return xml
+
+    @staticmethod
+    def doc_from_data(document_element_name, data,
+                      xmlns='http://schemas.microsoft.com/windowsazure'):
+        xml = _SqlManagementXmlSerializer.data_to_xml(data)
+        return _SqlManagementXmlSerializer.doc_from_xml(
+            document_element_name, xml, xmlns)
 
 
 def _parse_bool(value):

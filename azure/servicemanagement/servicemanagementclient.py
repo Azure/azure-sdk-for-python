@@ -46,6 +46,7 @@ class _ServiceManagementClient(object):
         self.host = host
         self.request_session = request_session
         self.x_ms_version = X_MS_VERSION
+        self.content_type = 'application/atom+xml;type=entry;charset=utf-8'
 
         if not self.cert_file and not request_session:
             if AZURE_MANAGEMENT_CERTFILE in os.environ:
@@ -210,7 +211,7 @@ class _ServiceManagementClient(object):
             else:
                 request.headers.append(
                     ('Content-Type',
-                     'application/atom+xml;type=entry;charset=utf-8'))
+                     self.content_type))
 
         return request.headers
 
