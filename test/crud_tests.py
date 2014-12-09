@@ -903,13 +903,13 @@ class CRUDTests(unittest.TestCase):
         results = client.ReadDocuments(resources['coll']['_self'],
                                        {'maxItemCount':2})
         docs = list(iter(results))
-        self.assertEqual(len(docs),
-                         3,
+        self.assertEqual(3,
+                         len(docs),
                          'QueryIterable should return all documents' +
                          ' using continuation')
-        self.assertEqual(docs[0]['id'], resources['doc1']['id'])
-        self.assertEqual(docs[1]['id'], resources['doc2']['id'])
-        self.assertEqual(docs[2]['id'], resources['doc3']['id'])
+        self.assertEqual(resources['doc1']['id'], docs[0]['id'])
+        self.assertEqual(resources['doc2']['id'], docs[1]['id'])
+        self.assertEqual(resources['doc3']['id'], docs[2]['id'])
 
         # Validate QueryIterable iterator with 'for'.
         counter = 0
@@ -917,18 +917,34 @@ class CRUDTests(unittest.TestCase):
         for doc in iter(results):
             counter += 1
             if counter == 1:
-                self.assertEqual(doc['id'],
-                                 resources['doc1']['id'],
+                self.assertEqual(resources['doc1']['id'],
+                                 doc['id'],
                                  'first document should be doc1')
             elif counter == 2:
-                self.assertEqual(doc['id'],
-                                 resources['doc2']['id'],
+                self.assertEqual(resources['doc2']['id'],
+                                 doc['id'],
                                  'second document should be doc2')
             elif counter == 3:
-                self.assertEqual(doc['id'],
-                                 resources['doc3']['id'],
+                self.assertEqual(resources['doc3']['id'],
+                                 doc['id'],
                                  'third document should be doc3')
         self.assertEqual(counter, 3)
+
+        # Get query results page by page.
+        results = client.ReadDocuments(resources['coll']['_self'],
+                                       {'maxItemCount':2})
+        first_block = results.fetch_next_block()
+        self.assertEqual(2,
+                         len(first_block),
+                         'First block should have 2 entries.')
+        self.assertEqual(resources['doc1']['id'], first_block[0]['id'])
+        self.assertEqual(resources['doc2']['id'], first_block[1]['id'])
+        self.assertEqual(1,
+                         len(results.fetch_next_block()),
+                         'Second block should have 1 entry.')
+        self.assertEqual(0,
+                         len(results.fetch_next_block()),
+                         'Then its empty.')
 
     def test_trigger_functionality(self):
         triggers_in_collection1 = [
