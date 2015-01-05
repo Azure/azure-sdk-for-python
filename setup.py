@@ -31,7 +31,7 @@ from distutils.core import setup
 
 setup(name='azure',
       version='0.9.0',
-      description='Windows Azure client APIs',
+      description='Microsoft Azure client APIs',
       license='Apache License 2.0',
       author='Microsoft Corporation',
       author_email='ptvshelp@microsoft.com',
