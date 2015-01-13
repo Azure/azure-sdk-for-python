@@ -59,6 +59,8 @@ class DocumentClient(object):
         self.connection_policy = (connection_policy or
                                   documents.ConnectionPolicy())
 
+        self.retry_policy = documents.RetryPolicy()
+
         self.default_headers = {
             http_constants.HttpHeaders.CacheControl: 'no-cache',
             http_constants.HttpHeaders.Version:
@@ -133,7 +135,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
     def ReadCollections(self, database_link, options={}):
         """Reads all collections in a database.
@@ -170,7 +172,7 @@ class DocumentClient(object):
                                     lambda _, body: body,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
     def CreateCollection(self, database_link, body, options={}):
         """Creates a collection in a database.
@@ -282,7 +284,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
     def ReplaceDatabase(self, database_link, db, options={}):
         """Replaces a database and returns it.
@@ -399,7 +401,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
     def ReplaceUser(self, user_link, user, options={}):
         """Replaces a user and return it.
@@ -516,7 +518,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
     def CreateDocument(self, collection_link, body, options={}):
         """Creates a document in a collection.
@@ -602,7 +604,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
     def CreateTrigger(self, collection_link, trigger, options={}):
         """Creates a trigger in a collection.
@@ -681,7 +683,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
     def CreateUserDefinedFunction(self, collection_link, udf, options={}):
         """Creates a user defined function in a collection.
@@ -760,7 +762,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
     def CreateStoredProcedure(self, collection_link, sproc, options={}):
         """Creates a stored procedure in a collection.
@@ -824,7 +826,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     '',
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
     def ReadConflict(self, conflict_link, options={}):
         """Reads a conflict.
@@ -1017,7 +1019,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, fetch_fn)
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
 
     def ReadMedia(self, media_link):

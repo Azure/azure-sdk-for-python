@@ -25,6 +25,7 @@
     <Compile Include="setup.py" />
     <Compile Include="test\crud_tests.py" />
     <Compile Include="pydocumentdb\auth.py" />
+    <Compile Include="pydocumentdb\backoff_retry_utility.py" />
     <Compile Include="pydocumentdb\base.py" />
     <Compile Include="pydocumentdb\documents.py" />
     <Compile Include="pydocumentdb\document_client.py" />
