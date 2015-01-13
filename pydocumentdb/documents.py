@@ -264,3 +264,15 @@ class ConnectionPolicy(object):
         self.MaxConcurrentFanoutRequests = (
             self.__defaultMaxConcurrentFanoutRequests)
         self.MediaReadMode = MediaReadMode.Buffered
+
+
+class RetryPolicy(object):
+    """The retry policy.
+
+    :Attributes:
+        - `MaxRetryAttemptsOnRequest`: int, the max retry attempts on request.
+        - `MaxRetryAttemptsOnQuery`: int, the max retry attempts on query.
+    """
+    def __init__(self):
+        self.MaxRetryAttemptsOnRequest = 0
+        self.MaxRetryAttemptsOnQuery = 3
