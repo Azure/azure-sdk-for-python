@@ -59,9 +59,12 @@ class CRUDTests(unittest.TestCase):
                          before_create_databases_count + 1,
                          'create should increase the number of databases')
         # query databases.
-        databases = list(client.QueryDatabases(
-            'SELECT * FROM root r WHERE r.id="{id}"'.format(
-                id=database_definition['id'])))
+        databases = list(client.QueryDatabases({
+            'query': 'SELECT * FROM root r WHERE r.id=@id',
+            'parameters': [
+                { 'name':'@id', 'value': database_definition['id'] }
+            ]
+        }))
         self.assert_(databases,
                      'number of results for the query should be > 0')
         # replace database.
@@ -82,6 +85,30 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadDatabase,
                                            created_db['_self'])
+
+    def test_sql_query_crud(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        # create two databases.
+        client.CreateDatabase({ 'id': 'database 1' })
+        client.CreateDatabase({ 'id': 'database 2' })
+        # query with parameters.
+        databases = list(client.QueryDatabases({
+            'query': 'SELECT * FROM root r WHERE r.id=@id',
+            'parameters': [
+                { 'name':'@id', 'value': 'database 1' }
+            ]
+        }))
+        self.assertEqual(1, len(databases), 'Unexpected number of query results.')
+
+        # query without parameters.
+        databases = list(client.QueryDatabases({
+            'query': 'SELECT * FROM root r WHERE r.id="database non-existing"'
+        }))
+        self.assertEqual(0, len(databases), 'Unexpected number of query results.')
+
+        # query with a string.
+        databases = list(client.QueryDatabases('SELECT * FROM root r WHERE r.id="database 2"'))
+        self.assertEqual(1, len(databases), 'Unexpected number of query results.')
 
     def test_collection_crud(self):
         client = document_client.DocumentClient(host,
@@ -104,8 +131,12 @@ class CRUDTests(unittest.TestCase):
         # query collections
         collections = list(client.QueryCollections(
             created_db['_self'],
-            'SELECT * FROM root r WHERE r.id="{id}"'.format(
-                id=collection_definition['id'])))
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters': [
+                    { 'name':'@id', 'value': collection_definition['id'] }
+                ]
+            }))
         self.assert_(collections)
         # delete collection
         client.DeleteCollection(created_collection['_self'])
@@ -171,13 +202,21 @@ class CRUDTests(unittest.TestCase):
         # query documents
         documents = list(client.QueryDocuments(
             created_collection['_self'],
-            'SELECT * FROM root r WHERE r.name="{name}"'.format(
-                name=document_definition['name'])))
+            {
+                'query': 'SELECT * FROM root r WHERE r.name=@name',
+                'parameters': [
+                    { 'name':'@name', 'value':document_definition['name'] }
+                ]
+            }))
         self.assert_(documents)
         documents = list(client.QueryDocuments(
             created_collection['_self'],
-            'SELECT * FROM root r WHERE r.name="{name}"'.format(
-                name=document_definition['name']),
+            {
+                'query': 'SELECT * FROM root r WHERE r.name=@name',
+                'parameters': [
+                    { 'name':'@name', 'value':document_definition['name'] }
+                ]
+            },
             { 'enableScanInQuery': True}))
         self.assert_(documents)
         # replace document.
@@ -383,7 +422,12 @@ class CRUDTests(unittest.TestCase):
         # query users
         results = list(client.QueryUsers(
             db['_self'],
-            'SELECT * FROM root r WHERE r.id="new user"'))
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters': [
+                    { 'name':'@id', 'value':'new user' }
+                ]
+            }))
         self.assert_(results)
 
         # replace user
@@ -432,8 +476,12 @@ class CRUDTests(unittest.TestCase):
         # query permissions
         results = list(client.QueryPermissions(
             user['_self'],
-            'SELECT * FROM root r WHERE r.id="{id}"'.format(
-                id=permission['id'])))
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters': [
+                    { 'name':'@id', 'value':permission['id'] }
+                ]
+            }))
         self.assert_(results)
 
         # replace permission 
@@ -637,14 +685,22 @@ class CRUDTests(unittest.TestCase):
         # query triggers
         triggers = list(client.QueryTriggers(
             collection['_self'],
-            'SELECT * FROM root r WHERE r.id="{id}"'.format(
-                id=trigger_definition['id'])))
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters': [
+                    { 'name': '@id', 'value': trigger_definition['id']}
+                ]
+            }))
         self.assert_(triggers)
 
         results = list(client.QueryTriggers(
             collection['_self'],
-            'SELECT * FROM root r WHERE r.id="{id}"'.format(
-                id=trigger_definition['id'])))
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters': [
+                    { 'name': '@id', 'value':trigger_definition['id'] }
+                ]
+            }))
         self.assert_(results)
 
         # replace trigger
@@ -703,8 +759,12 @@ class CRUDTests(unittest.TestCase):
         # query udfs
         results = list(client.QueryUserDefinedFunctions(
             collection['_self'],
-            'SELECT * FROM root r WHERE r.id="{id}"'.format(
-                id=udf_definition['id'])))
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters': [
+                    {'name':'@id', 'value':udf_definition['id']}
+                ]
+            }))
         self.assert_(results)
         # replace udf
         udf['body'] = 'function() {var x = 20;}'
@@ -760,8 +820,12 @@ class CRUDTests(unittest.TestCase):
         # query sprocs
         sprocs = list(client.QueryStoredProcedures(
             collection['_self'],
-            'SELECT * FROM root r WHERE r.id="{id}"'.format(
-                id=sproc_definition['id'])))
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters':[
+                    { 'name':'@id', 'value':sproc_definition['id'] }
+                ]
+            }))
         self.assert_(sprocs)
         # replace sproc
         sproc['body'] = 'function() {var x = 20;}'

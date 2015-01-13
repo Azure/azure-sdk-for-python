@@ -12,6 +12,12 @@ import pydocumentdb.runtime_constants as runtime_constants
 import pydocumentdb.synchronized_request as synchronized_request
 
 
+try:
+    basestring
+except NameError:
+    basestring = (str, bytes)
+
+
 class DocumentClient(object):
     """Represents a document client.
 
@@ -22,6 +28,11 @@ class DocumentClient(object):
     The service client encapsulates the endpoint and credentials used to access
     the DocumentDB service.
     """
+
+    class _QueryCompatibilityMode:
+        Default = 0
+        Query = 1
+        SqlQuery = 2
 
     def __init__(self,
                  url_connection,
@@ -75,6 +86,11 @@ class DocumentClient(object):
         # Keeps the latest response headers from server.
         self.last_response_headers = None
 
+        # Query compatibility mode.
+        # Allows to specify compatibility mode used by client when making query requests. Should be removed when
+        # application/sql is no longer supported.
+        self._query_compatibility_mode = DocumentClient._QueryCompatibilityMode.Default
+
     def CreateDatabase(self, body, options={}):
         """Creates a database.
 
@@ -120,7 +136,7 @@ class DocumentClient(object):
         """Queries databases.
 
         :Parameters:
-            - `query`: str
+            - `query`: str or dict.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -155,7 +171,7 @@ class DocumentClient(object):
 
         :Parameters:
             - `database_link`: str, the link to the database.
-            - `query`: str
+            - `query`: str or dict.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -267,7 +283,7 @@ class DocumentClient(object):
 
         :Parameters:
             - `database_link`: str, the link to the database.
-            - `query`: str
+            - `query`: str or dict.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -384,7 +400,7 @@ class DocumentClient(object):
 
         :Parameters:
             - `user_link`: str, the link to the user entity.
-            - `query`: str
+            - `query`: str or dict.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -501,7 +517,7 @@ class DocumentClient(object):
 
         :Parameters:
             - `collection_link`: str, the link to the document collection.
-            - `query`: str
+            - `query`: str or dict.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -587,7 +603,7 @@ class DocumentClient(object):
 
         :Parameters:
             - `collection_link`: str, the link to the document collection.
-            - `query`: str
+            - `query`: str or dict.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -666,7 +682,7 @@ class DocumentClient(object):
 
         :Parameters:
             - `collection_link`: str, the link to the collection.
-            - `query`: str
+            - `query`: str or dict.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -745,7 +761,7 @@ class DocumentClient(object):
 
         :Parameters:
             - `collection_link`: str, the link to the document collection.
-            - `query`: str
+            - `query`: str or dict.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -1001,7 +1017,7 @@ class DocumentClient(object):
 
         :Parameters:
             - `document_link`: str, the link to the document.
-            - `query`: str
+            - `query`: str or dict.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -1603,13 +1619,15 @@ class DocumentClient(object):
                     options={}):
         """Query for more than one DocumentDB resources.
 
+        Raises :exc:`SystemError` is the query compatibility mode is undefined.
+
         :Parameters:
             - `path`: str
             - `type`: str
             - `id`: str
             - `result_fn`: function
             - `create_fn`: function
-            - `query`: str
+            - `query`: str or dict
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -1638,9 +1656,17 @@ class DocumentClient(object):
                                                             headers)
             return __GetBodiesFromQueryResult(result)
         else:
+            query = self.__CheckAndUnifyQueryFormat(query)
+
             initial_headers[http_constants.HttpHeaders.IsQuery] = 'true'
-            initial_headers[http_constants.HttpHeaders.ContentType] = (
-                runtime_constants.MediaTypes.SQL)
+            if (self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.Default or
+                    self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.Query):
+                initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
+            elif self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.SqlQuery:
+                initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
+            else:
+                raise SystemError('Unexpected query compatibility mode.')
+
             headers = base.GetHeaders(self,
                                       initial_headers,
                                       'post',
@@ -1653,3 +1679,32 @@ class DocumentClient(object):
                                                              query,
                                                              headers)
             return __GetBodiesFromQueryResult(result)
+
+    def __CheckAndUnifyQueryFormat(self, query_body):
+        """Checks and unifies the format of the query body.
+
+        Raises :exc:`TypeError` if query_body is not of expected type (depending on the query compatibility mode).
+        Raises :exc:`ValueError` is query_body is a dict but doesn\'t have valid query text.
+        Raises :exc:`SystemError` is the query compatibility mode is undefined.
+
+        :Parameters:
+            - `query_body`: str or dict
+
+        :Returns:
+            dict or string, the formatted query body.
+        """
+        if (self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.Default or
+               self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.Query):
+            if not isinstance(query_body, dict) and not isinstance(query_body, basestring):
+                raise TypeError('query body must be a dict or string.')
+            if isinstance(query_body, dict) and not query_body.get('query'):
+                raise ValueError('query body must have valid query text with key "query".')
+            if isinstance(query_body, basestring):
+                return {'query': query_body}
+        elif (self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.SqlQuery and
+              not isinstance(query_body, basestring)):
+            raise TypeError('query body must be a string.')
+        else:
+            raise SystemError('Unexpected query compatibility mode.')
+
+        return query_body
