@@ -1349,8 +1349,10 @@ class DocumentClient(object):
 
     def GetDatabaseAccount(self):
         """Gets database account info.
+
         :Returns:
             documents.DatabaseAccount
+
         """
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self,

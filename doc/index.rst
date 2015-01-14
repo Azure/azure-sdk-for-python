@@ -7,7 +7,7 @@ Azure DocumentDB Python SDK.
 ========================================
 
 System Requirements:
------------------
+--------------------
 
     The supported Python versions are 2.7 and 2.7.x.
     To download Python version 2.7, please visit

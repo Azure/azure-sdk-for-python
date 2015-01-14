@@ -4,7 +4,7 @@ from distutils.core import setup
 import setuptools
 
 setup(name='pydocumentdb',
-      version='0.9.3-preview',
+      version='0.9.4-preview',
       description='Azure DocumentDB Python SDK',
       author="Microsoft",
       author_email="docdbteam@microsoft.onmicrosoft.com",

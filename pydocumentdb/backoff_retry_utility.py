@@ -15,6 +15,7 @@ def Execute(callback_fn, resource_throttle_retry_policy):
     :Parameters:
         - `callback_fn`: function
         - `resource_throttle_retry_policy`: retry.ResourceThrottleRetryPolicy
+
     """
     while True:
         try:
@@ -45,6 +46,7 @@ class ResourceThrottleRetryPolicy(object):
 
         :Returns:
             boolean
+
         """
         self.retry_after_in_milliseconds = 0
 
