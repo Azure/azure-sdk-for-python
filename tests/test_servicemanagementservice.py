@@ -186,7 +186,8 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         if self.reserved_ip_address:
             try:
-                self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+                result = self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+                self._wait_for_async(result.request_id)
             except:
                 pass
 
@@ -579,7 +580,7 @@ class ServiceManagementServiceTest(AzureTestCase):
             self.reserved_ip_address,
             'mylabel',
             'West US')
-        self._wait_for_reserved_ip_address(self.reserved_ip_address)
+        self._wait_for_async(result.request_id)
 
     def _reserved_ip_address_exists(self, name):
         try:
@@ -1401,7 +1402,7 @@ class ServiceManagementServiceTest(AzureTestCase):
             self.reserved_ip_address,
             'mylabel',
             'West US')
-        self._wait_for_reserved_ip_address(self.reserved_ip_address)
+        self._wait_for_async(result.request_id)
 
         # Assert
         self.assertTrue(
@@ -1413,6 +1414,7 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         # Act
         result = self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+        self._wait_for_async(result.request_id)
         self.reserved_ip_address = None
 
         # Assert

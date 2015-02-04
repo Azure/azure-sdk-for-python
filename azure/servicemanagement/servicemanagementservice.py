@@ -1099,7 +1099,8 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('name', name)
         return self._perform_post(
             self._get_reserved_ip_path(),
-            _XmlSerializer.create_reserved_ip_to_xml(name, label, location))
+            _XmlSerializer.create_reserved_ip_to_xml(name, label, location),
+            async=True, x_ms_version='2014-10-01')
 
     def delete_reserved_ip_address(self, name):
         '''
@@ -1108,7 +1109,8 @@ class ServiceManagementService(_ServiceManagementClient):
         name: Required. Name of the reserved IP address.
         '''
         _validate_not_none('name', name)
-        return self._perform_delete(self._get_reserved_ip_path(name))
+        return self._perform_delete(self._get_reserved_ip_path(name),
+                                    async=True, x_ms_version='2014-10-01')
 
     def get_reserved_ip_address(self, name):
         '''
