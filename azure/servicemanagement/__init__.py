@@ -2259,8 +2259,7 @@ class _XmlSerializer(object):
                   endpoint.load_balanced_endpoint_set_name),
                  ('LocalPort', endpoint.local_port),
                  ('Name', endpoint.name),
-                 ('Port', endpoint.port),
-                 ('IdleTimeoutInMinutes', endpoint.idle_timeout_in_minutes)])
+                 ('Port', endpoint.port)])
 
             if endpoint.load_balancer_probe.path or\
                 endpoint.load_balancer_probe.port or\
@@ -2276,7 +2275,8 @@ class _XmlSerializer(object):
                 [('Protocol', endpoint.protocol),
                  ('EnableDirectServerReturn',
                   endpoint.enable_direct_server_return,
-                  _lower)])
+                  _lower),
+                 ('IdleTimeoutInMinutes', endpoint.idle_timeout_in_minutes)])
 
             xml += '</InputEndpoint>'
         xml += '</InputEndpoints>'
