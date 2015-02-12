@@ -42,6 +42,8 @@ from azure.storage import (
     QueueEnumResults,
     QueueMessagesList,
     StorageServiceProperties,
+    _create_queue_msg_xml,
+    _parse_queue_msg_list,
     _update_storage_queue_header,
     )
 from azure.storage.storageclient import _StorageClient
@@ -242,13 +244,12 @@ class QueueService(_StorageClient):
         '''
         Adds a new message to the back of the message queue. A visibility
         timeout can also be specified to make the message invisible until the
-        visibility timeout expires. A message must be in a format that can be
-        included in an XML request with UTF-8 encoding. The encoded message can
-        be up to 64KB in size for versions 2011-08-18 and newer, or 8KB in size
-        for previous versions.
+        visibility timeout expires.
 
         queue_name: Name of the queue.
-        message_text: Message content.
+        message_text:
+            A message can be text or bytes, and will be automatically encoded
+            to base-64. The encoded message can be up to 64KB in size.
         visibilitytimeout:
             Optional. If not specified, the default value is 0. Specifies the
             new visibility timeout value, in seconds, relative to server time.
@@ -271,11 +272,7 @@ class QueueService(_StorageClient):
             ('visibilitytimeout', _str_or_none(visibilitytimeout)),
             ('messagettl', _str_or_none(messagettl))
         ]
-        request.body = _get_request_body(
-            '<?xml version="1.0" encoding="utf-8"?> \
-<QueueMessage> \
-    <MessageText>' + xml_escape(_str(message_text)) + '</MessageText> \
-</QueueMessage>')
+        request.body = _get_request_body(_create_queue_msg_xml(message_text))
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
@@ -316,7 +313,7 @@ class QueueService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_response(response, QueueMessagesList)
+        return _parse_queue_msg_list(response)
 
     def peek_messages(self, queue_name, numofmessages=None):
         '''
@@ -341,7 +338,7 @@ class QueueService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_response(response, QueueMessagesList)
+        return _parse_queue_msg_list(response)
 
     def delete_message(self, queue_name, message_id, popreceipt):
         '''
@@ -393,7 +390,9 @@ class QueueService(_StorageClient):
 
         queue_name: Name of the queue.
         message_id: Message to update.
-        message_text: Content of message.
+        message_text:
+            A message can be text or bytes, and will be automatically encoded
+            to base-64. The encoded message can be up to 64KB in size.
         popreceipt:
             Required. A valid pop receipt value returned from an earlier call
             to the Get Messages or Update Message operation.
@@ -418,11 +417,7 @@ class QueueService(_StorageClient):
             ('popreceipt', _str_or_none(popreceipt)),
             ('visibilitytimeout', _str_or_none(visibilitytimeout))
         ]
-        request.body = _get_request_body(
-            '<?xml version="1.0" encoding="utf-8"?> \
-<QueueMessage> \
-    <MessageText>' + xml_escape(_str(message_text)) + '</MessageText> \
-</QueueMessage>')
+        request.body = _get_request_body(_create_queue_msg_xml(message_text))
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(

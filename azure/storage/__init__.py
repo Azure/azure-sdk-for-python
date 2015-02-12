@@ -35,6 +35,7 @@ from azure import (WindowsAzureData,
                    _get_entry_properties,
                    _general_error_handler,
                    _list_of,
+                   _parse_response,
                    _parse_response_for_dict,
                    _sign_string,
                    _unicode_type,
@@ -355,8 +356,14 @@ class QueueMessage(WindowsAzureData):
         self.pop_receipt = u''
         self.time_next_visible = u''
         self.dequeue_count = u''
-        self.message_text = u''
+        self.message_text = u'' # temp storage for xml deserialization support
+        self.raw_string = u''
 
+    def as_text(self):
+        return _decode_base64_to_text(self.raw_string)
+
+    def as_bytes(self):
+        return _decode_base64_to_bytes(self.raw_string)
 
 class Entity(WindowsAzureData):
 
@@ -402,6 +409,20 @@ def _parse_blob_enum_results_list(response):
                 setattr(return_obj, name, value)
 
     return return_obj
+
+
+def _parse_queue_msg_list(response):
+    messages = _parse_response(response, QueueMessagesList)
+    for msg in messages:
+        msg.raw_string = msg.message_text
+        del msg.message_text
+
+    return messages
+
+
+def _create_queue_msg_xml(message):
+    xml = '<?xml version="1.0" encoding="utf-8"?><QueueMessage><MessageText>{0}</MessageText></QueueMessage>'
+    return xml.format(_encode_base64(message))
 
 
 def _update_storage_header(request):
