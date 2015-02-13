@@ -928,7 +928,7 @@ def _general_error_handler(http_error):
         if http_error.respbody is not None:
             raise WindowsAzureError(
                 _ERROR_UNKNOWN.format(str(http_error)) + '\n' + \
-                    http_error.respbody.decode('utf-8'))
+                    http_error.respbody.decode('utf-8-sig'))
         else:
             raise WindowsAzureError(_ERROR_UNKNOWN.format(str(http_error)))
 

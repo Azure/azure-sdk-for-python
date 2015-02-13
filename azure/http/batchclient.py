@@ -327,7 +327,7 @@ class _BatchClient(_HTTPClient):
         return HTTPResponse(int(status), reason.strip(), headers, body)
 
     def _report_batch_error(self, response):
-        xml = response.body.decode('utf-8')
+        xml = response.body.decode('utf-8-sig')
         doc = minidom.parseString(xml)
 
         n = _get_children_from_path(doc, (METADATA_NS, 'error'), 'code')
