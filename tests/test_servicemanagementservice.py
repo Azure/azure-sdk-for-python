@@ -193,22 +193,7 @@ class ServiceManagementServiceTest(AzureTestCase):
 
     #--Helpers-----------------------------------------------------------------
     def _wait_for_async(self, request_id):
-        count = 0
-        result = self.sms.get_operation_status(request_id)
-        while result.status == 'InProgress':
-            count = count + 1
-            if count > 120:
-                self.assertTrue(
-                    False, 'Timed out waiting for async operation to complete.')
-            time.sleep(5)
-            result = self.sms.get_operation_status(request_id)
-
-        if result.status != 'Succeeded':
-            print(vars(result))
-            if result.error:
-                print(result.error.code)
-                print(vars(result.error))
-            self.assertTrue(False, 'Asynchronous operation did not succeed.')
+        self.sms.wait_for_operation_status(request_id, timeout=600)
 
     def _wait_for_deployment(self, service_name, deployment_name,
                              status='Running'):

@@ -12,9 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import sys
+import time
+
 from azure import (
     WindowsAzureError,
+    WindowsAzureAsyncOperationError,
     MANAGEMENT_HOST,
+    _ERROR_ASYNC_OP_FAILURE,
+    _ERROR_ASYNC_OP_TIMEOUT,
     _str,
     _validate_not_none,
     )
@@ -1038,6 +1044,69 @@ class ServiceManagementService(_ServiceManagementClient):
                                  Locations)
 
     #--Operations for tracking asynchronous requests ---------------------
+    def wait_for_operation_status_progress_default_callback(elapsed):
+        sys.stdout.write('.')
+
+    def wait_for_operation_status_success_default_callback(elapsed):
+        sys.stdout.write('\n')
+
+    def wait_for_operation_status_failure_default_callback(elapsed, ex):
+        sys.stdout.write('\n')
+        print(vars(ex.result))
+        raise ex
+
+    def wait_for_operation_status(self,
+        request_id, wait_for_status='Succeeded', timeout=30, sleep_interval=5,
+        progress_callback=wait_for_operation_status_progress_default_callback,
+        success_callback=wait_for_operation_status_success_default_callback,
+        failure_callback=wait_for_operation_status_failure_default_callback):
+        '''
+        Waits for an asynchronous operation to complete.
+
+        This calls get_operation_status in a loop and returns when the expected
+        status is reached. The result of get_operation_status is returned. By
+        default, an exception is raised on timeout or error status.
+
+        request_id: The request ID for the request you wish to track.
+        wait_for_status: Status to wait for. Default is 'Succeeded'.
+        timeout: Total timeout in seconds. Default is 30s.
+        sleep_interval: Sleep time in seconds for each iteration. Default is 5s.
+        progress_callback:
+            Callback for each iteration.
+            Default prints '.'.
+            Set it to None for no progress notification.
+        success_callback:
+            Callback on success. Default prints newline.
+            Set it to None for no success notification.
+        failure_callback:
+            Callback on failure. Default prints newline+error details then
+            raises exception.
+            Set it to None for no failure notification.
+        '''
+        loops = timeout // sleep_interval + 1
+        start_time = time.time()
+        for _ in range(loops):
+            result = self.get_operation_status(request_id)
+            elapsed = time.time() - start_time
+            if result.status == wait_for_status:
+                if success_callback is not None:
+                    success_callback(elapsed)
+                return result
+            elif result.error:
+                if failure_callback is not None:
+                    ex = WindowsAzureAsyncOperationError(_ERROR_ASYNC_OP_FAILURE, result)
+                    failure_callback(elapsed, ex)
+                return result
+            else:
+                if progress_callback is not None:
+                    progress_callback(elapsed)
+                time.sleep(sleep_interval)
+
+        if failure_callback is not None:
+            ex = WindowsAzureAsyncOperationError(_ERROR_ASYNC_OP_TIMEOUT, result)
+            failure_callback(elapsed, ex)
+        return result
+
     def get_operation_status(self, request_id):
         '''
         Returns the status of the specified operation. After calling an
