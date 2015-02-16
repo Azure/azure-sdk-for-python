@@ -9,6 +9,10 @@ __pycache__/
 /bin/
 /obj/
 
+# Result of running python setup.py install/pip install -e
+/build/
+/azure.egg-info/
+
 # Test results
 /TestResults/
 
