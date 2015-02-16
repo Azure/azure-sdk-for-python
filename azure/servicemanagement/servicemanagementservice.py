@@ -1675,7 +1675,7 @@ class ServiceManagementService(_ServiceManagementClient):
             down before capturing an image.
         options.vm_image_name:
             Required. Specifies the name of the VM Image.
-        options.vm_image_name:
+        options.vm_image_label:
             Required. Specifies the label of the VM Image.
         options.description:
             Optional. Specifies the description of the VM Image.
