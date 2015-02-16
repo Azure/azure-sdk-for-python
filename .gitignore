@@ -9,6 +9,9 @@ __pycache__/
 /bin/
 /obj/
 
+# Result of running python setup.py install
+/build/
+
 # Test results
 /TestResults/
 
