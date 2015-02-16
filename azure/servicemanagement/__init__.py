@@ -1065,8 +1065,10 @@ class ConfigurationSetInputEndpoint(WindowsAzureData):
 
     def __init__(self, name=u'', protocol=u'', port=u'', local_port=u'',
                  load_balanced_endpoint_set_name=u'',
-                 enable_direct_server_return=False):
+                 enable_direct_server_return=False,
+                 idle_timeout_in_minutes=4):
         self.enable_direct_server_return = enable_direct_server_return
+        self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.load_balanced_endpoint_set_name = load_balanced_endpoint_set_name
         self.local_port = local_port
         self.name = name
@@ -1372,10 +1374,10 @@ class WebSpaces(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.web_space[index]
-    
+
 
 class WebSpace(WindowsAzureData):
-    
+
     def __init__(self):
         self.availability_state = u''
         self.geo_location = u''
@@ -1399,10 +1401,10 @@ class Sites(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.site[index]
-    
+
 
 class Site(WindowsAzureData):
-    
+
     def __init__(self):
         self.admin_enabled = False
         self.availability_state = ''
@@ -1439,20 +1441,20 @@ class HostNameSslStates(WindowsAzureData):
 
 
 class HostNameSslState(WindowsAzureData):
-    
+
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
-    
+
 
 class PublishData(WindowsAzureData):
     _xml_name = 'publishData'
-    
+
     def __init__(self):
         self.publish_profiles = _list_of(PublishProfile, 'publishProfile')
 
 class PublishProfile(WindowsAzureData):
-    
+
     def __init__(self):
         self.profile_name = _xml_attribute('profileName')
         self.publish_method = _xml_attribute('publishMethod')
@@ -1465,9 +1467,9 @@ class PublishProfile(WindowsAzureData):
         self.my_sqldb_connection_string = _xml_attribute('mySQLDBConnectionString')
         self.hosting_provider_forum_link = _xml_attribute('hostingProviderForumLink')
         self.control_panel_link = _xml_attribute('controlPanelLink')
-    
+
 class QueueDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.lock_duration = u''
         self.max_size_in_megabytes = 0
@@ -1490,9 +1492,9 @@ class QueueDescription(WindowsAzureData):
         self.auto_delete_on_idle = u''
         self.count_details = CountDetails()
         self.entity_availability_status = u''
-    
+
 class TopicDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.default_message_time_to_live = u''
         self.max_size_in_megabytes = 0
@@ -1512,7 +1514,7 @@ class TopicDescription(WindowsAzureData):
         self.subscription_count = 0
 
 class CountDetails(WindowsAzureData):
-    
+
     def __init__(self):
         self.active_message_count = 0
         self.dead_letter_message_count = 0
@@ -1521,7 +1523,7 @@ class CountDetails(WindowsAzureData):
         self.transfer_dead_letter_message_count = 0
 
 class NotificationHubDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.registration_ttl = u''
         self.authorization_rules = AuthorizationRules()
@@ -1539,9 +1541,9 @@ class AuthorizationRules(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.authorization_rule[index]
-    
+
 class AuthorizationRule(WindowsAzureData):
-    
+
     def __init__(self):
         self.claim_type = u''
         self.claim_value = u''
@@ -1553,7 +1555,7 @@ class AuthorizationRule(WindowsAzureData):
         self.secondary_keu = u''
 
 class RelayDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.path = u''
         self.listener_type = u''
@@ -1684,7 +1686,7 @@ class Servers(WindowsAzureData):
 
 
 class Server(WindowsAzureData):
-    
+
     def __init__(self):
         self.name = u''
         self.administrator_login = u''
@@ -1728,7 +1730,7 @@ class EventLog(WindowsAzureData):
 
 
 class CreateServerResponse(WindowsAzureData):
-    
+
     def __init__(self):
         self.server_name = u''
 
@@ -2273,7 +2275,8 @@ class _XmlSerializer(object):
                 [('Protocol', endpoint.protocol),
                  ('EnableDirectServerReturn',
                   endpoint.enable_direct_server_return,
-                  _lower)])
+                  _lower),
+                 ('IdleTimeoutInMinutes', endpoint.idle_timeout_in_minutes)])
 
             xml += '</InputEndpoint>'
         xml += '</InputEndpoints>'
