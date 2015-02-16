@@ -13,6 +13,8 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 from xml.dom import minidom
+import xml.etree.ElementTree
+import sys
 from azure import (
     WindowsAzureData,
     _Base64String,
@@ -30,6 +32,7 @@ from azure import (
     _get_child_nodes,
     _get_serialization_name,
     )
+
 
 #-----------------------------------------------------------------------------
 # Constants for Azure app environment settings.
@@ -1871,6 +1874,58 @@ def parse_response_for_async_op(response):
                 result.request_id = value
 
     return result
+
+def get_certificate_from_publish_settings(publish_settings_path, path_to_write_certificate, subscription_name=None):
+    '''
+    Writes a certificate file to the specified location.  This can then be used 
+    to instantiate ServiceManagementService.  Returns the subscription ID.
+
+    publish_settings_path: 
+        Path to subscription file downloaded from 
+        http://go.microsoft.com/fwlink/?LinkID=301775
+    path_to_write_certificate:
+        Path to write the certificate file.
+    subscription_name:
+        (optional)  Provide a subscription name here if you wish to use a 
+        specific subscription under the publish settings file.
+    '''
+    import base64
+    import OpenSSL.crypto as crypto
+
+    if publish_settings_path is None:
+        raise TypeError("publish_settings_path cannot be None")
+
+    if path_to_write_certificate is None:
+        raise TypeError("path_to_write_certificate cannot be None")
+
+    # parse the publishsettings file and find the ManagementCertificate Entry
+    tree = xml.etree.ElementTree.parse(publish_settings_path)
+    subscriptions = tree.getroot().findall("./PublishProfile/Subscription")
+    
+    if subscription_name is None:
+        # just take the first one in the file if they don't specify
+        subscription = subscriptions[0]
+    else:
+        for i in subscriptions:
+            if i.get('Name').lower() == subscription_name.lower():
+                subscription = i
+                break
+
+    if sys.version_info < (3,):
+        cert_string = base64.decodestring(subscription.get('ManagementCertificate'))
+    else:
+        cert_string = base64.decodestring(bytes(subscription.get('ManagementCertificate'), 'utf-8'))
+    
+    # Load the string in pkcs12 format.  Don't provide a password as it isn't encrypted.
+    cert = crypto.load_pkcs12(cert_string, b'') 
+
+    # Write the data out as a PEM format to a random location in temp for use under this run.
+    with open(path_to_write_certificate, 'wb') as f:
+        f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert.get_certificate()))
+        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, cert.get_privatekey()))
+        path_to_write_certificate = f.name
+
+    return subscription.get('Id')
 
 
 def _management_error_handler(http_error):
