@@ -50,5 +50,6 @@ setup(name='azure',
                 'azure.servicebus',
                 'azure.storage',
                 'azure.servicemanagement'],
-      install_requires=['python-dateutil']
+      install_requires=['python-dateutil', 
+                        'pyopenssl']
      )
