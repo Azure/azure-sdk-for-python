@@ -1875,6 +1875,7 @@ def parse_response_for_async_op(response):
 
     return result
 
+
 def get_certificate_from_publish_settings(publish_settings_path, path_to_write_certificate, subscription_name=None):
     '''
     Writes a certificate file to the specified location.  This can then be used 
