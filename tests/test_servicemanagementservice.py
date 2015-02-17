@@ -186,7 +186,8 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         if self.reserved_ip_address:
             try:
-                self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+                result = self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+                self._wait_for_async(result.request_id)
             except:
                 pass
 
@@ -554,32 +555,13 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._wait_for_async(result.request_id)
         self._wait_for_role(service_name, deployment_name, role_name)
 
-    def _wait_for_reserved_ip_address(self, name, state='Created'):
-        count = 0
-        try:
-            props = self.sms.get_reserved_ip_address(name)
-        except:
-            props = None
-
-        while props is None or props.state != state:
-            count = count + 1
-            if count > 120:
-                self.assertTrue(
-                    False, 'Timed out waiting for ip address state.')
-            time.sleep(5)
-
-            try:
-                props = self.sms.get_reserved_ip_address(name)
-            except:
-                props = None
-
     def _create_reserved_ip_address(self):
         self.reserved_ip_address = getUniqueName('ip')
         result = self.sms.create_reserved_ip_address(
             self.reserved_ip_address,
             'mylabel',
             'West US')
-        self._wait_for_reserved_ip_address(self.reserved_ip_address)
+        self._wait_for_async(result.request_id)
 
     def _reserved_ip_address_exists(self, name):
         try:
@@ -1401,7 +1383,7 @@ class ServiceManagementServiceTest(AzureTestCase):
             self.reserved_ip_address,
             'mylabel',
             'West US')
-        self._wait_for_reserved_ip_address(self.reserved_ip_address)
+        self._wait_for_async(result.request_id)
 
         # Assert
         self.assertTrue(
@@ -1413,10 +1395,10 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         # Act
         result = self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+        self._wait_for_async(result.request_id)
         self.reserved_ip_address = None
 
         # Assert
-        self.assertIsNone(result)
         self.assertFalse(
             self._reserved_ip_address_exists(self.reserved_ip_address))
 

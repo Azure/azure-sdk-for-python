@@ -312,6 +312,8 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'reserved_ip': 'ReservedIP',
     'reserved_ips': 'ReservedIPs',
     'aad_tenant_id': 'AADTenantID',
+    'start_ip_address': 'StartIPAddress',
+    'end_ip_address': 'EndIPAddress',
     }
 
 

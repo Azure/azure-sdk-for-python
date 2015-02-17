@@ -1099,7 +1099,8 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('name', name)
         return self._perform_post(
             self._get_reserved_ip_path(),
-            _XmlSerializer.create_reserved_ip_to_xml(name, label, location))
+            _XmlSerializer.create_reserved_ip_to_xml(name, label, location),
+            async=True)
 
     def delete_reserved_ip_address(self, name):
         '''
@@ -1108,7 +1109,8 @@ class ServiceManagementService(_ServiceManagementClient):
         name: Required. Name of the reserved IP address.
         '''
         _validate_not_none('name', name)
-        return self._perform_delete(self._get_reserved_ip_path(name))
+        return self._perform_delete(self._get_reserved_ip_path(name),
+                                    async=True)
 
     def get_reserved_ip_address(self, name):
         '''
@@ -1197,9 +1199,13 @@ class ServiceManagementService(_ServiceManagementClient):
             for a virtual machine.
         role_size:
             The size of the virtual machine to allocate. The default value is
-            Small. Possible values are: ExtraSmall, Small, Medium, Large,
-            ExtraLarge. The specified value must be compatible with the disk
-            selected in the OSVirtualHardDisk values.
+            Small. Possible values are: ExtraSmall,Small,Medium,Large,
+            ExtraLarge,A5,A6,A7,A8,A9,Basic_A0,Basic_A1,Basic_A2,Basic_A3,
+            Basic_A4,Standard_D1,Standard_D2,Standard_D3,Standard_D4,
+            Standard_D11,Standard_D12,Standard_D13,Standard_D14,Standard_G1,
+            Standard_G2,Sandard_G3,Standard_G4,Standard_G5. The specified
+            value must be compatible with the disk selected in the 
+            OSVirtualHardDisk values.
         role_type:
             The type of the role for the virtual machine. The only supported
             value is PersistentVMRole.
@@ -1669,7 +1675,7 @@ class ServiceManagementService(_ServiceManagementClient):
             down before capturing an image.
         options.vm_image_name:
             Required. Specifies the name of the VM Image.
-        options.vm_image_name:
+        options.vm_image_label:
             Required. Specifies the label of the VM Image.
         options.description:
             Optional. Specifies the description of the VM Image.

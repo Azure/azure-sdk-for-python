@@ -508,6 +508,7 @@ def _sign_storage_blob_request(request, account_name, account_key):
         if value:
             if current_name != name:
                 string_to_sign += '\n' + name + ':' + value
+                current_name = name
             else:
                 string_to_sign += '\n' + ',' + value
 

@@ -13,6 +13,8 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 from xml.dom import minidom
+import xml.etree.ElementTree
+import sys
 from azure import (
     WindowsAzureData,
     _Base64String,
@@ -31,6 +33,7 @@ from azure import (
     _get_child_nodes,
     _get_serialization_name,
     )
+
 
 #-----------------------------------------------------------------------------
 # Constants for Azure app environment settings.
@@ -1066,8 +1069,10 @@ class ConfigurationSetInputEndpoint(WindowsAzureData):
 
     def __init__(self, name=u'', protocol=u'', port=u'', local_port=u'',
                  load_balanced_endpoint_set_name=u'',
-                 enable_direct_server_return=False):
+                 enable_direct_server_return=False,
+                 idle_timeout_in_minutes=4):
         self.enable_direct_server_return = enable_direct_server_return
+        self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.load_balanced_endpoint_set_name = load_balanced_endpoint_set_name
         self.local_port = local_port
         self.name = name
@@ -1373,10 +1378,10 @@ class WebSpaces(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.web_space[index]
-    
+
 
 class WebSpace(WindowsAzureData):
-    
+
     def __init__(self):
         self.availability_state = u''
         self.geo_location = u''
@@ -1400,10 +1405,10 @@ class Sites(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.site[index]
-    
+
 
 class Site(WindowsAzureData):
-    
+
     def __init__(self):
         self.admin_enabled = False
         self.availability_state = ''
@@ -1440,20 +1445,20 @@ class HostNameSslStates(WindowsAzureData):
 
 
 class HostNameSslState(WindowsAzureData):
-    
+
     def __init__(self):
         self.name = u''
         self.ssl_state = u''
-    
+
 
 class PublishData(WindowsAzureData):
     _xml_name = 'publishData'
-    
+
     def __init__(self):
         self.publish_profiles = _list_of(PublishProfile, 'publishProfile')
 
 class PublishProfile(WindowsAzureData):
-    
+
     def __init__(self):
         self.profile_name = _xml_attribute('profileName')
         self.publish_method = _xml_attribute('publishMethod')
@@ -1466,9 +1471,9 @@ class PublishProfile(WindowsAzureData):
         self.my_sqldb_connection_string = _xml_attribute('mySQLDBConnectionString')
         self.hosting_provider_forum_link = _xml_attribute('hostingProviderForumLink')
         self.control_panel_link = _xml_attribute('controlPanelLink')
-    
+
 class QueueDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.lock_duration = u''
         self.max_size_in_megabytes = 0
@@ -1491,9 +1496,9 @@ class QueueDescription(WindowsAzureData):
         self.auto_delete_on_idle = u''
         self.count_details = CountDetails()
         self.entity_availability_status = u''
-    
+
 class TopicDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.default_message_time_to_live = u''
         self.max_size_in_megabytes = 0
@@ -1513,7 +1518,7 @@ class TopicDescription(WindowsAzureData):
         self.subscription_count = 0
 
 class CountDetails(WindowsAzureData):
-    
+
     def __init__(self):
         self.active_message_count = 0
         self.dead_letter_message_count = 0
@@ -1522,7 +1527,7 @@ class CountDetails(WindowsAzureData):
         self.transfer_dead_letter_message_count = 0
 
 class NotificationHubDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.registration_ttl = u''
         self.authorization_rules = AuthorizationRules()
@@ -1540,9 +1545,9 @@ class AuthorizationRules(WindowsAzureData):
 
     def __getitem__(self, index):
         return self.authorization_rule[index]
-    
+
 class AuthorizationRule(WindowsAzureData):
-    
+
     def __init__(self):
         self.claim_type = u''
         self.claim_value = u''
@@ -1554,7 +1559,7 @@ class AuthorizationRule(WindowsAzureData):
         self.secondary_keu = u''
 
 class RelayDescription(WindowsAzureData):
-    
+
     def __init__(self):
         self.path = u''
         self.listener_type = u''
@@ -1685,13 +1690,53 @@ class Servers(WindowsAzureData):
 
 
 class Server(WindowsAzureData):
-    
+
     def __init__(self):
         self.name = u''
         self.administrator_login = u''
         self.location = u''
+        self.geo_paired_region = u''
         self.fully_qualified_domain_name = u''
         self.version = u''
+
+
+class ServerQuota(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.value = 0
+
+
+class EventLog(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.database_name = u''
+        self.name = u''
+        self.start_time_utc = u''
+        self.interval_size_in_minutes = 0
+        self.event_category = u''
+        self.event_type = u''
+        self.event_subtype = 0
+        self.event_subtype_description = u''
+        self.number_of_events = 0
+        self.severity = 0
+        self.description = u''
+        self.additional_data = u''
+
+
+class CreateServerResponse(WindowsAzureData):
+
+    def __init__(self):
+        self.server_name = u''
 
 
 class Database(WindowsAzureData):
@@ -1709,6 +1754,33 @@ class Database(WindowsAzureData):
         self.is_federation_root = False
         self.is_system_object = False
         self.max_size_bytes = 0
+
+
+class FirewallRule(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.start_ip_address = u''
+        self.end_ip_address = u''
+
+
+class ServiceObjective(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.type = u''
+        self.state = u''
+        self.self_link = u''
+        self.parent_link = u''
+        self.id = u''
+        self.is_default = False
+        self.is_system = False
+        self.description = u''
+        self.enabled = False
 
 
 class CloudServices(WindowsAzureData):
@@ -1807,9 +1879,87 @@ def parse_response_for_async_op(response):
     return result
 
 
+def get_certificate_from_publish_settings(publish_settings_path, path_to_write_certificate, subscription_name=None):
+    '''
+    Writes a certificate file to the specified location.  This can then be used 
+    to instantiate ServiceManagementService.  Returns the subscription ID.
+
+    publish_settings_path: 
+        Path to subscription file downloaded from 
+        http://go.microsoft.com/fwlink/?LinkID=301775
+    path_to_write_certificate:
+        Path to write the certificate file.
+    subscription_name:
+        (optional)  Provide a subscription name here if you wish to use a 
+        specific subscription under the publish settings file.
+    '''
+    import base64
+    import OpenSSL.crypto as crypto
+
+    if publish_settings_path is None:
+        raise TypeError("publish_settings_path cannot be None")
+
+    if path_to_write_certificate is None:
+        raise TypeError("path_to_write_certificate cannot be None")
+
+    # parse the publishsettings file and find the ManagementCertificate Entry
+    tree = xml.etree.ElementTree.parse(publish_settings_path)
+    subscriptions = tree.getroot().findall("./PublishProfile/Subscription")
+    
+    if subscription_name is None:
+        # just take the first one in the file if they don't specify
+        subscription = subscriptions[0]
+    else:
+        for i in subscriptions:
+            if i.get('Name').lower() == subscription_name.lower():
+                subscription = i
+                break
+
+    if sys.version_info < (3,):
+        cert_string = base64.decodestring(subscription.get('ManagementCertificate'))
+    else:
+        cert_string = base64.decodestring(bytes(subscription.get('ManagementCertificate'), 'utf-8'))
+    
+    # Load the string in pkcs12 format.  Don't provide a password as it isn't encrypted.
+    cert = crypto.load_pkcs12(cert_string, b'') 
+
+    # Write the data out as a PEM format to a random location in temp for use under this run.
+    with open(path_to_write_certificate, 'wb') as f:
+        f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert.get_certificate()))
+        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, cert.get_privatekey()))
+        path_to_write_certificate = f.name
+
+    return subscription.get('Id')
+
+
 def _management_error_handler(http_error):
     ''' Simple error handler for management service. '''
     return _general_error_handler(http_error)
+
+
+def _data_to_xml(data):
+    '''Creates an xml fragment from the specified data.
+        data: Array of tuples, where first: xml element name
+                                    second: xml element text
+                                    third: conversion function
+    '''
+    xml = ''
+    for element in data:
+        name = element[0]
+        val = element[1]
+        if len(element) > 2:
+            converter = element[2]
+        else:
+            converter = None
+
+        if val is not None:
+            if converter is not None:
+                text = _str(converter(_str(val)))
+            else:
+                text = _str(val)
+
+            xml += ''.join(['<', name, '>', text, '</', name, '>'])
+    return xml
 
 
 class _XmlSerializer(object):
@@ -2178,7 +2328,8 @@ class _XmlSerializer(object):
                 [('Protocol', endpoint.protocol),
                  ('EnableDirectServerReturn',
                   endpoint.enable_direct_server_return,
-                  _lower)])
+                  _lower),
+                 ('IdleTimeoutInMinutes', endpoint.idle_timeout_in_minutes)])
 
             xml += '</InputEndpoint>'
         xml += '</InputEndpoints>'
@@ -2541,28 +2692,7 @@ class _XmlSerializer(object):
 
     @staticmethod
     def data_to_xml(data):
-        '''Creates an xml fragment from the specified data.
-           data: Array of tuples, where first: xml element name
-                                        second: xml element text
-                                        third: conversion function
-        '''
-        xml = ''
-        for element in data:
-            name = element[0]
-            val = element[1]
-            if len(element) > 2:
-                converter = element[2]
-            else:
-                converter = None
-
-            if val is not None:
-                if converter is not None:
-                    text = _str(converter(_str(val)))
-                else:
-                    text = _str(val)
-
-                xml += ''.join(['<', name, '>', text, '</', name, '>'])
-        return xml
+        return _data_to_xml(data)
 
     @staticmethod
     def doc_from_xml(document_element_name, inner_xml):
@@ -2599,6 +2729,94 @@ class _XmlSerializer(object):
                                '</ExtendedProperty>'])
             xml += '</ExtendedProperties>'
         return xml
+
+
+class _SqlManagementXmlSerializer(object):
+
+    @staticmethod
+    def create_server_to_xml(admin_login, admin_password, location):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'Server',
+            [('AdministratorLogin', admin_login),
+             ('AdministratorLoginPassword', admin_password),
+             ('Location', location)],
+             'http://schemas.microsoft.com/sqlazure/2010/12/')
+
+    @staticmethod
+    def set_server_admin_password_to_xml(admin_password):
+        return _SqlManagementXmlSerializer.doc_from_xml(
+            'AdministratorLoginPassword', admin_password,
+            'http://schemas.microsoft.com/sqlazure/2010/12/')
+
+    @staticmethod
+    def create_firewall_rule_to_xml(name, start_ip_address, end_ip_address):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'ServiceResource',
+            [('Name', name),
+             ('StartIPAddress', start_ip_address),
+             ('EndIPAddress', end_ip_address)])
+
+    @staticmethod
+    def update_firewall_rule_to_xml(name, start_ip_address, end_ip_address):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'ServiceResource',
+            [('Name', name),
+             ('StartIPAddress', start_ip_address),
+             ('EndIPAddress', end_ip_address)])
+
+    @staticmethod
+    def create_database_to_xml(name, service_objective_id, edition, collation_name,
+                max_size_bytes):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'ServiceResource',
+            [('Name', name),
+             ('Edition', edition),
+             ('CollationName', collation_name),
+             ('MaxSizeBytes', max_size_bytes),
+             ('ServiceObjectiveId', service_objective_id)])
+
+    @staticmethod
+    def update_database_to_xml(name, service_objective_id, edition,
+                               max_size_bytes):
+        return _SqlManagementXmlSerializer.doc_from_data(
+            'ServiceResource',
+            [('Name', name),
+             ('Edition', edition),
+             ('MaxSizeBytes', max_size_bytes),
+             ('ServiceObjectiveId', service_objective_id)])
+
+    @staticmethod
+    def xml_to_create_server_response(xmlstr):
+        xmldoc = minidom.parseString(xmlstr)
+        element = xmldoc.documentElement
+
+        response = CreateServerResponse()
+        response.server_name = element.firstChild.nodeValue
+        response.fully_qualified_domain_name = element.getAttribute('FullyQualifiedDomainName')
+
+        return response
+
+    @staticmethod
+    def data_to_xml(data):
+        return _data_to_xml(data)
+
+    @staticmethod
+    def doc_from_xml(document_element_name, inner_xml,
+                     xmlns='http://schemas.microsoft.com/windowsazure'):
+        '''Wraps the specified xml in an xml root element with default azure
+        namespaces'''
+        xml = ''.join(['<', document_element_name,
+                      ' xmlns="{0}">'.format(xmlns)])
+        xml += inner_xml
+        xml += ''.join(['</', document_element_name, '>'])
+        return xml
+
+    @staticmethod
+    def doc_from_data(document_element_name, data,
+                      xmlns='http://schemas.microsoft.com/windowsazure'):
+        xml = _SqlManagementXmlSerializer.data_to_xml(data)
+        return _SqlManagementXmlSerializer.doc_from_xml(
+            document_element_name, xml, xmlns)
 
 
 def _parse_bool(value):
