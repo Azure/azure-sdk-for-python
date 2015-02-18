@@ -722,14 +722,14 @@ def _parse_response(response, return_type):
     Parse the HTTPResponse's body and fill all the data into a class of
     return_type.
     '''
-    return _parse_response_body_from_xml_text(response.body, return_type)
+    return _parse_response_body_from_xml_text(response.body.decode('utf-8-sig'), return_type)
 
 def _parse_service_resources_response(response, return_type):
     '''
     Parse the HTTPResponse's body and fill all the data into a class of
     return_type.
     '''
-    return _parse_response_body_from_service_resources_xml_text(response.body, return_type)
+    return _parse_response_body_from_service_resources_xml_text(response.body.decode('utf-8-sig'), return_type)
 
 
 def _fill_data_to_return_object(node, return_obj):
@@ -932,7 +932,7 @@ def _general_error_handler(http_error):
         if http_error.respbody is not None:
             raise WindowsAzureError(
                 _ERROR_UNKNOWN.format(str(http_error)) + '\n' + \
-                    http_error.respbody.decode('utf-8'))
+                    http_error.respbody.decode('utf-8-sig'))
         else:
             raise WindowsAzureError(_ERROR_UNKNOWN.format(str(http_error)))
 

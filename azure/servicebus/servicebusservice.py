@@ -1098,7 +1098,7 @@ class ServiceBusWrapTokenAuthentication:
         request.headers.append(('Content-Length', str(len(request.body))))
         resp = httpclient.perform_request(request)
 
-        token = resp.body.decode('utf-8')
+        token = resp.body.decode('utf-8-sig')
         token = url_unquote(token[token.find('=') + 1:token.rfind('&')])
         _tokens[wrap_scope] = token
 

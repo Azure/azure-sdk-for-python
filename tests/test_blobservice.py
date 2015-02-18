@@ -2298,6 +2298,25 @@ class BlobServiceTest(AzureTestCase):
         blob = self.bs.get_blob(self.container_name, 'blob1')
         self.assertEqual(blob, b'AAABBBCCC')
 
+    def test_put_block_list_invalid_block_id(self):
+        # Arrange
+        self._create_container_and_block_blob(
+            self.container_name, 'blob1', b'')
+        self.bs.put_block(self.container_name, 'blob1', b'AAA', '1')
+        self.bs.put_block(self.container_name, 'blob1', b'BBB', '2')
+        self.bs.put_block(self.container_name, 'blob1', b'CCC', '3')
+
+        # Act
+        try:
+            resp = self.bs.put_block_list(
+                self.container_name, 'blob1', ['1', '2', '4'])
+            self.assertTrue(False)
+        except WindowsAzureError as e:
+            self.assertGreaterEqual(
+                str(e).find('specified block list is invalid'), 0)
+
+        # Assert
+
     def test_get_block_list_no_blocks(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2706,7 +2725,7 @@ class BlobServiceTest(AzureTestCase):
 
         # Assert
         self.assertNotEqual(data, respbody)
-        self.assertNotEqual(-1, respbody.decode('utf-8')
+        self.assertNotEqual(-1, respbody.decode('utf-8-sig')
                             .find('ResourceNotFound'))
 
     def test_no_sas_public_blob(self):
