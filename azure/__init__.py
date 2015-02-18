@@ -19,11 +19,14 @@ import hmac
 import sys
 import types
 import warnings
+
 if sys.version_info < (3,):
+    from cStringIO import StringIO
     from urllib2 import quote as url_quote
     from urllib2 import unquote as url_unquote
     _strtype = basestring
 else:
+    from io import StringIO
     from urllib.parse import quote as url_quote
     from urllib.parse import unquote as url_unquote
     _strtype = str
@@ -68,6 +71,7 @@ _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE = \
     'Message is not peek locked and cannot be deleted.'
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK = \
     'Message is not peek locked and cannot be unlocked.'
+_ERROR_EVENT_HUB_NOT_FOUND = 'Event hub was not found'
 _ERROR_QUEUE_NOT_FOUND = 'Queue was not found'
 _ERROR_TOPIC_NOT_FOUND = 'Topic was not found'
 _ERROR_CONFLICT = 'Conflict ({0})'
@@ -997,3 +1001,83 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     digest = signed_hmac_sha256.digest()
     encoded_digest = _encode_base64(digest)
     return encoded_digest
+
+
+def _lower(text):
+    return text.lower()
+
+
+class _XmlWriter(object):
+
+    def __init__(self, indent_string=None):
+        self.file = StringIO()
+        self.indent_level = 0
+        self.indent_string = indent_string
+
+    def _before_element(self, indent_change):
+        if self.indent_string:
+            self.indent_level += indent_change
+            self.file.write(self.indent_string * self.indent_level)
+
+    def _after_element(self, indent_change):
+        if self.indent_string:
+            self.file.write('\n')
+            self.indent_level += indent_change
+
+    def _write_attrs(self, attrs):
+        for attr_name, attr_val, attr_conv in attrs:
+            if attr_val is not None:
+                self.file.write(' ')
+                self.file.write(attr_name)
+                self.file.write('="')
+                val = attr_conv(_str(attr_val)) if attr_conv else _str(attr_val)
+                val = xml_escape(val)
+                self.file.write(val)
+                self.file.write('"')
+
+    def element(self, name, val, val_conv=None, attrs=None):
+        self._before_element(0)
+        self.file.write('<')
+        self.file.write(name)
+        if attrs:
+            self._write_attrs(attrs)
+        self.file.write('>')
+        val = val_conv(_str(val)) if val_conv else _str(val)
+        val = xml_escape(val)
+        self.file.write(val)
+        self.file.write('</')
+        self.file.write(name)
+        self.file.write('>')
+        self._after_element(0)
+
+    def elements(self, name_val_convs):
+        for name, val, conv in name_val_convs:
+            if val is not None:
+                self.element(name, val, conv)
+
+    def preprocessor(self, text):
+        self._before_element(0)
+        self.file.write(text)
+        self._after_element(0)
+
+    def start(self, name, attrs=None):
+        self._before_element(0)
+        self.file.write('<')
+        self.file.write(name)
+        if attrs:
+            self._write_attrs(attrs)
+        self.file.write('>')
+        self._after_element(1)
+
+    def end(self, name):
+        self._before_element(-1)
+        self.file.write('</')
+        self.file.write(name)
+        self.file.write('>')
+        self._after_element(0)
+
+    def xml(self):
+        return self.file.getvalue()
+
+    def close(self):
+        self.file.close()

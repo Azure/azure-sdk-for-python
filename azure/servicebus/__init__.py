@@ -22,16 +22,19 @@ from azure import (
     WindowsAzureData,
     WindowsAzureError,
     xml_escape,
-    _create_entry,
     _general_error_handler,
     _get_entry_properties,
     _get_child_nodes,
     _get_children_from_path,
     _get_first_child_node_value,
+    _lower,
+    _str,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
+    _ERROR_EVENT_HUB_NOT_FOUND,
     _ERROR_QUEUE_NOT_FOUND,
     _ERROR_TOPIC_NOT_FOUND,
+    _XmlWriter,
     )
 from azure.http import HTTPError
 
@@ -44,8 +47,14 @@ AZURE_SERVICEBUS_NAMESPACE = 'AZURE_SERVICEBUS_NAMESPACE'
 AZURE_SERVICEBUS_ACCESS_KEY = 'AZURE_SERVICEBUS_ACCESS_KEY'
 AZURE_SERVICEBUS_ISSUER = 'AZURE_SERVICEBUS_ISSUER'
 
-# namespace used for converting rules to objects
-XML_SCHEMA_NAMESPACE = 'http://www.w3.org/2001/XMLSchema-instance'
+
+class _XmlSchemas:
+    SchemaInstance = 'http://www.w3.org/2001/XMLSchema-instance'
+    SerializationArrays = 'http://schemas.microsoft.com/2003/10/Serialization/Arrays'
+    ServiceBus = 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    DataServices = 'http://schemas.microsoft.com/ado/2007/08/dataservices'
+    DataServicesMetadata = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
+    Atom = 'http://www.w3.org/2005/Atom'
 
 
 class Queue(WindowsAzureData):
@@ -141,6 +150,32 @@ class Rule(WindowsAzureData):
         self.filter_expression = filter_expression
         self.action_type = action_type
         self.action_expression = action_type
+
+
+class EventHub(WindowsAzureData):
+
+    def __init__(self, message_retention_in_days=None, status=None,
+                 user_metadata=None, partition_count=None):
+        self.message_retention_in_days = message_retention_in_days
+        self.status = status
+        self.user_metadata = user_metadata
+        self.partition_count = partition_count
+        self.authorization_rules = []
+        self.partition_ids = []
+
+
+class AuthorizationRule(WindowsAzureData):
+
+    def __init__(self, claim_type=None, claim_value=None, rights=None,
+                 key_name=None, primary_key=None, secondary_key=None):
+        self.claim_type = claim_type
+        self.claim_value = claim_value
+        self.rights = rights or []
+        self.created_time = None
+        self.modified_time = None
+        self.key_name = key_name
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
 
 
 class Message(WindowsAzureData):
@@ -329,7 +364,7 @@ def _convert_xml_to_rule(xmlstr):
                                              'RuleDescription'):
         for xml_filter in _get_child_nodes(rule_desc, 'Filter'):
             filter_type = xml_filter.getAttributeNS(
-                XML_SCHEMA_NAMESPACE, 'type')
+                _XmlSchemas.SchemaInstance, 'type')
             setattr(rule, 'filter_type', str(filter_type))
             if xml_filter.childNodes:
 
@@ -339,7 +374,7 @@ def _convert_xml_to_rule(xmlstr):
 
         for xml_action in _get_child_nodes(rule_desc, 'Action'):
             action_type = xml_action.getAttributeNS(
-                XML_SCHEMA_NAMESPACE, 'type')
+                _XmlSchemas.SchemaInstance, 'type')
             setattr(rule, 'action_type', str(action_type))
             if xml_action.childNodes:
                 action_expression = xml_action.childNodes[0].firstChild
@@ -356,6 +391,10 @@ def _convert_xml_to_rule(xmlstr):
 
 def _convert_response_to_queue(response):
     return _convert_xml_to_queue(response.body)
+
+
+def _convert_response_to_event_hub(response):
+    return _convert_xml_to_event_hub(response.body)
 
 
 def _parse_bool(value):
@@ -609,240 +648,260 @@ def _convert_xml_to_subscription(xmlstr):
     return subscription
 
 
-def _convert_subscription_to_xml(subscription):
-    '''
-    Converts a subscription object to xml to send.  The order of each field of
-    subscription in xml is very important so we can't simple call
-    convert_class_to_xml.
+def _convert_xml_to_event_hub(xmlstr):
+    xmldoc = minidom.parseString(xmlstr)
+    hub = EventHub()
 
-    subscription: the subsciption object to be converted.
-    '''
+    invalid_event_hub = True
+    # get node for each attribute in EventHub class, if nothing found then the
+    # response is not valid xml for EventHub.
+    for desc in _get_children_from_path(xmldoc,
+                                        'entry',
+                                        'content',
+                                        'EventHubDescription'):
+        node_value = _get_first_child_node_value(desc, 'SizeInBytes')
+        if node_value is not None:
+            hub.size_in_bytes = int(node_value)
+            invalid_event_hub = False
 
-    subscription_body = '<SubscriptionDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
-    if subscription:
-        if subscription.lock_duration is not None:
-            subscription_body += ''.join(
-                ['<LockDuration>',
-                 str(subscription.lock_duration),
-                 '</LockDuration>'])
+        node_value = _get_first_child_node_value(desc, 'MessageRetentionInDays')
+        if node_value is not None:
+            hub.message_retention_in_days = int(node_value)
+            invalid_event_hub = False
 
-        if subscription.requires_session is not None:
-            subscription_body += ''.join(
-                ['<RequiresSession>',
-                 str(subscription.requires_session).lower(),
-                 '</RequiresSession>'])
+        node_value = _get_first_child_node_value(desc, 'Status')
+        if node_value is not None:
+            hub.status = node_value
+            invalid_event_hub = False
 
-        if subscription.default_message_time_to_live is not None:
-            subscription_body += ''.join(
-                ['<DefaultMessageTimeToLive>',
-                 str(subscription.default_message_time_to_live),
-                 '</DefaultMessageTimeToLive>'])
+        node_value = _get_first_child_node_value(desc, 'UserMetadata')
+        if node_value is not None:
+            hub.user_metadata = node_value
+            invalid_event_hub = False
 
-        if subscription.dead_lettering_on_message_expiration is not None:
-            subscription_body += ''.join(
-                ['<DeadLetteringOnMessageExpiration>',
-                 str(subscription.dead_lettering_on_message_expiration).lower(),
-                 '</DeadLetteringOnMessageExpiration>'])
+        node_value = _get_first_child_node_value(desc, 'PartitionCount')
+        if node_value is not None:
+            hub.partition_count = int(node_value)
+            invalid_event_hub = False
 
-        if subscription.dead_lettering_on_filter_evaluation_exceptions is not None:
-            subscription_body += ''.join(
-                ['<DeadLetteringOnFilterEvaluationExceptions>',
-                 str(subscription.dead_lettering_on_filter_evaluation_exceptions).lower(),
-                 '</DeadLetteringOnFilterEvaluationExceptions>'])
+        ids = desc.getElementsByTagName('PartitionIds')
+        if ids:
+            for id_node in ids[0].getElementsByTagNameNS(_XmlSchemas.SerializationArrays, 'string'):
+                if id_node.firstChild:
+                    value = id_node.firstChild.nodeValue
+                    if value is not None:
+                        hub.partition_ids.append(value)
 
-        if subscription.enable_batched_operations is not None:
-            subscription_body += ''.join(
-                ['<EnableBatchedOperations>',
-                 str(subscription.enable_batched_operations).lower(),
-                 '</EnableBatchedOperations>'])
+        node_value = _get_first_child_node_value(desc, 'EntityAvailableStatus')
+        if node_value is not None:
+            hub.entity_available_status = node_value
+            invalid_event_hub = False
 
-        if subscription.max_delivery_count is not None:
-            subscription_body += ''.join(
-                ['<MaxDeliveryCount>',
-                 str(subscription.max_delivery_count),
-                 '</MaxDeliveryCount>'])
+        rules_children = _get_children_from_path(desc, 'AuthorizationRules', 'Authorization')
 
-        if subscription.message_count is not None:
-            subscription_body += ''.join(
-                ['<MessageCount>',
-                 str(subscription.message_count),
-                 '</MessageCount>'])
+        rules_nodes = desc.getElementsByTagName('AuthorizationRules')
+        if rules_nodes:
+            invalid_event_hub = False
+            for rule_node in rules_nodes[0].getElementsByTagName('AuthorizationRule'):
+                rule = AuthorizationRule()
 
-    subscription_body += '</SubscriptionDescription>'
-    return _create_entry(subscription_body)
+                node_value = _get_first_child_node_value(rule_node, 'ClaimType')
+                if node_value is not None:
+                    rule.claim_type = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'ClaimValue')
+                if node_value is not None:
+                    rule.claim_value = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'ModifiedTime')
+                if node_value is not None:
+                    rule.modified_time = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'CreatedTime')
+                if node_value is not None:
+                    rule.created_time = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'KeyName')
+                if node_value is not None:
+                    rule.key_name = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'PrimaryKey')
+                if node_value is not None:
+                    rule.primary_key = node_value
+
+                node_value = _get_first_child_node_value(rule_node, 'SecondaryKey')
+                if node_value is not None:
+                    rule.secondary_key = node_value
+
+                rights_nodes = rule_node.getElementsByTagName('Rights')
+                if rights_nodes:
+                    for access_rights_node in rights_nodes[0].getElementsByTagName('AccessRights'):
+                        if access_rights_node.firstChild:
+                            node_value = access_rights_node.firstChild.nodeValue
+                            rule.rights.append(node_value)
+
+                hub.authorization_rules.append(rule)
+
+    if invalid_event_hub:
+        raise WindowsAzureError(_ERROR_EVENT_HUB_NOT_FOUND)
+
+    # extract id, updated and name value from feed entry and set them of queue.
+    for name, value in _get_entry_properties(xmlstr, True).items():
+        if name == 'name':
+            value = value.partition('?')[0]
+        setattr(hub, name, value)
+
+    return hub
+
+
+def _convert_object_to_feed_entry(obj, rootName, content_writer):
+    updated_str = datetime.utcnow().isoformat()
+    if datetime.utcnow().utcoffset() is None:
+        updated_str += '+00:00'
+
+    writer = _XmlWriter()
+    writer.preprocessor('<?xml version="1.0" encoding="utf-8" standalone="yes"?>')
+    writer.start('entry', [
+        ('xmlns:d', _XmlSchemas.DataServices, None),
+        ('xmlns:m', _XmlSchemas.DataServicesMetadata, None),
+        ('xmlns', _XmlSchemas.Atom, None),
+        ])
+
+    writer.element('title', '')
+    writer.element('updated', updated_str)
+    writer.start('author')
+    writer.element('name', '')
+    writer.end('author')
+    writer.element('id', '')
+    writer.start('content', [('type', 'application/xml', None)])
+    writer.start(rootName, [
+        ('xmlns:i', _XmlSchemas.SchemaInstance, None),
+        ('xmlns', _XmlSchemas.ServiceBus, None),
+        ])
+
+    if obj:
+        content_writer(writer, obj)
+
+    writer.end(rootName)
+    writer.end('content')
+    writer.end('entry')
+
+    xml = writer.xml()
+    writer.close()
+
+    return xml
+
+
+def _convert_subscription_to_xml(sub):
+
+    def _subscription_to_xml(writer, sub):
+        writer.elements([
+            ('LockDuration', sub.lock_duration, None),
+            ('RequiresSession', sub.requires_session, _lower),
+            ('DefaultMessageTimeToLive', sub.default_message_time_to_live, None),
+            ('DeadLetteringOnMessageExpiration', sub.dead_lettering_on_message_expiration, _lower),
+            ('DeadLetteringOnFilterEvaluationExceptions', sub.dead_lettering_on_filter_evaluation_exceptions, _lower),
+            ('EnableBatchedOperations', sub.enable_batched_operations, _lower),
+            ('MaxDeliveryCount', sub.max_delivery_count, None),
+            ('MessageCount', sub.message_count, None),
+            ])
+
+    return _convert_object_to_feed_entry(
+        sub, 'SubscriptionDescription', _subscription_to_xml)
 
 
 def _convert_rule_to_xml(rule):
-    '''
-    Converts a rule object to xml to send.  The order of each field of rule
-    in xml is very important so we cann't simple call convert_class_to_xml.
 
-    rule: the rule object to be converted.
-    '''
-    rule_body = '<RuleDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
-    if rule:
+    def _rule_to_xml(writer, rule):
         if rule.filter_type:
-            rule_body += ''.join(
-                ['<Filter i:type="',
-                 xml_escape(rule.filter_type),
-                 '">'])
+            writer.start('Filter', [('i:type', rule.filter_type, None)])
             if rule.filter_type == 'CorrelationFilter':
-                rule_body += ''.join(
-                    ['<CorrelationId>',
-                     xml_escape(rule.filter_expression),
-                     '</CorrelationId>'])
+                writer.element('CorrelationId', rule.filter_expression)
             else:
-                rule_body += ''.join(
-                    ['<SqlExpression>',
-                     xml_escape(rule.filter_expression),
-                     '</SqlExpression>'])
-                rule_body += '<CompatibilityLevel>20</CompatibilityLevel>'
-            rule_body += '</Filter>'
+                writer.element('SqlExpression', rule.filter_expression)
+                writer.element('CompatibilityLevel', '20')
+            writer.end('Filter')
+            pass
         if rule.action_type:
-            rule_body += ''.join(
-                ['<Action i:type="',
-                 xml_escape(rule.action_type),
-                 '">'])
+            writer.start('Action', [('i:type', rule.action_type, None)])
             if rule.action_type == 'SqlRuleAction':
-                rule_body += ''.join(
-                    ['<SqlExpression>',
-                     xml_escape(rule.action_expression),
-                     '</SqlExpression>'])
-                rule_body += '<CompatibilityLevel>20</CompatibilityLevel>'
-            rule_body += '</Action>'
-    rule_body += '</RuleDescription>'
+                writer.element('SqlExpression', rule.action_expression)
+                writer.element('CompatibilityLevel', '20')
+            writer.end('Action')
+            pass
 
-    return _create_entry(rule_body)
+    return _convert_object_to_feed_entry(
+        rule, 'RuleDescription', _rule_to_xml)
 
 
 def _convert_topic_to_xml(topic):
-    '''
-    Converts a topic object to xml to send.  The order of each field of topic
-    in xml is very important so we cann't simple call convert_class_to_xml.
 
-    topic: the topic object to be converted.
-    '''
+    def _topic_to_xml(writer, topic):
+        writer.elements([
+            ('DefaultMessageTimeToLive', topic.default_message_time_to_live, None),
+            ('MaxSizeInMegabytes', topic.max_size_in_megabytes, None),
+            ('RequiresDuplicateDetection', topic.requires_duplicate_detection, _lower),
+            ('DuplicateDetectionHistoryTimeWindow', topic.duplicate_detection_history_time_window, None),
+            ('EnableBatchedOperations', topic.enable_batched_operations, _lower),
+            ('SizeInBytes', topic.size_in_bytes, None),
+            ])
 
-    topic_body = '<TopicDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
-    if topic:
-        if topic.default_message_time_to_live is not None:
-            topic_body += ''.join(
-                ['<DefaultMessageTimeToLive>',
-                 str(topic.default_message_time_to_live),
-                 '</DefaultMessageTimeToLive>'])
-
-        if topic.max_size_in_megabytes is not None:
-            topic_body += ''.join(
-                ['<MaxSizeInMegabytes>',
-                 str(topic.max_size_in_megabytes),
-                 '</MaxSizeInMegabytes>'])
-
-        if topic.requires_duplicate_detection is not None:
-            topic_body += ''.join(
-                ['<RequiresDuplicateDetection>',
-                 str(topic.requires_duplicate_detection).lower(),
-                 '</RequiresDuplicateDetection>'])
-
-        if topic.duplicate_detection_history_time_window is not None:
-            topic_body += ''.join(
-                ['<DuplicateDetectionHistoryTimeWindow>',
-                 str(topic.duplicate_detection_history_time_window),
-                 '</DuplicateDetectionHistoryTimeWindow>'])
-
-        if topic.enable_batched_operations is not None:
-            topic_body += ''.join(
-                ['<EnableBatchedOperations>',
-                 str(topic.enable_batched_operations).lower(),
-                 '</EnableBatchedOperations>'])
-
-        if topic.size_in_bytes is not None:
-            topic_body += ''.join(
-                ['<SizeInBytes>',
-                 str(topic.size_in_bytes),
-                 '</SizeInBytes>'])
-
-    topic_body += '</TopicDescription>'
-
-    return _create_entry(topic_body)
+    return _convert_object_to_feed_entry(
+        topic, 'TopicDescription', _topic_to_xml)
 
 
 def _convert_queue_to_xml(queue):
-    '''
-    Converts a queue object to xml to send.  The order of each field of queue
-    in xml is very important so we cann't simple call convert_class_to_xml.
 
-    queue: the queue object to be converted.
-    '''
-    queue_body = '<QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
-    if queue:
-        if queue.lock_duration:
-            queue_body += ''.join(
-                ['<LockDuration>',
-                 str(queue.lock_duration),
-                 '</LockDuration>'])
+    def _queue_to_xml(writer, queue):
+        writer.elements([
+            ('LockDuration', queue.lock_duration, None),
+            ('MaxSizeInMegabytes', queue.max_size_in_megabytes, None),
+            ('RequiresDuplicateDetection', queue.requires_duplicate_detection, _lower),
+            ('RequiresSession', queue.requires_session, _lower),
+            ('DefaultMessageTimeToLive', queue.default_message_time_to_live, None),
+            ('DeadLetteringOnMessageExpiration', queue.dead_lettering_on_message_expiration, _lower),
+            ('DuplicateDetectionHistoryTimeWindow', queue.duplicate_detection_history_time_window, None),
+            ('MaxDeliveryCount', queue.max_delivery_count, None),
+            ('EnableBatchedOperations', queue.enable_batched_operations, _lower),
+            ('SizeInBytes', queue.size_in_bytes, None),
+            ('MessageCount', queue.message_count, None),
+            ])
 
-        if queue.max_size_in_megabytes is not None:
-            queue_body += ''.join(
-                ['<MaxSizeInMegabytes>',
-                 str(queue.max_size_in_megabytes),
-                 '</MaxSizeInMegabytes>'])
+    return _convert_object_to_feed_entry(
+        queue, 'QueueDescription', _queue_to_xml)
 
-        if queue.requires_duplicate_detection is not None:
-            queue_body += ''.join(
-                ['<RequiresDuplicateDetection>',
-                 str(queue.requires_duplicate_detection).lower(),
-                 '</RequiresDuplicateDetection>'])
 
-        if queue.requires_session is not None:
-            queue_body += ''.join(
-                ['<RequiresSession>',
-                 str(queue.requires_session).lower(),
-                 '</RequiresSession>'])
+def _convert_event_hub_to_xml(hub):
 
-        if queue.default_message_time_to_live is not None:
-            queue_body += ''.join(
-                ['<DefaultMessageTimeToLive>',
-                 str(queue.default_message_time_to_live),
-                 '</DefaultMessageTimeToLive>'])
+    def _hub_to_xml(writer, hub):
+        writer.elements(
+            [('MessageRetentionInDays', hub.message_retention_in_days, None)])
+        if hub.authorization_rules:
+            writer.start('AuthorizationRules')
+            for rule in hub.authorization_rules:
+                writer.start('AuthorizationRule',
+                             [('i:type', 'SharedAccessAuthorizationRule', None)])
+                writer.elements(
+                    [('ClaimType', rule.claim_type, None),
+                     ('ClaimValue', rule.claim_value, None)])
+                if rule.rights:
+                    writer.start('Rights')
+                    for right in rule.rights:
+                        writer.element('AccessRights', right)
+                    writer.end('Rights')
+                writer.elements(
+                    [('KeyName', rule.key_name, None),
+                     ('PrimaryKey', rule.primary_key, None),
+                     ('SecondaryKey', rule.secondary_key, None)])
+                writer.end('AuthorizationRule')
+            writer.end('AuthorizationRules')
+        writer.elements(
+            [('Status', hub.status, None),
+             ('UserMetadata', hub.user_metadata, None),
+             ('PartitionCount', hub.partition_count, None)])
 
-        if queue.dead_lettering_on_message_expiration is not None:
-            queue_body += ''.join(
-                ['<DeadLetteringOnMessageExpiration>',
-                 str(queue.dead_lettering_on_message_expiration).lower(),
-                 '</DeadLetteringOnMessageExpiration>'])
-
-        if queue.duplicate_detection_history_time_window is not None:
-            queue_body += ''.join(
-                ['<DuplicateDetectionHistoryTimeWindow>',
-                 str(queue.duplicate_detection_history_time_window),
-                 '</DuplicateDetectionHistoryTimeWindow>'])
-
-        if queue.max_delivery_count is not None:
-            queue_body += ''.join(
-                ['<MaxDeliveryCount>',
-                 str(queue.max_delivery_count),
-                 '</MaxDeliveryCount>'])
-
-        if queue.enable_batched_operations is not None:
-            queue_body += ''.join(
-                ['<EnableBatchedOperations>',
-                 str(queue.enable_batched_operations).lower(),
-                 '</EnableBatchedOperations>'])
-
-        if queue.size_in_bytes is not None:
-            queue_body += ''.join(
-                ['<SizeInBytes>',
-                 str(queue.size_in_bytes),
-                 '</SizeInBytes>'])
-
-        if queue.message_count is not None:
-            queue_body += ''.join(
-                ['<MessageCount>',
-                 str(queue.message_count),
-                 '</MessageCount>'])
-
-    queue_body += '</QueueDescription>'
-    return _create_entry(queue_body)
+    return _convert_object_to_feed_entry(
+        hub, 'EventHubDescription', _hub_to_xml)
 
 
 def _service_bus_error_handler(http_error):
