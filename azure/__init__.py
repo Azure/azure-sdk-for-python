@@ -97,6 +97,8 @@ _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = \
 _ERROR_PAGE_BLOB_SIZE_ALIGNMENT = \
     'Invalid page blob size: {0}. ' + \
     'The size must be aligned to a 512-byte boundary.'
+_ERROR_ASYNC_OP_FAILURE = 'Asynchronous operation did not succeed.'
+_ERROR_ASYNC_OP_TIMEOUT = 'Timed out waiting for async operation to complete.'
 
 _USER_AGENT_STRING = 'pyazure/' + __version__
 
@@ -142,6 +144,15 @@ class WindowsAzureBatchOperationError(WindowsAzureError):
     def __init__(self, message, code):
         super(WindowsAzureBatchOperationError, self).__init__(message)
         self.code = code
+
+
+class WindowsAzureAsyncOperationError(WindowsAzureError):
+
+    '''Indicates that an async operation failed'''
+
+    def __init__(self, message, result):
+        super(WindowsAzureAsyncOperationError, self).__init__(message)
+        self.result = result
 
 
 class Feed(object):
