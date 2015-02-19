@@ -208,6 +208,11 @@ def _get_etree_tag_name_without_ns(tag):
     return val
 
 
+def _get_etree_text(element):
+    text = element.text
+    return text if text is not None else ''
+
+
 def _get_readable_id(id_name, id_prefix_to_skip):
     """simplified an id to be more friendly for us people"""
     # id_name is in the form 'https://namespace.host.suffix/name'
@@ -230,25 +235,25 @@ def _get_entry_properties_from_etree_element(element, include_id, id_prefix_to_s
     properties = {}
 
     etag = element.attrib.get(_make_etree_ns_attr_name(_etree_entity_feed_namespaces['m'], 'etag'), None)
-    if etag:
+    if etag is not None:
         properties['etag'] = etag
 
     updated = element.find('./atom:updated', _etree_entity_feed_namespaces)
-    if updated:
+    if updated is not None:
         properties['updated'] = updated.text
 
     author_name = element.find('./atom:author/atom:name', _etree_entity_feed_namespaces)
-    if author_name:
+    if author_name is not None:
         properties['author'] = author_name.text
 
     if include_id:
         if use_title_as_id:
             title = element.find('./atom:title', _etree_entity_feed_namespaces)
-            if title:
+            if title is not None:
                 properties['name'] = title.text
         else:
             id = element.find('./atom:id', _etree_entity_feed_namespaces)
-            if id:
+            if id is not None:
                 properties['name'] = _get_readable_id(id.text, id_prefix_to_skip)
 
     return properties

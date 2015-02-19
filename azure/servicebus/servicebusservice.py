@@ -19,7 +19,7 @@ import time
 from azure import (
     WindowsAzureError,
     SERVICE_BUS_HOST_BASE,
-    _convert_response_to_feeds,
+    _convert_response_to_feeds_using_etree,
     _dont_fail_not_exist,
     _dont_fail_on_exist,
     _encode_base64,
@@ -53,10 +53,10 @@ from azure.servicebus import (
     _convert_rule_to_xml,
     _convert_response_to_rule,
     _convert_response_to_event_hub,
-    _convert_xml_to_queue,
-    _convert_xml_to_topic,
-    _convert_xml_to_subscription,
-    _convert_xml_to_rule,
+    _convert_etree_element_to_queue,
+    _convert_etree_element_to_topic,
+    _convert_etree_element_to_subscription,
+    _convert_etree_element_to_rule,
     _create_message,
     _service_bus_error_handler,
     )
@@ -266,7 +266,7 @@ class ServiceBusService(object):
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_queue)
+        return _convert_response_to_feeds_using_etree(response, _convert_etree_element_to_queue)
 
     def create_topic(self, topic_name, topic=None, fail_on_exist=False):
         '''
@@ -353,7 +353,7 @@ class ServiceBusService(object):
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_topic)
+        return _convert_response_to_feeds_using_etree(response, _convert_etree_element_to_topic)
 
     def create_rule(self, topic_name, subscription_name, rule_name, rule=None,
                     fail_on_exist=False):
@@ -467,7 +467,7 @@ class ServiceBusService(object):
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_rule)
+        return _convert_response_to_feeds_using_etree(response, _convert_etree_element_to_rule)
 
     def create_subscription(self, topic_name, subscription_name,
                             subscription=None, fail_on_exist=False):
@@ -568,8 +568,8 @@ class ServiceBusService(object):
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response,
-                                          _convert_xml_to_subscription)
+        return _convert_response_to_feeds_using_etree(response,
+                                          _convert_etree_element_to_subscription)
 
     def send_topic_message(self, topic_name, message=None):
         '''
