@@ -1937,6 +1937,30 @@ def _management_error_handler(http_error):
     return _general_error_handler(http_error)
 
 
+def _convert_response_to_feeds(response, convert_func):
+    '''
+    DEPRECATED. Do not use outside of ServiceManagement.
+    New code should use _convert_response_to_feeds_using_etree.
+    '''
+    if response is None:
+        return None
+
+    feeds = _list_of(Feed)
+
+    _set_continuation_from_response(feeds, response)
+
+    xmldoc = minidom.parseString(response.body)
+    xml_entries = _get_children_from_path(xmldoc, 'feed', 'entry')
+    if not xml_entries:
+        # in some cases, response contains only entry but no feed
+        xml_entries = _get_children_from_path(xmldoc, 'entry')
+    for xml_entry in xml_entries:
+        new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
+        feeds.append(convert_func(new_node.toxml('utf-8')))
+
+    return feeds
+
+
 def _data_to_xml(data):
     '''Creates an xml fragment from the specified data.
         data: Array of tuples, where first: xml element name

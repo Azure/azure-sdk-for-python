@@ -14,7 +14,6 @@
 #--------------------------------------------------------------------------
 from azure import (
     MANAGEMENT_HOST,
-    _convert_response_to_feeds,
     _str,
     _validate_not_none,
     _convert_xml_to_windows_azure_object,
@@ -28,6 +27,7 @@ from azure.servicemanagement import (
     MetricProperties,
     MetricValues,
     MetricRollups,
+    _convert_response_to_feeds,
 )
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,

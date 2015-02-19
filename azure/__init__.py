@@ -533,29 +533,6 @@ def _convert_response_to_feeds_using_etree(response, convert_func):
     return feeds
 
 
-def _convert_response_to_feeds(response, convert_func):
-    '''
-    OBSOLETE. New code should use _convert_response_to_feeds_using_etree.
-    '''
-    if response is None:
-        return None
-
-    feeds = _list_of(Feed)
-
-    _set_continuation_from_response(feeds, response)
-
-    xmldoc = minidom.parseString(response.body)
-    xml_entries = _get_children_from_path(xmldoc, 'feed', 'entry')
-    if not xml_entries:
-        # in some cases, response contains only entry but no feed
-        xml_entries = _get_children_from_path(xmldoc, 'entry')
-    for xml_entry in xml_entries:
-        new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
-        feeds.append(convert_func(new_node.toxml('utf-8')))
-
-    return feeds
-
-
 def _convert_xml_to_windows_azure_object(xmlstr, azure_type, include_id=True, use_title_as_id=True):
     xmldoc = minidom.parseString(xmlstr)
     return_obj = azure_type()
