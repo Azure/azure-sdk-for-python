@@ -588,7 +588,7 @@ def _convert_etree_element_to_event_hub(entry_element):
             if _read_etree_element(hub_element, map[0], hub, map[1], map[2]):
                 invalid_event_hub = False
 
-        ids = hub_element.find('./sb:PartitionIds')
+        ids = hub_element.find('./sb:PartitionIds', _etree_sb_feed_namespaces)
         if ids is not None:
             for id_node in ids.findall('./arrays:string', _etree_sb_feed_namespaces):
                 value = _get_etree_text(id_node)
