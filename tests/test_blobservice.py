@@ -2349,6 +2349,12 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsInstance(block_list, BlobBlockList)
         self.assertEqual(len(block_list.uncommitted_blocks), 3)
         self.assertEqual(len(block_list.committed_blocks), 0)
+        self.assertEqual(block_list.uncommitted_blocks[0].id, '1')
+        self.assertEqual(block_list.uncommitted_blocks[0].size, 3)
+        self.assertEqual(block_list.uncommitted_blocks[1].id, '2')
+        self.assertEqual(block_list.uncommitted_blocks[1].size, 3)
+        self.assertEqual(block_list.uncommitted_blocks[2].id, '3')
+        self.assertEqual(block_list.uncommitted_blocks[2].size, 3)
 
     def test_get_block_list_committed_blocks(self):
         # Arrange
@@ -2368,6 +2374,12 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsInstance(block_list, BlobBlockList)
         self.assertEqual(len(block_list.uncommitted_blocks), 0)
         self.assertEqual(len(block_list.committed_blocks), 3)
+        self.assertEqual(block_list.committed_blocks[0].id, '1')
+        self.assertEqual(block_list.committed_blocks[0].size, 3)
+        self.assertEqual(block_list.committed_blocks[1].id, '2')
+        self.assertEqual(block_list.committed_blocks[1].size, 3)
+        self.assertEqual(block_list.committed_blocks[2].id, '3')
+        self.assertEqual(block_list.committed_blocks[2].size, 3)
 
     def test_put_page_update(self):
         # Arrange
