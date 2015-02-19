@@ -43,6 +43,7 @@ from azure import (WindowsAzureData,
                    _etree_entity_feed_namespaces,
                    _make_etree_ns_attr_name,
                    _get_etree_tag_name_without_ns,
+                   _get_etree_text,
                    ETree,
                    )
 
@@ -744,36 +745,33 @@ def _create_blob_result(response):
     return BlobResult(response.body, blob_properties)
 
 
+def _convert_block_etree_element_to_blob_block(block_element):
+    name_element = block_element.find('./Name')
+    size_element = block_element.find('./Size')
+
+    block_id = _decode_base64_to_text(_get_etree_text(name_element))
+    block_size = int(_get_etree_text(size_element))
+
+    return BlobBlock(block_id, block_size)
+
+
 def _convert_response_to_block_list(response):
     '''
     Converts xml response to block list class.
     '''
-    blob_block_list = BlobBlockList()
+    block_list = BlobBlockList()
 
-    xmldoc = minidom.parseString(response.body)
-    for xml_block in _get_children_from_path(xmldoc,
-                                             'BlockList',
-                                             'CommittedBlocks',
-                                             'Block'):
-        xml_block_id = _decode_base64_to_text(
-            _get_child_nodes(xml_block, 'Name')[0].firstChild.nodeValue)
-        xml_block_size = int(
-            _get_child_nodes(xml_block, 'Size')[0].firstChild.nodeValue)
-        blob_block_list.committed_blocks.append(
-            BlobBlock(xml_block_id, xml_block_size))
+    list_element = ETree.fromstring(response.body)
 
-    for xml_block in _get_children_from_path(xmldoc,
-                                             'BlockList',
-                                             'UncommittedBlocks',
-                                             'Block'):
-        xml_block_id = _decode_base64_to_text(
-            _get_child_nodes(xml_block, 'Name')[0].firstChild.nodeValue)
-        xml_block_size = int(
-            _get_child_nodes(xml_block, 'Size')[0].firstChild.nodeValue)
-        blob_block_list.uncommitted_blocks.append(
-            BlobBlock(xml_block_id, xml_block_size))
+    for block_element in list_element.findall('./CommittedBlocks/Block'):
+        block = _convert_block_etree_element_to_blob_block(block_element)
+        block_list.committed_blocks.append(block)
 
-    return blob_block_list
+    for block_element in list_element.findall('./UncommittedBlocks/Block'):
+        block = _convert_block_etree_element_to_blob_block(block_element)
+        block_list.uncommitted_blocks.append(block)
+
+    return block_list
 
 
 def _remove_prefix(name):
