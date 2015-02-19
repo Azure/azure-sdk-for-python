@@ -17,7 +17,7 @@ from azure import (
     TABLE_SERVICE_HOST_BASE,
     DEV_TABLE_HOST,
     _convert_class_to_xml,
-    _convert_response_to_feeds,
+    _convert_response_to_feeds_using_etree,
     _dont_fail_not_exist,
     _dont_fail_on_exist,
     _get_request_body,
@@ -35,10 +35,10 @@ from azure.http.batchclient import _BatchClient
 from azure.storage import (
     StorageServiceProperties,
     _convert_entity_to_xml,
+    _convert_etree_element_to_entity,
+    _convert_etree_element_to_table,
     _convert_response_to_entity,
     _convert_table_to_xml,
-    _convert_xml_to_entity,
-    _convert_xml_to_table,
     _sign_storage_table_request,
     _update_storage_table_header,
     )
@@ -148,7 +148,7 @@ class TableService(_StorageClient):
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_table)
+        return _convert_response_to_feeds_using_etree(response, _convert_etree_element_to_table)
 
     def create_table(self, table, fail_on_exist=False):
         '''
@@ -267,7 +267,7 @@ class TableService(_StorageClient):
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_entity)
+        return _convert_response_to_feeds_using_etree(response, _convert_etree_element_to_entity)
 
     def insert_entity(self, table_name, entity,
                       content_type='application/atom+xml'):

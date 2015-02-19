@@ -515,7 +515,7 @@ class TableServiceTest(AzureTestCase):
         total_entities_count = 1000
         entities_per_batch = 50
 
-        for j in range(total_entities_count / entities_per_batch):
+        for j in range(total_entities_count // entities_per_batch):
             self.ts.begin_batch()
             for i in range(entities_per_batch):
                 entity = Entity()

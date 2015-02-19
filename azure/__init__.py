@@ -35,6 +35,11 @@ from datetime import datetime
 from xml.dom import minidom
 from xml.sax.saxutils import escape as xml_escape
 
+try:
+    from xml.etree import cElementTree as ETree
+except ImportError:
+    from xml.etree import ElementTree as ETree
+
 #--------------------------------------------------------------------------
 # constants
 
@@ -187,6 +192,22 @@ def _decode_base64_to_text(data):
     return decoded_bytes.decode('utf-8')
 
 
+_etree_entity_feed_namespaces = {
+    'atom': 'http://www.w3.org/2005/Atom',
+    'm': 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata',
+    'd': 'http://schemas.microsoft.com/ado/2007/08/dataservices',
+}
+
+
+def _make_etree_ns_attr_name(ns, name):
+    return '{' + ns + '}' + name
+
+
+def _get_etree_tag_name_without_ns(tag):
+    val = tag.split('}')[1]
+    return val
+
+
 def _get_readable_id(id_name, id_prefix_to_skip):
     """simplified an id to be more friendly for us people"""
     # id_name is in the form 'https://namespace.host.suffix/name'
@@ -203,6 +224,34 @@ def _get_readable_id(id_name, id_prefix_to_skip):
             return id_name[pos + 1:]
     return id_name
 
+
+def _get_entry_properties_from_etree_element(element, include_id, id_prefix_to_skip=None, use_title_as_id=False):
+    ''' get properties from element tree element '''
+    properties = {}
+
+    etag = element.attrib.get(_make_etree_ns_attr_name(_etree_entity_feed_namespaces['m'], 'etag'), None)
+    if etag:
+        properties['etag'] = etag
+
+    updated = element.find('./atom:updated', _etree_entity_feed_namespaces)
+    if updated:
+        properties['updated'] = updated.text
+
+    author_name = element.find('./atom:author/atom:name', _etree_entity_feed_namespaces)
+    if author_name:
+        properties['author'] = author_name.text
+
+    if include_id:
+        if use_title_as_id:
+            title = element.find('./atom:title', _etree_entity_feed_namespaces)
+            if title:
+                properties['name'] = title.text
+        else:
+            id = element.find('./atom:id', _etree_entity_feed_namespaces)
+            if id:
+                properties['name'] = _get_readable_id(id.text, id_prefix_to_skip)
+
+    return properties
 
 def _get_entry_properties_from_node(entry, include_id, id_prefix_to_skip=None, use_title_as_id=False):
     ''' get properties from entry xml '''
@@ -444,18 +493,51 @@ def _clone_node_with_namespaces(node_to_clone, original_doc):
     return clone
 
 
-def _convert_response_to_feeds(response, convert_func):
-    if response is None:
-        return None
-
-    feeds = _list_of(Feed)
-
+def _set_continuation_from_response(feeds, response):
     x_ms_continuation = HeaderDict()
     for name, value in response.headers:
         if 'x-ms-continuation' in name:
             x_ms_continuation[name[len('x-ms-continuation') + 1:]] = value
     if x_ms_continuation:
         setattr(feeds, 'x_ms_continuation', x_ms_continuation)
+
+
+def _convert_response_to_feeds_using_etree(response, convert_func):
+
+    if response is None:
+        return None
+
+    feeds = _list_of(Feed)
+
+    _set_continuation_from_response(feeds, response)
+
+    root = ETree.fromstring(response.body)
+
+    # some feeds won't have the 'feed' element, just a single 'entry' element
+    root_name = _get_etree_tag_name_without_ns(root.tag)
+    if root_name == 'feed':
+        entries = root.findall("./atom:entry", _etree_entity_feed_namespaces)
+    elif root_name == 'entry':
+        entries = [root]
+    else:
+        raise NotImplementedError()
+
+    for entry in entries:
+        feeds.append(convert_func(entry))
+
+    return feeds
+
+
+def _convert_response_to_feeds(response, convert_func):
+    '''
+    OBSOLETE. New code should use _convert_response_to_feeds_using_etree.
+    '''
+    if response is None:
+        return None
+
+    feeds = _list_of(Feed)
+
+    _set_continuation_from_response(feeds, response)
 
     xmldoc = minidom.parseString(response.body)
     xml_entries = _get_children_from_path(xmldoc, 'feed', 'entry')
