@@ -21,7 +21,6 @@ from azure import (
     WindowsAzureData,
     WindowsAzureError,
     _general_error_handler,
-    _get_entry_properties_from_etree_element,
     _lower,
     _str,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
@@ -33,6 +32,7 @@ from azure import (
     _make_etree_ns_attr_name,
     _get_etree_text,
     ETree,
+    _ETreeXmlToObject,
     )
 from azure.http import HTTPError
 
@@ -383,7 +383,8 @@ def _convert_etree_element_to_rule(entry_element):
 
 
     # extract id, updated and name value from feed entry and set them of rule.
-    for name, value in _get_entry_properties_from_etree_element(entry_element, True, '/rules').items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True, '/rules').items():
         setattr(rule, name, value)
 
     return rule
@@ -461,7 +462,8 @@ def _convert_etree_element_to_queue(entry_element):
         raise WindowsAzureError(_ERROR_QUEUE_NOT_FOUND)
 
     # extract id, updated and name value from feed entry and set them of queue.
-    for name, value in _get_entry_properties_from_etree_element(entry_element, True).items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True).items():
         setattr(queue, name, value)
 
     return queue
@@ -513,7 +515,8 @@ def _convert_etree_element_to_topic(entry_element):
         raise WindowsAzureError(_ERROR_TOPIC_NOT_FOUND)
 
     # extract id, updated and name value from feed entry and set them of topic.
-    for name, value in _get_entry_properties_from_etree_element(entry_element, True).items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True).items():
         setattr(topic, name, value)
 
     return topic
@@ -560,7 +563,8 @@ def _convert_etree_element_to_subscription(entry_element):
         for map in mappings:
             _read_etree_element(subscription_element, map[0], subscription, map[1], map[2])
 
-    for name, value in _get_entry_properties_from_etree_element(entry_element, True, '/subscriptions').items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True, '/subscriptions').items():
         setattr(subscription, name, value)
 
     return subscription
@@ -627,7 +631,8 @@ def _convert_etree_element_to_event_hub(entry_element):
         raise WindowsAzureError(_ERROR_EVENT_HUB_NOT_FOUND)
 
     # extract id, updated and name value from feed entry and set them of queue.
-    for name, value in _get_entry_properties_from_etree_element(entry_element, True).items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True).items():
         if name == 'name':
             value = value.partition('?')[0]
         setattr(hub, name, value)

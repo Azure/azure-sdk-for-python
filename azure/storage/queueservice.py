@@ -23,8 +23,6 @@ from azure import (
     _dont_fail_on_exist,
     _get_request_body,
     _int_or_none,
-    _parse_enum_results_list,
-    _parse_response,
     _parse_response_for_dict_filter,
     _parse_response_for_dict_prefix,
     _str,
@@ -32,6 +30,7 @@ from azure import (
     _update_request_uri_query_local_storage,
     _validate_not_none,
     _ERROR_CONFLICT,
+    _ETreeXmlToObject,
     )
 from azure.http import (
     HTTPRequest,
@@ -85,7 +84,8 @@ class QueueService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_response(response, StorageServiceProperties)
+        return _ETreeXmlToObject.parse_response(
+            response, StorageServiceProperties)
 
     def list_queues(self, prefix=None, marker=None, maxresults=None,
                     include=None):
@@ -125,7 +125,7 @@ class QueueService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_enum_results_list(
+        return _ETreeXmlToObject.parse_enum_results_list(
             response, QueueEnumResults, "Queues", Queue)
 
     def create_queue(self, queue_name, x_ms_meta_name_values=None,
@@ -316,7 +316,8 @@ class QueueService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_response(response, QueueMessagesList)
+        return _ETreeXmlToObject.parse_response(
+            response, QueueMessagesList)
 
     def peek_messages(self, queue_name, numofmessages=None):
         '''
@@ -341,7 +342,8 @@ class QueueService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_response(response, QueueMessagesList)
+        return _ETreeXmlToObject.parse_response(
+            response, QueueMessagesList)
 
     def delete_message(self, queue_name, message_id, popreceipt):
         '''

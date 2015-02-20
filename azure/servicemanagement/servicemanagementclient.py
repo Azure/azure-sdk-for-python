@@ -18,7 +18,6 @@ from azure import (
     WindowsAzureError,
     MANAGEMENT_HOST,
     _get_request_body,
-    _parse_response,
     _str,
     _update_request_uri_query,
     )
@@ -30,6 +29,7 @@ from azure.http.httpclient import _HTTPClient
 from azure.servicemanagement import (
     AZURE_MANAGEMENT_CERTFILE,
     AZURE_MANAGEMENT_SUBSCRIPTIONID,
+    _MinidomXmlToObject,
     _management_error_handler,
     parse_response_for_async_op,
     X_MS_VERSION,
@@ -219,7 +219,7 @@ class _ServiceManagementClient(object):
         response = self.perform_get(path, x_ms_version)
 
         if response_type is not None:
-            return _parse_response(response, response_type)
+            return _MinidomXmlToObject.parse_response(response, response_type)
 
         return response
 
@@ -236,7 +236,7 @@ class _ServiceManagementClient(object):
         response = self.perform_post(path, body, x_ms_version)
 
         if response_type is not None:
-            return _parse_response(response, response_type)
+            return _MinidomXmlToObject.parse_response(response, response_type)
 
         if async:
             return parse_response_for_async_op(response)

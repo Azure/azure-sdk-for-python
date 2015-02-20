@@ -14,7 +14,6 @@
 #--------------------------------------------------------------------------
 from azure import (
     MANAGEMENT_HOST,
-    _parse_service_resources_response,
     _validate_not_none,
     )
 from azure.servicemanagement import (
@@ -25,6 +24,7 @@ from azure.servicemanagement import (
     Database,
     FirewallRule,
     _SqlManagementXmlSerializer,
+    _MinidomXmlToObject,
     )
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
@@ -129,7 +129,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         _validate_not_none('server_name', server_name)
         response = self._perform_get(self._get_quotas_path(server_name),
                                      None)
-        return _parse_service_resources_response(response, ServerQuota)
+        return _MinidomXmlToObject.parse_service_resources_response(
+            response, ServerQuota)
 
     def get_server_event_logs(self, server_name, start_date,
                               interval_size_in_minutes, event_types=''):
@@ -162,7 +163,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
                '?startDate={0}&intervalSizeInMinutes={1}&eventTypes={2}'.format(
             start_date, interval_size_in_minutes, event_types)
         response = self._perform_get(path, None)
-        return _parse_service_resources_response(response, EventLog)
+        return _MinidomXmlToObject.parse_service_resources_response(
+            response, EventLog)
 
     #--Operations for firewall rules ------------------------------------------
     def create_firewall_rule(self, server_name, name, start_ip_address,
@@ -244,7 +246,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         _validate_not_none('server_name', server_name)
         response = self._perform_get(self._get_firewall_rules_path(server_name),
                                      None)
-        return _parse_service_resources_response(response, FirewallRule)
+        return _MinidomXmlToObject.parse_service_resources_response(
+            response, FirewallRule)
 
     def list_service_level_objectives(self, server_name):
         '''
@@ -255,7 +258,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         _validate_not_none('server_name', server_name)
         response = self._perform_get(
             self._get_service_objectives_path(server_name), None)
-        return _parse_service_resources_response(response, ServiceObjective)
+        return _MinidomXmlToObject.parse_service_resources_response(
+            response, ServiceObjective)
 
     #--Operations for sql databases ----------------------------------------
     def create_database(self, server_name, name, service_objective_id,
@@ -352,7 +356,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         response = self._perform_get(self._get_list_databases_path(name),
                                      None)
-        return _parse_service_resources_response(response, Database)
+        return _MinidomXmlToObject.parse_service_resources_response(
+            response, Database)
 
 
     #--Helper functions --------------------------------------------------

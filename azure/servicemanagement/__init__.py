@@ -12,26 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+from datetime import datetime
 from xml.dom import minidom
-import xml.etree.ElementTree
 import sys
 from azure import (
+    ETree,
+    Feed,
     WindowsAzureData,
     _Base64String,
     _create_entry,
     _dict_of,
+    _decode_base64_to_text,
     _encode_base64,
     _general_error_handler,
-    _get_children_from_path,
-    _get_first_child_node_value,
     _list_of,
     _lower,
     _scalar_list_of,
     _str,
+    _strtype,
     _xml_attribute,
-    _get_entry_properties_from_node,
-    _get_child_nodes,
     _get_serialization_name,
+    _set_continuation_from_response_headers,
     )
 
 
@@ -1903,7 +1904,7 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
         raise TypeError("path_to_write_certificate cannot be None")
 
     # parse the publishsettings file and find the ManagementCertificate Entry
-    tree = xml.etree.ElementTree.parse(publish_settings_path)
+    tree = ETree.parse(publish_settings_path)
     subscriptions = tree.getroot().findall("./PublishProfile/Subscription")
     
     if subscription_name is None:
@@ -1937,28 +1938,394 @@ def _management_error_handler(http_error):
     return _general_error_handler(http_error)
 
 
-def _convert_response_to_feeds(response, convert_func):
+class _MinidomXmlToObject(object):
     '''
-    DEPRECATED. Do not use outside of ServiceManagement.
-    New code should use _convert_response_to_feeds_using_etree.
+    DEPRECATED.
+    All calls to this class will eventually be removed.
+    Do not use outside of service management apis.
     '''
-    if response is None:
-        return None
 
-    feeds = _list_of(Feed)
+    @staticmethod
+    def parse_response(response, return_type):
+        '''
+        Parse the HTTPResponse's body and fill all the data into a class of
+        return_type.
+        '''
+        doc = minidom.parseString(response.body)
+        return_obj = return_type()
+        xml_name = return_type._xml_name if hasattr(return_type, '_xml_name') else return_type.__name__ 
+        for node in _MinidomXmlToObject.get_child_nodes(doc, xml_name):
+            _MinidomXmlToObject._fill_data_to_return_object(node, return_obj)
 
-    _set_continuation_from_response(feeds, response)
+        return return_obj
 
-    xmldoc = minidom.parseString(response.body)
-    xml_entries = _get_children_from_path(xmldoc, 'feed', 'entry')
-    if not xml_entries:
-        # in some cases, response contains only entry but no feed
-        xml_entries = _get_children_from_path(xmldoc, 'entry')
-    for xml_entry in xml_entries:
-        new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
-        feeds.append(convert_func(new_node.toxml('utf-8')))
 
-    return feeds
+    @staticmethod
+    def parse_service_resources_response(response, return_type):
+        '''
+        Parse the HTTPResponse's body and fill all the data into a class of
+        return_type.
+        '''
+        doc = minidom.parseString(response.body)
+        return_obj = _list_of(return_type)
+        for node in _MinidomXmlToObject.get_children_from_path(doc, "ServiceResources", "ServiceResource"):
+            local_obj = return_type()
+            _MinidomXmlToObject._fill_data_to_return_object(node, local_obj)
+            return_obj.append(local_obj)
+
+        return return_obj
+
+
+    @staticmethod
+    def fill_data_member(xmldoc, element_name, data_member):
+        xmlelements = _MinidomXmlToObject.get_child_nodes(
+            xmldoc, _get_serialization_name(element_name))
+
+        if not xmlelements or not xmlelements[0].childNodes:
+            return None
+
+        value = xmlelements[0].firstChild.nodeValue
+
+        if data_member is None:
+            return value
+        elif isinstance(data_member, datetime):
+            return _to_datetime(value)
+        elif type(data_member) is bool:
+            return value.lower() != 'false'
+        else:
+            return type(data_member)(value)
+
+
+    @staticmethod
+    def convert_xml_to_azure_object(xmlstr, azure_type, include_id=True, use_title_as_id=True):
+        xmldoc = minidom.parseString(xmlstr)
+        return_obj = azure_type()
+        xml_name = azure_type._xml_name if hasattr(azure_type, '_xml_name') else azure_type.__name__
+
+        # Only one entry here
+        for xml_entry in _MinidomXmlToObject.get_children_from_path(xmldoc,
+                                                 'entry'):
+            for node in _MinidomXmlToObject.get_children_from_path(xml_entry,
+                                                'content',
+                                                xml_name):
+                _MinidomXmlToObject._fill_data_to_return_object(node, return_obj)
+            for name, value in _MinidomXmlToObject.get_entry_properties_from_node(
+                xml_entry,
+                include_id=include_id,
+                use_title_as_id=use_title_as_id).items():
+                setattr(return_obj, name, value)
+        return return_obj
+
+
+    @staticmethod
+    def get_entry_properties_from_node(entry, include_id, id_prefix_to_skip=None, use_title_as_id=False):
+        ''' get properties from entry xml '''
+        properties = {}
+
+        etag = entry.getAttributeNS(METADATA_NS, 'etag')
+        if etag:
+            properties['etag'] = etag
+        for updated in get_child_nodes(entry, 'updated'):
+            properties['updated'] = updated.firstChild.nodeValue
+        for name in get_children_from_path(entry, 'author', 'name'):
+            if name.firstChild is not None:
+                properties['author'] = name.firstChild.nodeValue
+
+        if include_id:
+            if use_title_as_id:
+                for title in get_child_nodes(entry, 'title'):
+                    properties['name'] = title.firstChild.nodeValue
+            else:
+                for id in get_child_nodes(entry, 'id'):
+                    properties['name'] = _get_readable_id(
+                        id.firstChild.nodeValue, id_prefix_to_skip)
+
+        return properties
+
+
+    @staticmethod
+    def convert_response_to_feeds(response, convert_func):
+        if response is None:
+            return None
+
+        feeds = _list_of(Feed)
+
+        _set_continuation_from_response_headers(feeds, response)
+
+        xmldoc = minidom.parseString(response.body)
+        xml_entries = _MinidomXmlToObject.get_children_from_path(xmldoc, 'feed', 'entry')
+        if not xml_entries:
+            # in some cases, response contains only entry but no feed
+            xml_entries = _MinidomXmlToObject.get_children_from_path(xmldoc, 'entry')
+        for xml_entry in xml_entries:
+            new_node = _MinidomXmlToObject._clone_node_with_namespaces(xml_entry, xmldoc)
+            feeds.append(convert_func(new_node.toxml('utf-8')))
+
+        return feeds
+
+
+    @staticmethod
+    def get_first_child_node_value(parent_node, node_name):
+        xml_attrs = _MinidomXmlToObject.get_child_nodes(parent_node, node_name)
+        if xml_attrs:
+            xml_attr = xml_attrs[0]
+            if xml_attr.firstChild:
+                value = xml_attr.firstChild.nodeValue
+                return value
+
+
+    @staticmethod
+    def get_children_from_path(node, *path):
+        '''descends through a hierarchy of nodes returning the list of children
+        at the inner most level.  Only returns children who share a common parent,
+        not cousins.'''
+        cur = node
+        for index, child in enumerate(path):
+            if isinstance(child, _strtype):
+                next = _MinidomXmlToObject.get_child_nodes(cur, child)
+            else:
+                next = _MinidomXmlToObject._get_child_nodesNS(cur, *child)
+            if index == len(path) - 1:
+                return next
+            elif not next:
+                break
+
+            cur = next[0]
+        return []
+
+
+    @staticmethod
+    def get_child_nodes(node, tagName):
+        return [childNode for childNode in node.getElementsByTagName(tagName)
+                if childNode.parentNode == node]
+
+
+    @staticmethod
+    def _get_child_nodesNS(node, ns, tagName):
+        return [childNode for childNode in node.getElementsByTagNameNS(ns, tagName)
+                if childNode.parentNode == node]
+
+
+    @staticmethod
+    def _parse_response_body_from_xml_node(node, return_type):
+        '''
+        parse the xml and fill all the data into a class of return_type
+        '''
+        return_obj = return_type()
+        _MinidomXmlToObject._fill_data_to_return_object(node, return_obj)
+
+        return return_obj
+
+
+    @staticmethod
+    def _fill_list_of(xmldoc, element_type, xml_element_name):
+        xmlelements = _MinidomXmlToObject.get_child_nodes(xmldoc, xml_element_name)
+        return [_MinidomXmlToObject._parse_response_body_from_xml_node(xmlelement, element_type) \
+            for xmlelement in xmlelements]
+
+
+    @staticmethod
+    def _fill_scalar_list_of(xmldoc, element_type, parent_xml_element_name,
+                             xml_element_name):
+        '''Converts an xml fragment into a list of scalar types.  The parent xml
+        element contains a flat list of xml elements which are converted into the
+        specified scalar type and added to the list.
+        Example:
+        xmldoc=
+    <Endpoints>
+        <Endpoint>http://{storage-service-name}.blob.core.windows.net/</Endpoint>
+        <Endpoint>http://{storage-service-name}.queue.core.windows.net/</Endpoint>
+        <Endpoint>http://{storage-service-name}.table.core.windows.net/</Endpoint>
+    </Endpoints>
+        element_type=str
+        parent_xml_element_name='Endpoints'
+        xml_element_name='Endpoint'
+        '''
+        xmlelements = _MinidomXmlToObject.get_child_nodes(xmldoc, parent_xml_element_name)
+        if xmlelements:
+            xmlelements = _MinidomXmlToObject.get_child_nodes(xmlelements[0], xml_element_name)
+            return [_MinidomXmlToObject._get_node_value(xmlelement, element_type) \
+                for xmlelement in xmlelements]
+
+
+    @staticmethod
+    def _fill_dict(xmldoc, element_name):
+        xmlelements = _MinidomXmlToObject.get_child_nodes(xmldoc, element_name)
+        if xmlelements:
+            return_obj = {}
+            for child in xmlelements[0].childNodes:
+                if child.firstChild:
+                    return_obj[child.nodeName] = child.firstChild.nodeValue
+            return return_obj
+
+
+    @staticmethod
+    def _fill_dict_of(xmldoc, parent_xml_element_name, pair_xml_element_name,
+                      key_xml_element_name, value_xml_element_name):
+        '''Converts an xml fragment into a dictionary. The parent xml element
+        contains a list of xml elements where each element has a child element for
+        the key, and another for the value.
+        Example:
+        xmldoc=
+    <ExtendedProperties>
+        <ExtendedProperty>
+            <Name>Ext1</Name>
+            <Value>Val1</Value>
+        </ExtendedProperty>
+        <ExtendedProperty>
+            <Name>Ext2</Name>
+            <Value>Val2</Value>
+        </ExtendedProperty>
+    </ExtendedProperties>
+        element_type=str
+        parent_xml_element_name='ExtendedProperties'
+        pair_xml_element_name='ExtendedProperty'
+        key_xml_element_name='Name'
+        value_xml_element_name='Value'
+        '''
+        return_obj = {}
+
+        xmlelements = _MinidomXmlToObject.get_child_nodes(xmldoc, parent_xml_element_name)
+        if xmlelements:
+            xmlelements = _MinidomXmlToObject.get_child_nodes(xmlelements[0], pair_xml_element_name)
+            for pair in xmlelements:
+                keys = _MinidomXmlToObject.get_child_nodes(pair, key_xml_element_name)
+                values = _MinidomXmlToObject.get_child_nodes(pair, value_xml_element_name)
+                if keys and values:
+                    key = keys[0].firstChild.nodeValue
+                    value = values[0].firstChild.nodeValue
+                    return_obj[key] = value
+
+        return return_obj
+
+
+    @staticmethod
+    def _fill_instance_child(xmldoc, element_name, return_type):
+        '''Converts a child of the current dom element to the specified type.
+        '''
+        xmlelements = _MinidomXmlToObject.get_child_nodes(
+            xmldoc, _get_serialization_name(element_name))
+
+        if not xmlelements:
+            return None
+
+        return_obj = return_type()
+        _MinidomXmlToObject._fill_data_to_return_object(xmlelements[0], return_obj)
+
+        return return_obj
+
+
+    @staticmethod
+    def _get_node_value(xmlelement, data_type):
+        value = xmlelement.firstChild.nodeValue
+        if data_type is datetime:
+            return _to_datetime(value)
+        elif data_type is bool:
+            return value.lower() != 'false'
+        else:
+            return data_type(value)
+
+
+    @staticmethod
+    def _fill_data_to_return_object(node, return_obj):
+        members = dict(vars(return_obj))
+        for name, value in members.items():
+            if isinstance(value, _list_of):
+                setattr(return_obj,
+                        name,
+                        _MinidomXmlToObject._fill_list_of(
+                            node,
+                            value.list_type,
+                            value.xml_element_name))
+            elif isinstance(value, _scalar_list_of):
+                setattr(return_obj,
+                        name,
+                        _MinidomXmlToObject._fill_scalar_list_of(
+                            node,
+                            value.list_type,
+                            _get_serialization_name(name),
+                            value.xml_element_name))
+            elif isinstance(value, _dict_of):
+                setattr(return_obj,
+                        name,
+                        _MinidomXmlToObject._fill_dict_of(
+                            node,
+                            _get_serialization_name(name),
+                            value.pair_xml_element_name,
+                            value.key_xml_element_name,
+                            value.value_xml_element_name))
+            elif isinstance(value, _xml_attribute):
+                real_value = None
+                if node.hasAttribute(value.xml_element_name):
+                    real_value = node.getAttribute(value.xml_element_name)
+                if real_value is not None:
+                    setattr(return_obj, name, real_value)
+            elif isinstance(value, WindowsAzureData):
+                setattr(return_obj,
+                        name,
+                        _MinidomXmlToObject._fill_instance_child(
+                            node,
+                            name,
+                            value.__class__))
+            elif isinstance(value, dict):
+                setattr(return_obj,
+                        name,
+                        _MinidomXmlToObject._fill_dict(
+                            node,
+                            _get_serialization_name(name)))
+            elif isinstance(value, _Base64String):
+                value = _MinidomXmlToObject.fill_data_minidom(
+                    node,
+                    name,
+                    '')
+                if value is not None:
+                    value = _decode_base64_to_text(value)
+                # always set the attribute, so we don't end up returning an object
+                # with type _Base64String
+                setattr(return_obj, name, value)
+            else:
+                value = _MinidomXmlToObject.fill_data_member(
+                    node,
+                    name,
+                    value)
+                if value is not None:
+                    setattr(return_obj, name, value)
+
+
+    @staticmethod
+    def _find_namespaces_from_child(parent, child, namespaces):
+        """Recursively searches from the parent to the child,
+        gathering all the applicable namespaces along the way"""
+        for cur_child in parent.childNodes:
+            if cur_child is child:
+                return True
+            if _MinidomXmlToObject._find_namespaces_from_child(cur_child, child, namespaces):
+                # we are the parent node
+                for key in cur_child.attributes.keys():
+                    if key.startswith('xmlns:') or key == 'xmlns':
+                        namespaces[key] = cur_child.attributes[key]
+                break
+        return False
+
+
+    @staticmethod
+    def _find_namespaces(parent, child):
+        res = {}
+        for key in parent.documentElement.attributes.keys():
+            if key.startswith('xmlns:') or key == 'xmlns':
+                res[key] = parent.documentElement.attributes[key]
+        _MinidomXmlToObject._find_namespaces_from_child(parent, child, res)
+        return res
+
+
+    @staticmethod
+    def _clone_node_with_namespaces(node_to_clone, original_doc):
+        clone = node_to_clone.cloneNode(True)
+
+        for key, value in _MinidomXmlToObject._find_namespaces(original_doc, node_to_clone).items():
+            clone.attributes[key] = value
+
+        return clone
 
 
 def _data_to_xml(data):
@@ -2915,12 +3282,13 @@ class _ServiceBusManagementXmlSerializer(object):
             ('Enabled', 'enabled', _parse_bool),
         )
 
-        for desc in _get_children_from_path(xmldoc,
-                                            'entry',
-                                            'content',
-                                            'NamespaceDescription'):
+        for desc in _MinidomXmlToObject.get_children_from_path(
+            xmldoc,
+            'entry',
+            'content',
+            'NamespaceDescription'):
             for xml_name, field_name, conversion_func in mappings:
-                node_value = _get_first_child_node_value(desc, xml_name)
+                node_value = _MinidomXmlToObject.get_first_child_node_value(desc, xml_name)
                 if node_value is not None:
                     if conversion_func is not None:
                         node_value = conversion_func(node_value)
@@ -2950,12 +3318,12 @@ class _ServiceBusManagementXmlSerializer(object):
         xmldoc = minidom.parseString(xmlstr)
         region = ServiceBusRegion()
 
-        for desc in _get_children_from_path(xmldoc, 'entry', 'content',
+        for desc in _MinidomXmlToObject.get_children_from_path(xmldoc, 'entry', 'content',
                                             'RegionCodeDescription'):
-            node_value = _get_first_child_node_value(desc, 'Code')
+            node_value = _MinidomXmlToObject.get_first_child_node_value(desc, 'Code')
             if node_value is not None:
                 region.code = node_value
-            node_value = _get_first_child_node_value(desc, 'FullName')
+            node_value = _MinidomXmlToObject.get_first_child_node_value(desc, 'FullName')
             if node_value is not None:
                 region.fullname = node_value
 
@@ -2983,9 +3351,9 @@ class _ServiceBusManagementXmlSerializer(object):
         xmldoc = minidom.parseString(xmlstr)
         availability = AvailabilityResponse()
 
-        for desc in _get_children_from_path(xmldoc, 'entry', 'content',
+        for desc in _MinidomXmlToObject.get_children_from_path(xmldoc, 'entry', 'content',
                                             'NamespaceAvailability'):
-            node_value = _get_first_child_node_value(desc, 'Result')
+            node_value = _MinidomXmlToObject.get_first_child_node_value(desc, 'Result')
             if node_value is not None:
                 availability.result = _parse_bool(node_value)
 
@@ -3054,23 +3422,24 @@ class _ServiceBusManagementXmlSerializer(object):
         members = dict(vars(return_obj))
 
         # Only one entry here
-        for xml_entry in _get_children_from_path(xmldoc,
+        for xml_entry in _MinidomXmlToObject.get_children_from_path(xmldoc,
                                                  'entry'):
-            for node in _get_children_from_path(xml_entry,
+            for node in _MinidomXmlToObject.get_children_from_path(xml_entry,
                                                 'content',
                                                 'm:properties'):
                 for name in members:
                     xml_name = "d:" + _get_serialization_name(name)
-                    children = _get_child_nodes(node, xml_name)
+                    children = _MinidomXmlToObject.get_child_nodes(node, xml_name)
                     if not children:
                         continue
                     child = children[0]
                     node_type = child.getAttributeNS("http://schemas.microsoft.com/ado/2007/08/dataservices/metadata", 'type')
                     node_value = _ServiceBusManagementXmlSerializer.odata_converter(child.firstChild.nodeValue, node_type)
                     setattr(return_obj, name, node_value)
-            for name, value in _get_entry_properties_from_node(xml_entry,
-                                                               include_id=True,
-                                                               use_title_as_id=False).items():
+            for name, value in _MinidomXmlToObject.get_entry_properties_from_node(
+                xml_entry,
+                include_id=True,
+                use_title_as_id=False).items():
                 if name in members:
                     continue  # Do not override if already members
                 setattr(return_obj, name, value)

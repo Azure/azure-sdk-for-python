@@ -18,7 +18,6 @@ import types
 from datetime import datetime
 from dateutil import parser
 from dateutil.tz import tzutc
-from xml.dom import minidom
 from azure import (WindowsAzureData,
                    WindowsAzureError,
                    METADATA_NS,
@@ -27,13 +26,6 @@ from azure import (WindowsAzureData,
                    _decode_base64_to_text,
                    _decode_base64_to_bytes,
                    _encode_base64,
-                   _fill_data_minidom,
-                   _fill_instance_element,
-                   _get_child_nodes,
-                   _get_child_nodesNS,
-                   _get_children_from_path,
-                   _get_entry_properties,
-                   _get_entry_properties_from_etree_element,
                    _general_error_handler,
                    _list_of,
                    _parse_response_for_dict,
@@ -45,6 +37,7 @@ from azure import (WindowsAzureData,
                    _get_etree_tag_name_without_ns,
                    _get_etree_text,
                    ETree,
+                   _ETreeXmlToObject,
                    )
 
 # x-ms-version for storage service.
@@ -388,24 +381,21 @@ class Table(WindowsAzureData):
 def _parse_blob_enum_results_list(response):
     respbody = response.body
     return_obj = BlobEnumResults()
-    doc = minidom.parseString(respbody)
+    enum_results = ETree.fromstring(respbody)
 
-    for enum_results in _get_child_nodes(doc, 'EnumerationResults'):
-        for child in _get_children_from_path(enum_results, 'Blobs', 'Blob'):
-            return_obj.blobs.append(_fill_instance_element(child, Blob))
+    for child in enum_results.findall('./Blobs/Blob'):
+        return_obj.blobs.append(_ETreeXmlToObject.fill_instance_element(child, Blob))
 
-        for child in _get_children_from_path(enum_results,
-                                             'Blobs',
-                                             'BlobPrefix'):
-            return_obj.prefixes.append(
-                _fill_instance_element(child, BlobPrefix))
+    for child in enum_results.findall('./Blobs/BlobPrefix'):
+        return_obj.prefixes.append(
+            _ETreeXmlToObject.fill_instance_element(child, BlobPrefix))
 
-        for name, value in vars(return_obj).items():
-            if name == 'blobs' or name == 'prefixes':
-                continue
-            value = _fill_data_minidom(enum_results, name, value)
-            if value is not None:
-                setattr(return_obj, name, value)
+    for name, value in vars(return_obj).items():
+        if name == 'blobs' or name == 'prefixes':
+            continue
+        value = _ETreeXmlToObject.fill_data_member(enum_results, name, value)
+        if value is not None:
+            setattr(return_obj, name, value)
 
     return return_obj
 
@@ -850,7 +840,8 @@ def _convert_etree_element_to_entity(entry_element):
 
     # extract id, updated and name value from feed entry and set them of
     # rule.
-    for name, value in _get_entry_properties_from_etree_element(entry_element, True).items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True).items():
         if name in ['etag']:
             _set_entity_attr(entity, name, value)
 
@@ -874,7 +865,8 @@ def _convert_etree_element_to_table(entry_element):
     if name_element is not None:
         table.name = name_element.text
 
-    for name_element, value in _get_entry_properties_from_etree_element(entry_element, False).items():
+    for name_element, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, False).items():
         setattr(table, name_element, value)
 
     return table
