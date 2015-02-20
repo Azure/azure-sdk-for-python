@@ -33,6 +33,7 @@ from azure import (
     _xml_attribute,
     _get_serialization_name,
     _set_continuation_from_response_headers,
+    METADATA_NS,
     )
 
 
@@ -2025,18 +2026,18 @@ class _MinidomXmlToObject(object):
         etag = entry.getAttributeNS(METADATA_NS, 'etag')
         if etag:
             properties['etag'] = etag
-        for updated in get_child_nodes(entry, 'updated'):
+        for updated in _MinidomXmlToObject.get_child_nodes(entry, 'updated'):
             properties['updated'] = updated.firstChild.nodeValue
-        for name in get_children_from_path(entry, 'author', 'name'):
+        for name in _MinidomXmlToObject.get_children_from_path(entry, 'author', 'name'):
             if name.firstChild is not None:
                 properties['author'] = name.firstChild.nodeValue
 
         if include_id:
             if use_title_as_id:
-                for title in get_child_nodes(entry, 'title'):
+                for title in _MinidomXmlToObject.get_child_nodes(entry, 'title'):
                     properties['name'] = title.firstChild.nodeValue
             else:
-                for id in get_child_nodes(entry, 'id'):
+                for id in _MinidomXmlToObject.get_child_nodes(entry, 'id'):
                     properties['name'] = _get_readable_id(
                         id.firstChild.nodeValue, id_prefix_to_skip)
 
@@ -2274,7 +2275,7 @@ class _MinidomXmlToObject(object):
                             node,
                             _get_serialization_name(name)))
             elif isinstance(value, _Base64String):
-                value = _MinidomXmlToObject.fill_data_minidom(
+                value = _MinidomXmlToObject.fill_data_member(
                     node,
                     name,
                     '')
