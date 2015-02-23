@@ -203,7 +203,7 @@ def _make_etree_ns_attr_name(ns, name):
 
 
 def _get_etree_tag_name_without_ns(tag):
-    val = tag.split('}')[1]
+    val = tag.partition('}')[2]
     return val
 
 
@@ -622,7 +622,7 @@ class _ETreeXmlToObject(object):
         return_type.
         '''
         root = ETree.fromstring(response.body)
-        xml_name = return_type._xml_name if hasattr(return_type, '_xml_name') else return_type.__name__ 
+        xml_name = getattr(return_type, '_xml_name', return_type.__name__) 
         if root.tag == xml_name:
             return _ETreeXmlToObject._parse_response_body_from_xml_node(root, return_type)
 
@@ -632,13 +632,13 @@ class _ETreeXmlToObject(object):
     @staticmethod
     def parse_enum_results_list(response, return_type, resp_type, item_type):
         """resp_body is the XML we received
-    resp_type is a string, such as Containers,
-    return_type is the type we're constructing, such as ContainerEnumResults
-    item_type is the type object of the item to be created, such as Container
+        resp_type is a string, such as Containers,
+        return_type is the type we're constructing, such as ContainerEnumResults
+        item_type is the type object of the item to be created, such as Container
 
-    This function then returns a ContainerEnumResults object with the
-    containers member populated with the results.
-    """
+        This function then returns a ContainerEnumResults object with the
+        containers member populated with the results.
+        """
 
         # parsing something like:
         # <EnumerationResults ... >
@@ -673,9 +673,9 @@ class _ETreeXmlToObject(object):
 
 
     @staticmethod
-    def parse_simple_list(response, type, item_type, list_name):
+    def parse_simple_list(response, return_type, item_type, list_name):
         respbody = response.body
-        res = type()
+        res = return_type()
         res_items = []
         root = ETree.fromstring(respbody)
         type_name = type.__name__
@@ -723,23 +723,23 @@ class _ETreeXmlToObject(object):
         if etag is not None:
             properties['etag'] = etag
 
-        updated = element.find('./atom:updated', _etree_entity_feed_namespaces)
-        if updated is not None:
-            properties['updated'] = updated.text
+        updated = element.findtext('./atom:updated', '', _etree_entity_feed_namespaces)
+        if updated:
+            properties['updated'] = updated
 
-        author_name = element.find('./atom:author/atom:name', _etree_entity_feed_namespaces)
-        if author_name is not None:
-            properties['author'] = author_name.text
+        author_name = element.findtext('./atom:author/atom:name', '', _etree_entity_feed_namespaces)
+        if author_name:
+            properties['author'] = author_name
 
         if include_id:
             if use_title_as_id:
-                title = element.find('./atom:title', _etree_entity_feed_namespaces)
-                if title is not None:
-                    properties['name'] = title.text
+                title = element.findtext('./atom:title', '', _etree_entity_feed_namespaces)
+                if title:
+                    properties['name'] = title
             else:
-                id = element.find('./atom:id', _etree_entity_feed_namespaces)
-                if id is not None:
-                    properties['name'] = _get_readable_id(id.text, id_prefix_to_skip)
+                id = element.findtext('./atom:id', '', _etree_entity_feed_namespaces)
+                if id:
+                    properties['name'] = _get_readable_id(id, id_prefix_to_skip)
 
         return properties
 

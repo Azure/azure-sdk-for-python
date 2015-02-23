@@ -736,11 +736,8 @@ def _create_blob_result(response):
 
 
 def _convert_block_etree_element_to_blob_block(block_element):
-    name_element = block_element.find('./Name')
-    size_element = block_element.find('./Size')
-
-    block_id = _decode_base64_to_text(_get_etree_text(name_element))
-    block_size = int(_get_etree_text(size_element))
+    block_id = _decode_base64_to_text(block_element.findtext('./Name', ''))
+    block_size = int(block_element.findtext('./Size'))
 
     return BlobBlock(block_id, block_size)
 
@@ -814,9 +811,7 @@ def _convert_etree_element_to_entity(entry_element):
     for prop in properties:
         for p in prop:
             name = _get_etree_tag_name_without_ns(p.tag)
-            value = p.text
-            if value is None:
-                value = ''
+            value = p.text or ''
             mtype = p.attrib.get(_make_etree_ns_attr_name(_etree_entity_feed_namespaces['m'], 'type'), None)
             isnull = p.attrib.get(_make_etree_ns_attr_name(_etree_entity_feed_namespaces['m'], 'null'), None)
 
