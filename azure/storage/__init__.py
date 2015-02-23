@@ -18,7 +18,6 @@ import types
 from datetime import datetime
 from dateutil import parser
 from dateutil.tz import tzutc
-from xml.dom import minidom
 from azure import (WindowsAzureData,
                    WindowsAzureError,
                    METADATA_NS,
@@ -27,18 +26,18 @@ from azure import (WindowsAzureData,
                    _decode_base64_to_text,
                    _decode_base64_to_bytes,
                    _encode_base64,
-                   _fill_data_minidom,
-                   _fill_instance_element,
-                   _get_child_nodes,
-                   _get_child_nodesNS,
-                   _get_children_from_path,
-                   _get_entry_properties,
                    _general_error_handler,
                    _list_of,
                    _parse_response_for_dict,
                    _sign_string,
                    _unicode_type,
                    _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY,
+                   _etree_entity_feed_namespaces,
+                   _make_etree_ns_attr_name,
+                   _get_etree_tag_name_without_ns,
+                   _get_etree_text,
+                   ETree,
+                   _ETreeXmlToObject,
                    )
 
 # x-ms-version for storage service.
@@ -382,24 +381,21 @@ class Table(WindowsAzureData):
 def _parse_blob_enum_results_list(response):
     respbody = response.body
     return_obj = BlobEnumResults()
-    doc = minidom.parseString(respbody)
+    enum_results = ETree.fromstring(respbody)
 
-    for enum_results in _get_child_nodes(doc, 'EnumerationResults'):
-        for child in _get_children_from_path(enum_results, 'Blobs', 'Blob'):
-            return_obj.blobs.append(_fill_instance_element(child, Blob))
+    for child in enum_results.findall('./Blobs/Blob'):
+        return_obj.blobs.append(_ETreeXmlToObject.fill_instance_element(child, Blob))
 
-        for child in _get_children_from_path(enum_results,
-                                             'Blobs',
-                                             'BlobPrefix'):
-            return_obj.prefixes.append(
-                _fill_instance_element(child, BlobPrefix))
+    for child in enum_results.findall('./Blobs/BlobPrefix'):
+        return_obj.prefixes.append(
+            _ETreeXmlToObject.fill_instance_element(child, BlobPrefix))
 
-        for name, value in vars(return_obj).items():
-            if name == 'blobs' or name == 'prefixes':
-                continue
-            value = _fill_data_minidom(enum_results, name, value)
-            if value is not None:
-                setattr(return_obj, name, value)
+    for name, value in vars(return_obj).items():
+        if name == 'blobs' or name == 'prefixes':
+            continue
+        value = _ETreeXmlToObject.fill_data_member(enum_results, name, value)
+        if value is not None:
+            setattr(return_obj, name, value)
 
     return return_obj
 
@@ -739,36 +735,30 @@ def _create_blob_result(response):
     return BlobResult(response.body, blob_properties)
 
 
+def _convert_block_etree_element_to_blob_block(block_element):
+    block_id = _decode_base64_to_text(block_element.findtext('./Name', ''))
+    block_size = int(block_element.findtext('./Size'))
+
+    return BlobBlock(block_id, block_size)
+
+
 def _convert_response_to_block_list(response):
     '''
     Converts xml response to block list class.
     '''
-    blob_block_list = BlobBlockList()
+    block_list = BlobBlockList()
 
-    xmldoc = minidom.parseString(response.body)
-    for xml_block in _get_children_from_path(xmldoc,
-                                             'BlockList',
-                                             'CommittedBlocks',
-                                             'Block'):
-        xml_block_id = _decode_base64_to_text(
-            _get_child_nodes(xml_block, 'Name')[0].firstChild.nodeValue)
-        xml_block_size = int(
-            _get_child_nodes(xml_block, 'Size')[0].firstChild.nodeValue)
-        blob_block_list.committed_blocks.append(
-            BlobBlock(xml_block_id, xml_block_size))
+    list_element = ETree.fromstring(response.body)
 
-    for xml_block in _get_children_from_path(xmldoc,
-                                             'BlockList',
-                                             'UncommittedBlocks',
-                                             'Block'):
-        xml_block_id = _decode_base64_to_text(
-            _get_child_nodes(xml_block, 'Name')[0].firstChild.nodeValue)
-        xml_block_size = int(
-            _get_child_nodes(xml_block, 'Size')[0].firstChild.nodeValue)
-        blob_block_list.uncommitted_blocks.append(
-            BlobBlock(xml_block_id, xml_block_size))
+    for block_element in list_element.findall('./CommittedBlocks/Block'):
+        block = _convert_block_etree_element_to_blob_block(block_element)
+        block_list.committed_blocks.append(block)
 
-    return blob_block_list
+    for block_element in list_element.findall('./UncommittedBlocks/Block'):
+        block = _convert_block_etree_element_to_blob_block(block_element)
+        block_list.uncommitted_blocks.append(block)
+
+    return block_list
 
 
 def _remove_prefix(name):
@@ -781,10 +771,13 @@ def _remove_prefix(name):
 def _convert_response_to_entity(response):
     if response is None:
         return response
-    return _convert_xml_to_entity(response.body)
+
+    root = ETree.fromstring(response.body)
+
+    return _convert_etree_element_to_entity(root)
 
 
-def _convert_xml_to_entity(xmlstr):
+def _convert_etree_element_to_entity(entry_element):
     ''' Convert xml response to entity.
 
     The format of entity:
@@ -812,51 +805,38 @@ def _convert_xml_to_entity(xmlstr):
       </content>
     </entry>
     '''
-    xmldoc = minidom.parseString(xmlstr)
-
-    xml_properties = None
-    for entry in _get_child_nodes(xmldoc, 'entry'):
-        for content in _get_child_nodes(entry, 'content'):
-            # TODO: Namespace
-            xml_properties = _get_child_nodesNS(
-                content, METADATA_NS, 'properties')
-
-    if not xml_properties:
-        return None
-
     entity = Entity()
-    # extract each property node and get the type from attribute and node value
-    for xml_property in xml_properties[0].childNodes:
-        name = _remove_prefix(xml_property.nodeName)
 
-        if xml_property.firstChild:
-            value = xml_property.firstChild.nodeValue
-        else:
-            value = ''
+    properties = entry_element.findall('./atom:content/m:properties', _etree_entity_feed_namespaces)
+    for prop in properties:
+        for p in prop:
+            name = _get_etree_tag_name_without_ns(p.tag)
+            value = p.text or ''
+            mtype = p.attrib.get(_make_etree_ns_attr_name(_etree_entity_feed_namespaces['m'], 'type'), None)
+            isnull = p.attrib.get(_make_etree_ns_attr_name(_etree_entity_feed_namespaces['m'], 'null'), None)
 
-        isnull = xml_property.getAttributeNS(METADATA_NS, 'null')
-        mtype = xml_property.getAttributeNS(METADATA_NS, 'type')
+            # if not isnull and no type info, then it is a string and we just
+            # need the str type to hold the property.
+            if not isnull and not mtype:
+                _set_entity_attr(entity, name, value)
+            elif isnull == 'true':
+                if mtype:
+                    property = EntityProperty(mtype, None)
+                else:
+                    property = EntityProperty('Edm.String', None)
+            else:  # need an object to hold the property
+                conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
+                if conv is not None:
+                    property = conv(value)
+                else:
+                    property = EntityProperty(mtype, value)
+                _set_entity_attr(entity, name, property)
 
-        # if not isnull and no type info, then it is a string and we just
-        # need the str type to hold the property.
-        if not isnull and not mtype:
-            _set_entity_attr(entity, name, value)
-        elif isnull == 'true':
-            if mtype:
-                property = EntityProperty(mtype, None)
-            else:
-                property = EntityProperty('Edm.String', None)
-        else:  # need an object to hold the property
-            conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
-            if conv is not None:
-                property = conv(value)
-            else:
-                property = EntityProperty(mtype, value)
-            _set_entity_attr(entity, name, property)
 
-        # extract id, updated and name value from feed entry and set them of
-        # rule.
-    for name, value in _get_entry_properties(xmlstr, True).items():
+    # extract id, updated and name value from feed entry and set them of
+    # rule.
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True).items():
         if name in ['etag']:
             _set_entity_attr(entity, name, value)
 
@@ -872,16 +852,18 @@ def _set_entity_attr(entity, name, value):
         entity.__dict__[name] = value
 
 
-def _convert_xml_to_table(xmlstr):
-    ''' Converts the xml response to table class.
-    Simply call convert_xml_to_entity and extract the table name, and add
-    updated and author info
+def _convert_etree_element_to_table(entry_element):
+    ''' Converts the xml element to table class.
     '''
     table = Table()
-    entity = _convert_xml_to_entity(xmlstr)
-    setattr(table, 'name', entity.TableName)
-    for name, value in _get_entry_properties(xmlstr, False).items():
-        setattr(table, name, value)
+    name_element = entry_element.find('./atom:content/m:properties/d:TableName', _etree_entity_feed_namespaces)
+    if name_element is not None:
+        table.name = name_element.text
+
+    for name_element, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, False).items():
+        setattr(table, name_element, value)
+
     return table
 
 

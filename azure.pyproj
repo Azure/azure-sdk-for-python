@@ -6,8 +6,9 @@
     <ProjectGuid>{25b2c65a-0553-4452-8907-8b5b17544e68}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>storage\blobservice.py</StartupFile>
-    <WorkingDirectory>.</WorkingDirectory>
+    <StartupFile>
+    </StartupFile>
+    <WorkingDirectory>tests</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azure</Name>
     <RootNamespace>azure</RootNamespace>
@@ -22,6 +23,8 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
+    <SearchPath>
+    </SearchPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

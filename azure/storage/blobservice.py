@@ -25,17 +25,15 @@ from azure import (
     _get_request_body,
     _get_request_body_bytes_only,
     _int_or_none,
-    _parse_enum_results_list,
-    _parse_response,
     _parse_response_for_dict,
     _parse_response_for_dict_filter,
     _parse_response_for_dict_prefix,
-    _parse_simple_list,
     _str,
     _str_or_none,
     _update_request_uri_query_local_storage,
     _validate_type_bytes,
     _validate_not_none,
+    _ETreeXmlToObject,
     )
 from azure.http import HTTPRequest
 from azure.storage import (
@@ -151,10 +149,8 @@ class BlobService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_enum_results_list(response,
-                                        ContainerEnumResults,
-                                        "Containers",
-                                        Container)
+        return _ETreeXmlToObject.parse_enum_results_list(
+            response, ContainerEnumResults, "Containers", Container)
 
     def create_container(self, container_name, x_ms_meta_name_values=None,
                          x_ms_blob_public_access=None, fail_on_exist=False):
@@ -296,7 +292,8 @@ class BlobService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_response(response, SignedIdentifiers)
+        return _ETreeXmlToObject.parse_response(
+            response, SignedIdentifiers)
 
     def set_container_acl(self, container_name, signed_identifiers=None,
                           x_ms_blob_public_access=None, x_ms_lease_id=None):
@@ -532,7 +529,8 @@ class BlobService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_response(response, StorageServiceProperties)
+        return _ETreeXmlToObject.parse_response(
+            response, StorageServiceProperties)
 
     def get_blob_properties(self, container_name, blob_name,
                             x_ms_lease_id=None):
@@ -2175,4 +2173,4 @@ class BlobService(_StorageClient):
             request, self.account_name, self.account_key)
         response = self._perform_request(request)
 
-        return _parse_simple_list(response, PageList, PageRange, "page_ranges")
+        return _ETreeXmlToObject.parse_simple_list(response, PageList, PageRange, "page_ranges")

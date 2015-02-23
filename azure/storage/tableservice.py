@@ -17,28 +17,27 @@ from azure import (
     TABLE_SERVICE_HOST_BASE,
     DEV_TABLE_HOST,
     _convert_class_to_xml,
-    _convert_response_to_feeds,
     _dont_fail_not_exist,
     _dont_fail_on_exist,
     _get_request_body,
     _int_or_none,
-    _parse_response,
     _parse_response_for_dict,
     _parse_response_for_dict_filter,
     _str,
     _str_or_none,
     _update_request_uri_query_local_storage,
     _validate_not_none,
+    _ETreeXmlToObject,
     )
 from azure.http import HTTPRequest
 from azure.http.batchclient import _BatchClient
 from azure.storage import (
     StorageServiceProperties,
     _convert_entity_to_xml,
+    _convert_etree_element_to_entity,
+    _convert_etree_element_to_table,
     _convert_response_to_entity,
     _convert_table_to_xml,
-    _convert_xml_to_entity,
-    _convert_xml_to_table,
     _sign_storage_table_request,
     _update_storage_table_header,
     )
@@ -97,7 +96,8 @@ class TableService(_StorageClient):
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
 
-        return _parse_response(response, StorageServiceProperties)
+        return _ETreeXmlToObject.parse_response(
+            response, StorageServiceProperties)
 
     def set_table_service_properties(self, storage_service_properties):
         '''
@@ -148,7 +148,8 @@ class TableService(_StorageClient):
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_table)
+        return _ETreeXmlToObject.convert_response_to_feeds(
+            response, _convert_etree_element_to_table)
 
     def create_table(self, table, fail_on_exist=False):
         '''
@@ -267,7 +268,8 @@ class TableService(_StorageClient):
         request.headers = _update_storage_table_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_entity)
+        return _ETreeXmlToObject.convert_response_to_feeds(
+            response, _convert_etree_element_to_entity)
 
     def insert_entity(self, table_name, entity,
                       content_type='application/atom+xml'):

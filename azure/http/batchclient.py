@@ -19,7 +19,6 @@ from azure import (
     _update_request_uri_query,
     WindowsAzureError,
     WindowsAzureBatchOperationError,
-    _get_children_from_path,
     url_unquote,
     _ERROR_CANNOT_FIND_PARTITION_KEY,
     _ERROR_CANNOT_FIND_ROW_KEY,
@@ -27,6 +26,9 @@ from azure import (
     _ERROR_INCORRECT_PARTITION_KEY_IN_BATCH,
     _ERROR_DUPLICATE_ROW_KEY_IN_BATCH,
     _ERROR_BATCH_COMMIT_FAIL,
+    ETree,
+    _get_etree_text,
+    _etree_entity_feed_namespaces,
     )
 from azure.http import HTTPError, HTTPRequest, HTTPResponse
 from azure.http.httpclient import _HTTPClient
@@ -35,7 +37,6 @@ from azure.storage import (
     METADATA_NS,
     _sign_storage_table_request,
     )
-from xml.dom import minidom
 
 _DATASERVICES_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices'
 
@@ -86,13 +87,11 @@ class _BatchClient(_HTTPClient):
         request: the request to insert, update or delete entity
         '''
         if request.method == 'POST':
-            doc = minidom.parseString(request.body)
-            part_key = _get_children_from_path(
-                doc, 'entry', 'content', (METADATA_NS, 'properties'),
-                (_DATASERVICES_NS, 'PartitionKey'))
-            if not part_key:
+            doc = ETree.fromstring(request.body)
+            part_key = doc.find('./atom:content/m:properties/d:PartitionKey', _etree_entity_feed_namespaces)
+            if part_key is None:
                 raise WindowsAzureError(_ERROR_CANNOT_FIND_PARTITION_KEY)
-            return part_key[0].firstChild.nodeValue
+            return _get_etree_text(part_key)
         else:
             uri = url_unquote(request.path)
             pos1 = uri.find('PartitionKey=\'')
@@ -110,13 +109,11 @@ class _BatchClient(_HTTPClient):
         request: the request to insert, update or delete entity
         '''
         if request.method == 'POST':
-            doc = minidom.parseString(request.body)
-            row_key = _get_children_from_path(
-                doc, 'entry', 'content', (METADATA_NS, 'properties'),
-                (_DATASERVICES_NS, 'RowKey'))
-            if not row_key:
+            doc = ETree.fromstring(request.body)
+            row_key = doc.find('./atom:content/m:properties/d:RowKey', _etree_entity_feed_namespaces)
+            if row_key is None:
                 raise WindowsAzureError(_ERROR_CANNOT_FIND_ROW_KEY)
-            return row_key[0].firstChild.nodeValue
+            return _get_etree_text(row_key)
         else:
             uri = url_unquote(request.path)
             pos1 = uri.find('RowKey=\'')
@@ -327,13 +324,12 @@ class _BatchClient(_HTTPClient):
         return HTTPResponse(int(status), reason.strip(), headers, body)
 
     def _report_batch_error(self, response):
-        xml = response.body.decode('utf-8-sig')
-        doc = minidom.parseString(xml)
+        doc = ETree.fromstring(response.body)
 
-        n = _get_children_from_path(doc, (METADATA_NS, 'error'), 'code')
-        code = n[0].firstChild.nodeValue if n and n[0].firstChild else ''
+        code_element = doc.find('./m:code', _etree_entity_feed_namespaces)
+        code = _get_etree_text(code_element) if code_element is not None else ''
 
-        n = _get_children_from_path(doc, (METADATA_NS, 'error'), 'message')
-        message = n[0].firstChild.nodeValue if n and n[0].firstChild else xml
+        message_element = doc.find('./m:message', _etree_entity_feed_namespaces)
+        message = _get_etree_text(message_element) if message_element is not None else ''
 
         raise WindowsAzureBatchOperationError(message, code)

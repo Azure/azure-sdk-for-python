@@ -509,6 +509,37 @@ class TableServiceTest(AzureTestCase):
         self.assertEqual(resp[0].RowKey, '1')
         self.assertEqual(resp[1].RowKey, '2')
 
+    def test_query_entities_large(self):
+        # Arrange
+        self._create_table(self.table_name)
+        total_entities_count = 1000
+        entities_per_batch = 50
+
+        for j in range(total_entities_count // entities_per_batch):
+            self.ts.begin_batch()
+            for i in range(entities_per_batch):
+                entity = Entity()
+                entity.PartitionKey = 'large'
+                entity.RowKey = 'batch{0}-item{1}'.format(j, i)
+                entity.test = EntityProperty('Edm.Boolean', 'true')
+                entity.test2 = 'hello world;' * 100
+                entity.test3 = 3
+                entity.test4 = EntityProperty('Edm.Int64', '1234567890')
+                entity.test5 = datetime.utcnow()
+                self.ts.insert_entity(self.table_name, entity)
+            self.ts.commit_batch()
+
+        # Act
+        start_time = datetime.now()
+        resp = self.ts.query_entities(self.table_name)
+        elapsed_time = datetime.now() - start_time
+
+        # Assert
+        print('query_entities took {0} secs.'.format(elapsed_time.total_seconds()))
+        # azure allocates 5 seconds to execute a query
+        # if it runs slowly, it will return fewer results and make the test fail
+        self.assertEqual(len(resp), total_entities_count)
+
     def test_query_entities_with_filter(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 2)
