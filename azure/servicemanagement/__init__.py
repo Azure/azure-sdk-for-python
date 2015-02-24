@@ -2194,7 +2194,8 @@ class _MinidomXmlToObject(object):
                 values = _MinidomXmlToObject.get_child_nodes(pair, value_xml_element_name)
                 if keys and values:
                     key = keys[0].firstChild.nodeValue
-                    value = values[0].firstChild.nodeValue
+                    valueContentNode = values[0].firstChild
+                    value = valueContentNode.nodeValue if valueContentNode else None
                     return_obj[key] = value
 
         return return_obj
