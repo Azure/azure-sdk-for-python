@@ -829,6 +829,61 @@ class Subscription(WindowsAzureData):
         self.created_time = u''
 
 
+class SubscriptionOperationCollection(WindowsAzureData):
+
+    def __init__(self):
+        self.subscription_operations = SubscriptionOperations()
+        self.continuation_token = u''
+
+
+class SubscriptionOperations(WindowsAzureData):
+
+    def __init__(self):
+        self.subscription_operations = _list_of(SubscriptionOperation)
+
+    def __iter__(self):
+        return iter(self.subscription_operations)
+
+    def __len__(self):
+        return len(self.subscription_operations)
+
+    def __getitem__(self, index):
+        return self.subscription_operations[index]
+
+
+class SubscriptionOperation(WindowsAzureData):
+
+    def __init__(self):
+        self.operation_id = u''
+        self.operation_object_id = u''
+        self.operation_name = u''
+        self.operation_parameters = _dict_of(
+            'OperationParameter', 'a:Name', 'a:Value')
+        self.operation_caller = OperationCaller()
+        self.operation_status = SubscriptionOperationStatus()
+        self.operation_started_time = u''
+        self.operation_completed_time = u''
+        self.operation_kind = u''
+
+
+class SubscriptionOperationStatus(WindowsAzureData):
+    _xml_name = 'OperationStatus'
+
+    def __init__(self):
+        self.id = u''
+        self.status = u''
+        self.http_status_code = 0
+
+
+class OperationCaller(WindowsAzureData):
+
+    def __init__(self):
+        self.used_service_management_api = False
+        self.user_email_address = u''
+        self.subscription_certificate_thumbprint = u''
+        self.client_ip = u''
+
+
 class AvailabilityResponse(WindowsAzureData):
 
     def __init__(self):
