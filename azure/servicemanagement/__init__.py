@@ -33,6 +33,7 @@ from azure import (
     _xml_attribute,
     _get_serialization_name,
     _set_continuation_from_response_headers,
+    _get_readable_id,
     METADATA_NS,
     )
 
