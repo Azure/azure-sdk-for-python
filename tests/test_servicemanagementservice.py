@@ -2668,42 +2668,27 @@ LyO+hc+q0iX3ecCQLUL1Laxj1bEohVvS31uuzQH9yCBwllJBx8EyufK/lDhu72md
         id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile)
         sms = azure.servicemanagement.ServiceManagementService(id, outfile)
         self.assertEqual(open(outfile).read(), expected_1)
-        try:
-            sms.get_subscription()
-            self.assertFalse(true, 'Subscription should be fake and should fail')
-        except:
-            pass
 
         # Test Select First Subscription
         outfile = tempfile.mktemp('.pem')
         id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile, 'cafecafe-cafe-1234-1234-1234cafe0001')
         sms = azure.servicemanagement.ServiceManagementService(id, outfile)
         self.assertEqual(open(outfile).read(), expected_1)
-        try:
-            sms.get_subscription()
-            self.assertFalse(true, 'Subscription should be fake and should fail')
-        except:
-            pass
 
         # Test Select Last Subscription
         outfile = tempfile.mktemp('.pem')
         id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile, 'cafecafe-cafe-1234-1234-1234cafe0003')
         sms = azure.servicemanagement.ServiceManagementService(id, outfile)
         self.assertEqual(open(outfile).read(), expected_3)
-        try:
-            sms.get_subscription()
-            self.assertFalse(true, 'Subscription should be fake and should fail')
-        except:
-            pass
 
         # Test Invalid Subscription ID
         outfile = tempfile.mktemp('.pem')
         try:
             id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile, 'DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD')
             self.assertFalse(true, "Subscription should not have been found")
-        except ValueError, e:
+        except ValueError as e:
             expected_msg = "The provided subscription_id '{}' was not found in the publish settings file provided at '{}'".format('DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD', infile)
-            self.assertEqual(e.message, expected_msg)
+            self.assertEqual(str(e), expected_msg)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
