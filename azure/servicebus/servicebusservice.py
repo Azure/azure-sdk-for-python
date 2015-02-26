@@ -17,9 +17,9 @@ import os
 import time
 
 from azure import (
+    _ETreeXmlToObject,
     WindowsAzureError,
     SERVICE_BUS_HOST_BASE,
-    _convert_response_to_feeds,
     _dont_fail_not_exist,
     _dont_fail_on_exist,
     _encode_base64,
@@ -43,6 +43,7 @@ from azure.servicebus import (
     AZURE_SERVICEBUS_NAMESPACE,
     AZURE_SERVICEBUS_ACCESS_KEY,
     AZURE_SERVICEBUS_ISSUER,
+    _convert_event_hub_to_xml,
     _convert_topic_to_xml,
     _convert_response_to_topic,
     _convert_queue_to_xml,
@@ -51,10 +52,11 @@ from azure.servicebus import (
     _convert_response_to_subscription,
     _convert_rule_to_xml,
     _convert_response_to_rule,
-    _convert_xml_to_queue,
-    _convert_xml_to_topic,
-    _convert_xml_to_subscription,
-    _convert_xml_to_rule,
+    _convert_response_to_event_hub,
+    _convert_etree_element_to_queue,
+    _convert_etree_element_to_topic,
+    _convert_etree_element_to_subscription,
+    _convert_etree_element_to_rule,
     _create_message,
     _service_bus_error_handler,
     )
@@ -264,7 +266,8 @@ class ServiceBusService(object):
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_queue)
+        return _ETreeXmlToObject.convert_response_to_feeds(
+            response, _convert_etree_element_to_queue)
 
     def create_topic(self, topic_name, topic=None, fail_on_exist=False):
         '''
@@ -351,7 +354,8 @@ class ServiceBusService(object):
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_topic)
+        return _ETreeXmlToObject.convert_response_to_feeds(
+            response, _convert_etree_element_to_topic)
 
     def create_rule(self, topic_name, subscription_name, rule_name, rule=None,
                     fail_on_exist=False):
@@ -465,7 +469,8 @@ class ServiceBusService(object):
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response, _convert_xml_to_rule)
+        return _ETreeXmlToObject.convert_response_to_feeds(
+            response, _convert_etree_element_to_rule)
 
     def create_subscription(self, topic_name, subscription_name,
                             subscription=None, fail_on_exist=False):
@@ -566,8 +571,8 @@ class ServiceBusService(object):
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
-        return _convert_response_to_feeds(response,
-                                          _convert_xml_to_subscription)
+        return _ETreeXmlToObject.convert_response_to_feeds(
+            response, _convert_etree_element_to_subscription)
 
     def send_topic_message(self, topic_name, message=None):
         '''
@@ -884,6 +889,126 @@ class ServiceBusService(object):
                                                          subscription_name,
                                                          timeout)
 
+    def create_event_hub(self, hub_name, hub=None, fail_on_exist=False):
+        '''
+        Creates a new Event Hub.
+
+        hub_name: Name of event hub.
+        hub: Optional. Event hub properties. Instance of EventHub class.
+        hub.message_retention_in_days:
+            Number of days to retain the events for this Event Hub.
+        hub.status: Status of the Event Hub (enabled or disabled).
+        hub.user_metadata: User metadata.
+        hub.partition_count: Number of shards on the Event Hub.
+        fail_on_exist:
+            Specify whether to throw an exception when the event hub exists.
+        '''
+        _validate_not_none('hub_name', hub_name)
+        request = HTTPRequest()
+        request.method = 'PUT'
+        request.host = self._get_host()
+        request.path = '/' + _str(hub_name) + '?api-version=2014-01'
+        request.body = _get_request_body(_convert_event_hub_to_xml(hub))
+        request.path, request.query = _update_request_uri_query(request)
+        request.headers = self._update_service_bus_header(request)
+        if not fail_on_exist:
+            try:
+                self._perform_request(request)
+                return True
+            except WindowsAzureError as ex:
+                _dont_fail_on_exist(ex)
+                return False
+        else:
+            self._perform_request(request)
+            return True
+
+    def update_event_hub(self, hub_name, hub=None):
+        '''
+        Updates an Event Hub.
+
+        hub_name: Name of event hub.
+        hub: Optional. Event hub properties. Instance of EventHub class.
+        hub.message_retention_in_days:
+            Number of days to retain the events for this Event Hub.
+        '''
+        _validate_not_none('hub_name', hub_name)
+        request = HTTPRequest()
+        request.method = 'PUT'
+        request.host = self._get_host()
+        request.path = '/' + _str(hub_name) + '?api-version=2014-01'
+        request.body = _get_request_body(_convert_event_hub_to_xml(hub))
+        request.path, request.query = _update_request_uri_query(request)
+        request.headers.append(('If-Match', '*'))
+        request.headers = self._update_service_bus_header(request)
+        response = self._perform_request(request)
+
+        return _convert_response_to_event_hub(response)
+
+    def delete_event_hub(self, hub_name, fail_not_exist=False):
+        '''
+        Deletes an Event Hub. This operation will also remove all associated
+        state.
+
+        hub_name: Name of the event hub to delete.
+        fail_not_exist:
+            Specify whether to throw an exception if the event hub doesn't exist.
+        '''
+        _validate_not_none('hub_name', hub_name)
+        request = HTTPRequest()
+        request.method = 'DELETE'
+        request.host = self._get_host()
+        request.path = '/' + _str(hub_name) + '?api-version=2014-01'
+        request.path, request.query = _update_request_uri_query(request)
+        request.headers = self._update_service_bus_header(request)
+        if not fail_not_exist:
+            try:
+                self._perform_request(request)
+                return True
+            except WindowsAzureError as ex:
+                _dont_fail_not_exist(ex)
+                return False
+        else:
+            self._perform_request(request)
+            return True
+
+    def get_event_hub(self, hub_name):
+        '''
+        Retrieves an existing event hub.
+
+        hub_name: Name of the event hub.
+        '''
+        _validate_not_none('hub_name', hub_name)
+        request = HTTPRequest()
+        request.method = 'GET'
+        request.host = self._get_host()
+        request.path = '/' + _str(hub_name) + ''
+        request.path, request.query = _update_request_uri_query(request)
+        request.headers = self._update_service_bus_header(request)
+        response = self._perform_request(request)
+
+        return _convert_response_to_event_hub(response)
+
+    def send_event(self, hub_name, message, device_id=None,
+                   broker_properties=None):
+        '''
+        Sends a new message event to an Event Hub.
+        '''
+        _validate_not_none('hub_name', hub_name)
+        request = HTTPRequest()
+        request.method = 'POST'
+        request.host = self._get_host()
+        if device_id:
+            request.path = '/{0}/publishers/{1}/messages?api-version=2014-01'.format(hub_name, device_id)
+        else:
+            request.path = '/{0}/messages?api-version=2014-01'.format(hub_name)
+        if broker_properties:
+            request.headers.append(
+                ('BrokerProperties', str(broker_properties)))
+        request.body = _get_request_body(message)
+        request.path, request.query = _update_request_uri_query(request)
+        request.headers = self._update_service_bus_header(request)
+        self._perform_request(request)
+
     def _get_host(self):
         return self.service_namespace + self.host_base
 
@@ -976,7 +1101,7 @@ class ServiceBusWrapTokenAuthentication:
         request.headers.append(('Content-Length', str(len(request.body))))
         resp = httpclient.perform_request(request)
 
-        token = resp.body.decode('utf-8')
+        token = resp.body.decode('utf-8-sig')
         token = url_unquote(token[token.find('=') + 1:token.rfind('&')])
         _tokens[wrap_scope] = token
 

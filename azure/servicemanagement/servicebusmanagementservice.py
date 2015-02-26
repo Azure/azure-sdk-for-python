@@ -14,10 +14,8 @@
 #--------------------------------------------------------------------------
 from azure import (
     MANAGEMENT_HOST,
-    _convert_response_to_feeds,
     _str,
     _validate_not_none,
-    _convert_xml_to_windows_azure_object,
 )
 from azure.servicemanagement import (
     _ServiceBusManagementXmlSerializer,
@@ -28,6 +26,7 @@ from azure.servicemanagement import (
     MetricProperties,
     MetricValues,
     MetricRollups,
+    _MinidomXmlToObject,
 )
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
@@ -75,7 +74,7 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_path('services/serviceBus/Regions/', None),
             None)
 
-        return _convert_response_to_feeds(
+        return _MinidomXmlToObject.convert_response_to_feeds(
             response,
             _ServiceBusManagementXmlSerializer.xml_to_region)
 
@@ -87,7 +86,7 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_path('services/serviceBus/Namespaces/', None),
             None)
 
-        return _convert_response_to_feeds(
+        return _MinidomXmlToObject.convert_response_to_feeds(
             response,
             _ServiceBusManagementXmlSerializer.xml_to_namespace)
 
@@ -157,9 +156,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_list_queues_path(name),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_convert_xml_to_windows_azure_object,
-                                                  azure_type=QueueDescription))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _MinidomXmlToObject.convert_xml_to_azure_object,
+                azure_type=QueueDescription
+            )
+        )
 
     def list_topics(self, name):
         '''
@@ -171,9 +174,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_list_topics_path(name),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_convert_xml_to_windows_azure_object,
-                                                  azure_type=TopicDescription))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _MinidomXmlToObject.convert_xml_to_azure_object,
+                azure_type=TopicDescription
+            )
+        )
 
     def list_notification_hubs(self, name):
         '''
@@ -185,9 +192,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_list_notification_hubs_path(name),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_convert_xml_to_windows_azure_object,
-                                                  azure_type=NotificationHubDescription))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _MinidomXmlToObject.convert_xml_to_azure_object,
+                azure_type=NotificationHubDescription
+            )
+        )
 
     def list_relays(self, name):
         '''
@@ -199,9 +210,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_list_relays_path(name),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_convert_xml_to_windows_azure_object,
-                                                  azure_type=RelayDescription))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _MinidomXmlToObject.convert_xml_to_azure_object,
+                azure_type=RelayDescription
+            )
+        )
 
     def get_supported_metrics_queue(self, name, queue_name):
         '''
@@ -214,9 +229,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_supported_metrics_queue_path(name, queue_name),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricProperties))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricProperties
+            )
+        )
 
     def get_supported_metrics_topic(self, name, topic_name):
         '''
@@ -229,9 +248,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_supported_metrics_topic_path(name, topic_name),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricProperties))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricProperties
+            )
+        )
 
     def get_supported_metrics_notification_hub(self, name, hub_name):
         '''
@@ -244,9 +267,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_supported_metrics_hub_path(name, hub_name),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricProperties))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricProperties
+            )
+        )
 
     def get_supported_metrics_relay(self, name, relay_name):
         '''
@@ -259,9 +286,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_supported_metrics_relay_path(name, relay_name),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricProperties))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricProperties
+            )
+        )
 
     def get_metrics_data_queue(self, name, queue_name, metric, rollup, filter_expresssion):
         '''
@@ -277,9 +308,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_metrics_data_queue_path(name, queue_name, metric, rollup, filter_expresssion),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricValues))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricValues
+            )
+        )
 
     def get_metrics_data_topic(self, name, topic_name, metric, rollup, filter_expresssion):
         '''
@@ -295,9 +330,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_metrics_data_topic_path(name, topic_name, metric, rollup, filter_expresssion),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricValues))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricValues
+            )
+        )
 
     def get_metrics_data_notification_hub(self, name, hub_name, metric, rollup, filter_expresssion):
         '''
@@ -313,9 +352,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_metrics_data_hub_path(name, hub_name, metric, rollup, filter_expresssion),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricValues))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricValues
+            )
+        )
 
     def get_metrics_data_relay(self, name, relay_name, metric, rollup, filter_expresssion):
         '''
@@ -331,9 +374,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_metrics_data_relay_path(name, relay_name, metric, rollup, filter_expresssion),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricValues))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricValues
+            )
+        )
 
     def get_metrics_rollups_queue(self, name, queue_name, metric):
         '''
@@ -349,9 +396,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_metrics_rollup_queue_path(name, queue_name, metric),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricRollups))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricRollups
+            )
+        )
 
     def get_metrics_rollups_topic(self, name, topic_name, metric):
         '''
@@ -367,9 +418,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_metrics_rollup_topic_path(name, topic_name, metric),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricRollups))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricRollups
+            )
+        )
 
     def get_metrics_rollups_notification_hub(self, name, hub_name, metric):
         '''
@@ -385,9 +440,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_metrics_rollup_hub_path(name, hub_name, metric),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricRollups))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricRollups
+            )
+        )
 
     def get_metrics_rollups_relay(self, name, relay_name, metric):
         '''
@@ -403,9 +462,13 @@ class ServiceBusManagementService(_ServiceManagementClient):
             self._get_get_metrics_rollup_relay_path(name, relay_name, metric),
             None)
 
-        return _convert_response_to_feeds(response,
-                                          partial(_ServiceBusManagementXmlSerializer.xml_to_metrics,
-                                                  object_type=MetricRollups))
+        return _MinidomXmlToObject.convert_response_to_feeds(
+            response,
+            partial(
+                _ServiceBusManagementXmlSerializer.xml_to_metrics,
+                object_type=MetricRollups
+            )
+        )
 
 
     # Helper functions --------------------------------------------------

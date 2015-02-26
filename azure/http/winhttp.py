@@ -324,16 +324,11 @@ class _WinHttpRequest(c_void_p):
     def response_body(self):
         '''
         Gets response body as a SAFEARRAY and converts the SAFEARRAY to str.
-        If it is an xml file, it always contains 3 characters before <?xml,
-        so we remove them.
         '''
         var_respbody = VARIANT()
         _WinHttpRequest._ResponseBody(self, byref(var_respbody))
         if var_respbody.is_safearray_of_bytes():
             respbody = var_respbody.str_from_safearray()
-            if respbody[3:].startswith(b'<?xml') and\
-               respbody.startswith(b'\xef\xbb\xbf'):
-                respbody = respbody[3:]
             return respbody
         else:
             return ''

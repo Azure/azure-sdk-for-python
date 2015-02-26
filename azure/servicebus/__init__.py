@@ -17,21 +17,22 @@ import json
 import sys
 
 from datetime import datetime
-from xml.dom import minidom
 from azure import (
     WindowsAzureData,
     WindowsAzureError,
-    xml_escape,
-    _create_entry,
     _general_error_handler,
-    _get_entry_properties,
-    _get_child_nodes,
-    _get_children_from_path,
-    _get_first_child_node_value,
+    _lower,
+    _str,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
+    _ERROR_EVENT_HUB_NOT_FOUND,
     _ERROR_QUEUE_NOT_FOUND,
     _ERROR_TOPIC_NOT_FOUND,
+    _XmlWriter,
+    _make_etree_ns_attr_name,
+    _get_etree_text,
+    ETree,
+    _ETreeXmlToObject,
     )
 from azure.http import HTTPError
 
@@ -44,8 +45,14 @@ AZURE_SERVICEBUS_NAMESPACE = 'AZURE_SERVICEBUS_NAMESPACE'
 AZURE_SERVICEBUS_ACCESS_KEY = 'AZURE_SERVICEBUS_ACCESS_KEY'
 AZURE_SERVICEBUS_ISSUER = 'AZURE_SERVICEBUS_ISSUER'
 
-# namespace used for converting rules to objects
-XML_SCHEMA_NAMESPACE = 'http://www.w3.org/2001/XMLSchema-instance'
+
+class _XmlSchemas:
+    SchemaInstance = 'http://www.w3.org/2001/XMLSchema-instance'
+    SerializationArrays = 'http://schemas.microsoft.com/2003/10/Serialization/Arrays'
+    ServiceBus = 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    DataServices = 'http://schemas.microsoft.com/ado/2007/08/dataservices'
+    DataServicesMetadata = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
+    Atom = 'http://www.w3.org/2005/Atom'
 
 
 class Queue(WindowsAzureData):
@@ -141,6 +148,32 @@ class Rule(WindowsAzureData):
         self.filter_expression = filter_expression
         self.action_type = action_type
         self.action_expression = action_type
+
+
+class EventHub(WindowsAzureData):
+
+    def __init__(self, message_retention_in_days=None, status=None,
+                 user_metadata=None, partition_count=None):
+        self.message_retention_in_days = message_retention_in_days
+        self.status = status
+        self.user_metadata = user_metadata
+        self.partition_count = partition_count
+        self.authorization_rules = []
+        self.partition_ids = []
+
+
+class AuthorizationRule(WindowsAzureData):
+
+    def __init__(self, claim_type=None, claim_value=None, rights=None,
+                 key_name=None, primary_key=None, secondary_key=None):
+        self.claim_type = claim_type
+        self.claim_value = claim_value
+        self.rights = rights or []
+        self.created_time = None
+        self.modified_time = None
+        self.key_name = key_name
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
 
 
 class Message(WindowsAzureData):
@@ -296,13 +329,21 @@ def _create_message(response, service_instance):
 
 # convert functions
 
+_etree_sb_feed_namespaces = {
+    'atom': _XmlSchemas.Atom,
+    'i': _XmlSchemas.SchemaInstance,
+    'sb': _XmlSchemas.ServiceBus,
+    'arrays': _XmlSchemas.SerializationArrays,
+}
+
 
 def _convert_response_to_rule(response):
-    return _convert_xml_to_rule(response.body)
+    root = ETree.fromstring(response.body)
+    return _convert_etree_element_to_rule(root)
 
 
-def _convert_xml_to_rule(xmlstr):
-    ''' Converts response xml to rule object.
+def _convert_etree_element_to_rule(entry_element):
+    ''' Converts entry element to rule object.
 
     The format of xml for rule:
 <entry xmlns='http://www.w3.org/2005/Atom'>
@@ -320,42 +361,43 @@ def _convert_xml_to_rule(xmlstr):
 </content>
 </entry>
     '''
-    xmldoc = minidom.parseString(xmlstr)
     rule = Rule()
 
-    for rule_desc in _get_children_from_path(xmldoc,
-                                             'entry',
-                                             'content',
-                                             'RuleDescription'):
-        for xml_filter in _get_child_nodes(rule_desc, 'Filter'):
-            filter_type = xml_filter.getAttributeNS(
-                XML_SCHEMA_NAMESPACE, 'type')
-            setattr(rule, 'filter_type', str(filter_type))
-            if xml_filter.childNodes:
+    rule_element = entry_element.find('./atom:content/sb:RuleDescription', _etree_sb_feed_namespaces)
+    if rule_element is not None:
+        filter_element = rule_element.find('./sb:Filter', _etree_sb_feed_namespaces)
+        if filter_element is not None:
+            rule.filter_type = filter_element.attrib.get(
+                _make_etree_ns_attr_name(_etree_sb_feed_namespaces['i'], 'type'), None)
+            sql_exp_element = filter_element.find('./sb:SqlExpression', _etree_sb_feed_namespaces)
+            if sql_exp_element is not None:
+                rule.filter_expression = sql_exp_element.text
 
-                for expr in _get_child_nodes(xml_filter, 'SqlExpression'):
-                    setattr(rule, 'filter_expression',
-                            expr.firstChild.nodeValue)
+        action_element = rule_element.find('./sb:Action', _etree_sb_feed_namespaces)
+        if action_element is not None:
+            rule.action_type = action_element.attrib.get(
+                _make_etree_ns_attr_name(_etree_sb_feed_namespaces['i'], 'type'), None)
+            sql_exp_element = action_element.find('./sb:SqlExpression', _etree_sb_feed_namespaces)
+            if sql_exp_element is not None:
+                rule.action_expression = sql_exp_element.text
 
-        for xml_action in _get_child_nodes(rule_desc, 'Action'):
-            action_type = xml_action.getAttributeNS(
-                XML_SCHEMA_NAMESPACE, 'type')
-            setattr(rule, 'action_type', str(action_type))
-            if xml_action.childNodes:
-                action_expression = xml_action.childNodes[0].firstChild
-                if action_expression:
-                    setattr(rule, 'action_expression',
-                            action_expression.nodeValue)
 
     # extract id, updated and name value from feed entry and set them of rule.
-    for name, value in _get_entry_properties(xmlstr, True, '/rules').items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True, '/rules').items():
         setattr(rule, name, value)
 
     return rule
 
 
 def _convert_response_to_queue(response):
-    return _convert_xml_to_queue(response.body)
+    root = ETree.fromstring(response.body)
+    return _convert_etree_element_to_queue(root)
+
+
+def _convert_response_to_event_hub(response):
+    root = ETree.fromstring(response.body)
+    return _convert_etree_element_to_event_hub(root)
 
 
 def _parse_bool(value):
@@ -364,8 +406,19 @@ def _parse_bool(value):
     return False
 
 
-def _convert_xml_to_queue(xmlstr):
-    ''' Converts xml response to queue object.
+def _read_etree_element(parent_element, child_element_name, target_object, target_field_name, converter):
+    child_element = parent_element.find('./sb:{0}'.format(child_element_name), _etree_sb_feed_namespaces)
+    if child_element is not None:
+        field_value = _get_etree_text(child_element)
+        if converter is not None:
+            field_value = converter(field_value)
+        setattr(target_object, target_field_name, field_value)
+        return True
+    return False
+
+
+def _convert_etree_element_to_queue(entry_element):
+    ''' Converts entry element to queue object.
 
     The format of xml response for queue:
 <QueueDescription
@@ -379,92 +432,50 @@ def _convert_xml_to_queue(xmlstr):
 </QueueDescription>
 
     '''
-    xmldoc = minidom.parseString(xmlstr)
     queue = Queue()
 
-    invalid_queue = True
     # get node for each attribute in Queue class, if nothing found then the
     # response is not valid xml for Queue.
-    for desc in _get_children_from_path(xmldoc,
-                                        'entry',
-                                        'content',
-                                        'QueueDescription'):
-        node_value = _get_first_child_node_value(desc, 'LockDuration')
-        if node_value is not None:
-            queue.lock_duration = node_value
-            invalid_queue = False
+    invalid_queue = True
 
-        node_value = _get_first_child_node_value(desc, 'MaxSizeInMegabytes')
-        if node_value is not None:
-            queue.max_size_in_megabytes = int(node_value)
-            invalid_queue = False
+    queue_element = entry_element.find('./atom:content/sb:QueueDescription', _etree_sb_feed_namespaces)
+    if queue_element is not None:
+        mappings = [
+            ('LockDuration', 'lock_duration', None),
+            ('MaxSizeInMegabytes', 'max_size_in_megabytes', int),
+            ('RequiresDuplicateDetection', 'requires_duplicate_detection', _parse_bool),
+            ('RequiresSession', 'requires_session', _parse_bool),
+            ('DefaultMessageTimeToLive', 'default_message_time_to_live', None),
+            ('DeadLetteringOnMessageExpiration', 'dead_lettering_on_message_expiration', _parse_bool),
+            ('DuplicateDetectionHistoryTimeWindow', 'duplicate_detection_history_time_window', None),
+            ('EnableBatchedOperations', 'enable_batched_operations', _parse_bool),
+            ('MaxDeliveryCount', 'max_delivery_count', int),
+            ('MessageCount', 'message_count', int),
+            ('SizeInBytes', 'size_in_bytes', int),
+        ]
 
-        node_value = _get_first_child_node_value(
-            desc, 'RequiresDuplicateDetection')
-        if node_value is not None:
-            queue.requires_duplicate_detection = _parse_bool(node_value)
-            invalid_queue = False
-
-        node_value = _get_first_child_node_value(desc, 'RequiresSession')
-        if node_value is not None:
-            queue.requires_session = _parse_bool(node_value)
-            invalid_queue = False
-
-        node_value = _get_first_child_node_value(
-            desc, 'DefaultMessageTimeToLive')
-        if node_value is not None:
-            queue.default_message_time_to_live = node_value
-            invalid_queue = False
-
-        node_value = _get_first_child_node_value(
-            desc, 'DeadLetteringOnMessageExpiration')
-        if node_value is not None:
-            queue.dead_lettering_on_message_expiration = _parse_bool(node_value)
-            invalid_queue = False
-
-        node_value = _get_first_child_node_value(
-            desc, 'DuplicateDetectionHistoryTimeWindow')
-        if node_value is not None:
-            queue.duplicate_detection_history_time_window = node_value
-            invalid_queue = False
-
-        node_value = _get_first_child_node_value(
-            desc, 'EnableBatchedOperations')
-        if node_value is not None:
-            queue.enable_batched_operations = _parse_bool(node_value)
-            invalid_queue = False
-
-        node_value = _get_first_child_node_value(desc, 'MaxDeliveryCount')
-        if node_value is not None:
-            queue.max_delivery_count = int(node_value)
-            invalid_queue = False
-
-        node_value = _get_first_child_node_value(desc, 'MessageCount')
-        if node_value is not None:
-            queue.message_count = int(node_value)
-            invalid_queue = False
-
-        node_value = _get_first_child_node_value(desc, 'SizeInBytes')
-        if node_value is not None:
-            queue.size_in_bytes = int(node_value)
-            invalid_queue = False
+        for map in mappings:
+            if _read_etree_element(queue_element, map[0], queue, map[1], map[2]):
+                invalid_queue = False
 
     if invalid_queue:
         raise WindowsAzureError(_ERROR_QUEUE_NOT_FOUND)
 
     # extract id, updated and name value from feed entry and set them of queue.
-    for name, value in _get_entry_properties(xmlstr, True).items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True).items():
         setattr(queue, name, value)
 
     return queue
 
 
 def _convert_response_to_topic(response):
-    return _convert_xml_to_topic(response.body)
+    root = ETree.fromstring(response.body)
+    return _convert_etree_element_to_topic(root)
 
 
-def _convert_xml_to_topic(xmlstr):
-    '''Converts xml response to topic
+def _convert_etree_element_to_topic(entry_element):
+    '''Converts entry element to topic
 
     The xml format for topic:
 <entry xmlns='http://www.w3.org/2005/Atom'>
@@ -481,62 +492,43 @@ def _convert_xml_to_topic(xmlstr):
     </content>
 </entry>
     '''
-    xmldoc = minidom.parseString(xmlstr)
     topic = Topic()
 
     invalid_topic = True
 
-    # get node for each attribute in Topic class, if nothing found then the
-    # response is not valid xml for Topic.
-    for desc in _get_children_from_path(xmldoc,
-                                        'entry',
-                                        'content',
-                                        'TopicDescription'):
-        invalid_topic = True
-        node_value = _get_first_child_node_value(
-            desc, 'DefaultMessageTimeToLive')
-        if node_value is not None:
-            topic.default_message_time_to_live = node_value
-            invalid_topic = False
-        node_value = _get_first_child_node_value(desc, 'MaxSizeInMegabytes')
-        if node_value is not None:
-            topic.max_size_in_megabytes = int(node_value)
-            invalid_topic = False
-        node_value = _get_first_child_node_value(
-            desc, 'RequiresDuplicateDetection')
-        if node_value is not None:
-            topic.requires_duplicate_detection = _parse_bool(node_value)
-            invalid_topic = False
-        node_value = _get_first_child_node_value(
-            desc, 'DuplicateDetectionHistoryTimeWindow')
-        if node_value is not None:
-            topic.duplicate_detection_history_time_window = node_value
-            invalid_topic = False
-        node_value = _get_first_child_node_value(
-            desc, 'EnableBatchedOperations')
-        if node_value is not None:
-            topic.enable_batched_operations = _parse_bool(node_value)
-            invalid_topic = False
-        node_value = _get_first_child_node_value(desc, 'SizeInBytes')
-        if node_value is not None:
-            topic.size_in_bytes = int(node_value)
-            invalid_topic = False
+    topic_element = entry_element.find('./atom:content/sb:TopicDescription', _etree_sb_feed_namespaces)
+    if topic_element is not None:
+        mappings = [
+            ('DefaultMessageTimeToLive', 'default_message_time_to_live', None),
+            ('MaxSizeInMegabytes', 'max_size_in_megabytes', int),
+            ('RequiresDuplicateDetection', 'requires_duplicate_detection', _parse_bool),
+            ('DuplicateDetectionHistoryTimeWindow', 'duplicate_detection_history_time_window', None),
+            ('EnableBatchedOperations', 'enable_batched_operations', _parse_bool),
+            ('SizeInBytes', 'size_in_bytes', int),
+        ]
+
+        for map in mappings:
+            if _read_etree_element(topic_element, map[0], topic, map[1], map[2]):
+                invalid_topic = False
 
     if invalid_topic:
         raise WindowsAzureError(_ERROR_TOPIC_NOT_FOUND)
 
     # extract id, updated and name value from feed entry and set them of topic.
-    for name, value in _get_entry_properties(xmlstr, True).items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True).items():
         setattr(topic, name, value)
+
     return topic
 
 
 def _convert_response_to_subscription(response):
-    return _convert_xml_to_subscription(response.body)
+    root = ETree.fromstring(response.body)
+    return _convert_etree_element_to_subscription(root)
 
 
-def _convert_xml_to_subscription(xmlstr):
-    '''Converts xml response to subscription
+def _convert_etree_element_to_subscription(entry_element):
+    '''Converts entry element to subscription
 
     The xml format for subscription:
 <entry xmlns='http://www.w3.org/2005/Atom'>
@@ -553,296 +545,249 @@ def _convert_xml_to_subscription(xmlstr):
     </content>
 </entry>
     '''
-    xmldoc = minidom.parseString(xmlstr)
     subscription = Subscription()
 
-    for desc in _get_children_from_path(xmldoc,
-                                        'entry',
-                                        'content',
-                                        'SubscriptionDescription'):
-        node_value = _get_first_child_node_value(desc, 'LockDuration')
-        if node_value is not None:
-            subscription.lock_duration = node_value
+    subscription_element = entry_element.find('./atom:content/sb:SubscriptionDescription', _etree_sb_feed_namespaces)
+    if subscription_element is not None:
+        mappings = [
+            ('LockDuration', 'lock_duration', None),
+            ('RequiresSession', 'requires_session', _parse_bool),
+            ('DefaultMessageTimeToLive', 'default_message_time_to_live', None),
+            ('DeadLetteringOnFilterEvaluationExceptions', 'dead_lettering_on_filter_evaluation_exceptions', _parse_bool),
+            ('DeadLetteringOnMessageExpiration', 'dead_lettering_on_message_expiration', _parse_bool),
+            ('EnableBatchedOperations', 'enable_batched_operations', _parse_bool),
+            ('MaxDeliveryCount', 'max_delivery_count', int),
+            ('MessageCount', 'message_count', int),
+        ]
 
-        node_value = _get_first_child_node_value(
-            desc, 'RequiresSession')
-        if node_value is not None:
-            subscription.requires_session = _parse_bool(node_value)
+        for map in mappings:
+            _read_etree_element(subscription_element, map[0], subscription, map[1], map[2])
 
-        node_value = _get_first_child_node_value(
-            desc, 'DefaultMessageTimeToLive')
-        if node_value is not None:
-            subscription.default_message_time_to_live = node_value
-
-        node_value = _get_first_child_node_value(
-            desc, 'DeadLetteringOnFilterEvaluationExceptions')
-        if node_value is not None:
-            subscription.dead_lettering_on_filter_evaluation_exceptions = \
-                _parse_bool(node_value)
-
-        node_value = _get_first_child_node_value(
-            desc, 'DeadLetteringOnMessageExpiration')
-        if node_value is not None:
-            subscription.dead_lettering_on_message_expiration = \
-                _parse_bool(node_value)
-
-        node_value = _get_first_child_node_value(
-            desc, 'EnableBatchedOperations')
-        if node_value is not None:
-            subscription.enable_batched_operations = _parse_bool(node_value)
-
-        node_value = _get_first_child_node_value(
-            desc, 'MaxDeliveryCount')
-        if node_value is not None:
-            subscription.max_delivery_count = int(node_value)
-
-        node_value = _get_first_child_node_value(
-            desc, 'MessageCount')
-        if node_value is not None:
-            subscription.message_count = int(node_value)
-
-    for name, value in _get_entry_properties(xmlstr,
-                                             True,
-                                             '/subscriptions').items():
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True, '/subscriptions').items():
         setattr(subscription, name, value)
 
     return subscription
 
 
-def _convert_subscription_to_xml(subscription):
-    '''
-    Converts a subscription object to xml to send.  The order of each field of
-    subscription in xml is very important so we can't simple call
-    convert_class_to_xml.
+def _convert_etree_element_to_event_hub(entry_element):
+    hub = EventHub()
 
-    subscription: the subsciption object to be converted.
-    '''
+    invalid_event_hub = True
+    # get node for each attribute in EventHub class, if nothing found then the
+    # response is not valid xml for EventHub.
 
-    subscription_body = '<SubscriptionDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
-    if subscription:
-        if subscription.lock_duration is not None:
-            subscription_body += ''.join(
-                ['<LockDuration>',
-                 str(subscription.lock_duration),
-                 '</LockDuration>'])
+    hub_element = entry_element.find('./atom:content/sb:EventHubDescription', _etree_sb_feed_namespaces)
+    if hub_element is not None:
+        mappings = [
+            ('SizeInBytes', 'size_in_bytes', int),
+            ('MessageRetentionInDays', 'message_retention_in_days', int),
+            ('Status', 'status', None),
+            ('UserMetadata', 'user_metadata', None),
+            ('PartitionCount', 'partition_count', int),
+            ('EntityAvailableStatus', 'entity_available_status', None),
+        ]
 
-        if subscription.requires_session is not None:
-            subscription_body += ''.join(
-                ['<RequiresSession>',
-                 str(subscription.requires_session).lower(),
-                 '</RequiresSession>'])
+        for map in mappings:
+            if _read_etree_element(hub_element, map[0], hub, map[1], map[2]):
+                invalid_event_hub = False
 
-        if subscription.default_message_time_to_live is not None:
-            subscription_body += ''.join(
-                ['<DefaultMessageTimeToLive>',
-                 str(subscription.default_message_time_to_live),
-                 '</DefaultMessageTimeToLive>'])
+        ids = hub_element.find('./sb:PartitionIds', _etree_sb_feed_namespaces)
+        if ids is not None:
+            for id_node in ids.findall('./arrays:string', _etree_sb_feed_namespaces):
+                value = _get_etree_text(id_node)
+                if value:
+                    hub.partition_ids.append(value)
 
-        if subscription.dead_lettering_on_message_expiration is not None:
-            subscription_body += ''.join(
-                ['<DeadLetteringOnMessageExpiration>',
-                 str(subscription.dead_lettering_on_message_expiration).lower(),
-                 '</DeadLetteringOnMessageExpiration>'])
+        rules_nodes = hub_element.find('./sb:AuthorizationRules', _etree_sb_feed_namespaces)
+        if rules_nodes is not None:
+            invalid_event_hub = False
+            for rule_node in rules_nodes.findall('./sb:AuthorizationRule', _etree_sb_feed_namespaces):
+                rule = AuthorizationRule()
 
-        if subscription.dead_lettering_on_filter_evaluation_exceptions is not None:
-            subscription_body += ''.join(
-                ['<DeadLetteringOnFilterEvaluationExceptions>',
-                 str(subscription.dead_lettering_on_filter_evaluation_exceptions).lower(),
-                 '</DeadLetteringOnFilterEvaluationExceptions>'])
+                mappings = [
+                    ('ClaimType', 'claim_type', None),
+                    ('ClaimValue', 'claim_value', None),
+                    ('ModifiedTime', 'modified_time', None),
+                    ('CreatedTime', 'created_time', None),
+                    ('KeyName', 'key_name', None),
+                    ('PrimaryKey', 'primary_key', None),
+                    ('SecondaryKey', 'secondary_key', None),
+                ]
 
-        if subscription.enable_batched_operations is not None:
-            subscription_body += ''.join(
-                ['<EnableBatchedOperations>',
-                 str(subscription.enable_batched_operations).lower(),
-                 '</EnableBatchedOperations>'])
+                for map in mappings:
+                    _read_etree_element(rule_node, map[0], rule, map[1], map[2])
 
-        if subscription.max_delivery_count is not None:
-            subscription_body += ''.join(
-                ['<MaxDeliveryCount>',
-                 str(subscription.max_delivery_count),
-                 '</MaxDeliveryCount>'])
+                rights_nodes = rule_node.find('./sb:Rights', _etree_sb_feed_namespaces)
+                if rights_nodes is not None:
+                    for access_rights_node in rights_nodes.findall('./sb:AccessRights', _etree_sb_feed_namespaces):
+                        node_value = _get_etree_text(access_rights_node)
+                        if node_value:
+                            rule.rights.append(node_value)
 
-        if subscription.message_count is not None:
-            subscription_body += ''.join(
-                ['<MessageCount>',
-                 str(subscription.message_count),
-                 '</MessageCount>'])
+                hub.authorization_rules.append(rule)
 
-    subscription_body += '</SubscriptionDescription>'
-    return _create_entry(subscription_body)
+    if invalid_event_hub:
+        raise WindowsAzureError(_ERROR_EVENT_HUB_NOT_FOUND)
+
+    # extract id, updated and name value from feed entry and set them of queue.
+    for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
+        entry_element, True).items():
+        if name == 'name':
+            value = value.partition('?')[0]
+        setattr(hub, name, value)
+
+    return hub
+
+
+def _convert_object_to_feed_entry(obj, rootName, content_writer):
+    updated_str = datetime.utcnow().isoformat()
+    if datetime.utcnow().utcoffset() is None:
+        updated_str += '+00:00'
+
+    writer = _XmlWriter()
+    writer.preprocessor('<?xml version="1.0" encoding="utf-8" standalone="yes"?>')
+    writer.start('entry', [
+        ('xmlns:d', _XmlSchemas.DataServices, None),
+        ('xmlns:m', _XmlSchemas.DataServicesMetadata, None),
+        ('xmlns', _XmlSchemas.Atom, None),
+        ])
+
+    writer.element('title', '')
+    writer.element('updated', updated_str)
+    writer.start('author')
+    writer.element('name', '')
+    writer.end('author')
+    writer.element('id', '')
+    writer.start('content', [('type', 'application/xml', None)])
+    writer.start(rootName, [
+        ('xmlns:i', _XmlSchemas.SchemaInstance, None),
+        ('xmlns', _XmlSchemas.ServiceBus, None),
+        ])
+
+    if obj:
+        content_writer(writer, obj)
+
+    writer.end(rootName)
+    writer.end('content')
+    writer.end('entry')
+
+    xml = writer.xml()
+    writer.close()
+
+    return xml
+
+
+def _convert_subscription_to_xml(sub):
+
+    def _subscription_to_xml(writer, sub):
+        writer.elements([
+            ('LockDuration', sub.lock_duration, None),
+            ('RequiresSession', sub.requires_session, _lower),
+            ('DefaultMessageTimeToLive', sub.default_message_time_to_live, None),
+            ('DeadLetteringOnMessageExpiration', sub.dead_lettering_on_message_expiration, _lower),
+            ('DeadLetteringOnFilterEvaluationExceptions', sub.dead_lettering_on_filter_evaluation_exceptions, _lower),
+            ('EnableBatchedOperations', sub.enable_batched_operations, _lower),
+            ('MaxDeliveryCount', sub.max_delivery_count, None),
+            ('MessageCount', sub.message_count, None),
+            ])
+
+    return _convert_object_to_feed_entry(
+        sub, 'SubscriptionDescription', _subscription_to_xml)
 
 
 def _convert_rule_to_xml(rule):
-    '''
-    Converts a rule object to xml to send.  The order of each field of rule
-    in xml is very important so we cann't simple call convert_class_to_xml.
 
-    rule: the rule object to be converted.
-    '''
-    rule_body = '<RuleDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
-    if rule:
+    def _rule_to_xml(writer, rule):
         if rule.filter_type:
-            rule_body += ''.join(
-                ['<Filter i:type="',
-                 xml_escape(rule.filter_type),
-                 '">'])
+            writer.start('Filter', [('i:type', rule.filter_type, None)])
             if rule.filter_type == 'CorrelationFilter':
-                rule_body += ''.join(
-                    ['<CorrelationId>',
-                     xml_escape(rule.filter_expression),
-                     '</CorrelationId>'])
+                writer.element('CorrelationId', rule.filter_expression)
             else:
-                rule_body += ''.join(
-                    ['<SqlExpression>',
-                     xml_escape(rule.filter_expression),
-                     '</SqlExpression>'])
-                rule_body += '<CompatibilityLevel>20</CompatibilityLevel>'
-            rule_body += '</Filter>'
+                writer.element('SqlExpression', rule.filter_expression)
+                writer.element('CompatibilityLevel', '20')
+            writer.end('Filter')
+            pass
         if rule.action_type:
-            rule_body += ''.join(
-                ['<Action i:type="',
-                 xml_escape(rule.action_type),
-                 '">'])
+            writer.start('Action', [('i:type', rule.action_type, None)])
             if rule.action_type == 'SqlRuleAction':
-                rule_body += ''.join(
-                    ['<SqlExpression>',
-                     xml_escape(rule.action_expression),
-                     '</SqlExpression>'])
-                rule_body += '<CompatibilityLevel>20</CompatibilityLevel>'
-            rule_body += '</Action>'
-    rule_body += '</RuleDescription>'
+                writer.element('SqlExpression', rule.action_expression)
+                writer.element('CompatibilityLevel', '20')
+            writer.end('Action')
+            pass
 
-    return _create_entry(rule_body)
+    return _convert_object_to_feed_entry(
+        rule, 'RuleDescription', _rule_to_xml)
 
 
 def _convert_topic_to_xml(topic):
-    '''
-    Converts a topic object to xml to send.  The order of each field of topic
-    in xml is very important so we cann't simple call convert_class_to_xml.
 
-    topic: the topic object to be converted.
-    '''
+    def _topic_to_xml(writer, topic):
+        writer.elements([
+            ('DefaultMessageTimeToLive', topic.default_message_time_to_live, None),
+            ('MaxSizeInMegabytes', topic.max_size_in_megabytes, None),
+            ('RequiresDuplicateDetection', topic.requires_duplicate_detection, _lower),
+            ('DuplicateDetectionHistoryTimeWindow', topic.duplicate_detection_history_time_window, None),
+            ('EnableBatchedOperations', topic.enable_batched_operations, _lower),
+            ('SizeInBytes', topic.size_in_bytes, None),
+            ])
 
-    topic_body = '<TopicDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
-    if topic:
-        if topic.default_message_time_to_live is not None:
-            topic_body += ''.join(
-                ['<DefaultMessageTimeToLive>',
-                 str(topic.default_message_time_to_live),
-                 '</DefaultMessageTimeToLive>'])
-
-        if topic.max_size_in_megabytes is not None:
-            topic_body += ''.join(
-                ['<MaxSizeInMegabytes>',
-                 str(topic.max_size_in_megabytes),
-                 '</MaxSizeInMegabytes>'])
-
-        if topic.requires_duplicate_detection is not None:
-            topic_body += ''.join(
-                ['<RequiresDuplicateDetection>',
-                 str(topic.requires_duplicate_detection).lower(),
-                 '</RequiresDuplicateDetection>'])
-
-        if topic.duplicate_detection_history_time_window is not None:
-            topic_body += ''.join(
-                ['<DuplicateDetectionHistoryTimeWindow>',
-                 str(topic.duplicate_detection_history_time_window),
-                 '</DuplicateDetectionHistoryTimeWindow>'])
-
-        if topic.enable_batched_operations is not None:
-            topic_body += ''.join(
-                ['<EnableBatchedOperations>',
-                 str(topic.enable_batched_operations).lower(),
-                 '</EnableBatchedOperations>'])
-
-        if topic.size_in_bytes is not None:
-            topic_body += ''.join(
-                ['<SizeInBytes>',
-                 str(topic.size_in_bytes),
-                 '</SizeInBytes>'])
-
-    topic_body += '</TopicDescription>'
-
-    return _create_entry(topic_body)
+    return _convert_object_to_feed_entry(
+        topic, 'TopicDescription', _topic_to_xml)
 
 
 def _convert_queue_to_xml(queue):
-    '''
-    Converts a queue object to xml to send.  The order of each field of queue
-    in xml is very important so we cann't simple call convert_class_to_xml.
 
-    queue: the queue object to be converted.
-    '''
-    queue_body = '<QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect">'
-    if queue:
-        if queue.lock_duration:
-            queue_body += ''.join(
-                ['<LockDuration>',
-                 str(queue.lock_duration),
-                 '</LockDuration>'])
+    def _queue_to_xml(writer, queue):
+        writer.elements([
+            ('LockDuration', queue.lock_duration, None),
+            ('MaxSizeInMegabytes', queue.max_size_in_megabytes, None),
+            ('RequiresDuplicateDetection', queue.requires_duplicate_detection, _lower),
+            ('RequiresSession', queue.requires_session, _lower),
+            ('DefaultMessageTimeToLive', queue.default_message_time_to_live, None),
+            ('DeadLetteringOnMessageExpiration', queue.dead_lettering_on_message_expiration, _lower),
+            ('DuplicateDetectionHistoryTimeWindow', queue.duplicate_detection_history_time_window, None),
+            ('MaxDeliveryCount', queue.max_delivery_count, None),
+            ('EnableBatchedOperations', queue.enable_batched_operations, _lower),
+            ('SizeInBytes', queue.size_in_bytes, None),
+            ('MessageCount', queue.message_count, None),
+            ])
 
-        if queue.max_size_in_megabytes is not None:
-            queue_body += ''.join(
-                ['<MaxSizeInMegabytes>',
-                 str(queue.max_size_in_megabytes),
-                 '</MaxSizeInMegabytes>'])
+    return _convert_object_to_feed_entry(
+        queue, 'QueueDescription', _queue_to_xml)
 
-        if queue.requires_duplicate_detection is not None:
-            queue_body += ''.join(
-                ['<RequiresDuplicateDetection>',
-                 str(queue.requires_duplicate_detection).lower(),
-                 '</RequiresDuplicateDetection>'])
 
-        if queue.requires_session is not None:
-            queue_body += ''.join(
-                ['<RequiresSession>',
-                 str(queue.requires_session).lower(),
-                 '</RequiresSession>'])
+def _convert_event_hub_to_xml(hub):
 
-        if queue.default_message_time_to_live is not None:
-            queue_body += ''.join(
-                ['<DefaultMessageTimeToLive>',
-                 str(queue.default_message_time_to_live),
-                 '</DefaultMessageTimeToLive>'])
+    def _hub_to_xml(writer, hub):
+        writer.elements(
+            [('MessageRetentionInDays', hub.message_retention_in_days, None)])
+        if hub.authorization_rules:
+            writer.start('AuthorizationRules')
+            for rule in hub.authorization_rules:
+                writer.start('AuthorizationRule',
+                             [('i:type', 'SharedAccessAuthorizationRule', None)])
+                writer.elements(
+                    [('ClaimType', rule.claim_type, None),
+                     ('ClaimValue', rule.claim_value, None)])
+                if rule.rights:
+                    writer.start('Rights')
+                    for right in rule.rights:
+                        writer.element('AccessRights', right)
+                    writer.end('Rights')
+                writer.elements(
+                    [('KeyName', rule.key_name, None),
+                     ('PrimaryKey', rule.primary_key, None),
+                     ('SecondaryKey', rule.secondary_key, None)])
+                writer.end('AuthorizationRule')
+            writer.end('AuthorizationRules')
+        writer.elements(
+            [('Status', hub.status, None),
+             ('UserMetadata', hub.user_metadata, None),
+             ('PartitionCount', hub.partition_count, None)])
 
-        if queue.dead_lettering_on_message_expiration is not None:
-            queue_body += ''.join(
-                ['<DeadLetteringOnMessageExpiration>',
-                 str(queue.dead_lettering_on_message_expiration).lower(),
-                 '</DeadLetteringOnMessageExpiration>'])
-
-        if queue.duplicate_detection_history_time_window is not None:
-            queue_body += ''.join(
-                ['<DuplicateDetectionHistoryTimeWindow>',
-                 str(queue.duplicate_detection_history_time_window),
-                 '</DuplicateDetectionHistoryTimeWindow>'])
-
-        if queue.max_delivery_count is not None:
-            queue_body += ''.join(
-                ['<MaxDeliveryCount>',
-                 str(queue.max_delivery_count),
-                 '</MaxDeliveryCount>'])
-
-        if queue.enable_batched_operations is not None:
-            queue_body += ''.join(
-                ['<EnableBatchedOperations>',
-                 str(queue.enable_batched_operations).lower(),
-                 '</EnableBatchedOperations>'])
-
-        if queue.size_in_bytes is not None:
-            queue_body += ''.join(
-                ['<SizeInBytes>',
-                 str(queue.size_in_bytes),
-                 '</SizeInBytes>'])
-
-        if queue.message_count is not None:
-            queue_body += ''.join(
-                ['<MessageCount>',
-                 str(queue.message_count),
-                 '</MessageCount>'])
-
-    queue_body += '</QueueDescription>'
-    return _create_entry(queue_body)
+    return _convert_object_to_feed_entry(
+        hub, 'EventHubDescription', _hub_to_xml)
 
 
 def _service_bus_error_handler(http_error):

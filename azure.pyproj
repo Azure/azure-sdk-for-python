@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{25b2c65a-0553-4452-8907-8b5b17544e68}</ProjectGuid>
+    <ProjectHome>
+    </ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <WorkingDirectory>tests</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>azure</Name>
+    <RootNamespace>azure</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments />
+    <InterpreterPath />
+    <InterpreterArguments />
+    <InterpreterId>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</InterpreterId>
+    <InterpreterVersion>2.7</InterpreterVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SearchPath>
+    </SearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="azure\http\batchclient.py" />
+    <Compile Include="azure\http\httpclient.py" />
+    <Compile Include="azure\http\requestsclient.py" />
+    <Compile Include="azure\http\winhttp.py" />
+    <Compile Include="azure\http\__init__.py" />
+    <Compile Include="azure\servicemanagement\schedulermanagementservice.py" />
+    <Compile Include="azure\servicemanagement\servicebusmanagementservice.py" />
+    <Compile Include="azure\servicemanagement\servicemanagementclient.py" />
+    <Compile Include="azure\servicemanagement\servicemanagementservice.py" />
+    <Compile Include="azure\servicemanagement\sqldatabasemanagementservice.py" />
+    <Compile Include="azure\servicemanagement\websitemanagementservice.py" />
+    <Compile Include="azure\servicemanagement\__init__.py" />
+    <Compile Include="azure\servicebus\servicebusservice.py" />
+    <Compile Include="azure\storage\blobservice.py" />
+    <Compile Include="azure\storage\queueservice.py" />
+    <Compile Include="azure\storage\cloudstorageaccount.py" />
+    <Compile Include="azure\storage\tableservice.py" />
+    <Compile Include="azure\storage\sharedaccesssignature.py" />
+    <Compile Include="azure\__init__.py" />
+    <Compile Include="azure\servicebus\__init__.py" />
+    <Compile Include="azure\storage\storageclient.py" />
+    <Compile Include="azure\storage\__init__.py" />
+    <Compile Include="setup.py" />
+    <Compile Include="tests\clean.py" />
+    <Compile Include="tests\doctest_blobservice.py" />
+    <Compile Include="tests\doctest_queueservice.py" />
+    <Compile Include="tests\doctest_servicebusservicequeue.py" />
+    <Compile Include="tests\doctest_servicebusservicetopic.py" />
+    <Compile Include="tests\doctest_tableservice.py" />
+    <Compile Include="tests\test_affinitygroupmanagementservice.py" />
+    <Compile Include="tests\test_blobservice.py" />
+    <Compile Include="tests\test_cloudstorageaccount.py" />
+    <Compile Include="tests\test_eventhubservice.py" />
+    <Compile Include="tests\test_managementcertificatemanagementservice.py" />
+    <Compile Include="tests\test_queueservice.py" />
+    <Compile Include="tests\test_schedulermanagementservice.py" />
+    <Compile Include="tests\test_servicebusmanagementservice.py" />
+    <Compile Include="tests\test_servicebusservice.py" />
+    <Compile Include="tests\test_servicemanagementservice.py" />
+    <Compile Include="tests\test_sharedaccesssignature.py" />
+    <Compile Include="tests\test_sqldatabasemanagementservice.py" />
+    <Compile Include="tests\test_storagemanagementservice.py" />
+    <Compile Include="tests\test_tableservice.py" />
+    <Compile Include="tests\test_websitemanagementservice.py" />
+    <Compile Include="tests\util.py" />
+    <Compile Include="tests\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="azure" />
+    <Folder Include="azure\http" />
+    <Folder Include="azure\servicemanagement" />
+    <Folder Include="azure\servicebus" />
+    <Folder Include="azure\storage" />
+    <Folder Include="tests\" />
+    <Folder Include="tests\data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.6" />
+    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.7" />
+    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.3" />
+    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.4" />
+    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\2.7" />
+    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.3" />
+    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include="ChangeLog.txt" />
+    <Content Include="LICENSE.txt" />
+    <Content Include="README.md" />
+    <Content Include="tests\azurecredentials_sample.json" />
+    <Content Include="tests\coverage.bat" />
+    <Content Include="tests\coverage_x64.bat" />
+    <Content Include="tests\data\testhd" />
+    <Content Include="tests\data\WindowsAzure1.cspkg" />
+    <Content Include="tests\run" />
+    <Content Include="tests\run.bat" />
+    <Content Include="tests\run_x64.bat" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <PtvsTargetsFile>$(VSToolsPath)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
+  <Import Condition="!Exists($(PtvsTargetsFile))" Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

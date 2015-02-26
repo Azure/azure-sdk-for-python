@@ -19,18 +19,25 @@ import hmac
 import sys
 import types
 import warnings
+
 if sys.version_info < (3,):
+    from cStringIO import StringIO
     from urllib2 import quote as url_quote
     from urllib2 import unquote as url_unquote
     _strtype = basestring
 else:
+    from io import StringIO
     from urllib.parse import quote as url_quote
     from urllib.parse import unquote as url_unquote
     _strtype = str
 
 from datetime import datetime
-from xml.dom import minidom
 from xml.sax.saxutils import escape as xml_escape
+
+try:
+    from xml.etree import cElementTree as ETree
+except ImportError:
+    from xml.etree import ElementTree as ETree
 
 #--------------------------------------------------------------------------
 # constants
@@ -68,6 +75,7 @@ _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE = \
     'Message is not peek locked and cannot be deleted.'
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK = \
     'Message is not peek locked and cannot be unlocked.'
+_ERROR_EVENT_HUB_NOT_FOUND = 'Event hub was not found'
 _ERROR_QUEUE_NOT_FOUND = 'Queue was not found'
 _ERROR_TOPIC_NOT_FOUND = 'Topic was not found'
 _ERROR_CONFLICT = 'Conflict ({0})'
@@ -93,6 +101,8 @@ _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = \
 _ERROR_PAGE_BLOB_SIZE_ALIGNMENT = \
     'Invalid page blob size: {0}. ' + \
     'The size must be aligned to a 512-byte boundary.'
+_ERROR_ASYNC_OP_FAILURE = 'Asynchronous operation did not succeed.'
+_ERROR_ASYNC_OP_TIMEOUT = 'Timed out waiting for async operation to complete.'
 
 _USER_AGENT_STRING = 'pyazure/' + __version__
 
@@ -140,6 +150,15 @@ class WindowsAzureBatchOperationError(WindowsAzureError):
         self.code = code
 
 
+class WindowsAzureAsyncOperationError(WindowsAzureError):
+
+    '''Indicates that an async operation failed'''
+
+    def __init__(self, message, result):
+        super(WindowsAzureAsyncOperationError, self).__init__(message)
+        self.result = result
+
+
 class Feed(object):
     pass
 
@@ -172,6 +191,27 @@ def _decode_base64_to_text(data):
     return decoded_bytes.decode('utf-8')
 
 
+_etree_entity_feed_namespaces = {
+    'atom': 'http://www.w3.org/2005/Atom',
+    'm': 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata',
+    'd': 'http://schemas.microsoft.com/ado/2007/08/dataservices',
+}
+
+
+def _make_etree_ns_attr_name(ns, name):
+    return '{' + ns + '}' + name
+
+
+def _get_etree_tag_name_without_ns(tag):
+    val = tag.partition('}')[2]
+    return val
+
+
+def _get_etree_text(element):
+    text = element.text
+    return text if text is not None else ''
+
+
 def _get_readable_id(id_name, id_prefix_to_skip):
     """simplified an id to be more friendly for us people"""
     # id_name is in the form 'https://namespace.host.suffix/name'
@@ -187,80 +227,6 @@ def _get_readable_id(id_name, id_prefix_to_skip):
         if pos != -1:
             return id_name[pos + 1:]
     return id_name
-
-
-def _get_entry_properties_from_node(entry, include_id, id_prefix_to_skip=None, use_title_as_id=False):
-    ''' get properties from entry xml '''
-    properties = {}
-
-    etag = entry.getAttributeNS(METADATA_NS, 'etag')
-    if etag:
-        properties['etag'] = etag
-    for updated in _get_child_nodes(entry, 'updated'):
-        properties['updated'] = updated.firstChild.nodeValue
-    for name in _get_children_from_path(entry, 'author', 'name'):
-        if name.firstChild is not None:
-            properties['author'] = name.firstChild.nodeValue
-
-    if include_id:
-        if use_title_as_id:
-            for title in _get_child_nodes(entry, 'title'):
-                properties['name'] = title.firstChild.nodeValue
-        else:
-            for id in _get_child_nodes(entry, 'id'):
-                properties['name'] = _get_readable_id(
-                    id.firstChild.nodeValue, id_prefix_to_skip)
-
-    return properties
-
-
-def _get_entry_properties(xmlstr, include_id, id_prefix_to_skip=None):
-    ''' get properties from entry xml '''
-    xmldoc = minidom.parseString(xmlstr)
-    properties = {}
-
-    for entry in _get_child_nodes(xmldoc, 'entry'):
-        properties.update(_get_entry_properties_from_node(entry, include_id, id_prefix_to_skip))
-
-    return properties
-
-
-def _get_first_child_node_value(parent_node, node_name):
-    xml_attrs = _get_child_nodes(parent_node, node_name)
-    if xml_attrs:
-        xml_attr = xml_attrs[0]
-        if xml_attr.firstChild:
-            value = xml_attr.firstChild.nodeValue
-            return value
-
-
-def _get_child_nodes(node, tagName):
-    return [childNode for childNode in node.getElementsByTagName(tagName)
-            if childNode.parentNode == node]
-
-
-def _get_children_from_path(node, *path):
-    '''descends through a hierarchy of nodes returning the list of children
-    at the inner most level.  Only returns children who share a common parent,
-    not cousins.'''
-    cur = node
-    for index, child in enumerate(path):
-        if isinstance(child, _strtype):
-            next = _get_child_nodes(cur, child)
-        else:
-            next = _get_child_nodesNS(cur, *child)
-        if index == len(path) - 1:
-            return next
-        elif not next:
-            break
-
-        cur = next[0]
-    return []
-
-
-def _get_child_nodesNS(node, ns, tagName):
-    return [childNode for childNode in node.getElementsByTagNameNS(ns, tagName)
-            if childNode.parentNode == node]
 
 
 def _create_entry(entry_body):
@@ -396,81 +362,13 @@ def _convert_class_to_xml(source, xml_prefix=True):
     return xmlstr
 
 
-def _find_namespaces_from_child(parent, child, namespaces):
-    """Recursively searches from the parent to the child,
-    gathering all the applicable namespaces along the way"""
-    for cur_child in parent.childNodes:
-        if cur_child is child:
-            return True
-        if _find_namespaces_from_child(cur_child, child, namespaces):
-            # we are the parent node
-            for key in cur_child.attributes.keys():
-                if key.startswith('xmlns:') or key == 'xmlns':
-                    namespaces[key] = cur_child.attributes[key]
-            break
-    return False
-
-
-def _find_namespaces(parent, child):
-    res = {}
-    for key in parent.documentElement.attributes.keys():
-        if key.startswith('xmlns:') or key == 'xmlns':
-            res[key] = parent.documentElement.attributes[key]
-    _find_namespaces_from_child(parent, child, res)
-    return res
-
-
-def _clone_node_with_namespaces(node_to_clone, original_doc):
-    clone = node_to_clone.cloneNode(True)
-
-    for key, value in _find_namespaces(original_doc, node_to_clone).items():
-        clone.attributes[key] = value
-
-    return clone
-
-
-def _convert_response_to_feeds(response, convert_func):
-    if response is None:
-        return None
-
-    feeds = _list_of(Feed)
-
+def _set_continuation_from_response_headers(feeds, response):
     x_ms_continuation = HeaderDict()
     for name, value in response.headers:
         if 'x-ms-continuation' in name:
             x_ms_continuation[name[len('x-ms-continuation') + 1:]] = value
     if x_ms_continuation:
         setattr(feeds, 'x_ms_continuation', x_ms_continuation)
-
-    xmldoc = minidom.parseString(response.body)
-    xml_entries = _get_children_from_path(xmldoc, 'feed', 'entry')
-    if not xml_entries:
-        # in some cases, response contains only entry but no feed
-        xml_entries = _get_children_from_path(xmldoc, 'entry')
-    for xml_entry in xml_entries:
-        new_node = _clone_node_with_namespaces(xml_entry, xmldoc)
-        feeds.append(convert_func(new_node.toxml('utf-8')))
-
-    return feeds
-
-
-def _convert_xml_to_windows_azure_object(xmlstr, azure_type, include_id=True, use_title_as_id=True):
-    xmldoc = minidom.parseString(xmlstr)
-    return_obj = azure_type()
-    xml_name = azure_type._xml_name if hasattr(azure_type, '_xml_name') else azure_type.__name__
-
-    # Only one entry here
-    for xml_entry in _get_children_from_path(xmldoc,
-                                             'entry'):
-        for node in _get_children_from_path(xml_entry,
-                                            'content',
-                                            xml_name):
-            _fill_data_to_return_object(node, return_obj)
-        for name, value in _get_entry_properties_from_node(xml_entry,
-                                                           include_id=include_id,
-                                                           use_title_as_id=use_title_as_id).items():
-            setattr(return_obj, name, value)
-    return return_obj
 
 
 def _validate_type_bytes(param_name, param):
@@ -481,133 +379,6 @@ def _validate_type_bytes(param_name, param):
 def _validate_not_none(param_name, param):
     if param is None:
         raise TypeError(_ERROR_VALUE_NONE.format(param_name))
-
-
-def _fill_list_of(xmldoc, element_type, xml_element_name):
-    xmlelements = _get_child_nodes(xmldoc, xml_element_name)
-    return [_parse_response_body_from_xml_node(xmlelement, element_type) \
-        for xmlelement in xmlelements]
-
-
-def _fill_scalar_list_of(xmldoc, element_type, parent_xml_element_name,
-                         xml_element_name):
-    '''Converts an xml fragment into a list of scalar types.  The parent xml
-    element contains a flat list of xml elements which are converted into the
-    specified scalar type and added to the list.
-    Example:
-    xmldoc=
-<Endpoints>
-    <Endpoint>http://{storage-service-name}.blob.core.windows.net/</Endpoint>
-    <Endpoint>http://{storage-service-name}.queue.core.windows.net/</Endpoint>
-    <Endpoint>http://{storage-service-name}.table.core.windows.net/</Endpoint>
-</Endpoints>
-    element_type=str
-    parent_xml_element_name='Endpoints'
-    xml_element_name='Endpoint'
-    '''
-    xmlelements = _get_child_nodes(xmldoc, parent_xml_element_name)
-    if xmlelements:
-        xmlelements = _get_child_nodes(xmlelements[0], xml_element_name)
-        return [_get_node_value(xmlelement, element_type) \
-            for xmlelement in xmlelements]
-
-
-def _fill_dict(xmldoc, element_name):
-    xmlelements = _get_child_nodes(xmldoc, element_name)
-    if xmlelements:
-        return_obj = {}
-        for child in xmlelements[0].childNodes:
-            if child.firstChild:
-                return_obj[child.nodeName] = child.firstChild.nodeValue
-        return return_obj
-
-
-def _fill_dict_of(xmldoc, parent_xml_element_name, pair_xml_element_name,
-                  key_xml_element_name, value_xml_element_name):
-    '''Converts an xml fragment into a dictionary. The parent xml element
-    contains a list of xml elements where each element has a child element for
-    the key, and another for the value.
-    Example:
-    xmldoc=
-<ExtendedProperties>
-    <ExtendedProperty>
-        <Name>Ext1</Name>
-        <Value>Val1</Value>
-    </ExtendedProperty>
-    <ExtendedProperty>
-        <Name>Ext2</Name>
-        <Value>Val2</Value>
-    </ExtendedProperty>
-</ExtendedProperties>
-    element_type=str
-    parent_xml_element_name='ExtendedProperties'
-    pair_xml_element_name='ExtendedProperty'
-    key_xml_element_name='Name'
-    value_xml_element_name='Value'
-    '''
-    return_obj = {}
-
-    xmlelements = _get_child_nodes(xmldoc, parent_xml_element_name)
-    if xmlelements:
-        xmlelements = _get_child_nodes(xmlelements[0], pair_xml_element_name)
-        for pair in xmlelements:
-            keys = _get_child_nodes(pair, key_xml_element_name)
-            values = _get_child_nodes(pair, value_xml_element_name)
-            if keys and values:
-                key = keys[0].firstChild.nodeValue
-                value = values[0].firstChild.nodeValue
-                return_obj[key] = value
-
-    return return_obj
-
-
-def _fill_instance_child(xmldoc, element_name, return_type):
-    '''Converts a child of the current dom element to the specified type.
-    '''
-    xmlelements = _get_child_nodes(
-        xmldoc, _get_serialization_name(element_name))
-
-    if not xmlelements:
-        return None
-
-    return_obj = return_type()
-    _fill_data_to_return_object(xmlelements[0], return_obj)
-
-    return return_obj
-
-
-def _fill_instance_element(element, return_type):
-    """Converts a DOM element into the specified object"""
-    return _parse_response_body_from_xml_node(element, return_type)
-
-
-def _fill_data_minidom(xmldoc, element_name, data_member):
-    xmlelements = _get_child_nodes(
-        xmldoc, _get_serialization_name(element_name))
-
-    if not xmlelements or not xmlelements[0].childNodes:
-        return None
-
-    value = xmlelements[0].firstChild.nodeValue
-
-    if data_member is None:
-        return value
-    elif isinstance(data_member, datetime):
-        return _to_datetime(value)
-    elif type(data_member) is bool:
-        return value.lower() != 'false'
-    else:
-        return type(data_member)(value)
-
-
-def _get_node_value(xmlelement, data_type):
-    value = xmlelement.firstChild.nodeValue
-    if data_type is datetime:
-        return _to_datetime(value)
-    elif data_type is bool:
-        return value.lower() != 'false'
-    else:
-        return data_type(value)
 
 
 def _get_request_body_bytes_only(param_name, param_value):
@@ -653,166 +424,6 @@ def _get_request_body(request_body):
 
     return request_body
 
-
-def _parse_enum_results_list(response, return_type, resp_type, item_type):
-    """resp_body is the XML we received
-resp_type is a string, such as Containers,
-return_type is the type we're constructing, such as ContainerEnumResults
-item_type is the type object of the item to be created, such as Container
-
-This function then returns a ContainerEnumResults object with the
-containers member populated with the results.
-"""
-
-    # parsing something like:
-    # <EnumerationResults ... >
-    #   <Queues>
-    #       <Queue>
-    #           <Something />
-    #           <SomethingElse />
-    #       </Queue>
-    #   </Queues>
-    # </EnumerationResults>
-    respbody = response.body
-    return_obj = return_type()
-    doc = minidom.parseString(respbody)
-
-    items = []
-    for enum_results in _get_child_nodes(doc, 'EnumerationResults'):
-        # path is something like Queues, Queue
-        for child in _get_children_from_path(enum_results,
-                                             resp_type,
-                                             resp_type[:-1]):
-            items.append(_fill_instance_element(child, item_type))
-
-        for name, value in vars(return_obj).items():
-            # queues, Queues, this is the list its self which we populated
-            # above
-            if name == resp_type.lower():
-                # the list its self.
-                continue
-            value = _fill_data_minidom(enum_results, name, value)
-            if value is not None:
-                setattr(return_obj, name, value)
-
-    setattr(return_obj, resp_type.lower(), items)
-    return return_obj
-
-
-def _parse_simple_list(response, type, item_type, list_name):
-    respbody = response.body
-    res = type()
-    res_items = []
-    doc = minidom.parseString(respbody)
-    type_name = type.__name__
-    item_name = item_type.__name__
-    for item in _get_children_from_path(doc, type_name, item_name):
-        res_items.append(_fill_instance_element(item, item_type))
-
-    setattr(res, list_name, res_items)
-    return res
-
-
-def _parse_response(response, return_type):
-    '''
-    Parse the HTTPResponse's body and fill all the data into a class of
-    return_type.
-    '''
-    return _parse_response_body_from_xml_text(response.body, return_type)
-
-def _parse_service_resources_response(response, return_type):
-    '''
-    Parse the HTTPResponse's body and fill all the data into a class of
-    return_type.
-    '''
-    return _parse_response_body_from_service_resources_xml_text(response.body, return_type)
-
-
-def _fill_data_to_return_object(node, return_obj):
-    members = dict(vars(return_obj))
-    for name, value in members.items():
-        if isinstance(value, _list_of):
-            setattr(return_obj,
-                    name,
-                    _fill_list_of(node,
-                                  value.list_type,
-                                  value.xml_element_name))
-        elif isinstance(value, _scalar_list_of):
-            setattr(return_obj,
-                    name,
-                    _fill_scalar_list_of(node,
-                                         value.list_type,
-                                         _get_serialization_name(name),
-                                         value.xml_element_name))
-        elif isinstance(value, _dict_of):
-            setattr(return_obj,
-                    name,
-                    _fill_dict_of(node,
-                                  _get_serialization_name(name),
-                                  value.pair_xml_element_name,
-                                  value.key_xml_element_name,
-                                  value.value_xml_element_name))
-        elif isinstance(value, _xml_attribute):
-            real_value = None
-            if node.hasAttribute(value.xml_element_name):
-                real_value = node.getAttribute(value.xml_element_name)
-            if real_value is not None:
-                setattr(return_obj, name, real_value)
-        elif isinstance(value, WindowsAzureData):
-            setattr(return_obj,
-                    name,
-                    _fill_instance_child(node, name, value.__class__))
-        elif isinstance(value, dict):
-            setattr(return_obj,
-                    name,
-                    _fill_dict(node, _get_serialization_name(name)))
-        elif isinstance(value, _Base64String):
-            value = _fill_data_minidom(node, name, '')
-            if value is not None:
-                value = _decode_base64_to_text(value)
-            # always set the attribute, so we don't end up returning an object
-            # with type _Base64String
-            setattr(return_obj, name, value)
-        else:
-            value = _fill_data_minidom(node, name, value)
-            if value is not None:
-                setattr(return_obj, name, value)
-
-
-def _parse_response_body_from_xml_node(node, return_type):
-    '''
-    parse the xml and fill all the data into a class of return_type
-    '''
-    return_obj = return_type()
-    _fill_data_to_return_object(node, return_obj)
-
-    return return_obj
-
-
-def _parse_response_body_from_xml_text(respbody, return_type):
-    '''
-    parse the xml and fill all the data into a class of return_type
-    '''
-    doc = minidom.parseString(respbody)
-    return_obj = return_type()
-    xml_name = return_type._xml_name if hasattr(return_type, '_xml_name') else return_type.__name__ 
-    for node in _get_child_nodes(doc, xml_name):
-        _fill_data_to_return_object(node, return_obj)
-
-    return return_obj
-
-def _parse_response_body_from_service_resources_xml_text(respbody, return_type):
-    '''
-    parse the xml and fill all the data into a class of return_type
-    '''
-    doc = minidom.parseString(respbody)
-    return_obj = _list_of(return_type)
-    for node in _get_children_from_path(doc, "ServiceResources", "ServiceResource"):
-        local_obj = return_type()
-        _fill_data_to_return_object(node, local_obj)
-        return_obj.append(local_obj)
-
-    return return_obj
 
 class _dict_of(dict):
 
@@ -928,7 +539,7 @@ def _general_error_handler(http_error):
         if http_error.respbody is not None:
             raise WindowsAzureError(
                 _ERROR_UNKNOWN.format(str(http_error)) + '\n' + \
-                    http_error.respbody.decode('utf-8'))
+                    http_error.respbody.decode('utf-8-sig'))
         else:
             raise WindowsAzureError(_ERROR_UNKNOWN.format(str(http_error)))
 
@@ -997,3 +608,376 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     digest = signed_hmac_sha256.digest()
     encoded_digest = _encode_base64(digest)
     return encoded_digest
+
+
+def _lower(text):
+    return text.lower()
+
+
+class _ETreeXmlToObject(object):
+    @staticmethod
+    def parse_response(response, return_type):
+        '''
+        Parse the HTTPResponse's body and fill all the data into a class of
+        return_type.
+        '''
+        root = ETree.fromstring(response.body)
+        xml_name = getattr(return_type, '_xml_name', return_type.__name__) 
+        if root.tag == xml_name:
+            return _ETreeXmlToObject._parse_response_body_from_xml_node(root, return_type)
+
+        return None
+
+
+    @staticmethod
+    def parse_enum_results_list(response, return_type, resp_type, item_type):
+        """resp_body is the XML we received
+        resp_type is a string, such as Containers,
+        return_type is the type we're constructing, such as ContainerEnumResults
+        item_type is the type object of the item to be created, such as Container
+
+        This function then returns a ContainerEnumResults object with the
+        containers member populated with the results.
+        """
+
+        # parsing something like:
+        # <EnumerationResults ... >
+        #   <Queues>
+        #       <Queue>
+        #           <Something />
+        #           <SomethingElse />
+        #       </Queue>
+        #   </Queues>
+        # </EnumerationResults>
+        return_obj = return_type()
+        root = ETree.fromstring(response.body)
+
+        items = []
+
+        for container_element in root.findall(resp_type):
+            for item_element in container_element.findall(resp_type[:-1]):
+                items.append(_ETreeXmlToObject.fill_instance_element(item_element, item_type))
+
+        for name, value in vars(return_obj).items():
+            # queues, Queues, this is the list its self which we populated
+            # above
+            if name == resp_type.lower():
+                # the list its self.
+                continue
+            value = _ETreeXmlToObject.fill_data_member(root, name, value)
+            if value is not None:
+                setattr(return_obj, name, value)
+
+        setattr(return_obj, resp_type.lower(), items)
+        return return_obj
+
+
+    @staticmethod
+    def parse_simple_list(response, return_type, item_type, list_name):
+        respbody = response.body
+        res = return_type()
+        res_items = []
+        root = ETree.fromstring(respbody)
+        type_name = type.__name__
+        item_name = item_type.__name__
+        for item in root.findall(item_name):
+            res_items.append(_ETreeXmlToObject.fill_instance_element(item, item_type))
+
+        setattr(res, list_name, res_items)
+        return res
+
+
+    @staticmethod
+    def convert_response_to_feeds(response, convert_func):
+
+        if response is None:
+            return None
+
+        feeds = _list_of(Feed)
+
+        _set_continuation_from_response_headers(feeds, response)
+
+        root = ETree.fromstring(response.body)
+
+        # some feeds won't have the 'feed' element, just a single 'entry' element
+        root_name = _get_etree_tag_name_without_ns(root.tag)
+        if root_name == 'feed':
+            entries = root.findall("./atom:entry", _etree_entity_feed_namespaces)
+        elif root_name == 'entry':
+            entries = [root]
+        else:
+            raise NotImplementedError()
+
+        for entry in entries:
+            feeds.append(convert_func(entry))
+
+        return feeds
+
+
+    @staticmethod
+    def get_entry_properties_from_element(element, include_id, id_prefix_to_skip=None, use_title_as_id=False):
+        ''' get properties from element tree element '''
+        properties = {}
+
+        etag = element.attrib.get(_make_etree_ns_attr_name(_etree_entity_feed_namespaces['m'], 'etag'), None)
+        if etag is not None:
+            properties['etag'] = etag
+
+        updated = element.findtext('./atom:updated', '', _etree_entity_feed_namespaces)
+        if updated:
+            properties['updated'] = updated
+
+        author_name = element.findtext('./atom:author/atom:name', '', _etree_entity_feed_namespaces)
+        if author_name:
+            properties['author'] = author_name
+
+        if include_id:
+            if use_title_as_id:
+                title = element.findtext('./atom:title', '', _etree_entity_feed_namespaces)
+                if title:
+                    properties['name'] = title
+            else:
+                id = element.findtext('./atom:id', '', _etree_entity_feed_namespaces)
+                if id:
+                    properties['name'] = _get_readable_id(id, id_prefix_to_skip)
+
+        return properties
+
+
+    @staticmethod
+    def fill_instance_element(element, return_type):
+        """Converts a DOM element into the specified object"""
+        return _ETreeXmlToObject._parse_response_body_from_xml_node(element, return_type)
+
+
+    @staticmethod
+    def fill_data_member(xmldoc, element_name, data_member):
+        element = xmldoc.find(_get_serialization_name(element_name))
+        if element is None:
+            return None
+
+        value = _get_etree_text(element)
+
+        if data_member is None:
+            return value
+        elif isinstance(data_member, datetime):
+            return _to_datetime(value)
+        elif type(data_member) is bool:
+            return value.lower() != 'false'
+        else:
+            return type(data_member)(value)
+
+
+    @staticmethod
+    def _parse_response_body_from_xml_node(node, return_type):
+        '''
+        parse the xml and fill all the data into a class of return_type
+        '''
+        return_obj = return_type()
+        _ETreeXmlToObject._fill_data_to_return_object(node, return_obj)
+
+        return return_obj
+
+
+    @staticmethod
+    def _fill_instance_child(xmldoc, element_name, return_type):
+        '''Converts a child of the current dom element to the specified type.
+        '''
+        element = xmldoc.find(_get_serialization_name(element_name))
+        if element is None:
+            return None
+
+        return_obj = return_type()
+        _ETreeXmlToObject._fill_data_to_return_object(element, return_obj)
+
+        return return_obj
+
+
+    @staticmethod
+    def _fill_data_to_return_object(node, return_obj):
+        members = dict(vars(return_obj))
+        for name, value in members.items():
+            if isinstance(value, _list_of):
+                setattr(return_obj,
+                        name,
+                        _ETreeXmlToObject._fill_list_of(node,
+                                      value.list_type,
+                                      value.xml_element_name))
+            elif isinstance(value, _scalar_list_of):
+                setattr(return_obj,
+                        name,
+                        _ETreeXmlToObject._fill_scalar_list_of(node,
+                                             value.list_type,
+                                             _get_serialization_name(name),
+                                             value.xml_element_name))
+            elif isinstance(value, _dict_of):
+                setattr(return_obj,
+                        name,
+                        _ETreeXmlToObject._fill_dict_of(node,
+                                      _get_serialization_name(name),
+                                      value.pair_xml_element_name,
+                                      value.key_xml_element_name,
+                                      value.value_xml_element_name))
+            elif isinstance(value, _xml_attribute):
+                real_value = node.attrib.get(value.xml_element_name, None)
+                if real_value is not None:
+                    setattr(return_obj, name, real_value)
+            elif isinstance(value, WindowsAzureData):
+                setattr(return_obj,
+                        name,
+                        _ETreeXmlToObject._fill_instance_child(node, name, value.__class__))
+            elif isinstance(value, dict):
+                setattr(return_obj,
+                        name,
+                        _ETreeXmlToObject._fill_dict(node, _get_serialization_name(name)))
+            elif isinstance(value, _Base64String):
+                value = _ETreeXmlToObject.fill_data_member(node, name, '')
+                if value is not None:
+                    value = _decode_base64_to_text(value)
+                # always set the attribute, so we don't end up returning an object
+                # with type _Base64String
+                setattr(return_obj, name, value)
+            else:
+                value = _ETreeXmlToObject.fill_data_member(node, name, value)
+                if value is not None:
+                    setattr(return_obj, name, value)
+
+
+    @staticmethod
+    def _fill_list_of(xmldoc, element_type, xml_element_name):
+        return [_ETreeXmlToObject._parse_response_body_from_xml_node(xmlelement, element_type) \
+            for xmlelement in xmldoc.findall(xml_element_name)]
+
+
+    @staticmethod
+    def _fill_scalar_list_of(xmldoc, element_type, parent_xml_element_name,
+                             xml_element_name):
+        '''Converts an xml fragment into a list of scalar types.  The parent xml
+        element contains a flat list of xml elements which are converted into the
+        specified scalar type and added to the list.
+        Example:
+        xmldoc=
+    <Endpoints>
+        <Endpoint>http://{storage-service-name}.blob.core.windows.net/</Endpoint>
+        <Endpoint>http://{storage-service-name}.queue.core.windows.net/</Endpoint>
+        <Endpoint>http://{storage-service-name}.table.core.windows.net/</Endpoint>
+    </Endpoints>
+        element_type=str
+        parent_xml_element_name='Endpoints'
+        xml_element_name='Endpoint'
+        '''
+        raise NotImplementedError('_scalar_list_of not supported')
+
+
+    @staticmethod
+    def _fill_dict(xmldoc, element_name):
+        container_element = xmldoc.find(element_name)
+        if container_element is not None:
+            return_obj = {}
+            for item_element in container_element.getchildren():
+                return_obj[item_element.tag] = _get_etree_text(item_element)
+            return return_obj
+        return None
+
+
+    @staticmethod
+    def _fill_dict_of(xmldoc, parent_xml_element_name, pair_xml_element_name,
+                      key_xml_element_name, value_xml_element_name):
+        '''Converts an xml fragment into a dictionary. The parent xml element
+        contains a list of xml elements where each element has a child element for
+        the key, and another for the value.
+        Example:
+        xmldoc=
+    <ExtendedProperties>
+        <ExtendedProperty>
+            <Name>Ext1</Name>
+            <Value>Val1</Value>
+        </ExtendedProperty>
+        <ExtendedProperty>
+            <Name>Ext2</Name>
+            <Value>Val2</Value>
+        </ExtendedProperty>
+    </ExtendedProperties>
+        element_type=str
+        parent_xml_element_name='ExtendedProperties'
+        pair_xml_element_name='ExtendedProperty'
+        key_xml_element_name='Name'
+        value_xml_element_name='Value'
+        '''
+        raise NotImplementedError('_dict_of not supported')
+
+
+class _XmlWriter(object):
+
+    def __init__(self, indent_string=None):
+        self.file = StringIO()
+        self.indent_level = 0
+        self.indent_string = indent_string
+
+    def _before_element(self, indent_change):
+        if self.indent_string:
+            self.indent_level += indent_change
+            self.file.write(self.indent_string * self.indent_level)
+
+    def _after_element(self, indent_change):
+        if self.indent_string:
+            self.file.write('\n')
+            self.indent_level += indent_change
+
+    def _write_attrs(self, attrs):
+        for attr_name, attr_val, attr_conv in attrs:
+            if attr_val is not None:
+                self.file.write(' ')
+                self.file.write(attr_name)
+                self.file.write('="')
+                val = attr_conv(_str(attr_val)) if attr_conv else _str(attr_val)
+                val = xml_escape(val)
+                self.file.write(val)
+                self.file.write('"')
+
+    def element(self, name, val, val_conv=None, attrs=None):
+        self._before_element(0)
+        self.file.write('<')
+        self.file.write(name)
+        if attrs:
+            self._write_attrs(attrs)
+        self.file.write('>')
+        val = val_conv(_str(val)) if val_conv else _str(val)
+        val = xml_escape(val)
+        self.file.write(val)
+        self.file.write('</')
+        self.file.write(name)
+        self.file.write('>')
+        self._after_element(0)
+
+    def elements(self, name_val_convs):
+        for name, val, conv in name_val_convs:
+            if val is not None:
+                self.element(name, val, conv)
+
+    def preprocessor(self, text):
+        self._before_element(0)
+        self.file.write(text)
+        self._after_element(0)
+
+    def start(self, name, attrs=None):
+        self._before_element(0)
+        self.file.write('<')
+        self.file.write(name)
+        if attrs:
+            self._write_attrs(attrs)
+        self.file.write('>')
+        self._after_element(1)
+
+    def end(self, name):
+        self._before_element(-1)
+        self.file.write('</')
+        self.file.write(name)
+        self.file.write('>')
+        self._after_element(0)
+
+    def xml(self):
+        return self.file.getvalue()
+
+    def close(self):
+        self.file.close()

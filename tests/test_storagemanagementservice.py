@@ -43,18 +43,6 @@ class StorageManagementServiceTest(AzureTestCase):
             pass
 
     #--Helpers-----------------------------------------------------------------
-    def _wait_for_async(self, request_id):
-        count = 0
-        result = self.sms.get_operation_status(request_id)
-        while result.status == 'InProgress':
-            count = count + 1
-            if count > 120:
-                self.assertTrue(
-                    False, 'Timed out waiting for async operation to complete.')
-            time.sleep(5)
-            result = self.sms.get_operation_status(request_id)
-        self.assertEqual(result.status, 'Succeeded')
-
     def _create_storage_account(self, name):
         result = self.sms.create_storage_account(
             name,
@@ -64,7 +52,7 @@ class StorageManagementServiceTest(AzureTestCase):
             'West US',
             False,
             {'ext1': 'val1', 'ext2': 42})
-        self._wait_for_async(result.request_id)
+        self.sms.wait_for_operation_status(result.request_id)
 
     def _storage_account_exists(self, name):
         try:
@@ -206,7 +194,7 @@ class StorageManagementServiceTest(AzureTestCase):
             'West US',
             True,
             {'ext1': 'val1', 'ext2': 42})
-        self._wait_for_async(result.request_id)
+        self.sms.wait_for_operation_status(result.request_id)
 
         # Assert
         self.assertTrue(
@@ -289,7 +277,7 @@ class StorageManagementServiceTest(AzureTestCase):
                 'West US',
                 True,
                 {'ext1': 'val1', 'ext2': 42})
-            self._wait_for_async(result.request_id)
+            self.sms.wait_for_operation_status(result.request_id)
 
         # Assert
 
@@ -307,7 +295,7 @@ class StorageManagementServiceTest(AzureTestCase):
             'West US',
             True,
             {'ext1': 'val1', 'ext2': 42})
-        self._wait_for_async(result.request_id)
+        self.sms.wait_for_operation_status(result.request_id)
 
         # Assert
         result = self.sms.get_storage_account_properties(
@@ -330,7 +318,7 @@ class StorageManagementServiceTest(AzureTestCase):
             'West US',
             True,
             {'ext1': u'丂狛狜', 'ext2': 42})
-        self._wait_for_async(result.request_id)
+        self.sms.wait_for_operation_status(result.request_id)
 
         # Assert
         result = self.sms.get_storage_account_properties(
