@@ -2696,6 +2696,14 @@ LyO+hc+q0iX3ecCQLUL1Laxj1bEohVvS31uuzQH9yCBwllJBx8EyufK/lDhu72md
         except:
             pass
 
+        # Test Invalid Subscription ID
+        outfile = tempfile.mktemp('.pem')
+        try:
+            id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile, 'DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD')
+            self.assertFalse(true, "Subscription should not have been found")
+        except ValueError, e:
+            self.assertEqual(e.message, "the provided subscription_id 'DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD' did not map to a valid subscription")
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

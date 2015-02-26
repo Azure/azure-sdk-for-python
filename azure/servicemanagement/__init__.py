@@ -31,6 +31,8 @@ from azure import (
     _get_entry_properties_from_node,
     _get_child_nodes,
     _get_serialization_name,
+    _validate_not_none,
+    _decode_base64_to_bytes,
     )
 import azure
 
@@ -809,7 +811,7 @@ class Subscription(WindowsAzureData):
 
     def __init__(self):
         self.subscription_id = u''
-        self.subscription_name= u''
+        self.subscription_name = u''
         self.subscription_status = u''
         self.account_admin_live_email_id = u''
         self.service_admin_live_email_id = u''
@@ -1896,8 +1898,8 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
     import base64
     import OpenSSL.crypto as crypto
 
-    azure._validate_not_none('publish_settings_path', publish_settings_path)
-    azure._validate_not_none('path_to_write_certificate', path_to_write_certificate)
+    _validate_not_none('publish_settings_path', publish_settings_path)
+    _validate_not_none('path_to_write_certificate', path_to_write_certificate)
 
     # parse the publishsettings file and find the ManagementCertificate Entry
     tree = xml.etree.ElementTree.parse(publish_settings_path)
@@ -1906,11 +1908,15 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
     # Default to the first subscription in the file if they don't specify
     # or get the matching subscription or return none.
     if subscription_id:
-        subscription = next((s for s in subscriptions if s.get('Id').lower() == subscription_id.lower()), None) 
+        subscription = next((s for s in subscriptions if s.get('Id').lower() == subscription_id.lower()), None)
     else:
         subscription = subscriptions[0]
 
-    cert_string = azure._decode_base64_to_bytes(subscription.get('ManagementCertificate'))
+    # validate that subscription was found
+    if subscription is None:
+        raise ValueError("the provided subscription_id '{}' did not map to a valid subscription".format(subscription_id))
+
+    cert_string = _decode_base64_to_bytes(subscription.get('ManagementCertificate'))
 
     # Load the string in pkcs12 format.  Don't provide a password as it isn't encrypted.
     cert = crypto.load_pkcs12(cert_string, b'') 
