@@ -43,11 +43,15 @@ from azure.storage import (
     PageRange,
     SignedIdentifiers,
     StorageServiceProperties,
+    _BlockBlobChunkUploader,
+    _PageBlobChunkUploader,
     _convert_block_list_to_xml,
     _convert_response_to_block_list,
     _create_blob_result,
+    _download_blob_chunks,
     _parse_blob_enum_results_list,
     _update_storage_blob_header,
+    _upload_blob_chunks,
     )
 from azure.storage.storageclient import _StorageClient
 from os import path
@@ -702,7 +706,8 @@ class BlobService(_StorageClient):
                                  x_ms_blob_content_md5=None,
                                  x_ms_blob_cache_control=None,
                                  x_ms_meta_name_values=None,
-                                 x_ms_lease_id=None, progress_callback=None):
+                                 x_ms_lease_id=None, progress_callback=None,
+                                 max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Creates a new block blob from a file path, or updates the content of an
         existing block blob, with automatic chunking and progress notifications.
@@ -737,6 +742,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob, or None if the total size is unknown.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to upload the blob chunks sequentially.
+            Set to 2 or more to upload the blob chunks in parallel. This uses
+            more system resources but will upload faster.
+        max_retries:
+            Number of times to retry upload of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -759,7 +774,10 @@ class BlobService(_StorageClient):
                                           x_ms_blob_cache_control,
                                           x_ms_meta_name_values,
                                           x_ms_lease_id,
-                                          progress_callback)
+                                          progress_callback,
+                                          max_connections,
+                                          max_retries,
+                                          retry_wait)
 
     def put_block_blob_from_file(self, container_name, blob_name, stream,
                                  count=None, content_encoding=None,
@@ -771,7 +789,8 @@ class BlobService(_StorageClient):
                                  x_ms_blob_content_md5=None,
                                  x_ms_blob_cache_control=None,
                                  x_ms_meta_name_values=None,
-                                 x_ms_lease_id=None, progress_callback=None):
+                                 x_ms_lease_id=None, progress_callback=None,
+                                 max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Creates a new block blob from a file/stream, or updates the content of
         an existing block blob, with automatic chunking and progress
@@ -810,6 +829,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob, or None if the total size is unknown.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to upload the blob chunks sequentially.
+            Set to 2 or more to upload the blob chunks in parallel. This uses
+            more system resources but will upload faster.
+        max_retries:
+            Number of times to retry upload of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -839,58 +868,52 @@ class BlobService(_StorageClient):
             if progress_callback:
                 progress_callback(count, count)
         else:
-            if progress_callback:
-                progress_callback(0, count)
+            self.put_blob(
+                container_name,
+                blob_name,
+                None,
+                'BlockBlob',
+                content_encoding,
+                content_language,
+                content_md5,
+                cache_control,
+                x_ms_blob_content_type,
+                x_ms_blob_content_encoding,
+                x_ms_blob_content_language,
+                x_ms_blob_content_md5,
+                x_ms_blob_cache_control,
+                x_ms_meta_name_values,
+                x_ms_lease_id,
+            )
 
-            self.put_blob(container_name,
-                          blob_name,
-                          None,
-                          'BlockBlob',
-                          content_encoding,
-                          content_language,
-                          content_md5,
-                          cache_control,
-                          x_ms_blob_content_type,
-                          x_ms_blob_content_encoding,
-                          x_ms_blob_content_language,
-                          x_ms_blob_content_md5,
-                          x_ms_blob_cache_control,
-                          x_ms_meta_name_values,
-                          x_ms_lease_id)
+            block_ids = _upload_blob_chunks(
+                self,
+                container_name,
+                blob_name,
+                count,
+                self._BLOB_MAX_CHUNK_DATA_SIZE,
+                stream,
+                max_connections,
+                max_retries,
+                retry_wait,
+                progress_callback,
+                x_ms_lease_id,
+                _BlockBlobChunkUploader,
+            )
 
-            remain_bytes = count
-            block_ids = []
-            block_index = 0
-            index = 0
-            while True:
-                request_count = self._BLOB_MAX_CHUNK_DATA_SIZE\
-                    if remain_bytes is None else min(
-                        remain_bytes,
-                        self._BLOB_MAX_CHUNK_DATA_SIZE)
-                data = stream.read(request_count)
-                if data:
-                    length = len(data)
-                    index += length
-                    remain_bytes = remain_bytes - \
-                        length if remain_bytes else None
-                    block_id = '{0:08d}'.format(block_index)
-                    self.put_block(container_name, blob_name,
-                                   data, block_id, x_ms_lease_id=x_ms_lease_id)
-                    block_ids.append(block_id)
-                    block_index += 1
-                    if progress_callback:
-                        progress_callback(index, count)
-                else:
-                    break
-
-            self.put_block_list(container_name, blob_name, block_ids,
-                                content_md5, x_ms_blob_cache_control,
-                                x_ms_blob_content_type,
-                                x_ms_blob_content_encoding,
-                                x_ms_blob_content_language,
-                                x_ms_blob_content_md5,
-                                x_ms_meta_name_values,
-                                x_ms_lease_id)
+            self.put_block_list(
+                container_name,
+                blob_name,
+                block_ids,
+                content_md5,
+                x_ms_blob_cache_control,
+                x_ms_blob_content_type,
+                x_ms_blob_content_encoding,
+                x_ms_blob_content_language,
+                x_ms_blob_content_md5,
+                x_ms_meta_name_values,
+                x_ms_lease_id,
+            )
 
     def put_block_blob_from_bytes(self, container_name, blob_name, blob,
                                   index=0, count=None, content_encoding=None,
@@ -902,7 +925,8 @@ class BlobService(_StorageClient):
                                   x_ms_blob_content_md5=None,
                                   x_ms_blob_cache_control=None,
                                   x_ms_meta_name_values=None,
-                                  x_ms_lease_id=None, progress_callback=None):
+                                  x_ms_lease_id=None, progress_callback=None,
+                                  max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Creates a new block blob from an array of bytes, or updates the content
         of an existing block blob, with automatic chunking and progress
@@ -942,6 +966,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob, or None if the total size is unknown.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to upload the blob chunks sequentially.
+            Set to 2 or more to upload the blob chunks in parallel. This uses
+            more system resources but will upload faster.
+        max_retries:
+            Number of times to retry upload of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -997,7 +1031,10 @@ class BlobService(_StorageClient):
                                           x_ms_blob_cache_control,
                                           x_ms_meta_name_values,
                                           x_ms_lease_id,
-                                          progress_callback)
+                                          progress_callback,
+                                          max_connections,
+                                          max_retries,
+                                          retry_wait)
 
     def put_block_blob_from_text(self, container_name, blob_name, text,
                                  text_encoding='utf-8',
@@ -1009,7 +1046,8 @@ class BlobService(_StorageClient):
                                  x_ms_blob_content_md5=None,
                                  x_ms_blob_cache_control=None,
                                  x_ms_meta_name_values=None,
-                                 x_ms_lease_id=None, progress_callback=None):
+                                 x_ms_lease_id=None, progress_callback=None,
+                                 max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Creates a new block blob from str/unicode, or updates the content of an
         existing block blob, with automatic chunking and progress notifications.
@@ -1045,6 +1083,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob, or None if the total size is unknown.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to upload the blob chunks sequentially.
+            Set to 2 or more to upload the blob chunks in parallel. This uses
+            more system resources but will upload faster.
+        max_retries:
+            Number of times to retry upload of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1070,7 +1118,10 @@ class BlobService(_StorageClient):
                                        x_ms_blob_cache_control,
                                        x_ms_meta_name_values,
                                        x_ms_lease_id,
-                                       progress_callback)
+                                       progress_callback,
+                                       max_connections,
+                                       max_retries,
+                                       retry_wait)
 
     def put_page_blob_from_path(self, container_name, blob_name, file_path,
                                 content_encoding=None, content_language=None,
@@ -1083,7 +1134,8 @@ class BlobService(_StorageClient):
                                 x_ms_meta_name_values=None,
                                 x_ms_lease_id=None,
                                 x_ms_blob_sequence_number=None,
-                                progress_callback=None):
+                                progress_callback=None,
+                                max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Creates a new page blob from a file path, or updates the content of an
         existing page blob, with automatic chunking and progress notifications.
@@ -1123,6 +1175,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob, or None if the total size is unknown.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to upload the blob chunks sequentially.
+            Set to 2 or more to upload the blob chunks in parallel. This uses
+            more system resources but will upload faster.
+        max_retries:
+            Number of times to retry upload of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1146,7 +1208,10 @@ class BlobService(_StorageClient):
                                          x_ms_meta_name_values,
                                          x_ms_lease_id,
                                          x_ms_blob_sequence_number,
-                                         progress_callback)
+                                         progress_callback,
+                                         max_connections,
+                                         max_retries,
+                                         retry_wait)
 
     def put_page_blob_from_file(self, container_name, blob_name, stream, count,
                                 content_encoding=None, content_language=None,
@@ -1159,7 +1224,8 @@ class BlobService(_StorageClient):
                                 x_ms_meta_name_values=None,
                                 x_ms_lease_id=None,
                                 x_ms_blob_sequence_number=None,
-                                progress_callback=None):
+                                progress_callback=None,
+                                max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Creates a new page blob from a file/stream, or updates the content of an
         existing page blob, with automatic chunking and progress notifications.
@@ -1202,6 +1268,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob, or None if the total size is unknown.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to upload the blob chunks sequentially.
+            Set to 2 or more to upload the blob chunks in parallel. This uses
+            more system resources but will upload faster.
+        max_retries:
+            Number of times to retry upload of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1214,48 +1290,40 @@ class BlobService(_StorageClient):
         if count % _PAGE_SIZE != 0:
             raise TypeError(_ERROR_PAGE_BLOB_SIZE_ALIGNMENT.format(count))
 
-        if progress_callback:
-            progress_callback(0, count)
+        self.put_blob(
+            container_name,
+            blob_name,
+            b'',
+            'PageBlob',
+            content_encoding,
+            content_language,
+            content_md5,
+            cache_control,
+            x_ms_blob_content_type,
+            x_ms_blob_content_encoding,
+            x_ms_blob_content_language,
+            x_ms_blob_content_md5,
+            x_ms_blob_cache_control,
+            x_ms_meta_name_values,
+            x_ms_lease_id,
+            count,
+            x_ms_blob_sequence_number
+        )
 
-        self.put_blob(container_name,
-                      blob_name,
-                      b'',
-                      'PageBlob',
-                      content_encoding,
-                      content_language,
-                      content_md5,
-                      cache_control,
-                      x_ms_blob_content_type,
-                      x_ms_blob_content_encoding,
-                      x_ms_blob_content_language,
-                      x_ms_blob_content_md5,
-                      x_ms_blob_cache_control,
-                      x_ms_meta_name_values,
-                      x_ms_lease_id,
-                      count,
-                      x_ms_blob_sequence_number)
-
-        remain_bytes = count
-        page_start = 0
-        while True:
-            request_count = min(remain_bytes, self._BLOB_MAX_CHUNK_DATA_SIZE)
-            data = stream.read(request_count)
-            if data:
-                length = len(data)
-                remain_bytes = remain_bytes - length
-                page_end = page_start + length - 1
-                self.put_page(container_name,
-                              blob_name,
-                              data,
-                              'bytes={0}-{1}'.format(page_start, page_end),
-                              'update',
-                              x_ms_lease_id=x_ms_lease_id)
-                page_start = page_start + length
-
-                if progress_callback:
-                    progress_callback(page_start, count)
-            else:
-                break
+        _upload_blob_chunks(
+            self,
+            container_name,
+            blob_name,
+            count,
+            self._BLOB_MAX_CHUNK_DATA_SIZE,
+            stream,
+            max_connections,
+            max_retries,
+            retry_wait,
+            progress_callback,
+            x_ms_lease_id,
+            _PageBlobChunkUploader,
+        )
 
     def put_page_blob_from_bytes(self, container_name, blob_name, blob,
                                  index=0, count=None, content_encoding=None,
@@ -1269,7 +1337,8 @@ class BlobService(_StorageClient):
                                  x_ms_meta_name_values=None,
                                  x_ms_lease_id=None,
                                  x_ms_blob_sequence_number=None,
-                                 progress_callback=None):
+                                 progress_callback=None,
+                                 max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Creates a new page blob from an array of bytes, or updates the content
         of an existing page blob, with automatic chunking and progress
@@ -1314,6 +1383,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob, or None if the total size is unknown.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to upload the blob chunks sequentially.
+            Set to 2 or more to upload the blob chunks in parallel. This uses
+            more system resources but will upload faster.
+        max_retries:
+            Number of times to retry upload of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1345,7 +1424,10 @@ class BlobService(_StorageClient):
                                      x_ms_meta_name_values,
                                      x_ms_lease_id,
                                      x_ms_blob_sequence_number,
-                                     progress_callback)
+                                     progress_callback,
+                                     max_connections,
+                                     max_retries,
+                                     retry_wait)
 
     def get_blob(self, container_name, blob_name, snapshot=None,
                  x_ms_range=None, x_ms_lease_id=None,
@@ -1393,7 +1475,8 @@ class BlobService(_StorageClient):
 
     def get_blob_to_path(self, container_name, blob_name, file_path,
                          open_mode='wb', snapshot=None, x_ms_lease_id=None,
-                         progress_callback=None):
+                         progress_callback=None,
+                         max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Downloads a blob to a file path, with automatic chunking and progress
         notifications.
@@ -1410,6 +1493,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to download the blob chunks sequentially.
+            Set to 2 or more to download the blob chunks in parallel. This uses
+            more system resources but will download faster.
+        max_retries:
+            Number of times to retry download of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1422,11 +1515,15 @@ class BlobService(_StorageClient):
                                   stream,
                                   snapshot,
                                   x_ms_lease_id,
-                                  progress_callback)
+                                  progress_callback,
+                                  max_connections,
+                                  max_retries,
+                                  retry_wait)
 
     def get_blob_to_file(self, container_name, blob_name, stream,
                          snapshot=None, x_ms_lease_id=None,
-                         progress_callback=None):
+                         progress_callback=None,
+                         max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Downloads a blob to a file/stream, with automatic chunking and progress
         notifications.
@@ -1442,6 +1539,17 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to download the blob chunks sequentially.
+            Set to 2 or more to download the blob chunks in parallel. This uses
+            more system resources but will download faster.
+            Note that parallel download requires the stream to be seekable.
+        max_retries:
+            Number of times to retry download of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1464,29 +1572,22 @@ class BlobService(_StorageClient):
             if progress_callback:
                 progress_callback(blob_size, blob_size)
         else:
-            if progress_callback:
-                progress_callback(0, blob_size)
-
-            index = 0
-            while index < blob_size:
-                chunk_range = 'bytes={0}-{1}'.format(
-                    index,
-                    index + self._BLOB_MAX_CHUNK_DATA_SIZE - 1)
-                data = self.get_blob(
-                    container_name, blob_name, x_ms_range=chunk_range)
-                length = len(data)
-                index += length
-                if length > 0:
-                    stream.write(data)
-                    if progress_callback:
-                        progress_callback(index, blob_size)
-                    if length < self._BLOB_MAX_CHUNK_DATA_SIZE:
-                        break
-                else:
-                    break
+            _download_blob_chunks(
+                self,
+                container_name,
+                blob_name,
+                blob_size,
+                self._BLOB_MAX_CHUNK_DATA_SIZE,
+                stream,
+                max_connections,
+                max_retries,
+                retry_wait,
+                progress_callback
+            )
 
     def get_blob_to_bytes(self, container_name, blob_name, snapshot=None,
-                          x_ms_lease_id=None, progress_callback=None):
+                          x_ms_lease_id=None, progress_callback=None,
+                          max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Downloads a blob as an array of bytes, with automatic chunking and
         progress notifications.
@@ -1501,6 +1602,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to download the blob chunks sequentially.
+            Set to 2 or more to download the blob chunks in parallel. This uses
+            more system resources but will download faster.
+        max_retries:
+            Number of times to retry download of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1511,13 +1622,17 @@ class BlobService(_StorageClient):
                               stream,
                               snapshot,
                               x_ms_lease_id,
-                              progress_callback)
+                              progress_callback,
+                              max_connections,
+                              max_retries,
+                              retry_wait)
 
         return stream.getvalue()
 
     def get_blob_to_text(self, container_name, blob_name, text_encoding='utf-8',
                          snapshot=None, x_ms_lease_id=None,
-                         progress_callback=None):
+                         progress_callback=None,
+                         max_connections=1, max_retries=5, retry_wait=1.0):
         '''
         Downloads a blob as unicode text, with automatic chunking and progress
         notifications.
@@ -1533,6 +1648,16 @@ class BlobService(_StorageClient):
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
             size of the blob.
+        max_connections:
+            Maximum number of parallel connections to use when the blob size
+            exceeds 64MB.
+            Set to 1 to download the blob chunks sequentially.
+            Set to 2 or more to download the blob chunks in parallel. This uses
+            more system resources but will download faster.
+        max_retries:
+            Number of times to retry download of blob chunk if an error occurs.
+        retry_wait:
+            Sleep time in secs between retries.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1542,7 +1667,10 @@ class BlobService(_StorageClient):
                                         blob_name,
                                         snapshot,
                                         x_ms_lease_id,
-                                        progress_callback)
+                                        progress_callback,
+                                        max_connections,
+                                        max_retries,
+                                        retry_wait)
 
         return result.decode(text_encoding)
 
