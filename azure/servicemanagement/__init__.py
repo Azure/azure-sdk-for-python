@@ -32,9 +32,12 @@ from azure import (
     _strtype,
     _xml_attribute,
     _get_serialization_name,
+    _validate_not_none,
+    _decode_base64_to_bytes,
     _set_continuation_from_response_headers,
     METADATA_NS,
     )
+import azure
 
 
 #-----------------------------------------------------------------------------
@@ -1881,7 +1884,7 @@ def parse_response_for_async_op(response):
     return result
 
 
-def get_certificate_from_publish_settings(publish_settings_path, path_to_write_certificate, subscription_name=None):
+def get_certificate_from_publish_settings(publish_settings_path, path_to_write_certificate, subscription_id=None):
     '''
     Writes a certificate file to the specified location.  This can then be used 
     to instantiate ServiceManagementService.  Returns the subscription ID.
@@ -1891,37 +1894,33 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
         http://go.microsoft.com/fwlink/?LinkID=301775
     path_to_write_certificate:
         Path to write the certificate file.
-    subscription_name:
-        (optional)  Provide a subscription name here if you wish to use a 
+    subscription_id:
+        (optional)  Provide a subscription id here if you wish to use a 
         specific subscription under the publish settings file.
     '''
     import base64
     import OpenSSL.crypto as crypto
 
-    if publish_settings_path is None:
-        raise TypeError("publish_settings_path cannot be None")
-
-    if path_to_write_certificate is None:
-        raise TypeError("path_to_write_certificate cannot be None")
+    _validate_not_none('publish_settings_path', publish_settings_path)
+    _validate_not_none('path_to_write_certificate', path_to_write_certificate)
 
     # parse the publishsettings file and find the ManagementCertificate Entry
     tree = ETree.parse(publish_settings_path)
     subscriptions = tree.getroot().findall("./PublishProfile/Subscription")
     
-    if subscription_name is None:
-        # just take the first one in the file if they don't specify
+    # Default to the first subscription in the file if they don't specify
+    # or get the matching subscription or return none.
+    if subscription_id:
+        subscription = next((s for s in subscriptions if s.get('Id').lower() == subscription_id.lower()), None)
+    else:
         subscription = subscriptions[0]
-    else:
-        for i in subscriptions:
-            if i.get('Name').lower() == subscription_name.lower():
-                subscription = i
-                break
 
-    if sys.version_info < (3,):
-        cert_string = base64.decodestring(subscription.get('ManagementCertificate'))
-    else:
-        cert_string = base64.decodestring(bytes(subscription.get('ManagementCertificate'), 'utf-8'))
-    
+    # validate that subscription was found
+    if subscription is None:
+        raise ValueError("The provided subscription_id '{}' was not found in the publish settings file provided at '{}'".format(subscription_id, publish_settings_path))
+
+    cert_string = _decode_base64_to_bytes(subscription.get('ManagementCertificate'))
+
     # Load the string in pkcs12 format.  Don't provide a password as it isn't encrypted.
     cert = crypto.load_pkcs12(cert_string, b'') 
 
@@ -1929,7 +1928,6 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
     with open(path_to_write_certificate, 'wb') as f:
         f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert.get_certificate()))
         f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, cert.get_privatekey()))
-        path_to_write_certificate = f.name
 
     return subscription.get('Id')
 
