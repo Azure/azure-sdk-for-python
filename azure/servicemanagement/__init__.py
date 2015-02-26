@@ -809,7 +809,7 @@ class Subscription(WindowsAzureData):
 
     def __init__(self):
         self.subscription_id = u''
-        self.subscription_id = u''
+        self.subscription_name= u''
         self.subscription_status = u''
         self.account_admin_live_email_id = u''
         self.service_admin_live_email_id = u''
