@@ -1914,7 +1914,7 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
 
     # validate that subscription was found
     if subscription is None:
-        raise ValueError("the provided subscription_id '{}' did not map to a valid subscription".format(subscription_id))
+        raise ValueError("The provided subscription_id '{}' was not found in the publish settings file provided at '{}'".format(subscription_id, publish_settings_path))
 
     cert_string = _decode_base64_to_bytes(subscription.get('ManagementCertificate'))
 

@@ -2702,7 +2702,8 @@ LyO+hc+q0iX3ecCQLUL1Laxj1bEohVvS31uuzQH9yCBwllJBx8EyufK/lDhu72md
             id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile, 'DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD')
             self.assertFalse(true, "Subscription should not have been found")
         except ValueError, e:
-            self.assertEqual(e.message, "the provided subscription_id 'DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD' did not map to a valid subscription")
+            expected_msg = "The provided subscription_id '{}' was not found in the publish settings file provided at '{}'".format('DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD', infile)
+            self.assertEqual(e.message, expected_msg)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
