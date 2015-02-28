@@ -44,7 +44,7 @@ from azure import (WindowsAzureData,
                    )
 
 # x-ms-version for storage service.
-X_MS_VERSION = '2012-02-12'
+X_MS_VERSION = '2014-02-14'
 
 
 class EnumResultsBase(object):
@@ -127,9 +127,20 @@ class Logging(WindowsAzureData):
         self.retention_policy = RetentionPolicy()
 
 
-class Metrics(WindowsAzureData):
+class HourMetrics(WindowsAzureData):
 
-    ''' Metrics class in service properties. '''
+    ''' Hour Metrics class in service properties. '''
+
+    def __init__(self):
+        self.version = u'1.0'
+        self.enabled = False
+        self.include_apis = None
+        self.retention_policy = RetentionPolicy()
+
+
+class MinuteMetrics(WindowsAzureData):
+
+    ''' Minute Metrics class in service properties. '''
 
     def __init__(self):
         self.version = u'1.0'
@@ -144,7 +155,8 @@ class StorageServiceProperties(WindowsAzureData):
 
     def __init__(self):
         self.logging = Logging()
-        self.metrics = Metrics()
+        self.hour_metrics = HourMetrics()
+        self.minute_metrics = MinuteMetrics()
 
 
 class AccessPolicy(WindowsAzureData):

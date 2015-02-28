@@ -62,9 +62,10 @@ class SharedAccessSignatureTest(AzureTestCase):
         sap = SharedAccessPolicy(accss_plcy, signed_identifier)
         signature = self.sas._generate_signature('images',
                                                  sap,
-                                                 X_MS_VERSION)
+                                                 X_MS_VERSION,
+                                                 None, None, None, None, None)
         self.assertEqual(signature,
-                         '1AWckmWSNrNCjh9krPXoD4exAgZWQQr38gG6z/ymkhQ=')
+                         'Md+SHy9BQNucdHnmDOEwlAkIWU5YxwlTq6gA9yJKE6w=')
 
     def test_generate_signature_blob(self):
         accss_plcy = AccessPolicy()
@@ -75,9 +76,14 @@ class SharedAccessSignatureTest(AzureTestCase):
 
         signature = self.sas._generate_signature('images/pic1.png',
                                                  sap,
-                                                 X_MS_VERSION)
+                                                 X_MS_VERSION,
+                                                 None,
+                                                 'file; attachment',
+                                                 None,
+                                                 None,
+                                                 'binary')
         self.assertEqual(signature,
-                         'ju4tX0G79vPxMOkBb7UfNVEgrj9+ZnSMutpUemVYHLY=')
+                         'uHckUC6T+BwUsc+DgrreyIS1k6au7uUd7LSSs/z+/+w=')
 
     def test_blob_signed_query_string(self):
         accss_plcy = AccessPolicy()
@@ -93,7 +99,7 @@ class SharedAccessSignatureTest(AzureTestCase):
         self.assertEqual(qry_str[SIGNED_RESOURCE], RESOURCE_BLOB)
         self.assertEqual(qry_str[SIGNED_PERMISSION], 'w')
         self.assertEqual(qry_str[SIGNED_SIGNATURE],
-                         '8I8E8TImfR2TIAcMDq8rF+IhhYyvowXpxSfF1kxnWLQ=')
+                         'Fqt8tNcyUOp30qYRtSFNcImrRMcxlk6IF17O4l96KT8=')
 
     def test_container_signed_query_string(self):
         accss_plcy = AccessPolicy()
@@ -111,7 +117,7 @@ class SharedAccessSignatureTest(AzureTestCase):
         self.assertEqual(qry_str[SIGNED_PERMISSION], 'r')
         self.assertEqual(qry_str[SIGNED_IDENTIFIER], 'YWJjZGVmZw==')
         self.assertEqual(qry_str[SIGNED_SIGNATURE],
-                         '1AWckmWSNrNCjh9krPXoD4exAgZWQQr38gG6z/ymkhQ=')
+                         'Md+SHy9BQNucdHnmDOEwlAkIWU5YxwlTq6gA9yJKE6w=')
 
     def test_sign_request(self):
         accss_plcy = AccessPolicy()
