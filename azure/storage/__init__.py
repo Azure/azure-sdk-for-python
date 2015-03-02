@@ -158,6 +158,13 @@ class StorageServiceProperties(WindowsAzureData):
         self.hour_metrics = HourMetrics()
         self.minute_metrics = MinuteMetrics()
 
+    @property
+    def metrics(self):
+        import warnings
+        warnings.warn(
+            'The metrics attribute has been deprecated. Use hour_metrics and minute_metrics instead.')
+        return self.hour_metrics
+
 
 class AccessPolicy(WindowsAzureData):
 
