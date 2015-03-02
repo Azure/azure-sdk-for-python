@@ -41,7 +41,8 @@ from azure.storage import (
     BlobBlockList,
     BlobResult,
     Logging,
-    Metrics,
+    HourMetrics,
+    MinuteMetrics,
     PageList,
     PageRange,
     SignedIdentifier,
@@ -64,6 +65,11 @@ from azure.storage.sharedaccesssignature import (
     RESOURCE_BLOB,
     RESOURCE_CONTAINER,
     SHARED_ACCESS_PERMISSION,
+    SIGNED_CACHE_CONTROL,
+    SIGNED_CONTENT_DISPOSITION,
+    SIGNED_CONTENT_ENCODING,
+    SIGNED_CONTENT_LANGUAGE,
+    SIGNED_CONTENT_TYPE,
     SIGNED_EXPIRY,
     SIGNED_IDENTIFIER,
     SIGNED_PERMISSION,
@@ -271,7 +277,10 @@ class BlobServiceTest(AzureTestCase):
 
         return text
 
-    def _get_permission(self, sas, resource_type, resource_path, permission):
+    def _get_permission(self, sas, resource_type, resource_path, permission,
+                        cache_control=None, content_disposition=None,
+                        content_encoding=None, content_language=None,
+                        content_type=None):
         date_format = "%Y-%m-%dT%H:%M:%SZ"
         start = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
         expiry = start + datetime.timedelta(hours=1)
@@ -279,9 +288,16 @@ class BlobServiceTest(AzureTestCase):
         sap = SharedAccessPolicy(AccessPolicy(start.strftime(date_format),
                                               expiry.strftime(date_format),
                                               permission))
-        signed_query = sas.generate_signed_query_string(resource_path,
-                                                        resource_type,
-                                                        sap)
+        signed_query = sas.generate_signed_query_string(
+            resource_path,
+            resource_type,
+            sap,
+            cache_control=cache_control,
+            content_disposition=content_disposition,
+            content_encoding=content_encoding,
+            content_language=content_language,
+            content_type=content_type,
+        )
 
         return Permission('/' + resource_path, signed_query)
 
@@ -323,14 +339,14 @@ class BlobServiceTest(AzureTestCase):
                 connection.send(content)
 
             resp = connection.getresponse()
-            resp.getheaders()
+            respheaders = resp.getheaders()
             respbody = None
             if resp.length is None:
                 respbody = resp.read()
             elif resp.length > 0:
                 respbody = resp.read(resp.length)
 
-            return respbody
+            return (respbody, respheaders)
         finally:
             connection.close()
 
@@ -1151,13 +1167,13 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         props = StorageServiceProperties()
-        props.metrics.enabled = False
+        props.hour_metrics.enabled = False
         resp = self.bs.set_blob_service_properties(props)
 
         # Assert
         self.assertIsNone(resp)
         received_props = self.bs.get_blob_service_properties()
-        self.assertFalse(received_props.metrics.enabled)
+        self.assertFalse(received_props.hour_metrics.enabled)
 
     def test_set_blob_service_properties_with_timeout(self):
         # Arrange
@@ -1181,7 +1197,8 @@ class BlobServiceTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertIsInstance(props.logging, Logging)
-        self.assertIsInstance(props.metrics, Metrics)
+        self.assertIsInstance(props.minute_metrics, MinuteMetrics)
+        self.assertIsInstance(props.hour_metrics, HourMetrics)
 
     def test_get_blob_service_properties_with_timeout(self):
         # Arrange
@@ -1192,7 +1209,8 @@ class BlobServiceTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(props)
         self.assertIsInstance(props.logging, Logging)
-        self.assertIsInstance(props.metrics, Metrics)
+        self.assertIsInstance(props.minute_metrics, MinuteMetrics)
+        self.assertIsInstance(props.hour_metrics, HourMetrics)
 
     #--Test cases for blobs ----------------------------------------------
     def test_make_blob_url(self):
@@ -1744,12 +1762,17 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         resp = self.bs.set_blob_properties(
-            self.container_name, 'blob1', x_ms_blob_content_language='spanish')
+            self.container_name,
+            'blob1',
+            x_ms_blob_content_language='spanish',
+            x_ms_blob_content_disposition='inline',
+        )
 
         # Assert
         self.assertIsNone(resp)
         props = self.bs.get_blob_properties(self.container_name, 'blob1')
         self.assertEqual(props['content-language'], 'spanish')
+        self.assertEqual(props['content-disposition'], 'inline')
 
     def test_set_blob_properties_with_non_existing_container(self):
         # Arrange
@@ -2733,7 +2756,7 @@ class BlobServiceTest(AzureTestCase):
         # Act
         host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
         url = '/' + res_path
-        respbody = self._get_request(host, url)
+        respbody, _ = self._get_request(host, url)
 
         # Assert
         self.assertNotEqual(data, respbody)
@@ -2750,7 +2773,7 @@ class BlobServiceTest(AzureTestCase):
         # Act
         host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
         url = '/' + res_path
-        respbody = self._get_request(host, url)
+        respbody, _ = self._get_request(host, url)
 
         # Assert
         self.assertEqual(data, respbody)
@@ -2771,10 +2794,45 @@ class BlobServiceTest(AzureTestCase):
         web_rsrc = self._get_signed_web_resource(sas, res_type, res_path, 'r')
         host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
         url = web_rsrc.request_url
-        respbody = self._get_request(host, url)
+        respbody, _ = self._get_request(host, url)
 
         # Assert
         self.assertEqual(data, respbody)
+
+    def test_shared_read_access_blob_with_content_query_params(self):
+        # Arrange
+        data = b'shared access signature with read permission on blob'
+        self._create_container_and_block_blob(
+            self.container_name, 'blob1.txt', data)
+        sas = SharedAccessSignature(credentials.getStorageServicesName(),
+                                    credentials.getStorageServicesKey())
+        res_path = self.container_name + '/blob1.txt'
+        res_type = RESOURCE_BLOB
+
+        # Act
+        permission = self._get_permission(
+            sas,
+            res_type,
+            res_path,
+            'r',
+            cache_control='no-cache',
+            content_disposition='inline',
+            content_encoding='utf-8',
+            content_language='fr',
+            content_type='text')
+        sas.permission_set = [permission]
+        web_rsrc = self._get_signed_web_resource(sas, res_type, res_path, 'r')
+        host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
+        url = web_rsrc.request_url
+        respbody, respheaders = self._get_request(host, url)
+
+        # Assert
+        self.assertEqual(data, respbody)
+        self.assertIn(('cache-control', 'no-cache'), respheaders)
+        self.assertIn(('content-disposition', 'inline'), respheaders)
+        self.assertIn(('content-encoding', 'utf-8'), respheaders)
+        self.assertIn(('content-language', 'fr'), respheaders)
+        self.assertIn(('content-type', 'text'), respheaders)
 
     def test_shared_write_access_blob(self):
         # Arrange
@@ -2794,7 +2852,7 @@ class BlobServiceTest(AzureTestCase):
         host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
         url = web_rsrc.request_url
         headers = {'x-ms-blob-type': 'BlockBlob'}
-        respbody = self._put_request(host, url, updated_data, headers)
+        respbody, _ = self._put_request(host, url, updated_data, headers)
 
         # Assert
         blob = self.bs.get_blob(self.container_name, 'blob1.txt')
@@ -2816,7 +2874,7 @@ class BlobServiceTest(AzureTestCase):
         web_rsrc = self._get_signed_web_resource(sas, res_type, res_path, 'd')
         host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
         url = web_rsrc.request_url
-        respbody = self._del_request(host, url)
+        respbody, _ = self._del_request(host, url)
 
         # Assert
         with self.assertRaises(WindowsAzureError):
@@ -2839,7 +2897,7 @@ class BlobServiceTest(AzureTestCase):
             sas, res_type, res_path + '/blob1.txt', 'r')
         host = credentials.getStorageServicesName() + BLOB_SERVICE_HOST_BASE
         url = web_rsrc.request_url
-        respbody = self._get_request(host, url)
+        respbody, _ = self._get_request(host, url)
 
         # Assert
         self.assertEqual(data, respbody)
@@ -2866,6 +2924,20 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         resp = self.bs.get_blob_to_bytes(self.container_name, blob_name)
+
+        # Assert
+        self.assertEqual(data, resp)
+
+    def test_get_blob_to_bytes_chunked_download_parallel(self):
+        # Arrange
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        self._create_container_and_block_blob(
+            self.container_name, blob_name, data)
+
+        # Act
+        resp = self.bs.get_blob_to_bytes(self.container_name, blob_name,
+                                         max_connections=10)
 
         # Assert
         self.assertEqual(data, resp)
@@ -2948,6 +3020,26 @@ class BlobServiceTest(AzureTestCase):
             actual = stream.read()
             self.assertEqual(data, actual)
 
+    def test_get_blob_to_file_chunked_download_parallel(self):
+        # Arrange
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_output.temp.dat'
+        self._create_container_and_block_blob(
+            self.container_name, blob_name, data)
+
+        # Act
+        with open(file_path, 'wb') as stream:
+            resp = self.bs.get_blob_to_file(
+                self.container_name, blob_name, stream,
+                max_connections=10)
+
+        # Assert
+        self.assertIsNone(resp)
+        with open(file_path, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data, actual)
+
     def test_get_blob_to_file_with_progress(self):
         # Arrange
         blob_name = 'blob1'
@@ -3000,6 +3092,34 @@ class BlobServiceTest(AzureTestCase):
             self.assertEqual(data, actual)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    def test_get_blob_to_file_with_progress_chunked_download_parallel(self):
+        # Arrange
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_output.temp.dat'
+        self._create_container_and_block_blob(
+            self.container_name, blob_name, data)
+
+        # Act
+        progress = []
+
+        def callback(current, total):
+            progress.append((current, total))
+
+        with open(file_path, 'wb') as stream:
+            resp = self.bs.get_blob_to_file(
+                self.container_name, blob_name, stream,
+                progress_callback=callback,
+                max_connections=5)
+
+        # Assert
+        self.assertIsNone(resp)
+        with open(file_path, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data, actual)
+        self.assertEqual(progress, sorted(progress))
+        self.assertGreater(len(progress), 0)
+
     def test_get_blob_to_path(self):
         # Arrange
         blob_name = 'blob1'
@@ -3029,6 +3149,25 @@ class BlobServiceTest(AzureTestCase):
         # Act
         resp = self.bs.get_blob_to_path(
             self.container_name, blob_name, file_path)
+
+        # Assert
+        self.assertIsNone(resp)
+        with open(file_path, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data, actual)
+
+    def test_get_blob_to_path_chunked_downlad_parallel(self):
+        # Arrange
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_output.temp.dat'
+        self._create_container_and_block_blob(
+            self.container_name, blob_name, data)
+
+        # Act
+        resp = self.bs.get_blob_to_path(
+            self.container_name, blob_name, file_path,
+            max_connections=10)
 
         # Assert
         self.assertIsNone(resp)
@@ -3165,6 +3304,21 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         resp = self.bs.get_blob_to_text(self.container_name, blob_name)
+
+        # Assert
+        self.assertEqual(text, resp)
+
+    def test_get_blob_to_text_chunked_download_parallel(self):
+        # Arrange
+        blob_name = 'blob1'
+        text = self._get_oversized_text_data()
+        data = text.encode('utf-8')
+        self._create_container_and_block_blob(
+            self.container_name, blob_name, data)
+
+        # Act
+        resp = self.bs.get_blob_to_text(self.container_name, blob_name,
+                                        max_connections=10)
 
         # Assert
         self.assertEqual(text, resp)
@@ -3306,6 +3460,22 @@ class BlobServiceTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    def test_put_block_blob_from_bytes_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+
+        # Act
+        resp = self.bs.put_block_blob_from_bytes(
+            self.container_name, blob_name, data,
+            max_connections=10)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+
     def test_put_block_blob_from_bytes_chunked_upload_with_properties(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3383,6 +3553,25 @@ class BlobServiceTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    def test_put_block_blob_from_path_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        resp = self.bs.put_block_blob_from_path(
+            self.container_name, blob_name, file_path,
+            max_connections=10)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+
     def test_put_block_blob_from_path_with_progress_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3450,6 +3639,26 @@ class BlobServiceTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    def test_put_block_blob_from_file_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        with open(file_path, 'rb') as stream:
+            resp = self.bs.put_block_blob_from_file(
+                self.container_name, blob_name, stream,
+                max_connections=10)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+
     def test_put_block_blob_from_file_with_progress_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3478,6 +3687,34 @@ class BlobServiceTest(AzureTestCase):
             progress,
             self._get_expected_progress(len(data), unknown_size=True))
 
+    def test_put_block_blob_from_file_with_progress_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        progress = []
+
+        def callback(current, total):
+            progress.append((current, total))
+
+        with open(file_path, 'rb') as stream:
+            resp = self.bs.put_block_blob_from_file(
+                self.container_name, blob_name, stream,
+                progress_callback=callback,
+                max_connections=5)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+        self.assertEqual(progress, sorted(progress))
+        self.assertGreater(len(progress), 0)
+
     def test_put_block_blob_from_file_chunked_upload_with_count(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3492,6 +3729,27 @@ class BlobServiceTest(AzureTestCase):
         with open(file_path, 'rb') as stream:
             resp = self.bs.put_block_blob_from_file(
                 self.container_name, blob_name, stream, blob_size)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
+        self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+
+    def test_put_block_blob_from_file_chunked_upload_with_count_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        blob_size = len(data) - 301
+        with open(file_path, 'rb') as stream:
+            resp = self.bs.put_block_blob_from_file(
+                self.container_name, blob_name, stream, blob_size,
+                max_connections=10)
 
         # Assert
         self.assertIsNone(resp)
@@ -3619,6 +3877,24 @@ class BlobServiceTest(AzureTestCase):
             self.container_name, blob_name, len(encoded_data))
         self.assertBlobEqual(self.container_name, blob_name, encoded_data)
 
+    def test_put_block_blob_from_text_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_text_data()
+        encoded_data = data.encode('utf-8')
+
+        # Act
+        resp = self.bs.put_block_blob_from_text(
+            self.container_name, blob_name, data,
+            max_connections=10)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(
+            self.container_name, blob_name, len(encoded_data))
+        self.assertBlobEqual(self.container_name, blob_name, encoded_data)
+
     def test_put_page_blob_from_bytes(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3697,6 +3973,22 @@ class BlobServiceTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    def test_put_page_blob_from_bytes_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_page_blob_binary_data()
+
+        # Act
+        resp = self.bs.put_page_blob_from_bytes(
+            self.container_name, blob_name, data,
+            max_connections=10)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+
     def test_put_page_blob_from_bytes_chunked_upload_with_index_and_count(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3708,6 +4000,25 @@ class BlobServiceTest(AzureTestCase):
         # Act
         resp = self.bs.put_page_blob_from_bytes(
             self.container_name, blob_name, data, index, count)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, count)
+        self.assertBlobEqual(self.container_name,
+                             blob_name, data[index:index + count])
+
+    def test_put_page_blob_from_bytes_chunked_upload_with_index_and_count_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_page_blob_binary_data()
+        index = 512
+        count = len(data) - 1024
+
+        # Act
+        resp = self.bs.put_page_blob_from_bytes(
+            self.container_name, blob_name, data, index, count,
+            max_connections=10)
 
         # Assert
         self.assertIsNone(resp)
@@ -3727,6 +4038,25 @@ class BlobServiceTest(AzureTestCase):
         # Act
         resp = self.bs.put_page_blob_from_path(
             self.container_name, blob_name, file_path)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+
+    def test_put_page_blob_from_path_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_page_blob_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        resp = self.bs.put_page_blob_from_path(
+            self.container_name, blob_name, file_path,
+            max_connections=10)
 
         # Assert
         self.assertIsNone(resp)
@@ -3778,6 +4108,27 @@ class BlobServiceTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
+    def test_put_page_blob_from_file_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_page_blob_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        blob_size = len(data)
+        with open(file_path, 'rb') as stream:
+            resp = self.bs.put_page_blob_from_file(
+                self.container_name, blob_name, stream, blob_size,
+                max_connections=10)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
+        self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+
     def test_put_page_blob_from_file_with_progress_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3805,6 +4156,35 @@ class BlobServiceTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    def test_put_page_blob_from_file_with_progress_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_page_blob_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        progress = []
+
+        def callback(current, total):
+            progress.append((current, total))
+
+        blob_size = len(data)
+        with open(file_path, 'rb') as stream:
+            resp = self.bs.put_page_blob_from_file(
+                self.container_name, blob_name, stream, blob_size,
+                progress_callback=callback,
+                max_connections=5)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
+        self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+        self.assertEqual(progress, sorted(progress))
+        self.assertGreater(len(progress), 0)
+
     def test_put_page_blob_from_file_chunked_upload_truncated(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3819,6 +4199,27 @@ class BlobServiceTest(AzureTestCase):
         with open(file_path, 'rb') as stream:
             resp = self.bs.put_page_blob_from_file(
                 self.container_name, blob_name, stream, blob_size)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
+        self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+
+    def test_put_page_blob_from_file_chunked_upload_truncated_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_page_blob_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        blob_size = len(data) - 512
+        with open(file_path, 'rb') as stream:
+            resp = self.bs.put_page_blob_from_file(
+                self.container_name, blob_name, stream, blob_size,
+                max_connections=10)
 
         # Assert
         self.assertIsNone(resp)
@@ -3851,6 +4252,7 @@ class BlobServiceTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         self.assertEqual(progress, self._get_expected_progress(blob_size))
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

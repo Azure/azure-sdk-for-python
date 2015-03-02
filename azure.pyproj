@@ -6,8 +6,7 @@
     <ProjectGuid>{25b2c65a-0553-4452-8907-8b5b17544e68}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>tests\blob_performance.py</StartupFile>
     <WorkingDirectory>tests</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azure</Name>
@@ -23,8 +22,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>
-    </SearchPath>
+    <SearchPath>.</SearchPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,6 +56,7 @@
     <Compile Include="azure\storage\storageclient.py" />
     <Compile Include="azure\storage\__init__.py" />
     <Compile Include="setup.py" />
+    <Compile Include="tests\blob_performance.py" />
     <Compile Include="tests\clean.py" />
     <Compile Include="tests\doctest_blobservice.py" />
     <Compile Include="tests\doctest_queueservice.py" />
