@@ -122,7 +122,6 @@ class VARIANT(Structure):
     '''
 
     class _tagData(Union):
-
         class _tagRecord(Structure):
             _fields_ = [('pvoid', c_void_p), ('precord', c_void_p)]
 
@@ -266,8 +265,10 @@ class _WinHttpRequest(c_void_p):
         '''
         Opens the request.
 
-        method: the request VERB 'GET', 'POST', etc.
-        url: the url to connect
+        method:
+            the request VERB 'GET', 'POST', etc.
+        url:
+            the url to connect
         '''
         _WinHttpRequest._SetTimeouts(self, 0, 65000, 65000, 65000)
 

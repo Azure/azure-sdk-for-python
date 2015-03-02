@@ -689,7 +689,6 @@ class _ETreeXmlToObject(object):
 
     @staticmethod
     def convert_response_to_feeds(response, convert_func):
-
         if response is None:
             return None
 

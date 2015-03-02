@@ -31,6 +31,7 @@ from azure.servicemanagement.servicemanagementclient import (
     )
 
 class SqlDatabaseManagementService(_ServiceManagementClient):
+
     ''' Note that this class is a preliminary work on SQL Database
         management. Since it lack a lot a features, final version
         can be slightly different from the current one.
@@ -41,13 +42,15 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Initializes the sql database management service.
 
-        subscription_id: Subscription to manage.
+        subscription_id:
+            Subscription to manage.
         cert_file:
             Path to .pem certificate file (httplib), or location of the
             certificate in your Personal certificate store (winhttp) in the
             CURRENT_USER\my\CertificateName format.
             If a request_session is specified, then this is unused.
-        host: Live ServiceClient URL. Defaults to Azure public cloud.
+        host:
+            Live ServiceClient URL. Defaults to Azure public cloud.
         request_session:
             Session object to use for http requests. If this is specified, it
             replaces the default use of httplib or winhttp. Also, the cert_file
@@ -68,9 +71,12 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Create a new Azure SQL Database server.
 
-        admin_login: The administrator login name for the new server.
-        admin_password: The administrator login password for the new server.
-        location: The region to deploy the new server.
+        admin_login:
+            The administrator login name for the new server.
+        admin_password:
+            The administrator login password for the new server.
+        location:
+            The region to deploy the new server.
         '''
         _validate_not_none('admin_login', admin_login)
         _validate_not_none('admin_password', admin_password)
@@ -91,8 +97,10 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Reset the administrator password for a server.
 
-        server_name: Name of the server to change the password.
-        admin_password: The new administrator password for the server.
+        server_name:
+            Name of the server to change the password.
+        admin_password:
+            The new administrator password for the server.
         '''
         _validate_not_none('server_name', server_name)
         _validate_not_none('admin_password', admin_password)
@@ -107,7 +115,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Deletes an Azure SQL Database server (including all its databases).
 
-        server_name: Name of the server you want to delete.
+        server_name:
+            Name of the server you want to delete.
         '''
         _validate_not_none('server_name', server_name)
         return self._perform_delete(
@@ -124,7 +133,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Gets quotas for an Azure SQL Database Server.
 
-        server_name: Name of the server.
+        server_name:
+            Name of the server.
         '''
         _validate_not_none('server_name', server_name)
         response = self._perform_get(self._get_quotas_path(server_name),
@@ -137,7 +147,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Gets the event logs for an Azure SQL Database Server.
 
-        server_name: Name of the server to retrieve the event logs from.
+        server_name:
+            Name of the server to retrieve the event logs from.
         start_date:
             The starting date and time of the events to retrieve in UTC format,
             for example '2011-09-28 16:05:00'.
@@ -172,8 +183,10 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Creates an Azure SQL Database server firewall rule.
 
-        server_name: Name of the server to set the firewall rule on. 
-        name: The name of the new firewall rule.
+        server_name:
+            Name of the server to set the firewall rule on. 
+        name:
+            The name of the new firewall rule.
         start_ip_address:
             The lowest IP address in the range of the server-level firewall
             setting. IP addresses equal to or greater than this can attempt to
@@ -200,8 +213,10 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Update a firewall rule for an Azure SQL Database server.
 
-        server_name: Name of the server to set the firewall rule on. 
-        name: The name of the firewall rule to update.
+        server_name:
+            Name of the server to set the firewall rule on. 
+        name:
+            The name of the firewall rule to update.
         start_ip_address:
             The lowest IP address in the range of the server-level firewall
             setting. IP addresses equal to or greater than this can attempt to
@@ -241,7 +256,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Retrieves the set of firewall rules for an Azure SQL Database Server.
 
-        server_name: Name of the server.
+        server_name:
+            Name of the server.
         '''
         _validate_not_none('server_name', server_name)
         response = self._perform_get(self._get_firewall_rules_path(server_name),
@@ -253,7 +269,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Gets the service level objectives for an Azure SQL Database server.
 
-        server_name: Name of the server.
+        server_name:
+            Name of the server.
         '''
         _validate_not_none('server_name', server_name)
         response = self._perform_get(
@@ -268,7 +285,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Creates a new Azure SQL Database.
 
-        server_name: Name of the server to contain the new database.
+        server_name:
+            Name of the server to contain the new database.
         name:
             Required. The name for the new database. See Naming Requirements
             in Azure SQL Database General Guidelines and Limitations and
@@ -312,7 +330,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Updates existing database details.
 
-        server_name: Name of the server to contain the new database.
+        server_name:
+            Name of the server to contain the new database.
         name:
             Required. The name for the new database. See Naming Requirements
             in Azure SQL Database General Guidelines and Limitations and
@@ -345,8 +364,10 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
         '''
         Deletes an Azure SQL Database.
 
-        server_name: Name of the server where the database is located.
-        name: Name of the database to delete.
+        server_name:
+            Name of the server where the database is located.
+        name:
+            Name of the database to delete.
         '''
         return self._perform_delete(self._get_databases_path(server_name, name))
 

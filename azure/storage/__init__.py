@@ -615,19 +615,27 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
 # Conversion from Python type to a function which returns a tuple of the
 # type string and content string.
 _PYTHON_TO_ENTITY_CONVERSIONS = {
-    int: _to_entity_int,
-    bool: _to_entity_bool,
-    datetime: _to_entity_datetime,
-    float: _to_entity_float,
-    EntityProperty: _to_entity_property,
-    str: _to_entity_str,
+    int:
+        _to_entity_int,
+    bool:
+        _to_entity_bool,
+    datetime:
+        _to_entity_datetime,
+    float:
+        _to_entity_float,
+    EntityProperty:
+        _to_entity_property,
+    str:
+        _to_entity_str,
 }
 
 if sys.version_info < (3,):
     _PYTHON_TO_ENTITY_CONVERSIONS.update({
-        long: _to_entity_int,
+        long:
+            _to_entity_int,
         types.NoneType: _to_entity_none,
-        unicode: _to_entity_str,
+        unicode:
+            _to_entity_str,
     })
 
 
@@ -708,7 +716,8 @@ def _convert_table_to_xml(table_name):
     the same as entity and the only difference is that table has only one
     property 'TableName', so we just call _convert_entity_to_xml.
 
-    table_name: the name of the table
+    table_name:
+        the name of the table
     '''
     return _convert_entity_to_xml({'TableName': table_name})
 

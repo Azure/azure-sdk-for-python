@@ -70,7 +70,8 @@ class _BatchClient(_HTTPClient):
         Extracts table name from request.uri. The request.uri has either
         "/mytable(...)" or "/mytable" format.
 
-        request: the request to insert, update or delete entity
+        request:
+            the request to insert, update or delete entity
         '''
         if '(' in request.path:
             pos = request.path.find('(')
@@ -84,7 +85,8 @@ class _BatchClient(_HTTPClient):
         request.path if it is not a POST request. Only insert operation request
         is a POST request and the PartitionKey is in the request body.
 
-        request: the request to insert, update or delete entity
+        request:
+            the request to insert, update or delete entity
         '''
         if request.method == 'POST':
             doc = ETree.fromstring(request.body)
@@ -106,7 +108,8 @@ class _BatchClient(_HTTPClient):
         request.path if it is not a POST request. Only insert operation request
         is a POST request and the Rowkey is in the request body.
 
-        request: the request to insert, update or delete entity
+        request:
+            the request to insert, update or delete entity
         '''
         if request.method == 'POST':
             doc = ETree.fromstring(request.body)
@@ -128,7 +131,8 @@ class _BatchClient(_HTTPClient):
         Validates that all requests have the same table name. Set the table
         name if it is the first request for the batch operation.
 
-        request: the request to insert, update or delete entity
+        request:
+            the request to insert, update or delete entity
         '''
         if self.batch_table:
             if self.get_request_table(request) != self.batch_table:
@@ -141,7 +145,8 @@ class _BatchClient(_HTTPClient):
         Validates that all requests have the same PartitiionKey. Set the
         PartitionKey if it is the first request for the batch operation.
 
-        request: the request to insert, update or delete entity
+        request:
+            the request to insert, update or delete entity
         '''
         if self.batch_partition_key:
             if self.get_request_partition_key(request) != \
@@ -155,7 +160,8 @@ class _BatchClient(_HTTPClient):
         Validates that all requests have the different RowKey and adds RowKey
         to existing RowKey list.
 
-        request: the request to insert, update or delete entity
+        request:
+            the request to insert, update or delete entity
         '''
         if self.batch_row_keys:
             if self.get_request_row_key(request) in self.batch_row_keys:
@@ -167,11 +173,16 @@ class _BatchClient(_HTTPClient):
         '''
         Starts the batch operation. Intializes the batch variables
 
-        is_batch: batch operation flag.
-        batch_table: the table name of the batch operation
-        batch_partition_key: the PartitionKey of the batch requests.
-        batch_row_keys: the RowKey list of adding requests.
-        batch_requests: the list of the requests.
+        is_batch:
+            batch operation flag.
+        batch_table:
+            the table name of the batch operation
+        batch_partition_key:
+            the PartitionKey of the batch requests.
+        batch_row_keys:
+            the RowKey list of adding requests.
+        batch_requests:
+            the list of the requests.
         '''
         self.is_batch = True
         self.batch_table = ''
@@ -183,7 +194,8 @@ class _BatchClient(_HTTPClient):
         '''
         Adds request to batch operation.
 
-        request: the request to insert, update or delete entity
+        request:
+            the request to insert, update or delete entity
         '''
         self.validate_request_table(request)
         self.validate_request_partition_key(request)

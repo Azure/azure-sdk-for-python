@@ -37,3 +37,4 @@ $RECYCLE.BIN/
 .idea
 src/build
 *.iml
+/doc/_build

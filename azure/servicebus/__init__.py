@@ -67,7 +67,6 @@ class Queue(WindowsAzureData):
                  duplicate_detection_history_time_window=None,
                  max_delivery_count=None, enable_batched_operations=None,
                  size_in_bytes=None, message_count=None):
-
         self.lock_duration = lock_duration
         self.max_size_in_megabytes = max_size_in_megabytes
         self.requires_duplicate_detection = requires_duplicate_detection
@@ -92,7 +91,6 @@ class Topic(WindowsAzureData):
                  max_size_in_megabytes=None, requires_duplicate_detection=None,
                  duplicate_detection_history_time_window=None,
                  enable_batched_operations=None, size_in_bytes=None):
-
         self.default_message_time_to_live = default_message_time_to_live
         self.max_size_in_megabytes = max_size_in_megabytes
         self.requires_duplicate_detection = requires_duplicate_detection
@@ -124,7 +122,6 @@ class Subscription(WindowsAzureData):
                  dead_lettering_on_filter_evaluation_exceptions=None,
                  enable_batched_operations=None, max_delivery_count=None,
                  message_count=None):
-
         self.lock_duration = lock_duration
         self.requires_session = requires_session
         self.default_message_time_to_live = default_message_time_to_live
@@ -277,8 +274,10 @@ class Message(WindowsAzureData):
 def _create_message(response, service_instance):
     ''' Create message from response.
 
-    response: response from service bus cloud server.
-    service_instance: the service bus client.
+    response:
+        response from service bus cloud server.
+    service_instance:
+        the service bus client.
     '''
     respbody = response.body
     custom_properties = {}
@@ -679,7 +678,6 @@ def _convert_object_to_feed_entry(obj, rootName, content_writer):
 
 
 def _convert_subscription_to_xml(sub):
-
     def _subscription_to_xml(writer, sub):
         writer.elements([
             ('LockDuration', sub.lock_duration, None),
@@ -697,7 +695,6 @@ def _convert_subscription_to_xml(sub):
 
 
 def _convert_rule_to_xml(rule):
-
     def _rule_to_xml(writer, rule):
         if rule.filter_type:
             writer.start('Filter', [('i:type', rule.filter_type, None)])
@@ -721,7 +718,6 @@ def _convert_rule_to_xml(rule):
 
 
 def _convert_topic_to_xml(topic):
-
     def _topic_to_xml(writer, topic):
         writer.elements([
             ('DefaultMessageTimeToLive', topic.default_message_time_to_live, None),
@@ -737,7 +733,6 @@ def _convert_topic_to_xml(topic):
 
 
 def _convert_queue_to_xml(queue):
-
     def _queue_to_xml(writer, queue):
         writer.elements([
             ('LockDuration', queue.lock_duration, None),
@@ -758,7 +753,6 @@ def _convert_queue_to_xml(queue):
 
 
 def _convert_event_hub_to_xml(hub):
-
     def _hub_to_xml(writer, hub):
         writer.elements(
             [('MessageRetentionInDays', hub.message_retention_in_days, None)])

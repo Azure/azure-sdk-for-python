@@ -38,10 +38,13 @@ class WebResource(object):
     '''
     Class that stands for the resource to get the share access signature
 
-    path: the resource path.
-    properties: dict of name and values. Contains 2 item: resource type and
+    path:
+        the resource path.
+    properties:
+        dict of name and values. Contains 2 item: resource type and
             permission
-    request_url: the url of the webresource include all the queries.
+    request_url:
+        the url of the webresource include all the queries.
     '''
 
     def __init__(self, path=None, request_url=None, properties=None):
@@ -55,8 +58,10 @@ class Permission(object):
     '''
     Permission class. Contains the path and query_string for the path.
 
-    path: the resource path
-    query_string: dict of name, values. Contains SIGNED_START, SIGNED_EXPIRY
+    path:
+        the resource path
+    query_string:
+        dict of name, values. Contains SIGNED_START, SIGNED_EXPIRY
             SIGNED_RESOURCE, SIGNED_PERMISSION, SIGNED_IDENTIFIER,
             SIGNED_SIGNATURE name values.
     '''
@@ -82,8 +87,10 @@ class SharedAccessSignature(object):
 
     account_name:
         the storage account name used to generate shared access signature
-    account_key: the access key to genenerate share access signature
-    permission_set: the permission cache used to signed the request url.
+    account_key:
+        the access key to genenerate share access signature
+    permission_set:
+        the permission cache used to signed the request url.
     '''
 
     def __init__(self, account_name, account_key, permission_set=None):
@@ -98,9 +105,12 @@ class SharedAccessSignature(object):
         Generates the query string for path, resource type and shared access
         policy.
 
-        path: the resource
-        resource_type: could be blob or container
-        shared_access_policy: shared access policy
+        path:
+            the resource
+        resource_type:
+            could be blob or container
+        shared_access_policy:
+            shared access policy
         version:
             x-ms-version for storage service, or None to get a signed query
             string compatible with pre 2012-02-12 clients, where the version

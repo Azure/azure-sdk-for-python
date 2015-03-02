@@ -70,13 +70,17 @@ class BlobService(_StorageClient):
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base=BLOB_SERVICE_HOST_BASE, dev_host=DEV_BLOB_HOST):
         '''
-        account_name: your storage account name, required for all operations.
-        account_key: your storage account key, required for all operations.
-        protocol: Optional. Protocol. Defaults to https.
+        account_name:
+            your storage account name, required for all operations.
+        account_key:
+            your storage account key, required for all operations.
+        protocol:
+            Optional. Protocol. Defaults to https.
         host_base:
             Optional. Live host base url. Defaults to Azure url. Override this
             for on-premise.
-        dev_host: Optional. Dev host url. Defaults to localhost.
+        dev_host:
+            Optional. Dev host url. Defaults to localhost.
         '''
         self._BLOB_MAX_DATA_SIZE = 64 * 1024 * 1024
         self._BLOB_MAX_CHUNK_DATA_SIZE = 4 * 1024 * 1024
@@ -88,8 +92,10 @@ class BlobService(_StorageClient):
         '''
         Creates the url to access a blob.
 
-        container_name: Name of container.
-        blob_name: Name of blob.
+        container_name:
+            Name of container.
+        blob_name:
+            Name of blob.
         account_name:
             Name of the storage account. If not specified, uses the account
             specified when BlobService was initialized.
@@ -158,7 +164,8 @@ class BlobService(_StorageClient):
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
 
-        container_name: Name of container to create.
+        container_name:
+            Name of container to create.
         x_ms_meta_name_values:
             Optional. A dict with name_value pairs to associate with the
             container as metadata. Example:{'Category':'test'}
@@ -196,7 +203,8 @@ class BlobService(_StorageClient):
         Returns all user-defined metadata and system properties for the
         specified container.
 
-        container_name: Name of existing container.
+        container_name:
+            Name of existing container.
         x_ms_lease_id:
             If specified, get_container_properties only succeeds if the
             container's lease is active and matches this ID.
@@ -220,7 +228,8 @@ class BlobService(_StorageClient):
         Returns all user-defined metadata for the specified container. The
         metadata will be in returned dictionary['x-ms-meta-(name)'].
 
-        container_name: Name of existing container.
+        container_name:
+            Name of existing container.
         x_ms_lease_id:
             If specified, get_container_metadata only succeeds if the
             container's lease is active and matches this ID.
@@ -246,7 +255,8 @@ class BlobService(_StorageClient):
         Sets one or more user-defined name-value pairs for the specified
         container.
 
-        container_name: Name of existing container.
+        container_name:
+            Name of existing container.
         x_ms_meta_name_values:
             A dict containing name, value for metadata.
             Example: {'category':'test'}
@@ -274,7 +284,8 @@ class BlobService(_StorageClient):
         '''
         Gets the permissions for the specified container.
 
-        container_name: Name of existing container.
+        container_name:
+            Name of existing container.
         x_ms_lease_id:
             If specified, get_container_acl only succeeds if the
             container's lease is active and matches this ID.
@@ -300,8 +311,10 @@ class BlobService(_StorageClient):
         '''
         Sets the permissions for the specified container.
 
-        container_name: Name of existing container.
-        signed_identifiers: SignedIdentifers instance
+        container_name:
+            Name of existing container.
+        signed_identifiers:
+            SignedIdentifers instance
         x_ms_blob_public_access:
             Optional. Possible values include: container, blob
         x_ms_lease_id:
@@ -331,11 +344,13 @@ class BlobService(_StorageClient):
         '''
         Marks the specified container for deletion.
 
-        container_name: Name of container to delete.
+        container_name:
+            Name of container to delete.
         fail_not_exist:
             Specify whether to throw an exception when the container doesn't
             exist.
-        x_ms_lease_id: Required if the container has an active lease.
+        x_ms_lease_id:
+            Required if the container has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         request = HTTPRequest()
@@ -366,10 +381,12 @@ class BlobService(_StorageClient):
         Establishes and manages a lock on a container for delete operations.
         The lock duration can be 15 to 60 seconds, or can be infinite.
 
-        container_name: Name of existing container.
+        container_name:
+            Name of existing container.
         x_ms_lease_action:
             Required. Possible values: acquire|renew|release|break|change
-        x_ms_lease_id: Required if the container has an active lease.
+        x_ms_lease_id:
+            Required if the container has an active lease.
         x_ms_lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
             (-1) for a lease that never expires. A non-infinite lease can be
@@ -422,7 +439,8 @@ class BlobService(_StorageClient):
         '''
         Returns the list of blobs under the specified container.
 
-        container_name: Name of existing container.
+        container_name:
+            Name of existing container.
         prefix:
             Optional. Filters the results to return only blobs whose names
             begin with the specified prefix.
@@ -493,8 +511,10 @@ class BlobService(_StorageClient):
         set the default request version for all incoming requests that do not
         have a version specified.
 
-        storage_service_properties: a StorageServiceProperties object.
-        timeout: Optional. The timeout parameter is expressed in seconds.
+        storage_service_properties:
+            a StorageServiceProperties object.
+        timeout:
+            Optional. The timeout parameter is expressed in seconds.
         '''
         _validate_not_none('storage_service_properties',
                            storage_service_properties)
@@ -516,7 +536,8 @@ class BlobService(_StorageClient):
         Gets the properties of a storage account's Blob service, including
         Windows Azure Storage Analytics.
 
-        timeout: Optional. The timeout parameter is expressed in seconds.
+        timeout:
+            Optional. The timeout parameter is expressed in seconds.
         '''
         request = HTTPRequest()
         request.method = 'GET'
@@ -538,9 +559,12 @@ class BlobService(_StorageClient):
         Returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        x_ms_lease_id: Required if the blob has an active lease.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -568,15 +592,22 @@ class BlobService(_StorageClient):
         '''
         Sets system properties on the blob.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
         x_ms_blob_cache_control:
             Optional. Modifies the cache control string for the blob.
-        x_ms_blob_content_type: Optional. Sets the blob's content type.
-        x_ms_blob_content_md5: Optional. Sets the blob's MD5 hash.
-        x_ms_blob_content_encoding: Optional. Sets the blob's content encoding.
-        x_ms_blob_content_language: Optional. Sets the blob's content language.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_type:
+            Optional. Sets the blob's content type.
+        x_ms_blob_content_md5:
+            Optional. Sets the blob's MD5 hash.
+        x_ms_blob_content_encoding:
+            Optional. Sets the blob's content encoding.
+        x_ms_blob_content_language:
+            Optional. Sets the blob's content language.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -617,15 +648,18 @@ class BlobService(_StorageClient):
         functions that handle the creation and upload of large blobs with
         automatic chunking and progress notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of blob to create or update.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of blob to create or update.
         blob:
             For BlockBlob:
                 Content of blob as bytes (size < 64MB). For larger size, you
                 must call put_block and put_block_list to set content of blob.
             For PageBlob:
                 Use None and call put_page to set content of blob.
-        x_ms_blob_type: Required. Could be BlockBlob or PageBlob.
+        x_ms_blob_type:
+            Required. Could be BlockBlob or PageBlob.
         content_encoding:
             Optional. Specifies which content encodings have been applied to
             the blob. This value is returned to the client when the Get Blob
@@ -642,13 +676,20 @@ class BlobService(_StorageClient):
         cache_control:
             Optional. The Blob service stores this value but does not use or
             modify it.
-        x_ms_blob_content_type: Optional. Set the blob's content type.
-        x_ms_blob_content_encoding: Optional. Set the blob's content encoding.
-        x_ms_blob_content_language: Optional. Set the blob's content language.
-        x_ms_blob_content_md5: Optional. Set the blob's MD5 hash.
-        x_ms_blob_cache_control: Optional. Sets the blob's cache control.
-        x_ms_meta_name_values: A dict containing name, value for metadata.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_type:
+            Optional. Set the blob's content type.
+        x_ms_blob_content_encoding:
+            Optional. Set the blob's content encoding.
+        x_ms_blob_content_language:
+            Optional. Set the blob's content language.
+        x_ms_blob_content_md5:
+            Optional. Set the blob's MD5 hash.
+        x_ms_blob_cache_control:
+            Optional. Sets the blob's cache control.
+        x_ms_meta_name_values:
+            A dict containing name, value for metadata.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         x_ms_blob_content_length:
             Required for page blobs. This header specifies the maximum size
             for the page blob, up to 1 TB. The page blob size must be aligned
@@ -707,9 +748,12 @@ class BlobService(_StorageClient):
         Creates a new block blob from a file path, or updates the content of an
         existing block blob, with automatic chunking and progress notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of blob to create or update.
-        file_path: Path of the file to upload as the blob content.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of blob to create or update.
+        file_path:
+            Path of the file to upload as the blob content.
         content_encoding:
             Optional. Specifies which content encodings have been applied to
             the blob. This value is returned to the client when the Get Blob
@@ -726,13 +770,20 @@ class BlobService(_StorageClient):
         cache_control:
             Optional. The Blob service stores this value but does not use or
             modify it.
-        x_ms_blob_content_type: Optional. Set the blob's content type.
-        x_ms_blob_content_encoding: Optional. Set the blob's content encoding.
-        x_ms_blob_content_language: Optional. Set the blob's content language.
-        x_ms_blob_content_md5: Optional. Set the blob's MD5 hash.
-        x_ms_blob_cache_control: Optional. Sets the blob's cache control.
-        x_ms_meta_name_values: A dict containing name, value for metadata.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_type:
+            Optional. Set the blob's content type.
+        x_ms_blob_content_encoding:
+            Optional. Set the blob's content encoding.
+        x_ms_blob_content_language:
+            Optional. Set the blob's content language.
+        x_ms_blob_content_md5:
+            Optional. Set the blob's MD5 hash.
+        x_ms_blob_cache_control:
+            Optional. Sets the blob's cache control.
+        x_ms_meta_name_values:
+            A dict containing name, value for metadata.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         progress_callback:
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
@@ -777,9 +828,12 @@ class BlobService(_StorageClient):
         an existing block blob, with automatic chunking and progress
         notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of blob to create or update.
-        stream: Opened file/stream to upload as the blob content.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of blob to create or update.
+        stream:
+            Opened file/stream to upload as the blob content.
         count:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
@@ -799,13 +853,20 @@ class BlobService(_StorageClient):
         cache_control:
             Optional. The Blob service stores this value but does not use or
             modify it.
-        x_ms_blob_content_type: Optional. Set the blob's content type.
-        x_ms_blob_content_encoding: Optional. Set the blob's content encoding.
-        x_ms_blob_content_language: Optional. Set the blob's content language.
-        x_ms_blob_content_md5: Optional. Set the blob's MD5 hash.
-        x_ms_blob_cache_control: Optional. Sets the blob's cache control.
-        x_ms_meta_name_values: A dict containing name, value for metadata.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_type:
+            Optional. Set the blob's content type.
+        x_ms_blob_content_encoding:
+            Optional. Set the blob's content encoding.
+        x_ms_blob_content_language:
+            Optional. Set the blob's content language.
+        x_ms_blob_content_md5:
+            Optional. Set the blob's MD5 hash.
+        x_ms_blob_cache_control:
+            Optional. Sets the blob's cache control.
+        x_ms_meta_name_values:
+            A dict containing name, value for metadata.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         progress_callback:
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
@@ -908,10 +969,14 @@ class BlobService(_StorageClient):
         of an existing block blob, with automatic chunking and progress
         notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of blob to create or update.
-        blob: Content of blob as an array of bytes.
-        index: Start index in the array of bytes.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of blob to create or update.
+        blob:
+            Content of blob as an array of bytes.
+        index:
+            Start index in the array of bytes.
         count:
             Number of bytes to upload. Set to None or negative value to upload
             all bytes starting from index.
@@ -931,13 +996,20 @@ class BlobService(_StorageClient):
         cache_control:
             Optional. The Blob service stores this value but does not use or
             modify it.
-        x_ms_blob_content_type: Optional. Set the blob's content type.
-        x_ms_blob_content_encoding: Optional. Set the blob's content encoding.
-        x_ms_blob_content_language: Optional. Set the blob's content language.
-        x_ms_blob_content_md5: Optional. Set the blob's MD5 hash.
-        x_ms_blob_cache_control: Optional. Sets the blob's cache control.
-        x_ms_meta_name_values: A dict containing name, value for metadata.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_type:
+            Optional. Set the blob's content type.
+        x_ms_blob_content_encoding:
+            Optional. Set the blob's content encoding.
+        x_ms_blob_content_language:
+            Optional. Set the blob's content language.
+        x_ms_blob_content_md5:
+            Optional. Set the blob's MD5 hash.
+        x_ms_blob_cache_control:
+            Optional. Sets the blob's cache control.
+        x_ms_meta_name_values:
+            A dict containing name, value for metadata.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         progress_callback:
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
@@ -1014,10 +1086,14 @@ class BlobService(_StorageClient):
         Creates a new block blob from str/unicode, or updates the content of an
         existing block blob, with automatic chunking and progress notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of blob to create or update.
-        text: Text to upload to the blob.
-        text_encoding: Encoding to use to convert the text to bytes.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of blob to create or update.
+        text:
+            Text to upload to the blob.
+        text_encoding:
+            Encoding to use to convert the text to bytes.
         content_encoding:
             Optional. Specifies which content encodings have been applied to
             the blob. This value is returned to the client when the Get Blob
@@ -1034,13 +1110,20 @@ class BlobService(_StorageClient):
         cache_control:
             Optional. The Blob service stores this value but does not use or
             modify it.
-        x_ms_blob_content_type: Optional. Set the blob's content type.
-        x_ms_blob_content_encoding: Optional. Set the blob's content encoding.
-        x_ms_blob_content_language: Optional. Set the blob's content language.
-        x_ms_blob_content_md5: Optional. Set the blob's MD5 hash.
-        x_ms_blob_cache_control: Optional. Sets the blob's cache control.
-        x_ms_meta_name_values: A dict containing name, value for metadata.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_type:
+            Optional. Set the blob's content type.
+        x_ms_blob_content_encoding:
+            Optional. Set the blob's content encoding.
+        x_ms_blob_content_language:
+            Optional. Set the blob's content language.
+        x_ms_blob_content_md5:
+            Optional. Set the blob's MD5 hash.
+        x_ms_blob_cache_control:
+            Optional. Sets the blob's cache control.
+        x_ms_meta_name_values:
+            A dict containing name, value for metadata.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         progress_callback:
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
@@ -1088,9 +1171,12 @@ class BlobService(_StorageClient):
         Creates a new page blob from a file path, or updates the content of an
         existing page blob, with automatic chunking and progress notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of blob to create or update.
-        file_path: Path of the file to upload as the blob content.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of blob to create or update.
+        file_path:
+            Path of the file to upload as the blob content.
         content_encoding:
             Optional. Specifies which content encodings have been applied to
             the blob. This value is returned to the client when the Get Blob
@@ -1107,13 +1193,20 @@ class BlobService(_StorageClient):
         cache_control:
             Optional. The Blob service stores this value but does not use or
             modify it.
-        x_ms_blob_content_type: Optional. Set the blob's content type.
-        x_ms_blob_content_encoding: Optional. Set the blob's content encoding.
-        x_ms_blob_content_language: Optional. Set the blob's content language.
-        x_ms_blob_content_md5: Optional. Set the blob's MD5 hash.
-        x_ms_blob_cache_control: Optional. Sets the blob's cache control.
-        x_ms_meta_name_values: A dict containing name, value for metadata.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_type:
+            Optional. Set the blob's content type.
+        x_ms_blob_content_encoding:
+            Optional. Set the blob's content encoding.
+        x_ms_blob_content_language:
+            Optional. Set the blob's content language.
+        x_ms_blob_content_md5:
+            Optional. Set the blob's MD5 hash.
+        x_ms_blob_cache_control:
+            Optional. Sets the blob's cache control.
+        x_ms_meta_name_values:
+            A dict containing name, value for metadata.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         x_ms_blob_sequence_number:
             Optional. Set for page blobs only. The sequence number is a
             user-controlled value that you can use to track requests. The
@@ -1164,9 +1257,12 @@ class BlobService(_StorageClient):
         Creates a new page blob from a file/stream, or updates the content of an
         existing page blob, with automatic chunking and progress notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of blob to create or update.
-        stream: Opened file/stream to upload as the blob content.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of blob to create or update.
+        stream:
+            Opened file/stream to upload as the blob content.
         count:
             Number of bytes to read from the stream. This is required, a page
             blob cannot be created if the count is unknown.
@@ -1186,13 +1282,20 @@ class BlobService(_StorageClient):
         cache_control:
             Optional. The Blob service stores this value but does not use or
             modify it.
-        x_ms_blob_content_type: Optional. Set the blob's content type.
-        x_ms_blob_content_encoding: Optional. Set the blob's content encoding.
-        x_ms_blob_content_language: Optional. Set the blob's content language.
-        x_ms_blob_content_md5: Optional. Set the blob's MD5 hash.
-        x_ms_blob_cache_control: Optional. Sets the blob's cache control.
-        x_ms_meta_name_values: A dict containing name, value for metadata.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_type:
+            Optional. Set the blob's content type.
+        x_ms_blob_content_encoding:
+            Optional. Set the blob's content encoding.
+        x_ms_blob_content_language:
+            Optional. Set the blob's content language.
+        x_ms_blob_content_md5:
+            Optional. Set the blob's MD5 hash.
+        x_ms_blob_cache_control:
+            Optional. Sets the blob's cache control.
+        x_ms_meta_name_values:
+            A dict containing name, value for metadata.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         x_ms_blob_sequence_number:
             Optional. Set for page blobs only. The sequence number is a
             user-controlled value that you can use to track requests. The
@@ -1275,10 +1378,14 @@ class BlobService(_StorageClient):
         of an existing page blob, with automatic chunking and progress
         notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of blob to create or update.
-        blob: Content of blob as an array of bytes.
-        index: Start index in the array of bytes.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of blob to create or update.
+        blob:
+            Content of blob as an array of bytes.
+        index:
+            Start index in the array of bytes.
         count:
             Number of bytes to upload. Set to None or negative value to upload
             all bytes starting from index.
@@ -1298,13 +1405,20 @@ class BlobService(_StorageClient):
         cache_control:
             Optional. The Blob service stores this value but does not use or
             modify it.
-        x_ms_blob_content_type: Optional. Set the blob's content type.
-        x_ms_blob_content_encoding: Optional. Set the blob's content encoding.
-        x_ms_blob_content_language: Optional. Set the blob's content language.
-        x_ms_blob_content_md5: Optional. Set the blob's MD5 hash.
-        x_ms_blob_cache_control: Optional. Sets the blob's cache control.
-        x_ms_meta_name_values: A dict containing name, value for metadata.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_type:
+            Optional. Set the blob's content type.
+        x_ms_blob_content_encoding:
+            Optional. Set the blob's content encoding.
+        x_ms_blob_content_language:
+            Optional. Set the blob's content language.
+        x_ms_blob_content_md5:
+            Optional. Set the blob's MD5 hash.
+        x_ms_blob_cache_control:
+            Optional. Sets the blob's cache control.
+        x_ms_meta_name_values:
+            A dict containing name, value for metadata.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         x_ms_blob_sequence_number:
             Optional. Set for page blobs only. The sequence number is a
             user-controlled value that you can use to track requests. The
@@ -1357,14 +1471,17 @@ class BlobService(_StorageClient):
         See get_blob_to_* for high level functions that handle the download
         of large blobs with automatic chunking and progress notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
         snapshot:
             Optional. The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to retrieve.
         x_ms_range:
             Optional. Return only the bytes of the blob in the specified range.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         x_ms_range_get_content_md5:
             Optional. When this header is set to true and specified together
             with the Range header, the service returns the MD5 hash for the
@@ -1398,14 +1515,19 @@ class BlobService(_StorageClient):
         Downloads a blob to a file path, with automatic chunking and progress
         notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        file_path: Path of file to write to.
-        open_mode: Mode to use when opening the file.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
+        file_path:
+            Path of file to write to.
+        open_mode:
+            Mode to use when opening the file.
         snapshot:
             Optional. The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to retrieve.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         progress_callback:
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
@@ -1431,13 +1553,17 @@ class BlobService(_StorageClient):
         Downloads a blob to a file/stream, with automatic chunking and progress
         notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        stream: Opened file/stream to write to.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
+        stream:
+            Opened file/stream to write to.
         snapshot:
             Optional. The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to retrieve.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         progress_callback:
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
@@ -1491,12 +1617,15 @@ class BlobService(_StorageClient):
         Downloads a blob as an array of bytes, with automatic chunking and
         progress notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
         snapshot:
             Optional. The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to retrieve.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         progress_callback:
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
@@ -1522,13 +1651,17 @@ class BlobService(_StorageClient):
         Downloads a blob as unicode text, with automatic chunking and progress
         notifications.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        text_encoding: Encoding to use when decoding the blob data.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
+        text_encoding:
+            Encoding to use when decoding the blob data.
         snapshot:
             Optional. The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to retrieve.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         progress_callback:
             Callback for progress with signature function(current, total) where
             current is the number of bytes transfered so far, and total is the
@@ -1551,12 +1684,15 @@ class BlobService(_StorageClient):
         '''
         Returns all user-defined metadata for the specified blob or snapshot.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
         snapshot:
             Optional. The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to retrieve.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1581,10 +1717,14 @@ class BlobService(_StorageClient):
         Sets user-defined metadata for the specified blob as one or more
         name-value pairs.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        x_ms_meta_name_values: Dict containing name and value pairs.
-        x_ms_lease_id: Required if the blob has an active lease.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
+        x_ms_meta_name_values:
+            Dict containing name and value pairs.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1610,11 +1750,14 @@ class BlobService(_StorageClient):
         Establishes and manages a one-minute lock on a blob for write
         operations.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
         x_ms_lease_action:
             Required. Possible values: acquire|renew|release|break|change
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         x_ms_lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
             (-1) for a lease that never expires. A non-infinite lease can be
@@ -1668,16 +1811,23 @@ class BlobService(_StorageClient):
         '''
         Creates a read-only snapshot of a blob.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        x_ms_meta_name_values: Optional. Dict containing name and value pairs.
-        if_modified_since: Optional. Datetime string.
-        if_unmodified_since: DateTime string.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
+        x_ms_meta_name_values:
+            Optional. Dict containing name and value pairs.
+        if_modified_since:
+            Optional. Datetime string.
+        if_unmodified_since:
+            DateTime string.
         if_match:
             Optional. snapshot the blob only if its ETag value matches the
             value specified.
-        if_none_match: Optional. An ETag value
-        x_ms_lease_id: Required if the blob has an active lease.
+        if_none_match:
+            Optional. An ETag value
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1715,8 +1865,10 @@ class BlobService(_StorageClient):
         '''
         Copies a blob to a destination within the storage account.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
         x_ms_copy_source:
             URL up to 2 KB in length that specifies a blob. A source blob in
             the same account can be private, but a blob in another account
@@ -1724,7 +1876,8 @@ class BlobService(_StorageClient):
             a Shared Access Signature. Examples:
             https://myaccount.blob.core.windows.net/mycontainer/myblob
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
-        x_ms_meta_name_values: Optional. Dict containing name and value pairs.
+        x_ms_meta_name_values:
+            Optional. Dict containing name and value pairs.
         x_ms_source_if_modified_since:
             Optional. An ETag value. Specify this conditional header to copy
             the source blob only if its ETag matches the value specified.
@@ -1738,13 +1891,17 @@ class BlobService(_StorageClient):
         x_ms_source_if_none_match:
             Optional. An ETag value. Specify this conditional header to copy
             the source blob only if its ETag matches the value specified.
-        if_modified_since: Optional. Datetime string.
-        if_unmodified_since: DateTime string.
+        if_modified_since:
+            Optional. Datetime string.
+        if_unmodified_since:
+            DateTime string.
         if_match:
             Optional. Snapshot the blob only if its ETag value matches the
             value specified.
-        if_none_match: Optional. An ETag value
-        x_ms_lease_id: Required if the blob has an active lease.
+        if_none_match:
+            Optional. An ETag value
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         x_ms_source_lease_id:
             Optional. Specify this to perform the Copy Blob operation only if
             the lease ID given matches the active lease ID of the source blob.
@@ -1805,8 +1962,10 @@ class BlobService(_StorageClient):
          Aborts a pending copy_blob operation, and leaves a destination blob
          with zero length and full metadata.
 
-         container_name: Name of destination container.
-         blob_name: Name of destination blob.
+         container_name:
+             Name of destination container.
+         blob_name:
+             Name of destination blob.
          x_ms_copy_id:
             Copy identifier provided in the x-ms-copy-id of the original
             copy_blob operation.
@@ -1842,8 +2001,10 @@ class BlobService(_StorageClient):
         To mark a specific snapshot for deletion provide the date/time of the
         snapshot via the snapshot parameter.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
         snapshot:
             Optional. The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to delete.
@@ -1851,12 +2012,15 @@ class BlobService(_StorageClient):
             Optional. The timeout parameter is expressed in seconds.
             The Blob service returns an error when the timeout interval elapses
             while processing the request.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         x_ms_delete_snapshots:
             Required if the blob has associated snapshots. Specify one of the
             following two options:
-                include: Delete the base blob and all of its snapshots.
-                only: Delete only the blob's snapshots and not the blob itself.
+                include:
+                    Delete the base blob and all of its snapshots.
+                only:
+                    Delete only the blob's snapshots and not the blob itself.
             This header should be specified only for a request against the base
             blob resource. If this header is specified on a request to delete
             an individual snapshot, the Blob service returns status code 400
@@ -1889,9 +2053,12 @@ class BlobService(_StorageClient):
         '''
         Creates a new block to be committed as part of a blob.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        block: Content of the block.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
+        block:
+            Content of the block.
         blockid:
             Required. A value that identifies the block. The string must be
             less than or equal to 64 bytes in size.
@@ -1900,7 +2067,8 @@ class BlobService(_StorageClient):
             verify the integrity of the blob during transport. When this
             header is specified, the storage service checks the hash that has
             arrived with the one that was sent.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1936,9 +2104,12 @@ class BlobService(_StorageClient):
         successfully written to the server in a prior Put Block (REST API)
         operation.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        block_list: A str list containing the block ids.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
+        block_list:
+            A str list containing the block ids.
         content_md5:
             Optional. An MD5 hash of the block content. This hash is used to
             verify the integrity of the blob during transport. When this header
@@ -1960,8 +2131,10 @@ class BlobService(_StorageClient):
             Optional. An MD5 hash of the blob content. Note that this hash is
             not validated, as the hashes for the individual blocks were
             validated when each was uploaded.
-        x_ms_meta_name_values: Optional. Dict containing name and value pairs.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_meta_name_values:
+            Optional. Dict containing name and value pairs.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -1997,15 +2170,18 @@ class BlobService(_StorageClient):
         Retrieves the list of blocks that have been uploaded as part of a
         block blob.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
         snapshot:
             Optional. Datetime to determine the time to retrieve the blocks.
         blocklisttype:
             Specifies whether to return the list of committed blocks, the list
             of uncommitted blocks, or both lists together. Valid values are:
             committed, uncommitted, or all.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -2037,13 +2213,17 @@ class BlobService(_StorageClient):
         '''
         Writes a range of pages to a page blob.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
-        page: Content of the page.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
+        page:
+            Content of the page.
         x_ms_range:
             Required. Specifies the range of bytes to be written as a page.
             Both the start and end of the range must be specified. Must be in
-            format: bytes=startByte-endByte. Given that pages must be aligned
+            format:
+                bytes=startByte-endByte. Given that pages must be aligned
             with 512-byte boundaries, the start offset must be a modulus of
             512 and the end offset must be a modulus of 512-1. Examples of
             valid byte ranges are 0-511, 512-1023, etc.
@@ -2059,7 +2239,8 @@ class BlobService(_StorageClient):
                     Content-Length header to zero, and the Range header to a
                     value that indicates the range to clear, up to maximum
                     blob size.
-        timeout: the timeout parameter is expressed in seconds.
+        timeout:
+            the timeout parameter is expressed in seconds.
         content_md5:
             Optional. An MD5 hash of the page content. This hash is used to
             verify the integrity of the page during transport. When this header
@@ -2067,7 +2248,8 @@ class BlobService(_StorageClient):
             that has arrived with the header value that was sent. If the two
             hashes do not match, the operation will fail with error code 400
             (Bad Request).
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         x_ms_if_sequence_number_lte:
             Optional. If the blob's sequence number is less than or equal to
             the specified value, the request proceeds; otherwise it fails.
@@ -2136,8 +2318,10 @@ class BlobService(_StorageClient):
         '''
         Retrieves the page ranges for a blob.
 
-        container_name: Name of existing container.
-        blob_name: Name of existing blob.
+        container_name:
+            Name of existing container.
+        blob_name:
+            Name of existing blob.
         snapshot:
             Optional. The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to retrieve information
@@ -2148,11 +2332,13 @@ class BlobService(_StorageClient):
         x_ms_range:
             Optional. Specifies the range of bytes to be written as a page.
             Both the start and end of the range must be specified. Must be in
-            format: bytes=startByte-endByte. Given that pages must be aligned
+            format:
+                bytes=startByte-endByte. Given that pages must be aligned
             with 512-byte boundaries, the start offset must be a modulus of
             512 and the end offset must be a modulus of 512-1. Examples of
             valid byte ranges are 0-511, 512-1023, etc.
-        x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_lease_id:
+            Required if the blob has an active lease.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
