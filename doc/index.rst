@@ -132,3 +132,12 @@ Indices and tables
 
 .. toctree::
   :hidden:
+
+.. toctree::
+  :hidden:
+  :glob:
+
+  servicebus
+  servicemanagement
+  storage
+  ref/*  
