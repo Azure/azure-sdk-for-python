@@ -568,7 +568,8 @@ class BlobService(_StorageClient):
                             x_ms_blob_content_md5=None,
                             x_ms_blob_content_encoding=None,
                             x_ms_blob_content_language=None,
-                            x_ms_lease_id=None):
+                            x_ms_lease_id=None,
+                            x_ms_blob_content_disposition=None):
         '''
         Sets system properties on the blob.
 
@@ -581,6 +582,14 @@ class BlobService(_StorageClient):
         x_ms_blob_content_encoding: Optional. Sets the blob's content encoding.
         x_ms_blob_content_language: Optional. Sets the blob's content language.
         x_ms_lease_id: Required if the blob has an active lease.
+        x_ms_blob_content_disposition:
+            Optional. Sets the blob's Content-Disposition header.
+            The Content-Disposition response header field conveys additional
+            information about how to process the response payload, and also can
+            be used to attach additional metadata. For example, if set to
+            attachment, it indicates that the user-agent should not display the
+            response, but instead show a Save As dialog with a filename other
+            than the blob name specified.
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
@@ -592,6 +601,8 @@ class BlobService(_StorageClient):
         request.headers = [
             ('x-ms-blob-cache-control', _str_or_none(x_ms_blob_cache_control)),
             ('x-ms-blob-content-type', _str_or_none(x_ms_blob_content_type)),
+            ('x-ms-blob-content-disposition',
+             _str_or_none(x_ms_blob_content_disposition)),
             ('x-ms-blob-content-md5', _str_or_none(x_ms_blob_content_md5)),
             ('x-ms-blob-content-encoding',
              _str_or_none(x_ms_blob_content_encoding)),

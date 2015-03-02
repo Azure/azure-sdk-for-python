@@ -1762,12 +1762,17 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         resp = self.bs.set_blob_properties(
-            self.container_name, 'blob1', x_ms_blob_content_language='spanish')
+            self.container_name,
+            'blob1',
+            x_ms_blob_content_language='spanish',
+            x_ms_blob_content_disposition='inline',
+        )
 
         # Assert
         self.assertIsNone(resp)
         props = self.bs.get_blob_properties(self.container_name, 'blob1')
         self.assertEqual(props['content-language'], 'spanish')
+        self.assertEqual(props['content-disposition'], 'inline')
 
     def test_set_blob_properties_with_non_existing_container(self):
         # Arrange
