@@ -76,9 +76,12 @@ class QueueServiceTest(AzureTestCase):
         self.assertIsNotNone(properties.logging)
         self.assertIsNotNone(properties.logging.retention_policy)
         self.assertIsNotNone(properties.logging.version)
-        self.assertIsNotNone(properties.metrics)
-        self.assertIsNotNone(properties.metrics.retention_policy)
-        self.assertIsNotNone(properties.metrics.version)
+        self.assertIsNotNone(properties.hour_metrics)
+        self.assertIsNotNone(properties.hour_metrics.retention_policy)
+        self.assertIsNotNone(properties.hour_metrics.version)
+        self.assertIsNotNone(properties.minute_metrics)
+        self.assertIsNotNone(properties.minute_metrics.retention_policy)
+        self.assertIsNotNone(properties.minute_metrics.version)
 
     def test_set_service_properties(self):
         # This api doesn't apply to local storage
@@ -96,9 +99,12 @@ class QueueServiceTest(AzureTestCase):
         self.assertIsNotNone(properties.logging)
         self.assertIsNotNone(properties.logging.retention_policy)
         self.assertIsNotNone(properties.logging.version)
-        self.assertIsNotNone(properties.metrics)
-        self.assertIsNotNone(properties.metrics.retention_policy)
-        self.assertIsNotNone(properties.metrics.version)
+        self.assertIsNotNone(properties.hour_metrics)
+        self.assertIsNotNone(properties.hour_metrics.retention_policy)
+        self.assertIsNotNone(properties.hour_metrics.version)
+        self.assertIsNotNone(properties.minute_metrics)
+        self.assertIsNotNone(properties.minute_metrics.retention_policy)
+        self.assertIsNotNone(properties.minute_metrics.version)
         self.assertTrue(properties.logging.read)
 
     def test_create_queue(self):
@@ -194,7 +200,6 @@ class QueueServiceTest(AzureTestCase):
         self.assertIsNotNone(queues_1[0])
         self.assertIsNone(queues_1[0].metadata)
         self.assertNotEqual('', queues_1[0].name)
-        self.assertNotEqual('', queues_1[0].url)
         # Asserts
         self.assertIsNotNone(queues_2)
         self.assertTrue(len(self.test_queues) - 3 <= len(queues_2))
@@ -203,7 +208,6 @@ class QueueServiceTest(AzureTestCase):
         self.assertIsNotNone(queues_2[0])
         self.assertIsNotNone(queues_2[0].metadata)
         self.assertNotEqual('', queues_2[0].name)
-        self.assertNotEqual('', queues_2[0].url)
 
     def test_set_queue_metadata(self):
         # Action
