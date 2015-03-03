@@ -33,6 +33,7 @@ class HTTPResponse(object):
 
     """Represents a response from an HTTP request.  An HTTPResponse has the
     following attributes:
+    
     status:
         the status code of the response
     message:
