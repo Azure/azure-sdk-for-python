@@ -1,3 +1,2 @@
-futures
 sphinx
 cloud_sptheme
