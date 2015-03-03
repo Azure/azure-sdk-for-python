@@ -88,10 +88,14 @@ class _ServiceManagementClient(object):
         '''
         Sets the proxy server host and port for the HTTP CONNECT Tunnelling.
 
-        host: Address of the proxy. Ex: '192.168.0.100'
-        port: Port of the proxy. Ex: 6000
-        user: User for proxy authorization.
-        password: Password for proxy authorization.
+        host:
+            Address of the proxy. Ex: '192.168.0.100'
+        port:
+            Port of the proxy. Ex: 6000
+        user:
+            User for proxy authorization.
+        password:
+            Password for proxy authorization.
         '''
         self._httpclient.set_proxy(host, port, user, password)
 

@@ -730,7 +730,8 @@ def _convert_table_to_xml(table_name):
     the same as entity and the only difference is that table has only one
     property 'TableName', so we just call _convert_entity_to_xml.
 
-    table_name: the name of the table
+    table_name:
+        the name of the table
     '''
     return _convert_entity_to_xml({'TableName': table_name})
 

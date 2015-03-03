@@ -1055,11 +1055,13 @@ class ConfigurationSetInputEndpoint(WindowsAzureData):
     '''
     Initializes a network configuration input endpoint.
 
-    name: Specifies the name for the external endpoint.
+    name:
+        Specifies the name for the external endpoint.
     protocol:
         Specifies the protocol to use to inspect the virtual machine
         availability status. Possible values are: HTTP, TCP.
-    port: Specifies the external port to use for the endpoint.
+    port:
+        Specifies the external port to use for the endpoint.
     local_port:
         Specifies the internal port on which the virtual machine is listening
         to serve the endpoint.
@@ -2329,9 +2331,12 @@ class _MinidomXmlToObject(object):
 
 def _data_to_xml(data):
     '''Creates an xml fragment from the specified data.
-        data: Array of tuples, where first: xml element name
-                                    second: xml element text
-                                    third: conversion function
+        data:
+            Array of tuples, where first: xml element name
+                                    second:
+                                        xml element text
+                                    third:
+                                        conversion function
     '''
     xml = ''
     for element in data:

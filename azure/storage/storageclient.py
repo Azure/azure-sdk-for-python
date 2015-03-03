@@ -43,13 +43,17 @@ class _StorageClient(object):
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base='', dev_host=''):
         '''
-        account_name: your storage account name, required for all operations.
-        account_key: your storage account key, required for all operations.
-        protocol: Optional. Protocol. Defaults to http.
+        account_name:
+            your storage account name, required for all operations.
+        account_key:
+            your storage account key, required for all operations.
+        protocol:
+            Optional. Protocol. Defaults to http.
         host_base:
             Optional. Live host base url. Defaults to Azure url. Override this
             for on-premise.
-        dev_host: Optional. Dev host url. Defaults to localhost.
+        dev_host:
+            Optional. Dev host url. Defaults to localhost.
         '''
         self.account_name = account_name
         self.account_key = account_key
@@ -115,10 +119,14 @@ class _StorageClient(object):
         '''
         Sets the proxy server host and port for the HTTP CONNECT Tunnelling.
 
-        host: Address of the proxy. Ex: '192.168.0.100'
-        port: Port of the proxy. Ex: 6000
-        user: User for proxy authorization.
-        password: Password for proxy authorization.
+        host:
+            Address of the proxy. Ex: '192.168.0.100'
+        port:
+            Port of the proxy. Ex: 6000
+        user:
+            User for proxy authorization.
+        password:
+            Password for proxy authorization.
         '''
         self._httpclient.set_proxy(host, port, user, password)
 

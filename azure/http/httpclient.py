@@ -48,11 +48,13 @@ class _HTTPClient(object):
     def __init__(self, service_instance, cert_file=None, account_name=None,
                  account_key=None, protocol='https', request_session=None):
         '''
-        service_instance: service client instance.
+        service_instance:
+            service client instance.
         cert_file:
             certificate file name/location. This is only used in hosted
             service management.
-        account_name: the storage account.
+        account_name:
+            the storage account.
         account_key:
             the storage account access key.
         request_session:
@@ -103,10 +105,14 @@ class _HTTPClient(object):
         '''
         Sets the proxy server host and port for the HTTP CONNECT Tunnelling.
 
-        host: Address of the proxy. Ex: '192.168.0.100'
-        port: Port of the proxy. Ex: 6000
-        user: User for proxy authorization.
-        password: Password for proxy authorization.
+        host:
+            Address of the proxy. Ex: '192.168.0.100'
+        port:
+            Port of the proxy. Ex: 6000
+        user:
+            User for proxy authorization.
+        password:
+            Password for proxy authorization.
         '''
         self.proxy_host = host
         self.proxy_port = port

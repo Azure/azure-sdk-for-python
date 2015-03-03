@@ -277,8 +277,10 @@ class Message(WindowsAzureData):
 def _create_message(response, service_instance):
     ''' Create message from response.
 
-    response: response from service bus cloud server.
-    service_instance: the service bus client.
+    response:
+        response from service bus cloud server.
+    service_instance:
+        the service bus client.
     '''
     respbody = response.body
     custom_properties = {}
