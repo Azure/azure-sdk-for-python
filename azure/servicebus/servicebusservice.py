@@ -63,6 +63,7 @@ from azure.servicebus import (
 
 
 class ServiceBusService(object):
+
     def __init__(self, service_namespace=None, account_key=None, issuer=None,
                  x_ms_version='2011-06-01', host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None,

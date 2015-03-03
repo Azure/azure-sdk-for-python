@@ -31,7 +31,6 @@ from azure.servicemanagement.servicemanagementclient import (
     )
 
 class SqlDatabaseManagementService(_ServiceManagementClient):
-
     ''' Note that this class is a preliminary work on SQL Database
         management. Since it lack a lot a features, final version
         can be slightly different from the current one.

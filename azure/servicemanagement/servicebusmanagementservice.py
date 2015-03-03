@@ -37,6 +37,7 @@ from functools import partial
 X_MS_VERSION = '2012-03-01'
 
 class ServiceBusManagementService(_ServiceManagementClient):
+
     def __init__(self, subscription_id=None, cert_file=None,
                  host=MANAGEMENT_HOST, request_session=None):
         '''

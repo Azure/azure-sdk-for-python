@@ -122,6 +122,7 @@ class VARIANT(Structure):
     '''
 
     class _tagData(Union):
+
         class _tagRecord(Structure):
             _fields_ = [('pvoid', c_void_p), ('precord', c_void_p)]
 

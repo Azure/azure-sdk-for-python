@@ -24,7 +24,6 @@ from azure.servicemanagement.servicemanagementclient import (
     )
 
 class SchedulerManagementService(_ServiceManagementClient):
-
     ''' Note that this class is a preliminary work on Scheduler
         management. Since it lack a lot a features, final version
         can be slightly different from the current one.
@@ -44,7 +43,6 @@ class SchedulerManagementService(_ServiceManagementClient):
             If a request_session is specified, then this is unused.
         host:
             Live ServiceClient URL. Defaults to Azure public cloud.
-
         request_session:
             Session object to use for http requests. If this is specified, it
             replaces the default use of httplib or winhttp. Also, the cert_file
