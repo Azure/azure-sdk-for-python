@@ -59,7 +59,7 @@ Installation
 Download Package
 ----------------
 
-To install via the Python Package Index (PyPI), type
+To install via the Python Package Index (PyPI), type:
 
 .. code:: shell
 
