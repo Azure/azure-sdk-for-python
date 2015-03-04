@@ -76,28 +76,7 @@ To get the source code of the SDK via **git** type:
     git clone https://github.com/Azure/azure-sdk-for-python.git
     cd azure-sdk-for-python
     python setup.py install
-
-
-Getting Started
-===============
-You can use these packages against the cloud Microsoft Azure Services,
-or against the local Storage Emulator (with the exception of Service Bus
-features).
-
-1. To use the cloud services, you need to first create an account with
-   Microsoft Azure. 
-   - To use the storage services, you need to set the
-   AZURE\_STORAGE\_ACCOUNT and the AZURE\_STORAGE\_ACCESS\_KEY
-   environment variables to the storage account name and primary access
-   key you obtain from the Azure Portal. 
-   - To use Service Bus, you need to
-   set the AZURE\_SERVICEBUS\_NAMESPACE and the
-   AZURE\_SERVICEBUS\_ACCESS\_KEY environment variables to the service
-   bus namespace and the default key you obtain from the Azure Portal.
-2. To use the Storage Emulator, make sure the latest version of the
-   Microsoft Azure SDK is installed on the machine, and set the EMULATED
-   environment variable to any value ("true", "1", etc.)
-
+    
 Usage
 =====
 For detailed documentation, please view our `documentation on ReadTheDocs <http://azure-sdk-for-python.readthedocs.org>`__
