@@ -1,11 +1,11 @@
 Microsoft Azure SDK for Python
 ==============================
 
+.. image:: https://pypip.in/d/azure/badge.svg
+        :target: https://pypi.python.org/pypi/azure/
+
 This project provides a set of Python packages that make it easy to
-access the Microsoft Azure storage and queue services. For documentation
-on how to host Python applications on Microsoft Azure, please see the
-`Microsoft Azure <http://azure.microsoft.com/en-us/develop/python/>`__
-Python Developer Center.
+access the Microsoft Azure components such as ServiceManagement, Storage, and ServiceBus.
 
 The SDK supports Python 2.7, 3.3, 3.4.
 
@@ -53,38 +53,44 @@ Features
       instances
    -  query and set the status of the current role
 
-Getting Started
-===============
+Installation
+============
+
+Download Package
+----------------
+
+To install via the Python Package Index (PyPI), type
+
+.. code:: shell
+
+    pip.exe install azure
+
 
 Download Source Code
 --------------------
 
-To get the source code of the SDK via **git** just type:
+To get the source code of the SDK via **git** type:
 
 .. code:: shell
 
     git clone https://github.com/Azure/azure-sdk-for-python.git
     cd azure-sdk-for-python
+    python setup.py install
 
-Download Package
-----------------
 
-Alternatively, to get the source code via the Python Package Index
-(PyPI), type
-
-.. code:: shell
-
-    %SystemDrive%\Python27\Scripts\pip.exe install azure
-
+Getting Started
+===============
 You can use these packages against the cloud Microsoft Azure Services,
 or against the local Storage Emulator (with the exception of Service Bus
 features).
 
 1. To use the cloud services, you need to first create an account with
-   Microsoft Azure. To use the storage services, you need to set the
+   Microsoft Azure. 
+   - To use the storage services, you need to set the
    AZURE\_STORAGE\_ACCOUNT and the AZURE\_STORAGE\_ACCESS\_KEY
    environment variables to the storage account name and primary access
-   key you obtain from the Azure Portal. To use Service Bus, you need to
+   key you obtain from the Azure Portal. 
+   - To use Service Bus, you need to
    set the AZURE\_SERVICEBUS\_NAMESPACE and the
    AZURE\_SERVICEBUS\_ACCESS\_KEY environment variables to the service
    bus namespace and the default key you obtain from the Azure Portal.
@@ -94,25 +100,21 @@ features).
 
 Usage
 =====
-For detailed usage information please view our documentation at `azure-sdk-for-python.ReadTheDocs.org <http://azure-sdk-for-python.readthedocs.org>`__
+For detailed documentation, please view our `documentation on ReadTheDocs <http://azure-sdk-for-python.readthedocs.org>`__
 
-\*\* For more examples please see the `Microsoft Azure Python Developer
-Center <http://azure.microsoft.com/en-us/develop/python/>`__ \*\*
+For further examples please visit the `Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__
 
 Need Help?
 ==========
 
-Be sure to check out the Microsoft Azure `Developer Forums on Stack
-Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__ if you have
+Be sure to check out the Microsoft Azure `Developer Forums on Stack Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__ if you have
 trouble with the provided code.
 
 Contribute Code or Provide Feedback
 ===================================
 
 If you would like to become an active contributor to this project please
-follow the instructions provided in `Microsoft Azure Projects
-Contribution
-Guidelines <http://windowsazure.github.com/guidelines.html>`__.
+follow the instructions provided in `Microsoft Azure Projects Contribution Guidelines <http://windowsazure.github.com/guidelines.html>`__.
 
 If you encounter any bugs with the library please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
@@ -121,5 +123,4 @@ section of the project.
 Learn More
 ==========
 
-`Microsoft Azure Python Developer
-Center <http://azure.microsoft.com/en-us/develop/python/>`__
+`Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__
