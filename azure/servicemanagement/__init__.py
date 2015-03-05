@@ -36,6 +36,7 @@ from azure import (
     _validate_not_none,
     _decode_base64_to_bytes,
     _set_continuation_from_response_headers,
+    _get_readable_id,
     METADATA_NS,
     )
 import azure
@@ -831,6 +832,61 @@ class Subscription(WindowsAzureData):
         self.max_dns_servers = 0
         self.aad_tenant_id = u''
         self.created_time = u''
+
+
+class SubscriptionOperationCollection(WindowsAzureData):
+
+    def __init__(self):
+        self.subscription_operations = SubscriptionOperations()
+        self.continuation_token = u''
+
+
+class SubscriptionOperations(WindowsAzureData):
+
+    def __init__(self):
+        self.subscription_operations = _list_of(SubscriptionOperation)
+
+    def __iter__(self):
+        return iter(self.subscription_operations)
+
+    def __len__(self):
+        return len(self.subscription_operations)
+
+    def __getitem__(self, index):
+        return self.subscription_operations[index]
+
+
+class SubscriptionOperation(WindowsAzureData):
+
+    def __init__(self):
+        self.operation_id = u''
+        self.operation_object_id = u''
+        self.operation_name = u''
+        self.operation_parameters = _dict_of(
+            'OperationParameter', 'a:Name', 'a:Value')
+        self.operation_caller = OperationCaller()
+        self.operation_status = SubscriptionOperationStatus()
+        self.operation_started_time = u''
+        self.operation_completed_time = u''
+        self.operation_kind = u''
+
+
+class SubscriptionOperationStatus(WindowsAzureData):
+    _xml_name = 'OperationStatus'
+
+    def __init__(self):
+        self.id = u''
+        self.status = u''
+        self.http_status_code = 0
+
+
+class OperationCaller(WindowsAzureData):
+
+    def __init__(self):
+        self.used_service_management_api = False
+        self.user_email_address = u''
+        self.subscription_certificate_thumbprint = u''
+        self.client_ip = u''
 
 
 class AvailabilityResponse(WindowsAzureData):
@@ -2195,7 +2251,8 @@ class _MinidomXmlToObject(object):
                 values = _MinidomXmlToObject.get_child_nodes(pair, value_xml_element_name)
                 if keys and values:
                     key = keys[0].firstChild.nodeValue
-                    value = values[0].firstChild.nodeValue
+                    valueContentNode = values[0].firstChild
+                    value = valueContentNode.nodeValue if valueContentNode else None
                     return_obj[key] = value
 
         return return_obj

@@ -279,6 +279,10 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'aad_tenant_id': 'AADTenantID',
     'start_ip_address': 'StartIPAddress',
     'end_ip_address': 'EndIPAddress',
+    'operation_id': 'OperationId',
+    'operation_object_id': 'OperationObjectId',
+    'client_ip': 'ClientIP',
+    'id': 'ID'
     }
 
 

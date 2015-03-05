@@ -17,6 +17,7 @@ import base64
 import os
 import time
 import unittest
+from datetime import datetime, timedelta
 
 import azure.http.httpclient
 
@@ -1357,6 +1358,20 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertTrue(result.max_storage_accounts > 0)
         self.assertTrue(result.max_virtual_network_sites > 0)
         self.assertGreater(len(result.aad_tenant_id), 0)
+
+    #--Test cases for retrieving subscription operations --------------------
+    def test_list_subscription_operations(self):
+        # Arrange
+
+        # Act
+        now = datetime.now()
+        one_month_before = now - timedelta(30)
+        result = self.sms.list_subscription_operations(one_month_before.strftime("%Y-%m-%d"), now.strftime("%Y-%m-%d"))
+        # Assert
+        self.assertIsNotNone(result)
+        for operation in result.subscription_operations:
+            self.assertTrue(operation.operation_id)
+
 
     #--Test cases for reserved ip addresses  -----------------------------
     def test_create_reserved_ip_address(self):
