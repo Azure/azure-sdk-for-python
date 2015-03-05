@@ -1,3 +1,34 @@
+2015-03-XX Version 0.10.0
+ * Performance improvements in xml deserialization of storage and service bus
+   Table storage query_entities is ~25X faster for the maximum of 1000 entities
+ * Ability to upload and download blobs using multiple connections, along with
+   retries when a chunk upload/download failure occurs
+   Controlled via the max_connections, max_retries, retry_wait parameters
+ * Use get_certificate_from_publish_settings to get a .pem certificate from
+   your azure publish settings file
+ * Ability to adjust the global http timeout
+ * Service bus event hub support (create/update/delete hubs + send events)
+ * Documentation for API Reference is now available at 
+   http://azure-sdk-for-python.readthedocs.org/en/documentation/index.html
+
+ * Fixes for bugs:
+   #237 Ability to use multiple connections to upload blob chunks in parallel
+   #254 Improve performance of table storage (and more?)
+   #258 Support authenticating with azureProfile like in CLI tools
+   #259 Unicode error is raised instead of actual error
+   #263 Change description name
+   #271 Update current_name so that multiple parameters with the same name...
+   #270 Documentation for capture_vm_image is incorrect
+   #273 Unicode error with utf-8 encoding value
+   #276 Service Mgmt - Reserved IP create/delete are async
+   #280 add support for setting IdleTimeoutInMinutes on load balanced endpoint
+   #288 InvalidHeaderValue on BlobService example
+   #294 Upload of large files is too slow
+   #304 Unable to upload large size files to Azure Page Blob
+
+Thank you to lmazuel, rhaps0dy, timfpark, gaellbn, moutai, edevil, rjschwei
+for their contributions.
+
 2014-11-21 Version 0.9.0
 
 IMPORTANT CHANGE IN BEHAVIOR THAT AFFECTS TABLE STORAGE USERS:
