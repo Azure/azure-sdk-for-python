@@ -1371,6 +1371,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertIsNotNone(result)
         for operation in result.subscription_operations:
             self.assertTrue(operation.operation_id)
+            self.assertTrue(operation.operation_status.status_id)
 
 
     #--Test cases for reserved ip addresses  -----------------------------

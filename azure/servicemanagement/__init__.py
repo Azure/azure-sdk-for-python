@@ -875,7 +875,7 @@ class SubscriptionOperationStatus(WindowsAzureData):
     _xml_name = 'OperationStatus'
 
     def __init__(self):
-        self.id = u''
+        self.status_id = u''
         self.status = u''
         self.http_status_code = 0
 
