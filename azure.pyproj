@@ -103,7 +103,8 @@
     <Content Include=".gitignore" />
     <Content Include="ChangeLog.txt" />
     <Content Include="LICENSE.txt" />
-    <Content Include="README.md" />
+    <Content Include="README.rst" />
+    <Content Include="requirements.txt" />
     <Content Include="tests\azurecredentials_sample.json" />
     <Content Include="tests\coverage.bat" />
     <Content Include="tests\coverage_x64.bat" />
