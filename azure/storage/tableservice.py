@@ -15,6 +15,7 @@
 from azure import (
     WindowsAzureError,
     TABLE_SERVICE_HOST_BASE,
+    DEFAULT_HTTP_TIMEOUT,
     DEV_TABLE_HOST,
     _convert_class_to_xml,
     _dont_fail_not_exist,
@@ -51,7 +52,8 @@ class TableService(_StorageClient):
     '''
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
-                 host_base=TABLE_SERVICE_HOST_BASE, dev_host=DEV_TABLE_HOST):
+                 host_base=TABLE_SERVICE_HOST_BASE, dev_host=DEV_TABLE_HOST,
+                 timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -64,16 +66,19 @@ class TableService(_StorageClient):
             for on-premise.
         dev_host:
             Optional. Dev host url. Defaults to localhost.
+        timeout:
+            Optional. Timeout for the http request, in seconds.
         '''
         super(TableService, self).__init__(
-            account_name, account_key, protocol, host_base, dev_host)
+            account_name, account_key, protocol, host_base, dev_host, timeout)
 
     def begin_batch(self):
         if self._batchclient is None:
             self._batchclient = _BatchClient(
                 service_instance=self,
                 account_key=self.account_key,
-                account_name=self.account_name)
+                account_name=self.account_name,
+                timeout=self._httpclient.timeout)
         return self._batchclient.begin_batch()
 
     def commit_batch(self):

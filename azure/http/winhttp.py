@@ -271,12 +271,16 @@ class _WinHttpRequest(c_void_p):
         url:
             the url to connect
         '''
-        _WinHttpRequest._SetTimeouts(self, 0, 65000, 65000, 65000)
-
         flag = VARIANT.create_bool_false()
         _method = BSTR(method)
         _url = BSTR(url)
         _WinHttpRequest._Open(self, _method, _url, flag)
+
+    def set_timeout(self, timeout_in_seconds):
+        ''' Sets up the timeout for the request. '''
+        timeout_in_ms = int(timeout_in_seconds * 1000)
+        _WinHttpRequest._SetTimeouts(
+            self, 0, timeout_in_ms, timeout_in_ms, timeout_in_ms)
 
     def set_request_header(self, name, value):
         ''' Sets the request header. '''
@@ -387,12 +391,13 @@ class _HTTPConnection(object):
 
     ''' Class corresponding to httplib HTTPConnection class. '''
 
-    def __init__(self, host, cert_file=None, key_file=None, protocol='http'):
+    def __init__(self, host, cert_file, protocol, timeout):
         ''' initialize the IWinHttpWebRequest Com Object.'''
         self.host = unicode(host)
         self.cert_file = cert_file
         self._httprequest = _WinHttpRequest()
         self.protocol = protocol
+        self.timeout = timeout
         clsid = GUID('{2087C2F4-2CEF-4953-A8AB-66779B670495}')
         iid = GUID('{016FE2EC-B2C8-45F8-B23B-39E53A75396B}')
         _CoInitialize(None)
@@ -415,6 +420,7 @@ class _HTTPConnection(object):
 
         protocol = unicode(self.protocol + '://')
         url = protocol + self.host + unicode(uri)
+        self._httprequest.set_timeout(self.timeout)
         self._httprequest.open(unicode(method), url)
 
         # sets certificate for the connection if cert_file is set.

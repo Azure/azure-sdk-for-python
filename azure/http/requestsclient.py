@@ -38,7 +38,7 @@ class _Response(object):
 
 class _RequestsConnection(object):
 
-    def __init__(self, host, protocol, session):
+    def __init__(self, host, protocol, session, timeout):
         self.host = host
         self.protocol = protocol
         self.session = session
@@ -47,6 +47,7 @@ class _RequestsConnection(object):
         self.body = None
         self.response = None
         self.uri = None
+        self.timeout = timeout
 
     def close(self):
         pass
@@ -68,7 +69,7 @@ class _RequestsConnection(object):
         pass
 
     def send(self, request_body):
-        self.response = self.session.request(self.method, self.uri, data=request_body, headers=self.headers)
+        self.response = self.session.request(self.method, self.uri, data=request_body, headers=self.headers, timeout=self.timeout)
 
     def getresponse(self):
         return _Response(self.response)
