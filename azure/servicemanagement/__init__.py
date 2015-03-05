@@ -30,6 +30,7 @@ from azure import (
     _scalar_list_of,
     _str,
     _strtype,
+    _unicode_type,
     _xml_attribute,
     _get_serialization_name,
     _validate_not_none,
@@ -76,7 +77,7 @@ class StorageService(WindowsAzureData):
         self.storage_service_keys = StorageServiceKeys()
         self.extended_properties = _dict_of(
             'ExtendedProperty', 'Name', 'Value')
-        self.capabilities = _scalar_list_of(str, 'Capability')
+        self.capabilities = _scalar_list_of(_unicode_type, 'Capability')
 
 
 class StorageAccountProperties(WindowsAzureData):
@@ -87,7 +88,7 @@ class StorageAccountProperties(WindowsAzureData):
         self.location = u''
         self.label = _Base64String()
         self.status = u''
-        self.endpoints = _scalar_list_of(str, 'Endpoint')
+        self.endpoints = _scalar_list_of(_unicode_type, 'Endpoint')
         self.geo_replication_enabled = False
         self.geo_primary_region = u''
         self.status_of_primary = u''
@@ -125,15 +126,15 @@ class Location(WindowsAzureData):
     def __init__(self):
         self.name = u''
         self.display_name = u''
-        self.available_services = _scalar_list_of(str, 'AvailableService')
+        self.available_services = _scalar_list_of(_unicode_type, 'AvailableService')
         self.compute_capabilities = ComputeCapabilities()
 
 
 class ComputeCapabilities(WindowsAzureData):
 
     def __init__(self):
-        self.web_worker_role_sizes = _scalar_list_of(str, 'RoleSize')
-        self.virtual_machines_role_sizes = _scalar_list_of(str, 'RoleSize')
+        self.web_worker_role_sizes = _scalar_list_of(_unicode_type, 'RoleSize')
+        self.virtual_machines_role_sizes = _scalar_list_of(_unicode_type, 'RoleSize')
 
 
 class AffinityGroup(WindowsAzureData):
@@ -145,7 +146,7 @@ class AffinityGroup(WindowsAzureData):
         self.location = u''
         self.hosted_services = HostedServices()
         self.storage_services = StorageServices()
-        self.capabilities = _scalar_list_of(str, 'Capability')
+        self.capabilities = _scalar_list_of(_unicode_type, 'Capability')
 
 
 class AffinityGroups(WindowsAzureData):
@@ -1030,7 +1031,7 @@ class ConfigurationSet(WindowsAzureData):
         self.configuration_set_type = u'NetworkConfiguration'
         self.role_type = u''
         self.input_endpoints = ConfigurationSetInputEndpoints()
-        self.subnet_names = _scalar_list_of(str, 'SubnetName')
+        self.subnet_names = _scalar_list_of(_unicode_type, 'SubnetName')
         self.public_ips = PublicIPs()
 
 
@@ -1421,9 +1422,9 @@ class Site(WindowsAzureData):
         self.availability_state = ''
         self.compute_mode = ''
         self.enabled = False
-        self.enabled_host_names = _scalar_list_of(str, 'a:string')
+        self.enabled_host_names = _scalar_list_of(_unicode_type, 'a:string')
         self.host_name_ssl_states = HostNameSslStates()
-        self.host_names = _scalar_list_of(str, 'a:string')
+        self.host_names = _scalar_list_of(_unicode_type, 'a:string')
         self.last_modified_time_utc = ''
         self.name = ''
         self.repository_site_name = ''
@@ -1558,7 +1559,7 @@ class AuthorizationRule(WindowsAzureData):
     def __init__(self):
         self.claim_type = u''
         self.claim_value = u''
-        self.rights = _scalar_list_of(str, 'AccessRights')
+        self.rights = _scalar_list_of(_unicode_type, 'AccessRights')
         self.created_time = u''
         self.modified_time = u''
         self.key_name = u''
