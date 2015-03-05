@@ -16,6 +16,7 @@ import os
 
 from azure import (
     WindowsAzureError,
+    DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
     _get_request_body,
     _str,
@@ -39,7 +40,8 @@ from azure.servicemanagement import (
 class _ServiceManagementClient(object):
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST, request_session=None):
+                 host=MANAGEMENT_HOST, request_session=None,
+                 timeout=DEFAULT_HTTP_TIMEOUT):
         self.requestid = None
         self.subscription_id = subscription_id
         self.cert_file = cert_file
@@ -64,7 +66,7 @@ class _ServiceManagementClient(object):
 
         self._httpclient = _HTTPClient(
             service_instance=self, cert_file=self.cert_file,
-            request_session=self.request_session)
+            request_session=self.request_session, timeout=timeout)
         self._filter = self._httpclient.perform_request
 
     def with_filter(self, filter):
@@ -75,7 +77,7 @@ class _ServiceManagementClient(object):
         request, pass it off to the next lambda, and then perform any
         post-processing on the response.'''
         res = type(self)(self.subscription_id, self.cert_file, self.host,
-                         self.request_session)
+                         self.request_session, self._httpclient.timeout)
         old_filter = self._filter
 
         def new_filter(request):
@@ -98,6 +100,14 @@ class _ServiceManagementClient(object):
             Password for proxy authorization.
         '''
         self._httpclient.set_proxy(host, port, user, password)
+
+    @property
+    def timeout(self):
+        return self._httpclient.timeout
+
+    @timeout.setter
+    def timeout(self, value):
+        self._httpclient.timeout = value
 
     def perform_get(self, path, x_ms_version=None):
         '''

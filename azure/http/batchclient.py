@@ -20,6 +20,7 @@ from azure import (
     WindowsAzureError,
     WindowsAzureBatchOperationError,
     url_unquote,
+    DEFAULT_HTTP_TIMEOUT,
     _ERROR_CANNOT_FIND_PARTITION_KEY,
     _ERROR_CANNOT_FIND_ROW_KEY,
     _ERROR_INCORRECT_TABLE_IN_BATCH,
@@ -56,9 +57,10 @@ class _BatchClient(_HTTPClient):
     '''
 
     def __init__(self, service_instance, account_key, account_name,
-                 protocol='http'):
+                 protocol='http', timeout=DEFAULT_HTTP_TIMEOUT):
         _HTTPClient.__init__(self, service_instance, account_name=account_name,
-                             account_key=account_key, protocol=protocol)
+                             account_key=account_key, protocol=protocol,
+                             timeout=timeout)
         self.is_batch = False
         self.batch_requests = []
         self.batch_table = ''

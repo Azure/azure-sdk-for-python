@@ -18,6 +18,7 @@ import time
 from azure import (
     WindowsAzureError,
     WindowsAzureAsyncOperationError,
+    DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
     _ERROR_ASYNC_OP_FAILURE,
     _ERROR_ASYNC_OP_TIMEOUT,
@@ -65,7 +66,8 @@ from azure.servicemanagement.servicemanagementclient import (
 class ServiceManagementService(_ServiceManagementClient):
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST, request_session=None):
+                 host=MANAGEMENT_HOST, request_session=None,
+                 timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         Initializes the management service.
 
@@ -88,9 +90,11 @@ class ServiceManagementService(_ServiceManagementClient):
             library. To use .pem certificate authentication with requests
             library, set the path to the .pem file on the session.cert
             attribute.
+        timeout:
+            Optional. Timeout for the http request, in seconds.
         '''
         super(ServiceManagementService, self).__init__(
-            subscription_id, cert_file, host, request_session)
+            subscription_id, cert_file, host, request_session, timeout)
 
     #--Operations for subscriptions --------------------------------------
     def list_role_sizes(self):

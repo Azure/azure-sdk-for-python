@@ -19,6 +19,7 @@ import time
 from azure import (
     _ETreeXmlToObject,
     WindowsAzureError,
+    DEFAULT_HTTP_TIMEOUT,
     SERVICE_BUS_HOST_BASE,
     _dont_fail_not_exist,
     _dont_fail_on_exist,
@@ -67,7 +68,7 @@ class ServiceBusService(object):
     def __init__(self, service_namespace=None, account_key=None, issuer=None,
                  x_ms_version='2011-06-01', host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None,
-                 authentication=None):
+                 authentication=None, timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         Initializes the service bus service for a namespace with the specified
         authentication settings (SAS or ACS).
@@ -97,6 +98,8 @@ class ServiceBusService(object):
         authentication:
             Instance of authentication class. If this is specified, then
             ACS and SAS parameters are ignored.
+        timeout:
+            Optional. Timeout for the http request, in seconds.
         '''
         self.requestid = None
         self.service_namespace = service_namespace
@@ -128,7 +131,7 @@ class ServiceBusService(object):
                 raise WindowsAzureError(
                     'You need to provide servicebus access key and Issuer OR shared access key and value')
 
-        self._httpclient = _HTTPClient(service_instance=self)
+        self._httpclient = _HTTPClient(service_instance=self, timeout=timeout)
         self._filter = self._httpclient.perform_request
 
     # Backwards compatibility:
@@ -185,6 +188,14 @@ class ServiceBusService(object):
             Password for proxy authorization.
         '''
         self._httpclient.set_proxy(host, port, user, password)
+
+    @property
+    def timeout(self):
+        return self._httpclient.timeout
+
+    @timeout.setter
+    def timeout(self, value):
+        self._httpclient.timeout = value
 
     def create_queue(self, queue_name, queue=None, fail_on_exist=False):
         '''
