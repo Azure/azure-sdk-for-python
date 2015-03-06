@@ -185,7 +185,7 @@ class WebsiteManagementService(_ServiceManagementClient):
         '''
         return self._perform_post(
             self._get_restart_path(webspace_name, website_name),
-            '')
+            None, async=True)
 
     def get_historical_usage_metrics(self, webspace_name, website_name,
                                      metrics = None, start_time=None, end_time=None, time_grain=None):

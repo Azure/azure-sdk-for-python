@@ -221,7 +221,7 @@ class WebsiteManagementServiceTest(AzureTestCase):
         result = self.wss.restart_site(self.webspace_name, self.created_site)
 
         # Assert
-        self.assertIsNone(result)
+        self.assertTrue(hasattr(result, 'request_id'))
 
     def test_get_web_site_metrics(self):
         # Arrange
