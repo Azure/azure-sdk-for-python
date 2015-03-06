@@ -6,6 +6,8 @@ python:
   - "3.4"
   - "pypy"
 before_install:
+  - openssl aes-256-cbc -K $encrypted_2578f62ed121_key -iv $encrypted_2578f62ed121_iv -in tests/azurecredentials.json.enc -out azurecredentials.json -d
+  - openssl aes-256-cbc -K $encrypted_2578f62ed121_key -iv $encrypted_2578f62ed121_iv -in tests/test_cert.pem.enc -out test_cert.pem -d
   - sudo apt-get update
 install:
   - travis_retry pip install -r requirements.txt
