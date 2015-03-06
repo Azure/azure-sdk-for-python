@@ -15,6 +15,7 @@
 from azure import (
     WindowsAzureConflictError,
     WindowsAzureError,
+    DEFAULT_HTTP_TIMEOUT,
     DEV_QUEUE_HOST,
     QUEUE_SERVICE_HOST_BASE,
     xml_escape,
@@ -53,7 +54,8 @@ class QueueService(_StorageClient):
     '''
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
-                 host_base=QUEUE_SERVICE_HOST_BASE, dev_host=DEV_QUEUE_HOST):
+                 host_base=QUEUE_SERVICE_HOST_BASE, dev_host=DEV_QUEUE_HOST,
+                 timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -66,9 +68,11 @@ class QueueService(_StorageClient):
             for on-premise.
         dev_host:
             Optional. Dev host url. Defaults to localhost.
+        timeout:
+            Optional. Timeout for the http request, in seconds.
         '''
         super(QueueService, self).__init__(
-            account_name, account_key, protocol, host_base, dev_host)
+            account_name, account_key, protocol, host_base, dev_host, timeout)
 
     def get_queue_service_properties(self, timeout=None):
         '''

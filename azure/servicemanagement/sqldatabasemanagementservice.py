@@ -13,6 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 from azure import (
+    DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
     _validate_not_none,
     )
@@ -37,7 +38,8 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
     '''
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST, request_session=None):
+                 host=MANAGEMENT_HOST, request_session=None,
+                 timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         Initializes the sql database management service.
 
@@ -60,9 +62,11 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
             library. To use .pem certificate authentication with requests
             library, set the path to the .pem file on the session.cert
             attribute.
+        timeout:
+            Optional. Timeout for the http request, in seconds.
         '''
         super(SqlDatabaseManagementService, self).__init__(
-            subscription_id, cert_file, host, request_session)
+            subscription_id, cert_file, host, request_session, timeout)
         self.content_type = 'application/xml'
 
     #--Operations for sql servers ----------------------------------------

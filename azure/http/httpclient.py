@@ -34,7 +34,11 @@ else:
     from urllib.parse import urlparse
 
 from azure.http import HTTPError, HTTPResponse
-from azure import _USER_AGENT_STRING, _update_request_uri_query
+from azure import (
+    _USER_AGENT_STRING,
+    _update_request_uri_query,
+    DEFAULT_HTTP_TIMEOUT,
+)
 
 DEBUG_REQUESTS = False
 DEBUG_RESPONSES = False
@@ -46,7 +50,8 @@ class _HTTPClient(object):
     '''
 
     def __init__(self, service_instance, cert_file=None, account_name=None,
-                 account_key=None, protocol='https', request_session=None):
+                 account_key=None, protocol='https', request_session=None,
+                 timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         service_instance:
             service client instance.
@@ -59,6 +64,8 @@ class _HTTPClient(object):
             the storage account access key.
         request_session:
             session object created with requests library (or compatible).
+        timeout:
+            timeout for the http request, in seconds.
         '''
         self.service_instance = service_instance
         self.status = None
@@ -73,6 +80,7 @@ class _HTTPClient(object):
         self.proxy_user = None
         self.proxy_password = None
         self.request_session = request_session
+        self.timeout = timeout
         if request_session:
             self.use_httplib = True
         else:
@@ -136,12 +144,12 @@ class _HTTPClient(object):
         if self.request_session:
             import azure.http.requestsclient
             connection = azure.http.requestsclient._RequestsConnection(
-                target_host, protocol, self.request_session)
-            #TODO: proxy stuff
+                target_host, protocol, self.request_session, self.timeout)
+            #TODO: proxy setup
         elif not self.use_httplib:
             import azure.http.winhttp
             connection = azure.http.winhttp._HTTPConnection(
-                target_host, cert_file=self.cert_file, protocol=protocol)
+                target_host, self.cert_file, protocol, self.timeout)
             proxy_host = self.proxy_host
             proxy_port = self.proxy_port
         else:
@@ -157,10 +165,12 @@ class _HTTPClient(object):
                 port = target_port
 
             if protocol == 'http':
-                connection = HTTPConnection(host, int(port))
+                connection = HTTPConnection(host, int(port),
+                                            timeout=self.timeout)
             else:
                 connection = HTTPSConnection(
-                    host, int(port), cert_file=self.cert_file)
+                    host, int(port), cert_file=self.cert_file,
+                    timeout=self.timeout)
 
         if self.proxy_host:
             headers = None

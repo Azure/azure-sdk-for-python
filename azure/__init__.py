@@ -43,7 +43,7 @@ except ImportError:
 # constants
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.9.0'
+__version__ = '0.10.0'
 
 # Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
@@ -60,6 +60,9 @@ DEV_TABLE_HOST = '127.0.0.1:10002'
 # Default credentials for Development Storage Service
 DEV_ACCOUNT_NAME = 'devstoreaccount1'
 DEV_ACCOUNT_KEY = 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=='
+
+# Default timeout for http requests (in secs)
+DEFAULT_HTTP_TIMEOUT = 65
 
 # All of our error messages
 _ERROR_CANNOT_FIND_PARTITION_KEY = 'Cannot find partition key in request.'
@@ -276,6 +279,10 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'aad_tenant_id': 'AADTenantID',
     'start_ip_address': 'StartIPAddress',
     'end_ip_address': 'EndIPAddress',
+    'operation_id': 'OperationId',
+    'operation_object_id': 'OperationObjectId',
+    'client_ip': 'ClientIP',
+    'status_id': 'ID'
     }
 
 

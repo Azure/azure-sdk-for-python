@@ -17,6 +17,7 @@ import base64
 import os
 import time
 import unittest
+from datetime import datetime, timedelta
 
 import azure.http.httpclient
 
@@ -1388,6 +1389,21 @@ class ServiceManagementServiceTest(AzureTestCase):
         self.assertTrue(result.max_virtual_network_sites > 0)
         self.assertGreater(len(result.aad_tenant_id), 0)
 
+    #--Test cases for retrieving subscription operations --------------------
+    def test_list_subscription_operations(self):
+        # Arrange
+
+        # Act
+        now = datetime.now()
+        one_month_before = now - timedelta(30)
+        result = self.sms.list_subscription_operations(one_month_before.strftime("%Y-%m-%d"), now.strftime("%Y-%m-%d"))
+        # Assert
+        self.assertIsNotNone(result)
+        for operation in result.subscription_operations:
+            self.assertTrue(operation.operation_id)
+            self.assertTrue(operation.operation_status.status_id)
+
+
     #--Test cases for reserved ip addresses  -----------------------------
     def test_create_reserved_ip_address(self):
         # Arrange
@@ -1710,7 +1726,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         storage_name = 'utstoragedonotdelete'
         # virtual network in affinity group
         virtual_network_name = 'utnetdonotdelete'
-        subnet_name = 'Subnet-1'                  # subnet in virtual network
+        subnet_name = u'啊齄丂狛狜'                # subnet in virtual network
 
         # Arrange
         service_name = self.hosted_service_name
@@ -1736,8 +1752,10 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._wait_for_role(service_name, deployment_name, role_name)
 
         # Assert
-        self.assertTrue(
-            self._role_exists(service_name, deployment_name, role_name))
+        role = self.sms.get_role(service_name, deployment_name, role_name)
+        self.assertIsNotNone(role)
+        self.assertEqual(role.configuration_sets.configuration_sets[0].subnet_names[0],
+                         subnet_name)
         deployment = self.sms.get_deployment_by_name(
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)

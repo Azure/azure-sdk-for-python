@@ -18,6 +18,7 @@ import time
 from azure import (
     WindowsAzureError,
     WindowsAzureAsyncOperationError,
+    DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
     _ERROR_ASYNC_OP_FAILURE,
     _ERROR_ASYNC_OP_TIMEOUT,
@@ -54,6 +55,7 @@ from azure.servicemanagement import (
     Subscriptions,
     SubscriptionCertificate,
     SubscriptionCertificates,
+    SubscriptionOperationCollection,
     VirtualNetworkSites,
     VMImages,
     _XmlSerializer,
@@ -65,7 +67,8 @@ from azure.servicemanagement.servicemanagementclient import (
 class ServiceManagementService(_ServiceManagementClient):
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST, request_session=None):
+                 host=MANAGEMENT_HOST, request_session=None,
+                 timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         Initializes the management service.
 
@@ -88,9 +91,11 @@ class ServiceManagementService(_ServiceManagementClient):
             library. To use .pem certificate authentication with requests
             library, set the path to the .pem file on the session.cert
             attribute.
+        timeout:
+            Optional. Timeout for the http request, in seconds.
         '''
         super(ServiceManagementService, self).__init__(
-            subscription_id, cert_file, host, request_session)
+            subscription_id, cert_file, host, request_session, timeout)
 
     #--Operations for subscriptions --------------------------------------
     def list_role_sizes(self):
@@ -536,7 +541,7 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
-        path= self._get_deployment_path_using_name(service_name, deployment_name)                
+        path= self._get_deployment_path_using_name(service_name, deployment_name)
         if delete_vhd:
             path += '?comp=media'
         return self._perform_delete(
@@ -1215,6 +1220,32 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         return self._perform_get('/' + self.subscription_id + '',
                                  Subscription)
+
+    # Operations for retrieving subscription operations ------------------
+    def list_subscription_operations(self, start_time=None, end_time=None, object_id_filter=None,
+                                     operation_result_filter=None, continuation_token=None):
+        '''
+        List subscription operations.
+
+        start_time: Required. An ISO8601 date.
+        end_time: Required. An ISO8601 date.
+        object_id_filter: Optional. Returns subscription operations only for the specified object type and object ID
+        operation_result_filter: Optional. Returns subscription operations only for the specified result status, either Succeeded, Failed, or InProgress.
+        continuation_token: Optional.
+        More information at:
+        https://msdn.microsoft.com/en-us/library/azure/gg715318.aspx
+        '''
+        start_time = ('StartTime=' + start_time) if start_time else ''
+        end_time = ('EndTime=' + end_time) if end_time else ''
+        object_id_filter = ('ObjectIdFilter=' + object_id_filter) if object_id_filter else ''
+        operation_result_filter = ('OperationResultFilter=' + operation_result_filter) if operation_result_filter else ''
+        continuation_token = ('ContinuationToken=' + continuation_token) if continuation_token else ''
+
+        parameters = ('&'.join(v for v in (start_time, end_time, object_id_filter, operation_result_filter, continuation_token) if v))
+        parameters = '?' + parameters if parameters else ''
+
+        return self._perform_get(self._get_list_subscription_operations_path() + parameters,
+                                 SubscriptionOperationCollection)
 
     #--Operations for reserved ip addresses  -----------------------------
     def create_reserved_ip_address(self, name, label=None, location=None):
@@ -2452,6 +2483,9 @@ class ServiceManagementService(_ServiceManagementClient):
 
     def _get_subscriptions_path(self):
         return '/subscriptions'
+
+    def _get_list_subscription_operations_path(self):
+        return self._get_path('operations', None)
 
     def _get_virtual_network_site_path(self):
         return self._get_path('services/networking/virtualnetwork', None)

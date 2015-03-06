@@ -13,6 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 from azure import (
+    DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
     _str,
     )
@@ -37,7 +38,8 @@ class WebsiteManagementService(_ServiceManagementClient):
     '''
 
     def __init__(self, subscription_id=None, cert_file=None,
-                 host=MANAGEMENT_HOST, request_session=None):
+                 host=MANAGEMENT_HOST, request_session=None,
+                 timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         Initializes the website management service.
 
@@ -60,9 +62,11 @@ class WebsiteManagementService(_ServiceManagementClient):
             library. To use .pem certificate authentication with requests
             library, set the path to the .pem file on the session.cert
             attribute.
+        timeout:
+            Optional. Timeout for the http request, in seconds.
         '''
         super(WebsiteManagementService, self).__init__(
-            subscription_id, cert_file, host, request_session)
+            subscription_id, cert_file, host, request_session, timeout)
 
     #--Operations for web sites ----------------------------------------
     def list_webspaces(self):

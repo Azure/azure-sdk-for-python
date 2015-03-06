@@ -15,6 +15,7 @@
 from azure import (
     WindowsAzureError,
     BLOB_SERVICE_HOST_BASE,
+    DEFAULT_HTTP_TIMEOUT,
     DEV_BLOB_HOST,
     _ERROR_VALUE_NEGATIVE,
     _ERROR_PAGE_BLOB_SIZE_ALIGNMENT,
@@ -72,7 +73,8 @@ class BlobService(_StorageClient):
     '''
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
-                 host_base=BLOB_SERVICE_HOST_BASE, dev_host=DEV_BLOB_HOST):
+                 host_base=BLOB_SERVICE_HOST_BASE, dev_host=DEV_BLOB_HOST,
+                 timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -85,11 +87,13 @@ class BlobService(_StorageClient):
             for on-premise.
         dev_host:
             Optional. Dev host url. Defaults to localhost.
+        timeout:
+            Optional. Timeout for the http request, in seconds.
         '''
         self._BLOB_MAX_DATA_SIZE = 64 * 1024 * 1024
         self._BLOB_MAX_CHUNK_DATA_SIZE = 4 * 1024 * 1024
         super(BlobService, self).__init__(
-            account_name, account_key, protocol, host_base, dev_host)
+            account_name, account_key, protocol, host_base, dev_host, timeout)
 
     def make_blob_url(self, container_name, blob_name, account_name=None,
                       protocol=None, host_base=None):
