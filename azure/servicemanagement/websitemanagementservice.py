@@ -174,6 +174,22 @@ class WebsiteManagementService(_ServiceManagementClient):
             path = path + '?' + query.lstrip('&')
         return self._perform_delete(path)
 
+    def update_site(self, webspace_name, website_name, state=None):
+        '''
+        Update a web site.
+
+        webspace_name:
+            The name of the webspace.
+        website_name:
+            The name of the website.
+        state:
+            The wanted state ('Running' or 'Stopped' accepted)
+        '''
+        xml = _XmlSerializer.update_website_to_xml(state)
+        return self._perform_put(
+            self._get_sites_details_path(webspace_name, website_name),
+            xml, async=True)
+
     def restart_site(self, webspace_name, website_name):
         '''
         Restart a web site.

@@ -223,6 +223,26 @@ class WebsiteManagementServiceTest(AzureTestCase):
         # Assert
         self.assertTrue(hasattr(result, 'request_id'))
 
+    def test_shutdown_start_site(self):
+        # Arrange
+        self._create_site()
+
+        # Act
+        result = self.wss.update_site(self.webspace_name, self.created_site, state="Stopped")
+        self.wss.wait_for_operation_status(result.request_id)
+
+        # Assert
+        result = self.wss.get_site(self.webspace_name, self.created_site)
+        self.assertEqual(result.state, 'Stopped')
+
+        # Act
+        result = self.wss.update_site(self.webspace_name, self.created_site, state="Running")
+        self.wss.wait_for_operation_status(result.request_id)
+
+        # Assert
+        result = self.wss.get_site(self.webspace_name, self.created_site)
+        self.assertEqual(result.state, 'Running')
+
     def test_get_web_site_metrics(self):
         # Arrange
         self._create_site()
