@@ -504,18 +504,21 @@ class ServiceManagementService(_ServiceManagementClient):
                 extended_properties),
             async=True)
 
-    def delete_deployment(self, service_name, deployment_name):
+    def delete_deployment(self, service_name, deployment_name,delete_vhd=False):
         '''
         Deletes the specified deployment.
 
         service_name: Name of the hosted service.
         deployment_name: The name of the deployment.
+	delete_vhd: If True, delete the vhd associated with this deployment (if any). Defaults to False.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
+        path= self._get_deployment_path_using_name(service_name, deployment_name)		        
+        if delete_vhd:
+            path += '?comp=media'
         return self._perform_delete(
-            self._get_deployment_path_using_name(
-                service_name, deployment_name),
+				path,
             async=True)
 
     def swap_deployment(self, service_name, production, source_deployment):
