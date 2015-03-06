@@ -14,7 +14,7 @@ the client (a .pem file).
 Using the Azure .PublishSettings certificate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can download your azure publish settings file and use the certificate that
+You can download your Azure publish settings file and use the certificate that
 is embedded in that file to create the client certificate. The server
 certificate already exists, so you won't need to upload one.
 
