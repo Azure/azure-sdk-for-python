@@ -49,6 +49,7 @@ from util import (
     getUniqueName,
     set_service_options,
     )
+from time import sleep
 
 # Enable these to view requests and responses
 azure.http.httpclient.DEBUG_REQUESTS = False
@@ -966,6 +967,35 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._wait_for_async(result.request_id)
 
         # Assert
+        self.assertFalse(
+            self._deployment_exists(self.hosted_service_name, deployment_name))
+
+    def test_delete_deployment_with_vhd(self):
+        # Arrange
+        service_name = self.hosted_service_name
+        deployment_name = self.hosted_service_name
+        role_name = self.hosted_service_name
+
+        self._create_vm_linux(service_name, deployment_name, role_name)
+        self.assertTrue(
+            self._blob_exists(self.container_name, role_name + '.vhd'))
+
+        # Act
+        result = self.sms.delete_deployment(
+            self.hosted_service_name, deployment_name, delete_vhd=True)
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        # Blob is taking 30 minutes to delete currently after the async id comes back
+        timeToSleep = 30 * 60
+        count = 0
+        while self._blob_exists(self.container_name, role_name + '.vhd'):
+            if count >= timeToSleep:
+                self.assertFalse(True, "Blob exists")
+            else:
+                sleep(5)
+                count += 5
+        print("Time to run:", count)
         self.assertFalse(
             self._deployment_exists(self.hosted_service_name, deployment_name))
 

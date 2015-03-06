@@ -541,7 +541,7 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('deployment_name', deployment_name)
-        path= self._get_deployment_path_using_name(service_name, deployment_name)          
+        path= self._get_deployment_path_using_name(service_name, deployment_name)
         if delete_vhd:
             path += '?comp=media'
         return self._perform_delete(
