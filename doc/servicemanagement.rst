@@ -18,7 +18,7 @@ You can download your azure publish settings file and use the certificate that
 is embedded in that file to create the client certificate. The server
 certificate already exists, so you won't need to upload one.
 
-To do this, download your `publish settings<http://go.microsoft.com/fwlink/?LinkID=301775>`__
+To do this, download your `publish settings <http://go.microsoft.com/fwlink/?LinkID=301775>`__
 then use this code to create the .pem file.
 
 .. code:: python
