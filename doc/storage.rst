@@ -69,7 +69,8 @@ available on the various upload and download methods described below.
 
 To upload an already opened file to a blob named 'image.png', the method
 **put\_block\_blob\_from\_file** can be used instead. The **count** parameter
-is optional, but you will get better performance if you specify it.
+is optional, but you will get better performance if you specify it. This
+indicates how many bytes you want read from the file and uploaded to the blob.
 
 .. code:: python
 
