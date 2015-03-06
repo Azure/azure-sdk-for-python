@@ -8,9 +8,36 @@ Service Management
 Set-up certificates
 ~~~~~~~~~~~~~~~~~~~
 
-You need to create two certificates, one for the server (a .cer file)
-and one for the client (a .pem file). To create the .pem file using
-`OpenSSL <http://www.openssl.org>`__, execute this:
+You will need two certificates, one for the server (a .cer file) and one for
+the client (a .pem file).
+
+Using the Azure .PublishSettings certificate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can download your azure publish settings file and use the certificate that
+is embedded in that file to create the client certificate. The server
+certificate already exists, so you won't need to upload one.
+
+To do this, download your `publish settings<http://go.microsoft.com/fwlink/?LinkID=301775>`__
+then use this code to create the .pem file.
+
+.. code:: python
+
+    from azure.servicemanagement import get_certificate_from_publish_settings
+
+    subscription_id = get_certificate_from_publish_settings(
+        publish_settings_path='MyAccount.PublishSettings',
+        path_to_write_certificate='mycert.pem',
+        subscription_id='00000000-0000-0000-0000-000000000000',
+    )
+
+The subscription id parameter is optional. If there are more than one
+subscription in the publish settings, the first one will be used.
+
+Creating and uploading new certificate with OpenSSL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To create the .pem file using `OpenSSL <http://www.openssl.org>`__, execute this:
 
 .. code:: shell
 
@@ -25,6 +52,9 @@ To create the .cer certificate, execute this:
 After you have created the certificate, you will need to upload the .cer
 file to Microsoft Azure via the "Upload" action of the "Settings" tab of
 the `management portal <http://manage.windows.com>`__.
+
+Initialization
+~~~~~~~~~~~~~~
 
 To initialize the management service, pass in your subscription id and
 the path to the .pem file.
