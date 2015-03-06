@@ -339,7 +339,7 @@ class BlobServiceTest(AzureTestCase):
                 connection.send(content)
 
             resp = connection.getresponse()
-            respheaders = resp.getheaders()
+            respheaders = [(name.lower(), val) for name, val in resp.getheaders()]
             respbody = None
             if resp.length is None:
                 respbody = resp.read()
