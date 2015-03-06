@@ -301,7 +301,7 @@ class ServiceManagementServiceTest(AzureTestCase):
     def _create_container_and_page_blob(self, container_name, blob_name,
                                         content_length):
         self.bc.create_container(container_name, None, 'container', False)
-        resp = self.bc.put_blob(container_name, blob_name, '',
+        resp = self.bc.put_blob(container_name, blob_name, b'',
                                 'PageBlob',
                                 x_ms_blob_content_length=str(content_length))
         self.assertIsNone(resp)
