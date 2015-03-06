@@ -110,6 +110,26 @@ sent before the subscription is created will not be received.
     sbs.send_topic_message('taskdiscussion', msg)
     msg = sbs.receive_subscription_message('taskdiscussion', 'client1')
 
+Event Hub
+---------
+
+Event Hubs enable the collection of event streams at high throughput, from
+a diverse set of devices and services.
+
+The **create\_event\_hub** method can be used to create an event hub:
+
+.. code:: python
+
+    sbs.create_event_hub('myhub')
+
+To send an event:
+
+.. code:: python
+
+    sbs.send_event('myhub', '{ "DeviceId":"dev-01", "Temperature":"37.0" }')
+
+The event content is the event message or JSON-encoded string that contains multiple messages.
+
 
 Need Help?
 ==========
