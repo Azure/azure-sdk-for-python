@@ -17,6 +17,7 @@
    #258 Support authenticating with azureProfile like in CLI tools
    #259 Unicode error is raised instead of actual error
    #263 Change description name
+   #268 delete_deployment does not pass comp=media to delete disks
    #271 Update current_name so that multiple parameters with the same name...
    #270 Documentation for capture_vm_image is incorrect
    #273 Unicode error with utf-8 encoding value
@@ -26,8 +27,8 @@
    #294 Upload of large files is too slow
    #304 Unable to upload large size files to Azure Page Blob
 
-Thank you to lmazuel, rhaps0dy, timfpark, gaellbn, moutai, edevil, rjschwei
-for their contributions.
+Thank you to lmazuel, rhaps0dy, timfpark, gaellbn, moutai, edevil, rjschwei and
+okaram for their contributions.
 
 2014-11-21 Version 0.9.0
 
