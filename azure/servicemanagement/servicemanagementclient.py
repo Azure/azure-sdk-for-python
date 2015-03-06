@@ -13,13 +13,19 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import os
+import sys
+import time
 
 from azure import (
     WindowsAzureError,
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
+    WindowsAzureAsyncOperationError,
+    _ERROR_ASYNC_OP_FAILURE,
+    _ERROR_ASYNC_OP_TIMEOUT,
     _get_request_body,
     _str,
+    _validate_not_none,
     _update_request_uri_query,
     )
 from azure.http import (
@@ -30,6 +36,7 @@ from azure.http.httpclient import _HTTPClient
 from azure.servicemanagement import (
     AZURE_MANAGEMENT_CERTFILE,
     AZURE_MANAGEMENT_SUBSCRIPTIONID,
+    Operation,
     _MinidomXmlToObject,
     _management_error_handler,
     parse_response_for_async_op,
@@ -198,6 +205,88 @@ class _ServiceManagementClient(object):
         response = self._perform_request(request)
 
         return response
+
+    #--Operations for tracking asynchronous requests ---------------------
+    def wait_for_operation_status_progress_default_callback(elapsed):
+        sys.stdout.write('.')
+
+    def wait_for_operation_status_success_default_callback(elapsed):
+        sys.stdout.write('\n')
+
+    def wait_for_operation_status_failure_default_callback(elapsed, ex):
+        sys.stdout.write('\n')
+        print(vars(ex.result))
+        raise ex
+
+    def wait_for_operation_status(self,
+        request_id, wait_for_status='Succeeded', timeout=30, sleep_interval=5,
+        progress_callback=wait_for_operation_status_progress_default_callback,
+        success_callback=wait_for_operation_status_success_default_callback,
+        failure_callback=wait_for_operation_status_failure_default_callback):
+        '''
+        Waits for an asynchronous operation to complete.
+
+        This calls get_operation_status in a loop and returns when the expected
+        status is reached. The result of get_operation_status is returned. By
+        default, an exception is raised on timeout or error status.
+
+        request_id:
+            The request ID for the request you wish to track.
+        wait_for_status:
+            Status to wait for. Default is 'Succeeded'.
+        timeout:
+            Total timeout in seconds. Default is 30s.
+        sleep_interval:
+            Sleep time in seconds for each iteration. Default is 5s.
+        progress_callback:
+            Callback for each iteration.
+            Default prints '.'.
+            Set it to None for no progress notification.
+        success_callback:
+            Callback on success. Default prints newline.
+            Set it to None for no success notification.
+        failure_callback:
+            Callback on failure. Default prints newline+error details then
+            raises exception.
+            Set it to None for no failure notification.
+        '''
+        loops = timeout // sleep_interval + 1
+        start_time = time.time()
+        for _ in range(loops):
+            result = self.get_operation_status(request_id)
+            elapsed = time.time() - start_time
+            if result.status == wait_for_status:
+                if success_callback is not None:
+                    success_callback(elapsed)
+                return result
+            elif result.error:
+                if failure_callback is not None:
+                    ex = WindowsAzureAsyncOperationError(_ERROR_ASYNC_OP_FAILURE, result)
+                    failure_callback(elapsed, ex)
+                return result
+            else:
+                if progress_callback is not None:
+                    progress_callback(elapsed)
+                time.sleep(sleep_interval)
+
+        if failure_callback is not None:
+            ex = WindowsAzureAsyncOperationError(_ERROR_ASYNC_OP_TIMEOUT, result)
+            failure_callback(elapsed, ex)
+        return result
+
+    def get_operation_status(self, request_id):
+        '''
+        Returns the status of the specified operation. After calling an
+        asynchronous operation, you can call Get Operation Status to determine
+        whether the operation has succeeded, failed, or is still in progress.
+
+        request_id:
+            The request ID for the request you wish to track.
+        '''
+        _validate_not_none('request_id', request_id)
+        return self._perform_get(
+            '/' + self.subscription_id + '/operations/' + _str(request_id),
+            Operation)
 
     #--Helper functions --------------------------------------------------
     def _perform_request(self, request):
