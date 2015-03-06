@@ -56,15 +56,32 @@ To upload a file 'uploads/image.png' from disk to a blob named
 
     from azure.storage import BlobService
     blob_service = BlobService(account_name, account_key)
-    blob_service.put_block_blob_from_path('images', 'image.png', 'uploads/image.png')
+    blob_service.put_block_blob_from_path(
+        'images',
+        'image.png',
+        'uploads/image.png',
+        max_connections=5,
+    )
+
+The **max\_connections** parameter is optional, and lets you use multiple
+parallel connections to perform uploads and downloads.  This parameter is
+available on the various upload and download methods described below.
 
 To upload an already opened file to a blob named 'image.png', the method
-**put\_block\_blob\_from\_file** can be used instead:
+**put\_block\_blob\_from\_file** can be used instead. The **count** parameter
+is optional, but you will get better performance if you specify it. This
+indicates how many bytes you want read from the file and uploaded to the blob.
 
 .. code:: python
 
     with open('uploads/image.png') as file:
-      blob_service.put_block_blob_from_file('images', 'image.png', file)
+        blob_service.put_block_blob_from_file(
+            'images',
+            'image.png',
+            file,
+            count=50000,
+            max_connections=4,
+        )
 
 To upload unicode text, use **put\_block\_blob\_from\_text** which will
 do the conversion to bytes using the specified encoding.
@@ -79,7 +96,12 @@ To download a blob named 'image.png' to a file on disk
 
     from azure.storage import BlobService
     blob_service = BlobService(account_name, account_key)
-    blob = blob_service.get_blob_to_path('images', 'image.png', 'downloads/image.png')
+    blob = blob_service.get_blob_to_path(
+        'images',
+        'image.png',
+        'downloads/image.png',
+        max_connections=8,
+    )
 
 To download to an already opened file, use **get\_blob\_to\_file**.
 
