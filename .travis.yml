@@ -1,6 +1,6 @@
 language: python
 python:
-  - "2.6"
+  - #"2.6"  # discover module doesn't exist so script fails
   - "2.7"
   - "3.3"
   - "3.4"
@@ -9,8 +9,8 @@ before_install:
   - # Secret Decryption
   - openssl aes-256-cbc -K $encrypted_2578f62ed121_key -iv $encrypted_2578f62ed121_iv -in secrets.tar.enc -out secrets.tar -d
   - tar xvf secrets.tar
-  - mv test_cert.pem $HOME/test_cert.pem
-  - mv azurecredentials.json $HOME/azurecredentials.json
+  - mv test_cert.pem /home/travis/test_cert.pem
+  - mv azurecredentials.json /home/travis/azurecredentials.json
   - # Update and install any extra packages
   - sudo apt-get update
 install:
