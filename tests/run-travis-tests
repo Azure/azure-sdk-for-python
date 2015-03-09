@@ -1,0 +1,14 @@
+#!/bin/bash
+
+export PYTHONPATH=$PYTHONPATH:..
+
+# Travis Restricts tests run time to 50 minutes.  For this reason we need to run a
+# subset of our test suite.
+
+# TODO: create a way to run a subset of our tests and not just py test_*.py file.
+# https://github.com/Azure/azure-sdk-for-python/issues/322
+
+echo "Running tests..."
+python -m unittest discover -p "test_storagemanagementservice.py"
+python -m unittest discover -p "test_servicebusservice.py"
+
