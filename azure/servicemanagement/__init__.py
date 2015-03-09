@@ -2592,14 +2592,14 @@ class _XmlSerializer(object):
              ('SourceMediaLink', source_media_link)])
 
     @staticmethod
-    def disk_to_xml(has_operating_system, label, media_link, name, os):
+    def disk_to_xml(label, media_link, name, os):
         return _XmlSerializer.doc_from_data(
             'Disk',
-            [('HasOperatingSystem', has_operating_system, _lower),
+            [('OS', os),
              ('Label', label),
              ('MediaLink', media_link),
              ('Name', name),
-             ('OS', os)])
+             ])
 
     @staticmethod
     def restart_role_operation_to_xml():

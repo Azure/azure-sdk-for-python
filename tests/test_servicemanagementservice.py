@@ -368,7 +368,7 @@ class ServiceManagementServiceTest(AzureTestCase):
             return False
 
     def _create_disk(self, disk_name, os, url):
-        result = self.sms.add_disk(False, disk_name, url, disk_name, os)
+        result = self.sms.add_disk(None, disk_name, url, disk_name, os)
         self.assertIsNone(result)
 
     def _disk_exists(self, disk_name):
@@ -2534,7 +2534,7 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         # Act
         result = self.sms.add_disk(
-            False, 'ptvslabel', url, self.disk_name, 'Windows')
+            None, 'ptvslabel', url, self.disk_name, 'Windows')
 
         # Assert
         self.assertIsNone(result)
@@ -2543,13 +2543,11 @@ class ServiceManagementServiceTest(AzureTestCase):
     def test_update_disk(self):
         # Arrange
         url = self._upload_disk_to_storage_blob('disk')
-        urlupdate = self._upload_disk_to_storage_blob('diskupdate')
         self._create_disk(self.disk_name, 'Windows', url)
 
         # Act
         result = self.sms.update_disk(
-            self.disk_name, False, 'ptvslabelupdate', urlupdate,
-            self.disk_name, 'Windows')
+            self.disk_name, None, 'ptvslabelupdate', None, None, None)
 
         # Assert
         self.assertIsNone(result)
