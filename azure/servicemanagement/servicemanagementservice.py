@@ -2299,8 +2299,7 @@ class ServiceManagementService(_ServiceManagementClient):
         or a data disk.
 
         has_operating_system:
-            Specifies whether the disk contains an operation system. Only a
-            disk with an operating system installed can be mounted as OS Drive.
+            Deprecated.
         label:
             Specifies the description of the disk.
         media_link:
@@ -2315,56 +2314,43 @@ class ServiceManagementService(_ServiceManagementClient):
         os:
             The OS type of the disk. Possible values are: Linux, Windows
         '''
-        _validate_not_none('has_operating_system', has_operating_system)
         _validate_not_none('label', label)
         _validate_not_none('media_link', media_link)
         _validate_not_none('name', name)
         _validate_not_none('os', os)
         return self._perform_post(self._get_disk_path(),
                                   _XmlSerializer.disk_to_xml(
-                                      has_operating_system,
                                       label,
                                       media_link,
                                       name,
                                       os))
 
-    def update_disk(self, disk_name, has_operating_system, label, media_link,
-                    name, os):
+    def update_disk(self, disk_name, has_operating_system=None, label=None, media_link=None,
+                    name=None, os=None):
         '''
         Updates an existing disk in your image repository.
 
         disk_name:
             The name of the disk to update.
         has_operating_system:
-            Specifies whether the disk contains an operation system. Only a
-            disk with an operating system installed can be mounted as OS Drive.
+            Deprecated.
         label:
             Specifies the description of the disk.
         media_link:
-            Specifies the location of the blob in Windows Azure blob store
-            where the media for the disk is located. The blob location must
-            belong to the storage account in the current subscription specified
-            by the <subscription-id> value in the operation call. Example:
-            http://example.blob.core.windows.net/disks/mydisk.vhd
+            Deprecated.
         name:
-            Specifies a name for the disk. Windows Azure uses the name to
-            identify the disk when creating virtual machines from the disk.
+            Deprecated.
         os:
-            The OS type of the disk. Possible values are: Linux, Windows
+            Deprecated.
         '''
         _validate_not_none('disk_name', disk_name)
-        _validate_not_none('has_operating_system', has_operating_system)
         _validate_not_none('label', label)
-        _validate_not_none('media_link', media_link)
-        _validate_not_none('name', name)
-        _validate_not_none('os', os)
         return self._perform_put(self._get_disk_path(disk_name),
                                  _XmlSerializer.disk_to_xml(
-                                     has_operating_system,
                                      label,
-                                     media_link,
-                                     name,
-                                     os))
+                                     None,
+                                     None,
+                                     None))
 
     def delete_disk(self, disk_name, delete_vhd=False):
         '''
