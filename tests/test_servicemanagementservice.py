@@ -13,7 +13,6 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
-import base64
 import os
 import time
 import unittest
@@ -346,7 +345,7 @@ class ServiceManagementServiceTest(AzureTestCase):
 
     def _add_deployment(self, service_name, deployment_name,
                         deployment_slot='Production'):
-        configuration = base64.b64encode(DEPLOYMENT_ORIGINAL_CONFIG)
+        configuration = _encode_base64(DEPLOYMENT_ORIGINAL_CONFIG)
         package_url = self._upload_default_package_to_storage_blob(
             deployment_name + 'Blob')
         result = self.sms.create_deployment(
@@ -941,7 +940,7 @@ class ServiceManagementServiceTest(AzureTestCase):
     def test_create_deployment(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
-        configuration = base64.b64encode(DEPLOYMENT_ORIGINAL_CONFIG)
+        configuration = _encode_base64(DEPLOYMENT_ORIGINAL_CONFIG)
         package_url = self._upload_default_package_to_storage_blob(
             'WindowsAzure1Blob')
 
@@ -1034,7 +1033,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         deployment_name = 'utdeployment'
         self._create_hosted_service_with_deployment(
             self.hosted_service_name, deployment_name)
-        configuration = base64.b64encode(DEPLOYMENT_UPDATE_CONFIG)
+        configuration = _encode_base64(DEPLOYMENT_UPDATE_CONFIG)
 
         # Act
         result = self.sms.change_deployment_configuration(
@@ -1068,7 +1067,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._create_hosted_service_with_deployment(
             self.hosted_service_name, deployment_name)
         package_url = self._upload_default_package_to_storage_blob('updated')
-        configuration = base64.b64encode(DEPLOYMENT_UPDATE_CONFIG)
+        configuration = _encode_base64(DEPLOYMENT_UPDATE_CONFIG)
 
         # Act
         result = self.sms.upgrade_deployment(
@@ -1088,7 +1087,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._create_hosted_service_with_deployment(
             self.hosted_service_name, deployment_name)
         package_url = self._upload_default_package_to_storage_blob('updated')
-        configuration = base64.b64encode(DEPLOYMENT_UPDATE_CONFIG)
+        configuration = _encode_base64(DEPLOYMENT_UPDATE_CONFIG)
         result = self.sms.upgrade_deployment(
             self.hosted_service_name, deployment_name, 'Manual',
             package_url, configuration, 'upgraded', True)
@@ -1112,7 +1111,7 @@ class ServiceManagementServiceTest(AzureTestCase):
             self.hosted_service_name, deployment_name)
         package_url = self._upload_default_package_to_storage_blob(
             'updated207')
-        configuration = base64.b64encode(DEPLOYMENT_UPDATE_CONFIG)
+        configuration = _encode_base64(DEPLOYMENT_UPDATE_CONFIG)
 
         self.sms.upgrade_deployment(self.hosted_service_name, deployment_name,
                                     'Auto', package_url, configuration,
