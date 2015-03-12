@@ -111,8 +111,11 @@
     <Content Include="tests\data\testhd" />
     <Content Include="tests\data\WindowsAzure1.cspkg" />
     <Content Include="tests\run" />
+    <Content Include="tests\run-mgmt.bat" />
+    <Content Include="tests\run-servicebus.bat" />
+    <Content Include="tests\run-storage.bat" />
+    <Content Include="tests\run-travis-tests" />
     <Content Include="tests\run.bat" />
-    <Content Include="tests\run_x64.bat" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
