@@ -1,4 +1,26 @@
-2015-03-XX Version 0.10.0
+2015-03-13 Version 0.10.0
+
+IMPORTANT CHANGE THAT AFFECTS STORAGE USERS (BLOB, QUEUE, TABLE):
+
+The library now targets x-ms-version '2014-02-14' of the storage REST API.
+Previous version of the library targeted '2012-02-12'.
+
+The upgrade to this new version causes some breaking changes for Python SDK users:
+ * Metrics for blob, queue, table service properties, which used to be accessed
+   with the 'metrics' field are now accessed via 'hour_metrics' and 'minute_metrics'.
+   Note that a backwards compatible 'metrics' property was added to redirect access 
+   to 'hour_metrics'.
+ * Url is no longer returned from list_containers, list_blobs, list_queues.
+   For blob, you can use the utility function make_blob_url as an alternate
+   way to get a URL.
+
+See MSDN documentation for details on REST API changes
+ in '2013-08-15': https://msdn.microsoft.com/en-us/library/azure/dn592124.aspx
+ in '2014-02-14': https://msdn.microsoft.com/en-us/library/azure/dd894041.aspx
+
+
+The other changes in this release are:
+
  * Performance improvements in xml deserialization of storage and service bus
    Table storage query_entities is ~25X faster for the maximum of 1000 entities
  * Ability to upload and download blobs using multiple connections, along with
