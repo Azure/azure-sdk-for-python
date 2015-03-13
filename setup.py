@@ -36,7 +36,7 @@ setup(name='azure',
       license='Apache License 2.0',
       author='Microsoft Corporation',
       author_email='ptvshelp@microsoft.com',
-      url='https://github.com/WindowsAzure/azure-sdk-for-python',
+      url='https://github.com/Azure/azure-sdk-for-python',
       classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
