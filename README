@@ -20,7 +20,7 @@ Welcome to DocumentDB.
 
     or
 
-    $ pip install --pre pydocumentdb
+    $ pip install pydocumentdb
 
 
 2) To run tests:

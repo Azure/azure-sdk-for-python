@@ -18,31 +18,6 @@ class DatabaseAccount(object):
 
           Value is returned from cached information updated periodically and
           is not guaranteed to be real time.
-        - `CapacityUnitsConsumed`: int, the number is capacity units database
-          account is currently consuming.
-
-          Value is returned from cached information updated periodically and is
-          not guaranteed to be real time.
-        - `CapacityUnitsProvisioned`: int, the number of provisioned capacity
-          units for the database account.
-
-          Value is returned from cached information updated periodically and
-          is not guaranteed to be real time.
-        - `ConsumedDocumentStorageInMB`: int, the cumulative sum of current
-          sizes of created collection in MB.
-
-          Value is returned from cached information updated periodically and
-          is not guaranteed to be real time.
-        - `ReservedDocumentStorageInMB`: int, the cumulative sum of maximum
-          sizes of created collection in MB.
-
-          Value is returned from cached information updated periodically and
-          is not guaranteed to be real time.
-        - `ProvisionedDocumentStorageInMB`: int, the provisioned documented
-          storage capacity for the database account.
-
-          Value is returned from cached information updated periodically and
-          is not guaranteed to be real time.
         - `ConsistencyPolicy`: dict, UserConsistencyPolicy settings.
         - `ConsistencyPolicy['defaultConsistencyLevel']`: dict, the default
           consistency level.
@@ -59,8 +34,6 @@ class DatabaseAccount(object):
         self.MediaLink = ''
         self.MaxMediaStorageUsageInMB = 0
         self.CurrentMediaStorageUsageInMB = 0
-        self.CapacityUnitsConsumed = 0
-        self.CapacityUnitsProvisioned = 0
         self.ConsumedDocumentStorageInMB = 0
         self.ReservedDocumentStorageInMB = 0
         self.ProvisionedDocumentStorageInMB = 0
@@ -130,29 +103,14 @@ class IndexingDirective(object):
     Include = 2
 
 
-class Protocol(object):
-    """Protocol to be used by DocumentClient for communicating to the DocumentDB
-    service.
-    
-    :Attributes:
-        - `Tcp`: A custom binary protocol on TCP.
-        - `Https`: HTTPS.
-    """
-    Tcp = 1
-    Https = 2
-
-
 class ConnectionMode(object):
     """Represents the connection mode to be used by the client.
 
     :Attributes:
-        - `Direct`: Use direct connectivity to the data nodes. Use gateway only
-          to initialize and cache logical addresses and refresh on updates.
         - `Gateway`: Use the DocumentDB gateway to route all requests. The
           gateway proxies requests to the right data partition.
     """
-    Direct = 0
-    Gateway = 1
+    Gateway = 0
 
 
 class MediaReadMode(object):
@@ -215,55 +173,48 @@ class TriggerOperation(object):
     Replace = 'replace'
 
 
+class SSLConfiguration(object):
+    """Configurations for SSL connections.
+
+    Please refer to https://docs.python.org/2/library/ssl.html#socket-creation for more detail.
+
+    :Attributes:
+        - `SSLKeyFile`: str, the path of the key file for ssl connection.
+        - `SSLCertFile`: str, the path of the cert file for ssl connection.
+        - `SSLCaCerts`: str, the path of the ca_certs file for ssl connection.
+    """
+    def __init__(self):
+        self.SSLKeyFile = None
+        self.SSLCertFile = None
+        self.SSLCaCerts = None
+
+
 class ConnectionPolicy(object):
     """Represents the Connection policy assocated with a DocumentClient.
 
     :Attributes:
-        - `MaxConnections`: int, gets or sets the maximum number of simultaneous
-          network connections with a specific data partition.
-
-          Currently used only for Protocol.Tcp.
         - `RequestTimeout`: int, gets or sets the request timeout (time to wait
           for response from network peer)
         - `MediaRequestTimeout`: int, gets or sets Time to wait for response
           from network peer for attachment content (aka media) operations.
         - `ConnectionMode`: int (documents.ConnectionMode), gets or sets the
-          connection mode used the client Gateway or Direct.
-        - `ConnectionProtocol`: int (documents.Protocol), gets or sets the
-          connection protocol.
-
-          This setting is not used for Gateway as Gateway
-          only supports HTTPS.
-        - `MaxCallsPerConnections`: int, gets or sets the number of maximum
-          simultaneous calls permitted on a single data connection.
-
-          Currently
-          used only for Protocol.Tcp.
-        - `MaxConcurrentFanoutRequests`: int, gets or sets the maximum number
-          of concurrent fanout requests.
+          connection mode used in the client. Currently only Gateway is supported.
         - `MediaReadMode`: str (MediaReadMode.Buffered), gets or sets the
           attachment content (aka media) download mode.
+        - `SSLConfiguration`: documents.SSLConfiguration, gets or sets the SSL configuration.
     """
 
-    __defaultMaxConnections = 20
-    __defaultMaxConcurrentCallsPerConnection = 50
     __defaultRequestTimeout = 60000  # milliseconds
     # defaultMediaRequestTimeout is based upon the blob client timeout and the
     # retry policy.
     __defaultMediaRequestTimeout = 300000  # milliseconds
-    __defaultMaxConcurrentFanoutRequests = 32
 
     def __init__(self):
-        self.MaxConnections = self.__defaultMaxConnections
         self.RequestTimeout = self.__defaultRequestTimeout
         self.MediaRequestTimeout = self.__defaultMediaRequestTimeout
-        self.ConnectionMode = ConnectionMode.Direct
-        self.ConnectionProtocol = Protocol.Https
-        self.MaxCallsPerConnections = (
-            self.__defaultMaxConcurrentCallsPerConnection)
-        self.MaxConcurrentFanoutRequests = (
-            self.__defaultMaxConcurrentFanoutRequests)
+        self.ConnectionMode = ConnectionMode.Gateway
         self.MediaReadMode = MediaReadMode.Buffered
+        self.SSLConfiguration = None
 
 
 class RetryPolicy(object):
