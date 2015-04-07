@@ -211,6 +211,7 @@ class DocumentClient(object):
                            None,
                            options)
 
+
     def ReadCollection(self, collection_link, options={}):
         """Reads a collection.
 
@@ -301,27 +302,6 @@ class DocumentClient(object):
                                     query,
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
-
-    def ReplaceDatabase(self, database_link, db, options={}):
-        """Replaces a database and returns it.
-
-        :Parameters:
-            - `database_link`: str, the link to the database.
-            - `db`: dict
-            - `options`: dict, the request options for the request.
-
-        :Returns:
-            dict
-
-        """
-        path = '/' + database_link
-        database_id = base.GetIdFromLink(database_link)
-        return self.Replace(db,
-                            path,
-                            'dbs',
-                            database_id,
-                            None,
-                            options)
 
     def DeleteDatabase(self, database_link, options={}):
         """Deletes a database.
@@ -1347,10 +1327,74 @@ class DocumentClient(object):
                                    None,
                                    options)
 
+    def ReplaceOffer(self, offer_link, offer):
+        """Replaces an offer and returns it.
+
+        :Parameters:
+            - `offer_link`: str, the link to the offer.
+            - `offer`: dict
+
+        :Returns:
+            dict
+
+        """
+        path = '/' + offer_link
+        offer_id = base.GetIdFromLink(offer_link)
+        return self.Replace(offer, path, 'offers', offer_id, None, None)
+
+    def ReadOffer(self, offer_link):
+        """Reads an offer.
+
+        :Parameters:
+            - `offer_link`: str, the link to the offer.
+
+        :Returns:
+            dict
+
+        """
+        path = '/' + offer_link
+        offer_id = base.GetIdFromLink(offer_link)
+        return self.Read(path, 'offers', offer_id, None, {})
+
+    def ReadOffers(self, options={}):
+        """Reads all offers.
+
+        :Parameters:
+            - `options`: dict, the request options for the request
+
+        :Returns:
+            query_iterable.QueryIterable
+
+        """
+        return self.QueryOffers(None, options)
+
+    def QueryOffers(self, query, options={}):
+        """Query for all offers.
+
+        :Parameters:
+            - `query`: str or dict.
+            - `options`: dict, the request options for the request
+
+        :Returns:
+            query_iterable.QueryIterable
+
+        """
+        def fetch_fn(options):
+            return self.__QueryFeed('/offers',
+                                    'offers',
+                                    '',
+                                    lambda r: r['Offers'],
+                                    lambda _, b: b,
+                                    query,
+                                    options), self.last_response_headers
+        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+
     def GetDatabaseAccount(self):
         """Gets database account info.
+
         :Returns:
             documents.DatabaseAccount
+
         """
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self,
@@ -1376,38 +1420,6 @@ class DocumentClient(object):
             database_account.CurrentMediaStorageUsageInMB = (
                 self.last_response_headers[
                     http_constants.HttpHeaders.CurrentMediaStorageUsageInMB])
-        if (http_constants.HttpHeaders.DatabaseAccountCapacityUnitsConsumed in
-            self.last_response_headers):
-            database_account.CapacityUnitsConsumed = self.last_response_headers[
-                http_constants.HttpHeaders.DatabaseAccountCapacityUnitsConsumed]
-        if (http_constants.HttpHeaders.DatabaseAccountCapacityUnitsProvisioned
-            in
-            self.last_response_headers):
-            database_account.CapacityUnitsProvisioned = (
-                self.last_response_headers[
-                    http_constants.HttpHeaders.
-                    DatabaseAccountCapacityUnitsProvisioned])
-        if (http_constants.HttpHeaders.
-                DatabaseAccountConsumedDocumentStorageInMB in
-            self.last_response_headers):
-            database_account.ConsumedDocumentStorageInMB = (
-                self.last_response_headers[
-                    http_constants.HttpHeaders.
-                    DatabaseAccountConsumedDocumentStorageInMB])
-        if (http_constants.HttpHeaders.
-                DatabaseAccountReservedDocumentStorageInMB in
-            self.last_response_headers):
-            database_account.ReservedDocumentStorageInMB = (
-               self.last_response_headers[
-                    http_constants.HttpHeaders.
-                    DatabaseAccountReservedDocumentStorageInMB])
-        if (http_constants.HttpHeaders.
-                DatabaseAccountProvisionedDocumentStorageInMB in
-            self.last_response_headers):
-            database_account.ProvisionedDocumentStorageInMB = (
-                self.last_response_headers[
-                    http_constants.HttpHeaders.
-                    DatabaseAccountProvisionedDocumentStorageInMB])
         database_account.ConsistencyPolicy = result['userConsistencyPolicy']
         return database_account
 

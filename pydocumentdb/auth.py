@@ -99,7 +99,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens,
         path_parts = path.split('/')
         resource_types = ['dbs', 'colls', 'docs', 'sprocs', 'udfs', 'triggers',
                           'users', 'permissions', 'attachments', 'media',
-                          'conflicts']
+                          'conflicts', 'offers']
         for one_part in reversed(path_parts):
             if not one_part in resource_types and one_part in resource_tokens:
                 return resource_tokens[one_part]

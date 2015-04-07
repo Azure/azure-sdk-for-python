@@ -29,6 +29,7 @@
     <Compile Include="pydocumentdb\base.py" />
     <Compile Include="pydocumentdb\documents.py" />
     <Compile Include="pydocumentdb\document_client.py" />
+    <Compile Include="pydocumentdb\https_connection.py" />
     <Compile Include="pydocumentdb\synchronized_request.py" />
     <Compile Include="pydocumentdb\__init__.py" />
     <Compile Include="test\__init__.py" />

@@ -13,8 +13,8 @@ import pydocumentdb.http_constants as http_constants
 
 
 # localhost
-masterKey = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-host = 'https://localhost:443'
+masterKey = '[YOUR_KEY_HERE]'
+host = '[YOUR_ENDPOINT_HERE]'
 
 
 class CRUDTests(unittest.TestCase):
@@ -67,20 +67,12 @@ class CRUDTests(unittest.TestCase):
         }))
         self.assert_(databases,
                      'number of results for the query should be > 0')
-        # replace database.
-        created_db['id'] = 'replaced db'
-        replaced_db = client.ReplaceDatabase(created_db['_self'], created_db)
-        self.assertEqual(replaced_db['id'],
-                         'replaced db',
-                         'Db id should change')
-        self.assertEqual(created_db['id'],
-                         replaced_db['id'],
-                        'Db id should stay the same')
-        # read database.
-        one_db_from_read = client.ReadDatabase(replaced_db['_self'])
-        self.assertEqual(replaced_db['id'], one_db_from_read['id'])
+
+		# read database.
+        one_db_from_read = client.ReadDatabase(created_db['_self'])
+
         # delete database.
-        client.DeleteDatabase(replaced_db['_self'])
+        client.DeleteDatabase(created_db['_self'])
         # read database after deletion
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadDatabase,
@@ -1206,6 +1198,119 @@ class CRUDTests(unittest.TestCase):
                                                {'temp': 'so'})
         self.assertEqual(result, 'aso')
 
+    def __ValidateOfferResponseBody(self, offer, expected_coll_link, expected_offer_type):
+        self.assert_(offer.get('id'), 'Id cannot be null.')
+        self.assert_(offer.get('_rid'), 'Resource Id (Rid) cannot be null.')
+        self.assert_(offer.get('_self'), 'Self Link cannot be null.')
+        self.assert_(offer.get('resource'), 'Resource Link cannot be null.')
+        self.assertTrue(offer['_self'].find(offer['id']) != -1,
+                        'Offer id not contained in offer self link.')
+        self.assertEqual(expected_coll_link.strip('/'), offer['resource'].strip('/'))
+        if (expected_offer_type):
+            self.assertEqual(expected_offer_type, offer.get('offerType'))
+
+    def test_offer_read_and_query(self):
+        client = document_client.DocumentClient(host, { 'masterKey': masterKey })
+        # Create database.
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        # Create collection.
+        collection = client.CreateCollection(db['_self'], { 'id': 'sample collection' })
+        offers = list(client.ReadOffers({}))
+        self.assertEqual(1, len(offers))
+        expected_offer = offers[0]
+        self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), None)
+        # Read the offer.
+        read_offer = client.ReadOffer(expected_offer.get('_self'))
+        self.__ValidateOfferResponseBody(read_offer, collection.get('_self'), expected_offer.get('offerType'))
+        # Check if the read resource is what we expected.
+        self.assertEqual(expected_offer.get('id'), read_offer.get('id'))
+        self.assertEqual(expected_offer.get('_rid'), read_offer.get('_rid'))
+        self.assertEqual(expected_offer.get('_self'), read_offer.get('_self'))
+        self.assertEqual(expected_offer.get('resource'), read_offer.get('resource'))
+        # Query for the offer.
+
+        offers = list(client.QueryOffers(
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters': [
+                    { 'name': '@id', 'value': expected_offer['id']}
+                ]
+            }, {}))
+        self.assertEqual(1, len(offers))
+        query_one_offer = offers[0]
+        self.__ValidateOfferResponseBody(query_one_offer, collection.get('_self'), expected_offer.get('offerType'))
+        # Check if the query result is what we expected.
+        self.assertEqual(expected_offer.get('id'), query_one_offer.get('id'))
+        self.assertEqual(expected_offer.get('_rid'), query_one_offer.get('_rid'))
+        self.assertEqual(expected_offer.get('_self'), query_one_offer.get('_self'))
+        self.assertEqual(expected_offer.get('resource'), query_one_offer.get('resource'))
+        # Expects an exception when reading offer with bad offer link.
+        self.__AssertHTTPFailureWithStatus(400, client.ReadOffer, expected_offer.get('_self')[:-1] + 'x')
+        # Now delete the collection.
+        client.DeleteCollection(collection.get('_self'))
+        # Reading fails.
+        self.__AssertHTTPFailureWithStatus(404, client.ReadOffer, expected_offer.get('_self'))
+        # Read feed now returns 0 results.
+        offers = list(client.ReadOffers())
+        self.assert_(not offers)
+
+    def test_offer_replace(self):
+        client = document_client.DocumentClient(host, { 'masterKey': masterKey })
+        # Create database.
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        # Create collection.
+        collection = client.CreateCollection(db['_self'], { 'id': 'sample collection' })
+        offers = list(client.ReadOffers())
+        self.assertEqual(1, len(offers))
+        expected_offer = offers[0]
+        self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), None)
+        # Replace the offer.
+        offer_to_replace = dict(expected_offer)
+        offer_to_replace['offerType'] = 'S2'
+        replaced_offer = client.ReplaceOffer(offer_to_replace['_self'], offer_to_replace)
+        self.__ValidateOfferResponseBody(replaced_offer, collection.get('_self'), 'S2')
+        # Check if the replaced offer is what we expect.
+        self.assertEqual(offer_to_replace.get('id'), replaced_offer.get('id'))
+        self.assertEqual(offer_to_replace.get('_rid'), replaced_offer.get('_rid'))
+        self.assertEqual(offer_to_replace.get('_self'), replaced_offer.get('_self'))
+        self.assertEqual(offer_to_replace.get('resource'), replaced_offer.get('resource'))
+        # Expects an exception when replacing an offer with bad id.
+        offer_to_replace_bad_id = dict(offer_to_replace)
+        offer_to_replace_bad_id['_rid'] = 'NotAllowed'
+        self.__AssertHTTPFailureWithStatus(
+            400, client.ReplaceOffer, offer_to_replace_bad_id['_self'], offer_to_replace_bad_id)
+        # Expects an exception when replacing an offer with bad rid.
+        offer_to_replace_bad_rid = dict(offer_to_replace)
+        offer_to_replace_bad_rid['_rid'] = 'InvalidRid'
+        self.__AssertHTTPFailureWithStatus(
+            400, client.ReplaceOffer, offer_to_replace_bad_rid['_self'], offer_to_replace_bad_rid)
+        # Expects an exception when replaceing an offer with null id and rid.
+        offer_to_replace_null_ids = dict(offer_to_replace)
+        offer_to_replace_null_ids['id'] = None
+        offer_to_replace_null_ids['_rid'] = None
+        self.__AssertHTTPFailureWithStatus(
+            400, client.ReplaceOffer, offer_to_replace_null_ids['_self'], offer_to_replace_null_ids)
+
+    def test_collection_with_offer_type(self):
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+        # create database
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        collections = list(client.ReadCollections(created_db['_self']))
+        # create a collection
+        before_create_collections_count = len(collections)
+        collection_definition = { 'id': 'sample collection' }
+        collection = client.CreateCollection(created_db['_self'],
+                                             collection_definition,
+                                             {
+                                                 'offerType': 'S2'
+                                             })
+        # We should have an offer of type S2.
+        offers = list(client.ReadOffers())
+        self.assertEqual(1, len(offers))
+        expected_offer = offers[0]
+        self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), 'S2')
+
     def test_database_account_functionality(self):
         # Validate database account functionality.
         client = document_client.DocumentClient(host,
@@ -1227,49 +1332,20 @@ class CRUDTests(unittest.TestCase):
                 client.last_response_headers[
                     http_constants.HttpHeaders.
                     CurrentMediaStorageUsageInMB])
-        if (http_constants.HttpHeaders.DatabaseAccountCapacityUnitsConsumed
-            in
-            client.last_response_headers):
-            self.assertEqual(
-                database_account.CapacityUnitsConsumed,
-                client.last_response_headers[
-                    http_constants.HttpHeaders.
-                    DatabaseAccountCapacityUnitsConsumed])
-        if (http_constants.HttpHeaders.
-                DatabaseAccountCapacityUnitsProvisioned in
-            client.last_response_headers):
-            self.assertEqual(
-                database_account.CapacityUnitsProvisioned,
-                client.last_response_headers[
-                    http_constants.HttpHeaders.
-                    DatabaseAccountCapacityUnitsProvisioned])
-        if (http_constants.HttpHeaders.
-                DatabaseAccountConsumedDocumentStorageInMB in
-            client.last_response_headers):
-            self.assertEqual(
-                database_account.ConsumedDocumentStorageInMB,
-                client.last_response_headers[
-                    http_constants.HttpHeaders.
-                    DatabaseAccountConsumedDocumentStorageInMB])
-        if (http_constants.HttpHeaders.
-            DatabaseAccountReservedDocumentStorageInMB in
-            client.last_response_headers):
-            self.assertEqual(
-                database_account.ReservedDocumentStorageInMB,
-                client.last_response_headers[
-                            http_constants.HttpHeaders.
-                            DatabaseAccountReservedDocumentStorageInMB])
-        if (http_constants.HttpHeaders.
-            DatabaseAccountProvisionedDocumentStorageInMB in
-            client.last_response_headers):
-            self.assertEqual(
-                database_account.ProvisionedDocumentStorageInMB,
-                client.last_response_headers[
-                    http_constants.HttpHeaders.
-                    DatabaseAccountProvisionedDocumentStorageInMB])
         self.assertTrue(
             database_account.ConsistencyPolicy['defaultConsistencyLevel']
             != None)
+
+    # To run this test, please provide your own CA certs file or download one from
+    #     http://curl.haxx.se/docs/caextract.html
+    #
+    # def test_ssl_connection(self):
+    #     connection_policy = documents.ConnectionPolicy()
+    #     connection_policy.SSLConfiguration = documents.SSLConfiguration()
+    #     connection_policy.SSLConfiguration.SSLCaCerts = './cacert.pem'
+    #     client = document_client.DocumentClient(host, {'masterKey': masterKey}, connection_policy)
+    #     # Read databases after creation.
+    #     databases = list(client.ReadDatabases())
 
 
 if __name__ == '__main__':

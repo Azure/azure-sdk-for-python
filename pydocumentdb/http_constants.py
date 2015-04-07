@@ -100,16 +100,6 @@ class HttpHeaders:
 
     # Usage Info
     CurrentMediaStorageUsageInMB = 'x-ms-media-storage-usage-mb'
-    DatabaseAccountCapacityUnitsConsumed = (
-        'x-ms-database-capacity-units-consumed')
-    DatabaseAccountCapacityUnitsProvisioned = (
-        'x-ms-database-capacity-units-provisioned')
-    DatabaseAccountConsumedDocumentStorageInMB = (
-        'x-ms-databaseaccount-consumed-mb')
-    DatabaseAccountReservedDocumentStorageInMB = (
-        'x-ms-databaseaccount-reserved-mb')
-    DatabaseAccountProvisionedDocumentStorageInMB = (
-        'x-ms-databaseaccount-provisioned-mb')
     RequestCharge = 'x-ms-request-charge'
 
     #Address related headers.
@@ -140,6 +130,9 @@ class HttpHeaders:
     # Object returning this determines what constitutes state and what
     # last state change means. For replica, it is the last role change.
     LastStateChangeUtc = 'x-ms-last-state-change-utc'
+
+    # Offer type.
+    OfferType = 'x-ms-offer-type'
 
 
 class HttpHeaderPreferenceTokens:
@@ -203,8 +196,8 @@ class CookieHeaders:
 class Versions:
     """Constants of versions.
     """
-    CurrentVersion = '2014-08-21'
-    UserAgent = 'documentdb-python-sdk-0.9.3'
+    CurrentVersion = '2015-04-08'
+    UserAgent = 'documentdb-python-sdk-1.0.0'
 
 
 class Delimiters:

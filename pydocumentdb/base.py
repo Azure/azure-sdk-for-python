@@ -88,6 +88,9 @@ def GetHeaders(document_client,
         headers[http_constants.HttpHeaders.ResourceTokenExpiry] = (
             options['resourceTokenExpirySeconds'])
 
+    if options.get('offerType'):
+        headers[http_constants.HttpHeaders.OfferType] = options['offerType']
+
     if document_client.master_key:
         headers[http_constants.HttpHeaders.XDate] = (
             datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT'))

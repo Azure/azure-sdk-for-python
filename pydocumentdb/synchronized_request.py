@@ -3,7 +3,6 @@
 """Synchronized request.
 """
 
-import httplib
 import json
 import urlparse
 import urllib
@@ -11,6 +10,7 @@ import urllib
 import pydocumentdb.documents as documents
 import pydocumentdb.errors as errors
 import pydocumentdb.http_constants as http_constants
+import pydocumentdb.https_connection as https_connection
 
 
 def _IsReadableStream(obj):
@@ -68,9 +68,10 @@ def _InternalRequest(connection_policy, request_options, request_body):
     connection_timeout = (connection_policy.MediaRequestTimeout
                           if is_media
                           else connection_policy.RequestTimeout)
-    connection =  httplib.HTTPSConnection(request_options['host'],
-                                          request_options['port'],
-                                          timeout=connection_timeout / 1000.0)
+    connection = https_connection.HTTPSConnection(request_options['host'],
+                                                  port=request_options['port'],
+                                                  ssl_configuration=connection_policy.SSLConfiguration,
+                                                  timeout=connection_timeout / 1000.0)
     connection.request(request_options['method'],
                        request_options['path'],
                        request_body,
