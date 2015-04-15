@@ -350,6 +350,13 @@ class BlobServiceTest(AzureTestCase):
         finally:
             connection.close()
 
+    class NonSeekableFile(object):
+        def __init__(self, wrapped_file):
+            self.wrapped_file = wrapped_file
+
+        def write(self, data):
+            self.wrapped_file.write(data)
+
     #--Test cases for blob service --------------------------------------------
     def test_create_blob_service_missing_arguments(self):
         # Arrange
@@ -3039,6 +3046,47 @@ class BlobServiceTest(AzureTestCase):
         with open(file_path, 'rb') as stream:
             actual = stream.read()
             self.assertEqual(data, actual)
+
+    def test_get_blob_to_file_non_seekable_chunked_download(self):
+        # Arrange
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_output.temp.dat'
+        self._create_container_and_block_blob(
+            self.container_name, blob_name, data)
+
+        # Act
+        with open(file_path, 'wb') as stream:
+            non_seekable_stream = BlobServiceTest.NonSeekableFile(stream)
+            resp = self.bs.get_blob_to_file(
+                self.container_name, blob_name, non_seekable_stream,
+                max_connections=1)
+
+        # Assert
+        self.assertIsNone(resp)
+        with open(file_path, 'rb') as stream:
+            actual = stream.read()
+            self.assertEqual(data, actual)
+
+    def test_get_blob_to_file_non_seekable_chunked_download_parallel(self):
+        # Arrange
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_output.temp.dat'
+        self._create_container_and_block_blob(
+            self.container_name, blob_name, data)
+
+        # Act
+        with open(file_path, 'wb') as stream:
+            non_seekable_stream = BlobServiceTest.NonSeekableFile(stream)
+
+            # Parallel downloads require that the file be seekable
+            with self.assertRaises(AttributeError):
+                resp = self.bs.get_blob_to_file(
+                    self.container_name, blob_name, non_seekable_stream,
+                    max_connections=10)
+
+        # Assert
 
     def test_get_blob_to_file_with_progress(self):
         # Arrange

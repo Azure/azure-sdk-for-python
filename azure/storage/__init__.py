@@ -900,7 +900,7 @@ class _BlobChunkDownloader(object):
         self.blob_size = blob_size
         self.chunk_size = chunk_size
         self.stream = stream
-        self.stream_start = stream.tell()
+        self.stream_start = stream.tell() if parallel else None
         self.stream_lock = threading.Lock() if parallel else None
         self.progress_callback = progress_callback
         self.progress_total = 0
@@ -938,7 +938,6 @@ class _BlobChunkDownloader(object):
                 self.stream.seek(self.stream_start + chunk_offset)
                 self.stream.write(chunk_data)
         else:
-            self.stream.seek(self.stream_start + chunk_offset)
             self.stream.write(chunk_data)
 
     def _download_chunk_with_retries(self, chunk_offset):
