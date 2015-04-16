@@ -357,6 +357,9 @@ class BlobServiceTest(AzureTestCase):
         def write(self, data):
             self.wrapped_file.write(data)
 
+        def read(self, count):
+            return self.wrapped_file.read(count)
+
     #--Test cases for blob service --------------------------------------------
     def test_create_blob_service_missing_arguments(self):
         # Arrange
@@ -3707,6 +3710,70 @@ class BlobServiceTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    def test_put_block_blob_from_file_non_seekable_chunked_upload_known_size(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+        blob_size = len(data) - 66
+
+        # Act
+        with open(file_path, 'rb') as stream:
+            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+            resp = self.bs.put_block_blob_from_file(
+                self.container_name, blob_name, non_seekable_file,
+                count=blob_size, max_connections=1)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
+        self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+
+    def test_put_block_blob_from_file_non_seekable_chunked_upload_unknown_size(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        with open(file_path, 'rb') as stream:
+            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+            resp = self.bs.put_block_blob_from_file(
+                self.container_name, blob_name, non_seekable_file,
+                max_connections=1)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
+        self.assertBlobEqual(self.container_name, blob_name, data)
+
+    def test_put_block_blob_from_file_non_seekable_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        with open(file_path, 'rb') as stream:
+            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+
+            # Parallel uploads require that the file be seekable
+            with self.assertRaises(AttributeError):
+                resp = self.bs.put_block_blob_from_file(
+                    self.container_name, blob_name, non_seekable_file,
+                    max_connections=10)
+
+        # Assert
+
     def test_put_block_blob_from_file_with_progress_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4176,6 +4243,50 @@ class BlobServiceTest(AzureTestCase):
         self.assertIsNone(resp)
         self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+
+    def test_put_page_blob_from_file_non_seekable_chunked_upload(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_page_blob_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        blob_size = len(data)
+        with open(file_path, 'rb') as stream:
+            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+            resp = self.bs.put_page_blob_from_file(
+                self.container_name, blob_name, non_seekable_file, blob_size,
+                max_connections=1)
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
+        self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+
+    def test_put_page_blob_from_file_non_seekable_chunked_upload_parallel(self):
+        # Arrange
+        self._create_container(self.container_name)
+        blob_name = 'blob1'
+        data = self._get_oversized_page_blob_binary_data()
+        file_path = 'blob_input.temp.dat'
+        with open(file_path, 'wb') as stream:
+            stream.write(data)
+
+        # Act
+        blob_size = len(data)
+        with open(file_path, 'rb') as stream:
+            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+
+            # Parallel uploads require that the file be seekable
+            with self.assertRaises(AttributeError):
+                resp = self.bs.put_page_blob_from_file(
+                    self.container_name, blob_name, non_seekable_file, blob_size,
+                    max_connections=10)
+
+        # Assert
 
     def test_put_page_blob_from_file_with_progress_chunked_upload(self):
         # Arrange

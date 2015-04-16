@@ -911,6 +911,7 @@ class BlobService(_StorageClient):
             Set to 1 to upload the blob chunks sequentially.
             Set to 2 or more to upload the blob chunks in parallel. This uses
             more system resources but will upload faster.
+            Note that parallel upload requires the stream to be seekable.
         max_retries:
             Number of times to retry upload of blob chunk if an error occurs.
         retry_wait:
@@ -1392,6 +1393,7 @@ class BlobService(_StorageClient):
             Set to 1 to upload the blob chunks sequentially.
             Set to 2 or more to upload the blob chunks in parallel. This uses
             more system resources but will upload faster.
+            Note that parallel upload requires the stream to be seekable.
         max_retries:
             Number of times to retry upload of blob chunk if an error occurs.
         retry_wait:
