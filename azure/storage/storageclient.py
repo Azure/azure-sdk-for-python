@@ -42,7 +42,8 @@ class _StorageClient(object):
     '''
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
-                 host_base='', dev_host='', timeout=DEFAULT_HTTP_TIMEOUT):
+                 host_base='', dev_host='', timeout=DEFAULT_HTTP_TIMEOUT,
+                 sas_token=None):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -57,6 +58,8 @@ class _StorageClient(object):
             Optional. Dev host url. Defaults to localhost.
         timeout:
             Optional. Timeout for the http request, in seconds.
+        sas_token:
+            Optional. Token to use to authenticate with shared access signature.
         '''
         self.account_name = account_name
         self.account_key = account_key
@@ -64,6 +67,7 @@ class _StorageClient(object):
         self.protocol = protocol
         self.host_base = host_base
         self.dev_host = dev_host
+        self.sas_token = sas_token
 
         # the app is not run in azure emulator or use default development
         # storage account and key if app is run in emulator.
@@ -79,7 +83,7 @@ class _StorageClient(object):
         # constructing, get the account and key from environment variables if
         # the app is not run in azure emulator or use default development
         # storage account and key if app is run in emulator.
-        if not self.account_name or not self.account_key:
+        if not self.account_name and not self.account_key:
             if self.is_emulated:
                 self.account_name = DEV_ACCOUNT_NAME
                 self.account_key = DEV_ACCOUNT_KEY
@@ -89,13 +93,11 @@ class _StorageClient(object):
                 self.account_name = os.environ.get(AZURE_STORAGE_ACCOUNT)
                 self.account_key = os.environ.get(AZURE_STORAGE_ACCESS_KEY)
 
-        if not self.account_name or not self.account_key:
+        if not self.account_name:
             raise WindowsAzureError(_ERROR_STORAGE_MISSING_INFO)
 
         self._httpclient = _HTTPClient(
             service_instance=self,
-            account_key=self.account_key,
-            account_name=self.account_name,
             protocol=self.protocol,
             timeout=timeout)
         self._batchclient = None

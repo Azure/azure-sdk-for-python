@@ -14,16 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import datetime
 import unittest
 
 from azure import WindowsAzureError
+from azure.storage import (
+    AccessPolicy,
+    SignedIdentifier,
+    SignedIdentifiers,
+    QueueSharedAccessPermissions,
+)
 from azure.storage.queueservice import QueueService
+from azure.storage.sharedaccesssignature import SharedAccessPolicy
 from util import (
     AzureTestCase,
     credentials,
     getUniqueName,
     set_service_options,
-    )
+)
 
 #------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'
@@ -62,6 +70,18 @@ class QueueServiceTest(AzureTestCase):
                 self.qs.delete_queue(queue_name)
             except:
                 pass
+
+    def _get_shared_access_policy(self, permission):
+        date_format = "%Y-%m-%dT%H:%M:%SZ"
+        start = datetime.datetime.utcnow() - datetime.timedelta(minutes=1)
+        expiry = start + datetime.timedelta(hours=1)
+        return SharedAccessPolicy(
+            AccessPolicy(
+                start.strftime(date_format),
+                expiry.strftime(date_format),
+                permission
+            )
+        )
 
     def test_get_service_properties(self):
         # This api doesn't apply to local storage
@@ -368,6 +388,209 @@ class QueueServiceTest(AzureTestCase):
         self.assertNotEqual('', message.insertion_time)
         self.assertNotEqual('', message.expiration_time)
         self.assertNotEqual('', message.time_next_visible)
+
+    def test_sas_read(self):
+        # Arrange
+        self.qs.put_message(self.test_queues[0], 'message1')
+        token = self.qs.generate_shared_access_signature(
+            self.test_queues[0],
+            self._get_shared_access_policy(QueueSharedAccessPermissions.READ),
+        )
+
+        # Act
+        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
+        set_service_options(service)
+        result = service.peek_messages(self.test_queues[0])
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(1, len(result))
+        message = result[0]
+        self.assertIsNotNone(message)
+        self.assertNotEqual('', message.message_id)
+        self.assertEqual('message1', message.message_text)
+
+    def test_sas_add(self):
+        # Arrange
+        token = self.qs.generate_shared_access_signature(
+            self.test_queues[0],
+            self._get_shared_access_policy(QueueSharedAccessPermissions.ADD),
+        )
+
+        # Act
+        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
+        set_service_options(service)
+        result = service.put_message(self.test_queues[0], 'addedmessage')
+
+        # Assert
+        result = self.qs.get_messages(self.test_queues[0])
+        self.assertEqual('addedmessage', result[0].message_text)
+
+    def test_sas_update(self):
+        # Arrange
+        self.qs.put_message(self.test_queues[0], 'message1')
+        token = self.qs.generate_shared_access_signature(
+            self.test_queues[0],
+            self._get_shared_access_policy(QueueSharedAccessPermissions.UPDATE),
+        )
+        result = self.qs.get_messages(self.test_queues[0])
+
+        # Act
+        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
+        set_service_options(service)
+        service.update_message(
+            self.test_queues[0],
+            result[0].message_id,
+            'updatedmessage1',
+            result[0].pop_receipt,
+            visibilitytimeout=0,
+        )
+
+        # Assert
+        result = self.qs.get_messages(self.test_queues[0])
+        self.assertEqual('updatedmessage1', result[0].message_text)
+
+    def test_sas_process(self):
+        # Arrange
+        self.qs.put_message(self.test_queues[0], 'message1')
+        token = self.qs.generate_shared_access_signature(
+            self.test_queues[0],
+            self._get_shared_access_policy(QueueSharedAccessPermissions.PROCESS),
+        )
+
+        # Act
+        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
+        set_service_options(service)
+        result = service.get_messages(self.test_queues[0])
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(1, len(result))
+        message = result[0]
+        self.assertIsNotNone(message)
+        self.assertNotEqual('', message.message_id)
+        self.assertEqual('message1', message.message_text)
+
+    def test_sas_signed_identifier(self):
+        # Arrange
+        si = SignedIdentifier()
+        si.id = 'testid'
+        si.access_policy.start = '2011-10-11'
+        si.access_policy.expiry = '2018-10-12'
+        si.access_policy.permission = QueueSharedAccessPermissions.READ
+        identifiers = SignedIdentifiers()
+        identifiers.signed_identifiers.append(si)
+
+        resp = self.qs.set_queue_acl(self.test_queues[0], identifiers)
+
+        self.qs.put_message(self.test_queues[0], 'message1')
+
+        token = self.qs.generate_shared_access_signature(
+            self.test_queues[0],
+            SharedAccessPolicy(signed_identifier=si.id),
+        )
+
+        # Act
+        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
+        set_service_options(service)
+        result = service.peek_messages(self.test_queues[0])
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(1, len(result))
+        message = result[0]
+        self.assertIsNotNone(message)
+        self.assertNotEqual('', message.message_id)
+        self.assertEqual('message1', message.message_text)
+
+    def test_get_queue_acl(self):
+        # Arrange
+
+        # Act
+        acl = self.qs.get_queue_acl(self.test_queues[0])
+
+        # Assert
+        self.assertIsNotNone(acl)
+        self.assertEqual(len(acl.signed_identifiers), 0)
+
+    def test_get_queue_acl_iter(self):
+        # Arrange
+
+        # Act
+        acl = self.qs.get_queue_acl(self.test_queues[0])
+        for signed_identifier in acl:
+            pass
+
+        # Assert
+        self.assertIsNotNone(acl)
+        self.assertEqual(len(acl.signed_identifiers), 0)
+        self.assertEqual(len(acl), 0)
+
+    def test_get_queue_acl_with_non_existing_queue(self):
+        # Arrange
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.qs.get_queue_acl(self.creatable_queues[0])
+
+        # Assert
+
+    def test_set_queue_acl(self):
+        # Arrange
+
+        # Act
+        resp = self.qs.set_queue_acl(self.test_queues[0])
+
+        # Assert
+        self.assertIsNone(resp)
+        acl = self.qs.get_queue_acl(self.test_queues[0])
+        self.assertIsNotNone(acl)
+
+    def test_set_queue_acl_with_empty_signed_identifiers(self):
+        # Arrange
+
+        # Act
+        identifiers = SignedIdentifiers()
+
+        resp = self.qs.set_queue_acl(self.test_queues[0], identifiers)
+
+        # Assert
+        self.assertIsNone(resp)
+        acl = self.qs.get_queue_acl(self.test_queues[0])
+        self.assertIsNotNone(acl)
+        self.assertEqual(len(acl.signed_identifiers), 0)
+
+    def test_set_queue_acl_with_signed_identifiers(self):
+        # Arrange
+
+        # Act
+        si = SignedIdentifier()
+        si.id = 'testid'
+        si.access_policy.start = '2011-10-11'
+        si.access_policy.expiry = '2011-10-12'
+        si.access_policy.permission = QueueSharedAccessPermissions.READ
+        identifiers = SignedIdentifiers()
+        identifiers.signed_identifiers.append(si)
+
+        resp = self.qs.set_queue_acl(self.test_queues[0], identifiers)
+
+        # Assert
+        self.assertIsNone(resp)
+        acl = self.qs.get_queue_acl(self.test_queues[0])
+        self.assertIsNotNone(acl)
+        self.assertEqual(len(acl.signed_identifiers), 1)
+        self.assertEqual(len(acl), 1)
+        self.assertEqual(acl.signed_identifiers[0].id, 'testid')
+        self.assertEqual(acl[0].id, 'testid')
+
+    def test_set_queue_acl_with_non_existing_queue(self):
+        # Arrange
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.qs.set_queue_acl(self.creatable_queues[0])
+
+        # Assert
 
     def test_with_filter(self):
         # Single filter

@@ -29,18 +29,27 @@ from azure import (
     _update_request_uri_query_local_storage,
     _validate_not_none,
     _ETreeXmlToObject,
+    _ERROR_STORAGE_MISSING_INFO,
     )
 from azure.http import HTTPRequest
 from azure.http.batchclient import _BatchClient
 from azure.storage import (
+    SignedIdentifiers,
     StorageServiceProperties,
+    StorageSASAuthentication,
+    StorageTableSharedKeyAuthentication,
+    TableSharedAccessPermissions,
     _convert_entity_to_xml,
     _convert_etree_element_to_entity,
     _convert_etree_element_to_table,
     _convert_response_to_entity,
+    _convert_signed_identifiers_to_xml,
     _convert_table_to_xml,
-    _sign_storage_table_request,
     _update_storage_table_header,
+    X_MS_VERSION,
+    )
+from azure.storage.sharedaccesssignature import (
+    SharedAccessSignature,
     )
 from azure.storage.storageclient import _StorageClient
 
@@ -53,7 +62,7 @@ class TableService(_StorageClient):
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base=TABLE_SERVICE_HOST_BASE, dev_host=DEV_TABLE_HOST,
-                 timeout=DEFAULT_HTTP_TIMEOUT):
+                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -68,16 +77,57 @@ class TableService(_StorageClient):
             Optional. Dev host url. Defaults to localhost.
         timeout:
             Optional. Timeout for the http request, in seconds.
+        sas_token:
+            Optional. Token to use to authenticate with shared access signature.
         '''
         super(TableService, self).__init__(
-            account_name, account_key, protocol, host_base, dev_host, timeout)
+            account_name, account_key, protocol, host_base, dev_host, timeout, sas_token)
+
+        if self.account_key:
+            self.authentication = StorageTableSharedKeyAuthentication(
+                self.account_name,
+                self.account_key,
+            )
+        elif self.sas_token:
+            self.authentication = StorageSASAuthentication(self.sas_token)
+        else:
+            raise WindowsAzureError(_ERROR_STORAGE_MISSING_INFO)
+
+    def generate_shared_access_signature(self, table_name,
+                                         shared_access_policy=None,
+                                         sas_version=X_MS_VERSION):
+        '''
+        Generates a shared access signature for the table.
+        Use the returned signature with the sas_token parameter of TableService.
+
+        table_name:
+            Required. Name of table.
+        shared_access_policy:
+            Instance of SharedAccessPolicy class.
+        sas_version:
+            x-ms-version for storage service, or None to get a signed query
+            string compatible with pre 2012-02-12 clients, where the version
+            is not included in the query string.
+        '''
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('shared_access_policy', shared_access_policy)
+        _validate_not_none('self.account_name', self.account_name)
+        _validate_not_none('self.account_key', self.account_key)
+
+        sas = SharedAccessSignature(self.account_name, self.account_key)
+        return sas.generate_signed_query_string(
+            table_name,
+            None,
+            shared_access_policy,
+            sas_version,
+            table_name=table_name,
+        )
 
     def begin_batch(self):
         if self._batchclient is None:
             self._batchclient = _BatchClient(
                 service_instance=self,
-                account_key=self.account_key,
-                account_name=self.account_name,
+                authentication=self.authentication,
                 timeout=self._httpclient.timeout)
         return self._batchclient.begin_batch()
 
@@ -219,6 +269,48 @@ class TableService(_StorageClient):
         else:
             self._perform_request(request)
             return True
+
+    def get_table_acl(self, table_name):
+        '''
+        Returns details about any stored access policies specified on the
+        table that may be used with Shared Access Signatures.
+
+        table_name:
+            Name of existing table.
+        '''
+        _validate_not_none('table_name', table_name)
+        request = HTTPRequest()
+        request.method = 'GET'
+        request.host = self._get_host()
+        request.path = '/' + _str(table_name) + '?comp=acl'
+        request.path, request.query = _update_request_uri_query_local_storage(
+            request, self.use_local_storage)
+        request.headers = _update_storage_table_header(request)
+        response = self._perform_request(request)
+
+        return _ETreeXmlToObject.parse_response(response, SignedIdentifiers)
+
+    def set_table_acl(self, table_name, signed_identifiers=None):
+        '''
+        Sets stored access policies for the table that may be used with
+        Shared Access Signatures.
+
+        table_name:
+            Name of existing table.
+        signed_identifiers:
+            SignedIdentifers instance
+        '''
+        _validate_not_none('table_name', table_name)
+        request = HTTPRequest()
+        request.method = 'PUT'
+        request.host = self._get_host()
+        request.path = '/' + _str(table_name) + '?comp=acl'
+        request.body = _get_request_body(
+            _convert_signed_identifiers_to_xml(signed_identifiers))
+        request.path, request.query = _update_request_uri_query_local_storage(
+            request, self.use_local_storage)
+        request.headers = _update_storage_table_header(request, content_type=None)
+        self._perform_request(request)
 
     def get_entity(self, table_name, partition_key, row_key, select=''):
         '''
@@ -528,8 +620,5 @@ class TableService(_StorageClient):
         return _parse_response_for_dict_filter(response, filter=['etag'])
 
     def _perform_request_worker(self, request):
-        auth = _sign_storage_table_request(request,
-                                           self.account_name,
-                                           self.account_key)
-        request.headers.append(('Authorization', auth))
+        self.authentication.sign_request(request)
         return self._httpclient.perform_request(request)

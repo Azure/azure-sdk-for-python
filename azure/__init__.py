@@ -87,7 +87,7 @@ _ERROR_UNKNOWN = 'Unknown error ({0})'
 _ERROR_SERVICEBUS_MISSING_INFO = \
     'You need to provide servicebus namespace, access key and Issuer'
 _ERROR_STORAGE_MISSING_INFO = \
-    'You need to provide both account name and access key'
+    'You need to provide an account name'
 _ERROR_ACCESS_POLICY = \
     'share_access_policy must be either SignedIdentifier or AccessPolicy ' + \
     'instance'

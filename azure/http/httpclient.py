@@ -49,19 +49,16 @@ class _HTTPClient(object):
     Takes the request and sends it to cloud service and returns the response.
     '''
 
-    def __init__(self, service_instance, cert_file=None, account_name=None,
-                 account_key=None, protocol='https', request_session=None,
-                 timeout=DEFAULT_HTTP_TIMEOUT):
+    def __init__(self, service_instance, cert_file=None, protocol='https',
+                 request_session=None, timeout=DEFAULT_HTTP_TIMEOUT):
         '''
         service_instance:
             service client instance.
         cert_file:
             certificate file name/location. This is only used in hosted
             service management.
-        account_name:
-            the storage account.
-        account_key:
-            the storage account access key.
+        protocol:
+            http or https.
         request_session:
             session object created with requests library (or compatible).
         timeout:
@@ -72,8 +69,6 @@ class _HTTPClient(object):
         self.respheader = None
         self.message = None
         self.cert_file = cert_file
-        self.account_name = account_name
-        self.account_key = account_key
         self.protocol = protocol
         self.proxy_host = None
         self.proxy_port = None
