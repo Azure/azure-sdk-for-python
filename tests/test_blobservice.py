@@ -18,15 +18,14 @@ import base64
 import datetime
 import os
 import random
+import requests
 import sys
 import time
 import unittest
 if sys.version_info < (3,):
     from httplib import HTTPConnection
-    from urlparse import urlparse
 else:
     from http.client import HTTPConnection
-    from urllib.parse import urlparse
 
 from azure import (
     WindowsAzureError,
@@ -254,48 +253,6 @@ class BlobServiceTest(AzureTestCase):
                 permission
             )
         )
-
-    def _get_request(self, url):
-        return self._web_request('GET', url)
-
-    def _put_request(self, url, content, headers):
-        return self._web_request('PUT', url, content, headers)
-
-    def _del_request(self, url):
-        return self._web_request('DELETE', url)
-
-    def _web_request(self, method, url, content=None, headers=None):
-        if content and not isinstance(content, bytes):
-            raise TypeError('content should be bytes')
-
-        result = urlparse(url)
-        host = result.hostname
-
-        connection = HTTPConnection(host)
-        try:
-            connection.putrequest(method, url)
-            connection.putheader(
-                'Content-Type', 'application/octet-stream;Charset=UTF-8')
-            if headers:
-                for name, val in headers.items():
-                    connection.putheader(name, val)
-            if content is not None:
-                connection.putheader('Content-Length', str(len(content)))
-            connection.endheaders()
-            if content is not None:
-                connection.send(content)
-
-            resp = connection.getresponse()
-            respheaders = [(name.lower(), val) for name, val in resp.getheaders()]
-            respbody = None
-            if resp.length is None:
-                respbody = resp.read()
-            elif resp.length > 0:
-                respbody = resp.read(resp.length)
-
-            return (respbody, respheaders)
-        finally:
-            connection.close()
 
     #--Test cases for blob service --------------------------------------------
     def test_create_blob_service_missing_arguments(self):
@@ -2709,12 +2666,11 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         url = self.bs.make_blob_url(self.container_name, blob_name)
-        respbody, _ = self._get_request(url)
+        response = requests.get(url)
 
         # Assert
-        self.assertNotEqual(data, respbody)
-        self.assertNotEqual(-1, respbody.decode('utf-8-sig')
-                            .find('ResourceNotFound'))
+        self.assertFalse(response.ok)
+        self.assertNotEqual(-1, response.text.find('ResourceNotFound'))
 
     def test_no_sas_public_blob(self):
         # Arrange
@@ -2725,10 +2681,11 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         url = self.bs.make_blob_url(self.container_name, blob_name)
-        respbody, _ = self._get_request(url)
+        response = requests.get(url)
 
         # Assert
-        self.assertEqual(data, respbody)
+        self.assertTrue(response.ok)
+        self.assertEqual(data, response.content)
 
     def test_public_access_blob(self):
         # Arrange
@@ -2823,10 +2780,11 @@ class BlobServiceTest(AzureTestCase):
             blob_name,
             sas_token=token,
         )
-        respbody, _ = self._get_request(url)
+        response = requests.get(url)
 
         # Assert
-        self.assertEqual(data, respbody)
+        self.assertTrue(response.ok)
+        self.assertEqual(data, response.content)
 
     def test_shared_read_access_blob_with_content_query_params(self):
         # Arrange
@@ -2854,15 +2812,15 @@ class BlobServiceTest(AzureTestCase):
         )
 
         # Act
-        respbody, respheaders = self._get_request(url)
+        response = requests.get(url)
 
         # Assert
-        self.assertEqual(data, respbody)
-        self.assertIn(('cache-control', 'no-cache'), respheaders)
-        self.assertIn(('content-disposition', 'inline'), respheaders)
-        self.assertIn(('content-encoding', 'utf-8'), respheaders)
-        self.assertIn(('content-language', 'fr'), respheaders)
-        self.assertIn(('content-type', 'text'), respheaders)
+        self.assertEqual(data, response.content)
+        self.assertEqual(response.headers['cache-control'], 'no-cache')
+        self.assertEqual(response.headers['content-disposition'], 'inline')
+        self.assertEqual(response.headers['content-encoding'], 'utf-8')
+        self.assertEqual(response.headers['content-language'], 'fr')
+        self.assertEqual(response.headers['content-type'], 'text')
 
     def test_shared_write_access_blob(self):
         # Arrange
@@ -2887,9 +2845,10 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         headers = {'x-ms-blob-type': 'BlockBlob'}
-        respbody, _ = self._put_request(url, updated_data, headers)
+        response = requests.put(url, headers=headers, data=updated_data)
 
         # Assert
+        self.assertTrue(response.ok)
         blob = self.bs.get_blob(self.container_name, 'blob1.txt')
         self.assertEqual(updated_data, blob)
 
@@ -2914,9 +2873,10 @@ class BlobServiceTest(AzureTestCase):
         )
 
         # Act
-        respbody, _ = self._del_request(url)
+        response = requests.delete(url)
 
         # Assert
+        self.assertTrue(response.ok)
         with self.assertRaises(WindowsAzureMissingResourceError):
             blob = self.bs.get_blob(self.container_name, blob_name)
 
@@ -2941,10 +2901,11 @@ class BlobServiceTest(AzureTestCase):
         )
 
         # Act
-        respbody, _ = self._get_request(url)
+        response = requests.get(url)
 
         # Assert
-        self.assertEqual(data, respbody)
+        self.assertTrue(response.ok)
+        self.assertEqual(data, response.content)
 
     def test_get_blob_to_bytes(self):
         # Arrange
