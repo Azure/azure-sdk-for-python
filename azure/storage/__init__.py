@@ -900,7 +900,7 @@ class _BlobChunkDownloader(object):
         self.blob_size = blob_size
         self.chunk_size = chunk_size
         self.stream = stream
-        self.stream_start = stream.tell()
+        self.stream_start = stream.tell() if parallel else None
         self.stream_lock = threading.Lock() if parallel else None
         self.progress_callback = progress_callback
         self.progress_total = 0
@@ -938,7 +938,6 @@ class _BlobChunkDownloader(object):
                 self.stream.seek(self.stream_start + chunk_offset)
                 self.stream.write(chunk_data)
         else:
-            self.stream.seek(self.stream_start + chunk_offset)
             self.stream.write(chunk_data)
 
     def _download_chunk_with_retries(self, chunk_offset):
@@ -969,7 +968,7 @@ class _BlobChunkUploader(object):
         self.blob_size = blob_size
         self.chunk_size = chunk_size
         self.stream = stream
-        self.stream_start = stream.tell()
+        self.stream_start = stream.tell() if parallel else None
         self.stream_lock = threading.Lock() if parallel else None
         self.progress_callback = progress_callback
         self.progress_total = 0
@@ -1001,13 +1000,27 @@ class _BlobChunkUploader(object):
         chunk_data = self._read_from_stream(chunk_offset, size)
         return self._upload_chunk_with_retries(chunk_offset, chunk_data)
 
+    def process_all_unknown_size(self):
+        assert self.stream_lock is None
+        range_ids = []
+        index = 0
+        while True:
+            data = self._read_from_stream(None, self.chunk_size)
+            if data:
+                index += len(data)
+                range_id = self._upload_chunk_with_retries(index, data)
+                range_ids.append(range_id)
+            else:
+                break
+
+        return range_ids
+
     def _read_from_stream(self, offset, count):
         if self.stream_lock is not None:
             with self.stream_lock:
                 self.stream.seek(self.stream_start + offset)
                 data = self.stream.read(count)
         else:
-            self.stream.seek(self.stream_start + offset)
             data = self.stream.read(count)
         return data
 
@@ -1118,7 +1131,10 @@ def _upload_blob_chunks(blob_service, container_name, blob_name,
         executor = concurrent.futures.ThreadPoolExecutor(max_connections)
         range_ids = list(executor.map(uploader.process_chunk, uploader.get_chunk_offsets()))
     else:
-        range_ids = [uploader.process_chunk(start) for start in uploader.get_chunk_offsets()]
+        if blob_size is not None:
+            range_ids = [uploader.process_chunk(start) for start in uploader.get_chunk_offsets()]
+        else:
+            range_ids = uploader.process_all_unknown_size()
 
     return range_ids
 
