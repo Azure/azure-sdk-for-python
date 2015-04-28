@@ -1,3 +1,7 @@
+2015-04-28 Version 0.10.2
+ * Fixes for bugs:
+   #338 Version 0.10.0 fails with 'SocketReader' object has no attribute 'tell'
+
 2015-03-13 Version 0.10.0
 
 IMPORTANT CHANGE THAT AFFECTS STORAGE USERS (BLOB, QUEUE, TABLE):

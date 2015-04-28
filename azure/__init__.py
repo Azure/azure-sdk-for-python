@@ -43,7 +43,7 @@ except ImportError:
 # constants
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.10.0'
+__version__ = '0.10.2'
 
 # Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
