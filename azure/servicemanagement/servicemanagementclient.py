@@ -174,6 +174,7 @@ class _ServiceManagementClient(object):
             If specified, this is used for the x-ms-version header.
             Otherwise, self.x_ms_version is used.
         '''
+
         request = HTTPRequest()
         request.method = 'POST'
         request.host = self.host
@@ -356,6 +357,14 @@ class _ServiceManagementClient(object):
 
     def _get_path(self, resource, name):
         path = '/' + self.subscription_id + '/' + resource
+        if name is not None:
+            path += '/' + _str(name)
+        return path
+
+    def _get_cloud_services_path(self, cloud_service_id, resource=None, name=None):
+        path = '/' + self.subscription_id + '/cloudservices/' + cloud_service_id
+        if resource is not None:
+            path += '/resources/' + _str(resource)
         if name is not None:
             path += '/' + _str(name)
         return path

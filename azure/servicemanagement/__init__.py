@@ -3507,6 +3507,27 @@ class _ServiceBusManagementXmlSerializer(object):
                 setattr(return_obj, name, value)
         return return_obj
 
+
+class _SchedulerManagementXmlSerializer(object):
+
+    @staticmethod
+    def create_cloud_service_to_xml(label, description, geo_region):
+        '''
+        <CloudService xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">
+          <Label>MyApp3</Label>
+          <Description>My Cloud Service for app3</Description>
+          <GeoRegion>South Central US</GeoRegion>
+        </CloudService>
+        '''
+        body = '<CloudService xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
+        body += ''.join(['<Label>', label, '</Label>'])
+        body += ''.join(['<Description>', description, '</Description>'])
+        body += ''.join(['<GeoRegion>', geo_region, '</GeoRegion>'])
+        body += '</CloudService>'
+
+        return body
+
+
 from azure.servicemanagement.servicemanagementservice import (
     ServiceManagementService)
 from azure.servicemanagement.servicebusmanagementservice import (
