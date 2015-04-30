@@ -77,11 +77,18 @@ class SchedulerManagementService(_ServiceManagementClient):
 
     def create_cloud_service(self, cloud_service_id, label, description, geo_region):
         '''
-        The Get Cloud Service operation gets all the resources (job collections)
-        in the cloud service.
+        The Create Cloud Service request creates a new cloud service. When job
+        collections are created, they are hosted within a cloud service.
+        A cloud service groups job collections together in a given region.
+        Once a cloud service has been created, job collections can then be
+        created and contained within it.
 
         cloud_service_id:
             The cloud service id
+        label:
+            The name of the cloud service.
+        description:
+            The description of the cloud service.
         geo_region:
             The geographical region of the webspace that will be created.
         '''
