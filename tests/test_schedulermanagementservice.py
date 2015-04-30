@@ -38,7 +38,7 @@ class SchedulerManagementServiceTest(AzureTestCase):
 
     def setUp(self):
         self.ss = create_service_management(SchedulerManagementService)
-        self.cloud_service_id = getUniqueName('ss')
+        self.cloud_service_id = getUniqueName('cloud_service_')
 
 
     def tearDown(self):
@@ -101,3 +101,38 @@ class SchedulerManagementServiceTest(AzureTestCase):
 
         # Assert
         self.assertIsNotNone(result)
+
+    def test_create_job_collection(self):
+        # Arrange
+        self._create_cloud_service()
+
+        # Act
+        result = self.ss.create_job_collection(self.cloud_service_id, getUniqueName('job_collection_'))
+
+        # Assert
+        self.assertIsNone(result)
+
+    def test_delete_job_collection(self):
+        # Arrange
+        job_collection_id = getUniqueName('job_collection_')
+        self._create_cloud_service()
+        self.ss.create_job_collection(self.cloud_service_id, job_collection_id)
+
+        # Act
+        result = self.ss.delete_job_collection(self.cloud_service_id, job_collection_id)
+
+        # Assert
+        self.assertIsNone(result)
+
+    def test_get_job_collection(self):
+        # Arrange
+        self._create_cloud_service()
+        job_collection_id = getUniqueName('job_collection_')
+        self.ss.create_job_collection(self.cloud_service_id, job_collection_id)
+
+        # Act
+        result = self.ss.get_job_collection(self.cloud_service_id, job_collection_id)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(result.name,job_collection_id)

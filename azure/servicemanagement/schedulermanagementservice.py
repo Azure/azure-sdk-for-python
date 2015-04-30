@@ -20,6 +20,7 @@ from azure import (
 )
 from azure.servicemanagement import (
     _SchedulerManagementXmlSerializer,
+    Resource,
     CloudService,
     CloudServices,
     AvailabilityResponse,
@@ -127,7 +128,7 @@ class SchedulerManagementService(_ServiceManagementClient):
         path = self._get_cloud_services_path(cloud_service_id)
         return self._perform_delete(path, CloudService)
 
-    def check_job_collection_name(self, cloud_service_id, job_collection_name):
+    def check_job_collection_name(self, cloud_service_id, job_collection_id):
         '''
         The Check Name Availability operation checks if a new job collection with
         the given name may be created, or if it is unavailable. The result of the
@@ -135,16 +136,84 @@ class SchedulerManagementService(_ServiceManagementClient):
 
         cloud_service_id:
             The cloud service id
-        job_collection_name:
-            Name of the hosted service.
+        job_collection_id:
+            The name of the job_collection_id.
         '''
         _validate_not_none('cloud_service_id', cloud_service_id)
-        _validate_not_none('job_collection_name', job_collection_name)
+        _validate_not_none('job_collection_id', job_collection_id)
 
         path = self._get_cloud_services_path(
             cloud_service_id, "scheduler", "jobCollections")
-        path += "?op=checknameavailability&resourceName=" + job_collection_name
-        return self._perform_post(path, "", AvailabilityResponse)
+        path += "?op=checknameavailability&resourceName=" + job_collection_id
+        return self._perform_post(path, None, AvailabilityResponse)
+
+    def create_job_collection(self, cloud_service_id, job_collection_id, plan="Standard"):
+        '''
+        The Create Job Collection request is specified as follows. Replace <subscription-id>
+        with your subscription ID, <cloud-service-id> with your cloud service ID, and
+        <job-collection-id> with the ID of the job collection you\'d like to create.
+        There are no "default" pre-existing job collections every job collection
+        must be manually created.
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+
+        path = self._get_cloud_services_path(
+            cloud_service_id, "scheduler", "jobCollections")
+
+        path += '/' + _str(job_collection_id)
+        body = _SchedulerManagementXmlSerializer.create_job_collection_to_xml(
+            plan)
+
+        return self._perform_put(path, body)
+
+    def delete_job_collection(self, cloud_service_id, job_collection_id):
+        '''
+        The Delete Job Collection request is specified as follows. Replace <subscription-id>
+        with your subscription ID, <cloud-service-id> with your cloud service ID, and
+        <job-collection-id> with the ID of the job collection you\'d like to delete.
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+
+        path = self._get_cloud_services_path(
+            cloud_service_id, "scheduler", "jobCollections")
+
+        path += '/' + _str(job_collection_id)
+
+        return self._perform_delete(path)
+
+    def get_job_collection(self, cloud_service_id, job_collection_id):
+        '''
+        The Get Job Collection operation gets the details of a job collection
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+
+
+        path = self._get_cloud_services_path(
+            cloud_service_id, "scheduler", "~/jobCollections")
+
+        path += '/' + _str(job_collection_id) + '?api-version=2014-04-01'
+
+        return self._perform_get(path, Resource)
+
+
 
     #--Helper functions --------------------------------------------------
 
