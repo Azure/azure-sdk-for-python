@@ -170,10 +170,15 @@ class AccessPolicy(WindowsAzureData):
 
     ''' Access Policy class in service properties. '''
 
-    def __init__(self, start=u'', expiry=u'', permission='u'):
+    def __init__(self, start=u'', expiry=u'', permission=u'',
+                 start_pk=u'', start_rk=u'', end_pk=u'', end_rk=u''):
         self.start = start
         self.expiry = expiry
         self.permission = permission
+        self.start_pk = start_pk
+        self.start_rk = start_rk
+        self.end_pk = end_pk
+        self.end_rk = end_rk
 
 
 class SignedIdentifier(WindowsAzureData):
@@ -396,8 +401,90 @@ class EntityProperty(WindowsAzureData):
 
 class Table(WindowsAzureData):
 
-    ''' Only for intellicens and telling user the return type. '''
+    ''' Only for IntelliSense and telling user the return type. '''
     pass
+
+
+class ContainerSharedAccessPermissions(object):
+    '''Permissions for a container.'''
+
+    '''
+    Read the content, properties, metadata or block list of any blob in
+    the container. Use any blob in the container as the source of a
+    copy operation.
+    '''
+    READ = 'r'
+
+    '''
+    For any blob in the container, create or write content, properties,
+    metadata, or block list. Snapshot or lease the blob. Resize the blob
+    (page blob only). Use the blob as the destination of a copy operation
+    within the same account.
+    You cannot grant permissions to read or write container properties or
+    metadata, nor to lease a container.
+    '''
+    WRITE = 'w'
+
+    '''Delete any blob in the container.'''
+    DELETE = 'd'
+
+    '''List blobs in the container.'''
+    LIST = 'l'
+
+
+class BlobSharedAccessPermissions(object):
+    '''Permissions for a blob.'''
+
+    '''
+    Read the content, properties, metadata and block list. Use the blob
+    as the source of a copy operation.
+    '''
+    READ = 'r'
+
+    '''
+    Create or write content, properties, metadata, or block list.
+    Snapshot or lease the blob. Resize the blob (page blob only). Use the
+    blob as the destination of a copy operation within the same account.
+    '''
+    WRITE = 'w'
+
+    '''Delete the blob.'''
+    DELETE = 'd'
+
+
+class TableSharedAccessPermissions(object):
+    '''Permissions for a table.'''
+
+    '''Get entities and query entities.'''
+    QUERY = 'r'
+
+    '''Add entities.'''
+    ADD = 'a'
+
+    '''Update entities.'''
+    UPDATE = 'u'
+
+    '''Delete entities.'''
+    DELETE = 'd'
+
+
+class QueueSharedAccessPermissions(object):
+    '''Permissions for a queue.'''
+
+    '''
+    Read metadata and properties, including message count.
+    Peek at messages.
+    '''
+    READ = 'r'
+
+    '''Add messages to the queue.'''
+    ADD = 'a'
+
+    '''Update messages in the queue.'''
+    UPDATE = 'u'
+
+    '''Get and delete messages from the queue.'''
+    PROCESS = 'p'
 
 
 def _parse_blob_enum_results_list(response):
@@ -444,7 +531,7 @@ def _update_storage_header(request):
     return request
 
 
-def _update_storage_blob_header(request, account_name, account_key):
+def _update_storage_blob_header(request, authentication):
     ''' add additional headers for storage blob request. '''
 
     request = _update_storage_header(request)
@@ -452,112 +539,31 @@ def _update_storage_blob_header(request, account_name, account_key):
     request.headers.append(('x-ms-date', current_time))
     request.headers.append(
         ('Content-Type', 'application/octet-stream Charset=UTF-8'))
-    request.headers.append(('Authorization',
-                            _sign_storage_blob_request(request,
-                                                       account_name,
-                                                       account_key)))
+    authentication.sign_request(request)
 
     return request.headers
 
 
-def _update_storage_queue_header(request, account_name, account_key):
-    ''' add additional headers for storage queue request. '''
-    return _update_storage_blob_header(request, account_name, account_key)
+def _update_storage_queue_header(request, authentication):
+    return _update_storage_blob_header(request, authentication)
 
 
-def _update_storage_table_header(request):
+def _update_storage_table_header(request, content_type='application/atom+xml'):
     ''' add additional headers for storage table request. '''
 
     request = _update_storage_header(request)
-    for name, _ in request.headers:
-        if name.lower() == 'content-type':
-            break
-    else:
-        request.headers.append(('Content-Type', 'application/atom+xml'))
+    if content_type:
+        for name, _ in request.headers:
+            if name.lower() == 'content-type':
+                break
+        else:
+            request.headers.append(('Content-Type', content_type))
     request.headers.append(('DataServiceVersion', '2.0;NetFx'))
     request.headers.append(('MaxDataServiceVersion', '2.0;NetFx'))
     current_time = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
     request.headers.append(('x-ms-date', current_time))
     request.headers.append(('Date', current_time))
     return request.headers
-
-
-def _sign_storage_blob_request(request, account_name, account_key):
-    '''
-    Returns the signed string for blob request which is used to set
-    Authorization header. This is also used to sign queue request.
-    '''
-
-    uri_path = request.path.split('?')[0]
-
-    # method to sign
-    string_to_sign = request.method + '\n'
-
-    # get headers to sign
-    headers_to_sign = [
-        'content-encoding', 'content-language', 'content-length',
-        'content-md5', 'content-type', 'date', 'if-modified-since',
-        'if-match', 'if-none-match', 'if-unmodified-since', 'range']
-
-    request_header_dict = dict((name.lower(), value)
-                               for name, value in request.headers if value)
-    string_to_sign += '\n'.join(request_header_dict.get(x, '')
-                                for x in headers_to_sign) + '\n'
-
-    # get x-ms header to sign
-    x_ms_headers = []
-    for name, value in request.headers:
-        if 'x-ms' in name:
-            x_ms_headers.append((name.lower(), value))
-    x_ms_headers.sort()
-    for name, value in x_ms_headers:
-        if value:
-            string_to_sign += ''.join([name, ':', value, '\n'])
-
-    # get account_name and uri path to sign
-    string_to_sign += '/' + account_name + uri_path
-
-    # get query string to sign if it is not table service
-    query_to_sign = request.query
-    query_to_sign.sort()
-
-    current_name = ''
-    for name, value in query_to_sign:
-        if value:
-            if current_name != name:
-                string_to_sign += '\n' + name + ':' + value
-                current_name = name
-            else:
-                string_to_sign += '\n' + ',' + value
-
-    # sign the request
-    auth_string = 'SharedKey ' + account_name + ':' + \
-        _sign_string(account_key, string_to_sign)
-    return auth_string
-
-
-def _sign_storage_table_request(request, account_name, account_key):
-    uri_path = request.path.split('?')[0]
-
-    string_to_sign = request.method + '\n'
-    headers_to_sign = ['content-md5', 'content-type', 'date']
-    request_header_dict = dict((name.lower(), value)
-                               for name, value in request.headers if value)
-    string_to_sign += '\n'.join(request_header_dict.get(x, '')
-                                for x in headers_to_sign) + '\n'
-
-    # get account_name and uri path to sign
-    string_to_sign += ''.join(['/', account_name, uri_path])
-
-    for name, value in request.query:
-        if name == 'comp' and uri_path == '/':
-            string_to_sign += '?comp=' + value
-            break
-
-    # sign the request
-    auth_string = 'SharedKey ' + account_name + ':' + \
-        _sign_string(account_key, string_to_sign)
-    return auth_string
 
 
 def _to_python_bool(value):
@@ -751,6 +757,26 @@ def _convert_block_list_to_xml(block_id_list):
         xml += '<Latest>{0}</Latest>'.format(_encode_base64(value))
 
     return xml + '</BlockList>'
+
+
+def _convert_signed_identifiers_to_xml(signed_identifiers):
+    if signed_identifiers is None:
+        return ''
+    xml = '<?xml version="1.0" encoding="utf-8"?><SignedIdentifiers>'
+    for signed_identifier in signed_identifiers:
+        xml += '<SignedIdentifier>'
+        xml += '<Id>{0}</Id>'.format(signed_identifier.id)
+        xml += '<AccessPolicy>'
+        if signed_identifier.access_policy.start:
+            xml += '<Start>{0}</Start>'.format(signed_identifier.access_policy.start)
+        if signed_identifier.access_policy.expiry:
+            xml += '<Expiry>{0}</Expiry>'.format(signed_identifier.access_policy.expiry)
+        if signed_identifier.access_policy.permission:
+            xml += '<Permission>{0}</Permission>'.format(signed_identifier.access_policy.permission)
+        xml += '</AccessPolicy>'
+        xml += '</SignedIdentifier>'
+
+    return xml + '</SignedIdentifiers>'
 
 
 def _create_blob_result(response):
@@ -1143,6 +1169,116 @@ def _storage_error_handler(http_error):
     ''' Simple error handler for storage service. '''
     return _general_error_handler(http_error)
 
+
+class StorageSASAuthentication(object):
+    def __init__(self, sas_token):
+        self.sas_token = sas_token
+
+    def sign_request(self, request):
+        if '?' in request.path:
+            request.path += '&'
+        else:
+            request.path += '?'
+
+        request.path += self.sas_token
+
+
+class _StorageSharedKeyAuthentication(object):
+    def __init__(self, account_name, account_key):
+        self.account_name = account_name
+        self.account_key = account_key
+
+    def _get_headers(self, request, headers_to_sign):
+        headers = {
+            name.lower() : value for name, value in request.headers if value
+        }
+        return '\n'.join(headers.get(x, '') for x in headers_to_sign) + '\n'
+
+    def _get_verb(self, request):
+        return request.method + '\n'
+
+    def _get_canonicalized_resource(self, request):
+        uri_path = request.path.split('?')[0]
+        return '/' + self.account_name + uri_path
+
+    def _get_canonicalized_headers(self, request):
+        string_to_sign = ''
+        x_ms_headers = []
+        for name, value in request.headers:
+            if name.startswith('x-ms-'):
+                x_ms_headers.append((name.lower(), value))
+        x_ms_headers.sort()
+        for name, value in x_ms_headers:
+            if value:
+                string_to_sign += ''.join([name, ':', value, '\n'])
+        return string_to_sign
+
+    def _add_authorization_header(self, request, string_to_sign):
+        signature = _sign_string(self.account_key, string_to_sign)
+        auth_string = 'SharedKey ' + self.account_name + ':' + signature
+        request.headers.append(('Authorization', auth_string))
+
+
+class StorageSharedKeyAuthentication(_StorageSharedKeyAuthentication):
+    def sign_request(self, request):
+        string_to_sign = \
+            self._get_verb(request) + \
+            self._get_headers(
+                request,
+                [
+                    'content-encoding', 'content-language', 'content-length',
+                    'content-md5', 'content-type', 'date', 'if-modified-since',
+                    'if-match', 'if-none-match', 'if-unmodified-since', 'range'
+                ]
+            ) + \
+            self._get_canonicalized_headers(request) + \
+            self._get_canonicalized_resource(request) + \
+            self._get_canonicalized_resource_query(request)
+
+        self._add_authorization_header(request, string_to_sign)
+
+    def _get_canonicalized_resource_query(self, request):
+        query_to_sign = request.query
+        query_to_sign.sort()
+
+        string_to_sign = ''
+        current_name = ''
+        for name, value in query_to_sign:
+            if value:
+                if current_name != name:
+                    string_to_sign += '\n' + name + ':' + value
+                    current_name = name
+                else:
+                    string_to_sign += '\n' + ',' + value
+
+        return string_to_sign
+
+
+class StorageTableSharedKeyAuthentication(_StorageSharedKeyAuthentication):
+    def sign_request(self, request):
+        string_to_sign = \
+            self._get_verb(request) + \
+            self._get_headers(
+                request,
+                ['content-md5', 'content-type', 'date'],
+            ) + \
+            self._get_canonicalized_resource(request) + \
+            self._get_canonicalized_resource_query(request)
+
+        self._add_authorization_header(request, string_to_sign)
+
+    def _get_canonicalized_resource_query(self, request):
+        for name, value in request.query:
+            if name == 'comp':
+                return '?comp=' + value
+        return ''
+
+
+class StorageNoAuthentication(object):
+    def sign_request(self, request):
+        pass
+
+
 # make these available just from storage.
 from azure.storage.blobservice import BlobService
 from azure.storage.queueservice import QueueService
@@ -1151,6 +1287,4 @@ from azure.storage.cloudstorageaccount import CloudStorageAccount
 from azure.storage.sharedaccesssignature import (
     SharedAccessSignature,
     SharedAccessPolicy,
-    Permission,
-    WebResource,
-    )
+)

@@ -31,6 +31,7 @@ from azure import (
     _update_request_uri_query_local_storage,
     _validate_not_none,
     _ERROR_CONFLICT,
+    _ERROR_STORAGE_MISSING_INFO,
     _ETreeXmlToObject,
     )
 from azure.http import (
@@ -41,8 +42,16 @@ from azure.storage import (
     Queue,
     QueueEnumResults,
     QueueMessagesList,
+    SignedIdentifiers,
     StorageServiceProperties,
+    StorageSASAuthentication,
+    StorageSharedKeyAuthentication,
+    _convert_signed_identifiers_to_xml,
     _update_storage_queue_header,
+    X_MS_VERSION,
+    )
+from azure.storage.sharedaccesssignature import (
+    SharedAccessSignature,
     )
 from azure.storage.storageclient import _StorageClient
 
@@ -55,7 +64,7 @@ class QueueService(_StorageClient):
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base=QUEUE_SERVICE_HOST_BASE, dev_host=DEV_QUEUE_HOST,
-                 timeout=DEFAULT_HTTP_TIMEOUT):
+                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -70,9 +79,50 @@ class QueueService(_StorageClient):
             Optional. Dev host url. Defaults to localhost.
         timeout:
             Optional. Timeout for the http request, in seconds.
+        sas_token:
+            Optional. Token to use to authenticate with shared access signature.
         '''
         super(QueueService, self).__init__(
-            account_name, account_key, protocol, host_base, dev_host, timeout)
+            account_name, account_key, protocol, host_base, dev_host, timeout, sas_token)
+
+        if self.account_key:
+            self.authentication = StorageSharedKeyAuthentication(
+                self.account_name,
+                self.account_key,
+            )
+        elif self.sas_token:
+            self.authentication = StorageSASAuthentication(self.sas_token)
+        else:
+            raise WindowsAzureError(_ERROR_STORAGE_MISSING_INFO)
+
+    def generate_shared_access_signature(self, queue_name,
+                                         shared_access_policy=None,
+                                         sas_version=X_MS_VERSION):
+        '''
+        Generates a shared access signature for the queue.
+        Use the returned signature with the sas_token parameter of QueueService.
+
+        queue_name:
+            Required. Name of queue.
+        shared_access_policy:
+            Instance of SharedAccessPolicy class.
+        sas_version:
+            x-ms-version for storage service, or None to get a signed query
+            string compatible with pre 2012-02-12 clients, where the version
+            is not included in the query string.
+        '''
+        _validate_not_none('queue_name', queue_name)
+        _validate_not_none('shared_access_policy', shared_access_policy)
+        _validate_not_none('self.account_name', self.account_name)
+        _validate_not_none('self.account_key', self.account_key)
+
+        sas = SharedAccessSignature(self.account_name, self.account_key)
+        return sas.generate_signed_query_string(
+            queue_name,
+            None,
+            shared_access_policy,
+            sas_version,
+        )
 
     def get_queue_service_properties(self, timeout=None):
         '''
@@ -90,7 +140,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _ETreeXmlToObject.parse_response(
@@ -131,7 +181,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _ETreeXmlToObject.parse_enum_results_list(
@@ -159,7 +209,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         if not fail_on_exist:
             try:
                 response = self._perform_request(request)
@@ -193,7 +243,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         if not fail_not_exist:
             try:
                 self._perform_request(request)
@@ -221,7 +271,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_response_for_dict_prefix(
@@ -248,7 +298,52 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
+        self._perform_request(request)
+
+    def get_queue_acl(self, queue_name):
+        '''
+        Returns details about any stored access policies specified on the
+        queue that may be used with Shared Access Signatures.
+
+        queue_name:
+            Name of existing queue.
+        '''
+        _validate_not_none('queue_name', queue_name)
+        request = HTTPRequest()
+        request.method = 'GET'
+        request.host = self._get_host()
+        request.path = '/' + _str(queue_name) + '?comp=acl'
+        request.path, request.query = _update_request_uri_query_local_storage(
+            request, self.use_local_storage)
+        request.headers = _update_storage_queue_header(
+            request, self.authentication)
+        response = self._perform_request(request)
+
+        return _ETreeXmlToObject.parse_response(response, SignedIdentifiers)
+
+    def set_queue_acl(self, queue_name, signed_identifiers=None):
+        '''
+        Sets stored access policies for the queue that may be used with
+        Shared Access Signatures.
+
+        queue_name:
+            Name of existing queue.
+        signed_identifiers:
+            SignedIdentifers instance
+        '''
+        _validate_not_none('queue_name', queue_name)
+        request = HTTPRequest()
+        request.method = 'PUT'
+        request.host = self._get_host()
+        request.path = '/' + \
+            _str(queue_name) + '?comp=acl'
+        request.body = _get_request_body(
+            _convert_signed_identifiers_to_xml(signed_identifiers))
+        request.path, request.query = _update_request_uri_query_local_storage(
+            request, self.use_local_storage)
+        request.headers = _update_storage_queue_header(
+            request, self.authentication)
         self._perform_request(request)
 
     def put_message(self, queue_name, message_text, visibilitytimeout=None,
@@ -295,7 +390,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def get_messages(self, queue_name, numofmessages=None,
@@ -330,7 +425,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _ETreeXmlToObject.parse_response(
@@ -357,7 +452,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _ETreeXmlToObject.parse_response(
@@ -387,7 +482,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def clear_messages(self, queue_name):
@@ -405,7 +500,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def update_message(self, queue_name, message_id, message_text, popreceipt,
@@ -452,7 +547,7 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_response_for_dict_filter(
@@ -482,5 +577,5 @@ class QueueService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_queue_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)

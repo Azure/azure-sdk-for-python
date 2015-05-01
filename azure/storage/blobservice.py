@@ -44,15 +44,24 @@ from azure.storage import (
     PageRange,
     SignedIdentifiers,
     StorageServiceProperties,
+    StorageSASAuthentication,
+    StorageSharedKeyAuthentication,
+    StorageNoAuthentication,
+    X_MS_VERSION,
     _BlockBlobChunkUploader,
     _PageBlobChunkUploader,
     _convert_block_list_to_xml,
     _convert_response_to_block_list,
+    _convert_signed_identifiers_to_xml,
     _create_blob_result,
     _download_blob_chunks,
     _parse_blob_enum_results_list,
     _update_storage_blob_header,
     _upload_blob_chunks,
+    )
+from azure.storage.sharedaccesssignature import (
+    SharedAccessSignature,
+    ResourceType,
     )
 from azure.storage.storageclient import _StorageClient
 from os import path
@@ -74,7 +83,7 @@ class BlobService(_StorageClient):
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base=BLOB_SERVICE_HOST_BASE, dev_host=DEV_BLOB_HOST,
-                 timeout=DEFAULT_HTTP_TIMEOUT):
+                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -89,14 +98,26 @@ class BlobService(_StorageClient):
             Optional. Dev host url. Defaults to localhost.
         timeout:
             Optional. Timeout for the http request, in seconds.
+        sas_token:
+            Optional. Token to use to authenticate with shared access signature.
         '''
         self._BLOB_MAX_DATA_SIZE = 64 * 1024 * 1024
         self._BLOB_MAX_CHUNK_DATA_SIZE = 4 * 1024 * 1024
         super(BlobService, self).__init__(
-            account_name, account_key, protocol, host_base, dev_host, timeout)
+            account_name, account_key, protocol, host_base, dev_host, timeout, sas_token)
+
+        if self.account_key:
+            self.authentication = StorageSharedKeyAuthentication(
+                self.account_name,
+                self.account_key,
+            )
+        elif self.sas_token:
+            self.authentication = StorageSASAuthentication(self.sas_token)
+        else:
+            self.authentication = StorageNoAuthentication()
 
     def make_blob_url(self, container_name, blob_name, account_name=None,
-                      protocol=None, host_base=None):
+                      protocol=None, host_base=None, sas_token=None):
         '''
         Creates the url to access a blob.
 
@@ -113,6 +134,9 @@ class BlobService(_StorageClient):
         host_base:
             Live host base url.  If not specified, uses the host base specified
             when BlobService was initialized.
+        sas_token:
+            Shared access signature token created with
+            generate_shared_access_signature.
         '''
 
         if not account_name:
@@ -122,11 +146,83 @@ class BlobService(_StorageClient):
         if not host_base:
             host_base = self.host_base
 
-        return '{0}://{1}{2}/{3}/{4}'.format(protocol,
-                                             account_name,
-                                             host_base,
-                                             container_name,
-                                             blob_name)
+        url = '{0}://{1}{2}/{3}/{4}'.format(
+            protocol,
+            account_name,
+            host_base,
+            container_name,
+            blob_name,
+        )
+
+        if sas_token:
+            url += '?' + sas_token
+
+        return url
+
+    def generate_shared_access_signature(self,
+                                         container_name,
+                                         blob_name=None,
+                                         shared_access_policy=None,
+                                         sas_version=X_MS_VERSION,
+                                         cache_control=None,
+                                         content_disposition=None,
+                                         content_encoding=None,
+                                         content_language=None,
+                                         content_type=None):
+        '''
+        Generates a shared access signature for the container or blob.
+        Use the returned signature with the sas_token parameter of BlobService.
+
+        container_name:
+            Required. Name of container.
+        blob_name:
+            Optional. Name of blob.
+        shared_access_policy:
+            Instance of SharedAccessPolicy class.
+        sas_version:
+            x-ms-version for storage service, or None to get a signed query
+            string compatible with pre 2012-02-12 clients, where the version
+            is not included in the query string.
+        cache_control:
+            Response header value for Cache-Control when resource is accessed
+            using this shared access signature.
+        content_disposition:
+            Response header value for Content-Disposition when resource is accessed
+            using this shared access signature.
+        content_encoding:
+            Response header value for Content-Encoding when resource is accessed
+            using this shared access signature.
+        content_language:
+            Response header value for Content-Language when resource is accessed
+            using this shared access signature.
+        content_type:
+            Response header value for Content-Type when resource is accessed
+            using this shared access signature.
+        '''
+        _validate_not_none('container_name', container_name)
+        _validate_not_none('shared_access_policy', shared_access_policy)
+        _validate_not_none('self.account_name', self.account_name)
+        _validate_not_none('self.account_key', self.account_key)
+
+        if blob_name:
+            resource_type = ResourceType.RESOURCE_BLOB
+            resource_path = container_name + '/' + blob_name
+        else:
+            resource_type = ResourceType.RESOURCE_CONTAINER
+            resource_path = container_name
+
+        sas = SharedAccessSignature(self.account_name, self.account_key)
+        return sas.generate_signed_query_string(
+            resource_path,
+            resource_type,
+            shared_access_policy,
+            sas_version,
+            cache_control,
+            content_disposition,
+            content_encoding,
+            content_language,
+            content_type,
+        )
 
     def list_containers(self, prefix=None, marker=None, maxresults=None,
                         include=None):
@@ -160,7 +256,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _ETreeXmlToObject.parse_enum_results_list(
@@ -194,7 +290,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         if not fail_on_exist:
             try:
                 self._perform_request(request)
@@ -226,7 +322,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_response_for_dict(response)
@@ -252,7 +348,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_response_for_dict_prefix(response, prefixes=['x-ms-meta'])
@@ -285,7 +381,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def get_container_acl(self, container_name, x_ms_lease_id=None):
@@ -308,7 +404,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _ETreeXmlToObject.parse_response(
@@ -340,11 +436,11 @@ class BlobService(_StorageClient):
             ('x-ms-lease-id', _str_or_none(x_ms_lease_id)),
         ]
         request.body = _get_request_body(
-            _convert_class_to_xml(signed_identifiers))
+            _convert_signed_identifiers_to_xml(signed_identifiers))
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def delete_container(self, container_name, fail_not_exist=False,
@@ -369,7 +465,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         if not fail_not_exist:
             try:
                 self._perform_request(request)
@@ -435,7 +531,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_response_for_dict_filter(
@@ -506,7 +602,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_blob_enum_results_list(response)
@@ -536,7 +632,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def get_blob_service_properties(self, timeout=None):
@@ -555,7 +651,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _ETreeXmlToObject.parse_response(
@@ -584,7 +680,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
 
         response = self._perform_request(request)
 
@@ -648,7 +744,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def put_blob(self, container_name, blob_name, blob, x_ms_blob_type,
@@ -750,7 +846,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def put_block_blob_from_path(self, container_name, blob_name, file_path,
@@ -1602,7 +1698,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request, None)
 
         return _create_blob_result(response)
@@ -1851,7 +1947,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_response_for_dict_prefix(response, prefixes=['x-ms-meta'])
@@ -1885,7 +1981,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def lease_blob(self, container_name, blob_name, x_ms_lease_action,
@@ -1942,7 +2038,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_response_for_dict_filter(
@@ -1992,7 +2088,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_response_for_dict_filter(
@@ -2096,7 +2192,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _parse_response_for_dict(response)
@@ -2133,7 +2229,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def delete_blob(self, container_name, blob_name, snapshot=None,
@@ -2190,7 +2286,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def put_block(self, container_name, blob_name, block, blockid,
@@ -2233,7 +2329,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def put_block_list(self, container_name, blob_name, block_list,
@@ -2306,7 +2402,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def get_block_list(self, container_name, blob_name, snapshot=None,
@@ -2343,7 +2439,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _convert_response_to_block_list(response)
@@ -2455,7 +2551,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         self._perform_request(request)
 
     def get_page_ranges(self, container_name, blob_name, snapshot=None,
@@ -2501,7 +2597,7 @@ class BlobService(_StorageClient):
         request.path, request.query = _update_request_uri_query_local_storage(
             request, self.use_local_storage)
         request.headers = _update_storage_blob_header(
-            request, self.account_name, self.account_key)
+            request, self.authentication)
         response = self._perform_request(request)
 
         return _ETreeXmlToObject.parse_simple_list(response, PageList, PageRange, "page_ranges")

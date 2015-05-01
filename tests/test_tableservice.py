@@ -18,21 +18,30 @@ import base64
 import time
 import unittest
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
-from azure import WindowsAzureError, WindowsAzureBatchOperationError
+from azure import (
+    WindowsAzureError,
+    WindowsAzureBatchOperationError,
+    WindowsAzureMissingResourceError,
+)
 from azure.storage import (
+    AccessPolicy,
     Entity,
     EntityProperty,
+    SignedIdentifier,
+    SignedIdentifiers,
     StorageServiceProperties,
     TableService,
-    )
+    TableSharedAccessPermissions,
+)
+from azure.storage.sharedaccesssignature import SharedAccessPolicy
 from util import (
     AzureTestCase,
     credentials,
     getUniqueName,
     set_service_options,
-    )
+)
 
 #------------------------------------------------------------------------------
 
@@ -204,6 +213,18 @@ class TableServiceTest(AzureTestCase):
         self.assertEqual(entity.clsid.value,
                          'c9da6455-213d-42c9-9a79-3e9149a57833')
         self.assertTrue(hasattr(entity, "Timestamp"))
+
+    def _get_shared_access_policy(self, permission):
+        date_format = "%Y-%m-%dT%H:%M:%SZ"
+        start = datetime.utcnow() - timedelta(minutes=1)
+        expiry = start + timedelta(hours=1)
+        return SharedAccessPolicy(
+            AccessPolicy(
+                start.strftime(date_format),
+                expiry.strftime(date_format),
+                permission
+            )
+        )
 
     #--Test cases for table service -------------------------------------------
     def test_get_set_table_service_properties(self):
@@ -1327,6 +1348,278 @@ class TableServiceTest(AzureTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(resp.date, local_date.astimezone(tzutc()))
         self.assertEqual(resp.date.astimezone(local_tz), local_date)
+
+    def test_sas_query(self):
+        # Arrange
+        self._create_table_with_default_entities(self.table_name, 2)
+        token = self.ts.generate_shared_access_signature(
+            self.table_name,
+            self._get_shared_access_policy(TableSharedAccessPermissions.QUERY),
+        )
+
+        # Act
+        service = TableService(
+            credentials.getStorageServicesName(),
+            sas_token=token,
+        )
+        set_service_options(service)
+        resp = self.ts.query_entities(self.table_name, None, 'age,sex')
+
+        # Assert
+        self.assertEqual(len(resp), 2)
+        self.assertEqual(resp[0].age, 39)
+        self.assertEqual(resp[0].sex, 'male')
+        self.assertFalse(hasattr(resp[0], "birthday"))
+        self.assertFalse(hasattr(resp[0], "married"))
+        self.assertFalse(hasattr(resp[0], "deceased"))
+
+    def test_sas_add(self):
+        # Arrange
+        self._create_table(self.table_name)
+        policy = self._get_shared_access_policy(TableSharedAccessPermissions.ADD)
+        token = self.ts.generate_shared_access_signature(self.table_name, policy)
+
+        # Act
+        service = TableService(
+            credentials.getStorageServicesName(),
+            sas_token=token,
+        )
+        set_service_options(service)
+        service.insert_entity(
+            self.table_name,
+            {
+                'PartitionKey': 'test',
+                'RowKey': 'test1',
+                'text': 'hello',
+            })
+
+        # Assert
+        resp = self.ts.get_entity(self.table_name, 'test', 'test1')
+        self.assertIsNotNone(resp)
+        self.assertEqual(resp.text, 'hello')
+
+    def test_sas_add_inside_range(self):
+        # Arrange
+        self._create_table(self.table_name)
+        policy = self._get_shared_access_policy(TableSharedAccessPermissions.ADD)
+        policy.access_policy.start_pk = 'test'
+        policy.access_policy.end_pk = 'test'
+        policy.access_policy.start_rk = 'test1'
+        policy.access_policy.end_rk = 'test1'
+        token = self.ts.generate_shared_access_signature(self.table_name, policy)
+
+        # Act
+        service = TableService(
+            credentials.getStorageServicesName(),
+            sas_token=token,
+        )
+        set_service_options(service)
+        service.insert_entity(
+            self.table_name,
+            {
+                'PartitionKey': 'test',
+                'RowKey': 'test1',
+                'text': 'hello',
+            })
+
+        # Assert
+        resp = self.ts.get_entity(self.table_name, 'test', 'test1')
+        self.assertIsNotNone(resp)
+        self.assertEqual(resp.text, 'hello')
+
+    def test_sas_add_outside_range(self):
+        # Arrange
+        self._create_table(self.table_name)
+        policy = self._get_shared_access_policy(TableSharedAccessPermissions.ADD)
+        policy.access_policy.start_pk = 'test'
+        policy.access_policy.end_pk = 'test'
+        policy.access_policy.start_rk = 'test1'
+        policy.access_policy.end_rk = 'test1'
+        token = self.ts.generate_shared_access_signature(self.table_name, policy)
+
+        # Act
+        service = TableService(
+            credentials.getStorageServicesName(),
+            sas_token=token,
+        )
+        set_service_options(service)
+        with self.assertRaises(WindowsAzureMissingResourceError):
+            service.insert_entity(
+                self.table_name,
+                {
+                    'PartitionKey': 'test',
+                    'RowKey': 'test2',
+                    'text': 'hello',
+                })
+
+        # Assert
+
+    def test_sas_update(self):
+        # Arrange
+        self._create_table_with_default_entities(self.table_name, 1)
+        policy = self._get_shared_access_policy(TableSharedAccessPermissions.UPDATE)
+        token = self.ts.generate_shared_access_signature(self.table_name, policy)
+
+        # Act
+        service = TableService(
+            credentials.getStorageServicesName(),
+            sas_token=token,
+        )
+        set_service_options(service)
+        updated_entity = self._create_updated_entity_dict('MyPartition', '1')
+        resp = service.update_entity(self.table_name, 'MyPartition', '1', updated_entity)
+
+        # Assert
+        received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
+        self._assert_updated_entity(received_entity)
+
+    def test_sas_delete(self):
+        # Arrange
+        self._create_table_with_default_entities(self.table_name, 1)
+        policy = self._get_shared_access_policy(TableSharedAccessPermissions.DELETE)
+        token = self.ts.generate_shared_access_signature(self.table_name, policy)
+
+        # Act
+        service = TableService(
+            credentials.getStorageServicesName(),
+            sas_token=token,
+        )
+        set_service_options(service)
+        service.delete_entity(self.table_name, 'MyPartition', '1')
+
+        # Assert
+        with self.assertRaises(WindowsAzureMissingResourceError):
+            self.ts.get_entity(self.table_name, 'MyPartition', '1')
+
+    def test_sas_signed_identifier(self):
+        # Arrange
+        self._create_table_with_default_entities(self.table_name, 2)
+
+        si = SignedIdentifier()
+        si.id = 'testid'
+        si.access_policy.start = '2011-10-11'
+        si.access_policy.expiry = '2018-10-12'
+        si.access_policy.permission = TableSharedAccessPermissions.QUERY
+        identifiers = SignedIdentifiers()
+        identifiers.signed_identifiers.append(si)
+
+        resp = self.ts.set_table_acl(self.table_name, identifiers)
+
+        token = self.ts.generate_shared_access_signature(
+            self.table_name,
+            SharedAccessPolicy(signed_identifier=si.id),
+        )
+
+        # Act
+        service = TableService(
+            credentials.getStorageServicesName(),
+            sas_token=token,
+        )
+        set_service_options(service)
+        resp = self.ts.query_entities(self.table_name, None, 'age,sex')
+
+        # Assert
+        self.assertEqual(len(resp), 2)
+        self.assertEqual(resp[0].age, 39)
+        self.assertEqual(resp[0].sex, 'male')
+        self.assertFalse(hasattr(resp[0], "birthday"))
+        self.assertFalse(hasattr(resp[0], "married"))
+        self.assertFalse(hasattr(resp[0], "deceased"))
+
+    def test_get_table_acl(self):
+        # Arrange
+        self._create_table_with_default_entities(self.table_name, 1)
+
+        # Act
+        acl = self.ts.get_table_acl(self.table_name)
+
+        # Assert
+        self.assertIsNotNone(acl)
+        self.assertEqual(len(acl.signed_identifiers), 0)
+
+    def test_get_table_acl_iter(self):
+        # Arrange
+        self._create_table_with_default_entities(self.table_name, 1)
+
+        # Act
+        acl = self.ts.get_table_acl(self.table_name)
+        for signed_identifier in acl:
+            pass
+
+        # Assert
+        self.assertIsNotNone(acl)
+        self.assertEqual(len(acl.signed_identifiers), 0)
+        self.assertEqual(len(acl), 0)
+
+    def test_get_table_acl_with_non_existing_container(self):
+        # Arrange
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.ts.get_table_acl(self.table_name)
+
+        # Assert
+
+    def test_set_table_acl(self):
+        # Arrange
+        self._create_table_with_default_entities(self.table_name, 1)
+
+        # Act
+        resp = self.ts.set_table_acl(self.table_name)
+
+        # Assert
+        self.assertIsNone(resp)
+        acl = self.ts.get_table_acl(self.table_name)
+        self.assertIsNotNone(acl)
+
+    def test_set_table_acl_with_empty_signed_identifiers(self):
+        # Arrange
+        self._create_table_with_default_entities(self.table_name, 1)
+
+        # Act
+        identifiers = SignedIdentifiers()
+
+        resp = self.ts.set_table_acl(self.table_name, identifiers)
+
+        # Assert
+        self.assertIsNone(resp)
+        acl = self.ts.get_table_acl(self.table_name)
+        self.assertIsNotNone(acl)
+        self.assertEqual(len(acl.signed_identifiers), 0)
+
+    def test_set_table_acl_with_signed_identifiers(self):
+        # Arrange
+        self._create_table_with_default_entities(self.table_name, 1)
+
+        # Act
+        si = SignedIdentifier()
+        si.id = 'testid'
+        si.access_policy.start = '2011-10-11'
+        si.access_policy.expiry = '2011-10-12'
+        si.access_policy.permission = TableSharedAccessPermissions.QUERY
+        identifiers = SignedIdentifiers()
+        identifiers.signed_identifiers.append(si)
+
+        resp = self.ts.set_table_acl(self.table_name, identifiers)
+
+        # Assert
+        self.assertIsNone(resp)
+        acl = self.ts.get_table_acl(self.table_name)
+        self.assertIsNotNone(acl)
+        self.assertEqual(len(acl.signed_identifiers), 1)
+        self.assertEqual(len(acl), 1)
+        self.assertEqual(acl.signed_identifiers[0].id, 'testid')
+        self.assertEqual(acl[0].id, 'testid')
+
+    def test_set_table_acl_with_non_existing_table(self):
+        # Arrange
+
+        # Act
+        with self.assertRaises(WindowsAzureError):
+            self.ts.set_table_acl(self.table_name)
+
+        # Assert
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

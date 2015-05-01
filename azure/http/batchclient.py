@@ -36,7 +36,6 @@ from azure.http.httpclient import _HTTPClient
 from azure.storage import (
     _update_storage_table_header,
     METADATA_NS,
-    _sign_storage_table_request,
     )
 
 _DATASERVICES_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices'
@@ -56,11 +55,10 @@ class _BatchClient(_HTTPClient):
     service. It only supports one changeset.
     '''
 
-    def __init__(self, service_instance, account_key, account_name,
+    def __init__(self, service_instance, authentication,
                  protocol='http', timeout=DEFAULT_HTTP_TIMEOUT):
-        _HTTPClient.__init__(self, service_instance, account_name=account_name,
-                             account_key=account_key, protocol=protocol,
-                             timeout=timeout)
+        _HTTPClient.__init__(self, service_instance, protocol=protocol, timeout=timeout)
+        self.authentication = authentication
         self.is_batch = False
         self.batch_requests = []
         self.batch_table = ''
@@ -278,10 +276,7 @@ class _BatchClient(_HTTPClient):
 
             request.path, request.query = _update_request_uri_query(request)
             request.headers = _update_storage_table_header(request)
-            auth = _sign_storage_table_request(request,
-                                               self.account_name,
-                                               self.account_key)
-            request.headers.append(('Authorization', auth))
+            self.authentication.sign_request(request)
 
             # Submit the whole request as batch request.
             response = self.perform_request(request)
