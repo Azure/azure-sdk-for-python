@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import json
+
 from azure import (
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
@@ -24,6 +26,7 @@ from azure.servicemanagement import (
     CloudService,
     CloudServices,
     AvailabilityResponse,
+    JSONEncoder
 )
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
@@ -205,17 +208,89 @@ class SchedulerManagementService(_ServiceManagementClient):
         _validate_not_none('cloud_service_id', cloud_service_id)
         _validate_not_none('job_collection_id', job_collection_id)
 
-
-        path = self._get_cloud_services_path(
-            cloud_service_id, "scheduler", "~/jobCollections")
-
-        path += '/' + _str(job_collection_id) + '?api-version=2014-04-01'
+        path = self._get_job_collection_path(
+            cloud_service_id, job_collection_id)
 
         return self._perform_get(path, Resource)
 
+    def create_job(self, cloud_service_id, job_collection_id, job_id, job):
+        '''
+        The Create Job request creates a new job.
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        job_id:
+            The job id you wish to create.
+        job:
+            A dictionary of the payload
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+        _validate_not_none('job_id', job_id)
+        _validate_not_none('job', job)
 
+        path = self._get_job_collection_path(
+            cloud_service_id, job_collection_id, job_id)
+
+        self.content_type = "application/json"
+        return self._perform_put(path, JSONEncoder().encode(job))
+
+    def delete_job(self, cloud_service_id, job_collection_id, job_id):
+        '''
+        The Delete Job request creates a new job.
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        job_id:
+            The job id you wish to create.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+        _validate_not_none('job_id', job_id)
+
+        path = self._get_job_collection_path(
+            cloud_service_id, job_collection_id, job_id)
+        return self._perform_delete(path)
+
+    def get_job(self, cloud_service_id, job_collection_id, job_id):
+        '''
+        The Get Job operation gets the details (including the current job status)
+        of the specified job from the specified job collection.
+
+        The return type is
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        job_id:
+            The job id you wish to create.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+        _validate_not_none('job_id', job_id)
+
+        path = self._get_job_collection_path(
+            cloud_service_id, job_collection_id, job_id)
+
+        self.content_type = "application/json"
+        payload = self._perform_get(path).body
+        return json.loads(payload)
 
     #--Helper functions --------------------------------------------------
+
+    def _get_job_collection_path(self, cloud_service_id, job_collection_id, job_id=None):
+        path = self._get_cloud_services_path(
+            cloud_service_id, "scheduler", "~/jobCollections")
+
+        path += '/' + _str(job_collection_id)
+        if job_id is not None:
+            path += '/jobs/' + job_id
+
+        path += '?api-version=2014-04-01'
+        return path
 
     def _get_list_cloud_services_path(self):
         return self._get_path('cloudservices', None)

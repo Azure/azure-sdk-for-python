@@ -319,7 +319,7 @@ class _ServiceManagementClient(object):
 
         return request.headers
 
-    def _perform_get(self, path, response_type, x_ms_version=None):
+    def _perform_get(self, path, response_type=None, x_ms_version=None):
         response = self.perform_get(path, x_ms_version)
 
         if response_type is not None:

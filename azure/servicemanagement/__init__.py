@@ -40,7 +40,7 @@ from azure import (
     METADATA_NS,
     )
 import azure
-
+import json
 
 #-----------------------------------------------------------------------------
 # Constants for Azure app environment settings.
@@ -1870,6 +1870,14 @@ class CloudService(WindowsAzureData):
         self.description = u''
         self.geo_region = u''
         self.resources = Resources()
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        else:
+            return super(JSONEncoder, self).default(obj)
 
 
 class Resources(WindowsAzureData):
