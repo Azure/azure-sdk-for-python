@@ -3122,6 +3122,12 @@ class _XmlSerializer(object):
         return _XmlSerializer.doc_from_xml('Site', xml)
 
     @staticmethod
+    def update_website_to_xml(state):
+        xml = _XmlSerializer.data_to_xml(
+            [('State', state)])
+        return _XmlSerializer.doc_from_xml('Site', xml)
+
+    @staticmethod
     def create_reserved_ip_to_xml(name, label, location):
         return _XmlSerializer.doc_from_data(
             'ReservedIP',
