@@ -279,6 +279,30 @@ class SchedulerManagementService(_ServiceManagementClient):
         payload = self._perform_get(path).body
         return json.loads(payload)
 
+    def get_all_jobs(self, cloud_service_id, job_collection_id):
+        '''
+        The Get All Jobs operation gets all the jobs in a job collection.
+        The full list of jobs can be accessed by excluding any job ID in the
+        GET call (i.e. /jobs.)
+
+        The return type is
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        '''
+
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+
+        path = self._get_job_collection_path(cloud_service_id, job_collection_id,"")
+
+
+        self.content_type = "application/json"
+        payload = self._perform_get(path).body
+        return json.loads(payload)
+
     #--Helper functions --------------------------------------------------
 
     def _get_job_collection_path(self, cloud_service_id, job_collection_id, job_id=None):
