@@ -12,19 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import json
+
 from azure import (
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
-    _str
-    )
+    _str,
+    _validate_not_none
+)
 from azure.servicemanagement import (
+    _SchedulerManagementXmlSerializer,
+    Resource,
+    CloudService,
     CloudServices,
-    )
+    AvailabilityResponse,
+    JSONEncoder
+)
 from azure.servicemanagement.servicemanagementclient import (
     _ServiceManagementClient,
-    )
+)
+
 
 class SchedulerManagementService(_ServiceManagementClient):
+
     ''' Note that this class is a preliminary work on Scheduler
         management. Since it lack a lot a features, final version
         can be slightly different from the current one.
@@ -69,8 +79,242 @@ class SchedulerManagementService(_ServiceManagementClient):
         return self._perform_get(self._get_list_cloud_services_path(),
                                  CloudServices)
 
+    def create_cloud_service(self, cloud_service_id, label, description, geo_region):
+        '''
+        The Create Cloud Service request creates a new cloud service. When job
+        collections are created, they are hosted within a cloud service.
+        A cloud service groups job collections together in a given region.
+        Once a cloud service has been created, job collections can then be
+        created and contained within it.
+
+        cloud_service_id:
+            The cloud service id
+        label:
+            The name of the cloud service.
+        description:
+            The description of the cloud service.
+        geo_region:
+            The geographical region of the webspace that will be created.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('label', label)
+        _validate_not_none('description', description)
+        _validate_not_none('geo_region', geo_region)
+
+        path = self._get_cloud_services_path(cloud_service_id)
+        body = _SchedulerManagementXmlSerializer.create_cloud_service_to_xml(
+            label, description, geo_region)
+
+        return self._perform_put(path, body)
+
+    def get_cloud_service(self, cloud_service_id):
+        '''
+        The Get Cloud Service operation gets all the resources (job collections)
+        in the cloud service.
+
+        cloud_service_id:
+            The cloud service id
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        path = self._get_cloud_services_path(cloud_service_id)
+        return self._perform_get(path, CloudService)
+
+    def delete_cloud_service(self, cloud_service_id):
+        '''
+        The Get Cloud Service operation gets all the resources (job collections)
+        in the cloud service.
+
+        cloud_service_id:
+            The cloud service id
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        path = self._get_cloud_services_path(cloud_service_id)
+        return self._perform_delete(path, CloudService)
+
+    def check_job_collection_name(self, cloud_service_id, job_collection_id):
+        '''
+        The Check Name Availability operation checks if a new job collection with
+        the given name may be created, or if it is unavailable. The result of the
+        operation is a Boolean true or false.
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            The name of the job_collection_id.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+
+        path = self._get_cloud_services_path(
+            cloud_service_id, "scheduler", "jobCollections")
+        path += "?op=checknameavailability&resourceName=" + job_collection_id
+        return self._perform_post(path, None, AvailabilityResponse)
+
+    def create_job_collection(self, cloud_service_id, job_collection_id, plan="Standard"):
+        '''
+        The Create Job Collection request is specified as follows. Replace <subscription-id>
+        with your subscription ID, <cloud-service-id> with your cloud service ID, and
+        <job-collection-id> with the ID of the job collection you\'d like to create.
+        There are no "default" pre-existing job collections every job collection
+        must be manually created.
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+
+        path = self._get_cloud_services_path(
+            cloud_service_id, "scheduler", "jobCollections")
+
+        path += '/' + _str(job_collection_id)
+        body = _SchedulerManagementXmlSerializer.create_job_collection_to_xml(
+            plan)
+
+        return self._perform_put(path, body)
+
+    def delete_job_collection(self, cloud_service_id, job_collection_id):
+        '''
+        The Delete Job Collection request is specified as follows. Replace <subscription-id>
+        with your subscription ID, <cloud-service-id> with your cloud service ID, and
+        <job-collection-id> with the ID of the job collection you\'d like to delete.
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+
+        path = self._get_cloud_services_path(
+            cloud_service_id, "scheduler", "jobCollections")
+
+        path += '/' + _str(job_collection_id)
+
+        return self._perform_delete(path)
+
+    def get_job_collection(self, cloud_service_id, job_collection_id):
+        '''
+        The Get Job Collection operation gets the details of a job collection
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+
+        path = self._get_job_collection_path(
+            cloud_service_id, job_collection_id)
+
+        return self._perform_get(path, Resource)
+
+    def create_job(self, cloud_service_id, job_collection_id, job_id, job):
+        '''
+        The Create Job request creates a new job.
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        job_id:
+            The job id you wish to create.
+        job:
+            A dictionary of the payload
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+        _validate_not_none('job_id', job_id)
+        _validate_not_none('job', job)
+
+        path = self._get_job_collection_path(
+            cloud_service_id, job_collection_id, job_id)
+
+        self.content_type = "application/json"
+        return self._perform_put(path, JSONEncoder().encode(job))
+
+    def delete_job(self, cloud_service_id, job_collection_id, job_id):
+        '''
+        The Delete Job request creates a new job.
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        job_id:
+            The job id you wish to create.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+        _validate_not_none('job_id', job_id)
+
+        path = self._get_job_collection_path(
+            cloud_service_id, job_collection_id, job_id)
+        return self._perform_delete(path)
+
+    def get_job(self, cloud_service_id, job_collection_id, job_id):
+        '''
+        The Get Job operation gets the details (including the current job status)
+        of the specified job from the specified job collection.
+
+        The return type is
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        job_id:
+            The job id you wish to create.
+        '''
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+        _validate_not_none('job_id', job_id)
+
+        path = self._get_job_collection_path(
+            cloud_service_id, job_collection_id, job_id)
+
+        self.content_type = "application/json"
+        payload = self._perform_get(path).body
+        return json.loads(payload)
+
+    def get_all_jobs(self, cloud_service_id, job_collection_id):
+        '''
+        The Get All Jobs operation gets all the jobs in a job collection.
+        The full list of jobs can be accessed by excluding any job ID in the
+        GET call (i.e. /jobs.)
+
+        The return type is
+
+        cloud_service_id:
+            The cloud service id
+        job_collection_id:
+            Name of the hosted service.
+        '''
+
+        _validate_not_none('cloud_service_id', cloud_service_id)
+        _validate_not_none('job_collection_id', job_collection_id)
+
+        path = self._get_job_collection_path(cloud_service_id, job_collection_id,"")
+
+
+        self.content_type = "application/json"
+        payload = self._perform_get(path).body
+        return json.loads(payload)
 
     #--Helper functions --------------------------------------------------
+
+    def _get_job_collection_path(self, cloud_service_id, job_collection_id, job_id=None):
+        path = self._get_cloud_services_path(
+            cloud_service_id, "scheduler", "~/jobCollections")
+
+        path += '/' + _str(job_collection_id)
+        if job_id is not None:
+            path += '/jobs/' + job_id
+
+        path += '?api-version=2014-04-01'
+        return path
+
     def _get_list_cloud_services_path(self):
         return self._get_path('cloudservices', None)
-

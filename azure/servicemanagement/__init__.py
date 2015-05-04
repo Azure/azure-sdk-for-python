@@ -40,7 +40,7 @@ from azure import (
     METADATA_NS,
     )
 import azure
-
+import json
 
 #-----------------------------------------------------------------------------
 # Constants for Azure app environment settings.
@@ -1872,6 +1872,14 @@ class CloudService(WindowsAzureData):
         self.resources = Resources()
 
 
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        else:
+            return super(JSONEncoder, self).default(obj)
+
+
 class Resources(WindowsAzureData):
 
     def __init__(self):
@@ -3513,6 +3521,51 @@ class _ServiceBusManagementXmlSerializer(object):
                 setattr(return_obj, name, value)
         return return_obj
 
+
+class _SchedulerManagementXmlSerializer(object):
+
+    @staticmethod
+    def create_cloud_service_to_xml(label, description, geo_region):
+        '''
+        <CloudService xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">
+          <Label>MyApp3</Label>
+          <Description>My Cloud Service for app3</Description>
+          <GeoRegion>South Central US</GeoRegion>
+        </CloudService>
+        '''
+        body = '<CloudService xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">'
+        body += ''.join(['<Label>', label, '</Label>'])
+        body += ''.join(['<Description>', description, '</Description>'])
+        body += ''.join(['<GeoRegion>', geo_region, '</GeoRegion>'])
+        body += '</CloudService>'
+
+        return body
+
+    @staticmethod
+    def create_job_collection_to_xml(plan):
+        '''
+        <Resource xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure">
+        <IntrinsicSettings>
+            <Plan>Standard</Plan>
+            <Quota>
+                <MaxJobCount>10</MaxJobCount>
+                <MaxRecurrence>
+                    <Frequency>Second</Frequency>
+                    <Interval>1</Interval>
+                </MaxRecurrence>
+            </Quota>
+        </IntrinsicSettings>
+        </Resource>
+        '''
+
+        if plan not in ["Free", "Standard"]:
+            raise ValueError("Plan: Invalid option must be 'Standard' or 'Free'")
+
+        body = '<Resource xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure"><IntrinsicSettings>'
+        body += ''.join(['<plan>', plan, '</plan>'])
+        body += '</IntrinsicSettings></Resource>'
+
+        return body
 from azure.servicemanagement.servicemanagementservice import (
     ServiceManagementService)
 from azure.servicemanagement.servicebusmanagementservice import (
