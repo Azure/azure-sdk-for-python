@@ -48,7 +48,7 @@ AZURE_MANAGEMENT_CERTFILE = 'AZURE_MANAGEMENT_CERTFILE'
 AZURE_MANAGEMENT_SUBSCRIPTIONID = 'AZURE_MANAGEMENT_SUBSCRIPTIONID'
 
 # x-ms-version for service management.
-X_MS_VERSION = '2014-06-01'
+X_MS_VERSION = '2014-10-01'
 
 #-----------------------------------------------------------------------------
 # Data classes
@@ -289,6 +289,7 @@ class Deployment(WindowsAzureData):
         self.last_modified_time = u''
         self.extended_properties = _dict_of(
             'ExtendedProperty', 'Name', 'Value')
+        self.virtual_ips = VirtualIPs()
 
 
 class RoleInstanceList(WindowsAzureData):
@@ -706,6 +707,28 @@ class PersistentVMDowntimeInfo(WindowsAzureData):
         self.start_time = u''
         self.end_time = u''
         self.status = u''
+
+class VirtualIPs(WindowsAzureData):
+
+    def __init__(self):
+        self.virtual_ips = _list_of(VirtualIP)
+
+    def __iter__(self):
+        return iter(self.virtual_ips)
+
+    def __len__(self):
+        return len(self.virtual_ips)
+
+    def __getitem__(self, index):
+        return self.virtual_ips[index]
+
+class VirtualIP(WindowsAzureData):
+
+    def __init__(self):
+        self.address = u''
+        self.is_reserved = False
+        self.reserved_ip_name = u''
+        self.type = u''
 
 
 class Certificates(WindowsAzureData):
@@ -2775,15 +2798,16 @@ class _XmlSerializer(object):
                  ('Name', endpoint.name),
                  ('Port', endpoint.port)])
 
-            if endpoint.load_balancer_probe.path or\
-                endpoint.load_balancer_probe.port or\
-                endpoint.load_balancer_probe.protocol:
-                xml += '<LoadBalancerProbe>'
-                xml += _XmlSerializer.data_to_xml(
-                    [('Path', endpoint.load_balancer_probe.path),
-                     ('Port', endpoint.load_balancer_probe.port),
-                     ('Protocol', endpoint.load_balancer_probe.protocol)])
-                xml += '</LoadBalancerProbe>'
+            if endpoint.load_balancer_probe:
+                if endpoint.load_balancer_probe.path or\
+                    endpoint.load_balancer_probe.port or\
+                    endpoint.load_balancer_probe.protocol:
+                        xml += '<LoadBalancerProbe>'
+                        xml += _XmlSerializer.data_to_xml(
+                            [('Path', endpoint.load_balancer_probe.path),
+                            ('Port', endpoint.load_balancer_probe.port),
+                            ('Protocol', endpoint.load_balancer_probe.protocol)])
+                        xml += '</LoadBalancerProbe>'
 
             xml += _XmlSerializer.data_to_xml(
                 [('Protocol', endpoint.protocol),
@@ -2795,8 +2819,9 @@ class _XmlSerializer(object):
             xml += '</InputEndpoint>'
         xml += '</InputEndpoints>'
         xml += '<SubnetNames>'
-        for name in configuration.subnet_names:
-            xml += _XmlSerializer.data_to_xml([('SubnetName', name)])
+        if configuration.subnet_names:
+            for name in configuration.subnet_names:
+                xml += _XmlSerializer.data_to_xml([('SubnetName', name)])
         xml += '</SubnetNames>'
 
         if configuration.public_ips:

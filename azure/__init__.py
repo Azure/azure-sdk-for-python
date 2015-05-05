@@ -282,7 +282,9 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'operation_id': 'OperationId',
     'operation_object_id': 'OperationObjectId',
     'client_ip': 'ClientIP',
-    'status_id': 'ID'
+    'status_id': 'ID',
+    'virtual_ips': 'VirtualIPs',
+    'virtual_ip': 'VirtualIP'
     }
 
 
