@@ -418,7 +418,7 @@ class ServiceManagementService(_ServiceManagementClient):
             Name of the hosted service.
         '''
         _validate_not_none('service_name', service_name)
-        return self._perform_delete(self._get_hosted_service_path(service_name))
+        return self._perform_delete(self._get_hosted_service_path(service_name), async=True)
 
     def get_deployment_by_slot(self, service_name, deployment_slot):
         '''
