@@ -375,7 +375,8 @@ class ServiceManagementService(_ServiceManagementClient):
                                       description,
                                       location,
                                       affinity_group,
-                                      extended_properties))
+                                      extended_properties),
+                                  async=True)
 
     def update_hosted_service(self, service_name, label=None, description=None,
                               extended_properties=None):
@@ -410,15 +411,25 @@ class ServiceManagementService(_ServiceManagementClient):
                                      description,
                                      extended_properties))
 
-    def delete_hosted_service(self, service_name):
+    def delete_hosted_service(self, service_name, complete=False):
         '''
         Deletes the specified hosted service from Windows Azure.
 
         service_name:
             Name of the hosted service.
+        complete:
+            True if all OS/data disks and the source blobs for the disks should
+            also be deleted from storage.
         '''
+
         _validate_not_none('service_name', service_name)
-        return self._perform_delete(self._get_hosted_service_path(service_name))
+
+        path = self._get_hosted_service_path(service_name)
+
+        if complete == True:
+            path = path +'?comp=media'
+
+        return self._perform_delete(path, async=True)
 
     def get_deployment_by_slot(self, service_name, deployment_slot):
         '''
@@ -898,23 +909,24 @@ class ServiceManagementService(_ServiceManagementClient):
             Certificate)
 
     def add_service_certificate(self, service_name, data, certificate_format,
-                                password):
+                                password=None):
         '''
         Adds a certificate to a hosted service.
 
         service_name:
             Name of the hosted service.
         data:
-            The base-64 encoded form of the pfx file.
+            The base-64 encoded form of the pfx/cer file.
         certificate_format:
-            The service certificate format. The only supported value is pfx.
+            The service certificate format.
         password:
-            The certificate password.
+            The certificate password. Default to None when using cer format.
         '''
         _validate_not_none('service_name', service_name)
         _validate_not_none('data', data)
         _validate_not_none('certificate_format', certificate_format)
         _validate_not_none('password', password)
+
         return self._perform_post(
             '/' + self.subscription_id + '/services/hostedservices/' +
             _str(service_name) + '/certificates',
