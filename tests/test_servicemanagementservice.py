@@ -251,7 +251,7 @@ class ServiceManagementServiceTest(AzureTestCase):
             location,
             affinity_group,
             {'ext1': 'val1', 'ext2': 42})
-        self.assertIsNone(result)
+        self._wait_for_async(result.request_id)
 
     def _hosted_service_exists(self, name):
         try:
@@ -859,9 +859,9 @@ class ServiceManagementServiceTest(AzureTestCase):
         result = self.sms.create_hosted_service(
             self.hosted_service_name, label, description, location, None,
             {'ext1': 'val1', 'ext2': 'val2'})
+        self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertIsNone(result)
         self.assertTrue(self._hosted_service_exists(self.hosted_service_name))
 
     def test_update_hosted_service(self):
@@ -898,9 +898,9 @@ class ServiceManagementServiceTest(AzureTestCase):
 
         # Act
         result = self.sms.delete_hosted_service(self.hosted_service_name)
+        self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertIsNone(result)
         self.assertFalse(self._hosted_service_exists(self.hosted_service_name))
 
     def test_get_deployment_by_slot(self):
@@ -2098,7 +2098,6 @@ class ServiceManagementServiceTest(AzureTestCase):
             if image.category == 'Public':
                 self.assertGreater(len(image.name), 0)
                 self.assertGreater(len(image.category), 0)
-                self.assertGreater(len(image.description), 0)
                 self.assertGreater(len(image.label), 0)
                 self.assertGreater(len(image.location), 0)
                 self.assertGreater(len(image.publisher_name), 0)
