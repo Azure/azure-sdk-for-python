@@ -39,7 +39,7 @@ from azure.servicemanagement import (
     VMImage,
     WindowsConfigurationSet,
     parse_response_for_async_op,
-    )
+    AsynchronousOperationResult)
 from azure.storage.blobservice import BlobService
 from util import (
     AzureTestCase,
@@ -164,7 +164,8 @@ class ServiceManagementServiceTest(AzureTestCase):
                     self._wait_for_async(result.request_id)
                 except:
                     pass
-            self.sms.delete_hosted_service(self.hosted_service_name)
+            result = self.sms.delete_hosted_service(self.hosted_service_name)
+            self._wait_for_async(result.request_id)
         except:
             pass
 
@@ -900,7 +901,8 @@ class ServiceManagementServiceTest(AzureTestCase):
         result = self.sms.delete_hosted_service(self.hosted_service_name)
 
         # Assert
-        self.assertIsNone(result)
+        self.assertIsInstance(result, AsynchronousOperationResult)
+        self._wait_for_async(result.request_id)
         self.assertFalse(self._hosted_service_exists(self.hosted_service_name))
 
     def test_get_deployment_by_slot(self):
