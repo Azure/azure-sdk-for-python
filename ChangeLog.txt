@@ -1,3 +1,34 @@
+DATE TBD: Version 0.11.0
+
+IMPORTANT CHANGE THAT AFFECTS STORAGE:
+
+The API for creating shared access signatures has changed. The new API enables
+easy production AND consumption of SAS for blob, queue and table storage.
+
+ * To produce a SAS, use generate_shared_access_signature on
+   BlobService/QueueService/TableService
+ * To consume a SAS, init BlobService/QueueService/TableService with
+   account_name & sas_token (no account_key)
+ * For blob storage, you can now pass a sas_token to make_blob_url
+ * For blob storage, you can now consume public containers/blobs, init 
+   BlobService/QueueService/TableService with account_name only
+   (no account_key or sas_token)
+
+ See http://azure-sdk-for-python.readthedocs.org/en/latest/storage.html for
+ more details on using SAS with Azure Storage.
+
+Other changes:
+
+ * Create/list/delete job functionality added to SchedulerManagementService
+ * update_site added to WebsiteManagementService to start/stop web sites
+ * Target x-ms-version 2014-10-01 for service management
+ * Add virtual IP fields in Deployment
+ * Make cloud service create/delete async
+ * Delete cloud service now supports deleting blobs from storage
+
+Thank you to lmazuel, antonydenyer, zlike-msft and amegianeg for their
+contributions.
+
 2015-04-28 Version 0.10.2
  * Fixes for bugs:
    #338 Version 0.10.0 fails with 'SocketReader' object has no attribute 'tell'
