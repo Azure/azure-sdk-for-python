@@ -1376,13 +1376,17 @@ class DataVirtualHardDisks(WindowsAzureData):
 
 class DataVirtualHardDisk(WindowsAzureData):
 
-    def __init__(self):
-        self.host_caching = None
-        self.disk_label = u''
-        self.disk_name = u''
-        self.lun = 0
-        self.logical_disk_size_in_gb = 0
-        self.media_link = u''
+    def __init__(self, media_link=u'', host_caching=None,
+                 disk_label=u'', disk_name=u'',
+                 lun=0, logical_disk_size_in_gb=0,
+                 source_media_link=None):
+        self.host_caching = host_caching
+        self.disk_label = disk_label
+        self.disk_name = disk_name
+        self.lun = lun
+        self.logical_disk_size_in_gb = logical_disk_size_in_gb
+        self.media_link = media_link
+        self.source_media_link = source_media_link
 
 
 class OSVirtualHardDisk(WindowsAzureData):
@@ -1397,6 +1401,7 @@ class OSVirtualHardDisk(WindowsAzureData):
         self.disk_name = disk_name
         self.os = os
         self.remote_source_image_link = remote_source_image_link
+
 
 class AsynchronousOperationResult(WindowsAzureData):
 
@@ -2903,7 +2908,8 @@ class _XmlSerializer(object):
                      ('DiskName', hd.disk_name),
                      ('Lun', hd.lun),
                      ('LogicalDiskSizeInGB', hd.logical_disk_size_in_gb),
-                     ('MediaLink', hd.media_link)])
+                     ('MediaLink', hd.media_link),
+                     ('SourceMediaLink', hd.source_media_link)])
                 xml += '</DataVirtualHardDisk>'
             xml += '</DataVirtualHardDisks>'
 
