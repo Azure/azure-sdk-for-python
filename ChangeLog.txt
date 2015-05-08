@@ -25,8 +25,9 @@ Other changes:
  * Add virtual IP fields in Deployment
  * Make cloud service create/delete async
  * Delete cloud service now supports deleting blobs from storage
+ * Support for specifying SourceMediaLink for DataVirtualHardDisks
 
-Thank you to lmazuel, antonydenyer, zlike-msft and amegianeg for their
+Thank you to lmazuel, antonydenyer, zlike-msft, melor and amegianeg for their
 contributions.
 
 2015-04-28 Version 0.10.2
