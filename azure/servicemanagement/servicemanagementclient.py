@@ -210,12 +210,15 @@ class _ServiceManagementClient(object):
     #--Operations for tracking asynchronous requests ---------------------
     def wait_for_operation_status_progress_default_callback(elapsed):
         sys.stdout.write('.')
+        sys.stdout.flush()
 
     def wait_for_operation_status_success_default_callback(elapsed):
         sys.stdout.write('\n')
+        sys.stdout.flush()
 
     def wait_for_operation_status_failure_default_callback(elapsed, ex):
         sys.stdout.write('\n')
+        sys.stdout.flush()
         print(vars(ex.result))
         raise ex
 

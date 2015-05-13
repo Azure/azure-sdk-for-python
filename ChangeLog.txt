@@ -1,4 +1,4 @@
-DATE TBD: Version 0.11.0
+2015-05-13 Version 0.11.0
 
 IMPORTANT CHANGE THAT AFFECTS STORAGE:
 
@@ -26,6 +26,9 @@ Other changes:
  * Make cloud service create/delete async
  * Delete cloud service now supports deleting blobs from storage
  * Support for specifying SourceMediaLink for DataVirtualHardDisks
+
+ * Fixes for bugs:
+   #350 wait_for_operation needs to flush as it prints
 
 Thank you to lmazuel, antonydenyer, zlike-msft, melor and amegianeg for their
 contributions.
