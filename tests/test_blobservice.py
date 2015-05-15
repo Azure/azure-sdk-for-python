@@ -354,6 +354,23 @@ class BlobServiceTest(AzureTestCase):
         self.assertEqual(bs.account_key, credentials.getStorageServicesKey())
         self.assertEqual(bs.is_emulated, False)
 
+    def test_create_blob_service_connection_string(self):
+        # Arrange
+        connection_string = 'DefaultEndpointsProtocol={};AccountName={};AccountKey={}'.format(
+                            'http', credentials.getStorageServicesName(),
+                            credentials.getStorageServicesKey())
+        
+        # Act
+        bs = BlobService(connection_string = connection_string)
+        
+        # Assert
+        self.assertIsNotNone(bs)
+        self.assertEqual(bs.account_name, credentials.getStorageServicesName())
+        self.assertEqual(bs.account_key, credentials.getStorageServicesKey())
+        self.assertEqual(bs.protocol, 'http')
+        self.assertEqual(bs.host_base, BLOB_SERVICE_HOST_BASE)
+        self.assertFalse(bs.is_emulated)
+        
     #--Test cases for containers -----------------------------------------
     def test_create_container_no_options(self):
         # Arrange
