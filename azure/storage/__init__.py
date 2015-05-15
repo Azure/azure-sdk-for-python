@@ -41,7 +41,14 @@ from azure import (WindowsAzureData,
                    _get_etree_text,
                    ETree,
                    _ETreeXmlToObject,
-                   )
+                   BLOB_SERVICE_HOST_BASE,
+                   TABLE_SERVICE_HOST_BASE,
+                   QUEUE_SERVICE_HOST_BASE,
+                   DEV_BLOB_HOST,
+                   DEV_TABLE_HOST,
+                   DEV_QUEUE_HOST,
+                   DEFAULT_HTTP_TIMEOUT,
+                  )
 
 # x-ms-version for storage service.
 X_MS_VERSION = '2014-02-14'
@@ -1277,6 +1284,33 @@ class StorageTableSharedKeyAuthentication(_StorageSharedKeyAuthentication):
 class StorageNoAuthentication(object):
     def sign_request(self, request):
         pass
+
+
+class StorageConnectionParameters(object):
+    '''Extract connection parameters from a connection string.
+    
+       This is based on http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/ .
+       
+       TODO "(Blob|Table|Queue|File)Endpoint" are not yet supported.
+    '''
+    def __init__(self, connection_string = ''):
+        connection_params = dict(s.split('=',1) for s in connection_string.split(';'))
+
+        self.account_name = connection_params.get('AccountName', None)
+        self.account_key = connection_params.get('AccountKey', None)
+        self.protocol = connection_params.get('DefaultEndpointsProtocol', 'https')
+        endpoint_suffix = connection_params.get('EndpointSuffix', None)
+        self.host_base_blob = BLOB_SERVICE_HOST_BASE if endpoint_suffix is None \
+                              else ".blob.{0}".format(endpoint_suffix)
+        self.host_base_table = TABLE_SERVICE_HOST_BASE if endpoint_suffix is None \
+                               else ".table.{0}".format(endpoint_suffix)
+        self.host_base_queue = QUEUE_SERVICE_HOST_BASE if endpoint_suffix is None \
+                               else ".queue.{0}".format(endpoint_suffix)
+        self.dev_host_blob = DEV_BLOB_HOST
+        self.dev_host_table = DEV_TABLE_HOST
+        self.dev_host_queue = DEV_QUEUE_HOST
+        self.timeout = DEFAULT_HTTP_TIMEOUT
+        self.sas_token = connection_params.get('SharedAccessSignature', None)
 
 
 # make these available just from storage.

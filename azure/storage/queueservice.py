@@ -46,6 +46,7 @@ from azure.storage import (
     StorageServiceProperties,
     StorageSASAuthentication,
     StorageSharedKeyAuthentication,
+    StorageConnectionParameters,
     _convert_signed_identifiers_to_xml,
     _update_storage_queue_header,
     X_MS_VERSION,
@@ -64,7 +65,7 @@ class QueueService(_StorageClient):
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base=QUEUE_SERVICE_HOST_BASE, dev_host=DEV_QUEUE_HOST,
-                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None):
+                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None, connection_string=None):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -82,6 +83,16 @@ class QueueService(_StorageClient):
         sas_token:
             Optional. Token to use to authenticate with shared access signature.
         '''
+        if connection_string is not None:
+            connection_params = StorageConnectionParameters(connection_string)
+            account_name = connection_params.account_name
+            account_key = connection_params.account_key
+            protocol = connection_params.protocol
+            host_base = connection_params.host_base_blob
+            dev_host = connection_params.dev_host_blob
+            timeout = connection_params.timeout
+            sas_token = connection_params.sas_token
+            
         super(QueueService, self).__init__(
             account_name, account_key, protocol, host_base, dev_host, timeout, sas_token)
 
