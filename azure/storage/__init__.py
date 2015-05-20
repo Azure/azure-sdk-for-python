@@ -1289,8 +1289,8 @@ class StorageConnectionParameters(object):
     This is based on http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/ .
        
     NOTE "(Blob|Table|Queue|File)Endpoint" are not supported.
-         dev_host and timeout cannot be specified with a connections tring.
          "SharedAccessSignature" is not supported.
+         dev_host, timeout, and sas_token cannot be specified with a connection string.
     '''
     def __init__(self, connection_string = ''):
         connection_params = dict(s.split('=',1) for s in connection_string.split(';'))
