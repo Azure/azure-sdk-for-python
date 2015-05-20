@@ -80,16 +80,21 @@ class TableService(_StorageClient):
             Optional. Timeout for the http request, in seconds.
         sas_token:
             Optional. Token to use to authenticate with shared access signature.
+        connection_string:
+            Optional. If specified, the first four parameters (account_name,
+            account_key, protocol, host_base) may be overridden
+            by values specified in the connection_string. The next three parameters
+            (dev_host, timeout, sas_token) cannot be specified with a
+            connection_string. See
+            http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/
+            for the connection string format.
         '''
         if connection_string is not None:
             connection_params = StorageConnectionParameters(connection_string)
             account_name = connection_params.account_name
             account_key = connection_params.account_key
             protocol = connection_params.protocol
-            host_base = connection_params.host_base_blob
-            dev_host = connection_params.dev_host_blob
-            timeout = connection_params.timeout
-            sas_token = connection_params.sas_token
+            host_base = connection_params.host_base_table
             
         super(TableService, self).__init__(
             account_name, account_key, protocol, host_base, dev_host, timeout, sas_token)
