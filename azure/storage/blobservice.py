@@ -47,6 +47,7 @@ from azure.storage import (
     StorageSASAuthentication,
     StorageSharedKeyAuthentication,
     StorageNoAuthentication,
+    StorageConnectionParameters,
     X_MS_VERSION,
     _BlockBlobChunkUploader,
     _PageBlobChunkUploader,
@@ -83,7 +84,7 @@ class BlobService(_StorageClient):
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base=BLOB_SERVICE_HOST_BASE, dev_host=DEV_BLOB_HOST,
-                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None):
+                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None, connection_string=None):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -100,7 +101,22 @@ class BlobService(_StorageClient):
             Optional. Timeout for the http request, in seconds.
         sas_token:
             Optional. Token to use to authenticate with shared access signature.
+        connection_string:
+            Optional. If specified, the first four parameters (account_name,
+            account_key, protocol, host_base) may be overridden
+            by values specified in the connection_string. The next three parameters
+            (dev_host, timeout, sas_token) cannot be specified with a
+            connection_string. See 
+            http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/
+            for the connection string format.
         '''
+        if connection_string is not None:
+            connection_params = StorageConnectionParameters(connection_string)
+            account_name = connection_params.account_name
+            account_key = connection_params.account_key
+            protocol = connection_params.protocol
+            host_base = connection_params.host_base_blob
+            
         self._BLOB_MAX_DATA_SIZE = 64 * 1024 * 1024
         self._BLOB_MAX_CHUNK_DATA_SIZE = 4 * 1024 * 1024
         super(BlobService, self).__init__(
