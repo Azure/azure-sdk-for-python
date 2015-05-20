@@ -181,7 +181,7 @@ class _HTTPClient(object):
         if self.use_httplib:
             if self.proxy_host:
                 for i in connection._buffer:
-                    if i.startswith("Host: "):
+                    if i.startswith(b"Host: "):
                         connection._buffer.remove(i)
                 connection.putheader(
                     'Host', "{0}:{1}".format(connection._tunnel_host,
