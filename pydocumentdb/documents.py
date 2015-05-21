@@ -189,6 +189,18 @@ class SSLConfiguration(object):
         self.SSLCaCerts = None
 
 
+class ProxyConfiguration(object):
+    """Configurations for proxy.
+
+    :Attributes:
+        - `Host`: str, the host address of the proxy.
+        - `Port`: int, the port number of the proxy.
+    """
+    def __init__(self):
+        self.Host = None
+        self.Port = None
+
+
 class ConnectionPolicy(object):
     """Represents the Connection policy assocated with a DocumentClient.
 
@@ -202,6 +214,7 @@ class ConnectionPolicy(object):
         - `MediaReadMode`: str (MediaReadMode.Buffered), gets or sets the
           attachment content (aka media) download mode.
         - `SSLConfiguration`: documents.SSLConfiguration, gets or sets the SSL configuration.
+        - `ProxyConfiguration`: documents.ProxyConfiguration, gets or sets the proxy configuration.
     """
 
     __defaultRequestTimeout = 60000  # milliseconds
@@ -215,6 +228,7 @@ class ConnectionPolicy(object):
         self.ConnectionMode = ConnectionMode.Gateway
         self.MediaReadMode = MediaReadMode.Buffered
         self.SSLConfiguration = None
+        self.ProxyConfiguration = None
 
 
 class RetryPolicy(object):

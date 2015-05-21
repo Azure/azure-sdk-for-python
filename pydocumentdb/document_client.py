@@ -812,6 +812,20 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        return self.QueryConflicts(collection_link, None, feed_options)
+
+    def QueryConflicts(self, collection_link, query, options={}):
+        """Queries conflicts in a collection.
+
+        :Parameters:
+            - `collection_link`: str, the link to the document collection.
+            - `query`: str or dict.
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            query_iterable.QueryIterable
+
+        """
         path = '/' + collection_link + 'conflicts/'
         collection_id = base.GetIdFromLink(collection_link)
         def fetch_fn(options):
@@ -820,7 +834,7 @@ class DocumentClient(object):
                                     collection_id,
                                     lambda r: r['Conflicts'],
                                     lambda _, b: b,
-                                    '',
+                                    query,
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 

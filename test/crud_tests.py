@@ -1348,6 +1348,18 @@ class CRUDTests(unittest.TestCase):
     #     databases = list(client.ReadDatabases())
 
 
+    # To run this test, please specify your own proxy server.
+    #
+    # def test_proxy_connection(self):
+    #     connection_policy = documents.ConnectionPolicy()
+    #     connection_policy.ProxyConfiguration = documents.ProxyConfiguration()
+    #     connection_policy.ProxyConfiguration.Host = '127.0.0.1'
+    #     connection_policy.ProxyConfiguration.Port = 8088
+    #     client = document_client.DocumentClient(host, {'masterKey': masterKey}, connection_policy)
+    #     # Read databases after creation.
+    #     databases = list(client.ReadDatabases())
+
+
 if __name__ == '__main__':
     try:
         unittest.main()
