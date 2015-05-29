@@ -568,10 +568,10 @@ def _update_storage_table_header(request, content_type='application/atom+xml'):
     request.headers.append(('Date', current_time))
     return request.headers
 
-def _to_http_date(dt):
-    weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][dt.weekday()]
-    month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep","Oct", "Nov", "Dec"][dt.month - 1]
-    return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (weekday, dt.day, month, dt.year, dt.hour, dt.minute, dt.second)
+def _to_http_date(value):
+    weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][value.weekday()]
+    month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep","Oct", "Nov", "Dec"][value.month - 1]
+    return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (weekday, value.day, month, value.year, value.hour, value.minute, value.second)
 
 def _to_python_bool(value):
     if value.lower() == 'true':
