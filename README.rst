@@ -4,6 +4,9 @@ Microsoft Azure SDK for Python
 .. image:: https://pypip.in/d/azure/badge.svg
         :target: https://pypi.python.org/pypi/azure/
 
+.. image:: http://www.quantifiedcode.com/api/v1/project/7e8a70bc3a1d445b95561f55712fee5a/badge.svg
+        :target: http://www.quantifiedcode.com/app/project/7e8a70bc3a1d445b95561f55712fee5a
+
 This project provides a set of Python packages that make it easy to
 access the Microsoft Azure components such as ServiceManagement, Storage, and ServiceBus.
 
