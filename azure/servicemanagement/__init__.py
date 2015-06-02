@@ -226,6 +226,28 @@ class VirtualNetworkSite(WindowsAzureData):
         self.affinity_group = u''
         self.subnets = Subnets()
 
+class NetworkSecurityGroups(WindowsAzureData):
+
+    def __init__(self):
+        self.network_security_groups = _list_of(NetworkSecurityGroup)
+
+    def __iter__(self):
+        return iter(self.network_security_groups)
+
+    def __len__(self):
+        return len(self.network_security_groups)
+
+    def __getitem__(self, index):
+        return self.network_security_groups[index]
+
+
+class NetworkSecurityGroup(WindowsAzureData):
+
+    def __init__(self):
+        self.name = u''
+        self.label=u''
+        self.location=u''
+
 
 class Subnets(WindowsAzureData):
 
@@ -3227,6 +3249,14 @@ class _XmlSerializer(object):
                                '</ExtendedProperty>'])
             xml += '</ExtendedProperties>'
         return xml
+    
+    @staticmethod
+    def create_network_security_group_to_xml(name, label, location):
+        return _XmlSerializer.doc_from_data(
+            'NetworkSecurityGroup',
+            [('Name', name),
+             ('Label', label),
+             ('Location', location)])
 
 
 class _SqlManagementXmlSerializer(object):

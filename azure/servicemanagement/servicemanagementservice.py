@@ -33,6 +33,7 @@ from azure.servicemanagement import (
     HostedService,
     HostedServices,
     Images,
+    NetworkSecurityGroups,
     OperatingSystems,
     OperatingSystemFamilies,
     OSImage,
@@ -2386,6 +2387,34 @@ class ServiceManagementService(_ServiceManagementClient):
         Retrieves a list of the virtual networks.
         '''
         return self._perform_get(self._get_virtual_network_site_path(), VirtualNetworkSites)
+
+    #--Operations for network security groups  ---------------------------
+    def list_network_security_groups(self):
+        '''
+        Retrieves a list of the network security groups.
+        '''
+        return self._perform_get(self._get_network_security_group_path(), NetworkSecurityGroups)
+    
+    def create_network_security_group(self, name, label=None, location=None):
+        '''
+        Creates a network security group for the specified subscription.
+
+        name:
+            Required. Specifies the name for the security group.
+        label:
+            Optional. Specifies a label for the network security group. 
+            The label can be up to 1024 characters long and can be used 
+            for your tracking purposes.
+        location:
+            Required. Specifies the location of the network security 
+            group.
+        '''
+        _validate_not_none('name', name)
+        _validate_not_none('location', location)
+        return self._perform_post(
+            self._get_network_security_group_path(),
+            _XmlSerializer.create_network_security_group_to_xml(name, label, location),
+            async=True)
   
       #--Helper functions --------------------------------------------------
     def _get_role_sizes_path(self):
@@ -2467,3 +2496,7 @@ class ServiceManagementService(_ServiceManagementClient):
 
     def _get_image_path(self, image_name=None):
         return self._get_path('services/images', image_name)
+    
+    def _get_network_security_group_path(self):
+        return self._get_path('services/networking/networksecuritygroups', None)
+        
