@@ -52,6 +52,8 @@ setup(name='azure',
                 'azure.storage',
                 'azure.servicemanagement'],
       install_requires=['python-dateutil', 
-                        'pyopenssl',
-                        'futures']
-     )
+                        'futures'],
+      extras_require = { 
+          'get_certificate_from_publish_settings' : ['pyopenssl'] 
+      }
+)
