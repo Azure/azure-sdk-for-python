@@ -2415,6 +2415,18 @@ class ServiceManagementService(_ServiceManagementClient):
             self._get_network_security_group_path(),
             _XmlSerializer.create_network_security_group_to_xml(name, label, location),
             async=True)
+    
+    def delete_network_security_group(self, network_security_group_name):
+        '''
+        Deletes a network security group in the specified subscription.
+
+        network_security_group_name:
+            The name of the network security group.
+        '''
+        _validate_not_none('network_security_group_name', network_security_group_name)
+        return self._perform_delete('/' + self.subscription_id + \
+                                    '/services/networking/networksecuritygroups/' + \
+                                    _str(network_security_group_name))
   
       #--Helper functions --------------------------------------------------
     def _get_role_sizes_path(self):
