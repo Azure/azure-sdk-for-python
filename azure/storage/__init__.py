@@ -538,7 +538,7 @@ def _update_storage_blob_header(request, authentication):
     ''' add additional headers for storage blob request. '''
 
     request = _update_storage_header(request)
-    current_time = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+    current_time = _to_http_date(datetime.utcnow())
     request.headers.append(('x-ms-date', current_time))
     request.headers.append(
         ('Content-Type', 'application/octet-stream Charset=UTF-8'))
@@ -563,11 +563,15 @@ def _update_storage_table_header(request, content_type='application/atom+xml'):
             request.headers.append(('Content-Type', content_type))
     request.headers.append(('DataServiceVersion', '2.0;NetFx'))
     request.headers.append(('MaxDataServiceVersion', '2.0;NetFx'))
-    current_time = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+    current_time = _to_http_date(datetime.utcnow())
     request.headers.append(('x-ms-date', current_time))
     request.headers.append(('Date', current_time))
     return request.headers
 
+def _to_http_date(value):
+    weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][value.weekday()]
+    month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep","Oct", "Nov", "Dec"][value.month - 1]
+    return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (weekday, value.day, month, value.year, value.hour, value.minute, value.second)
 
 def _to_python_bool(value):
     if value.lower() == 'true':
