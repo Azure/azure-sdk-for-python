@@ -19,7 +19,8 @@ import types
 from datetime import datetime
 from dateutil import parser
 from dateutil.tz import tzutc
-from time import sleep
+from time import sleep, time
+from wsgiref.handlers import format_date_time
 from azure import (WindowsAzureData,
                    WindowsAzureError,
                    METADATA_NS,
@@ -538,7 +539,7 @@ def _update_storage_blob_header(request, authentication):
     ''' add additional headers for storage blob request. '''
 
     request = _update_storage_header(request)
-    current_time = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+    current_time = format_date_time(time())
     request.headers.append(('x-ms-date', current_time))
     request.headers.append(
         ('Content-Type', 'application/octet-stream Charset=UTF-8'))
@@ -563,7 +564,7 @@ def _update_storage_table_header(request, content_type='application/atom+xml'):
             request.headers.append(('Content-Type', content_type))
     request.headers.append(('DataServiceVersion', '2.0;NetFx'))
     request.headers.append(('MaxDataServiceVersion', '2.0;NetFx'))
-    current_time = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+    current_time = format_date_time(time())
     request.headers.append(('x-ms-date', current_time))
     request.headers.append(('Date', current_time))
     return request.headers
