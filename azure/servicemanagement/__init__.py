@@ -1994,7 +1994,11 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
         specific subscription under the publish settings file.
     '''
     import base64
-    import OpenSSL.crypto as crypto
+
+    try:
+        import OpenSSL.crypto as crypto
+    except:
+        raise Exception("pyopenssl is required to use get_certificate_from_publish_settings")
 
     _validate_not_none('publish_settings_path', publish_settings_path)
     _validate_not_none('path_to_write_certificate', path_to_write_certificate)

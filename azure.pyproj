@@ -104,6 +104,7 @@
     <Content Include="ChangeLog.txt" />
     <Content Include="LICENSE.txt" />
     <Content Include="README.rst" />
+    <Content Include="optional-requirements.txt" />
     <Content Include="requirements.txt" />
     <Content Include="tests\azurecredentials_sample.json" />
     <Content Include="tests\coverage.bat" />
