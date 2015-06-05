@@ -396,7 +396,7 @@ class _HTTPConnection(object):
         self.host = unicode(host)
         self.cert_file = cert_file
         self._httprequest = _WinHttpRequest()
-        self.protocol = protocol
+        self.protocol = protocol.lower()
         self.timeout = timeout
         clsid = GUID('{2087C2F4-2CEF-4953-A8AB-66779B670495}')
         iid = GUID('{016FE2EC-B2C8-45F8-B23B-39E53A75396B}')

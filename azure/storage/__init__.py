@@ -1297,7 +1297,7 @@ class StorageConnectionParameters(object):
 
         self.account_name = connection_params.get('AccountName', None)
         self.account_key = connection_params.get('AccountKey', None)
-        self.protocol = connection_params.get('DefaultEndpointsProtocol', 'https')
+        self.protocol = connection_params.get('DefaultEndpointsProtocol', 'https').lower()
         endpoint_suffix = connection_params.get('EndpointSuffix', None)
         self.host_base_blob = BLOB_SERVICE_HOST_BASE if endpoint_suffix is None \
                               else ".blob.{}".format(endpoint_suffix)
