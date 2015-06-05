@@ -126,6 +126,7 @@ class _HTTPClient(object):
         ''' Return the target uri for the request.'''
         protocol = request.protocol_override \
             if request.protocol_override else self.protocol
+        protocol = protocol.lower()
         port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
         return protocol + '://' + request.host + ':' + str(port) + request.path
 
@@ -133,6 +134,7 @@ class _HTTPClient(object):
         ''' Create connection for the request. '''
         protocol = request.protocol_override \
             if request.protocol_override else self.protocol
+        protocol = protocol.lower()
         target_host = request.host
         target_port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
 
@@ -159,7 +161,7 @@ class _HTTPClient(object):
                 host = target_host
                 port = target_port
 
-            if protocol == 'http':
+            if protocol.lower() == 'http':
                 connection = HTTPConnection(host, int(port),
                                             timeout=self.timeout)
             else:

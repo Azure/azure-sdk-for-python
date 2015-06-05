@@ -93,7 +93,7 @@ class TableService(_StorageClient):
             connection_params = StorageConnectionParameters(connection_string)
             account_name = connection_params.account_name
             account_key = connection_params.account_key
-            protocol = connection_params.protocol
+            protocol = connection_params.protocol.lower()
             host_base = connection_params.host_base_table
             
         super(TableService, self).__init__(

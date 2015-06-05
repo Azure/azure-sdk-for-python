@@ -64,7 +64,7 @@ class _StorageClient(object):
         self.account_name = account_name
         self.account_key = account_key
         self.requestid = None
-        self.protocol = protocol
+        self.protocol = protocol.lower()
         self.host_base = host_base
         self.dev_host = dev_host
         self.sas_token = sas_token
