@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-from azure import (
+from azure.storage._internal import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_KEY,
 )
@@ -25,7 +25,7 @@ from azure.storage.sharedaccesssignature import (
     QueryStringConstants,
     ResourceType,
 )
-from util import (
+from .util import (
     AzureTestCase,
     credentials,
     getUniqueName,

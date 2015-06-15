@@ -6,17 +6,18 @@ __pycache__/
 .ptvs/
 
 # Build results
-/bin/
-/obj/
-/dist/
-/MANIFEST
+bin/
+obj/
+dist/
+MANIFEST
 
 # Result of running python setup.py install/pip install -e
-/build/
-/azure.egg-info/
+RECORD.txt
+build/
+*.egg-info/
 
 # Test results
-/TestResults/
+TestResults/
 
 # User-specific files
 *.suo

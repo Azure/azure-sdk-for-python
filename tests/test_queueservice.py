@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+import sys
 import datetime
 import unittest
 
-from azure import WindowsAzureError
 from azure.storage import (
     AccessPolicy,
     SignedIdentifier,
@@ -26,7 +26,8 @@ from azure.storage import (
 )
 from azure.storage.queueservice import QueueService
 from azure.storage.sharedaccesssignature import SharedAccessPolicy
-from util import (
+from azure.common import WindowsAzureError
+from .util import (
     AzureTestCase,
     credentials,
     getUniqueName,

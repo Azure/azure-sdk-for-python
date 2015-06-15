@@ -22,21 +22,15 @@ import requests
 import sys
 import time
 import unittest
-if sys.version_info < (3,):
-    from httplib import HTTPConnection
-else:
-    from http.client import HTTPConnection
 
-from azure import (
+from azure.common import (
     WindowsAzureError,
     WindowsAzureConflictError,
     WindowsAzureMissingResourceError,
+)
+from azure.storage._internal import (
     BLOB_SERVICE_HOST_BASE,
-    )
-from azure.http import (
-    HTTPRequest,
-    HTTPResponse,
-    )
+)
 from azure.storage import (
     AccessPolicy,
     BlobBlockList,
@@ -51,7 +45,7 @@ from azure.storage import (
     SignedIdentifier,
     SignedIdentifiers,
     StorageServiceProperties,
-    )
+)
 from azure.storage.blobservice import BlobService
 from azure.storage.storageclient import (
     AZURE_STORAGE_ACCESS_KEY,
@@ -59,14 +53,14 @@ from azure.storage.storageclient import (
     EMULATED,
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_KEY,
-    )
+)
 from azure.storage.sharedaccesssignature import SharedAccessPolicy
-from util import (
+from .util import (
     AzureTestCase,
     credentials,
     getUniqueName,
     set_service_options,
-    )
+)
 
 
 #------------------------------------------------------------------------------
@@ -2566,7 +2560,6 @@ class BlobServiceTest(AzureTestCase):
 
         def my_filter(request, next):
             called.append(True)
-            self.assertIsInstance(request, HTTPRequest)
             for header in request.headers:
                 self.assertIsInstance(header, tuple)
                 for item in header:
@@ -2578,7 +2571,6 @@ class BlobServiceTest(AzureTestCase):
             self.assertIsInstance(request.body, strtype)
             response = next(request)
 
-            self.assertIsInstance(response, HTTPResponse)
             self.assertIsInstance(response.body, (bytes, type(None)))
             self.assertIsInstance(response.headers, list)
             for header in response.headers:

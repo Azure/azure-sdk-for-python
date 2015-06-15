@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +15,20 @@
 import time
 import unittest
 
-from azure import (
+from azure.common import (
     WindowsAzureError,
     WindowsAzureMissingResourceError,
+)
+from azure.servicemanagement._internal import (
     Feed,
-    )
+)
 from azure.servicemanagement import ServiceBusManagementService
-from util import (
+from .util import (
     AzureTestCase,
     credentials,
     getUniqueName,
     set_service_options,
-    )
+)
 
 #------------------------------------------------------------------------------
 

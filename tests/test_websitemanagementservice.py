@@ -26,15 +26,15 @@ from azure.servicemanagement import (
     WebsiteManagementService,
     WebSpaces,
     WebSpace,
-    PublishData
-    )
+    PublishData,
+)
 
-from util import (
+from .util import (
     AzureTestCase,
     create_service_management,
     credentials,
     getUniqueName,
-    )
+)
 
 class WebsiteManagementServiceTest(AzureTestCase):
 

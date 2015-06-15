@@ -23,7 +23,7 @@ import os
 
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
-from azure import (
+from azure.common import (
     WindowsAzureError,
     WindowsAzureBatchOperationError,
     WindowsAzureMissingResourceError,
@@ -39,7 +39,7 @@ from azure.storage import (
     TableSharedAccessPermissions,
 )
 from azure.storage.sharedaccesssignature import SharedAccessPolicy
-from util import (
+from .util import (
     AzureTestCase,
     credentials,
     getUniqueName,

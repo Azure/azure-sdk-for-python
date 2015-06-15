@@ -22,8 +22,8 @@ import time
 import unittest
 
 from datetime import datetime
-from azure import WindowsAzureError
-from azure.http import HTTPError
+from azure.common import WindowsAzureError
+from azure.servicebus._http import HTTPError
 from azure.servicebus import (
     AZURE_SERVICEBUS_NAMESPACE,
     AZURE_SERVICEBUS_ACCESS_KEY,
@@ -34,13 +34,13 @@ from azure.servicebus import (
     ServiceBusService,
     Subscription,
     Topic,
-    )
-from util import (
+)
+from .util import (
     AzureTestCase,
     credentials,
     getUniqueName,
     set_service_options,
-    )
+)
 
 #------------------------------------------------------------------------------
 

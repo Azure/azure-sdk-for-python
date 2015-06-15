@@ -6,14 +6,14 @@
     <ProjectGuid>{25b2c65a-0553-4452-8907-8b5b17544e68}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>tests\blob_performance.py</StartupFile>
-    <WorkingDirectory>tests</WorkingDirectory>
+    <StartupFile>setup.py</StartupFile>
+    <WorkingDirectory>dist</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azure</Name>
     <RootNamespace>azure</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments />
+    <CommandLineArguments>install</CommandLineArguments>
     <InterpreterPath />
     <InterpreterArguments />
     <InterpreterId>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</InterpreterId>
@@ -22,7 +22,8 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>.</SearchPath>
+    <SearchPath>azure-_core\;azure-common\;azure-storage\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-_core\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\</SearchPath>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,28 +34,76 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="azure\http\batchclient.py" />
-    <Compile Include="azure\http\httpclient.py" />
-    <Compile Include="azure\http\requestsclient.py" />
-    <Compile Include="azure\http\winhttp.py" />
-    <Compile Include="azure\http\__init__.py" />
-    <Compile Include="azure\servicemanagement\schedulermanagementservice.py" />
-    <Compile Include="azure\servicemanagement\servicebusmanagementservice.py" />
-    <Compile Include="azure\servicemanagement\servicemanagementclient.py" />
-    <Compile Include="azure\servicemanagement\servicemanagementservice.py" />
-    <Compile Include="azure\servicemanagement\sqldatabasemanagementservice.py" />
-    <Compile Include="azure\servicemanagement\websitemanagementservice.py" />
-    <Compile Include="azure\servicemanagement\__init__.py" />
-    <Compile Include="azure\servicebus\servicebusservice.py" />
-    <Compile Include="azure\storage\blobservice.py" />
-    <Compile Include="azure\storage\queueservice.py" />
-    <Compile Include="azure\storage\cloudstorageaccount.py" />
-    <Compile Include="azure\storage\tableservice.py" />
-    <Compile Include="azure\storage\sharedaccesssignature.py" />
-    <Compile Include="azure\__init__.py" />
-    <Compile Include="azure\servicebus\__init__.py" />
-    <Compile Include="azure\storage\storageclient.py" />
-    <Compile Include="azure\storage\__init__.py" />
+    <Compile Include="azure-common\azure\__init__.py" />
+    <Compile Include="azure-common\setup.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\__init__.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-resource\azure\__init__.py" />
+    <Compile Include="azure-mgmt-resource\setup.py" />
+    <Compile Include="azure-mgmt-network\azure\mgmt\network\__init__.py" />
+    <Compile Include="azure-mgmt-network\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-network\azure\__init__.py" />
+    <Compile Include="azure-mgmt-network\setup.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\__init__.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-compute\azure\__init__.py" />
+    <Compile Include="azure-mgmt-compute\setup.py" />
+    <Compile Include="azure-mgmt\setup.py" />
+    <Compile Include="azure-common\azure\common\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-mgmt-storage\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-storage\azure\__init__.py" />
+    <Compile Include="azure-mgmt-storage\setup.py" />
+    <Compile Include="azure-mgmt-_core\azure\__init__.py" />
+    <Compile Include="azure-mgmt-_core\setup.py" />
+    <Compile Include="azure-servicebus\azure\__init__.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\schedulermanagementservice.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\servicebusmanagementservice.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\servicemanagementclient.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\servicemanagementservice.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\sqldatabasemanagementservice.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\websitemanagementservice.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\httpclient.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\requestsclient.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\winhttp.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\__init__.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_internal.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\__init__.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\__init__.py" />
+    <Compile Include="azure-mgmt-_core\azure\mgmt\__init__.py" />
+    <Compile Include="azure-servicebus\azure\servicebus\servicebusservice.py" />
+    <Compile Include="azure-servicebus\azure\servicebus\_http\httpclient.py" />
+    <Compile Include="azure-servicebus\azure\servicebus\_http\requestsclient.py" />
+    <Compile Include="azure-servicebus\azure\servicebus\_http\winhttp.py" />
+    <Compile Include="azure-servicebus\azure\servicebus\_http\__init__.py" />
+    <Compile Include="azure-servicebus\azure\servicebus\_internal.py" />
+    <Compile Include="azure-servicebus\azure\servicebus\__init__.py" />
+    <Compile Include="azure-servicebus\setup.py" />
+    <Compile Include="azure-servicemanagement-legacy\setup.py" />
+    <Compile Include="azure-storage\azure\storage\blobservice.py" />
+    <Compile Include="azure-storage\azure\storage\cloudstorageaccount.py" />
+    <Compile Include="azure-storage\azure\storage\_internal.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_http\batchclient.py" />
+    <Compile Include="azure-storage\azure\storage\_http\httpclient.py" />
+    <Compile Include="azure-storage\azure\storage\_http\requestsclient.py" />
+    <Compile Include="azure-storage\azure\storage\_http\winhttp.py" />
+    <Compile Include="azure-storage\azure\storage\_http\__init__.py" />
+    <Compile Include="azure-storage\azure\storage\queueservice.py" />
+    <Compile Include="azure-storage\azure\storage\sharedaccesssignature.py" />
+    <Compile Include="azure-storage\azure\storage\storageclient.py" />
+    <Compile Include="azure-storage\azure\storage\tableservice.py" />
+    <Compile Include="azure-storage\azure\storage\__init__.py" />
+    <Compile Include="azure-storage\azure\__init__.py" />
+    <Compile Include="azure-storage\setup.py" />
+    <Compile Include="azure-_core\azure\__init__.py" />
+    <Compile Include="azure-_core\setup.py" />
+    <Compile Include="azure\setup.py" />
     <Compile Include="setup.py" />
     <Compile Include="tests\blob_performance.py" />
     <Compile Include="tests\clean.py" />
@@ -63,7 +112,11 @@
     <Compile Include="tests\doctest_servicebusservicequeue.py" />
     <Compile Include="tests\doctest_servicebusservicetopic.py" />
     <Compile Include="tests\doctest_tableservice.py" />
+    <Compile Include="tests\loader.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="tests\test_affinitygroupmanagementservice.py" />
+    <Compile Include="tests\test_arm_compute.py" />
     <Compile Include="tests\test_blobservice.py" />
     <Compile Include="tests\test_cloudstorageaccount.py" />
     <Compile Include="tests\test_eventhubservice.py" />
@@ -76,17 +129,51 @@
     <Compile Include="tests\test_sharedaccesssignature.py" />
     <Compile Include="tests\test_sqldatabasemanagementservice.py" />
     <Compile Include="tests\test_storagemanagementservice.py" />
+    <Compile Include="tests\test_arm_storage.py" />
     <Compile Include="tests\test_tableservice.py" />
     <Compile Include="tests\test_websitemanagementservice.py" />
     <Compile Include="tests\util.py" />
     <Compile Include="tests\__init__.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="azure" />
-    <Folder Include="azure\http" />
-    <Folder Include="azure\servicemanagement" />
-    <Folder Include="azure\servicebus" />
-    <Folder Include="azure\storage" />
+    <Folder Include="azure-mgmt-resource\" />
+    <Folder Include="azure-mgmt-resource\azure\" />
+    <Folder Include="azure-mgmt-resource\azure\mgmt\" />
+    <Folder Include="azure-mgmt-resource\azure\mgmt\resource\" />
+    <Folder Include="azure-mgmt-network\" />
+    <Folder Include="azure-mgmt-network\azure\" />
+    <Folder Include="azure-mgmt-network\azure\mgmt\" />
+    <Folder Include="azure-mgmt-network\azure\mgmt\network\" />
+    <Folder Include="azure-mgmt-compute\" />
+    <Folder Include="azure-mgmt-compute\azure\" />
+    <Folder Include="azure-mgmt-compute\azure\mgmt\" />
+    <Folder Include="azure-mgmt-compute\azure\mgmt\compute\" />
+    <Folder Include="azure-mgmt\" />
+    <Folder Include="azure-common\azure\" />
+    <Folder Include="azure-common\azure\common\" />
+    <Folder Include="azure-mgmt-storage\azure\" />
+    <Folder Include="azure-mgmt-storage\azure\mgmt\" />
+    <Folder Include="azure-mgmt-storage\azure\mgmt\storage\" />
+    <Folder Include="azure-servicemanagement-legacy\" />
+    <Folder Include="azure-servicemanagement-legacy\azure\" />
+    <Folder Include="azure-servicemanagement-legacy\azure\servicemanagement\" />
+    <Folder Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\" />
+    <Folder Include="azure-mgmt-storage\" />
+    <Folder Include="azure-mgmt-_core\" />
+    <Folder Include="azure-mgmt-_core\azure\" />
+    <Folder Include="azure-mgmt-_core\azure\mgmt\" />
+    <Folder Include="azure-servicebus\" />
+    <Folder Include="azure-servicebus\azure\" />
+    <Folder Include="azure-servicebus\azure\servicebus\" />
+    <Folder Include="azure-servicebus\azure\servicebus\_http\" />
+    <Folder Include="azure-storage\" />
+    <Folder Include="azure-storage\azure\" />
+    <Folder Include="azure-storage\azure\storage\" />
+    <Folder Include="azure-storage\azure\storage\_http\" />
+    <Folder Include="azure-_core\" />
+    <Folder Include="azure-_core\azure\" />
+    <Folder Include="azure-common\" />
+    <Folder Include="azure\" />
     <Folder Include="tests\" />
     <Folder Include="tests\data\" />
   </ItemGroup>
@@ -101,8 +188,44 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Content Include="azure-common\MANIFEST.in" />
+    <Content Include="azure-common\README.rst" />
+    <Content Include="azure-common\setup.cfg" />
+    <Content Include="azure-mgmt-resource\MANIFEST.in" />
+    <Content Include="azure-mgmt-resource\README.rst" />
+    <Content Include="azure-mgmt-resource\setup.cfg" />
+    <Content Include="azure-mgmt-network\MANIFEST.in" />
+    <Content Include="azure-mgmt-network\README.rst" />
+    <Content Include="azure-mgmt-network\setup.cfg" />
+    <Content Include="azure-mgmt-compute\MANIFEST.in" />
+    <Content Include="azure-mgmt-compute\README.rst" />
+    <Content Include="azure-mgmt-compute\setup.cfg" />
+    <Content Include="azure-mgmt-storage\MANIFEST.in" />
+    <Content Include="azure-mgmt-storage\README.rst" />
+    <Content Include="azure-mgmt-storage\setup.cfg" />
+    <Content Include="azure-mgmt-_core\MANIFEST.in" />
+    <Content Include="azure-mgmt-_core\README.rst" />
+    <Content Include="azure-mgmt-_core\setup.cfg" />
+    <Content Include="azure-mgmt\README.rst" />
+    <Content Include="azure-mgmt\setup.cfg" />
+    <Content Include="azure-servicebus\MANIFEST.in" />
+    <Content Include="azure-servicebus\README.rst" />
+    <Content Include="azure-servicebus\setup.cfg" />
+    <Content Include="azure-servicemanagement-legacy\MANIFEST.in" />
+    <Content Include="azure-servicemanagement-legacy\README.rst" />
+    <Content Include="azure-servicemanagement-legacy\setup.cfg" />
+    <Content Include="azure-storage\MANIFEST.in" />
+    <Content Include="azure-storage\README.rst" />
+    <Content Include="azure-storage\setup.cfg" />
+    <Content Include="azure-_core\README.rst" />
+    <Content Include="azure-_core\setup.cfg" />
+    <Content Include="azure\README.rst" />
+    <Content Include="azure\setup.cfg" />
+    <Content Include="build.ps1" />
     <Content Include="ChangeLog.txt" />
+    <Content Include="HOWTO.txt" />
     <Content Include="LICENSE.txt" />
+    <Content Include="MANIFEST.in" />
     <Content Include="README.rst" />
     <Content Include="optional-requirements.txt" />
     <Content Include="requirements.txt" />

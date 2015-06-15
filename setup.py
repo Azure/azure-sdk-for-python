@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
@@ -15,45 +15,42 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
-from distutils.core import setup
+import os
+import os.path
+import copy
+import sys
+import runpy
 
-# To build:
-# python setup.py sdist
-#
-# To install:
-# python setup.py install
-#
-# To register (only needed once):
-# python setup.py register
-#
-# To upload:
-# python setup.py sdist upload
+root_folder = os.path.abspath(os.path.dirname(__file__))
 
-setup(name='azure',
-      version='0.11.0',
-      description='Microsoft Azure client APIs',
-      long_description=open('README.rst', 'r').read(),
-      license='Apache License 2.0',
-      author='Microsoft Corporation',
-      author_email='ptvshelp@microsoft.com',
-      url='https://github.com/Azure/azure-sdk-for-python',
-      classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'License :: OSI Approved :: Apache Software License'],
-      packages=['azure',
-                'azure.http',
-                'azure.servicebus',
-                'azure.storage',
-                'azure.servicemanagement'],
-      install_requires=['python-dateutil', 
-                        'futures'],
-      extras_require = { 
-          'get_certificate_from_publish_settings' : ['pyopenssl'] 
-      }
-)
+# order is significant, start from the leaf nodes
+packages = [
+    'azure-_core',
+    'azure-common',
+    'azure-mgmt-_core',
+    'azure-mgmt-compute',
+    'azure-mgmt-network',
+    'azure-mgmt-resource',
+    'azure-mgmt-storage',
+    'azure-servicebus',
+    'azure-servicemanagement-legacy',
+    'azure-storage',
+]
+
+for pkg_name in packages:
+    pkg_setup_folder = os.path.join(root_folder, pkg_name)
+    pkg_setup_path = os.path.join(pkg_setup_folder, 'setup.py')
+
+    try:
+        saved_dir = os.getcwd()
+        saved_syspath = sys.path
+
+        os.chdir(pkg_setup_folder)
+        sys.path = [pkg_setup_folder] + copy.copy(saved_syspath)
+
+        result = runpy.run_path(pkg_setup_path)
+    except Exception as e:
+        print(e)
+    finally:
+        os.chdir(saved_dir)
+        sys.path = saved_syspath

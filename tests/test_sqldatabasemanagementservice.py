@@ -15,9 +15,11 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
+import unittest
+
 from azure.servicemanagement.sqldatabasemanagementservice import (
     SqlDatabaseManagementService,
-    )
+)
 
 from azure.servicemanagement import (
     EventLog,
@@ -27,14 +29,13 @@ from azure.servicemanagement import (
     ServiceObjective,
     Database,
     FirewallRule,
-    )
+)
 
-from util import (
+from .util import (
     AzureTestCase,
     create_service_management,
     credentials,
-    )
-import unittest
+)
 
 class SqlDatabaseManagementServiceTest(AzureTestCase):
 

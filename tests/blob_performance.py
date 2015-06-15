@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@ import datetime
 import sys
 
 from azure.storage import BlobService
-from util import credentials
+from .util import credentials
 
 # Warning:
 # This script will take a while to run with everything enabled.

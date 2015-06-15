@@ -18,11 +18,11 @@ import time
 import unittest
 from datetime import datetime, timedelta
 
-import azure.http.httpclient
+import azure.servicemanagement._http.httpclient
 
-from azure import (
+from azure.servicemanagement._internal import (
     _encode_base64,
-    )
+)
 from azure.servicemanagement import (
     CaptureRoleAsVMImage,
     CertificateSetting,
@@ -39,20 +39,20 @@ from azure.servicemanagement import (
     VMImage,
     WindowsConfigurationSet,
     parse_response_for_async_op,
-    )
+)
 from azure.storage.blobservice import BlobService
-from util import (
+from .util import (
     AzureTestCase,
     create_service_management,
     credentials,
     getUniqueName,
     set_service_options,
-    )
+)
 from time import sleep
 
 # Enable these to view requests and responses
-azure.http.httpclient.DEBUG_REQUESTS = False
-azure.http.httpclient.DEBUG_RESPONSES = False
+azure.servicemanagement._http.httpclient.DEBUG_REQUESTS = False
+azure.servicemanagement._http.httpclient.DEBUG_RESPONSES = False
 
 SERVICE_CERT_FORMAT = 'pfx'
 SERVICE_CERT_PASSWORD = 'Python'

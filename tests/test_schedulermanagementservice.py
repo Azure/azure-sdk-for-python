@@ -27,7 +27,7 @@ from azure.servicemanagement import (
     CloudService
 )
 
-from util import (
+from .util import (
     AzureTestCase,
     create_service_management,
     credentials,

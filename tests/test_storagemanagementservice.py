@@ -17,14 +17,14 @@
 import time
 import unittest
 
-from azure import WindowsAzureError
+from azure.common import WindowsAzureError
 from azure.servicemanagement import ServiceManagementService
-from util import (
+from .util import (
     AzureTestCase,
     create_service_management,
     credentials,
     getUniqueName,
-    )
+)
 
 #------------------------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,18 +14,18 @@
 #--------------------------------------------------------------------------
 import unittest
 
-from azure import WindowsAzureError
+from azure.common import WindowsAzureError
 from azure.storage import (
     BlobService,
     CloudStorageAccount,
     QueueService,
     TableService,
-    )
-from util import (
+)
+from .util import (
     AzureTestCase,
     credentials,
     getUniqueName,
-    )
+)
 
 #------------------------------------------------------------------------------
 

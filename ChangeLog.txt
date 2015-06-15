@@ -1,3 +1,17 @@
+XXX-XX-XX Version X.Y.Z
+
+The following classes have moved from azure to azure.common:
+    WindowsAzureError
+    WindowsAzureConflictError
+    WindowsAzureMissingResourceError
+    WindowsAzureBatchOperationError
+    WindowsAzureAsyncOperationError
+
+when we switch to requests for storage:
+ - filters
+
+
+
 2015-05-13 Version 0.11.0
 
 IMPORTANT CHANGE THAT AFFECTS STORAGE:

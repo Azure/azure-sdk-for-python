@@ -19,13 +19,13 @@ from azure.servicemanagement import (
     AffinityGroup,
     Locations,
     ServiceManagementService,
-    )
-from util import (
+)
+from .util import (
     AzureTestCase,
     create_service_management,
     credentials,
     getUniqueName,
-    )
+)
 
 #------------------------------------------------------------------------------
 
