@@ -1,0 +1,329 @@
+interactions:
+- request:
+    body: !!python/unicode '{"location": "westus"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+    method: PUT
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts?api-version=2014-04-01-preview'
+  response:
+    body: {string: !!python/unicode '{"id":"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_storage_test_storage_accounts","name":"test_mgmt_storage_test_storage_accounts","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-length: [!!python/unicode '231']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:33:41 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      x-ms-correlation-request-id: [!!python/unicode 'bab12d31-9a57-40ea-891b-a683f5e70c5a']
+      x-ms-ratelimit-remaining-subscription-writes: [!!python/unicode '1199']
+      x-ms-request-id: [!!python/unicode 'bab12d31-9a57-40ea-891b-a683f5e70c5a']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223341Z:bab12d31-9a57-40ea-891b-a683f5e70c5a']
+    status: {code: 201, message: Created}
+- request:
+    body: !!python/unicode '{"type": "Microsoft.Storage/storageAccounts", "name":
+      "pyarmstorage"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['69']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-client-request-id: [9832fd41-6b84-4416-ac74-c8ece1799374]
+    method: POST
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-05-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
+        kR9fZkWZTcr8o0dtvc5/yf8DVlVqihYAAAA=
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:33:41 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      transfer-encoding: [!!python/unicode 'chunked']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode '84ae100f-a1d9-4329-93d6-1448cbbea3b5']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14997']
+      x-ms-request-id: [!!python/unicode '7720ab0c-c91e-4200-971c-8d7b84566794']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223342Z:84ae100f-a1d9-4329-93d6-1448cbbea3b5']
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/unicode '{"location": "westus", "properties": {"accountType": "Standard_LRS"}}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['69']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-client-request-id: [1305199b-1bda-4c36-bb66-151c98337e61]
+    method: PUT
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage?api-version=2015-05-01-preview'
+  response:
+    body: {string: !!python/unicode 'null'}
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-length: [!!python/unicode '4']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:33:42 GMT']
+      expires: [!!python/unicode '-1']
+      location: [!!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview']
+      pragma: [!!python/unicode 'no-cache']
+      retry-after: [!!python/unicode '25']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      x-ms-correlation-request-id: [!!python/unicode 'a9b33dcf-162e-41c1-9359-da0c39405ae3']
+      x-ms-ratelimit-remaining-subscription-writes: [!!python/unicode '1196']
+      x-ms-request-id: [!!python/unicode '16a532f6-55d6-475a-ae68-074c95c14831']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223343Z:a9b33dcf-162e-41c1-9359-da0c39405ae3']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-client-request-id: [55262aaf-53c1-4f36-95dd-ddc878a81564]
+    method: GET
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview'
+  response:
+    body: {string: !!python/unicode 'null'}
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-length: [!!python/unicode '4']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:33:43 GMT']
+      expires: [!!python/unicode '-1']
+      location: [!!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview']
+      pragma: [!!python/unicode 'no-cache']
+      retry-after: [!!python/unicode '25']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      x-ms-correlation-request-id: [!!python/unicode 'f108bae2-72ee-4b1e-987b-89fbfbb3905e']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14996']
+      x-ms-request-id: [!!python/unicode '7606ca3a-2c75-436b-9acb-4a60c7020ea0']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223344Z:f108bae2-72ee-4b1e-987b-89fbfbb3905e']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-client-request-id: [8a5cf44f-aff3-4c55-8c7a-6acd13f238b0]
+    method: GET
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR6u6
+        WuV1W+TNR49+8UfZdFqtl+2b61X+0aOPXrfZcpbVs9//+avXH/2S0UdlNc3aolrSV9/Nmzb96vVH
+        v+T/AdZKU7pCAAAA
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:34:08 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      transfer-encoding: [!!python/unicode 'chunked']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode 'afe3a31b-2127-4b49-9348-ad9d9fd8cd67']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14995']
+      x-ms-request-id: [!!python/unicode '952439fd-0f7d-4273-8480-438cc80d39f0']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223409Z:afe3a31b-2127-4b49-9348-ad9d9fd8cd67']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-client-request-id: [871af809-6a7f-46df-9b71-9058c6e022bf]
+    method: GET
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage?api-version=2015-05-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3VmW7d67f763vZMd3N/enx082J7MsvvbD/IHn95/+Omn09mn+3frvKnW
+        9TT/vK7Wq+Zumzft77+4WLS/f9NWdXaR//78ifkjm06r9bJt7q7q6rKY5XVz94tiWldNdd6OX0uj
+        u9r42La9zuqFfvjR6KNltsgJ2c6nZTXNgDZ9813qMf3qNX3YXq/Q9MYuqCkhtMrrtsibjx79Yvx1
+        WTQErlhevG6zFlBer6fTPJ/lM2qt43gj8KnFcpbVs9//+Sv0uqqLRVZfny5nq6oAdAI4KasJtZy3
+        7ap5dDcY0hjfjadVnY+viuWsumrGy7y9S4B+0TpfA370Lf4y+lqbTcrB1/jLyGu/xOL9PEbJhoiw
+        br48fylt6Lvjy6woAYy+ndY5v/Km4KnZ29m9v73z6fbu/Td7e4/u3Xu0vzfeuX/w8N7Bw5/66Jf8
+        kv8HkjagbG4CAAA=
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:34:08 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      transfer-encoding: [!!python/unicode 'chunked']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode 'e54e5dc9-cd8d-4b17-9d9a-2d79671d5af8']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14994']
+      x-ms-request-id: [!!python/unicode '259488c5-fe88-4a8d-93ce-181b49d63c10']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223409Z:e54e5dc9-cd8d-4b17-9d9a-2d79671d5af8']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-client-request-id: [c00a7cb1-1358-4449-97ec-75680abac4ad]
+    method: POST
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage/listKeys?api-version=2015-05-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
+        692PHn1Uvfmp2e998m71k9e/dzn/vX6vL5dn5f3v7qy+ffa6+uQHz+6+e/6dT54unx9//u31/sNP
+        nr7IFrOf+r2Wl2fZ9b2fXO8V0+e/6HjS/t4PFu16+uL3Or47vfvi/g9erC4+++yjEXrYox4ePP/p
+        t9MvPn319CD/ReXnn/7ET72ezN/W+28ePvnpJ8v9nzxf/dT164fl0/3JVXuwLvZ+n5dvZ7/X7/Pg
+        7sOrk+ns4ovi1adf/V67T5+/uvfm9y7uzR/ee/fVw2KV/wT18Ev+H+5eUDvFAAAA
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:34:09 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      transfer-encoding: [!!python/unicode 'chunked']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode 'd0a7806e-ef90-4c9d-90ba-3b19453b0113']
+      x-ms-ratelimit-remaining-subscription-writes: [!!python/unicode '1195']
+      x-ms-request-id: [!!python/unicode 'd46d3d31-8e46-4222-ae5b-4c7eb1b3f12e']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223409Z:d0a7806e-ef90-4c9d-90ba-3b19453b0113']
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/unicode '{"keyName": "key1"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['19']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-client-request-id: [8199f50f-9923-4204-8a7e-9f84425460a3]
+    method: POST
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage/regenerateKey?api-version=2015-05-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
+        692PHn1U/eTkJ568vH717sUvuvq9q0+evdz75PdaPPjJTz9fFfee51/NflF9fXb1Zuf3/vzL8+f3
+        559PXr5+8YPj5c7re9/J97/9sD5+vre+e3rw4veazy8vfvJ8v17ee3a3ufjss49G6GGPenjw/Kff
+        Tr/49NXTg/wXlZ9/+hM/9Xoyf1vvv3n45KefLPd/8nz1U9evH5ZP9ydX7cG62Pt9Xr6d/V6/z4O7
+        D69OprOLL4pXn371e+0+ff7q3pvfu7g3f3jv3VcPi1X+E9TDL/l/AHJI5KbFAAAA
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:34:09 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      transfer-encoding: [!!python/unicode 'chunked']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode 'ceea1b0d-5f7e-4c17-9bbf-d85c06a6cc74']
+      x-ms-ratelimit-remaining-subscription-writes: [!!python/unicode '1194']
+      x-ms-request-id: [!!python/unicode 'ed2f203c-b9e4-4901-8395-3b0422623593']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223410Z:ceea1b0d-5f7e-4c17-9bbf-d85c06a6cc74']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-client-request-id: [89f8f215-d8e8-4535-acca-ee80b0b3efd7]
+    method: GET
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts?api-version=2015-05-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
+        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXN3lmW79+6f723vZAf3t/dnBw+2J7Ps/vaD/MGn9x9+
+        +ul09un+3TpvqnU9zT+vq/WqudvmTfv7Ly4W7e/ftFWdXeS/P39i/sim02q9bJu7q7q6LGZ53dz9
+        opjWVVOdt+PX0uiuNj62ba+zeqEffjT6aJktCOePOp+W1TQD2vTNd6nH9KvX9GF7vULTG7ugpoTQ
+        Kq/bIm8+evSL8ddl0RC4Ynnxus1aQHm9nk7zfJbPqLWO443ApxbLWVbPfv/nr9Drqi4WWX19upyt
+        qgLQCeCkrCbUct62q+bR3WBIY3w3nlZ1Pr4qlrPqqhkv8/YuAfpF6xzTE3+Lv4y+1maTcvA1/jLy
+        2i+xeD+PUbIhIqybL89fShv67vgyK0oAo2+ndc6vvCl4avZ2du9v73y6vXv/zd7eo3v3Hu3vjXfu
+        Hzy8d/Dwpz76Jb/k+zSH+bv2ebF8S40/+iX/D9q7ZyyIAgAA
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:34:09 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      transfer-encoding: [!!python/unicode 'chunked']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode '05ea5b3e-4f6f-4f50-856e-0155046537af']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14993']
+      x-ms-request-id: [!!python/unicode '8e9f3987-b6b5-4254-94ce-591a8dc7a2b9']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223410Z:05ea5b3e-4f6f-4f50-856e-0155046537af']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-client-request-id: [c6131315-fc9e-4c9c-92ae-ba2614f8d47b]
+    method: DELETE
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage?api-version=2015-05-01-preview'
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-length: [!!python/unicode '0']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:34:10 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      x-ms-correlation-request-id: [!!python/unicode '0cf92bbd-aee5-49e0-b740-4f49d76fb28c']
+      x-ms-ratelimit-remaining-subscription-writes: [!!python/unicode '1193']
+      x-ms-request-id: [!!python/unicode 'd21be340-6ce3-42d9-b2d9-4d3251800917']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223411Z:0cf92bbd-aee5-49e0-b740-4f49d76fb28c']
+    status: {code: 200, message: OK}
+version: 1

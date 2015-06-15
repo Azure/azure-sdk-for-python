@@ -1,0 +1,231 @@
+interactions:
+- request:
+    body: !!python/unicode '{"location": "westus", "tags": {"tag1": "value1"}}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['50']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+    method: PUT
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups?api-version=2014-04-01-preview'
+  response:
+    body: {string: !!python/unicode '{"id":"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_resource_test_resource_groups","name":"test_mgmt_resource_test_resource_groups","location":"westus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-length: [!!python/unicode '256']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:37:46 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      x-ms-correlation-request-id: [!!python/unicode '26a49e55-ec83-42f8-9505-9f01468cd1b1']
+      x-ms-ratelimit-remaining-subscription-writes: [!!python/unicode '1195']
+      x-ms-request-id: [!!python/unicode '26a49e55-ec83-42f8-9505-9f01468cd1b1']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223747Z:26a49e55-ec83-42f8-9505-9f01468cd1b1']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+    method: GET
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups?api-version=2014-04-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3VmW7d67f763vZMd3N/enx082J7MsvvbD/IHn95/+Omn09mn+3frvKnW
+        9TT/vK7Wq+Zumzft77+4WLS/v/ni9+eP7F8X3O6j0UfLbJFTn/ztrV4oq2kGxOilK2qxxmdtdtF8
+        9OgX4+cufX6Zlet896NfMvpoVVervG6LnL+mvy6Lht4tlhev26xFx6/X02mez/LZR7/kl/w/s7bT
+        WQABAAA=
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-length: [!!python/unicode '290']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:37:46 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode '9faadb0c-628c-481a-bde5-cff02dc3c12a']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14994']
+      x-ms-request-id: [!!python/unicode '9faadb0c-628c-481a-bde5-cff02dc3c12a']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223747Z:9faadb0c-628c-481a-bde5-cff02dc3c12a']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+    method: HEAD
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups?api-version=2014-04-01-preview'
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-length: [!!python/unicode '0']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:37:46 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      x-ms-correlation-request-id: [!!python/unicode '7e54b585-0c8f-43c8-bbf9-535c8082f03b']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14993']
+      x-ms-request-id: [!!python/unicode '7e54b585-0c8f-43c8-bbf9-535c8082f03b']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223747Z:7e54b585-0c8f-43c8-bbf9-535c8082f03b']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+    method: HEAD
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/unknowngroup?api-version=2014-04-01-preview'
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-length: [!!python/unicode '104']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:37:46 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      x-ms-correlation-request-id: [!!python/unicode '834b3f1a-7a99-4381-b1a3-73a5e93bcbc8']
+      x-ms-failure-cause: [!!python/unicode 'gateway']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14992']
+      x-ms-request-id: [!!python/unicode '834b3f1a-7a99-4381-b1a3-73a5e93bcbc8']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223747Z:834b3f1a-7a99-4381-b1a3-73a5e93bcbc8']
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+    method: GET
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?api-version=2014-04-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
+        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXN3lmW79+6f723vZAf3t/dnBw+2J7Ps/vaD/MGn9x9+
+        +ul09un+3TpvqnU9zT+vq/WquZvVi3VblL9/mzft759dZkWZTYqyaK9//yZvm49GHy2zBfX40Y3t
+        ymqaAQ1qe0Vt1viszS6ajx794l8y+mhVV6u8boscf+Ovy6KhxsXy4nWbtejg9Xo6zfNZPvvol/yS
+        0Tc3vklZXVzk9SxfVISQDib8MIY5Yfhzg++0rNYzoml9WUzz3393b3f/3s7B/oN9+t99wksHcEOr
+        zojyNUZDn9M4/l8xqvvA98GDg/s7ewd7hFd8VN1W/y8f1d4u8D24f7Czt3+P0IoOqtvo/+1jugd0
+        MQef3mfOig+q2+r/7aPaB76YhJ29XXBWfFTdVv9vH9UD4PvgwYOHe3sHu4RXfFTdVv8fGdXDvXv3
+        Hj4kvDaOyrb6f/mo7u0wvgc7u5/u7TwgvKKj6rX6/8SoDu4/eHB/5wD4bhiV1+r/7aNilU289fDB
+        vd1PCa/4qLqt/t8+KvYZgO/uw/vQA/FRdVv9v31U6jM8eHjv3g5mIT6qbqv/t4/qU8H33v6n95m3
+        4qPqtvr/yKgO9u8fsM7eOCrb6v/tozoAvqTd7h/c24WHFx9Vt9X/y0e1zzoblmj/PuMbHVWv1f/b
+        R6U6+8HuvYf3wFvxUXVb/b99VKKzaRYO9nd3CK/4qLqt/t8+Ko0x7u3fO3gISxQfVbfV/0dG9eD+
+        /sN7wHfjqGyr/7ePSiKn/Qf3Pt1nDy8+qm6r/7ePyursew84do+Pqtvq/+2jegh8yRXae/Dpg33C
+        Kz6qbqv/r4xqn9yHA8Jr86hMq/+Xj+q+xffe/YeQmOioeq3+Xz6qT8ldIHzJEu3d20GeJTqqXqv/
+        t49K7OuDT6n1AexrfFTdVv8fGdXDezv7D2CJNo7Ktvp/+6g0Hny4d0Bqm/CKj6rb6v8ro9q/v8cS
+        s3lUptX/V0b18GD3HvDdPCrT6v/tozL5y4f3D/ags+Oj6rb6f/uo2BcifCnchXKLD6rT6P/lY3rA
+        uo281v17hDDhFR1Ur9X/20elEcanD/cpIUF4xUfVbfX/9lFxhAHWukeJTMIrPqpuq//XjirAlzyh
+        h/fZum4alWv1//ZRkQtO+NI0PNzbAb7xUXVb/b99VNYXf7C/B58hPqpuq/+Xj4qYivH99OH9/QeI
+        m6Kj6rX6/8SooLN3Dvawir1hVF6r/7ePSrOXB/sHOw+Ab3xU3Vb/bx+VaDd69h6yLx4fVbfV/9tH
+        pV7rg4f3SRUQXvFRdVv9v31UqrPJabi/B188Pqpuq/+3j0rd1nv3KMbAqkB8VN1W/y8f1UPWbsRb
+        93c+5ZXR6Kh6rf4/MSrS2fcekoojvDaMymv1//ZRqc5++PDefV6Xio+q2+r/7aOykdOurODER9Vt
+        9f/2URlL9PBg5z5mIT6qbqv/t49KLBG5RDs797AqEB9Vt9X/J0ZFvHXvYG8X9nXDqLxW/28fFVsi
+        Wpd6SLkx8FZ8VN1W/68b1dP8PFuX7faLvL2q6rfUIWGjY4l+1xnBuqHPCN+fW+xf/8Tz7dOsab96
+        DVeng374pYc/gWrn03zZ1ln5/55xfJeo+tVrwiYyDPudN4r/F81CW9XZRb59IiRlRLuDiDTxxvL/
+        rslQXIV3CKOBsdjvvYHk9Nn/u0bxoqrbuU/2gdH02nmjWuK7/1fOEWN9arTppqHZRt1x/b9HFxt8
+        X0M/+VMxMK5eO29o1MH/S6cMusxOxsDIgjbeqKDz/t83X8CW6b9hNPx9ZyT/75iX7+aT7Sd19oOi
+        ZH4ilDrD6DfwxjHhLwgwf0Ho/9wPxpeIyFD8r72B/L9KVoCnNS+RMdjvvAH8v8f0OAzheA2ijy89
+        /AnU/8s0FlD9TrbKlhBgQigyEv/r/9ePhe2gz/6RAfXaeKNic/n/zlFZYzE0JNugO57/95gT4Moa
+        1id/ZDy9Nt6QCPD/C6cIAmInIDKi4HtvNDCS/++aH2DKNB8YBX/XGcHP8TwUy+pFNctPgJnB2v/s
+        /1XYzgiz1XU7r5Yt4TLLV2V1Tfgo3gPfdkdw0wh+dkdQTdcLEsDZZNt8s32BrwhRM4wNTf5fNRb+
+        QQgo3ubP//fhuI1VSR9L/uD/VXjO15cZIQQcFFHvE/rx/x5MX+RXv/8r/ej3588IG8U5+t3/y7Hf
+        xsLGIP787f/bRwBXeXgE+Pb/VSNYkm1B5jivNSFOyCj6sa/+34V7e9lsl8Vy/Y6wMEj7n/2/CtvV
+        olhm+SV4WHH1Pvl/F6ZEwzLP6iUhYVD1PvJw/bkPZFfXx/XipFqs1q189IbIRwgZvAe+9sZg6d1m
+        F8D+l/xcj0ZzUfyRouuPJvL1/0tH8/L6pFpuv17R+1W9/V1SJc28ghXS4Qx+HxsP4f1zMwrxYrMf
+        rGsoQEU9/PD/hfiuJ+tluyY8AoTtpx7GP/cyXBfTtxQ90v+Wl4SHYtz51MP4557GDYUEBeKCbJmV
+        100BZBTt2Ff/78K9INQKEJawMEj7n/2/C9s2v6QgjH4wbgbf8NP/V2EMnH7/rF78/lMxO78/f3C5
+        aA729gkvHQF/ONwqNqL/F2h0RnJxsWh/f/OF4G3/4tgYyPrDvNULG0aMn7v0OcVg63z3o59LAlxf
+        CMa//3lV//42q6GDjX+5YWDvPZLv/5L/Bxj/Ra4RUQAA
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-length: [!!python/unicode '2142']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:37:46 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode 'eaee8f84-6088-4871-8d01-de21a3f55827']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14991']
+      x-ms-request-id: [!!python/unicode 'eaee8f84-6088-4871-8d01-de21a3f55827']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223747Z:eaee8f84-6088-4871-8d01-de21a3f55827']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+    method: DELETE
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups?api-version=2014-04-01-preview'
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-length: [!!python/unicode '0']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:37:46 GMT']
+      expires: [!!python/unicode '-1']
+      location: [!!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTLVdFU1RVUyIsImpvYkxvY2F0aW9uIjoid2VzdHVzIn0?api-version=2014-04-01-preview']
+      pragma: [!!python/unicode 'no-cache']
+      retry-after: [!!python/unicode '15']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      x-ms-correlation-request-id: [!!python/unicode '958fc7b4-fe71-4df8-a0b9-fe02241dcd1c']
+      x-ms-ratelimit-remaining-subscription-writes: [!!python/unicode '1194']
+      x-ms-request-id: [!!python/unicode '958fc7b4-fe71-4df8-a0b9-fe02241dcd1c']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223747Z:958fc7b4-fe71-4df8-a0b9-fe02241dcd1c']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+      x-ms-version: [2014-04-01-preview]
+    method: GET
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTLVdFU1RVUyIsImpvYkxvY2F0aW9uIjoid2VzdHVzIn0?api-version=2014-04-01-preview'
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-length: [!!python/unicode '0']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:37:46 GMT']
+      expires: [!!python/unicode '-1']
+      location: [!!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTLVdFU1RVUyIsImpvYkxvY2F0aW9uIjoid2VzdHVzIn0?api-version=2014-04-01-preview']
+      pragma: [!!python/unicode 'no-cache']
+      retry-after: [!!python/unicode '15']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      x-ms-correlation-request-id: [!!python/unicode 'a348fb38-d504-442c-9e18-067cfc4a8fef']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14990']
+      x-ms-request-id: [!!python/unicode 'a348fb38-d504-442c-9e18-067cfc4a8fef']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223747Z:a348fb38-d504-442c-9e18-067cfc4a8fef']
+    status: {code: 202, message: Accepted}
+version: 1

@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+    method: GET
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?domainNameLabel=pydomain&api-version=2015-05-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UfZZVaU2aTMP3qUtvU6/42TX/L/AGV5chIZAAAA
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:38:53 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      transfer-encoding: [!!python/unicode 'chunked']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode '93f8a0ef-be43-4dda-a0d1-c88724974328']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14997']
+      x-ms-request-id: [!!python/unicode '30cf78db-54a3-417b-bc05-18a5d8e2eac2']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T223854Z:93f8a0ef-be43-4dda-a0d1-c88724974328']
+    status: {code: 200, message: OK}
+version: 1

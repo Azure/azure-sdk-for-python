@@ -19,6 +19,10 @@ build/
 # Test results
 TestResults/
 
+# Credentials 
+credentials_real.json
+testsettings_local.json
+
 # User-specific files
 *.suo
 *.user

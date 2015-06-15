@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
+    method: GET
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/vmSizes?api-version=2015-05-01-preview'
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UeXWbnOP3qUfg9/pSl/iOejZbbA5x+9brPlLKtnv//xzkcj9+16McnrL89PqjpvqNmu+6pqnhbN
+        29fFD/Kz5RdP8N3O/oP79/dcC3qlWtfTvNNub2f/YMe1WuSLqr7W7x58euB9k717mrUZXj+p1suW
+        vt+VL3+JNto0jN2f5WE82P10cBi7Dx56ACLj2JMvbzOOvQ3j8Dr52uPYvXewtz80kHv3D/a9r/oD
+        2ZcvbzOQexsG4nXytQey93D3YHAgmC3vq/5ADuTL2wzk/oaBeGh+7YFsnJHd/Xv3PvW+64/kPaZk
+        f8NIPHJ97ZF8uvvw/t7XH8nup/LtbYby6Yah/Kxz197Bpw88EJGhvAd7Pdgwkp/1Sbn/4N6+R67I
+        SG6elCdZU0z/P25HdAw/20Zkf+fhp0Nj+HAjooP42bYgn+7uD0rGhxsQHcTPtvXY3ds7GGanD7Ye
+        OoqfbYW7t3//wTBDfZMK9+nPtmjc393bGRrJjVx1o2i4cfxsS8fuDhnzoYHcyFg3iocbyM+2hLC+
+        HRrIzbx1o4i4kfxsSwlr3aGR3GzL30tKNomJ183XHsvuJva6eVbeg792N0nKzzqD3Twt78Fgu5tk
+        5Wedw74JH8sbyyZp2fVm/2sP5mD34bAq3t3d//TAI1lkNPdur42PDzYMxuvla4/l3sPdUOX6Y/lG
+        J+b44YahfCPzsnEst5iX9xjM5z/bauzew3t7PlGCsdws+7dXY5//bGuxBwef7t/zmgUjuZnDbq/F
+        Pv/ZVmK79x8Q5X10/aF8wwz2s67F7u2Sb7znI+yPZm/v4b0HXjeR0byHGvt8U4rIZ46vPZpPKR+x
+        f99H2B/N/v2DBz6QyGg+vb3IPH29Sfq/CV+/4wb7Q/kmXf3Xm2Tfw/Jrj2Pv4MGnXqtgIJ0x9gfy
+        PhOySfQ9cv2sDORmp/L2Ouzp601y79Hra4+EZD7QuP5ISLvdYFfeQ4ORlGwSE6+frz2WLr7+WG6e
+        lffhr591X79rCP2hdIfZH8r7MNjPuq/fM4T+WLrj7I/l/Vhsk7h8I2ayZwj90fSG2h+OtZL48f3f
+        OPkl/w/Wi/5hgBwAAA==
+    headers:
+      cache-control: [!!python/unicode 'no-cache']
+      content-encoding: [!!python/unicode 'gzip']
+      content-type: [!!python/unicode 'application/json; charset=utf-8']
+      date: [!!python/unicode 'Mon, 15 Jun 2015 22:41:44 GMT']
+      expires: [!!python/unicode '-1']
+      pragma: [!!python/unicode 'no-cache']
+      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
+      transfer-encoding: [!!python/unicode 'chunked']
+      vary: [!!python/unicode 'Accept-Encoding']
+      x-ms-correlation-request-id: [!!python/unicode 'd5f4cb74-ddfb-42ad-8d06-abd80c3afd5c']
+      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14996']
+      x-ms-request-id: [!!python/unicode '6949577e-68fa-4f00-917c-5979b512b182']
+      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T224144Z:d5f4cb74-ddfb-42ad-8d06-abd80c3afd5c']
+    status: {code: 200, message: OK}
+version: 1

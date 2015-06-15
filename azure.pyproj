@@ -6,14 +6,15 @@
     <ProjectGuid>{25b2c65a-0553-4452-8907-8b5b17544e68}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>setup.py</StartupFile>
-    <WorkingDirectory>dist</WorkingDirectory>
+    <StartupFile>tests\create_credentials_file.py</StartupFile>
+    <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azure</Name>
     <RootNamespace>azure</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>install</CommandLineArguments>
+    <CommandLineArguments>
+    </CommandLineArguments>
     <InterpreterPath />
     <InterpreterArguments />
     <InterpreterId>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</InterpreterId>
@@ -34,8 +35,15 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="azure-common\azure\common\arm.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-common\azure\common\filters.py" />
     <Compile Include="azure-common\azure\__init__.py" />
     <Compile Include="azure-common\setup.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\computemanagement.py" />
+    <Compile Include="azure-mgmt-network\azure\mgmt\network\networkresourceprovider.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resourcemanagement.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\__init__.py" />
@@ -48,6 +56,7 @@
     <Compile Include="azure-mgmt-compute\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-compute\azure\__init__.py" />
     <Compile Include="azure-mgmt-compute\setup.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\storagemanagement.py" />
     <Compile Include="azure-mgmt\setup.py" />
     <Compile Include="azure-common\azure\common\__init__.py">
       <SubType>Code</SubType>
@@ -105,8 +114,10 @@
     <Compile Include="azure-_core\setup.py" />
     <Compile Include="azure\setup.py" />
     <Compile Include="setup.py" />
+    <Compile Include="tests\mgmtutil.py" />
     <Compile Include="tests\blob_performance.py" />
     <Compile Include="tests\clean.py" />
+    <Compile Include="tests\create_credentials_file.py" />
     <Compile Include="tests\doctest_blobservice.py" />
     <Compile Include="tests\doctest_queueservice.py" />
     <Compile Include="tests\doctest_servicebusservicequeue.py" />
@@ -115,8 +126,11 @@
     <Compile Include="tests\loader.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="tests\testutil.py" />
     <Compile Include="tests\test_affinitygroupmanagementservice.py" />
-    <Compile Include="tests\test_arm_compute.py" />
+    <Compile Include="tests\test_mgmt_compute.py" />
+    <Compile Include="tests\test_mgmt_network.py" />
+    <Compile Include="tests\test_mgmt_resource.py" />
     <Compile Include="tests\test_blobservice.py" />
     <Compile Include="tests\test_cloudstorageaccount.py" />
     <Compile Include="tests\test_eventhubservice.py" />
@@ -129,7 +143,7 @@
     <Compile Include="tests\test_sharedaccesssignature.py" />
     <Compile Include="tests\test_sqldatabasemanagementservice.py" />
     <Compile Include="tests\test_storagemanagementservice.py" />
-    <Compile Include="tests\test_arm_storage.py" />
+    <Compile Include="tests\test_mgmt_storage.py" />
     <Compile Include="tests\test_tableservice.py" />
     <Compile Include="tests\test_websitemanagementservice.py" />
     <Compile Include="tests\util.py" />
@@ -176,15 +190,18 @@
     <Folder Include="azure\" />
     <Folder Include="tests\" />
     <Folder Include="tests\data\" />
+    <Folder Include="tests\recordings\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.6" />
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.7" />
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.3" />
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.4" />
+    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.5" />
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\2.7" />
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.3" />
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.4" />
+    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.5" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
@@ -234,6 +251,20 @@
     <Content Include="tests\coverage_x64.bat" />
     <Content Include="tests\data\testhd" />
     <Content Include="tests\data\WindowsAzure1.cspkg" />
+    <Content Include="tests\recordings\test_mgmt_compute.test_availability_sets.yaml" />
+    <Content Include="tests\recordings\test_mgmt_compute.test_usage.yaml" />
+    <Content Include="tests\recordings\test_mgmt_compute.test_vms_with_image_reference.yaml" />
+    <Content Include="tests\recordings\test_mgmt_compute.test_vms_with_source_image.yaml" />
+    <Content Include="tests\recordings\test_mgmt_compute.test_vm_extensions.yaml" />
+    <Content Include="tests\recordings\test_mgmt_compute.test_vm_sizes.yaml" />
+    <Content Include="tests\recordings\test_mgmt_network.test_dns_availability.yaml" />
+    <Content Include="tests\recordings\test_mgmt_network.test_network_security_groups.yaml" />
+    <Content Include="tests\recordings\test_mgmt_network.test_public_ip_addresses.yaml" />
+    <Content Include="tests\recordings\test_mgmt_network.test_subnets.yaml" />
+    <Content Include="tests\recordings\test_mgmt_network.test_virtual_networks.yaml" />
+    <Content Include="tests\recordings\test_mgmt_resource.test_providers.yaml" />
+    <Content Include="tests\recordings\test_mgmt_resource.test_resource_groups.yaml" />
+    <Content Include="tests\recordings\test_mgmt_storage.test_storage_accounts.yaml" />
     <Content Include="tests\run" />
     <Content Include="tests\run-mgmt.bat" />
     <Content Include="tests\run-servicebus.bat" />

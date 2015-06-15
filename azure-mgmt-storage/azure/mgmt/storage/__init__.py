@@ -16,7 +16,4 @@
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
 __version__ = '0.20.0'
 
-# TODO: Replace with real implementation
-class StorageManagementClient(object):
-    def name(self):
-        return 'StorageManagementClient'
+from .storagemanagement import *
