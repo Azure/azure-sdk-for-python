@@ -86,7 +86,8 @@ class BlobService(_StorageClient):
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base=BLOB_SERVICE_HOST_BASE, dev_host=DEV_BLOB_HOST,
-                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None, connection_string=None):
+                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None, connection_string=None,
+                 request_session=None):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -111,6 +112,9 @@ class BlobService(_StorageClient):
             connection_string. See 
             http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/
             for the connection string format.
+        request_session:
+            Optional. Session object to use for http requests. If this is
+            specified, it replaces the default use of httplib.
         '''
         if connection_string is not None:
             connection_params = StorageConnectionParameters(connection_string)
@@ -122,7 +126,7 @@ class BlobService(_StorageClient):
         self._BLOB_MAX_DATA_SIZE = 64 * 1024 * 1024
         self._BLOB_MAX_CHUNK_DATA_SIZE = 4 * 1024 * 1024
         super(BlobService, self).__init__(
-            account_name, account_key, protocol, host_base, dev_host, timeout, sas_token)
+            account_name, account_key, protocol, host_base, dev_host, timeout, sas_token, request_session)
 
         if self.account_key:
             self.authentication = StorageSharedKeyAuthentication(
