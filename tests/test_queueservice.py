@@ -30,6 +30,7 @@ from util import (
     AzureTestCase,
     credentials,
     getUniqueName,
+    create_storage_service,
     set_service_options,
 )
 
@@ -41,9 +42,11 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 class QueueServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.qs = QueueService(credentials.getStorageServicesName(),
-                               credentials.getStorageServicesKey())
-        set_service_options(self.qs)
+        self.qs = create_storage_service(
+            QueueService,
+            credentials.getStorageServicesName(),
+            credentials.getStorageServicesKey(),
+        )
 
         self.test_queues = []
         self.creatable_queues = []

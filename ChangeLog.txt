@@ -1,3 +1,15 @@
+2015-06-16 Version 0.11.1
+
+ * Azure storage connection string support
+ * Add a request_session parameter to storage and service bus classes
+ * Fixes for bugs:
+   #370 Fix table service authentication for non-english locale
+   #380 Make protocol string case insensitive
+   #376 Make pyopenssl dependency optional
+   #360 Installing `azure` on Python 3 should not install futures
+
+Thank you to rchamorro, drdarshan, hosungs, h_yamaki for their contributions.
+
 2015-05-13 Version 0.11.0
 
 IMPORTANT CHANGE THAT AFFECTS STORAGE:

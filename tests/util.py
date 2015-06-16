@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -184,6 +184,18 @@ def create_service_management(service_class):
                             credentials.getManagementCertFile())
     set_service_options(service)
     return service
+
+
+def create_storage_service(service_class, name, key):
+    session = None
+    if credentials.getUseRequestsLibrary():
+        from requests import Session
+        session = Session()
+
+    service = service_class(name, key, request_session=session)
+    set_service_options(service)
+    return service
+
 
 def set_service_options(service):
     useHttplibOverride = credentials.getUseHttplibOverride()

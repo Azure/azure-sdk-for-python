@@ -42,6 +42,7 @@ from azure.storage.sharedaccesssignature import SharedAccessPolicy
 from util import (
     AzureTestCase,
     credentials,
+    create_storage_service,
     getUniqueName,
     set_service_options,
 )
@@ -55,9 +56,11 @@ MAX_RETRY = 60
 class TableServiceTest(AzureTestCase):
 
     def setUp(self):
-        self.ts = TableService(credentials.getStorageServicesName(),
-                               credentials.getStorageServicesKey())
-        set_service_options(self.ts)
+        self.ts = create_storage_service(
+            TableService,
+            credentials.getStorageServicesName(),
+            credentials.getStorageServicesKey(),
+        )
 
         self.table_name = getUniqueName('uttable')
         self.additional_table_names = []
