@@ -42,11 +42,17 @@ from util import (
 class EventHubServiceTest(AzureTestCase):
 
     def setUp(self):
+        session = None
+        if credentials.getUseRequestsLibrary():
+            from requests import Session
+            session = Session()
+
         self.sbs = ServiceBusService(
             credentials.getEventHubNamespace(),
             shared_access_key_name=credentials.getEventHubSasKeyName(),
             shared_access_key_value=credentials.getEventHubSasKeyValue(),
-            )
+            request_session=session,
+        )
 
         set_service_options(self.sbs)
 

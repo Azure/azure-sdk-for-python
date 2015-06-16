@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,7 +68,8 @@ class ServiceBusService(object):
     def __init__(self, service_namespace=None, account_key=None, issuer=None,
                  x_ms_version='2011-06-01', host_base=SERVICE_BUS_HOST_BASE,
                  shared_access_key_name=None, shared_access_key_value=None,
-                 authentication=None, timeout=DEFAULT_HTTP_TIMEOUT):
+                 authentication=None, timeout=DEFAULT_HTTP_TIMEOUT,
+                 request_session=None):
         '''
         Initializes the service bus service for a namespace with the specified
         authentication settings (SAS or ACS).
@@ -100,6 +101,9 @@ class ServiceBusService(object):
             ACS and SAS parameters are ignored.
         timeout:
             Optional. Timeout for the http request, in seconds.
+        request_session:
+            Optional. Session object to use for http requests. If this is
+            specified, it replaces the default use of httplib.
         '''
         self.requestid = None
         self.service_namespace = service_namespace
@@ -131,7 +135,11 @@ class ServiceBusService(object):
                 raise WindowsAzureError(
                     'You need to provide servicebus access key and Issuer OR shared access key and value')
 
-        self._httpclient = _HTTPClient(service_instance=self, timeout=timeout)
+        self._httpclient = _HTTPClient(
+            service_instance=self,
+            timeout=timeout,
+            request_session=request_session,
+        )
         self._filter = self._httpclient.perform_request
 
     # Backwards compatibility:

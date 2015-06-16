@@ -48,17 +48,25 @@ from util import (
 class ServiceBusTest(AzureTestCase):
 
     def setUp(self):
+        session = None
+        if credentials.getUseRequestsLibrary():
+            from requests import Session
+            session = Session()
+
         if credentials.getServiceBusAuthenticationType().lower() == 'sas':
             self.sbs = ServiceBusService(
                 credentials.getServiceBusNamespace(),
                 shared_access_key_name=credentials.getServiceBusSasKeyName(),
                 shared_access_key_value=credentials.getServiceBusSasKeyValue(),
-                )
+                request_session=session,
+            )
         else:
             self.sbs = ServiceBusService(
                 credentials.getServiceBusNamespace(),
                 account_key=credentials.getServiceBusKey(),
-                issuer='owner')
+                issuer='owner',
+                request_session=session,
+            )
 
         set_service_options(self.sbs)
 

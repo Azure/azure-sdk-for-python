@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,7 +63,8 @@ class TableService(_StorageClient):
 
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base=TABLE_SERVICE_HOST_BASE, dev_host=DEV_TABLE_HOST,
-                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None, connection_string=None):
+                 timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None, connection_string=None,
+                 request_session=None):
         '''
         account_name:
             your storage account name, required for all operations.
@@ -88,6 +89,9 @@ class TableService(_StorageClient):
             connection_string. See
             http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/
             for the connection string format.
+        request_session:
+            Optional. Session object to use for http requests. If this is
+            specified, it replaces the default use of httplib.
         '''
         if connection_string is not None:
             connection_params = StorageConnectionParameters(connection_string)
@@ -97,7 +101,7 @@ class TableService(_StorageClient):
             host_base = connection_params.host_base_table
             
         super(TableService, self).__init__(
-            account_name, account_key, protocol, host_base, dev_host, timeout, sas_token)
+            account_name, account_key, protocol, host_base, dev_host, timeout, sas_token, request_session)
 
         if self.account_key:
             self.authentication = StorageTableSharedKeyAuthentication(
