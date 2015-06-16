@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ except ImportError:
 # constants
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.11.0'
+__version__ = '0.11.1'
 
 # Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'

@@ -34,7 +34,7 @@ if sys.version_info < (3,0):
     reqs.append('futures')
 
 setup(name='azure',
-      version='0.11.0',
+      version='0.11.1',
       description='Microsoft Azure client APIs',
       long_description=open('README.rst', 'r').read(),
       license='Apache License 2.0',
