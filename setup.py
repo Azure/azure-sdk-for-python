@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-
+import sys
 from distutils.core import setup
 
 # To build:
@@ -28,6 +28,10 @@ from distutils.core import setup
 #
 # To upload:
 # python setup.py sdist upload
+
+reqs = ['python-dateutil']
+if sys.version_info < (3,0):
+    reqs.append('futures')
 
 setup(name='azure',
       version='0.11.0',
@@ -51,8 +55,7 @@ setup(name='azure',
                 'azure.servicebus',
                 'azure.storage',
                 'azure.servicemanagement'],
-      install_requires=['python-dateutil', 
-                        'futures'],
+      install_requires=reqs,
       extras_require = { 
           'get_certificate_from_publish_settings' : ['pyopenssl'] 
       }
