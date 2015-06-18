@@ -15,6 +15,7 @@
 import sys
 import threading
 import types
+import collections
 
 from datetime import datetime
 from dateutil import parser
@@ -388,7 +389,7 @@ class QueueMessage(WindowsAzureData):
         self.message_text = u''
 
 
-class Entity(WindowsAzureData):
+class Entity(WindowsAzureData, collections.UserDict):
 
     ''' Entity class. The attributes of entity will be created dynamically. '''
     pass
@@ -897,6 +898,8 @@ def _convert_etree_element_to_entity(entry_element):
 
 
 def _set_entity_attr(entity, name, value):
+    if isinstance(entity, Entity):
+        entity.data[name] = value
     try:
         setattr(entity, name, value)
     except UnicodeEncodeError:
