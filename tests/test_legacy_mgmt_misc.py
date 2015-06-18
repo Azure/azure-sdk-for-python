@@ -96,7 +96,7 @@ LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
 
 
 #------------------------------------------------------------------------------
-class ServiceManagementServiceTest(AzureTestCase):
+class LegacyMgmtMiscTest(AzureTestCase):
 
     def setUp(self):
         self.sms = create_service_management(ServiceManagementService)

@@ -40,7 +40,7 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 #------------------------------------------------------------------------------
 
 
-class QueueServiceTest(AzureTestCase):
+class StorageQueueTest(AzureTestCase):
 
     def setUp(self):
         self.qs = create_storage_service(
@@ -61,7 +61,7 @@ class QueueServiceTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(QueueServiceTest, self).tearDown()
+        return super(StorageQueueTest, self).tearDown()
 
     def cleanup(self):
         for queue_name in self.test_queues:

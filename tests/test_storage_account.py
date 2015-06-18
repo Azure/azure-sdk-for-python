@@ -30,7 +30,7 @@ from .util import (
 #------------------------------------------------------------------------------
 
 
-class CloudStorageAccountTest(AzureTestCase):
+class StorageAccountTest(AzureTestCase):
 
     def setUp(self):
         self.account = CloudStorageAccount(

@@ -29,11 +29,7 @@ if "%PYTHONPATH%" == "" (
 )
 
 echo Running tests using %PYTHONDIR%
-%PYTHONDIR%\python.exe -m unittest discover -p "test_cloudstorageaccount.py"
-%PYTHONDIR%\python.exe -m unittest discover -p "test_blobservice.py"
-%PYTHONDIR%\python.exe -m unittest discover -p "test_queueservice.py"
-%PYTHONDIR%\python.exe -m unittest discover -p "test_sharedaccesssignature.py"
-%PYTHONDIR%\python.exe -m unittest discover -p "test_tableservice.py"
+%PYTHONDIR%\python.exe -m unittest discover -p "test_storage_*.py"
 
 
 set UNITTEST_EC=%ERRORLEVEL%

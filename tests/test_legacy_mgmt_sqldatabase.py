@@ -34,7 +34,7 @@ from .util import (
     credentials,
 )
 
-class SqlDatabaseManagementServiceTest(AzureTestCase):
+class LegacyMgmtSqlDatabaseTest(AzureTestCase):
 
     def setUp(self):
         self.sqlms = create_service_management(SqlDatabaseManagementService)
@@ -42,7 +42,7 @@ class SqlDatabaseManagementServiceTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(SqlDatabaseManagementServiceTest, self).tearDown()
+        return super(LegacyMgmtSqlDatabaseTest, self).tearDown()
 
     def cleanup(self):
         if self.created_server:

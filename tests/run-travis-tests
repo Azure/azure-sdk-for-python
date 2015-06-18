@@ -9,6 +9,6 @@ export PYTHONPATH=$PYTHONPATH:..
 # https://github.com/Azure/azure-sdk-for-python/issues/322
 
 echo "Running tests..."
-python -m unittest discover -p "test_storagemanagementservice.py"
-python -m unittest discover -p "test_servicebusservice.py"
+python -m unittest discover -p "test_legacy_mgmt_storage.py"
+python -m unittest discover -p "test_servicebus_servicebus.py"
 

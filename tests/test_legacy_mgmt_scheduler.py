@@ -32,7 +32,7 @@ from .util import (
 )
 
 
-class SchedulerManagementServiceTest(AzureTestCase):
+class LegacyMgmtSchedulerTest(AzureTestCase):
 
     def setUp(self):
         self.ss = create_service_management(SchedulerManagementService)
@@ -42,7 +42,7 @@ class SchedulerManagementServiceTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(SchedulerManagementServiceTest, self).tearDown()
+        return super(LegacyMgmtSchedulerTest, self).tearDown()
 
     def cleanup(self):
         self.ss.delete_cloud_service(self.service_id)

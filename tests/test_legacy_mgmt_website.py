@@ -36,7 +36,7 @@ from .util import (
     getUniqueName,
 )
 
-class WebsiteManagementServiceTest(AzureTestCase):
+class LegacyMgmtWebsiteTest(AzureTestCase):
 
     def setUp(self):
         self.wss = create_service_management(WebsiteManagementService)
@@ -47,7 +47,7 @@ class WebsiteManagementServiceTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(WebsiteManagementServiceTest, self).tearDown()
+        return super(LegacyMgmtWebsiteTest, self).tearDown()
 
     def cleanup(self):
         if self.created_site:

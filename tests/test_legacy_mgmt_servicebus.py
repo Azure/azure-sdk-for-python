@@ -30,7 +30,7 @@ from .util import (
 #------------------------------------------------------------------------------
 
 
-class ServiceBusManagementServiceTest(AzureTestCase):
+class LegacyMgmtServiceBusTest(AzureTestCase):
 
     def setUp(self):
         self.sms = ServiceBusManagementService(

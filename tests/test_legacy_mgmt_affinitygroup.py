@@ -30,7 +30,7 @@ from .util import (
 #------------------------------------------------------------------------------
 
 
-class AffinityGroupManagementServiceTest(AzureTestCase):
+class LegacyMgmtAffinityGroupTest(AzureTestCase):
 
     def setUp(self):
         self.sms = create_service_management(ServiceManagementService)

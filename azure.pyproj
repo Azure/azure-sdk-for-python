@@ -150,25 +150,25 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\testutil.py" />
-    <Compile Include="tests\test_affinitygroupmanagementservice.py" />
+    <Compile Include="tests\test_legacy_mgmt_affinitygroup.py" />
     <Compile Include="tests\test_mgmt_compute.py" />
     <Compile Include="tests\test_mgmt_network.py" />
     <Compile Include="tests\test_mgmt_resource.py" />
-    <Compile Include="tests\test_blobservice.py" />
-    <Compile Include="tests\test_cloudstorageaccount.py" />
-    <Compile Include="tests\test_eventhubservice.py" />
-    <Compile Include="tests\test_managementcertificatemanagementservice.py" />
-    <Compile Include="tests\test_queueservice.py" />
-    <Compile Include="tests\test_schedulermanagementservice.py" />
-    <Compile Include="tests\test_servicebusmanagementservice.py" />
-    <Compile Include="tests\test_servicebusservice.py" />
-    <Compile Include="tests\test_servicemanagementservice.py" />
-    <Compile Include="tests\test_sharedaccesssignature.py" />
-    <Compile Include="tests\test_sqldatabasemanagementservice.py" />
-    <Compile Include="tests\test_storagemanagementservice.py" />
+    <Compile Include="tests\test_storage_blob.py" />
+    <Compile Include="tests\test_storage_account.py" />
+    <Compile Include="tests\test_servicebus_eventhub.py" />
+    <Compile Include="tests\test_legacy_mgmt_managementcertificate.py" />
+    <Compile Include="tests\test_storage_queue.py" />
+    <Compile Include="tests\test_legacy_mgmt_scheduler.py" />
+    <Compile Include="tests\test_legacy_mgmt_servicebus.py" />
+    <Compile Include="tests\test_servicebus_servicebus.py" />
+    <Compile Include="tests\test_legacy_mgmt_misc.py" />
+    <Compile Include="tests\test_storage_sas.py" />
+    <Compile Include="tests\test_legacy_mgmt_sqldatabase.py" />
+    <Compile Include="tests\test_legacy_mgmt_storage.py" />
     <Compile Include="tests\test_mgmt_storage.py" />
-    <Compile Include="tests\test_tableservice.py" />
-    <Compile Include="tests\test_websitemanagementservice.py" />
+    <Compile Include="tests\test_storage_table.py" />
+    <Compile Include="tests\test_legacy_mgmt_website.py" />
     <Compile Include="tests\util.py" />
     <Compile Include="tests\__init__.py" />
   </ItemGroup>
@@ -289,6 +289,7 @@
     <Content Include="tests\recordings\test_mgmt_resource.test_resource_groups.yaml" />
     <Content Include="tests\recordings\test_mgmt_storage.test_storage_accounts.yaml" />
     <Content Include="tests\run" />
+    <Content Include="tests\run-legacy-mgmt.bat" />
     <Content Include="tests\run-mgmt.bat" />
     <Content Include="tests\run-servicebus.bat" />
     <Content Include="tests\run-storage.bat" />
