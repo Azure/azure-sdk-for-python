@@ -399,7 +399,11 @@ class Entity(WindowsAzureData, collections.UserDict):
             raise AttributeError
     def __setattr__(self, name, value):
         data[name] = value
-        return super().__setattr__(name, value)
+        return super(Entity, self).__setattr__(name, value)
+    def __delattr__(self, name):
+        if name in data:
+            del data[name]
+        return super(Entity, self).__delattr__(name)
 
 
 class EntityProperty(WindowsAzureData):
