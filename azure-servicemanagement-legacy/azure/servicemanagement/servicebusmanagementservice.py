@@ -12,14 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from ._internal import (
+from .constants import (
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
-    _str,
-    _validate_not_none,
 )
-from . import (
-    _ServiceBusManagementXmlSerializer,
+from .models import (
     QueueDescription,
     TopicDescription,
     NotificationHubDescription,
@@ -27,10 +24,19 @@ from . import (
     MetricProperties,
     MetricValues,
     MetricRollups,
-    _MinidomXmlToObject,
+)
+from ._common_conversion import (
+    _str,
+)
+from ._common_error import (
+    _validate_not_none
 )
 from .servicemanagementclient import (
     _ServiceManagementClient,
+)
+from ._serialization import (
+    _ServiceBusManagementXmlSerializer,
+    _MinidomXmlToObject,
 )
 
 from functools import partial

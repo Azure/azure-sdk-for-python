@@ -12,24 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from ._internal import (
+from .constants import (
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
-    _validate_not_none,
-    )
-from . import (
-    EventLog,
-    ServerQuota,
-    Servers,
-    ServiceObjective,
+)
+from .models import (
     Database,
+    EventLog,
     FirewallRule,
-    _SqlManagementXmlSerializer,
-    _MinidomXmlToObject,
-    )
+    Servers,
+    ServerQuota,
+    ServiceObjective,
+)
 from .servicemanagementclient import (
     _ServiceManagementClient,
-    )
+)
+from ._common_error import (
+    _validate_not_none,
+)
+from ._serialization import (
+    _SqlManagementXmlSerializer,
+    _MinidomXmlToObject,
+)
 
 class SqlDatabaseManagementService(_ServiceManagementClient):
     ''' Note that this class is a preliminary work on SQL Database

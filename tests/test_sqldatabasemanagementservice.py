@@ -17,10 +17,6 @@
 
 import unittest
 
-from azure.servicemanagement.sqldatabasemanagementservice import (
-    SqlDatabaseManagementService,
-)
-
 from azure.servicemanagement import (
     EventLog,
     ServerQuota,
@@ -29,6 +25,7 @@ from azure.servicemanagement import (
     ServiceObjective,
     Database,
     FirewallRule,
+    SqlDatabaseManagementService,
 )
 
 from .util import (

@@ -18,13 +18,10 @@
 import unittest
 from datetime import datetime
 
-from azure.servicemanagement.schedulermanagementservice import (
-    SchedulerManagementService,
-)
-
 from azure.servicemanagement import (
     CloudServices,
-    CloudService
+    CloudService,
+    SchedulerManagementService,
 )
 
 from .util import (

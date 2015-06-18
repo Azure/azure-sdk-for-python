@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from ._internal import (
+from azure.common import (
     WindowsAzureError,
+)
+from .constants import (
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
-    _str,
-    _validate_not_none,
-    )
-from . import (
+)
+from .models import (
     AffinityGroups,
     AffinityGroup,
     AvailabilityResponse,
@@ -51,11 +51,19 @@ from . import (
     SubscriptionOperationCollection,
     VirtualNetworkSites,
     VMImages,
-    _XmlSerializer,
-    )
+)
+from ._common_conversion import (
+    _str,
+)
+from ._common_error import (
+    _validate_not_none,
+)
 from .servicemanagementclient import (
     _ServiceManagementClient,
-    )
+)
+from ._serialization import (
+    _XmlSerializer,
+)
 
 class ServiceManagementService(_ServiceManagementClient):
 

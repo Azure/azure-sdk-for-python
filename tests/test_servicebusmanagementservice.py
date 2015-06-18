@@ -19,9 +19,6 @@ from azure.common import (
     WindowsAzureError,
     WindowsAzureMissingResourceError,
 )
-from azure.servicemanagement._internal import (
-    Feed,
-)
 from azure.servicemanagement import ServiceBusManagementService
 from .util import (
     AzureTestCase,

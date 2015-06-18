@@ -70,17 +70,40 @@
     <Compile Include="azure-mgmt-_core\azure\__init__.py" />
     <Compile Include="azure-mgmt-_core\setup.py" />
     <Compile Include="azure-servicebus\azure\__init__.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\constants.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_common_models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\publishsettings.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\schedulermanagementservice.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\servicebusmanagementservice.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\servicemanagementclient.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\servicemanagementservice.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\sqldatabasemanagementservice.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\websitemanagementservice.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_common_conversion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_common_error.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_common_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\httpclient.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\requestsclient.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\winhttp.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\__init__.py" />
-    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_internal.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\__init__.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\__init__.py" />
     <Compile Include="azure-mgmt-_core\azure\mgmt\__init__.py" />
