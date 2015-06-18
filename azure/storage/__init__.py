@@ -392,17 +392,18 @@ class QueueMessage(WindowsAzureData):
 class Entity(WindowsAzureData, collections.UserDict):
 
     ''' Entity class. The attributes of entity will be created dynamically. '''
+    data = {}
     def __getattr__(self, name):
-        if name in super().data:
-            return super().data[name]
+        if name in self.data:
+            return self.data[name]
         else:
             raise AttributeError
     def __setattr__(self, name, value):
-        super().data[name] = value
+        self.data[name] = value
         return super(Entity, self).__setattr__(name, value)
     def __delattr__(self, name):
         if name in self.data:
-            del super().data[name]
+            del self.data[name]
         return super(Entity, self).__delattr__(name)
 
 
