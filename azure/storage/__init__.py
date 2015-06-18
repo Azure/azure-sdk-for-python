@@ -903,8 +903,6 @@ def _convert_etree_element_to_entity(entry_element):
 
 
 def _set_entity_attr(entity, name, value):
-    if isinstance(entity, Entity):
-        entity.data[name] = value
     try:
         setattr(entity, name, value)
     except UnicodeEncodeError:
