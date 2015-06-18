@@ -16,7 +16,6 @@ from datetime import datetime
 from xml.dom import minidom
 import sys
 from ._internal import (
-    ETree,
     Feed,
     WindowsAzureData,
     _Base64String,
@@ -44,6 +43,8 @@ import json
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
 __version__ = '0.20.0'
+
+_USER_AGENT_STRING = 'pyazure/' + __version__
 
 #-----------------------------------------------------------------------------
 # Constants for Azure app environment settings.
@@ -1999,6 +2000,11 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
     import base64
 
     try:
+        from xml.etree import cElementTree as ET
+    except ImportError:
+        from xml.etree import ElementTree as ET
+
+    try:
         import OpenSSL.crypto as crypto
     except:
         raise Exception("pyopenssl is required to use get_certificate_from_publish_settings")
@@ -2007,7 +2013,7 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
     _validate_not_none('path_to_write_certificate', path_to_write_certificate)
 
     # parse the publishsettings file and find the ManagementCertificate Entry
-    tree = ETree.parse(publish_settings_path)
+    tree = ET.parse(publish_settings_path)
     subscriptions = tree.getroot().findall("./PublishProfile/Subscription")
     
     # Default to the first subscription in the file if they don't specify
@@ -2040,11 +2046,6 @@ def _management_error_handler(http_error):
 
 
 class _MinidomXmlToObject(object):
-    '''
-    DEPRECATED.
-    All calls to this class will eventually be removed.
-    Do not use outside of service management apis.
-    '''
 
     @staticmethod
     def parse_response(response, return_type):
@@ -2137,6 +2138,7 @@ class _MinidomXmlToObject(object):
                 for title in _MinidomXmlToObject.get_child_nodes(entry, 'title'):
                     properties['name'] = title.firstChild.nodeValue
             else:
+                # TODO: check if this is used
                 for id in _MinidomXmlToObject.get_child_nodes(entry, 'id'):
                     properties['name'] = _get_readable_id(
                         id.firstChild.nodeValue, id_prefix_to_skip)

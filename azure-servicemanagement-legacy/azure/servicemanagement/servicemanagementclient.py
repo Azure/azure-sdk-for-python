@@ -26,7 +26,6 @@ from ._internal import (
     _get_request_body,
     _str,
     _validate_not_none,
-    _update_request_uri_query,
     )
 from ._http import (
     HTTPError,
@@ -41,6 +40,7 @@ from . import (
     _management_error_handler,
     parse_response_for_async_op,
     X_MS_VERSION,
+    _USER_AGENT_STRING,
     )
 
 
@@ -73,7 +73,8 @@ class _ServiceManagementClient(object):
 
         self._httpclient = _HTTPClient(
             service_instance=self, cert_file=self.cert_file,
-            request_session=self.request_session, timeout=timeout)
+            request_session=self.request_session, timeout=timeout,
+            user_agent=_USER_AGENT_STRING)
         self._filter = self._httpclient.perform_request
 
     def with_filter(self, filter):
@@ -131,7 +132,7 @@ class _ServiceManagementClient(object):
         request.method = 'GET'
         request.host = self.host
         request.path = path
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
@@ -155,7 +156,7 @@ class _ServiceManagementClient(object):
         request.host = self.host
         request.path = path
         request.body = _get_request_body(body)
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
@@ -180,7 +181,7 @@ class _ServiceManagementClient(object):
         request.host = self.host
         request.path = path
         request.body = _get_request_body(body)
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
@@ -201,7 +202,7 @@ class _ServiceManagementClient(object):
         request.method = 'DELETE'
         request.host = self.host
         request.path = path
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
