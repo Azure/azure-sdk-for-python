@@ -393,11 +393,11 @@ class Entity(WindowsAzureData, dict):
 
     ''' Entity class. The attributes of entity will be created dynamically. '''
     def __getattr__(self, name):
-        return super(Entity, self).__getattr__(name)
+        return dict.__getitem__(name)
     def __setattr__(self, name, value):
-        return super(Entity, self).__setattr__(name, value)
+        return dict.__setitem__(name, value)
     def __delattr__(self, name):
-        return super(Entity, self).__delattr__(name)
+        return dict.__delitem__(name)
 
 
 class EntityProperty(WindowsAzureData):
