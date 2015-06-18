@@ -393,16 +393,16 @@ class Entity(WindowsAzureData, collections.UserDict):
 
     ''' Entity class. The attributes of entity will be created dynamically. '''
     def __getattr__(self, name):
-        if name in self.data:
-            return self.data[name]
+        if name in super().data:
+            return super().data[name]
         else:
             raise AttributeError
     def __setattr__(self, name, value):
-        self.data[name] = value
+        super().data[name] = value
         return super(Entity, self).__setattr__(name, value)
     def __delattr__(self, name):
         if name in self.data:
-            del self.data[name]
+            del super().data[name]
         return super(Entity, self).__delattr__(name)
 
 
