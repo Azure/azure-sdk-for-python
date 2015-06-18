@@ -69,6 +69,15 @@
     <Compile Include="azure-mgmt-storage\setup.py" />
     <Compile Include="azure-mgmt-_core\azure\__init__.py" />
     <Compile Include="azure-mgmt-_core\setup.py" />
+    <Compile Include="azure-servicebus\azure\servicebus\constants.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-servicebus\azure\__init__.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\constants.py">
       <SubType>Code</SubType>

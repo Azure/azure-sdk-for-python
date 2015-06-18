@@ -1,4 +1,4 @@
-﻿#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,23 +13,14 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
-from .constants import (
-    __author__,
-    __version__,
-    DEFAULT_RULE_NAME,
-    AZURE_SERVICEBUS_NAMESPACE,
-    AZURE_SERVICEBUS_ACCESS_KEY,
-    AZURE_SERVICEBUS_ISSUER,
-)
+__author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
+__version__ = '0.20.0'
 
-from .models import (
-    Queue,
-    Topic,
-    Subscription,
-    Rule,
-    EventHub,
-    AuthorizationRule,
-    Message,
-)
+# default rule name for subscription
+DEFAULT_RULE_NAME = '$Default'
 
-from .servicebusservice import ServiceBusService
+#-----------------------------------------------------------------------------
+# Constants for Azure app environment settings.
+AZURE_SERVICEBUS_NAMESPACE = 'AZURE_SERVICEBUS_NAMESPACE'
+AZURE_SERVICEBUS_ACCESS_KEY = 'AZURE_SERVICEBUS_ACCESS_KEY'
+AZURE_SERVICEBUS_ISSUER = 'AZURE_SERVICEBUS_ISSUER'

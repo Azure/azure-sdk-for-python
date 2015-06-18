@@ -24,6 +24,7 @@ if sys.version_info < (3,):
         HTTPS_PORT,
         )
     from urlparse import urlparse
+    from urllib2 import quote as url_quote
 else:
     from http.client import (
         HTTPSConnection,
@@ -32,13 +33,9 @@ else:
         HTTPS_PORT,
         )
     from urllib.parse import urlparse
+    from urllib.parse import quote as url_quote
 
 from . import HTTPError, HTTPResponse
-from .._internal import (
-    _USER_AGENT_STRING,
-    _update_request_uri_query,
-    DEFAULT_HTTP_TIMEOUT,
-)
 
 DEBUG_REQUESTS = False
 DEBUG_RESPONSES = False
@@ -50,7 +47,7 @@ class _HTTPClient(object):
     '''
 
     def __init__(self, service_instance, cert_file=None, protocol='https',
-                 request_session=None, timeout=DEFAULT_HTTP_TIMEOUT):
+                 request_session=None, timeout=65, user_agent=''):
         '''
         service_instance:
             service client instance.
@@ -63,6 +60,8 @@ class _HTTPClient(object):
             session object created with requests library (or compatible).
         timeout:
             timeout for the http request, in seconds.
+        user_agent:
+            user agent string to set in http header.
         '''
         self.service_instance = service_instance
         self.status = None
@@ -76,6 +75,7 @@ class _HTTPClient(object):
         self.proxy_password = None
         self.request_session = request_session
         self.timeout = timeout
+        self.user_agent = user_agent
         if request_session:
             self.use_httplib = True
         else:
@@ -139,13 +139,13 @@ class _HTTPClient(object):
         target_port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
 
         if self.request_session:
-            import azure.http.requestsclient
-            connection = azure.http.requestsclient._RequestsConnection(
+            from .requestsclient import _RequestsConnection
+            connection = _RequestsConnection(
                 target_host, protocol, self.request_session, self.timeout)
             #TODO: proxy setup
         elif not self.use_httplib:
-            import azure.http.winhttp
-            connection = azure.http.winhttp._HTTPConnection(
+            from .winhttp import _HTTPConnection
+            connection = _HTTPConnection(
                 target_host, self.cert_file, protocol, self.timeout)
             proxy_host = self.proxy_host
             proxy_port = self.proxy_port
@@ -193,7 +193,7 @@ class _HTTPClient(object):
             if value:
                 connection.putheader(name, value)
 
-        connection.putheader('User-Agent', _USER_AGENT_STRING)
+        connection.putheader('User-Agent', self.user_agent)
         connection.endheaders()
 
     def send_request_body(self, connection, request_body):
@@ -203,6 +203,33 @@ class _HTTPClient(object):
         elif (not isinstance(connection, HTTPSConnection) and
               not isinstance(connection, HTTPConnection)):
             connection.send(None)
+
+    def _update_request_uri_query(self, request):
+        '''pulls the query string out of the URI and moves it into
+        the query portion of the request object.  If there are already
+        query parameters on the request the parameters in the URI will
+        appear after the existing parameters'''
+
+        if '?' in request.path:
+            request.path, _, query_string = request.path.partition('?')
+            if query_string:
+                query_params = query_string.split('&')
+                for query in query_params:
+                    if '=' in query:
+                        name, _, value = query.partition('=')
+                        request.query.append((name, value))
+
+        request.path = url_quote(request.path, '/()$=\',')
+
+        # add encoded queries to request.path.
+        if request.query:
+            request.path += '?'
+            for name, value in request.query:
+                if value is not None:
+                    request.path += name + '=' + url_quote(value, '/()$=\',') + '&'
+            request.path = request.path[:-1]
+
+        return request.path, request.query
 
     def perform_request(self, request):
         ''' Sends request to cloud service server and return the response. '''
@@ -253,7 +280,7 @@ class _HTTPClient(object):
                 new_url = urlparse(dict(headers)['location'])
                 request.host = new_url.hostname
                 request.path = new_url.path
-                request.path, request.query = _update_request_uri_query(request)
+                request.path, request.query = self._update_request_uri_query(request)
                 return self.perform_request(request)
             if self.status >= 300:
                 raise HTTPError(self.status, self.message,

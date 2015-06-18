@@ -23,6 +23,7 @@ from ._internal import (
     _ETreeXmlToObject,
     DEFAULT_HTTP_TIMEOUT,
     SERVICE_BUS_HOST_BASE,
+    _USER_AGENT_STRING,
     _dont_fail_not_exist,
     _dont_fail_on_exist,
     _encode_base64,
@@ -42,10 +43,13 @@ from ._http import (
     HTTPRequest,
 )
 from ._http.httpclient import _HTTPClient
-from . import (
+
+from .constants import (
     AZURE_SERVICEBUS_NAMESPACE,
     AZURE_SERVICEBUS_ACCESS_KEY,
     AZURE_SERVICEBUS_ISSUER,
+)
+from ._serialization import (
     _convert_event_hub_to_xml,
     _convert_topic_to_xml,
     _convert_response_to_topic,
@@ -141,6 +145,7 @@ class ServiceBusService(object):
             service_instance=self,
             timeout=timeout,
             request_session=request_session,
+            user_agent=_USER_AGENT_STRING,
         )
         self._filter = self._httpclient.perform_request
 
