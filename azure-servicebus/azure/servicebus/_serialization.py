@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,21 +29,22 @@ from .models import (
     AuthorizationRule,
     Message,
 )
-from ._internal import (
-    WindowsAzureData,
-    _general_error_handler,
+from ._common_conversion import (
     _lower,
     _str,
-    _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
-    _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
-    _ERROR_EVENT_HUB_NOT_FOUND,
-    _ERROR_QUEUE_NOT_FOUND,
-    _ERROR_TOPIC_NOT_FOUND,
+)
+from ._common_serialization import (
     _XmlWriter,
     _make_etree_ns_attr_name,
     _get_etree_text,
     ETree,
     _ETreeXmlToObject,
+)
+from ._common_error import (
+    _ERROR_EVENT_HUB_NOT_FOUND,
+    _ERROR_QUEUE_NOT_FOUND,
+    _ERROR_TOPIC_NOT_FOUND,
+    _general_error_handler,
 )
 from ._http import HTTPError
 

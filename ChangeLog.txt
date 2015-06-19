@@ -11,6 +11,10 @@ The following have moved from 'azure' to 'azure.servicemanagement':
     MANAGEMENT_HOST
     DEFAULT_HTTP_TIMEOUT
 
+The following have moved from 'azure' to 'azure.servicebus':
+    SERVICE_BUS_HOST_BASE
+    DEFAULT_HTTP_TIMEOUT
+
 when we switch to requests for storage:
  - filters
 

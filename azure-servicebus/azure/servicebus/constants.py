@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,8 @@
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
 __version__ = '0.20.0'
 
+_USER_AGENT_STRING = 'pyazure/' + __version__
+
 # default rule name for subscription
 DEFAULT_RULE_NAME = '$Default'
 
@@ -24,3 +26,9 @@ DEFAULT_RULE_NAME = '$Default'
 AZURE_SERVICEBUS_NAMESPACE = 'AZURE_SERVICEBUS_NAMESPACE'
 AZURE_SERVICEBUS_ACCESS_KEY = 'AZURE_SERVICEBUS_ACCESS_KEY'
 AZURE_SERVICEBUS_ISSUER = 'AZURE_SERVICEBUS_ISSUER'
+
+# Live ServiceClient URLs
+SERVICE_BUS_HOST_BASE = '.servicebus.windows.net'
+
+# Default timeout for http requests (in secs)
+DEFAULT_HTTP_TIMEOUT = 65

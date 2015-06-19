@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,10 @@ from datetime import datetime
 from azure.common import (
     WindowsAzureError,
 )
-from ._internal import (
+from ._common_models import (
     WindowsAzureData,
+)
+from ._common_error import (
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
 )

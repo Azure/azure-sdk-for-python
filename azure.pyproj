@@ -75,6 +75,18 @@
     <Compile Include="azure-servicebus\azure\servicebus\models.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_common_conversion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_common_error.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_common_models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_common_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-servicebus\azure\servicebus\_serialization.py">
       <SubType>Code</SubType>
     </Compile>
@@ -121,7 +133,6 @@
     <Compile Include="azure-servicebus\azure\servicebus\_http\requestsclient.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\winhttp.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\__init__.py" />
-    <Compile Include="azure-servicebus\azure\servicebus\_internal.py" />
     <Compile Include="azure-servicebus\azure\servicebus\__init__.py" />
     <Compile Include="azure-servicebus\setup.py" />
     <Compile Include="azure-servicemanagement-legacy\setup.py" />
