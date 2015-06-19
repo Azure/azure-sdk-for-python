@@ -175,3 +175,11 @@ def get_test_file_path(relative_path):
     base_path = os.path.dirname(__file__)
     absolute_path = os.path.join(base_path, relative_path)
     return absolute_path
+
+
+def record(test):
+    def recording_test(self):
+        with self.recording():
+            test(self)
+    recording_test.__name__ = test.__name__
+    return recording_test
