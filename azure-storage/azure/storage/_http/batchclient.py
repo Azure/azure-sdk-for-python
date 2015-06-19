@@ -19,19 +19,20 @@ from azure.common import (
     WindowsAzureError,
     WindowsAzureBatchOperationError,
 )
-from .._internal import (
-    _update_request_uri_query,
-    url_unquote,
-    DEFAULT_HTTP_TIMEOUT,
+from .._common_error import (
     _ERROR_CANNOT_FIND_PARTITION_KEY,
     _ERROR_CANNOT_FIND_ROW_KEY,
     _ERROR_INCORRECT_TABLE_IN_BATCH,
     _ERROR_INCORRECT_PARTITION_KEY_IN_BATCH,
     _ERROR_DUPLICATE_ROW_KEY_IN_BATCH,
     _ERROR_BATCH_COMMIT_FAIL,
+)
+from .._common_serialization import (
     ETree,
+    url_unquote,
     _get_etree_text,
     _etree_entity_feed_namespaces,
+    _update_request_uri_query,
 )
 from .._serialization import (
     _update_storage_table_header,
@@ -57,7 +58,7 @@ class _BatchClient(_HTTPClient):
     '''
 
     def __init__(self, service_instance, authentication,
-                 protocol='http', timeout=DEFAULT_HTTP_TIMEOUT):
+                 protocol='http', timeout=65):
         _HTTPClient.__init__(self, service_instance, protocol=protocol, timeout=timeout)
         self.authentication = authentication
         self.is_batch = False

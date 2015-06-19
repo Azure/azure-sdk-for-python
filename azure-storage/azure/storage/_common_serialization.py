@@ -18,8 +18,10 @@ import warnings
 
 if sys.version_info < (3,):
     from urllib2 import quote as url_quote
+    from urllib2 import unquote as url_unquote
 else:
     from urllib.parse import quote as url_quote
+    from urllib.parse import unquote as url_unquote
 
 from datetime import datetime
 from xml.sax.saxutils import escape as xml_escape

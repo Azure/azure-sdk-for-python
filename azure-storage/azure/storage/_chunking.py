@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,8 @@ import sys
 import threading
 
 from time import sleep
-from ._internal import (
-    url_quote,
-    _encode_base64,
-)
+from ._common_conversion import _encode_base64
+from ._common_serialization import url_quote
 
 
 class _BlobChunkDownloader(object):
