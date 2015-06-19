@@ -24,6 +24,7 @@ if sys.version_info < (3,):
         HTTPS_PORT,
         )
     from urlparse import urlparse
+    from urllib2 import quote as url_quote
 else:
     from http.client import (
         HTTPSConnection,
@@ -32,13 +33,9 @@ else:
         HTTPS_PORT,
         )
     from urllib.parse import urlparse
+    from urllib.parse import quote as url_quote
 
 from . import HTTPError, HTTPResponse
-from .._internal import (
-    _USER_AGENT_STRING,
-    _update_request_uri_query,
-    DEFAULT_HTTP_TIMEOUT,
-)
 
 DEBUG_REQUESTS = False
 DEBUG_RESPONSES = False
@@ -50,7 +47,7 @@ class _HTTPClient(object):
     '''
 
     def __init__(self, service_instance, cert_file=None, protocol='https',
-                 request_session=None, timeout=DEFAULT_HTTP_TIMEOUT):
+                 request_session=None, timeout=65, user_agent=''):
         '''
         service_instance:
             service client instance.
@@ -63,6 +60,8 @@ class _HTTPClient(object):
             session object created with requests library (or compatible).
         timeout:
             timeout for the http request, in seconds.
+        user_agent:
+            user agent string to set in http header.
         '''
         self.service_instance = service_instance
         self.status = None
@@ -76,33 +75,7 @@ class _HTTPClient(object):
         self.proxy_password = None
         self.request_session = request_session
         self.timeout = timeout
-        if request_session:
-            self.use_httplib = True
-        else:
-            self.use_httplib = self.should_use_httplib()
-
-    def should_use_httplib(self):
-        if sys.platform.lower().startswith('win') and self.cert_file:
-            # On Windows, auto-detect between Windows Store Certificate
-            # (winhttp) and OpenSSL .pem certificate file (httplib).
-            #
-            # We used to only support certificates installed in the Windows
-            # Certificate Store.
-            #   cert_file example: CURRENT_USER\my\CertificateName
-            #
-            # We now support using an OpenSSL .pem certificate file,
-            # for a consistent experience across all platforms.
-            #   cert_file example: account\certificate.pem
-            #
-            # When using OpenSSL .pem certificate file on Windows, make sure
-            # you are on CPython 2.7.4 or later.
-
-            # If it's not an existing file on disk, then treat it as a path in
-            # the Windows Certificate Store, which means we can't use httplib.
-            if not os.path.isfile(self.cert_file):
-                return False
-
-        return True
+        self.user_agent = user_agent
 
     def set_proxy(self, host, port, user, password):
         '''
@@ -139,16 +112,10 @@ class _HTTPClient(object):
         target_port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
 
         if self.request_session:
-            import azure.http.requestsclient
-            connection = azure.http.requestsclient._RequestsConnection(
+            from .requestsclient import _RequestsConnection
+            connection = _RequestsConnection(
                 target_host, protocol, self.request_session, self.timeout)
             #TODO: proxy setup
-        elif not self.use_httplib:
-            import azure.http.winhttp
-            connection = azure.http.winhttp._HTTPConnection(
-                target_host, self.cert_file, protocol, self.timeout)
-            proxy_host = self.proxy_host
-            proxy_port = self.proxy_port
         else:
             if ':' in target_host:
                 target_host, _, target_port = target_host.rpartition(':')
@@ -180,20 +147,19 @@ class _HTTPClient(object):
         return connection
 
     def send_request_headers(self, connection, request_headers):
-        if self.use_httplib:
-            if self.proxy_host:
-                for i in connection._buffer:
-                    if i.startswith(b"Host: "):
-                        connection._buffer.remove(i)
-                connection.putheader(
-                    'Host', "{0}:{1}".format(connection._tunnel_host,
-                                             connection._tunnel_port))
+        if self.proxy_host:
+            for i in connection._buffer:
+                if i.startswith(b"Host: "):
+                    connection._buffer.remove(i)
+            connection.putheader(
+                'Host', "{0}:{1}".format(connection._tunnel_host,
+                                            connection._tunnel_port))
 
         for name, value in request_headers:
             if value:
                 connection.putheader(name, value)
 
-        connection.putheader('User-Agent', _USER_AGENT_STRING)
+        connection.putheader('User-Agent', self.user_agent)
         connection.endheaders()
 
     def send_request_body(self, connection, request_body):
@@ -204,16 +170,38 @@ class _HTTPClient(object):
               not isinstance(connection, HTTPConnection)):
             connection.send(None)
 
+    def _update_request_uri_query(self, request):
+        '''pulls the query string out of the URI and moves it into
+        the query portion of the request object.  If there are already
+        query parameters on the request the parameters in the URI will
+        appear after the existing parameters'''
+
+        if '?' in request.path:
+            request.path, _, query_string = request.path.partition('?')
+            if query_string:
+                query_params = query_string.split('&')
+                for query in query_params:
+                    if '=' in query:
+                        name, _, value = query.partition('=')
+                        request.query.append((name, value))
+
+        request.path = url_quote(request.path, '/()$=\',')
+
+        # add encoded queries to request.path.
+        if request.query:
+            request.path += '?'
+            for name, value in request.query:
+                if value is not None:
+                    request.path += name + '=' + url_quote(value, '/()$=\',') + '&'
+            request.path = request.path[:-1]
+
+        return request.path, request.query
+
     def perform_request(self, request):
         ''' Sends request to cloud service server and return the response. '''
         connection = self.get_connection(request)
         try:
             connection.putrequest(request.method, request.path)
-
-            if not self.use_httplib:
-                if self.proxy_host and self.proxy_user:
-                    connection.set_proxy_credentials(
-                        self.proxy_user, self.proxy_password)
 
             self.send_request_headers(connection, request.headers)
             self.send_request_body(connection, request.body)
@@ -253,7 +241,7 @@ class _HTTPClient(object):
                 new_url = urlparse(dict(headers)['location'])
                 request.host = new_url.hostname
                 request.path = new_url.path
-                request.path, request.query = _update_request_uri_query(request)
+                request.path, request.query = self._update_request_uri_query(request)
                 return self.perform_request(request)
             if self.status >= 300:
                 raise HTTPError(self.status, self.message,

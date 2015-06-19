@@ -143,7 +143,6 @@
     <Compile Include="azure-storage\azure\storage\_http\batchclient.py" />
     <Compile Include="azure-storage\azure\storage\_http\httpclient.py" />
     <Compile Include="azure-storage\azure\storage\_http\requestsclient.py" />
-    <Compile Include="azure-storage\azure\storage\_http\winhttp.py" />
     <Compile Include="azure-storage\azure\storage\_http\__init__.py" />
     <Compile Include="azure-storage\azure\storage\queueservice.py" />
     <Compile Include="azure-storage\azure\storage\sharedaccesssignature.py" />
