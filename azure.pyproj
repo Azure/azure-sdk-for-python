@@ -131,7 +131,6 @@
     <Compile Include="azure-servicebus\azure\servicebus\servicebusservice.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\httpclient.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\requestsclient.py" />
-    <Compile Include="azure-servicebus\azure\servicebus\_http\winhttp.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\__init__.py" />
     <Compile Include="azure-servicebus\azure\servicebus\__init__.py" />
     <Compile Include="azure-servicebus\setup.py" />

@@ -76,33 +76,6 @@ class _HTTPClient(object):
         self.request_session = request_session
         self.timeout = timeout
         self.user_agent = user_agent
-        if request_session:
-            self.use_httplib = True
-        else:
-            self.use_httplib = self.should_use_httplib()
-
-    def should_use_httplib(self):
-        if sys.platform.lower().startswith('win') and self.cert_file:
-            # On Windows, auto-detect between Windows Store Certificate
-            # (winhttp) and OpenSSL .pem certificate file (httplib).
-            #
-            # We used to only support certificates installed in the Windows
-            # Certificate Store.
-            #   cert_file example: CURRENT_USER\my\CertificateName
-            #
-            # We now support using an OpenSSL .pem certificate file,
-            # for a consistent experience across all platforms.
-            #   cert_file example: account\certificate.pem
-            #
-            # When using OpenSSL .pem certificate file on Windows, make sure
-            # you are on CPython 2.7.4 or later.
-
-            # If it's not an existing file on disk, then treat it as a path in
-            # the Windows Certificate Store, which means we can't use httplib.
-            if not os.path.isfile(self.cert_file):
-                return False
-
-        return True
 
     def set_proxy(self, host, port, user, password):
         '''
@@ -143,12 +116,6 @@ class _HTTPClient(object):
             connection = _RequestsConnection(
                 target_host, protocol, self.request_session, self.timeout)
             #TODO: proxy setup
-        elif not self.use_httplib:
-            from .winhttp import _HTTPConnection
-            connection = _HTTPConnection(
-                target_host, self.cert_file, protocol, self.timeout)
-            proxy_host = self.proxy_host
-            proxy_port = self.proxy_port
         else:
             if ':' in target_host:
                 target_host, _, target_port = target_host.rpartition(':')
@@ -180,14 +147,13 @@ class _HTTPClient(object):
         return connection
 
     def send_request_headers(self, connection, request_headers):
-        if self.use_httplib:
-            if self.proxy_host:
-                for i in connection._buffer:
-                    if i.startswith(b"Host: "):
-                        connection._buffer.remove(i)
-                connection.putheader(
-                    'Host', "{0}:{1}".format(connection._tunnel_host,
-                                             connection._tunnel_port))
+        if self.proxy_host:
+            for i in connection._buffer:
+                if i.startswith(b"Host: "):
+                    connection._buffer.remove(i)
+            connection.putheader(
+                'Host', "{0}:{1}".format(connection._tunnel_host,
+                                            connection._tunnel_port))
 
         for name, value in request_headers:
             if value:
@@ -236,11 +202,6 @@ class _HTTPClient(object):
         connection = self.get_connection(request)
         try:
             connection.putrequest(request.method, request.path)
-
-            if not self.use_httplib:
-                if self.proxy_host and self.proxy_user:
-                    connection.set_proxy_credentials(
-                        self.proxy_user, self.proxy_password)
 
             self.send_request_headers(connection, request.headers)
             self.send_request_body(connection, request.body)
