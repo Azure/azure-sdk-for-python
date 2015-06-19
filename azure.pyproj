@@ -135,8 +135,20 @@
     <Compile Include="azure-servicebus\azure\servicebus\__init__.py" />
     <Compile Include="azure-servicebus\setup.py" />
     <Compile Include="azure-servicemanagement-legacy\setup.py" />
+    <Compile Include="azure-storage\azure\storage\auth.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-storage\azure\storage\blobservice.py" />
     <Compile Include="azure-storage\azure\storage\cloudstorageaccount.py" />
+    <Compile Include="azure-storage\azure\storage\connection.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\constants.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_chunking.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-storage\azure\storage\models.py">
       <SubType>Code</SubType>
     </Compile>
@@ -151,6 +163,9 @@
     <Compile Include="azure-storage\azure\storage\sharedaccesssignature.py" />
     <Compile Include="azure-storage\azure\storage\storageclient.py" />
     <Compile Include="azure-storage\azure\storage\tableservice.py" />
+    <Compile Include="azure-storage\azure\storage\_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-storage\azure\storage\__init__.py" />
     <Compile Include="azure-storage\azure\__init__.py" />
     <Compile Include="azure-storage\setup.py" />

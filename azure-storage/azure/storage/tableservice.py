@@ -35,13 +35,19 @@ from ._internal import (
 )
 from ._http import HTTPRequest
 from ._http.batchclient import _BatchClient
-from . import (
+from .models import (
     SignedIdentifiers,
     StorageServiceProperties,
+    TableSharedAccessPermissions,
+)
+from .auth import (
     StorageSASAuthentication,
     StorageTableSharedKeyAuthentication,
-    TableSharedAccessPermissions,
+)
+from .connection import (
     StorageConnectionParameters,
+)
+from ._serialization import (
     _convert_entity_to_xml,
     _convert_etree_element_to_entity,
     _convert_etree_element_to_table,
@@ -49,6 +55,8 @@ from . import (
     _convert_signed_identifiers_to_xml,
     _convert_table_to_xml,
     _update_storage_table_header,
+)
+from .constants import (
     X_MS_VERSION,
 )
 from .sharedaccesssignature import (

@@ -32,13 +32,13 @@ from .._internal import (
     ETree,
     _get_etree_text,
     _etree_entity_feed_namespaces,
-    )
+    METADATA_NS,
+)
+from .._serialization import (
+    _update_storage_table_header,
+)
 from . import HTTPError, HTTPRequest, HTTPResponse
 from .httpclient import _HTTPClient
-from .. import (
-    _update_storage_table_header,
-    METADATA_NS,
-    )
 
 _DATASERVICES_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices'
 

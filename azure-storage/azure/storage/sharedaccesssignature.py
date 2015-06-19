@@ -13,7 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 from ._internal import _sign_string, url_quote
-from . import X_MS_VERSION
+from .constants import X_MS_VERSION
 
 
 class ResourceType(object):

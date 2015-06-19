@@ -27,7 +27,7 @@ from ._internal import (
 )
 from ._http import HTTPError
 from ._http.httpclient import _HTTPClient
-from . import _storage_error_handler
+from ._serialization import _storage_error_handler
 
 #--------------------------------------------------------------------------
 # constants for azure app setting environment variables

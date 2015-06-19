@@ -40,17 +40,25 @@ from ._http import (
     HTTPRequest,
     HTTP_RESPONSE_NO_CONTENT,
 )
-from . import (
+from .models import (
     Queue,
     QueueEnumResults,
     QueueMessagesList,
     SignedIdentifiers,
     StorageServiceProperties,
+)
+from .auth import (
     StorageSASAuthentication,
     StorageSharedKeyAuthentication,
+)
+from .connection import (
     StorageConnectionParameters,
+)
+from ._serialization import (
     _convert_signed_identifiers_to_xml,
     _update_storage_queue_header,
+)
+from .constants import (
     X_MS_VERSION,
 )
 from .sharedaccesssignature import (
