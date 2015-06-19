@@ -54,10 +54,6 @@ from ._common_models import (
     _xml_attribute,
 )
 
-# All of our error messages
-
-METADATA_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
-
 
 _etree_entity_feed_namespaces = {
     'atom': 'http://www.w3.org/2005/Atom',

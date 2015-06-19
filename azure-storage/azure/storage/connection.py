@@ -13,7 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
-from ._internal import (
+from .constants import (
     BLOB_SERVICE_HOST_BASE,
     TABLE_SERVICE_HOST_BASE,
     QUEUE_SERVICE_HOST_BASE,

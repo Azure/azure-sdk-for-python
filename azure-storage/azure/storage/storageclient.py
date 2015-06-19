@@ -18,26 +18,21 @@ import sys
 from azure.common import (
     WindowsAzureError,
 )
-from ._internal import (
+from .constants import (
+    AZURE_STORAGE_ACCOUNT,
+    AZURE_STORAGE_ACCESS_KEY,
     DEFAULT_HTTP_TIMEOUT,
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_KEY,
-    _ERROR_STORAGE_MISSING_INFO,
-)
-from .constants import (
+    EMULATED,
     _USER_AGENT_STRING,
 )
 from ._http import HTTPError
 from ._http.httpclient import _HTTPClient
 from ._serialization import _storage_error_handler
-
-#--------------------------------------------------------------------------
-# constants for azure app setting environment variables
-AZURE_STORAGE_ACCOUNT = 'AZURE_STORAGE_ACCOUNT'
-AZURE_STORAGE_ACCESS_KEY = 'AZURE_STORAGE_ACCESS_KEY'
-EMULATED = 'EMULATED'
-
-#--------------------------------------------------------------------------
+from ._common_error import (
+    _ERROR_STORAGE_MISSING_INFO,
+)
 
 
 class _StorageClient(object):

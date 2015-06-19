@@ -23,30 +23,35 @@ from wsgiref.handlers import format_date_time
 from azure.common import (
     WindowsAzureError,
 )
-from ._internal import (
+from ._common_models import (
     WindowsAzureData,
-    METADATA_NS,
-    xml_escape,
-    _create_entry,
-    _decode_base64_to_text,
-    _decode_base64_to_bytes,
-    _encode_base64,
-    _general_error_handler,
     _list_of,
-    _parse_response_for_dict,
     _unicode_type,
-    _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY,
+)
+from ._common_serialization import (
+    _create_entry,
     _etree_entity_feed_namespaces,
     _make_etree_ns_attr_name,
     _get_etree_tag_name_without_ns,
     _get_etree_text,
+    _parse_response_for_dict,
+    xml_escape,
     ETree,
     _ETreeXmlToObject,
+)
+from ._common_conversion import (
+    _decode_base64_to_text,
+    _decode_base64_to_bytes,
+    _encode_base64,
+)
+from ._common_error import (
+    _general_error_handler,
+    _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY,
+)
+from .constants import (
     BLOB_SERVICE_HOST_BASE,
     TABLE_SERVICE_HOST_BASE,
     QUEUE_SERVICE_HOST_BASE,
-)
-from .constants import (
     X_MS_VERSION,
 )
 from .models import (

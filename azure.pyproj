@@ -152,7 +152,16 @@
     <Compile Include="azure-storage\azure\storage\models.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="azure-storage\azure\storage\_internal.py">
+    <Compile Include="azure-storage\azure\storage\_common_conversion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_common_error.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_common_models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_common_serialization.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="azure-storage\azure\storage\_http\batchclient.py" />

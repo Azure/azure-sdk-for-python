@@ -20,12 +20,12 @@ import unittest
 
 from azure.storage import (
     AccessPolicy,
+    SharedAccessPolicy,
     SignedIdentifier,
     SignedIdentifiers,
+    QueueService,
     QueueSharedAccessPermissions,
 )
-from azure.storage.queueservice import QueueService
-from azure.storage.sharedaccesssignature import SharedAccessPolicy
 from azure.common import WindowsAzureError
 from .util import (
     AzureTestCase,

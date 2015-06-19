@@ -16,6 +16,15 @@ from .constants import (
     __author__,
     __version__,
     X_MS_VERSION,
+    BLOB_SERVICE_HOST_BASE,
+    QUEUE_SERVICE_HOST_BASE,
+    TABLE_SERVICE_HOST_BASE,
+    DEV_BLOB_HOST,
+    DEV_QUEUE_HOST,
+    DEV_TABLE_HOST,
+    DEV_ACCOUNT_NAME,
+    DEV_ACCOUNT_KEY,
+    DEFAULT_HTTP_TIMEOUT,
 )
 
 from .models import (

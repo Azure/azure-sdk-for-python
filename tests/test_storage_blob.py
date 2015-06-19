@@ -28,13 +28,14 @@ from azure.common import (
     WindowsAzureConflictError,
     WindowsAzureMissingResourceError,
 )
-from azure.storage._internal import (
-    BLOB_SERVICE_HOST_BASE,
-)
 from azure.storage import (
+    BLOB_SERVICE_HOST_BASE,
+    DEV_ACCOUNT_NAME,
+    DEV_ACCOUNT_KEY,
     AccessPolicy,
     BlobBlockList,
     BlobResult,
+    BlobService,
     BlobSharedAccessPermissions,
     ContainerSharedAccessPermissions,
     Logging,
@@ -42,19 +43,16 @@ from azure.storage import (
     MinuteMetrics,
     PageList,
     PageRange,
+    SharedAccessPolicy,
     SignedIdentifier,
     SignedIdentifiers,
     StorageServiceProperties,
 )
-from azure.storage.blobservice import BlobService
 from azure.storage.storageclient import (
     AZURE_STORAGE_ACCESS_KEY,
     AZURE_STORAGE_ACCOUNT,
     EMULATED,
-    DEV_ACCOUNT_NAME,
-    DEV_ACCOUNT_KEY,
 )
-from azure.storage.sharedaccesssignature import SharedAccessPolicy
 from .util import (
     AzureTestCase,
     credentials,

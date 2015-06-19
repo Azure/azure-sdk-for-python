@@ -14,14 +14,14 @@
 #--------------------------------------------------------------------------
 import unittest
 
-from azure.storage._internal import (
+from azure.storage import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_KEY,
-)
-from azure.storage import AccessPolicy
-from azure.storage.sharedaccesssignature import (
+    AccessPolicy,
     SharedAccessPolicy,
     SharedAccessSignature,
+)
+from azure.storage.sharedaccesssignature import (
     QueryStringConstants,
     ResourceType,
 )

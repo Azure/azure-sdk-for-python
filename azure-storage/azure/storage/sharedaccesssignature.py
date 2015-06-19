@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from ._internal import _sign_string, url_quote
+from ._common_conversion import _sign_string
+from ._common_serialization import url_quote
 from .constants import X_MS_VERSION
 
 

@@ -32,7 +32,6 @@ from .._internal import (
     ETree,
     _get_etree_text,
     _etree_entity_feed_namespaces,
-    METADATA_NS,
 )
 from .._serialization import (
     _update_storage_table_header,

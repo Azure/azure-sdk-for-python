@@ -32,13 +32,13 @@ from azure.storage import (
     AccessPolicy,
     Entity,
     EntityProperty,
+    SharedAccessPolicy,
     SignedIdentifier,
     SignedIdentifiers,
     StorageServiceProperties,
     TableService,
     TableSharedAccessPermissions,
 )
-from azure.storage.sharedaccesssignature import SharedAccessPolicy
 from .util import (
     AzureTestCase,
     credentials,
