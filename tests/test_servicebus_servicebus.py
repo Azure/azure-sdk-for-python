@@ -45,7 +45,7 @@ from .util import (
 #------------------------------------------------------------------------------
 
 
-class ServiceBusTest(AzureTestCase):
+class ServiceBusServiceBusTest(AzureTestCase):
 
     def setUp(self):
         session = None
@@ -78,7 +78,7 @@ class ServiceBusTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(ServiceBusTest, self).tearDown()
+        return super(ServiceBusServiceBusTest, self).tearDown()
 
     def cleanup(self):
         try:

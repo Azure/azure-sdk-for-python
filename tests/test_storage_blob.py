@@ -28,13 +28,14 @@ from azure.common import (
     WindowsAzureConflictError,
     WindowsAzureMissingResourceError,
 )
-from azure.storage._internal import (
-    BLOB_SERVICE_HOST_BASE,
-)
 from azure.storage import (
+    BLOB_SERVICE_HOST_BASE,
+    DEV_ACCOUNT_NAME,
+    DEV_ACCOUNT_KEY,
     AccessPolicy,
     BlobBlockList,
     BlobResult,
+    BlobService,
     BlobSharedAccessPermissions,
     ContainerSharedAccessPermissions,
     Logging,
@@ -42,19 +43,16 @@ from azure.storage import (
     MinuteMetrics,
     PageList,
     PageRange,
+    SharedAccessPolicy,
     SignedIdentifier,
     SignedIdentifiers,
     StorageServiceProperties,
 )
-from azure.storage.blobservice import BlobService
 from azure.storage.storageclient import (
     AZURE_STORAGE_ACCESS_KEY,
     AZURE_STORAGE_ACCOUNT,
     EMULATED,
-    DEV_ACCOUNT_NAME,
-    DEV_ACCOUNT_KEY,
 )
-from azure.storage.sharedaccesssignature import SharedAccessPolicy
 from .util import (
     AzureTestCase,
     credentials,
@@ -67,7 +65,7 @@ from .util import (
 #------------------------------------------------------------------------------
 
 
-class BlobServiceTest(AzureTestCase):
+class StorageBlobTest(AzureTestCase):
 
     def setUp(self):
         self.bs = create_storage_service(
@@ -103,7 +101,7 @@ class BlobServiceTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(BlobServiceTest, self).tearDown()
+        return super(StorageBlobTest, self).tearDown()
 
     def cleanup(self):
         if self.container_lease_id:
@@ -3079,7 +3077,7 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         with open(file_path, 'wb') as stream:
-            non_seekable_stream = BlobServiceTest.NonSeekableFile(stream)
+            non_seekable_stream = StorageBlobTest.NonSeekableFile(stream)
             resp = self.bs.get_blob_to_file(
                 self.container_name, blob_name, non_seekable_stream,
                 max_connections=1)
@@ -3100,7 +3098,7 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         with open(file_path, 'wb') as stream:
-            non_seekable_stream = BlobServiceTest.NonSeekableFile(stream)
+            non_seekable_stream = StorageBlobTest.NonSeekableFile(stream)
 
             # Parallel downloads require that the file be seekable
             with self.assertRaises(AttributeError):
@@ -3741,7 +3739,7 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         with open(file_path, 'rb') as stream:
-            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+            non_seekable_file = StorageBlobTest.NonSeekableFile(stream)
             resp = self.bs.put_block_blob_from_file(
                 self.container_name, blob_name, non_seekable_file,
                 count=blob_size, max_connections=1)
@@ -3762,7 +3760,7 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         with open(file_path, 'rb') as stream:
-            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+            non_seekable_file = StorageBlobTest.NonSeekableFile(stream)
             resp = self.bs.put_block_blob_from_file(
                 self.container_name, blob_name, non_seekable_file,
                 max_connections=1)
@@ -3783,7 +3781,7 @@ class BlobServiceTest(AzureTestCase):
 
         # Act
         with open(file_path, 'rb') as stream:
-            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+            non_seekable_file = StorageBlobTest.NonSeekableFile(stream)
 
             # Parallel uploads require that the file be seekable
             with self.assertRaises(AttributeError):
@@ -4275,7 +4273,7 @@ class BlobServiceTest(AzureTestCase):
         # Act
         blob_size = len(data)
         with open(file_path, 'rb') as stream:
-            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+            non_seekable_file = StorageBlobTest.NonSeekableFile(stream)
             resp = self.bs.put_page_blob_from_file(
                 self.container_name, blob_name, non_seekable_file, blob_size,
                 max_connections=1)
@@ -4297,7 +4295,7 @@ class BlobServiceTest(AzureTestCase):
         # Act
         blob_size = len(data)
         with open(file_path, 'rb') as stream:
-            non_seekable_file = BlobServiceTest.NonSeekableFile(stream)
+            non_seekable_file = StorageBlobTest.NonSeekableFile(stream)
 
             # Parallel uploads require that the file be seekable
             with self.assertRaises(AttributeError):

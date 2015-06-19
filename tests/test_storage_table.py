@@ -32,13 +32,13 @@ from azure.storage import (
     AccessPolicy,
     Entity,
     EntityProperty,
+    SharedAccessPolicy,
     SignedIdentifier,
     SignedIdentifiers,
     StorageServiceProperties,
     TableService,
     TableSharedAccessPermissions,
 )
-from azure.storage.sharedaccesssignature import SharedAccessPolicy
 from .util import (
     AzureTestCase,
     credentials,
@@ -53,7 +53,7 @@ MAX_RETRY = 60
 #------------------------------------------------------------------------------
 
 
-class TableServiceTest(AzureTestCase):
+class StorageTableTest(AzureTestCase):
 
     def setUp(self):
         self.ts = create_storage_service(
@@ -67,7 +67,7 @@ class TableServiceTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(TableServiceTest, self).tearDown()
+        return super(StorageTableTest, self).tearDown()
 
     def cleanup(self):
         try:

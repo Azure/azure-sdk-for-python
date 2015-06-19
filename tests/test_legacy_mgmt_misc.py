@@ -18,9 +18,7 @@ import time
 import unittest
 from datetime import datetime, timedelta
 
-import azure.servicemanagement._http.httpclient
-
-from azure.servicemanagement._internal import (
+from azure.servicemanagement._common_conversion import (
     _encode_base64,
 )
 from azure.servicemanagement import (
@@ -39,6 +37,7 @@ from azure.servicemanagement import (
     VMImage,
     WindowsConfigurationSet,
     parse_response_for_async_op,
+    get_certificate_from_publish_settings,
 )
 from azure.storage.blobservice import BlobService
 from .util import (
@@ -49,10 +48,6 @@ from .util import (
     set_service_options,
 )
 from time import sleep
-
-# Enable these to view requests and responses
-azure.servicemanagement._http.httpclient.DEBUG_REQUESTS = False
-azure.servicemanagement._http.httpclient.DEBUG_RESPONSES = False
 
 SERVICE_CERT_FORMAT = 'pfx'
 SERVICE_CERT_PASSWORD = 'Python'
@@ -101,7 +96,7 @@ LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
 
 
 #------------------------------------------------------------------------------
-class ServiceManagementServiceTest(AzureTestCase):
+class LegacyMgmtMiscTest(AzureTestCase):
 
     def setUp(self):
         self.sms = create_service_management(ServiceManagementService)
@@ -2694,26 +2689,26 @@ LyO+hc+q0iX3ecCQLUL1Laxj1bEohVvS31uuzQH9yCBwllJBx8EyufK/lDhu72md
 
         # Test Default (picks first subscription)
         outfile = tempfile.mktemp('.pem')
-        id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile)
-        sms = azure.servicemanagement.ServiceManagementService(id, outfile)
+        id = get_certificate_from_publish_settings(infile, outfile)
+        sms = ServiceManagementService(id, outfile)
         self.assertEqual(open(outfile).read(), expected_1)
 
         # Test Select First Subscription
         outfile = tempfile.mktemp('.pem')
-        id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile, 'cafecafe-cafe-1234-1234-1234cafe0001')
-        sms = azure.servicemanagement.ServiceManagementService(id, outfile)
+        id = get_certificate_from_publish_settings(infile, outfile, 'cafecafe-cafe-1234-1234-1234cafe0001')
+        sms = ServiceManagementService(id, outfile)
         self.assertEqual(open(outfile).read(), expected_1)
 
         # Test Select Last Subscription
         outfile = tempfile.mktemp('.pem')
-        id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile, 'cafecafe-cafe-1234-1234-1234cafe0003')
-        sms = azure.servicemanagement.ServiceManagementService(id, outfile)
+        id = get_certificate_from_publish_settings(infile, outfile, 'cafecafe-cafe-1234-1234-1234cafe0003')
+        sms = ServiceManagementService(id, outfile)
         self.assertEqual(open(outfile).read(), expected_3)
 
         # Test Invalid Subscription ID
         outfile = tempfile.mktemp('.pem')
         try:
-            id = azure.servicemanagement.get_certificate_from_publish_settings(infile, outfile, 'DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD')
+            id = get_certificate_from_publish_settings(infile, outfile, 'DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD')
             self.assertFalse(true, "Subscription should not have been found")
         except ValueError as e:
             expected_msg = "The provided subscription_id '{}' was not found in the publish settings file provided at '{}'".format('DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD', infile)

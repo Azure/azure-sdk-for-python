@@ -19,9 +19,6 @@ from azure.common import (
     WindowsAzureError,
     WindowsAzureMissingResourceError,
 )
-from azure.servicemanagement._internal import (
-    Feed,
-)
 from azure.servicemanagement import ServiceBusManagementService
 from .util import (
     AzureTestCase,
@@ -33,7 +30,7 @@ from .util import (
 #------------------------------------------------------------------------------
 
 
-class ServiceBusManagementServiceTest(AzureTestCase):
+class LegacyMgmtServiceBusTest(AzureTestCase):
 
     def setUp(self):
         self.sms = ServiceBusManagementService(

@@ -16,41 +16,54 @@ from azure.common import (
     WindowsAzureConflictError,
     WindowsAzureError,
 )
-from ._internal import (
+from .constants import (
     DEFAULT_HTTP_TIMEOUT,
     DEV_QUEUE_HOST,
     QUEUE_SERVICE_HOST_BASE,
-    xml_escape,
-    _convert_class_to_xml,
+)
+from ._common_error import (
     _dont_fail_not_exist,
     _dont_fail_on_exist,
-    _get_request_body,
-    _int_or_none,
-    _parse_response_for_dict_filter,
-    _parse_response_for_dict_prefix,
-    _str,
-    _str_or_none,
-    _update_request_uri_query_local_storage,
     _validate_not_none,
     _ERROR_CONFLICT,
     _ERROR_STORAGE_MISSING_INFO,
+)
+from ._common_serialization import (
+    xml_escape,
+    _convert_class_to_xml,
+    _get_request_body,
+    _parse_response_for_dict_filter,
+    _parse_response_for_dict_prefix,
+    _update_request_uri_query_local_storage,
     _ETreeXmlToObject,
+)
+from ._common_conversion import (
+    _int_or_none,
+    _str,
+    _str_or_none,
 )
 from ._http import (
     HTTPRequest,
-    HTTP_RESPONSE_NO_CONTENT,
 )
-from . import (
+from .models import (
     Queue,
     QueueEnumResults,
     QueueMessagesList,
     SignedIdentifiers,
     StorageServiceProperties,
+)
+from .auth import (
     StorageSASAuthentication,
     StorageSharedKeyAuthentication,
+)
+from .connection import (
     StorageConnectionParameters,
+)
+from ._serialization import (
     _convert_signed_identifiers_to_xml,
     _update_storage_queue_header,
+)
+from .constants import (
     X_MS_VERSION,
 )
 from .sharedaccesssignature import (
@@ -58,6 +71,8 @@ from .sharedaccesssignature import (
 )
 from .storageclient import _StorageClient
 
+
+_HTTP_RESPONSE_NO_CONTENT = 204
 
 class QueueService(_StorageClient):
 
@@ -235,7 +250,7 @@ class QueueService(_StorageClient):
         if not fail_on_exist:
             try:
                 response = self._perform_request(request)
-                if response.status == HTTP_RESPONSE_NO_CONTENT:
+                if response.status == _HTTP_RESPONSE_NO_CONTENT:
                     return False
                 return True
             except WindowsAzureError as ex:
@@ -243,7 +258,7 @@ class QueueService(_StorageClient):
                 return False
         else:
             response = self._perform_request(request)
-            if response.status == HTTP_RESPONSE_NO_CONTENT:
+            if response.status == _HTTP_RESPONSE_NO_CONTENT:
                 raise WindowsAzureConflictError(
                     _ERROR_CONFLICT.format(response.message))
             return True

@@ -15,57 +15,71 @@
 from azure.common import (
     WindowsAzureError,
 )
-from ._internal import (
-    BLOB_SERVICE_HOST_BASE,
-    DEFAULT_HTTP_TIMEOUT,
-    DEV_BLOB_HOST,
-    _ERROR_VALUE_NEGATIVE,
-    _ERROR_PAGE_BLOB_SIZE_ALIGNMENT,
-    _convert_class_to_xml,
+from ._common_error import (
     _dont_fail_not_exist,
     _dont_fail_on_exist,
+    _validate_not_none,
+    _validate_type_bytes,
+    _ERROR_VALUE_NEGATIVE,
+    _ERROR_PAGE_BLOB_SIZE_ALIGNMENT,
+)
+from ._common_conversion import (
     _encode_base64,
+    _int_or_none,
+    _str,
+    _str_or_none,
+)
+from ._common_serialization import (
+    _convert_class_to_xml,
     _get_request_body,
     _get_request_body_bytes_only,
-    _int_or_none,
     _parse_response_for_dict,
     _parse_response_for_dict_filter,
     _parse_response_for_dict_prefix,
-    _str,
-    _str_or_none,
     _update_request_uri_query_local_storage,
-    _validate_type_bytes,
-    _validate_not_none,
     _ETreeXmlToObject,
-    )
+)
 from ._http import HTTPRequest
-from . import (
+from ._chunking import (
+    _BlockBlobChunkUploader,
+    _PageBlobChunkUploader,
+    _download_blob_chunks,
+    _upload_blob_chunks,
+)
+from .models import (
     Container,
     ContainerEnumResults,
     PageList,
     PageRange,
     SignedIdentifiers,
     StorageServiceProperties,
+)
+from .auth import (
     StorageSASAuthentication,
     StorageSharedKeyAuthentication,
     StorageNoAuthentication,
+)
+from .connection import (
     StorageConnectionParameters,
+)
+from .constants import (
+    BLOB_SERVICE_HOST_BASE,
+    DEFAULT_HTTP_TIMEOUT,
+    DEV_BLOB_HOST,
     X_MS_VERSION,
-    _BlockBlobChunkUploader,
-    _PageBlobChunkUploader,
+)
+from ._serialization import (
     _convert_block_list_to_xml,
     _convert_response_to_block_list,
     _convert_signed_identifiers_to_xml,
     _create_blob_result,
-    _download_blob_chunks,
     _parse_blob_enum_results_list,
     _update_storage_blob_header,
-    _upload_blob_chunks,
-    )
+)
 from .sharedaccesssignature import (
     SharedAccessSignature,
     ResourceType,
-    )
+)
 from .storageclient import _StorageClient
 from os import path
 import sys

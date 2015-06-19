@@ -38,7 +38,7 @@ from .util import (
 #------------------------------------------------------------------------------
 
 
-class EventHubServiceTest(AzureTestCase):
+class ServiceBusEventHubTest(AzureTestCase):
 
     def setUp(self):
         session = None
@@ -59,7 +59,7 @@ class EventHubServiceTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(EventHubServiceTest, self).tearDown()
+        return super(ServiceBusEventHubTest, self).tearDown()
 
     def cleanup(self):
         try:

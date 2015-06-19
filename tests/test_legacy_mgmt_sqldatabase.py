@@ -17,10 +17,6 @@
 
 import unittest
 
-from azure.servicemanagement.sqldatabasemanagementservice import (
-    SqlDatabaseManagementService,
-)
-
 from azure.servicemanagement import (
     EventLog,
     ServerQuota,
@@ -29,6 +25,7 @@ from azure.servicemanagement import (
     ServiceObjective,
     Database,
     FirewallRule,
+    SqlDatabaseManagementService,
 )
 
 from .util import (
@@ -37,7 +34,7 @@ from .util import (
     credentials,
 )
 
-class SqlDatabaseManagementServiceTest(AzureTestCase):
+class LegacyMgmtSqlDatabaseTest(AzureTestCase):
 
     def setUp(self):
         self.sqlms = create_service_management(SqlDatabaseManagementService)
@@ -45,7 +42,7 @@ class SqlDatabaseManagementServiceTest(AzureTestCase):
 
     def tearDown(self):
         self.cleanup()
-        return super(SqlDatabaseManagementServiceTest, self).tearDown()
+        return super(LegacyMgmtSqlDatabaseTest, self).tearDown()
 
     def cleanup(self):
         if self.created_server:

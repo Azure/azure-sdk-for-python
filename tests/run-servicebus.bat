@@ -29,8 +29,7 @@ if "%PYTHONPATH%" == "" (
 )
 
 echo Running tests using %PYTHONDIR%
-%PYTHONDIR%\python.exe -m unittest discover -p "test_eventhubservice.py"
-%PYTHONDIR%\python.exe -m unittest discover -p "test_servicebusservice.py"
+%PYTHONDIR%\python.exe -m unittest discover -p "test_servicebus_*.py"
 
 
 set UNITTEST_EC=%ERRORLEVEL%

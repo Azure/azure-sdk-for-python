@@ -14,24 +14,29 @@
 #--------------------------------------------------------------------------
 import json
 
-from ._internal import (
+from .constants import (
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
-    _str,
-    _validate_not_none
 )
-from . import (
-    _SchedulerManagementXmlSerializer,
-    Resource,
+from .models import (
+    AvailabilityResponse,
     CloudService,
     CloudServices,
-    AvailabilityResponse,
-    JSONEncoder
+    Resource,
+)
+from ._common_conversion import (
+    _str,
+)
+from ._common_error import (
+    _validate_not_none
 )
 from .servicemanagementclient import (
     _ServiceManagementClient,
 )
-
+from ._serialization import (
+    JSONEncoder,
+    _SchedulerManagementXmlSerializer,
+)
 
 class SchedulerManagementService(_ServiceManagementClient):
 

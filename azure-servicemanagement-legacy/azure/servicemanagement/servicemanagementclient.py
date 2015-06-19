@@ -16,32 +16,42 @@ import os
 import sys
 import time
 
-from ._internal import (
+from azure.common import (
     WindowsAzureError,
+    WindowsAzureAsyncOperationError,
+)
+from .constants import (
+    AZURE_MANAGEMENT_CERTFILE,
+    AZURE_MANAGEMENT_SUBSCRIPTIONID,
+    X_MS_VERSION,
+    _USER_AGENT_STRING,
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
-    WindowsAzureAsyncOperationError,
+)
+from .models import (
+    AsynchronousOperationResult,
+    Operation,
+)
+from ._common_conversion import (
+    _str,
+)
+from ._common_error import (
     _ERROR_ASYNC_OP_FAILURE,
     _ERROR_ASYNC_OP_TIMEOUT,
-    _get_request_body,
-    _str,
+    _general_error_handler,
     _validate_not_none,
-    _update_request_uri_query,
-    )
+)
+from ._common_serialization import (
+    _get_request_body,
+)
 from ._http import (
     HTTPError,
     HTTPRequest,
-    )
+)
 from ._http.httpclient import _HTTPClient
-from . import (
-    AZURE_MANAGEMENT_CERTFILE,
-    AZURE_MANAGEMENT_SUBSCRIPTIONID,
-    Operation,
+from ._serialization import (
     _MinidomXmlToObject,
-    _management_error_handler,
-    parse_response_for_async_op,
-    X_MS_VERSION,
-    )
+)
 
 
 class _ServiceManagementClient(object):
@@ -73,7 +83,8 @@ class _ServiceManagementClient(object):
 
         self._httpclient = _HTTPClient(
             service_instance=self, cert_file=self.cert_file,
-            request_session=self.request_session, timeout=timeout)
+            request_session=self.request_session, timeout=timeout,
+            user_agent=_USER_AGENT_STRING)
         self._filter = self._httpclient.perform_request
 
     def with_filter(self, filter):
@@ -131,7 +142,7 @@ class _ServiceManagementClient(object):
         request.method = 'GET'
         request.host = self.host
         request.path = path
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
@@ -155,7 +166,7 @@ class _ServiceManagementClient(object):
         request.host = self.host
         request.path = path
         request.body = _get_request_body(body)
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
@@ -180,7 +191,7 @@ class _ServiceManagementClient(object):
         request.host = self.host
         request.path = path
         request.body = _get_request_body(body)
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
@@ -201,7 +212,7 @@ class _ServiceManagementClient(object):
         request.method = 'DELETE'
         request.host = self.host
         request.path = path
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_management_header(request, x_ms_version)
         response = self._perform_request(request)
 
@@ -371,3 +382,23 @@ class _ServiceManagementClient(object):
         if name is not None:
             path += '/' + _str(name)
         return path
+
+
+def _management_error_handler(http_error):
+    ''' Simple error handler for management service. '''
+    return _general_error_handler(http_error)
+
+
+def parse_response_for_async_op(response):
+    ''' Extracts request id from response header. '''
+
+    if response is None:
+        return None
+
+    result = AsynchronousOperationResult()
+    if response.headers:
+        for name, value in response.headers:
+            if name.lower() == 'x-ms-request-id':
+                result.request_id = value
+
+    return result

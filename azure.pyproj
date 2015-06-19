@@ -18,7 +18,7 @@
     <InterpreterPath />
     <InterpreterArguments />
     <InterpreterId>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</InterpreterId>
-    <InterpreterVersion>2.7</InterpreterVersion>
+    <InterpreterVersion>3.4</InterpreterVersion>
     <SccProjectName>SAK</SccProjectName>
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
@@ -69,44 +69,112 @@
     <Compile Include="azure-mgmt-storage\setup.py" />
     <Compile Include="azure-mgmt-_core\azure\__init__.py" />
     <Compile Include="azure-mgmt-_core\setup.py" />
+    <Compile Include="azure-servicebus\azure\servicebus\constants.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_common_conversion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_common_error.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_common_models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_common_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicebus\azure\servicebus\_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-servicebus\azure\__init__.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\constants.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_common_models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\publishsettings.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\schedulermanagementservice.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\servicebusmanagementservice.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\servicemanagementclient.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\servicemanagementservice.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\sqldatabasemanagementservice.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\websitemanagementservice.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_common_conversion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_common_error.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_common_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\httpclient.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\requestsclient.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\winhttp.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\__init__.py" />
-    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_internal.py" />
+    <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\__init__.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\__init__.py" />
     <Compile Include="azure-mgmt-_core\azure\mgmt\__init__.py" />
     <Compile Include="azure-servicebus\azure\servicebus\servicebusservice.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\httpclient.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\requestsclient.py" />
-    <Compile Include="azure-servicebus\azure\servicebus\_http\winhttp.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\__init__.py" />
-    <Compile Include="azure-servicebus\azure\servicebus\_internal.py" />
     <Compile Include="azure-servicebus\azure\servicebus\__init__.py" />
     <Compile Include="azure-servicebus\setup.py" />
     <Compile Include="azure-servicemanagement-legacy\setup.py" />
+    <Compile Include="azure-storage\azure\storage\auth.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-storage\azure\storage\blobservice.py" />
     <Compile Include="azure-storage\azure\storage\cloudstorageaccount.py" />
-    <Compile Include="azure-storage\azure\storage\_internal.py">
+    <Compile Include="azure-storage\azure\storage\connection.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\constants.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_chunking.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_common_conversion.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_common_error.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_common_models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\_common_serialization.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="azure-storage\azure\storage\_http\batchclient.py" />
     <Compile Include="azure-storage\azure\storage\_http\httpclient.py" />
     <Compile Include="azure-storage\azure\storage\_http\requestsclient.py" />
-    <Compile Include="azure-storage\azure\storage\_http\winhttp.py" />
     <Compile Include="azure-storage\azure\storage\_http\__init__.py" />
     <Compile Include="azure-storage\azure\storage\queueservice.py" />
     <Compile Include="azure-storage\azure\storage\sharedaccesssignature.py" />
     <Compile Include="azure-storage\azure\storage\storageclient.py" />
     <Compile Include="azure-storage\azure\storage\tableservice.py" />
+    <Compile Include="azure-storage\azure\storage\_serialization.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-storage\azure\storage\__init__.py" />
     <Compile Include="azure-storage\azure\__init__.py" />
     <Compile Include="azure-storage\setup.py" />
@@ -127,25 +195,25 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\testutil.py" />
-    <Compile Include="tests\test_affinitygroupmanagementservice.py" />
+    <Compile Include="tests\test_legacy_mgmt_affinitygroup.py" />
     <Compile Include="tests\test_mgmt_compute.py" />
     <Compile Include="tests\test_mgmt_network.py" />
     <Compile Include="tests\test_mgmt_resource.py" />
-    <Compile Include="tests\test_blobservice.py" />
-    <Compile Include="tests\test_cloudstorageaccount.py" />
-    <Compile Include="tests\test_eventhubservice.py" />
-    <Compile Include="tests\test_managementcertificatemanagementservice.py" />
-    <Compile Include="tests\test_queueservice.py" />
-    <Compile Include="tests\test_schedulermanagementservice.py" />
-    <Compile Include="tests\test_servicebusmanagementservice.py" />
-    <Compile Include="tests\test_servicebusservice.py" />
-    <Compile Include="tests\test_servicemanagementservice.py" />
-    <Compile Include="tests\test_sharedaccesssignature.py" />
-    <Compile Include="tests\test_sqldatabasemanagementservice.py" />
-    <Compile Include="tests\test_storagemanagementservice.py" />
+    <Compile Include="tests\test_storage_blob.py" />
+    <Compile Include="tests\test_storage_account.py" />
+    <Compile Include="tests\test_servicebus_eventhub.py" />
+    <Compile Include="tests\test_legacy_mgmt_managementcertificate.py" />
+    <Compile Include="tests\test_storage_queue.py" />
+    <Compile Include="tests\test_legacy_mgmt_scheduler.py" />
+    <Compile Include="tests\test_legacy_mgmt_servicebus.py" />
+    <Compile Include="tests\test_servicebus_servicebus.py" />
+    <Compile Include="tests\test_legacy_mgmt_misc.py" />
+    <Compile Include="tests\test_storage_sas.py" />
+    <Compile Include="tests\test_legacy_mgmt_sqldatabase.py" />
+    <Compile Include="tests\test_legacy_mgmt_storage.py" />
     <Compile Include="tests\test_mgmt_storage.py" />
-    <Compile Include="tests\test_tableservice.py" />
-    <Compile Include="tests\test_websitemanagementservice.py" />
+    <Compile Include="tests\test_storage_table.py" />
+    <Compile Include="tests\test_legacy_mgmt_website.py" />
     <Compile Include="tests\util.py" />
     <Compile Include="tests\__init__.py" />
   </ItemGroup>
@@ -266,6 +334,7 @@
     <Content Include="tests\recordings\test_mgmt_resource.test_resource_groups.yaml" />
     <Content Include="tests\recordings\test_mgmt_storage.test_storage_accounts.yaml" />
     <Content Include="tests\run" />
+    <Content Include="tests\run-legacy-mgmt.bat" />
     <Content Include="tests\run-mgmt.bat" />
     <Content Include="tests\run-servicebus.bat" />
     <Content Include="tests\run-storage.bat" />

@@ -29,7 +29,7 @@ MANAGEMENT_CERT_THUMBRINT = 'BEA4B74BD6B915E9DD6A01FB1B8C3C1740F517F2'
 #------------------------------------------------------------------------------
 
 
-class ManagementCertificateManagementServiceTest(AzureTestCase):
+class LegacyMgmtManagementCertificateTest(AzureTestCase):
 
     def setUp(self):
         self.sms = create_service_management(ServiceManagementService)

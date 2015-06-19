@@ -12,24 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from ._internal import (
+from .constants import (
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
-    _str,
-    )
-from . import (
-    WebSpaces,
-    WebSpace,
-    Sites,
-    Site,
-    MetricResponses,
+)
+from .models import (
     MetricDefinitions,
+    MetricResponses,
     PublishData,
-    _XmlSerializer,
-    )
+    Site,
+    Sites,
+    WebSpace,
+    WebSpaces,
+)
 from .servicemanagementclient import (
     _ServiceManagementClient,
-    )
+)
+from ._common_conversion import (
+    _str,
+)
+from ._serialization import (
+    _XmlSerializer,
+)
 
 class WebsiteManagementService(_ServiceManagementClient):
     ''' Note that this class is a preliminary work on WebSite

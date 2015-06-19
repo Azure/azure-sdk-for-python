@@ -1,14 +1,30 @@
-XXX-XX-XX Version X.Y.Z
+XXXX-XX-XX Version X.Y.Z
 
-The following classes have moved from azure to azure.common:
+The following have moved from 'azure' to 'azure.common':
     WindowsAzureError
     WindowsAzureConflictError
     WindowsAzureMissingResourceError
     WindowsAzureBatchOperationError
     WindowsAzureAsyncOperationError
 
-when we switch to requests for storage:
- - filters
+The following have moved from 'azure' to 'azure.servicemanagement':
+    DEFAULT_HTTP_TIMEOUT
+    MANAGEMENT_HOST
+
+The following have moved from 'azure' to 'azure.servicebus':
+    DEFAULT_HTTP_TIMEOUT
+    SERVICE_BUS_HOST_BASE
+
+The following have moved from 'azure' to 'azure.storage':
+    DEFAULT_HTTP_TIMEOUT
+    BLOB_SERVICE_HOST_BASE
+    QUEUE_SERVICE_HOST_BASE
+    TABLE_SERVICE_HOST_BASE
+    DEV_BLOB_HOST
+    DEV_QUEUE_HOST
+    DEV_TABLE_HOST
+    DEV_ACCOUNT_NAME
+    DEV_ACCOUNT_KEY
 
 2015-06-16 Version 0.11.1
 

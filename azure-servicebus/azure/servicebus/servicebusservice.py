@@ -19,33 +19,41 @@ import time
 from azure.common import (
     WindowsAzureError,
 )
-from ._internal import (
-    _ETreeXmlToObject,
+from .constants import (
+    AZURE_SERVICEBUS_NAMESPACE,
+    AZURE_SERVICEBUS_ACCESS_KEY,
+    AZURE_SERVICEBUS_ISSUER,
     DEFAULT_HTTP_TIMEOUT,
     SERVICE_BUS_HOST_BASE,
+    _USER_AGENT_STRING,
+)
+from ._common_error import (
     _dont_fail_not_exist,
     _dont_fail_on_exist,
+    _validate_not_none,
+)
+from ._common_models import (
+    _unicode_type,
+)
+from ._common_conversion import (
     _encode_base64,
-    _get_request_body,
-    _get_request_body_bytes_only,
     _int_or_none,
     _sign_string,
     _str,
-    _unicode_type,
-    _update_request_uri_query,
+)
+from ._common_serialization import (
+    _ETreeXmlToObject,
+    _get_request_body,
+    _get_request_body_bytes_only,
     url_quote,
     url_unquote,
-    _validate_not_none,
 )
 from ._http import (
     HTTPError,
     HTTPRequest,
 )
 from ._http.httpclient import _HTTPClient
-from . import (
-    AZURE_SERVICEBUS_NAMESPACE,
-    AZURE_SERVICEBUS_ACCESS_KEY,
-    AZURE_SERVICEBUS_ISSUER,
+from ._serialization import (
     _convert_event_hub_to_xml,
     _convert_topic_to_xml,
     _convert_response_to_topic,
@@ -141,6 +149,7 @@ class ServiceBusService(object):
             service_instance=self,
             timeout=timeout,
             request_session=request_session,
+            user_agent=_USER_AGENT_STRING,
         )
         self._filter = self._httpclient.perform_request
 
@@ -225,7 +234,7 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + _str(queue_name) + ''
         request.body = _get_request_body(_convert_queue_to_xml(queue))
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_on_exist:
             try:
@@ -253,7 +262,7 @@ class ServiceBusService(object):
         request.method = 'DELETE'
         request.host = self._get_host()
         request.path = '/' + _str(queue_name) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_not_exist:
             try:
@@ -278,7 +287,7 @@ class ServiceBusService(object):
         request.method = 'GET'
         request.host = self._get_host()
         request.path = '/' + _str(queue_name) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -292,7 +301,7 @@ class ServiceBusService(object):
         request.method = 'GET'
         request.host = self._get_host()
         request.path = '/$Resources/Queues'
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -317,7 +326,7 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + _str(topic_name) + ''
         request.body = _get_request_body(_convert_topic_to_xml(topic))
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_on_exist:
             try:
@@ -345,7 +354,7 @@ class ServiceBusService(object):
         request.method = 'DELETE'
         request.host = self._get_host()
         request.path = '/' + _str(topic_name) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_not_exist:
             try:
@@ -370,7 +379,7 @@ class ServiceBusService(object):
         request.method = 'GET'
         request.host = self._get_host()
         request.path = '/' + _str(topic_name) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -384,7 +393,7 @@ class ServiceBusService(object):
         request.method = 'GET'
         request.host = self._get_host()
         request.path = '/$Resources/Topics'
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -416,7 +425,7 @@ class ServiceBusService(object):
             _str(subscription_name) + \
             '/rules/' + _str(rule_name) + ''
         request.body = _get_request_body(_convert_rule_to_xml(rule))
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_on_exist:
             try:
@@ -453,7 +462,7 @@ class ServiceBusService(object):
         request.path = '/' + _str(topic_name) + '/subscriptions/' + \
             _str(subscription_name) + \
             '/rules/' + _str(rule_name) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_not_exist:
             try:
@@ -486,7 +495,7 @@ class ServiceBusService(object):
         request.path = '/' + _str(topic_name) + '/subscriptions/' + \
             _str(subscription_name) + \
             '/rules/' + _str(rule_name) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -509,7 +518,7 @@ class ServiceBusService(object):
         request.path = '/' + \
             _str(topic_name) + '/subscriptions/' + \
             _str(subscription_name) + '/rules/'
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -538,7 +547,7 @@ class ServiceBusService(object):
             _str(topic_name) + '/subscriptions/' + _str(subscription_name) + ''
         request.body = _get_request_body(
             _convert_subscription_to_xml(subscription))
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_on_exist:
             try:
@@ -571,7 +580,7 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + \
             _str(topic_name) + '/subscriptions/' + _str(subscription_name) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_not_exist:
             try:
@@ -600,7 +609,7 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + \
             _str(topic_name) + '/subscriptions/' + _str(subscription_name) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -618,7 +627,7 @@ class ServiceBusService(object):
         request.method = 'GET'
         request.host = self._get_host()
         request.path = '/' + _str(topic_name) + '/subscriptions/'
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -647,7 +656,7 @@ class ServiceBusService(object):
         request.headers = message.add_headers(request)
         request.body = _get_request_body_bytes_only(
             'message.body', message.body)
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
 
@@ -683,7 +692,7 @@ class ServiceBusService(object):
             _str(topic_name) + '/subscriptions/' + \
             _str(subscription_name) + '/messages/head'
         request.query = [('timeout', _int_or_none(timeout))]
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -719,7 +728,7 @@ class ServiceBusService(object):
                        '/subscriptions/' + str(subscription_name) + \
                        '/messages/' + _str(sequence_number) + \
                        '/' + _str(lock_token) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
 
@@ -747,7 +756,7 @@ class ServiceBusService(object):
                        '/subscriptions/' + _str(subscription_name) + \
                        '/messages/head'
         request.query = [('timeout', _int_or_none(timeout))]
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -783,7 +792,7 @@ class ServiceBusService(object):
                        '/subscriptions/' + _str(subscription_name) + \
                        '/messages/' + _str(sequence_number) + \
                        '/' + _str(lock_token) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
 
@@ -809,7 +818,7 @@ class ServiceBusService(object):
         request.headers = message.add_headers(request)
         request.body = _get_request_body_bytes_only('message.body',
                                                     message.body)
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
 
@@ -836,7 +845,7 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + _str(queue_name) + '/messages/head'
         request.query = [('timeout', _int_or_none(timeout))]
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -867,7 +876,7 @@ class ServiceBusService(object):
         request.path = '/' + _str(queue_name) + \
                        '/messages/' + _str(sequence_number) + \
                        '/' + _str(lock_token) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
 
@@ -889,7 +898,7 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + _str(queue_name) + '/messages/head'
         request.query = [('timeout', _int_or_none(timeout))]
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -920,7 +929,7 @@ class ServiceBusService(object):
         request.path = '/' + _str(queue_name) + \
                        '/messages/' + _str(sequence_number) + \
                        '/' + _str(lock_token) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
 
@@ -987,7 +996,7 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + _str(hub_name) + '?api-version=2014-01'
         request.body = _get_request_body(_convert_event_hub_to_xml(hub))
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_on_exist:
             try:
@@ -1017,7 +1026,7 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + _str(hub_name) + '?api-version=2014-01'
         request.body = _get_request_body(_convert_event_hub_to_xml(hub))
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers.append(('If-Match', '*'))
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
@@ -1039,7 +1048,7 @@ class ServiceBusService(object):
         request.method = 'DELETE'
         request.host = self._get_host()
         request.path = '/' + _str(hub_name) + '?api-version=2014-01'
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         if not fail_not_exist:
             try:
@@ -1064,7 +1073,7 @@ class ServiceBusService(object):
         request.method = 'GET'
         request.host = self._get_host()
         request.path = '/' + _str(hub_name) + ''
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         response = self._perform_request(request)
 
@@ -1087,7 +1096,7 @@ class ServiceBusService(object):
             request.headers.append(
                 ('BrokerProperties', str(broker_properties)))
         request.body = _get_request_body(message)
-        request.path, request.query = _update_request_uri_query(request)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
 

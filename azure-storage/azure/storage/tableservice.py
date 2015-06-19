@@ -15,33 +15,40 @@
 from azure.common import (
     WindowsAzureError,
 )
-from ._internal import (
-    TABLE_SERVICE_HOST_BASE,
-    DEFAULT_HTTP_TIMEOUT,
-    DEV_TABLE_HOST,
-    _convert_class_to_xml,
-    _dont_fail_not_exist,
-    _dont_fail_on_exist,
-    _get_request_body,
+from ._common_conversion import (
     _int_or_none,
-    _parse_response_for_dict,
-    _parse_response_for_dict_filter,
     _str,
     _str_or_none,
-    _update_request_uri_query_local_storage,
+)
+from ._common_error import (
+    _dont_fail_not_exist,
+    _dont_fail_on_exist,
     _validate_not_none,
-    _ETreeXmlToObject,
     _ERROR_STORAGE_MISSING_INFO,
+)
+from ._common_serialization import (
+    _convert_class_to_xml,
+    _get_request_body,
+    _parse_response_for_dict,
+    _parse_response_for_dict_filter,
+    _update_request_uri_query_local_storage,
+    _ETreeXmlToObject,
 )
 from ._http import HTTPRequest
 from ._http.batchclient import _BatchClient
-from . import (
+from .models import (
     SignedIdentifiers,
     StorageServiceProperties,
+    TableSharedAccessPermissions,
+)
+from .auth import (
     StorageSASAuthentication,
     StorageTableSharedKeyAuthentication,
-    TableSharedAccessPermissions,
+)
+from .connection import (
     StorageConnectionParameters,
+)
+from ._serialization import (
     _convert_entity_to_xml,
     _convert_etree_element_to_entity,
     _convert_etree_element_to_table,
@@ -49,6 +56,11 @@ from . import (
     _convert_signed_identifiers_to_xml,
     _convert_table_to_xml,
     _update_storage_table_header,
+)
+from .constants import (
+    TABLE_SERVICE_HOST_BASE,
+    DEFAULT_HTTP_TIMEOUT,
+    DEV_TABLE_HOST,
     X_MS_VERSION,
 )
 from .sharedaccesssignature import (

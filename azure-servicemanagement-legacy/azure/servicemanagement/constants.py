@@ -1,4 +1,4 @@
-﻿#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,25 +13,21 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
-from .constants import (
-    __author__,
-    __version__,
-    DEFAULT_RULE_NAME,
-    AZURE_SERVICEBUS_NAMESPACE,
-    AZURE_SERVICEBUS_ACCESS_KEY,
-    AZURE_SERVICEBUS_ISSUER,
-    SERVICE_BUS_HOST_BASE,
-    DEFAULT_HTTP_TIMEOUT,
-)
+__author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
+__version__ = '0.20.0'
 
-from .models import (
-    Queue,
-    Topic,
-    Subscription,
-    Rule,
-    EventHub,
-    AuthorizationRule,
-    Message,
-)
+_USER_AGENT_STRING = 'pyazure/' + __version__
 
-from .servicebusservice import ServiceBusService
+#-----------------------------------------------------------------------------
+# Constants for Azure app environment settings.
+AZURE_MANAGEMENT_CERTFILE = 'AZURE_MANAGEMENT_CERTFILE'
+AZURE_MANAGEMENT_SUBSCRIPTIONID = 'AZURE_MANAGEMENT_SUBSCRIPTIONID'
+
+# Live ServiceClient URLs
+MANAGEMENT_HOST = 'management.core.windows.net'
+
+# Default timeout for http requests (in secs)
+DEFAULT_HTTP_TIMEOUT = 65
+
+# x-ms-version for service management.
+X_MS_VERSION = '2014-10-01'

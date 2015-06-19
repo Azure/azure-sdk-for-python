@@ -29,7 +29,7 @@ from .util import (
 #------------------------------------------------------------------------------
 
 
-class StorageManagementServiceTest(AzureTestCase):
+class LegacyMgmtStorageTest(AzureTestCase):
 
     def setUp(self):
         self.sms = create_service_management(ServiceManagementService)

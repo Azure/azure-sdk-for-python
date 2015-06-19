@@ -29,7 +29,7 @@ if "%PYTHONPATH%" == "" (
 )
 
 echo Running tests using %PYTHONDIR%
-%PYTHONDIR%\python.exe -m unittest discover -p "test_mgmt_*.py"
+%PYTHONDIR%\python.exe -m unittest discover -p "test_legacy_mgmt_*.py"
 
 
 set UNITTEST_EC=%ERRORLEVEL%
