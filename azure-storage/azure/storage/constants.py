@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,3 +17,5 @@ __version__ = '0.20.0'
 
 # x-ms-version for storage service.
 X_MS_VERSION = '2014-02-14'
+
+_USER_AGENT_STRING = 'pyazure/' + __version__

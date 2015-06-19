@@ -23,6 +23,8 @@ from ._internal import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_KEY,
     _ERROR_STORAGE_MISSING_INFO,
+)
+from .constants import (
     _USER_AGENT_STRING,
 )
 from ._http import HTTPError

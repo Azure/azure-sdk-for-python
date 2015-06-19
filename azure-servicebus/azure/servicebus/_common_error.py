@@ -23,8 +23,6 @@ _ERROR_CONFLICT = 'Conflict ({0})'
 _ERROR_NOT_FOUND = 'Not found ({0})'
 _ERROR_UNKNOWN = 'Unknown error ({0})'
 _ERROR_VALUE_NONE = '{0} should not be None.'
-_ERROR_ASYNC_OP_FAILURE = 'Asynchronous operation did not succeed.'
-_ERROR_ASYNC_OP_TIMEOUT = 'Timed out waiting for async operation to complete.'
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE = \
     'Message is not peek locked and cannot be deleted.'
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK = \

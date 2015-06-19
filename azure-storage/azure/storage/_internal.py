@@ -50,15 +50,10 @@ from azure.common import (
 #--------------------------------------------------------------------------
 # constants
 
-__author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.11.0'
-
 # Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
 QUEUE_SERVICE_HOST_BASE = '.queue.core.windows.net'
 TABLE_SERVICE_HOST_BASE = '.table.core.windows.net'
-SERVICE_BUS_HOST_BASE = '.servicebus.windows.net'
-MANAGEMENT_HOST = 'management.core.windows.net'
 
 # Development ServiceClient URLs
 DEV_BLOB_HOST = '127.0.0.1:10000'
@@ -86,14 +81,9 @@ _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE = \
     'Message is not peek locked and cannot be deleted.'
 _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK = \
     'Message is not peek locked and cannot be unlocked.'
-_ERROR_EVENT_HUB_NOT_FOUND = 'Event hub was not found'
-_ERROR_QUEUE_NOT_FOUND = 'Queue was not found'
-_ERROR_TOPIC_NOT_FOUND = 'Topic was not found'
 _ERROR_CONFLICT = 'Conflict ({0})'
 _ERROR_NOT_FOUND = 'Not found ({0})'
 _ERROR_UNKNOWN = 'Unknown error ({0})'
-_ERROR_SERVICEBUS_MISSING_INFO = \
-    'You need to provide servicebus namespace, access key and Issuer'
 _ERROR_STORAGE_MISSING_INFO = \
     'You need to provide an account name'
 _ERROR_ACCESS_POLICY = \
@@ -112,10 +102,6 @@ _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = \
 _ERROR_PAGE_BLOB_SIZE_ALIGNMENT = \
     'Invalid page blob size: {0}. ' + \
     'The size must be aligned to a 512-byte boundary.'
-_ERROR_ASYNC_OP_FAILURE = 'Asynchronous operation did not succeed.'
-_ERROR_ASYNC_OP_TIMEOUT = 'Timed out waiting for async operation to complete.'
-
-_USER_AGENT_STRING = 'pyazure/' + __version__
 
 METADATA_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
 
@@ -879,79 +865,3 @@ class _ETreeXmlToObject(object):
         value_xml_element_name='Value'
         '''
         raise NotImplementedError('_dict_of not supported')
-
-
-class _XmlWriter(object):
-
-    def __init__(self, indent_string=None):
-        self.file = StringIO()
-        self.indent_level = 0
-        self.indent_string = indent_string
-
-    def _before_element(self, indent_change):
-        if self.indent_string:
-            self.indent_level += indent_change
-            self.file.write(self.indent_string * self.indent_level)
-
-    def _after_element(self, indent_change):
-        if self.indent_string:
-            self.file.write('\n')
-            self.indent_level += indent_change
-
-    def _write_attrs(self, attrs):
-        for attr_name, attr_val, attr_conv in attrs:
-            if attr_val is not None:
-                self.file.write(' ')
-                self.file.write(attr_name)
-                self.file.write('="')
-                val = attr_conv(_str(attr_val)) if attr_conv else _str(attr_val)
-                val = xml_escape(val)
-                self.file.write(val)
-                self.file.write('"')
-
-    def element(self, name, val, val_conv=None, attrs=None):
-        self._before_element(0)
-        self.file.write('<')
-        self.file.write(name)
-        if attrs:
-            self._write_attrs(attrs)
-        self.file.write('>')
-        val = val_conv(_str(val)) if val_conv else _str(val)
-        val = xml_escape(val)
-        self.file.write(val)
-        self.file.write('</')
-        self.file.write(name)
-        self.file.write('>')
-        self._after_element(0)
-
-    def elements(self, name_val_convs):
-        for name, val, conv in name_val_convs:
-            if val is not None:
-                self.element(name, val, conv)
-
-    def preprocessor(self, text):
-        self._before_element(0)
-        self.file.write(text)
-        self._after_element(0)
-
-    def start(self, name, attrs=None):
-        self._before_element(0)
-        self.file.write('<')
-        self.file.write(name)
-        if attrs:
-            self._write_attrs(attrs)
-        self.file.write('>')
-        self._after_element(1)
-
-    def end(self, name):
-        self._before_element(-1)
-        self.file.write('</')
-        self.file.write(name)
-        self.file.write('>')
-        self._after_element(0)
-
-    def xml(self):
-        return self.file.getvalue()
-
-    def close(self):
-        self.file.close()
