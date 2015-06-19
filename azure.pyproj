@@ -137,6 +137,9 @@
     <Compile Include="azure-servicemanagement-legacy\setup.py" />
     <Compile Include="azure-storage\azure\storage\blobservice.py" />
     <Compile Include="azure-storage\azure\storage\cloudstorageaccount.py" />
+    <Compile Include="azure-storage\azure\storage\models.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-storage\azure\storage\_internal.py">
       <SubType>Code</SubType>
     </Compile>
