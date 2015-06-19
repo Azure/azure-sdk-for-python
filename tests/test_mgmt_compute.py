@@ -21,7 +21,7 @@ from collections import namedtuple
 import azure.mgmt.compute
 import azure.mgmt.network
 import azure.mgmt.storage
-from .testutil import HttpStatusCode
+from .testutil import HttpStatusCode, record
 from .mgmtutil import AzureMgmtTestCase
 
 ComputeResourceNames = namedtuple(
@@ -166,354 +166,354 @@ class MgmtComputeTest(AzureMgmtTestCase):
             vhd_name,
         )
 
+    @record
     def test_vms_with_source_image(self):
-        with self.recording():
-            self.create_resource_group()
+        self.create_resource_group()
 
-            names = self.get_resource_names('pyvmsm')
-            os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
+        names = self.get_resource_names('pyvmsm')
+        os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
 
-            self.create_storage_account(names.storage)
-            subnet = self.create_virtual_network(names.network, names.subnet)
-            nic_id = self.create_network_interface(names.nic, subnet)
+        self.create_storage_account(names.storage)
+        subnet = self.create_virtual_network(names.network, names.subnet)
+        nic_id = self.create_network_interface(names.nic, subnet)
 
-            storage_profile = self.get_storage_profile(os_vhd_uri)
-            storage_profile.source_image = azure.mgmt.compute.SourceImageReference(
-                reference_uri=self.windows_img_ref_id,
-            )
+        storage_profile = self.get_storage_profile(os_vhd_uri)
+        storage_profile.source_image = azure.mgmt.compute.SourceImageReference(
+            reference_uri=self.windows_img_ref_id,
+        )
 
-            params_create = azure.mgmt.compute.VirtualMachine(
-                location=self.region,
-                name=names.vm,
-                type='Microsoft.Compute/virtualMachines', # don't know if needed
-                os_profile=self.get_os_profile(),
-                hardware_profile=self.get_hardware_profile(),
-                network_profile=self.get_network_profile(nic_id),
-                storage_profile=storage_profile,
-            )
+        params_create = azure.mgmt.compute.VirtualMachine(
+            location=self.region,
+            name=names.vm,
+            type='Microsoft.Compute/virtualMachines', # don't know if needed
+            os_profile=self.get_os_profile(),
+            hardware_profile=self.get_hardware_profile(),
+            network_profile=self.get_network_profile(nic_id),
+            storage_profile=storage_profile,
+        )
 
-            result_create = self.compute_client.virtual_machines.create_or_update(
-                self.group_name,
-                params_create,
-            )
-            self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        result_create = self.compute_client.virtual_machines.create_or_update(
+            self.group_name,
+            params_create,
+        )
+        self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
+    @record
     def test_vms_with_image_reference(self):
-        with self.recording():
-            self.create_resource_group()
+        self.create_resource_group()
 
-            names = self.get_resource_names('pyvmir')
-            os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
+        names = self.get_resource_names('pyvmir')
+        os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
 
-            self.create_storage_account(names.storage)
-            subnet = self.create_virtual_network(names.network, names.subnet)
-            nic_id = self.create_network_interface(names.nic, subnet)
+        self.create_storage_account(names.storage)
+        subnet = self.create_virtual_network(names.network, names.subnet)
+        nic_id = self.create_network_interface(names.nic, subnet)
 
-            storage_profile = self.get_storage_profile(os_vhd_uri)
-            storage_profile.image_reference = azure.mgmt.compute.ImageReference(
-                publisher='Canonical',
-                offer='UbuntuServer',
-                sku='15.04',
-                version='15.04.201504220',
-            )
+        storage_profile = self.get_storage_profile(os_vhd_uri)
+        storage_profile.image_reference = azure.mgmt.compute.ImageReference(
+            publisher='Canonical',
+            offer='UbuntuServer',
+            sku='15.04',
+            version='15.04.201504220',
+        )
 
-            params_create = azure.mgmt.compute.VirtualMachine(
-                location=self.region,
-                name=names.vm,
-                type='Microsoft.Compute/virtualMachines', # don't know if needed
-                os_profile=self.get_os_profile(),
-                hardware_profile=self.get_hardware_profile(),
-                network_profile=self.get_network_profile(nic_id),
-                storage_profile=storage_profile,
-            )
+        params_create = azure.mgmt.compute.VirtualMachine(
+            location=self.region,
+            name=names.vm,
+            type='Microsoft.Compute/virtualMachines', # don't know if needed
+            os_profile=self.get_os_profile(),
+            hardware_profile=self.get_hardware_profile(),
+            network_profile=self.get_network_profile(nic_id),
+            storage_profile=storage_profile,
+        )
 
-            result_create = self.compute_client.virtual_machines.create_or_update(
-                self.group_name,
-                params_create,
-            )
-            self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        result_create = self.compute_client.virtual_machines.create_or_update(
+            self.group_name,
+            params_create,
+        )
+        self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
+    @record
     def test_vm_extensions(self):
         #WARNING: this test may take 40 mins to complete against live server
-        with self.recording():
-            self.create_resource_group()
+        self.create_resource_group()
 
-            names = self.get_resource_names('pyvmext')
-            os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
-            ext_name = 'extension1'
+        names = self.get_resource_names('pyvmext')
+        os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
+        ext_name = 'extension1'
 
-            self.create_storage_account(names.storage)
-            subnet = self.create_virtual_network(names.network, names.subnet)
-            nic_id = self.create_network_interface(names.nic, subnet)
+        self.create_storage_account(names.storage)
+        subnet = self.create_virtual_network(names.network, names.subnet)
+        nic_id = self.create_network_interface(names.nic, subnet)
 
-            storage_profile = self.get_storage_profile(os_vhd_uri)
-            storage_profile.source_image = azure.mgmt.compute.SourceImageReference(
-                reference_uri=self.windows_img_ref_id,
-            )
+        storage_profile = self.get_storage_profile(os_vhd_uri)
+        storage_profile.source_image = azure.mgmt.compute.SourceImageReference(
+            reference_uri=self.windows_img_ref_id,
+        )
 
-            params_create = azure.mgmt.compute.VirtualMachine(
-                location=self.region,
-                name=names.vm,
-                type='Microsoft.Compute/virtualMachines', # don't know if needed
-                os_profile=self.get_os_profile(),
-                hardware_profile=self.get_hardware_profile(),
-                network_profile=self.get_network_profile(nic_id),
-                storage_profile=storage_profile,
-            )
+        params_create = azure.mgmt.compute.VirtualMachine(
+            location=self.region,
+            name=names.vm,
+            type='Microsoft.Compute/virtualMachines', # don't know if needed
+            os_profile=self.get_os_profile(),
+            hardware_profile=self.get_hardware_profile(),
+            network_profile=self.get_network_profile(nic_id),
+            storage_profile=storage_profile,
+        )
 
-            result_create = self.compute_client.virtual_machines.create_or_update(
-                self.group_name,
-                params_create,
-            )
-            self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        result_create = self.compute_client.virtual_machines.create_or_update(
+            self.group_name,
+            params_create,
+        )
+        self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
-            params_create = azure.mgmt.compute.VirtualMachineExtension(
-                location=self.region,
-                name=ext_name,
-                publisher='Microsoft.Compute',
-                extension_type='VMAccessAgent',
-                type_handler_version='2.0',
-                auto_upgrade_minor_version=True,
-                settings='{}',
-                protected_settings='{}',
-                tags={
-                    'tag1': 'value1',
-                },
-            )
-            result_create = self.compute_client.virtual_machine_extensions.create_or_update(
-                self.group_name,
-                names.vm,
-                params_create,
-            )
-            self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        params_create = azure.mgmt.compute.VirtualMachineExtension(
+            location=self.region,
+            name=ext_name,
+            publisher='Microsoft.Compute',
+            extension_type='VMAccessAgent',
+            type_handler_version='2.0',
+            auto_upgrade_minor_version=True,
+            settings='{}',
+            protected_settings='{}',
+            tags={
+                'tag1': 'value1',
+            },
+        )
+        result_create = self.compute_client.virtual_machine_extensions.create_or_update(
+            self.group_name,
+            names.vm,
+            params_create,
+        )
+        self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
-            result_get = self.compute_client.virtual_machine_extensions.get(
-                self.group_name,
-                names.vm,
-                ext_name,
-            )
-            self.assertEqual(result_get.status_code, HttpStatusCode.OK)
+        result_get = self.compute_client.virtual_machine_extensions.get(
+            self.group_name,
+            names.vm,
+            ext_name,
+        )
+        self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
-            result_get_view = self.compute_client.virtual_machine_extensions.get_with_instance_view(
-                self.group_name,
-                names.vm,
-                ext_name,
-            )
-            self.assertEqual(result_get.status_code, HttpStatusCode.OK)
+        result_get_view = self.compute_client.virtual_machine_extensions.get_with_instance_view(
+            self.group_name,
+            names.vm,
+            ext_name,
+        )
+        self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
-            result_delete = self.compute_client.virtual_machine_extensions.delete(
-                self.group_name,
-                names.vm,
-                ext_name,
-            )
-            self.assertEqual(result_get.status_code, HttpStatusCode.OK)
+        result_delete = self.compute_client.virtual_machine_extensions.delete(
+            self.group_name,
+            names.vm,
+            ext_name,
+        )
+        self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
+    @record
     def test_vm_extension_images(self):
-        with self.recording():
-            result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
-                azure.mgmt.compute.VirtualMachineImageListPublishersParameters(
+        result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
+            azure.mgmt.compute.VirtualMachineImageListPublishersParameters(
+                location=self.region,
+            ),
+        )
+        self.assertEqual(result_list_pub.status_code, HttpStatusCode.OK)
+
+        for res in result_list_pub.resources:
+            publisher_name = res.name
+
+            result_list = self.compute_client.virtual_machine_extension_images.list_types(
+                azure.mgmt.compute.VirtualMachineExtensionImageListTypesParameters(
                     location=self.region,
+                    publisher_name=publisher_name,
                 ),
             )
-            self.assertEqual(result_list_pub.status_code, HttpStatusCode.OK)
+            self.assertEqual(result_list.status_code, HttpStatusCode.OK)
 
-            for res in result_list_pub.resources:
-                publisher_name = res.name
+            for res in result_list.resources:
+                type_name = res.name
 
-                result_list = self.compute_client.virtual_machine_extension_images.list_types(
-                    azure.mgmt.compute.VirtualMachineExtensionImageListTypesParameters(
+                result_list_versions = self.compute_client.virtual_machine_extension_images.list_versions(
+                    azure.mgmt.compute.VirtualMachineExtensionImageListVersionsParameters(
                         location=self.region,
                         publisher_name=publisher_name,
+                        type=type_name,
                     ),
                 )
                 self.assertEqual(result_list.status_code, HttpStatusCode.OK)
 
-                for res in result_list.resources:
-                    type_name = res.name
+                for res in result_list_versions.resources:
+                    version = res.name
 
-                    result_list_versions = self.compute_client.virtual_machine_extension_images.list_versions(
-                        azure.mgmt.compute.VirtualMachineExtensionImageListVersionsParameters(
+                    result_get = self.compute_client.virtual_machine_extension_images.get(
+                        azure.mgmt.compute.VirtualMachineExtensionImageGetParameters(
                             location=self.region,
                             publisher_name=publisher_name,
                             type=type_name,
+                            version=version,
+                        ),
+                    )
+                    self.assertEqual(result_get.status_code, HttpStatusCode.OK)
+
+                    print('PUBLISHER: {0}, TYPE: {1}, VERSION: {2}'.format(
+                        publisher_name,
+                        type_name,
+                        version,
+                    ))
+
+    @record
+    def test_vm_images(self):
+        result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
+            azure.mgmt.compute.VirtualMachineImageListPublishersParameters(
+                location=self.region,
+            ),
+        )
+        self.assertEqual(result_list_pub.status_code, HttpStatusCode.OK)
+        self.assertGreater(len(result_list_pub.resources), 0)
+
+        for res in result_list_pub.resources:
+            publisher_name = res.name
+
+            result_list_offers = self.compute_client.virtual_machine_images.list_offers(
+                azure.mgmt.compute.VirtualMachineImageListOffersParameters(
+                    location=self.region,
+                    publisher_name=publisher_name,
+                ),
+            )
+            self.assertEqual(result_list_offers.status_code, HttpStatusCode.OK)
+
+            for res in result_list_offers.resources:
+                offer = res.name
+
+                result_list_skus = self.compute_client.virtual_machine_images.list_skus(
+                    azure.mgmt.compute.VirtualMachineImageListSkusParameters(
+                        location=self.region,
+                        publisher_name=publisher_name,
+                        offer=offer,
+                    ),
+                )
+                self.assertEqual(result_list_skus.status_code, HttpStatusCode.OK)
+
+                for res in result_list_skus.resources:
+                    skus = res.name
+
+                    result_list = self.compute_client.virtual_machine_images.list(
+                        azure.mgmt.compute.VirtualMachineImageListParameters(
+                            location=self.region,
+                            publisher_name=publisher_name,
+                            offer=offer,
+                            skus=skus,
                         ),
                     )
                     self.assertEqual(result_list.status_code, HttpStatusCode.OK)
 
-                    for res in result_list_versions.resources:
+                    for res in result_list.resources:
                         version = res.name
 
-                        result_get = self.compute_client.virtual_machine_extension_images.get(
-                            azure.mgmt.compute.VirtualMachineExtensionImageGetParameters(
+                        result_get = self.compute_client.virtual_machine_images.get(
+                            azure.mgmt.compute.VirtualMachineImageGetParameters(
                                 location=self.region,
                                 publisher_name=publisher_name,
-                                type=type_name,
+                                offer=offer,
+                                skus=skus,
                                 version=version,
                             ),
                         )
                         self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
-                        print('PUBLISHER: {0}, TYPE: {1}, VERSION: {2}'.format(
+                        print('PUBLISHER: {0}, OFFER: {1}, SKUS: {2}, VERSION: {3}'.format(
                             publisher_name,
-                            type_name,
+                            offer,
+                            skus,
                             version,
                         ))
 
-    def test_vm_images(self):
-        with self.recording():
-            result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
-                azure.mgmt.compute.VirtualMachineImageListPublishersParameters(
-                    location=self.region,
-                ),
-            )
-            self.assertEqual(result_list_pub.status_code, HttpStatusCode.OK)
-            self.assertGreater(len(result_list_pub.resources), 0)
-
-            for res in result_list_pub.resources:
-                publisher_name = res.name
-
-                result_list_offers = self.compute_client.virtual_machine_images.list_offers(
-                    azure.mgmt.compute.VirtualMachineImageListOffersParameters(
-                        location=self.region,
-                        publisher_name=publisher_name,
-                    ),
-                )
-                self.assertEqual(result_list_offers.status_code, HttpStatusCode.OK)
-
-                for res in result_list_offers.resources:
-                    offer = res.name
-
-                    result_list_skus = self.compute_client.virtual_machine_images.list_skus(
-                        azure.mgmt.compute.VirtualMachineImageListSkusParameters(
-                            location=self.region,
-                            publisher_name=publisher_name,
-                            offer=offer,
-                        ),
-                    )
-                    self.assertEqual(result_list_skus.status_code, HttpStatusCode.OK)
-
-                    for res in result_list_skus.resources:
-                        skus = res.name
-
-                        result_list = self.compute_client.virtual_machine_images.list(
-                            azure.mgmt.compute.VirtualMachineImageListParameters(
-                                location=self.region,
-                                publisher_name=publisher_name,
-                                offer=offer,
-                                skus=skus,
-                            ),
-                        )
-                        self.assertEqual(result_list.status_code, HttpStatusCode.OK)
-
-                        for res in result_list.resources:
-                            version = res.name
-
-                            result_get = self.compute_client.virtual_machine_images.get(
-                                azure.mgmt.compute.VirtualMachineImageGetParameters(
-                                   location=self.region,
-                                   publisher_name=publisher_name,
-                                   offer=offer,
-                                   skus=skus,
-                                   version=version,
-                                ),
-                            )
-                            self.assertEqual(result_get.status_code, HttpStatusCode.OK)
-
-                            print('PUBLISHER: {0}, OFFER: {1}, SKUS: {2}, VERSION: {3}'.format(
-                                publisher_name,
-                                offer,
-                                skus,
-                                version,
-                            ))
-
+    @record
     def test_availability_sets(self):
-        with self.recording():
-            self.create_resource_group()
+        self.create_resource_group()
 
-            availability_set_name = self.get_resource_name('pyarmset')
+        availability_set_name = self.get_resource_name('pyarmset')
 
-            params_create = azure.mgmt.compute.AvailabilitySet(
-                location=self.region,
-                name=availability_set_name,
-                platform_fault_domain_count=2,
-                platform_update_domain_count=4,
-                statuses=[
-                    azure.mgmt.compute.InstanceViewStatus(
-                        code='test1',
-                        display_status='test1 display',
-                        message='test1 message',
-                    ),
-                    azure.mgmt.compute.InstanceViewStatus(
-                        code='test2',
-                        display_status='test2 display',
-                        message='test2 message',
-                    ),
-                ],
-                tags={
-                    'tag1': 'value1',
-                },
-            )
-            result_create = self.compute_client.availability_sets.create_or_update(
-                self.group_name,
-                params_create,
-            )
-            self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        params_create = azure.mgmt.compute.AvailabilitySet(
+            location=self.region,
+            name=availability_set_name,
+            platform_fault_domain_count=2,
+            platform_update_domain_count=4,
+            statuses=[
+                azure.mgmt.compute.InstanceViewStatus(
+                    code='test1',
+                    display_status='test1 display',
+                    message='test1 message',
+                ),
+                azure.mgmt.compute.InstanceViewStatus(
+                    code='test2',
+                    display_status='test2 display',
+                    message='test2 message',
+                ),
+            ],
+            tags={
+                'tag1': 'value1',
+            },
+        )
+        result_create = self.compute_client.availability_sets.create_or_update(
+            self.group_name,
+            params_create,
+        )
+        self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
-            result_get = self.compute_client.availability_sets.get(
-                self.group_name,
-                availability_set_name,
-            )
-            self.assertEqual(result_get.status_code, HttpStatusCode.OK)
-            #TODO: error, we get 0 back, not 2
-            #self.assertEqual(
-            #    len(result_get.availability_set.statuses),
-            #    len(params_create.statuses),
-            #)
-            #self.assertEqual(
-            #    result_get.availability_set.statuses[0].code,
-            #    view_status1.code,
-            #)
-            #self.assertEqual(
-            #    result_get.availability_set.statuses[1].code,
-            #    view_status2.code,
-            #)
-            self.assertEqual(
-                result_get.availability_set.platform_fault_domain_count,
-                params_create.platform_fault_domain_count,
-            )
-            self.assertEqual(
-                result_get.availability_set.platform_update_domain_count,
-                params_create.platform_update_domain_count,
-            )
+        result_get = self.compute_client.availability_sets.get(
+            self.group_name,
+            availability_set_name,
+        )
+        self.assertEqual(result_get.status_code, HttpStatusCode.OK)
+        #TODO: error, we get 0 back, not 2
+        #self.assertEqual(
+        #    len(result_get.availability_set.statuses),
+        #    len(params_create.statuses),
+        #)
+        #self.assertEqual(
+        #    result_get.availability_set.statuses[0].code,
+        #    view_status1.code,
+        #)
+        #self.assertEqual(
+        #    result_get.availability_set.statuses[1].code,
+        #    view_status2.code,
+        #)
+        self.assertEqual(
+            result_get.availability_set.platform_fault_domain_count,
+            params_create.platform_fault_domain_count,
+        )
+        self.assertEqual(
+            result_get.availability_set.platform_update_domain_count,
+            params_create.platform_update_domain_count,
+        )
 
-            result_list = self.compute_client.availability_sets.list(
-                self.group_name,
-            )
-            self.assertEqual(result_list.status_code, HttpStatusCode.OK)
+        result_list = self.compute_client.availability_sets.list(
+            self.group_name,
+        )
+        self.assertEqual(result_list.status_code, HttpStatusCode.OK)
 
-            result_list_sizes = self.compute_client.availability_sets.list_available_sizes(
-                self.group_name,
-                availability_set_name,
-            )
-            self.assertEqual(result_list_sizes.status_code, HttpStatusCode.OK)
+        result_list_sizes = self.compute_client.availability_sets.list_available_sizes(
+            self.group_name,
+            availability_set_name,
+        )
+        self.assertEqual(result_list_sizes.status_code, HttpStatusCode.OK)
 
-            result_delete = self.compute_client.availability_sets.delete(
-                self.group_name,
-                availability_set_name,
-            )
-            self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
+        result_delete = self.compute_client.availability_sets.delete(
+            self.group_name,
+            availability_set_name,
+        )
+        self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
 
+    @record
     def test_usage(self):
-        with self.recording():
-            result_list = self.compute_client.usage.list(self.region)
-            self.assertEqual(result_list.status_code, HttpStatusCode.OK)
-            self.assertGreater(len(result_list.usages), 0)
+        result_list = self.compute_client.usage.list(self.region)
+        self.assertEqual(result_list.status_code, HttpStatusCode.OK)
+        self.assertGreater(len(result_list.usages), 0)
 
+    @record
     def test_vm_sizes(self):
-        with self.recording():
-            result_list = self.compute_client.virtual_machine_sizes.list(self.region)
-            self.assertEqual(result_list.status_code, HttpStatusCode.OK)
-            self.assertGreater(len(result_list.virtual_machine_sizes), 0)
+        result_list = self.compute_client.virtual_machine_sizes.list(self.region)
+        self.assertEqual(result_list.status_code, HttpStatusCode.OK)
+        self.assertGreater(len(result_list.virtual_machine_sizes), 0)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
