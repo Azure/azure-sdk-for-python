@@ -43,10 +43,11 @@ except ImportError:
 # constants
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.11.1'
+__version__ = '0.11.2'
 
 # Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
+FILES_SERVICE_HOST_BASE = '.file.core.windows.net'
 QUEUE_SERVICE_HOST_BASE = '.queue.core.windows.net'
 TABLE_SERVICE_HOST_BASE = '.table.core.windows.net'
 SERVICE_BUS_HOST_BASE = '.servicebus.windows.net'
@@ -54,6 +55,7 @@ MANAGEMENT_HOST = 'management.core.windows.net'
 
 # Development ServiceClient URLs
 DEV_BLOB_HOST = '127.0.0.1:10000'
+DEV_FILES_HOST = '127.0.0.1:10003' # guessing on the port value, please advise
 DEV_QUEUE_HOST = '127.0.0.1:10001'
 DEV_TABLE_HOST = '127.0.0.1:10002'
 
