@@ -6,7 +6,7 @@
     <ProjectGuid>{25b2c65a-0553-4452-8907-8b5b17544e68}</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>tests\create_credentials_file.py</StartupFile>
+    <StartupFile>tests\doctest_tableservice.py</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azure</Name>
@@ -182,9 +182,21 @@
     <Compile Include="azure-_core\setup.py" />
     <Compile Include="azure\setup.py" />
     <Compile Include="setup.py" />
-    <Compile Include="tests\mgmtutil.py" />
+    <Compile Include="tests\common_auth.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\common_extendedtestcase.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\legacy_mgmt_settings_real.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\mgmt_settings_fake.py" />
+    <Compile Include="tests\mgmt_settings_real.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\mgmt_testcase.py" />
     <Compile Include="tests\blob_performance.py" />
-    <Compile Include="tests\clean.py" />
     <Compile Include="tests\create_credentials_file.py" />
     <Compile Include="tests\doctest_blobservice.py" />
     <Compile Include="tests\doctest_queueservice.py" />
@@ -194,7 +206,21 @@
     <Compile Include="tests\loader.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="tests\testutil.py" />
+    <Compile Include="tests\legacy_mgmt_testcase.py" />
+    <Compile Include="tests\legacy_mgmt_settings_fake.py" />
+    <Compile Include="tests\storage_testcase.py" />
+    <Compile Include="tests\servicebus_testcase.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\servicebus_settings_real.py" />
+    <Compile Include="tests\servicebus_settings_fake.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\storage_settings_real.py" />
+    <Compile Include="tests\storage_settings_fake.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\common_recordingtestcase.py" />
     <Compile Include="tests\test_legacy_mgmt_affinitygroup.py" />
     <Compile Include="tests\test_mgmt_compute.py" />
     <Compile Include="tests\test_mgmt_network.py" />
@@ -314,25 +340,10 @@
     <Content Include="README.rst" />
     <Content Include="optional-requirements.txt" />
     <Content Include="requirements.txt" />
-    <Content Include="tests\azurecredentials_sample.json" />
     <Content Include="tests\coverage.bat" />
     <Content Include="tests\coverage_x64.bat" />
     <Content Include="tests\data\testhd" />
     <Content Include="tests\data\WindowsAzure1.cspkg" />
-    <Content Include="tests\recordings\test_mgmt_compute.test_availability_sets.yaml" />
-    <Content Include="tests\recordings\test_mgmt_compute.test_usage.yaml" />
-    <Content Include="tests\recordings\test_mgmt_compute.test_vms_with_image_reference.yaml" />
-    <Content Include="tests\recordings\test_mgmt_compute.test_vms_with_source_image.yaml" />
-    <Content Include="tests\recordings\test_mgmt_compute.test_vm_extensions.yaml" />
-    <Content Include="tests\recordings\test_mgmt_compute.test_vm_sizes.yaml" />
-    <Content Include="tests\recordings\test_mgmt_network.test_dns_availability.yaml" />
-    <Content Include="tests\recordings\test_mgmt_network.test_network_security_groups.yaml" />
-    <Content Include="tests\recordings\test_mgmt_network.test_public_ip_addresses.yaml" />
-    <Content Include="tests\recordings\test_mgmt_network.test_subnets.yaml" />
-    <Content Include="tests\recordings\test_mgmt_network.test_virtual_networks.yaml" />
-    <Content Include="tests\recordings\test_mgmt_resource.test_providers.yaml" />
-    <Content Include="tests\recordings\test_mgmt_resource.test_resource_groups.yaml" />
-    <Content Include="tests\recordings\test_mgmt_storage.test_storage_accounts.yaml" />
     <Content Include="tests\run" />
     <Content Include="tests\run-legacy-mgmt.bat" />
     <Content Include="tests\run-mgmt.bat" />

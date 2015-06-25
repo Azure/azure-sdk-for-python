@@ -17,7 +17,7 @@ import datetime
 import sys
 
 from azure.storage import BlobService
-from .util import credentials
+from . import storage_settings_real as settings
 
 # Warning:
 # This script will take a while to run with everything enabled.
@@ -131,11 +131,7 @@ def process(service, blobs, counts, is_page_blob):
 
 
 def main():
-    service = BlobService(
-        credentials.getStorageServicesName(),
-        credentials.getStorageServicesKey(),
-    )
-
+    service = BlobService(settings.STORAGE_ACCOUNT_NAME, settings.STORAGE_ACCOUNT_KEY)
     service.create_container(CONTAINER_NAME)
 
     process(service, LOCAL_BLOCK_BLOB_FILES, CONNECTION_COUNTS, is_page_blob=False)

@@ -1,0 +1,141 @@
+interactions:
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8
+      ZW50cnkgeG1sbnM6ZD0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAwNy8wOC9k
+      YXRhc2VydmljZXMiIHhtbG5zOm09Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYWRvLzIw
+      MDcvMDgvZGF0YXNlcnZpY2VzL21ldGFkYXRhIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAw
+      NS9BdG9tIiA+Cjx0aXRsZSAvPjx1cGRhdGVkPjIwMTUtMDYtMjNUMDA6MTI6MDQuMTEyMjE2KzAw
+      OjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWUgLz48L2F1dGhvcj48aWQgLz4KPGNvbnRlbnQgdHlw
+      ZT0iYXBwbGljYXRpb24veG1sIj4KICAgIDxtOnByb3BlcnRpZXMgeG1sOnNwYWNlPSJwcmVzZXJ2
+      ZSI+PGQ6VGFibGVOYW1lIG06dHlwZT0iRWRtLlN0cmluZyI+dXR0YWJsZWJmZDcxN2Q5PC9kOlRh
+      YmxlTmFtZT48L206cHJvcGVydGllcz48L2NvbnRlbnQ+PC9lbnRyeT4=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['497']
+      Content-Type: [application/atom+xml]
+      DataServiceVersion: [2.0;NetFx]
+      Date: ['Tue, 23 Jun 2015 00:12:04 GMT']
+      MaxDataServiceVersion: [2.0;NetFx]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:12:04 GMT']
+      x-ms-version: ['2014-02-14']
+    method: POST
+    uri: https://storagename.table.core.windows.net/Tables
+  response:
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><entry xml:base="https://storagename.table.core.windows.net/"
+        xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>https://storagename.table.core.windows.net/Tables(''uttablebfd717d9'')</id><category
+        term="storagename.Tables" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"
+        /><link rel="edit" title="Tables" href="Tables(''uttablebfd717d9'')" /><title
+        /><updated>2015-06-23T00:12:04Z</updated><author><name /></author><content
+        type="application/xml"><m:properties><d:TableName>uttablebfd717d9</d:TableName></m:properties></content></entry>'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Tue, 23 Jun 2015 00:12:04 GMT']
+      Location: ['https://storagename.table.core.windows.net/Tables(''uttablebfd717d9'')']
+      Server: [Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      x-ms-request-id: [b56096f2-0002-0077-0949-ad2ffa000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8
+      ZW50cnkgeG1sbnM6ZD0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAwNy8wOC9k
+      YXRhc2VydmljZXMiIHhtbG5zOm09Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYWRvLzIw
+      MDcvMDgvZGF0YXNlcnZpY2VzL21ldGFkYXRhIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAw
+      NS9BdG9tIiA+Cjx0aXRsZSAvPjx1cGRhdGVkPjIwMTUtMDYtMjNUMDA6MTI6MDQuNjc3MTQ4KzAw
+      OjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWUgLz48L2F1dGhvcj48aWQgLz4KPGNvbnRlbnQgdHlw
+      ZT0iYXBwbGljYXRpb24veG1sIj4KICAgIDxtOnByb3BlcnRpZXMgeG1sOnNwYWNlPSJwcmVzZXJ2
+      ZSI+PGQ6b3RoZXIgbTp0eXBlPSJFZG0uSW50NjQiPjIwPC9kOm90aGVyPjxkOlBhcnRpdGlvbktl
+      eSBtOnR5cGU9IkVkbS5TdHJpbmciPk15UGFydGl0aW9uPC9kOlBhcnRpdGlvbktleT48ZDpSb3dL
+      ZXkgbTp0eXBlPSJFZG0uU3RyaW5nIj4xPC9kOlJvd0tleT48ZDpvcHRpb25hbCBtOm51bGw9InRy
+      dWUiIC8+PGQ6c2V4IG06dHlwZT0iRWRtLlN0cmluZyI+bWFsZTwvZDpzZXg+PGQ6bWFycmllZCBt
+      OnR5cGU9IkVkbS5Cb29sZWFuIj50cnVlPC9kOm1hcnJpZWQ+PGQ6ZGVjZWFzZWQgbTp0eXBlPSJF
+      ZG0uQm9vbGVhbiI+ZmFsc2U8L2Q6ZGVjZWFzZWQ+PGQ6Y2xzaWQgbTp0eXBlPSJFZG0uR3VpZCI+
+      YzlkYTY0NTUtMjEzZC00MmM5LTlhNzktM2U5MTQ5YTU3ODMzPC9kOmNsc2lkPjxkOmJpcnRoZGF5
+      IG06dHlwZT0iRWRtLkRhdGVUaW1lIj4xOTcwLTEwLTA0VDAwOjAwOjAwWjwvZDpiaXJ0aGRheT48
+      ZDpsYXJnZSBtOnR5cGU9IkVkbS5JbnQ2NCI+OTMzMzExMTAwMDwvZDpsYXJnZT48ZDpyYXRpbyBt
+      OnR5cGU9IkVkbS5Eb3VibGUiPjMuMTwvZDpyYXRpbz48ZDphZ2UgbTp0eXBlPSJFZG0uSW50MzIi
+      PjM5PC9kOmFnZT48ZDpCaXJ0aGRheSBtOnR5cGU9IkVkbS5EYXRlVGltZSI+MTk3My0xMC0wNFQw
+      MDowMDowMFo8L2Q6QmlydGhkYXk+PC9tOnByb3BlcnRpZXM+PC9jb250ZW50PjwvZW50cnk+
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['1080']
+      Content-Type: [application/atom+xml]
+      DataServiceVersion: [2.0;NetFx]
+      Date: ['Tue, 23 Jun 2015 00:12:04 GMT']
+      MaxDataServiceVersion: [2.0;NetFx]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:12:04 GMT']
+      x-ms-version: ['2014-02-14']
+    method: POST
+    uri: https://storagename.table.core.windows.net/uttablebfd717d9
+  response:
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><entry xml:base="https://storagename.table.core.windows.net/"
+        xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+        xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:etag="W/&quot;datetime''2015-06-23T00%3A12%3A04.8836544Z''&quot;"><id>https://storagename.table.core.windows.net/uttablebfd717d9(PartitionKey=''MyPartition'',RowKey=''1'')</id><category
+        term="storagename.uttablebfd717d9" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"
+        /><link rel="edit" title="uttablebfd717d9" href="uttablebfd717d9(PartitionKey=''MyPartition'',RowKey=''1'')"
+        /><title /><updated>2015-06-23T00:12:04Z</updated><author><name /></author><content
+        type="application/xml"><m:properties><d:PartitionKey>MyPartition</d:PartitionKey><d:RowKey>1</d:RowKey><d:Timestamp
+        m:type="Edm.DateTime">2015-06-23T00:12:04.8836544Z</d:Timestamp><d:other m:type="Edm.Int64">20</d:other><d:sex>male</d:sex><d:married
+        m:type="Edm.Boolean">true</d:married><d:deceased m:type="Edm.Boolean">false</d:deceased><d:clsid
+        m:type="Edm.Guid">c9da6455-213d-42c9-9a79-3e9149a57833</d:clsid><d:birthday
+        m:type="Edm.DateTime">1970-10-04T00:00:00Z</d:birthday><d:large m:type="Edm.Int64">9333111000</d:large><d:ratio
+        m:type="Edm.Double">3.1</d:ratio><d:age m:type="Edm.Int32">39</d:age><d:Birthday
+        m:type="Edm.DateTime">1973-10-04T00:00:00Z</d:Birthday></m:properties></content></entry>'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Tue, 23 Jun 2015 00:12:04 GMT']
+      ETag: [W/"datetime'2015-06-23T00%3A12%3A04.8836544Z'"]
+      Location: ['https://storagename.table.core.windows.net/uttablebfd717d9(PartitionKey=''MyPartition'',RowKey=''1'')']
+      Server: [Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      x-ms-request-id: [b5609702-0002-0077-1649-ad2ffa000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/atom+xml]
+      DataServiceVersion: [2.0;NetFx]
+      Date: ['Tue, 23 Jun 2015 00:12:04 GMT']
+      If-Match: [W/"datetime'2012-06-15T22%3A51%3A44.9662825Z'"]
+      MaxDataServiceVersion: [2.0;NetFx]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:12:04 GMT']
+      x-ms-version: ['2014-02-14']
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/uttablebfd717d9(PartitionKey='MyPartition',RowKey='1')
+  response:
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>UpdateConditionNotSatisfied</code><message
+        xml:lang="en-US">The update condition specified in the request was not satisfied.
+
+        RequestId:b560970b-0002-0077-1f49-ad2ffa000000
+
+        Time:2015-06-23T00:12:04.9266608Z</message></error>'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/xml;charset=utf-8]
+      Date: ['Tue, 23 Jun 2015 00:12:04 GMT']
+      Server: [Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      x-ms-request-id: [b560970b-0002-0077-1f49-ad2ffa000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 412, message: Precondition Failed}
+version: 1

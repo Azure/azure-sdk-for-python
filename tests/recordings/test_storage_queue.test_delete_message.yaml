@@ -1,0 +1,178 @@
+interactions:
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPFF1ZXVlTWVzc2FnZT4gICAg
+      IDxNZXNzYWdlVGV4dD5tZXNzYWdlMTwvTWVzc2FnZVRleHQ+IDwvUXVldWVNZXNzYWdlPg==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['109']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:06:50 GMT']
+      x-ms-version: ['2014-02-14']
+    method: POST
+    uri: https://storagename.queue.core.windows.net/mytestqueue6334e0f9d/messages
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:06:49 GMT']
+      Server: [Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [cb8d7287-0003-0007-7b48-ad5c3e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPFF1ZXVlTWVzc2FnZT4gICAg
+      IDxNZXNzYWdlVGV4dD5tZXNzYWdlMjwvTWVzc2FnZVRleHQ+IDwvUXVldWVNZXNzYWdlPg==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['109']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:06:50 GMT']
+      x-ms-version: ['2014-02-14']
+    method: POST
+    uri: https://storagename.queue.core.windows.net/mytestqueue6334e0f9d/messages
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:06:49 GMT']
+      Server: [Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [cb8d7293-0003-0007-0748-ad5c3e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPFF1ZXVlTWVzc2FnZT4gICAg
+      IDxNZXNzYWdlVGV4dD5tZXNzYWdlMzwvTWVzc2FnZVRleHQ+IDwvUXVldWVNZXNzYWdlPg==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['109']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:06:50 GMT']
+      x-ms-version: ['2014-02-14']
+    method: POST
+    uri: https://storagename.queue.core.windows.net/mytestqueue6334e0f9d/messages
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:06:49 GMT']
+      Server: [Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [cb8d729a-0003-0007-0e48-ad5c3e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPFF1ZXVlTWVzc2FnZT4gICAg
+      IDxNZXNzYWdlVGV4dD5tZXNzYWdlNDwvTWVzc2FnZVRleHQ+IDwvUXVldWVNZXNzYWdlPg==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['109']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:06:50 GMT']
+      x-ms-version: ['2014-02-14']
+    method: POST
+    uri: https://storagename.queue.core.windows.net/mytestqueue6334e0f9d/messages
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:06:49 GMT']
+      Server: [Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [cb8d729e-0003-0007-1248-ad5c3e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:06:50 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.queue.core.windows.net/mytestqueue6334e0f9d/messages
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>7543afba-e614-49c2-94b7-5b54ac748b62</MessageId><InsertionTime>Tue,\
+        \ 23 Jun 2015 00:06:50 GMT</InsertionTime><ExpirationTime>Tue, 30 Jun 2015\
+        \ 00:06:50 GMT</ExpirationTime><DequeueCount>1</DequeueCount><PopReceipt>AgAAAAMAAAAAAAAAKp/ekkit0AE=</PopReceipt><TimeNextVisible>Tue,\
+        \ 23 Jun 2015 00:07:20 GMT</TimeNextVisible><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:06:49 GMT']
+      Server: [Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [cb8d72aa-0003-0007-1d48-ad5c3e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:06:50 GMT']
+      x-ms-version: ['2014-02-14']
+    method: DELETE
+    uri: https://storagename.queue.core.windows.net/mytestqueue6334e0f9d/messages/7543afba-e614-49c2-94b7-5b54ac748b62?popreceipt=AgAAAAMAAAAAAAAAKp/ekkit0AE=
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+      Date: ['Tue, 23 Jun 2015 00:06:49 GMT']
+      Server: [Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [cb8d72b8-0003-0007-2a48-ad5c3e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:06:50 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.queue.core.windows.net/mytestqueue6334e0f9d/messages?numofmessages=32
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>9609c24c-829c-40b6-9136-87d621f3815b</MessageId><InsertionTime>Tue,\
+        \ 23 Jun 2015 00:06:50 GMT</InsertionTime><ExpirationTime>Tue, 30 Jun 2015\
+        \ 00:06:50 GMT</ExpirationTime><DequeueCount>1</DequeueCount><PopReceipt>AgAAAAMAAAAAAAAA6Zfrkkit0AE=</PopReceipt><TimeNextVisible>Tue,\
+        \ 23 Jun 2015 00:07:20 GMT</TimeNextVisible><MessageText>message2</MessageText></QueueMessage><QueueMessage><MessageId>8cb2cbd3-5fdf-4719-81d9-27fbb54f1301</MessageId><InsertionTime>Tue,\
+        \ 23 Jun 2015 00:06:50 GMT</InsertionTime><ExpirationTime>Tue, 30 Jun 2015\
+        \ 00:06:50 GMT</ExpirationTime><DequeueCount>1</DequeueCount><PopReceipt>AgAAAAMAAAAAAAAA6Zfrkkit0AE=</PopReceipt><TimeNextVisible>Tue,\
+        \ 23 Jun 2015 00:07:20 GMT</TimeNextVisible><MessageText>message3</MessageText></QueueMessage><QueueMessage><MessageId>e3652ab3-95c8-4ba3-b6c6-e359a6d2f7e1</MessageId><InsertionTime>Tue,\
+        \ 23 Jun 2015 00:06:50 GMT</InsertionTime><ExpirationTime>Tue, 30 Jun 2015\
+        \ 00:06:50 GMT</ExpirationTime><DequeueCount>1</DequeueCount><PopReceipt>AgAAAAMAAAAAAAAA6Zfrkkit0AE=</PopReceipt><TimeNextVisible>Tue,\
+        \ 23 Jun 2015 00:07:20 GMT</TimeNextVisible><MessageText>message4</MessageText></QueueMessage></QueueMessagesList>"}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:06:49 GMT']
+      Server: [Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [cb8d72c1-0003-0007-3348-ad5c3e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+version: 1

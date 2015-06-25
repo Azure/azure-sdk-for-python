@@ -22,6 +22,10 @@ TestResults/
 # Credentials 
 credentials_real.json
 testsettings_local.json
+servicebus_settings_real.py
+storage_settings_real.py
+legacy_mgmt_settings_real.py
+mgmt_settings_real.py
 
 # User-specific files
 *.suo
@@ -45,3 +49,4 @@ $RECYCLE.BIN/
 src/build
 *.iml
 /doc/_build
+/.vs/config/applicationhost.config

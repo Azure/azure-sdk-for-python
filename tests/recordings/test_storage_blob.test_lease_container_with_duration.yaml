@@ -1,0 +1,107 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:52:06 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer35f2156c?restype=container
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:52:06 GMT']
+      ETag: ['"0x8D27B65F6913D9F"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:52:07 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [c4fe2c43-0001-0085-5e4e-adfd6e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:52:07 GMT']
+      x-ms-lease-action: [acquire]
+      x-ms-lease-duration: ['15']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer35f2156c?restype=container&comp=lease
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:52:06 GMT']
+      ETag: ['"0x8D27B65F6913D9F"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:52:07 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-lease-id: [0a62eb26-c927-4ee5-af4d-19b4dd71ae4a]
+      x-ms-request-id: [c4fe2c56-0001-0085-6e4e-adfd6e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:52:07 GMT']
+      x-ms-lease-action: [acquire]
+      x-ms-lease-duration: ['60']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer35f2156c?restype=container&comp=lease
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There\
+        \ is already a lease present.\nRequestId:c4fe2c64-0001-0085-7c4e-adfd6e000000\n\
+        Time:2015-06-23T00:52:07.2398350Z</Message></Error>"}
+    headers:
+      Content-Length: ['221']
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:52:06 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [c4fe2c64-0001-0085-7c4e-adfd6e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 409, message: There is already a lease present.}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:52:22 GMT']
+      x-ms-lease-action: [acquire]
+      x-ms-lease-duration: ['60']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer35f2156c?restype=container&comp=lease
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:52:21 GMT']
+      ETag: ['"0x8D27B65F6913D9F"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:52:07 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-lease-id: [6bc3c67a-642c-4730-a93b-fea77157c9f3]
+      x-ms-request-id: [c4fe3f27-0001-0085-4e4e-adfd6e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+version: 1

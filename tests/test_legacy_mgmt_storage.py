@@ -19,28 +19,30 @@ import unittest
 
 from azure.common import WindowsAzureError
 from azure.servicemanagement import ServiceManagementService
-from .util import (
-    AzureTestCase,
-    create_service_management,
-    credentials,
-    getUniqueName,
+from .common_recordingtestcase import (
+    TestMode,
+    record,
 )
+from .legacy_mgmt_testcase import LegacyMgmtTestCase
 
-#------------------------------------------------------------------------------
 
-
-class LegacyMgmtStorageTest(AzureTestCase):
+class LegacyMgmtStorageTest(LegacyMgmtTestCase):
 
     def setUp(self):
-        self.sms = create_service_management(ServiceManagementService)
+        super(LegacyMgmtStorageTest, self).setUp()
 
-        self.storage_account_name = getUniqueName('utstor')
+        self.sms = self.create_service_management(ServiceManagementService)
+
+        self.storage_account_name = self.get_resource_name('utstor')
 
     def tearDown(self):
-        try:
-            self.sms.delete_storage_account(self.storage_account_name)
-        except:
-            pass
+        if not self.is_playback():
+            try:
+                self.sms.delete_storage_account(self.storage_account_name)
+            except:
+                pass
+
+        return super(LegacyMgmtStorageTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _create_storage_account(self, name):
@@ -62,6 +64,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
             return False
 
     #--Test cases for storage accounts -----------------------------------
+    @record
     def test_list_storage_accounts(self):
         # Arrange
         self._create_storage_account(self.storage_account_name)
@@ -105,6 +108,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
         self.assertIsNotNone(storage.extended_properties)
         self.assertTrue(len(storage.extended_properties) > 0)
 
+    @record
     def test_get_storage_account_properties(self):
         # Arrange
         self._create_storage_account(self.storage_account_name)
@@ -144,6 +148,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
         self.assertIsNotNone(result.capabilities)
         self.assertTrue(len(result.capabilities) > 0)
 
+    @record
     def test_get_storage_account_keys(self):
         # Arrange
         self._create_storage_account(self.storage_account_name)
@@ -159,6 +164,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
         self.assertIsNotNone(result.storage_service_keys.secondary)
         self.assertIsNone(result.storage_service_properties)
 
+    @record
     def test_regenerate_storage_account_keys(self):
         # Arrange
         self._create_storage_account(self.storage_account_name)
@@ -180,6 +186,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
         self.assertNotEqual(result.storage_service_keys.secondary,
                             previous.storage_service_keys.secondary)
 
+    @record
     def test_create_storage_account(self):
         # Arrange
         description = self.storage_account_name + 'description'
@@ -200,6 +207,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
         self.assertTrue(
             self._storage_account_exists(self.storage_account_name))
 
+    @record
     def test_update_storage_account(self):
         # Arrange
         self._create_storage_account(self.storage_account_name)
@@ -225,6 +233,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
         self.assertEqual(props.extended_properties['ext2'], '53')
         self.assertEqual(props.extended_properties['ext3'], 'brandnew')
 
+    @record
     def test_delete_storage_account(self):
         # Arrange
         self._create_storage_account(self.storage_account_name)
@@ -237,6 +246,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
         self.assertFalse(
             self._storage_account_exists(self.storage_account_name))
 
+    @record
     def test_check_storage_account_name_availability_not_available(self):
         # Arrange
         self._create_storage_account(self.storage_account_name)
@@ -249,6 +259,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertFalse(result.result)
 
+    @record
     def test_check_storage_account_name_availability_available(self):
         # Arrange
 
@@ -260,6 +271,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertTrue(result.result)
 
+    @record
     def test_unicode_create_storage_account_unicode_name(self):
         # Arrange
         self.storage_account_name = self.storage_account_name + u'啊齄丂狛狜'
@@ -281,6 +293,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_unicode_create_storage_account_unicode_description_label(self):
         # Arrange
         description = u'啊齄丂狛狜'
@@ -304,6 +317,7 @@ class LegacyMgmtStorageTest(AzureTestCase):
             result.storage_service_properties.description, description)
         self.assertEqual(result.storage_service_properties.label, label)
 
+    @record
     def test_unicode_create_storage_account_unicode_property_value(self):
         # Arrange
         description = 'description'

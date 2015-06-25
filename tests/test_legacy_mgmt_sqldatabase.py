@@ -27,29 +27,31 @@ from azure.servicemanagement import (
     FirewallRule,
     SqlDatabaseManagementService,
 )
-
-from .util import (
-    AzureTestCase,
-    create_service_management,
-    credentials,
+from .common_recordingtestcase import (
+    TestMode,
+    record,
 )
+from .legacy_mgmt_testcase import LegacyMgmtTestCase
 
-class LegacyMgmtSqlDatabaseTest(AzureTestCase):
+
+class LegacyMgmtSqlDatabaseTest(LegacyMgmtTestCase):
 
     def setUp(self):
-        self.sqlms = create_service_management(SqlDatabaseManagementService)
+        super(LegacyMgmtSqlDatabaseTest, self).setUp()
+
+        self.sqlms = self.create_service_management(SqlDatabaseManagementService)
+
         self.created_server = None
 
     def tearDown(self):
-        self.cleanup()
-        return super(LegacyMgmtSqlDatabaseTest, self).tearDown()
+        if not self.is_playback():
+            if self.created_server:
+                try:
+                    self.sqlms.delete_server(self.created_server)
+                except:
+                    pass
 
-    def cleanup(self):
-        if self.created_server:
-            try:
-                self.sqlms.delete_server(self.created_server)
-            except:
-                pass
+        return super(LegacyMgmtSqlDatabaseTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _create_server(self):
@@ -70,6 +72,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         )
 
     #--Operations for servers -------------------------------------------------
+    @record
     def test_create_server(self):
         # Arrange
 
@@ -82,6 +85,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         self.assertGreater(len(result.fully_qualified_domain_name), 0)
         self.assertTrue(self._server_exists(self.created_server))
 
+    @record
     def test_set_server_admin_password(self):
         # Arrange
         self._create_server()
@@ -92,6 +96,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         # Assert
         self.assertIsNone(result)
 
+    @record
     def test_delete_server(self):
         # Arrange
         self._create_server()
@@ -103,6 +108,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         self.assertIsNone(result)
         self.assertFalse(self._server_exists(self.created_server))
 
+    @record
     def test_list_servers(self):
         # Arrange
         self._create_server()
@@ -125,6 +131,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         self.assertTrue(match.fully_qualified_domain_name.startswith(self.created_server))
         self.assertGreater(len(match.version), 0)
 
+    @record
     def test_list_quotas(self):
         # Arrange
         self._create_server()
@@ -142,6 +149,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
             self.assertGreater(quota.value, 0)
 
     #--Operations for firewall rules ------------------------------------------
+    @record
     def test_create_firewall_rule(self):
         # Arrange
         self._create_server()
@@ -155,6 +163,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         # Assert
         self.assertIsNone(result)
 
+    @record
     def test_delete_firewall_rule(self):
         # Arrange
         self._create_server()
@@ -170,6 +179,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         # Assert
         self.assertIsNone(result)
 
+    @record
     def test_update_firewall_rule(self):
         # Arrange
         self._create_server()
@@ -187,6 +197,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         # Assert
         self.assertIsNone(result)
 
+    @record
     def test_list_firewall_rules(self):
         # Arrange
         self._create_server()
@@ -205,6 +216,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         for rule in result:
             self.assertIsInstance(rule, FirewallRule)
 
+    @record
     def test_list_service_level_objectives(self):
         # Arrange
         self._create_server()
@@ -219,6 +231,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         for rule in result:
             self.assertIsInstance(rule, ServiceObjective)
 
+    @record
     def test_create_database(self):
         # Arrange
         self._create_server()
@@ -234,6 +247,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         # Assert
         self.assertIsNone(result)
 
+    @record
     def test_delete_database(self):
         # Arrange
         self._create_server()
@@ -247,6 +261,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         match = [d for d in result if d.name == 'temp']
         self.assertEqual(len(match), 0)
 
+    @record
     def test_update_database(self):
         # Arrange
         self._create_server()
@@ -262,6 +277,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         match = [d for d in result if d.name == 'newname']
         self.assertEqual(len(match), 1)
 
+    @record
     def test_list_databases(self):
         # Arrange
         self._create_server()
@@ -284,3 +300,7 @@ class LegacyMgmtSqlDatabaseTest(AzureTestCase):
         self.assertGreater(match.id, 0)
         self.assertGreater(len(match.edition), 0)
         self.assertGreater(len(match.collation_name), 0)
+
+#------------------------------------------------------------------------------
+if __name__ == '__main__':
+    unittest.main()

@@ -1,0 +1,147 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:57:14 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerbf2817de?restype=container
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:57:14 GMT']
+      ETag: ['"0x8D27B66AE1E23BC"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:57:15 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [b9950746-0001-0022-244f-adc48d000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-blob-content-length: ['1024']
+      x-ms-blob-type: [PageBlob]
+      x-ms-date: ['Tue, 23 Jun 2015 00:57:15 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerbf2817de/blob1
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:57:14 GMT']
+      ETag: ['"0x8D27B66ADF2CACC"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:57:14 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [b9950756-0001-0022-334f-adc48d000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      7P7+tERrjcVzDVCWtA8MVld1+X2TrrlLE6vu+d8EuDVO7UIzdUVN+PsBKBj3GSEG+mIM+qdBVEFu
+      i5ZGZtoMTxSXe1J7nesPyKf5F9T2edT19jmyx0viITXuWUaojZSLQEvpj8xE7vyNOC6WRI5Bb62P
+      g219XgDOcCOzwV07niZfRkPUGgJHa4dpLDWH33z+e2agXptLGGIVnIpirElKhuGYfbs3dTcymJAh
+      8tO8ey87y1NKup3Ip47Kbs4iCtlm6E7BN5QPMsDdRZaCuaz21Z05OSM0nl1UgN6AgRRTR/9lbnMz
+      ABb4RXEHrcPg1dQgqVN5RpsB4aUr5Lk1Ah+qqM8+EaBiP7Q0QHyKsIouYfrXv5RZ+9f4oMXgT8aj
+      QKZqS5MteuEgu1x8fN9hyOzXwGo0m0NKVJEVP9/dv3fZBeeq09J9eMr6T4YOy8+L5eLub2/cFesI
+      WkGzrzhxhVnw/j810oPI1d4swCteImsRA5MVvyVv/voSajCi8sZeWbLRt5wqc5luC9rKhs+JFbSS
+      wyN5DfswL33LtxuV3YqWoVa5/M49hLrOpod1ibOc6ZHO1fNEojSIsevC9tis6bzivtaTw7Pa8nDw
+      TVexfCKtTcpKtroNpMjWlbQAQCoHTOqpU0zSuLHeKwRC1lZbNHGvERfavkSaO1/a4PSFyimKDPYE
+      DpjqJRj3njVAm21G37aVm9AlKWulxFHGTkMEawN5MsFpaUCWk3Kcsy1dFWMI4G6FTjdf16Nrvu+O
+      fiNqdZH7qVgUy91mn1Ak0IiO/2OwuiHJTNQq8H85G5J5x4De4TzR8t0u6qZZLvTLTJCkalL6RMSq
+      ZpLpBW5puGNiTvnvOKJ2RwJQisyheWq0zKNKWeVyuEvjCi1CdW/s4ZA4gxQcHMzpo/Olz/oDuxR/
+      Jk+9bw2Z/INZmERR6gMnWMVXe2DYmrNZpcLStF0cgARRHEx+xVJscs5fIlDZly1gSfJx0qJfgRHa
+      owNymXAvUQ4m/YPsfX/VbTJApcg55eXQOgGxBDaazYCutBofiTA/c/xTZRyqWdcvtZBXSYjkdOLo
+      CpUZCZ/kBk34hAqo12gH6e9IK6n9IKlgGLz0EM2mhz+1u4YGdwo6dDBlK1XIMRqvXQu+51wfPOAr
+      Ol2NbE70sBpImfPOMcXGMNdC0kUzphXmVo8RB/te7jT7Z3ZLxFIVMO+0PzPd4kSs3SEeFIuBE4o4
+      vffsoTvkbakv3VVRIuA5J5W6hIF2gMqhdmy4l0WTcr8YAv9egprYkc90UoxsmipI5XtNPN+tGhYm
+      Ev8fQ5Yg9Qpl7ch7xBqVhdsrmd0yBV1sXzf6nUb0aEcrYEF+o/Cdcr9+0d2Urc+wV/Q0WAkHNQ==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['1024']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:57:15 GMT']
+      x-ms-page-write: [update]
+      x-ms-range: [bytes=0-1023]
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerbf2817de/blob1?comp=page
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [Qlj4b5NfRdIp5HifmrSh/w==]
+      Date: ['Tue, 23 Jun 2015 00:57:14 GMT']
+      ETag: ['"0x8D27B66ADFA44FD"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:57:14 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-blob-sequence-number: ['0']
+      x-ms-request-id: [b995075e-0001-0022-3b4f-adc48d000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:57:15 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainerbf2817de/blob1
+  response:
+    body:
+      string: !!binary |
+        7P7+tERrjcVzDVCWtA8MVld1+X2TrrlLE6vu+d8EuDVO7UIzdUVN+PsBKBj3GSEG+mIM+qdBVEFu
+        i5ZGZtoMTxSXe1J7nesPyKf5F9T2edT19jmyx0viITXuWUaojZSLQEvpj8xE7vyNOC6WRI5Bb62P
+        g219XgDOcCOzwV07niZfRkPUGgJHa4dpLDWH33z+e2agXptLGGIVnIpirElKhuGYfbs3dTcymJAh
+        8tO8ey87y1NKup3Ip47Kbs4iCtlm6E7BN5QPMsDdRZaCuaz21Z05OSM0nl1UgN6AgRRTR/9lbnMz
+        ABb4RXEHrcPg1dQgqVN5RpsB4aUr5Lk1Ah+qqM8+EaBiP7Q0QHyKsIouYfrXv5RZ+9f4oMXgT8aj
+        QKZqS5MteuEgu1x8fN9hyOzXwGo0m0NKVJEVP9/dv3fZBeeq09J9eMr6T4YOy8+L5eLub2/cFesI
+        WkGzrzhxhVnw/j810oPI1d4swCteImsRA5MVvyVv/voSajCi8sZeWbLRt5wqc5luC9rKhs+JFbSS
+        wyN5DfswL33LtxuV3YqWoVa5/M49hLrOpod1ibOc6ZHO1fNEojSIsevC9tis6bzivtaTw7Pa8nDw
+        TVexfCKtTcpKtroNpMjWlbQAQCoHTOqpU0zSuLHeKwRC1lZbNHGvERfavkSaO1/a4PSFyimKDPYE
+        DpjqJRj3njVAm21G37aVm9AlKWulxFHGTkMEawN5MsFpaUCWk3Kcsy1dFWMI4G6FTjdf16Nrvu+O
+        fiNqdZH7qVgUy91mn1Ak0IiO/2OwuiHJTNQq8H85G5J5x4De4TzR8t0u6qZZLvTLTJCkalL6RMSq
+        ZpLpBW5puGNiTvnvOKJ2RwJQisyheWq0zKNKWeVyuEvjCi1CdW/s4ZA4gxQcHMzpo/Olz/oDuxR/
+        Jk+9bw2Z/INZmERR6gMnWMVXe2DYmrNZpcLStF0cgARRHEx+xVJscs5fIlDZly1gSfJx0qJfgRHa
+        owNymXAvUQ4m/YPsfX/VbTJApcg55eXQOgGxBDaazYCutBofiTA/c/xTZRyqWdcvtZBXSYjkdOLo
+        CpUZCZ/kBk34hAqo12gH6e9IK6n9IKlgGLz0EM2mhz+1u4YGdwo6dDBlK1XIMRqvXQu+51wfPOAr
+        Ol2NbE70sBpImfPOMcXGMNdC0kUzphXmVo8RB/te7jT7Z3ZLxFIVMO+0PzPd4kSs3SEeFIuBE4o4
+        vffsoTvkbakv3VVRIuA5J5W6hIF2gMqhdmy4l0WTcr8YAv9egprYkc90UoxsmipI5XtNPN+tGhYm
+        Ev8fQ5Yg9Qpl7ch7xBqVhdsrmd0yBV1sXzf6nUb0aEcrYEF+o/Cdcr9+0d2Urc+wV/Q0WAkHNQ==
+    headers:
+      Accept-Ranges: [bytes]
+      Content-Length: ['1024']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      Date: ['Tue, 23 Jun 2015 00:57:14 GMT']
+      ETag: ['"0x8D27B66ADFA44FD"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:57:14 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Vary: [Origin]
+      x-ms-blob-sequence-number: ['0']
+      x-ms-blob-type: [PageBlob]
+      x-ms-lease-state: [available]
+      x-ms-lease-status: [unlocked]
+      x-ms-request-id: [b9950768-0001-0022-454f-adc48d000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+version: 1

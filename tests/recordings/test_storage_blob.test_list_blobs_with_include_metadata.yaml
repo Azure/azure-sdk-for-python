@@ -1,0 +1,141 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:09 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer79eb168b?restype=container
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:50:09 GMT']
+      ETag: ['"0x8D27B65B0C69ED1"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:50:10 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [31a3fc9d-0001-0011-744e-ad9da0000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      aGVsbG8gd29ybGQ=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['11']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:10 GMT']
+      x-ms-meta-name: [bob]
+      x-ms-meta-number: ['1']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer79eb168b/blob1
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [XrY7u+Ae7tCTyyK7j1rNww==]
+      Date: ['Tue, 23 Jun 2015 00:50:09 GMT']
+      ETag: ['"0x8D27B65B0A200CA"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:50:09 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [31a3fcc1-0001-0011-164e-ad9da0000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      aGVsbG8gd29ybGQ=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['11']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:10 GMT']
+      x-ms-meta-name: [car]
+      x-ms-meta-number: ['2']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer79eb168b/blob2
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [XrY7u+Ae7tCTyyK7j1rNww==]
+      Date: ['Tue, 23 Jun 2015 00:50:09 GMT']
+      ETag: ['"0x8D27B65B0A8B7DE"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:50:09 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [31a3fcd9-0001-0011-2a4e-ad9da0000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:10 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer79eb168b/blob1?comp=snapshot
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:50:09 GMT']
+      ETag: ['"0x8D27B65B0A200CA"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:50:09 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [31a3fcf9-0001-0011-4a4e-ad9da0000000]
+      x-ms-snapshot: ['2015-06-23T00:50:09.8901730Z']
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:10 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer79eb168b?include=metadata&restype=container&comp=list
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
+        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"\
+        utcontainer79eb168b\"><Blobs><Blob><Name>blob1</Name><Properties><Last-Modified>Tue,\
+        \ 23 Jun 2015 00:50:09 GMT</Last-Modified><Etag>0x8D27B65B0A200CA</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream\
+        \ Charset=UTF-8</Content-Type><Content-Encoding /><Content-Language /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control\
+        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState></Properties><Metadata><number>1</number><name>bob</name></Metadata></Blob><Blob><Name>blob2</Name><Properties><Last-Modified>Tue,\
+        \ 23 Jun 2015 00:50:09 GMT</Last-Modified><Etag>0x8D27B65B0A8B7DE</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream\
+        \ Charset=UTF-8</Content-Type><Content-Encoding /><Content-Language /><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control\
+        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState></Properties><Metadata><number>2</number><name>car</name></Metadata></Blob></Blobs><NextMarker\
+        \ /></EnumerationResults>"}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:50:09 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      Vary: [Origin]
+      x-ms-request-id: [31a3fd16-0001-0011-644e-ad9da0000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+version: 1

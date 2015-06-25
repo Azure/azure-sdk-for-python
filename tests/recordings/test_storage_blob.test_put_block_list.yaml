@@ -1,0 +1,181 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer22250f3e?restype=container
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      ETag: ['"0x8D27B65C9E41BB3"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:50:52 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [ddad30cc-0001-0008-7d4e-adb1c8000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:52 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer22250f3e/blob1
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [1B2M2Y8AsgTpgAmY7PhCfg==]
+      Date: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      ETag: ['"0x8D27B65C994D91A"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [ddad30e0-0001-0008-0e4e-adb1c8000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      QUFB
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['3']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:52 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer22250f3e/blob1?blockid=MQ==&comp=block
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [4fr/s+YU5sL7p0KWliOGtw==]
+      Date: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [ddad30eb-0001-0008-194e-adb1c8000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      QkJC
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['3']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:52 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer22250f3e/blob1?blockid=Mg==&comp=block
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [K7Il8LqaWJMHV6ho7VfZow==]
+      Date: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [ddad30ff-0001-0008-2a4e-adb1c8000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      Q0ND
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['3']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:52 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer22250f3e/blob1?blockid=Mw==&comp=block
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [3vuZ5pqfH24G8VAGsfFmrg==]
+      Date: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [ddad310b-0001-0008-334e-adb1c8000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48QmxvY2tMaXN0PjxMYXRlc3Q+
+      TVE9PTwvTGF0ZXN0PjxMYXRlc3Q+TWc9PTwvTGF0ZXN0PjxMYXRlc3Q+TXc9PTwvTGF0ZXN0Pjwv
+      QmxvY2tMaXN0Pg==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['124']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:52 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer22250f3e/blob1?comp=blocklist
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [gVQz2MG4JM7SL7ulYGKEFw==]
+      Date: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      ETag: ['"0x8D27B65C9C27A20"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [ddad311c-0001-0008-444e-adb1c8000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:50:52 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer22250f3e/blob1
+  response:
+    body: {string: AAABBBCCC}
+    headers:
+      Accept-Ranges: [bytes]
+      Content-Length: ['9']
+      Content-Type: [application/octet-stream]
+      Date: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      ETag: ['"0x8D27B65C9C27A20"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:50:51 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Vary: [Origin]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-lease-state: [available]
+      x-ms-lease-status: [unlocked]
+      x-ms-request-id: [ddad312e-0001-0008-534e-adb1c8000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+version: 1

@@ -1,0 +1,90 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/atom+xml]
+      DataServiceVersion: [2.0;NetFx]
+      Date: ['Tue, 23 Jun 2015 00:11:59 GMT']
+      MaxDataServiceVersion: [2.0;NetFx]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:11:59 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>2</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors\
+        \ /></StorageServiceProperties>"}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:11:58 GMT']
+      Server: [Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [9f07129a-0002-0030-7c49-adf091000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U3RvcmFnZVNlcnZpY2VQcm9w
+      ZXJ0aWVzPjxNaW51dGVNZXRyaWNzPjxWZXJzaW9uPjEuMDwvVmVyc2lvbj48UmV0ZW50aW9uUG9s
+      aWN5PjxFbmFibGVkPkZhbHNlPC9FbmFibGVkPjwvUmV0ZW50aW9uUG9saWN5PjxFbmFibGVkPkZh
+      bHNlPC9FbmFibGVkPjwvTWludXRlTWV0cmljcz48SG91ck1ldHJpY3M+PFZlcnNpb24+MS4wPC9W
+      ZXJzaW9uPjxSZXRlbnRpb25Qb2xpY3k+PERheXM+MjwvRGF5cz48RW5hYmxlZD5UcnVlPC9FbmFi
+      bGVkPjwvUmV0ZW50aW9uUG9saWN5PjxJbmNsdWRlQVBJcz50cnVlPC9JbmNsdWRlQVBJcz48RW5h
+      YmxlZD5UcnVlPC9FbmFibGVkPjwvSG91ck1ldHJpY3M+PExvZ2dpbmc+PFZlcnNpb24+MS4wPC9W
+      ZXJzaW9uPjxEZWxldGU+RmFsc2U8L0RlbGV0ZT48UmV0ZW50aW9uUG9saWN5PjxEYXlzPjU8L0Rh
+      eXM+PEVuYWJsZWQ+VHJ1ZTwvRW5hYmxlZD48L1JldGVudGlvblBvbGljeT48UmVhZD5GYWxzZTwv
+      UmVhZD48V3JpdGU+RmFsc2U8L1dyaXRlPjwvTG9nZ2luZz48L1N0b3JhZ2VTZXJ2aWNlUHJvcGVy
+      dGllcz4=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['575']
+      Content-Type: [application/atom+xml]
+      DataServiceVersion: [2.0;NetFx]
+      Date: ['Tue, 23 Jun 2015 00:11:59 GMT']
+      MaxDataServiceVersion: [2.0;NetFx]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:11:59 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:11:58 GMT']
+      Server: [Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [9f0712a4-0002-0030-0549-adf091000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/atom+xml]
+      DataServiceVersion: [2.0;NetFx]
+      Date: ['Tue, 23 Jun 2015 00:12:00 GMT']
+      MaxDataServiceVersion: [2.0;NetFx]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:12:00 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>2</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors\
+        \ /></StorageServiceProperties>"}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:11:58 GMT']
+      Server: [Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [9f0712cc-0002-0030-2b49-adf091000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+version: 1

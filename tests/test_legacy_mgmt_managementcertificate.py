@@ -15,12 +15,12 @@
 import unittest
 
 from azure.servicemanagement import ServiceManagementService
-from .util import (
-    AzureTestCase,
-    create_service_management,
-    credentials,
-    getUniqueName,
+from .common_recordingtestcase import (
+    TestMode,
+    record,
 )
+from .legacy_mgmt_testcase import LegacyMgmtTestCase
+
 
 MANAGEMENT_CERT_PUBLICKEY = 'MIIBCgKCAQEAsjULNM53WPLkht1rbrDob/e4hZTHzj/hlLoBt2X3cNRc6dOPsMucxbMdchbCqAFa5RIaJvF5NDKqZuUSwq6bttD71twzy9bQ03EySOcRBad1VyqAZQ8DL8nUGSnXIUh+tpz4fDGM5f3Ly9NX8zfGqG3sT635rrFlUp3meJC+secCCwTLOOcIs3KQmuB+pMB5Y9rPhoxcekFfpq1pKtis6pmxnVbiL49kr6UUL6RQRDwik4t1jttatXLZqHETTmXl0Y0wS5AcJUXVAn5AL2kybULoThop2v01/E0NkPtFPAqLVs/kKBahniNn9uwUo+LS9FA8rWGu0FY4CZEYDfhb+QIDAQAB'
 MANAGEMENT_CERT_DATA = 'MIIC9jCCAeKgAwIBAgIQ00IFaqV9VqVJxI+wZka0szAJBgUrDgMCHQUAMBUxEzARBgNVBAMTClB5dGhvblRlc3QwHhcNMTIwODMwMDAyNTMzWhcNMzkxMjMxMjM1OTU5WjAVMRMwEQYDVQQDEwpQeXRob25UZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsjULNM53WPLkht1rbrDob/e4hZTHzj/hlLoBt2X3cNRc6dOPsMucxbMdchbCqAFa5RIaJvF5NDKqZuUSwq6bttD71twzy9bQ03EySOcRBad1VyqAZQ8DL8nUGSnXIUh+tpz4fDGM5f3Ly9NX8zfGqG3sT635rrFlUp3meJC+secCCwTLOOcIs3KQmuB+pMB5Y9rPhoxcekFfpq1pKtis6pmxnVbiL49kr6UUL6RQRDwik4t1jttatXLZqHETTmXl0Y0wS5AcJUXVAn5AL2kybULoThop2v01/E0NkPtFPAqLVs/kKBahniNn9uwUo+LS9FA8rWGu0FY4CZEYDfhb+QIDAQABo0owSDBGBgNVHQEEPzA9gBBS6knRHo54LppngxVCCzZVoRcwFTETMBEGA1UEAxMKUHl0aG9uVGVzdIIQ00IFaqV9VqVJxI+wZka0szAJBgUrDgMCHQUAA4IBAQAnZbP3YV+08wI4YTg6MOVA+j1njd0kVp35FLehripmaMNE6lgk3Vu1MGGl0JnvMr3fNFGFzRske/jVtFxlHE5H/CoUzmyMQ+W06eV/e995AduwTKsS0ZgYn0VoocSXWst/nyhpKOcbJgAOohOYxgsGI1JEqQgjyeqzcCIhw/vlWiA3V8bSiPnrC9vwhH0eB025hBd2VbEGDz2nWCYkwtuOLMTvkmLi/oFw3GOfgagZKk8k/ZPffMCafz+yR3vb1nqAjncrVcJLI8amUfpxhjZYexo8MbxBA432M6w8sjXN+uLCl7ByWZ4xs4vonWgkmjeObtU37SIzolHT4dxIgaP2'
@@ -29,19 +29,24 @@ MANAGEMENT_CERT_THUMBRINT = 'BEA4B74BD6B915E9DD6A01FB1B8C3C1740F517F2'
 #------------------------------------------------------------------------------
 
 
-class LegacyMgmtManagementCertificateTest(AzureTestCase):
+class LegacyMgmtManagementCertificateTest(LegacyMgmtTestCase):
 
     def setUp(self):
-        self.sms = create_service_management(ServiceManagementService)
+        super(LegacyMgmtManagementCertificateTest, self).setUp()
+
+        self.sms = self.create_service_management(ServiceManagementService)
 
         self.certificate_thumbprints = []
 
     def tearDown(self):
-        for thumbprint in self.certificate_thumbprints:
-            try:
-                self.sms.delete_management_certificate(thumbprint)
-            except:
-                pass
+        if not self.is_playback():
+            for thumbprint in self.certificate_thumbprints:
+                try:
+                    self.sms.delete_management_certificate(thumbprint)
+                except:
+                    pass
+
+        return super(LegacyMgmtManagementCertificateTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _create_management_certificate(self, cert):
@@ -59,6 +64,7 @@ class LegacyMgmtManagementCertificateTest(AzureTestCase):
             return False
 
     #--Test cases for management certificates ----------------------------
+    @record
     def test_list_management_certificates(self):
         # Arrange
         local_cert = _local_certificate()
@@ -86,6 +92,7 @@ class LegacyMgmtManagementCertificateTest(AzureTestCase):
         self.assertEqual(cert.subscription_certificate_thumbprint,
                          local_cert.thumbprint)
 
+    @record
     def test_get_management_certificate(self):
         # Arrange
         local_cert = _local_certificate()
@@ -103,6 +110,7 @@ class LegacyMgmtManagementCertificateTest(AzureTestCase):
         self.assertEqual(result.subscription_certificate_thumbprint,
                          local_cert.thumbprint)
 
+    @record
     def test_add_management_certificate(self):
         # Arrange
         local_cert = _local_certificate()
@@ -118,6 +126,7 @@ class LegacyMgmtManagementCertificateTest(AzureTestCase):
         self.assertTrue(
             self._management_certificate_exists(local_cert.thumbprint))
 
+    @record
     def test_delete_management_certificate(self):
         # Arrange
         local_cert = _local_certificate()

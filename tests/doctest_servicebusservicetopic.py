@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 How to Create a Topic
 ---------------------
 >>> from azure.servicebus import *
->>> bus_service = ServiceBusService(ns, key, 'owner')
+>>> bus_service = ServiceBusService(shared_access_key_name=key_name, shared_access_key_value=key_value, 'owner')
 >>> bus_service.create_topic('mytopic')
 True
 
@@ -85,10 +85,10 @@ True
 True
 
 """
-from util import credentials
+from tests import servicebus_settings_real as settings
 
-ns = credentials.getServiceBusNamespace()
-key = credentials.getServiceBusKey()
+key_name = settings.SERVICEBUS_SAS_KEY_NAME
+key_value = settings.SERVICEBUS_SAS_KEY_VALUE
 
 if __name__ == "__main__":
     import doctest

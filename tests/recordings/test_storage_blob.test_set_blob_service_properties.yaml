@@ -1,0 +1,57 @@
+interactions:
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U3RvcmFnZVNlcnZpY2VQcm9w
+      ZXJ0aWVzPjxIb3VyTWV0cmljcz48RW5hYmxlZD5GYWxzZTwvRW5hYmxlZD48UmV0ZW50aW9uUG9s
+      aWN5PjxFbmFibGVkPkZhbHNlPC9FbmFibGVkPjwvUmV0ZW50aW9uUG9saWN5PjxWZXJzaW9uPjEu
+      MDwvVmVyc2lvbj48L0hvdXJNZXRyaWNzPjxNaW51dGVNZXRyaWNzPjxFbmFibGVkPkZhbHNlPC9F
+      bmFibGVkPjxSZXRlbnRpb25Qb2xpY3k+PEVuYWJsZWQ+RmFsc2U8L0VuYWJsZWQ+PC9SZXRlbnRp
+      b25Qb2xpY3k+PFZlcnNpb24+MS4wPC9WZXJzaW9uPjwvTWludXRlTWV0cmljcz48TG9nZ2luZz48
+      VmVyc2lvbj4xLjA8L1ZlcnNpb24+PERlbGV0ZT5GYWxzZTwvRGVsZXRlPjxSZXRlbnRpb25Qb2xp
+      Y3k+PEVuYWJsZWQ+RmFsc2U8L0VuYWJsZWQ+PC9SZXRlbnRpb25Qb2xpY3k+PFdyaXRlPkZhbHNl
+      PC9Xcml0ZT48UmVhZD5GYWxzZTwvUmVhZD48L0xvZ2dpbmc+PC9TdG9yYWdlU2VydmljZVByb3Bl
+      cnRpZXM+
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['519']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:51:00 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:51:00 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [22678104-0001-000d-664e-ad45b7000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:51:01 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>www.ab.com,www.bc.com</AllowedOrigins><AllowedHeaders>x-ms-meta-data*,x-ms-meta-target*</AllowedHeaders><ExposedHeaders>x-ms-meta-source*,x-ms-meta-test*</ExposedHeaders><MaxAgeInSeconds>5</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>HEAD</AllowedMethods><AllowedOrigins>*</AllowedOrigins><AllowedHeaders>x-ms-meta-ab*</AllowedHeaders><ExposedHeaders>x-ms-meta-abc*</ExposedHeaders><MaxAgeInSeconds>25</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>"}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:51:00 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      Vary: [Origin]
+      x-ms-request-id: [2267812a-0001-000d-0b4e-ad45b7000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+version: 1

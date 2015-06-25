@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/atom+xml]
+      DataServiceVersion: [2.0;NetFx]
+      Date: ['Tue, 23 Jun 2015 00:12:07 GMT']
+      MaxDataServiceVersion: [2.0;NetFx]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:12:07 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.table.core.windows.net/Tables('uttable24f21971')
+  response:
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
+        xml:lang="en-US">The specified resource does not exist.
+
+        RequestId:b474b61c-0002-0014-6049-ad69df000000
+
+        Time:2015-06-23T00:12:07.1526765Z</message></error>'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/xml;charset=utf-8]
+      Date: ['Tue, 23 Jun 2015 00:12:06 GMT']
+      Server: [Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      x-ms-request-id: [b474b61c-0002-0014-6049-ad69df000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 404, message: Not Found}
+version: 1

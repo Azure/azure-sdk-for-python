@@ -26,6 +26,30 @@ The following have moved from 'azure' to 'azure.storage':
     DEV_ACCOUNT_NAME
     DEV_ACCOUNT_KEY
 
+
+TEST FAILURES
+=============
+
+StorageBlobTest
+---------------
+(fail in playback mode)
+test_get_blob_to_text_chunked_download
+test_put_block_blob_from_text_chunked_upload
+
+StorageTableTest
+----------------
+(fail in any mode)
+test_get_table_acl
+test_get_table_acl_iter
+test_set_table_acl
+test_set_table_acl_with_empty_signed_identifiers
+test_set_table_acl_with_empty_signed_identifiers
+
+StorageQueueTest
+----------------
+<none>
+
+
 2015-06-16 Version 0.11.1
 
  * Azure storage connection string support

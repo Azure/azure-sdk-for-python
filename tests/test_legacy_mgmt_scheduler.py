@@ -23,25 +23,31 @@ from azure.servicemanagement import (
     CloudService,
     SchedulerManagementService,
 )
-
-from .util import (
-    AzureTestCase,
-    create_service_management,
-    credentials,
-    getUniqueName
+from .common_recordingtestcase import (
+    TestMode,
+    record,
 )
+from .legacy_mgmt_testcase import LegacyMgmtTestCase
 
 
-class LegacyMgmtSchedulerTest(AzureTestCase):
+class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
 
     def setUp(self):
-        self.ss = create_service_management(SchedulerManagementService)
-        self.service_id = getUniqueName('cloud_service_')
-        self.coll_id = getUniqueName('job_collection_')
+        super(LegacyMgmtSchedulerTest, self).setUp()
+
+        self.ss = self.create_service_management(SchedulerManagementService)
+
+        self.service_id = self.get_resource_name('cloud_service_')
+        self.coll_id = self.get_resource_name('job_collection_')
         self.job_id = 'job_id'
 
     def tearDown(self):
-        self.cleanup()
+        if not self.is_playback():
+            try:
+                self.ss.delete_cloud_service(self.service_id)
+            except:
+                pass
+
         return super(LegacyMgmtSchedulerTest, self).tearDown()
 
     def cleanup(self):
@@ -96,6 +102,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         }
 
     #--Operations for scheduler ----------------------------------------
+    @record
     def test_list_cloud_services(self):
         # Arrange
         self._create_cloud_service()
@@ -111,6 +118,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
             self.assertIsNotNone(cs)
             self.assertIsInstance(cs, CloudService)
 
+    @record
     def test_get_cloud_service(self):
         # Arrange
         self._create_cloud_service()
@@ -124,6 +132,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         self.assertEqual(result.label, "label")
         self.assertEqual(result.geo_region, "West Europe")
 
+    @record
     def test_create_cloud_service(self):
         # Arrange
 
@@ -140,6 +149,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         self.assertIsNotNone(result)
 
     @unittest.skip("functionality not working, haven't had a chance to debug")
+    @record
     def test_check_name_availability(self):
         # Arrange
         self._create_cloud_service()
@@ -150,6 +160,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
 
+    @record
     def test_create_job_collection(self):
         # Arrange
         self._create_cloud_service()
@@ -161,6 +172,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
 
+    @record
     def test_delete_job_collection(self):
         # Arrange
         self._create_cloud_service()
@@ -173,6 +185,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
 
+    @record
     def test_get_job_collection(self):
         # Arrange
         self._create_cloud_service()
@@ -185,6 +198,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result.name, self.coll_id)
 
+    @record
     def test_create_job(self):
         # Arrange
         self._create_cloud_service()
@@ -203,6 +217,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
 
+    @record
     def test_delete_job(self):
         # Arrange
         self._create_cloud_service()
@@ -216,6 +231,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
 
+    @record
     def test_get_job(self):
         self._create_cloud_service()
         self._create_job_collection()
@@ -228,6 +244,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result["state"], "enabled")
 
+    @record
     def test_get_all_jobs(self):
         self._create_cloud_service()
         self._create_job_collection()
@@ -239,3 +256,7 @@ class LegacyMgmtSchedulerTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
         self.assertEqual(len(result), 1)
+
+#------------------------------------------------------------------------------
+if __name__ == '__main__':
+    unittest.main()

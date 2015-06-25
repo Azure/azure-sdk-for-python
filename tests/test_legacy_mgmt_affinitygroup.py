@@ -20,42 +20,44 @@ from azure.servicemanagement import (
     Locations,
     ServiceManagementService,
 )
-from .util import (
-    AzureTestCase,
-    create_service_management,
-    credentials,
-    getUniqueName,
+from .common_recordingtestcase import (
+    TestMode,
+    record,
 )
+from .legacy_mgmt_testcase import LegacyMgmtTestCase
 
-#------------------------------------------------------------------------------
 
-
-class LegacyMgmtAffinityGroupTest(AzureTestCase):
+class LegacyMgmtAffinityGroupTest(LegacyMgmtTestCase):
 
     def setUp(self):
-        self.sms = create_service_management(ServiceManagementService)
+        super(LegacyMgmtAffinityGroupTest, self).setUp()
 
-        self.affinity_group_name = getUniqueName('utaffgrp')
+        self.sms = self.create_service_management(ServiceManagementService)
+
+        self.affinity_group_name = self.get_resource_name('utaffgrp')
         self.hosted_service_name = None
         self.storage_account_name = None
 
     def tearDown(self):
-        try:
-            if self.hosted_service_name is not None:
-                self.sms.delete_hosted_service(self.hosted_service_name)
-        except:
-            pass
+        if not self.is_playback():
+            try:
+                if self.hosted_service_name is not None:
+                    self.sms.delete_hosted_service(self.hosted_service_name)
+            except:
+                pass
 
-        try:
-            if self.storage_account_name is not None:
-                self.sms.delete_storage_account(self.storage_account_name)
-        except:
-            pass
+            try:
+                if self.storage_account_name is not None:
+                    self.sms.delete_storage_account(self.storage_account_name)
+            except:
+                pass
 
-        try:
-            self.sms.delete_affinity_group(self.affinity_group_name)
-        except:
-            pass
+            try:
+                self.sms.delete_affinity_group(self.affinity_group_name)
+            except:
+                pass
+
+        return super(LegacyMgmtAffinityGroupTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _create_affinity_group(self, name):
@@ -71,6 +73,7 @@ class LegacyMgmtAffinityGroupTest(AzureTestCase):
             return False
 
     #--Test cases for affinity groups ------------------------------------
+    @record
     def test_list_affinity_groups(self):
         # Arrange
         self._create_affinity_group(self.affinity_group_name)
@@ -96,10 +99,11 @@ class LegacyMgmtAffinityGroupTest(AzureTestCase):
         self.assertIsNotNone(group.capabilities)
         self.assertTrue(len(group.capabilities) > 0)
 
+    @record
     def test_get_affinity_group_properties(self):
         # Arrange
-        self.hosted_service_name = getUniqueName('utsvc')
-        self.storage_account_name = getUniqueName('utstorage')
+        self.hosted_service_name = self.get_resource_name('utsvc')
+        self.storage_account_name = self.get_resource_name('utstorage')
         self._create_affinity_group(self.affinity_group_name)
         self.sms.create_hosted_service(
             self.hosted_service_name,
@@ -132,6 +136,7 @@ class LegacyMgmtAffinityGroupTest(AzureTestCase):
         # not sure why azure does not return any storage service
         self.assertTrue(len(result.capabilities) > 0)
 
+    @record
     def test_create_affinity_group(self):
         # Arrange
         label = 'tstmgmtaffgrp'
@@ -145,6 +150,7 @@ class LegacyMgmtAffinityGroupTest(AzureTestCase):
         self.assertIsNone(result)
         self.assertTrue(self._affinity_group_exists(self.affinity_group_name))
 
+    @record
     def test_update_affinity_group(self):
         # Arrange
         self._create_affinity_group(self.affinity_group_name)
@@ -162,6 +168,7 @@ class LegacyMgmtAffinityGroupTest(AzureTestCase):
         self.assertEqual(props.label, label)
         self.assertEqual(props.description, description)
 
+    @record
     def test_delete_affinity_group(self):
         # Arrange
         self._create_affinity_group(self.affinity_group_name)
@@ -174,6 +181,7 @@ class LegacyMgmtAffinityGroupTest(AzureTestCase):
         self.assertFalse(self._affinity_group_exists(self.affinity_group_name))
 
     #--Test cases for locations ------------------------------------------
+    @record
     def test_list_locations(self):
         # Arrange
 

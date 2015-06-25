@@ -1,0 +1,51 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:57:05 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainera5a2175e?restype=container
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:57:04 GMT']
+      ETag: ['"0x8D27B66A86AC274"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:57:05 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [9c82f223-0001-0071-4e4f-add882000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:57:06 GMT']
+      x-ms-version: ['2014-02-14']
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/utcontainera5a2175e/blob1
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The\
+        \ specified blob does not exist.\nRequestId:9c82f235-0001-0071-5d4f-add882000000\n\
+        Time:2015-06-23T00:57:05.5570812Z</Message></Error>"}
+    headers:
+      Content-Length: ['215']
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:57:04 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [9c82f235-0001-0071-5d4f-add882000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 404, message: The specified blob does not exist.}
+version: 1

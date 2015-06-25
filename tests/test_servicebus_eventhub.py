@@ -22,6 +22,7 @@ import time
 import unittest
 
 from datetime import datetime
+from requests import Session
 from azure.common import WindowsAzureError
 from azure.servicebus import (
     AuthorizationRule,
@@ -29,49 +30,47 @@ from azure.servicebus import (
     ServiceBusService,
 )
 from .util import (
-    AzureTestCase,
-    credentials,
-    getUniqueName,
     set_service_options,
 )
-
+from .common_recordingtestcase import (
+    TestMode,
+    record,
+)
+from .servicebus_testcase import ServiceBusTestCase
 #------------------------------------------------------------------------------
 
 
-class ServiceBusEventHubTest(AzureTestCase):
+class ServiceBusEventHubTest(ServiceBusTestCase):
 
     def setUp(self):
-        session = None
-        if credentials.getUseRequestsLibrary():
-            from requests import Session
-            session = Session()
+        super(ServiceBusEventHubTest, self).setUp()
 
         self.sbs = ServiceBusService(
-            credentials.getEventHubNamespace(),
-            shared_access_key_name=credentials.getEventHubSasKeyName(),
-            shared_access_key_value=credentials.getEventHubSasKeyValue(),
-            request_session=session,
+            self.settings.EVENTHUB_NAME,
+            shared_access_key_name=self.settings.EVENTHUB_SAS_KEY_NAME,
+            shared_access_key_value=self.settings.EVENTHUB_SAS_KEY_VALUE,
+            request_session=Session(),
         )
 
         set_service_options(self.sbs)
 
-        self.event_hub_name = getUniqueName('uthub')
+        self.event_hub_name = self.get_resource_name('uthub')
 
     def tearDown(self):
-        self.cleanup()
-        return super(ServiceBusEventHubTest, self).tearDown()
+        if not self.is_playback():
+            try:
+                self.sbs.delete_event_hub(self.event_hub_name)
+            except:
+                pass
 
-    def cleanup(self):
-        try:
-            self.sbs.delete_event_hub(self.event_hub_name)
-        except:
-            pass
+        return super(ServiceBusEventHubTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _create_event_hub(self, hub_name):
         self.sbs.create_event_hub(hub_name, None, True)
 
     #--Test cases for event hubs ----------------------------------------------
+    @record
     def test_create_event_hub_no_options(self):
         # Arrange
 
@@ -81,6 +80,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_event_hub_no_options_fail_on_exist(self):
         # Arrange
 
@@ -90,6 +90,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_event_hub_with_options(self):
         # Arrange
 
@@ -112,6 +113,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         self.assertEqual(created_hub.user_metadata, hub.user_metadata)
         self.assertEqual(len(created_hub.partition_ids), hub.partition_count)
 
+    @record
     def test_create_event_hub_with_authorization(self):
         # Arrange
 
@@ -146,6 +148,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         self.assertEqual(created_hub.authorization_rules[0].secondary_key,
                          hub.authorization_rules[0].secondary_key)
 
+    @record
     def test_update_event_hub(self):
         # Arrange
         self._create_event_hub(self.event_hub_name)
@@ -160,6 +163,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         self.assertEqual(result.message_retention_in_days,
                          hub.message_retention_in_days)
 
+    @record
     def test_update_event_hub_with_authorization(self):
         # Arrange
         self._create_event_hub(self.event_hub_name)
@@ -193,6 +197,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         self.assertEqual(result.authorization_rules[0].secondary_key,
                          hub.authorization_rules[0].secondary_key)
 
+    @record
     def test_get_event_hub_with_existing_event_hub(self):
         # Arrange
         self._create_event_hub(self.event_hub_name)
@@ -204,6 +209,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         self.assertIsNotNone(event_hub)
         self.assertEqual(event_hub.name, self.event_hub_name)
 
+    @record
     def test_get_event_hub_with_non_existing_event_hub(self):
         # Arrange
 
@@ -213,6 +219,7 @@ class ServiceBusEventHubTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_delete_event_hub_with_existing_event_hub(self):
         # Arrange
         self._create_event_hub(self.event_hub_name)
@@ -223,6 +230,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         # Assert
         self.assertTrue(deleted)
 
+    @record
     def test_delete_event_hub_with_existing_event_hub_fail_not_exist(self):
         # Arrange
         self._create_event_hub(self.event_hub_name)
@@ -233,6 +241,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         # Assert
         self.assertTrue(deleted)
 
+    @record
     def test_delete_event_hub_with_non_existing_event_hub(self):
         # Arrange
 
@@ -242,6 +251,7 @@ class ServiceBusEventHubTest(AzureTestCase):
         # Assert
         self.assertFalse(deleted)
 
+    @record
     def test_delete_event_hub_with_non_existing_event_hub_fail_not_exist(self):
         # Arrange
 
@@ -251,6 +261,7 @@ class ServiceBusEventHubTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_send_event(self):
         # Arrange
         self._create_event_hub(self.event_hub_name)

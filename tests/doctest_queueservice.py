@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,7 +63,7 @@ How To: Get the Queue Length
 >>> queue_metadata = queue_service.get_queue_metadata('taskqueue')
 >>> count = queue_metadata['x-ms-approximate-messages-count']
 >>> count
-u'0'
+'0'
 
 How To: Delete a Queue
 ----------------------
@@ -71,10 +71,10 @@ How To: Delete a Queue
 True
 
 """
-from util import credentials
+from tests import storage_settings_real as settings
 
-name = credentials.getStorageServicesName()
-key = credentials.getStorageServicesKey()
+name = settings.STORAGE_ACCOUNT_NAME
+key = settings.STORAGE_ACCOUNT_KEY
 
 if __name__ == "__main__":
     import doctest
