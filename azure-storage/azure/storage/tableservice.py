@@ -162,7 +162,10 @@ class TableService(_StorageClient):
             self._batchclient = _BatchClient(
                 service_instance=self,
                 authentication=self.authentication,
-                timeout=self._httpclient.timeout)
+                request_session=self._httpclient.request_session,
+                timeout=self._httpclient.timeout,
+                user_agent=self._httpclient.user_agent,
+            )
         return self._batchclient.begin_batch()
 
     def commit_batch(self):

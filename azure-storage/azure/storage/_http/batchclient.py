@@ -58,8 +58,8 @@ class _BatchClient(_HTTPClient):
     '''
 
     def __init__(self, service_instance, authentication,
-                 protocol='http', timeout=65):
-        _HTTPClient.__init__(self, service_instance, protocol=protocol, timeout=timeout)
+                 protocol='http', request_session=None, timeout=65, user_agent=''):
+        _HTTPClient.__init__(self, service_instance, protocol=protocol, request_session=request_session, timeout=timeout, user_agent=user_agent)
         self.authentication = authentication
         self.is_batch = False
         self.batch_requests = []
