@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      DataServiceVersion: [2.0;NetFx]
+      Date: ['Tue, 23 Jun 2015 00:11:36 GMT']
+      MaxDataServiceVersion: [2.0;NetFx]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:11:36 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.table.core.windows.net/uttable7db1901?comp=acl
+  response:
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>MediaTypeNotSupported</m:code><m:message
+        xml:lang="en-US">None of the provided media types are supported
+
+        RequestId:5525205f-0002-0045-1b49-ad772a000000
+
+        Time:2015-06-23T00:11:36.9561659Z</m:message></m:error>'}
+    headers:
+      Content-Length: ['335']
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:11:36 GMT']
+      Server: [Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [5525205f-0002-0045-1b49-ad772a000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 415, message: None of the provided media types are supported}
+version: 1

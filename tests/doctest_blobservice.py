@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
 """
 How to: Create a Container
 --------------------------
->>> from azure.storage import *
+>>> from azure.storage import BlobService
 >>> blob_service = BlobService(name, key)
 >>> blob_service.create_container('mycontainer')
 True
@@ -28,7 +28,7 @@ True
 
 How to: Upload a Blob into a Container
 --------------------------------------
->>> myblob = 'hello blob'
+>>> myblob = b'hello blob'
 >>> blob_service.put_blob('mycontainer', 'myblob', myblob, x_ms_blob_type='BlockBlob')
 
 How to: List the Blobs in a Container
@@ -41,8 +41,8 @@ myblob
 How to: Download Blobs
 ----------------------
 >>> blob = blob_service.get_blob('mycontainer', 'myblob')
->>> print(blob)
-hello blob
+>>> blob
+b'hello blob'
 
 How to: Delete a Blob
 ---------------------
@@ -55,10 +55,10 @@ True
 True
 
 """
-from util import credentials
+from tests import storage_settings_real as settings
 
-name = credentials.getStorageServicesName()
-key = credentials.getStorageServicesKey()
+name = settings.STORAGE_ACCOUNT_NAME
+key = settings.STORAGE_ACCOUNT_KEY
 
 if __name__ == "__main__":
     import doctest

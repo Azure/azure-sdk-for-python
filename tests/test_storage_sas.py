@@ -25,20 +25,17 @@ from azure.storage.sharedaccesssignature import (
     QueryStringConstants,
     ResourceType,
 )
-from .util import (
-    AzureTestCase,
-    credentials,
-    getUniqueName,
+from .common_extendedtestcase import (
+    ExtendedTestCase,
 )
 
 #------------------------------------------------------------------------------
 
 
-class StorageSASTest(AzureTestCase):
+class StorageSASTest(ExtendedTestCase):
 
     def setUp(self):
-        self.sas = SharedAccessSignature(account_name=DEV_ACCOUNT_NAME,
-                                         account_key=DEV_ACCOUNT_KEY)
+        self.sas = SharedAccessSignature(DEV_ACCOUNT_NAME, DEV_ACCOUNT_KEY)
 
     def tearDown(self):
         return super(StorageSASTest, self).tearDown()

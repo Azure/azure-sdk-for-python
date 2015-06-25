@@ -23,6 +23,7 @@ import os
 
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
+from requests import Session
 from azure.common import (
     WindowsAzureError,
     WindowsAzureBatchOperationError,
@@ -40,12 +41,14 @@ from azure.storage import (
     TableSharedAccessPermissions,
 )
 from .util import (
-    AzureTestCase,
-    credentials,
     create_storage_service,
-    getUniqueName,
     set_service_options,
 )
+from .common_recordingtestcase import (
+    TestMode,
+    record,
+)
+from .storage_testcase import StorageTestCase
 
 #------------------------------------------------------------------------------
 
@@ -53,33 +56,31 @@ MAX_RETRY = 60
 #------------------------------------------------------------------------------
 
 
-class StorageTableTest(AzureTestCase):
+class StorageTableTest(StorageTestCase):
 
     def setUp(self):
-        self.ts = create_storage_service(
-            TableService,
-            credentials.getStorageServicesName(),
-            credentials.getStorageServicesKey(),
-        )
+        super(StorageTableTest, self).setUp()
 
-        self.table_name = getUniqueName('uttable')
+        self.ts = create_storage_service(TableService, self.settings)
+
+        self.table_name = self.get_resource_name('uttable')
+
         self.additional_table_names = []
 
     def tearDown(self):
-        self.cleanup()
-        return super(StorageTableTest, self).tearDown()
-
-    def cleanup(self):
-        try:
-            self.ts.delete_table(self.table_name)
-        except:
-            pass
-
-        for name in self.additional_table_names:
+        if not self.is_playback():
             try:
-                self.ts.delete_table(name)
+                self.ts.delete_table(self.table_name)
             except:
                 pass
+
+            for name in self.additional_table_names:
+                try:
+                    self.ts.delete_table(name)
+                except:
+                    pass
+
+        return super(StorageTableTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _create_table(self, table_name):
@@ -233,6 +234,7 @@ class StorageTableTest(AzureTestCase):
         )
 
     #--Test cases for table service -------------------------------------------
+    @record
     def test_get_set_table_service_properties(self):
         table_properties = self.ts.get_table_service_properties()
         self.ts.set_table_service_properties(table_properties)
@@ -262,11 +264,12 @@ class StorageTableTest(AzureTestCase):
                     cur = getattr(cur, component)
                 if value == cur:
                     break
-                time.sleep(1)
+                self.sleep(1)
                 retry_count += 1
 
             self.assertEqual(value, cur)
 
+    @record
     def test_table_service_retention_single_set(self):
         table_properties = self.ts.get_table_service_properties()
         table_properties.logging.retention_policy.enabled = False
@@ -286,6 +289,7 @@ class StorageTableTest(AzureTestCase):
                           self.ts.set_table_service_properties,
                           table_properties)
 
+    @record
     def test_table_service_set_both(self):
         table_properties = self.ts.get_table_service_properties()
         table_properties.logging.retention_policy.enabled = True
@@ -298,6 +302,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(5, table_properties.logging.retention_policy.days)
 
     #--Test cases for tables --------------------------------------------------
+    @record
     def test_create_table(self):
         # Arrange
 
@@ -307,6 +312,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_table_fail_on_exist(self):
         # Arrange
 
@@ -316,6 +322,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_table_with_already_existing_table(self):
         # Arrange
 
@@ -327,6 +334,7 @@ class StorageTableTest(AzureTestCase):
         self.assertTrue(created1)
         self.assertFalse(created2)
 
+    @record
     def test_create_table_with_already_existing_table_fail_on_exist(self):
         # Arrange
 
@@ -338,6 +346,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_query_tables(self):
         # Arrange
         self._create_table(self.table_name)
@@ -353,6 +362,7 @@ class StorageTableTest(AzureTestCase):
         self.assertGreaterEqual(len(tables), 1)
         self.assertIn(self.table_name, tableNames)
 
+    @record
     def test_query_tables_with_table_name(self):
         # Arrange
         self._create_table(self.table_name)
@@ -366,6 +376,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(len(tables), 1)
         self.assertEqual(tables[0].name, self.table_name)
 
+    @record
     def test_query_tables_with_table_name_no_tables(self):
         # Arrange
 
@@ -375,6 +386,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_query_tables_with_top(self):
         # Arrange
         self.additional_table_names = [
@@ -390,6 +402,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertEqual(len(tables), 3)
 
+    @record
     def test_query_tables_with_top_and_next_table_name(self):
         # Arrange
         self.additional_table_names = [
@@ -407,6 +420,7 @@ class StorageTableTest(AzureTestCase):
         self.assertGreaterEqual(len(tables_set2), 1)
         self.assertLessEqual(len(tables_set2), 3)
 
+    @record
     def test_delete_table_with_existing_table(self):
         # Arrange
         self._create_table(self.table_name)
@@ -419,6 +433,7 @@ class StorageTableTest(AzureTestCase):
         tables = self.ts.query_tables()
         self.assertNamedItemNotInContainer(tables, self.table_name)
 
+    @record
     def test_delete_table_with_existing_table_fail_not_exist(self):
         # Arrange
         self._create_table(self.table_name)
@@ -431,6 +446,7 @@ class StorageTableTest(AzureTestCase):
         tables = self.ts.query_tables()
         self.assertNamedItemNotInContainer(tables, self.table_name)
 
+    @record
     def test_delete_table_with_non_existing_table(self):
         # Arrange
 
@@ -440,6 +456,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertFalse(deleted)
 
+    @record
     def test_delete_table_with_non_existing_table_fail_not_exist(self):
         # Arrange
 
@@ -450,6 +467,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
 
     #--Test cases for entities ------------------------------------------
+    @record
     def test_insert_entity_dictionary(self):
         # Arrange
         self._create_table(self.table_name)
@@ -461,6 +479,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
+    @record
     def test_insert_entity_class_instance(self):
         # Arrange
         self._create_table(self.table_name)
@@ -472,6 +491,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
+    @record
     def test_insert_entity_conflict(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -484,6 +504,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_entity(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -496,6 +517,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(resp.RowKey, '1')
         self._assert_default_entity(resp)
 
+    @record
     def test_get_entity_not_existing(self):
         # Arrange
         self._create_table(self.table_name)
@@ -506,6 +528,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_entity_with_select(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -521,6 +544,7 @@ class StorageTableTest(AzureTestCase):
         self.assertFalse(hasattr(resp, "married"))
         self.assertFalse(hasattr(resp, "deceased"))
 
+    @record
     def test_query_entities(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 2)
@@ -536,6 +560,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(resp[0].RowKey, '1')
         self.assertEqual(resp[1].RowKey, '2')
 
+    @record
     def test_query_entities_large(self):
         # Arrange
         self._create_table(self.table_name)
@@ -552,7 +577,7 @@ class StorageTableTest(AzureTestCase):
                 entity.test2 = 'hello world;' * 100
                 entity.test3 = 3
                 entity.test4 = EntityProperty('Edm.Int64', '1234567890')
-                entity.test5 = datetime.utcnow()
+                entity.test5 = datetime(2016, 12, 31, 11, 59, 59, 0)
                 self.ts.insert_entity(self.table_name, entity)
             self.ts.commit_batch()
 
@@ -567,6 +592,7 @@ class StorageTableTest(AzureTestCase):
         # if it runs slowly, it will return fewer results and make the test fail
         self.assertEqual(len(resp), total_entities_count)
 
+    @record
     def test_query_entities_with_filter(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 2)
@@ -584,6 +610,7 @@ class StorageTableTest(AzureTestCase):
             self.assertEqual(entity.PartitionKey, 'MyPartition')
             self._assert_default_entity(entity)
 
+    @record
     def test_query_entities_with_select(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 2)
@@ -599,6 +626,7 @@ class StorageTableTest(AzureTestCase):
         self.assertFalse(hasattr(resp[0], "married"))
         self.assertFalse(hasattr(resp[0], "deceased"))
 
+    @record
     def test_query_entities_with_top(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 3)
@@ -609,6 +637,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertEqual(len(resp), 2)
 
+    @record
     def test_query_entities_with_top_and_next(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 5)
@@ -634,6 +663,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(resp2[1].RowKey, '4')
         self.assertEqual(resp3[0].RowKey, '5')
 
+    @record
     def test_update_entity(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -649,6 +679,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
+    @record
     def test_update_entity_with_if_matches(self):
         # Arrange
         entities = self._create_table_with_default_entities(self.table_name, 1)
@@ -665,6 +696,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
+    @record
     def test_update_entity_with_if_doesnt_match(self):
         # Arrange
         entities = self._create_table_with_default_entities(self.table_name, 1)
@@ -678,6 +710,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_insert_or_merge_entity_with_existing_entity(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -693,6 +726,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '1')
         self._assert_merged_entity(received_entity)
 
+    @record
     def test_insert_or_merge_entity_with_non_existing_entity(self):
         # Arrange
         self._create_table(self.table_name)
@@ -708,6 +742,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
+    @record
     def test_insert_or_replace_entity_with_existing_entity(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -723,6 +758,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
+    @record
     def test_insert_or_replace_entity_with_non_existing_entity(self):
         # Arrange
         self._create_table(self.table_name)
@@ -738,6 +774,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
+    @record
     def test_merge_entity(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -753,6 +790,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '1')
         self._assert_merged_entity(received_entity)
 
+    @record
     def test_merge_entity_not_existing(self):
         # Arrange
         self._create_table(self.table_name)
@@ -765,6 +803,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_merge_entity_with_if_matches(self):
         # Arrange
         entities = self._create_table_with_default_entities(self.table_name, 1)
@@ -781,6 +820,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '1')
         self._assert_merged_entity(received_entity)
 
+    @record
     def test_merge_entity_with_if_doesnt_match(self):
         # Arrange
         entities = self._create_table_with_default_entities(self.table_name, 1)
@@ -794,6 +834,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_delete_entity(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -806,6 +847,7 @@ class StorageTableTest(AzureTestCase):
         with self.assertRaises(WindowsAzureError):
             self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
+    @record
     def test_delete_entity_not_existing(self):
         # Arrange
         self._create_table(self.table_name)
@@ -816,6 +858,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_delete_entity_with_if_matches(self):
         # Arrange
         entities = self._create_table_with_default_entities(self.table_name, 1)
@@ -829,6 +872,7 @@ class StorageTableTest(AzureTestCase):
         with self.assertRaises(WindowsAzureError):
             self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
+    @record
     def test_delete_entity_with_if_doesnt_match(self):
         # Arrange
         entities = self._create_table_with_default_entities(self.table_name, 1)
@@ -842,6 +886,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
 
     #--Test cases for batch ---------------------------------------------
+    @record
     def test_with_filter_single(self):
         called = []
 
@@ -861,6 +906,7 @@ class StorageTableTest(AzureTestCase):
         self.assertTrue(called)
         del called[:]
 
+    @record
     def test_with_filter_chained(self):
         called = []
 
@@ -879,6 +925,7 @@ class StorageTableTest(AzureTestCase):
 
         tc.delete_table(self.table_name)
 
+    @record
     def test_batch_insert(self):
         # Arrange
         self._create_table(self.table_name)
@@ -901,6 +948,7 @@ class StorageTableTest(AzureTestCase):
         result = self.ts.get_entity(self.table_name, '001', 'batch_insert')
         self.assertIsNotNone(result)
 
+    @record
     def test_batch_update(self):
         # Arrange
         self._create_table(self.table_name)
@@ -927,6 +975,7 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertEqual('value1', entity.test2)
 
+    @record
     def test_batch_merge(self):
         # Arrange
         self._create_table(self.table_name)
@@ -957,6 +1006,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual('value1', entity.test2)
         self.assertEqual(1234567890, entity.test4)
 
+    @record
     def test_batch_update_if_match(self):
         # Arrange
         entities = self._create_table_with_default_entities(self.table_name, 1)
@@ -975,6 +1025,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
+    @record
     def test_batch_update_if_doesnt_match(self):
         # Arrange
         entities = self._create_table_with_default_entities(self.table_name, 2)
@@ -1004,6 +1055,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, 'MyPartition', '2')
         self._assert_default_entity(received_entity)
 
+    @record
     def test_batch_insert_replace(self):
         # Arrange
         self._create_table(self.table_name)
@@ -1030,6 +1082,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual('value', entity.test2)
         self.assertEqual(1234567890, entity.test4)
 
+    @record
     def test_batch_insert_merge(self):
         # Arrange
         self._create_table(self.table_name)
@@ -1056,6 +1109,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual('value', entity.test2)
         self.assertEqual(1234567890, entity.test4)
 
+    @record
     def test_batch_delete(self):
         # Arrange
         self._create_table(self.table_name)
@@ -1077,6 +1131,7 @@ class StorageTableTest(AzureTestCase):
         self.ts.delete_entity(self.table_name, '001', 'batch_delete')
         self.ts.commit_batch()
 
+    @record
     def test_batch_inserts(self):
         # Arrange
         self._create_table(self.table_name)
@@ -1102,6 +1157,7 @@ class StorageTableTest(AzureTestCase):
         self.assertIsNotNone(entities)
         self.assertEqual(100, len(entities))
 
+    @record
     def test_batch_all_operations_together(self):
         # Arrange
         self._create_table(self.table_name)
@@ -1151,6 +1207,7 @@ class StorageTableTest(AzureTestCase):
             self.table_name, "PartitionKey eq '003'", '')
         self.assertEqual(5, len(entities))
 
+    @record
     def test_batch_same_row_operations_fail(self):
         # Arrange
         self._create_table(self.table_name)
@@ -1179,6 +1236,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_batch_different_partition_operations_fail(self):
         # Arrange
         self._create_table(self.table_name)
@@ -1203,6 +1261,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_batch_different_table_operations_fail(self):
         # Arrange
         other_table_name = self.table_name + 'other'
@@ -1224,6 +1283,7 @@ class StorageTableTest(AzureTestCase):
 
         self.ts.cancel_batch()
 
+    @record
     def test_unicode_property_value(self):
         ''' regression test for github issue #57'''
         # Act
@@ -1241,6 +1301,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(resp[0].Description, u'ꀕ')
         self.assertEqual(resp[1].Description, u'ꀕ')
 
+    @record
     def test_unicode_property_name(self):
         # Act
         self._create_table(self.table_name)
@@ -1257,6 +1318,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(resp[0].__dict__[u'啊齄丂狛狜'], u'ꀕ')
         self.assertEqual(resp[1].__dict__[u'啊齄丂狛狜'], u'hello')
 
+    @record
     def test_unicode_create_table_unicode_name(self):
         # Arrange
         self.table_name = self.table_name + u'啊齄丂狛狜'
@@ -1268,6 +1330,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_empty_and_spaces_property_value(self):
         # Act
         self._create_table(self.table_name)
@@ -1302,6 +1365,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(resp.SpacesBeforeAndAfterByte, '   Text   ')
         self.assertEqual(resp.SpacesBeforeAndAfterUnicode, u'   Text   ')
 
+    @record
     def test_none_property_value(self):
         # Act
         self._create_table(self.table_name)
@@ -1318,6 +1382,7 @@ class StorageTableTest(AzureTestCase):
         self.assertIsNotNone(resp)
         self.assertFalse(hasattr(resp, 'NoneValue'))
 
+    @record
     def test_binary_property_value(self):
         # Act
         binary_data = b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
@@ -1336,6 +1401,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(resp.binary.type, 'Edm.Binary')
         self.assertEqual(resp.binary.value, binary_data)
 
+    @record
     def test_timezone(self):
         # Act
         local_tz = tzoffset('BRST', -10800)
@@ -1355,6 +1421,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(resp.date, local_date.astimezone(tzutc()))
         self.assertEqual(resp.date.astimezone(local_tz), local_date)
 
+    @record
     def test_locale(self):
         # Arrange
         culture = 'es_ES.utf8' if not os.name is "nt" else "Spanish_Spain"
@@ -1370,7 +1437,12 @@ class StorageTableTest(AzureTestCase):
         # Assert
         self.assertIsNone(e)
 
+    @record
     def test_sas_query(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_table_with_default_entities(self.table_name, 2)
         token = self.ts.generate_shared_access_signature(
@@ -1380,10 +1452,10 @@ class StorageTableTest(AzureTestCase):
 
         # Act
         service = TableService(
-            credentials.getStorageServicesName(),
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service)
+        set_service_options(service, self.settings)
         resp = self.ts.query_entities(self.table_name, None, 'age,sex')
 
         # Assert
@@ -1394,7 +1466,12 @@ class StorageTableTest(AzureTestCase):
         self.assertFalse(hasattr(resp[0], "married"))
         self.assertFalse(hasattr(resp[0], "deceased"))
 
+    @record
     def test_sas_add(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_table(self.table_name)
         policy = self._get_shared_access_policy(TableSharedAccessPermissions.ADD)
@@ -1402,10 +1479,10 @@ class StorageTableTest(AzureTestCase):
 
         # Act
         service = TableService(
-            credentials.getStorageServicesName(),
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service)
+        set_service_options(service, self.settings)
         service.insert_entity(
             self.table_name,
             {
@@ -1419,7 +1496,12 @@ class StorageTableTest(AzureTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(resp.text, 'hello')
 
+    @record
     def test_sas_add_inside_range(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_table(self.table_name)
         policy = self._get_shared_access_policy(TableSharedAccessPermissions.ADD)
@@ -1431,10 +1513,10 @@ class StorageTableTest(AzureTestCase):
 
         # Act
         service = TableService(
-            credentials.getStorageServicesName(),
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service)
+        set_service_options(service, self.settings)
         service.insert_entity(
             self.table_name,
             {
@@ -1448,7 +1530,12 @@ class StorageTableTest(AzureTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(resp.text, 'hello')
 
+    @record
     def test_sas_add_outside_range(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_table(self.table_name)
         policy = self._get_shared_access_policy(TableSharedAccessPermissions.ADD)
@@ -1460,10 +1547,10 @@ class StorageTableTest(AzureTestCase):
 
         # Act
         service = TableService(
-            credentials.getStorageServicesName(),
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service)
+        set_service_options(service, self.settings)
         with self.assertRaises(WindowsAzureMissingResourceError):
             service.insert_entity(
                 self.table_name,
@@ -1475,7 +1562,12 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_sas_update(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
         policy = self._get_shared_access_policy(TableSharedAccessPermissions.UPDATE)
@@ -1483,10 +1575,10 @@ class StorageTableTest(AzureTestCase):
 
         # Act
         service = TableService(
-            credentials.getStorageServicesName(),
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service)
+        set_service_options(service, self.settings)
         updated_entity = self._create_updated_entity_dict('MyPartition', '1')
         resp = service.update_entity(self.table_name, 'MyPartition', '1', updated_entity)
 
@@ -1494,7 +1586,12 @@ class StorageTableTest(AzureTestCase):
         received_entity = self.ts.get_entity(self.table_name, 'MyPartition', '1')
         self._assert_updated_entity(received_entity)
 
+    @record
     def test_sas_delete(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
         policy = self._get_shared_access_policy(TableSharedAccessPermissions.DELETE)
@@ -1502,17 +1599,22 @@ class StorageTableTest(AzureTestCase):
 
         # Act
         service = TableService(
-            credentials.getStorageServicesName(),
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service)
+        set_service_options(service, self.settings)
         service.delete_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
         with self.assertRaises(WindowsAzureMissingResourceError):
             self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
+    @record
     def test_sas_signed_identifier(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_table_with_default_entities(self.table_name, 2)
 
@@ -1533,10 +1635,10 @@ class StorageTableTest(AzureTestCase):
 
         # Act
         service = TableService(
-            credentials.getStorageServicesName(),
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service)
+        set_service_options(service, self.settings)
         resp = self.ts.query_entities(self.table_name, None, 'age,sex')
 
         # Assert
@@ -1547,6 +1649,7 @@ class StorageTableTest(AzureTestCase):
         self.assertFalse(hasattr(resp[0], "married"))
         self.assertFalse(hasattr(resp[0], "deceased"))
 
+    @record
     def test_get_table_acl(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -1558,6 +1661,7 @@ class StorageTableTest(AzureTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.signed_identifiers), 0)
 
+    @record
     def test_get_table_acl_iter(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -1572,6 +1676,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(len(acl.signed_identifiers), 0)
         self.assertEqual(len(acl), 0)
 
+    @record
     def test_get_table_acl_with_non_existing_container(self):
         # Arrange
 
@@ -1581,6 +1686,7 @@ class StorageTableTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_set_table_acl(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -1593,6 +1699,7 @@ class StorageTableTest(AzureTestCase):
         acl = self.ts.get_table_acl(self.table_name)
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_table_acl_with_empty_signed_identifiers(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -1608,6 +1715,7 @@ class StorageTableTest(AzureTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.signed_identifiers), 0)
 
+    @record
     def test_set_table_acl_with_signed_identifiers(self):
         # Arrange
         self._create_table_with_default_entities(self.table_name, 1)
@@ -1632,6 +1740,7 @@ class StorageTableTest(AzureTestCase):
         self.assertEqual(acl.signed_identifiers[0].id, 'testid')
         self.assertEqual(acl[0].id, 'testid')
 
+    @record
     def test_set_table_acl_with_non_existing_table(self):
         # Arrange
 

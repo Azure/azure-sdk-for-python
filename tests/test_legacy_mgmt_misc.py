@@ -14,7 +14,7 @@
 #--------------------------------------------------------------------------
 
 import os
-import time
+import requests
 import unittest
 from datetime import datetime, timedelta
 
@@ -41,13 +41,14 @@ from azure.servicemanagement import (
 )
 from azure.storage.blobservice import BlobService
 from .util import (
-    AzureTestCase,
-    create_service_management,
-    credentials,
-    getUniqueName,
-    set_service_options,
+    create_storage_service,
 )
-from time import sleep
+from .common_recordingtestcase import (
+    TestMode,
+    record,
+)
+from .legacy_mgmt_testcase import LegacyMgmtTestCase
+
 
 SERVICE_CERT_FORMAT = 'pfx'
 SERVICE_CERT_PASSWORD = 'Python'
@@ -77,115 +78,101 @@ DEPLOYMENT_UPDATE_CONFIG = '''<ServiceConfiguration serviceName="WindowsAzure1" 
 CSPKG_PATH = 'data/WindowsAzure1.cspkg'
 DATA_VHD_PATH = 'data/testhd'
 
-# This blob must be created manually before running the unit tests,
-# they must be present in the storage account listed in the credentials file.
-LINUX_OS_VHD_URL = credentials.getLinuxOSVHD()
-
-# The easiest way to create a Linux OS vhd is to use the Azure management
-# portal to create a Linux VM, and have it store the VHD in the
-# storage account listed in the credentials file.  Then stop the VM,
-# and use the following code to copy the VHD to another blob (if you
-# try to use the VM's VHD directly without making a copy, you will get
-# conflict errors).
-
-# sourceblob = '/{0}/{1}/{2}'.format(credentials.getStorageServicesName(), 'vhdcontainername', 'vhdblobname')
-# self.bc.copy_blob('vhdcontainername', 'targetvhdblobname', sourceblob)
-#
-# in the credentials file, set:
-#    "linuxosvhd" : "http://storageservicesname.blob.core.windows.net/vhdcontainername/targetvhdblobname",
-
 
 #------------------------------------------------------------------------------
-class LegacyMgmtMiscTest(AzureTestCase):
+class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     def setUp(self):
-        self.sms = create_service_management(ServiceManagementService)
+        super(LegacyMgmtMiscTest, self).setUp()
 
-        self.bc = BlobService(credentials.getStorageServicesName(),
-                              credentials.getStorageServicesKey())
-        set_service_options(self.bc)
+        self.sms = self.create_service_management(ServiceManagementService)
 
-        self.hosted_service_name = getUniqueName('utsvc')
-        self.container_name = getUniqueName('utctnr')
-        self.disk_name = getUniqueName('utdisk')
-        self.os_image_name = getUniqueName('utosimg')
+        self.bc = create_storage_service(BlobService, self.settings)
+
+        self.hosted_service_name = self.get_resource_name('utsvc')
+        self.container_name = self.get_resource_name('utctnr')
+        self.disk_name = self.get_resource_name('utdisk')
+        self.os_image_name = self.get_resource_name('utosimg')
         self.data_disk_info = None
         self.reserved_ip_address = None
 
     def tearDown(self):
-        if self.data_disk_info is not None:
-            try:
-                disk = self.sms.get_data_disk(
-                    self.data_disk_info[0], self.data_disk_info[1],
-                    self.data_disk_info[2], self.data_disk_info[3])
+        if not self.is_playback():
+            if self.data_disk_info is not None:
                 try:
-                    result = self.sms.delete_data_disk(
+                    disk = self.sms.get_data_disk(
                         self.data_disk_info[0], self.data_disk_info[1],
                         self.data_disk_info[2], self.data_disk_info[3])
-                    self._wait_for_async(result.request_id)
+                    try:
+                        result = self.sms.delete_data_disk(
+                            self.data_disk_info[0], self.data_disk_info[1],
+                            self.data_disk_info[2], self.data_disk_info[3])
+                        self._wait_for_async(result.request_id)
+                    except:
+                        pass
+                    try:
+                        self.sms.delete_disk(disk.disk_name)
+                    except:
+                        pass
                 except:
                     pass
-                try:
-                    self.sms.delete_disk(disk.disk_name)
-                except:
-                    pass
+
+            disk_names = [self.disk_name]
+
+            try:
+                # Can't delete a hosted service if it has deployments, so delete
+                # those first
+                props = self.sms.get_hosted_service_properties(
+                    self.hosted_service_name, True)
+                for deployment in props.deployments:
+                    try:
+                        for role in deployment.role_list:
+                            role_props = self.sms.get_role(
+                                self.hosted_service_name,
+                                deployment.name,
+                                role.role_name)
+                            if role_props.os_virtual_hard_disk.disk_name \
+                                not in disk_names:
+                                disk_names.append(
+                                    role_props.os_virtual_hard_disk.disk_name)
+                    except:
+                        pass
+
+                    try:
+                        result = self.sms.delete_deployment(
+                            self.hosted_service_name, deployment.name)
+                        self._wait_for_async(result.request_id)
+                    except:
+                        pass
+                self.sms.delete_hosted_service(self.hosted_service_name)
             except:
                 pass
 
-        disk_names = [self.disk_name]
-
-        try:
-            # Can't delete a hosted service if it has deployments, so delete
-            # those first
-            props = self.sms.get_hosted_service_properties(
-                self.hosted_service_name, True)
-            for deployment in props.deployments:
-                try:
-                    for role in deployment.role_list:
-                        role_props = self.sms.get_role(
-                            self.hosted_service_name,
-                            deployment.name,
-                            role.role_name)
-                        if role_props.os_virtual_hard_disk.disk_name \
-                            not in disk_names:
-                            disk_names.append(
-                                role_props.os_virtual_hard_disk.disk_name)
-                except:
-                    pass
-
-                try:
-                    result = self.sms.delete_deployment(
-                        self.hosted_service_name, deployment.name)
-                    self._wait_for_async(result.request_id)
-                except:
-                    pass
-            self.sms.delete_hosted_service(self.hosted_service_name)
-        except:
-            pass
-
-        try:
-            result = self.sms.delete_os_image(self.os_image_name)
-            self._wait_for_async(result.request_id)
-        except:
-            pass
-
-        for disk_name in disk_names:
             try:
-                self.sms.delete_disk(disk_name)
-            except:
-                pass
-
-        try:
-            self.bc.delete_container(self.container_name)
-        except:
-            pass
-
-        if self.reserved_ip_address:
-            try:
-                result = self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+                result = self.sms.delete_os_image(self.os_image_name)
                 self._wait_for_async(result.request_id)
             except:
                 pass
+
+            for disk_name in disk_names:
+                try:
+                    self.sms.delete_disk(disk_name)
+                except:
+                    pass
+
+            try:
+                self.bc.delete_container(self.container_name)
+            except:
+                pass
+
+            if self.reserved_ip_address:
+                try:
+                    result = self.sms.delete_reserved_ip_address(self.reserved_ip_address)
+                    self._wait_for_async(result.request_id)
+                except:
+                    pass
+
+        return super(LegacyMgmtMiscTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _wait_for_async(self, request_id):
@@ -200,7 +187,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             if count > 120:
                 self.assertTrue(
                     False, 'Timed out waiting for deployment status.')
-            time.sleep(5)
+            self.sleep(5)
             props = self.sms.get_deployment_by_name(
                 service_name, deployment_name)
 
@@ -213,7 +200,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             if count > 120:
                 self.assertTrue(
                     False, 'Timed out waiting for role instance status.')
-            time.sleep(5)
+            self.sleep(5)
             props = self.sms.get_deployment_by_name(
                 service_name, deployment_name)
 
@@ -225,7 +212,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             if count > 120:
                 self.assertTrue(
                     False, 'Timed out waiting for rollback allowed.')
-            time.sleep(5)
+            self.sleep(5)
             props = self.sms.get_deployment_by_name(
                 service_name, deployment_name)
 
@@ -302,7 +289,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
 
     def _upload_file_to_block_blob(self, file_path, blob_name):
         data = open(file_path, 'rb').read()
-        url = self._make_blob_url(credentials.getStorageServicesName(),
+        url = self._make_blob_url(self.settings.STORAGE_ACCOUNT_NAME,
                                   self.container_name, blob_name)
         self._create_container_and_block_blob(
             self.container_name, blob_name, data)
@@ -324,7 +311,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
                     break
 
     def _upload_file_to_page_blob(self, file_path, blob_name):
-        url = self._make_blob_url(credentials.getStorageServicesName(),
+        url = self._make_blob_url(self.settings.STORAGE_ACCOUNT_NAME,
                                   self.container_name, blob_name)
         content_length = os.path.getsize(file_path)
         self._create_container_and_page_blob(
@@ -470,7 +457,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
 
     def _os_hd(self, image_name, target_container_name, target_blob_name):
         media_link = self._make_blob_url(
-            credentials.getStorageServicesName(),
+            self.settings.STORAGE_ACCOUNT_NAME,
             target_container_name, target_blob_name)
         os_hd = OSVirtualHardDisk(image_name, media_link,
                                   disk_label=target_blob_name)
@@ -537,7 +524,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self._wait_for_role(service_name, deployment_name, role_name)
 
     def _create_reserved_ip_address(self):
-        self.reserved_ip_address = getUniqueName('ip')
+        self.reserved_ip_address = self.get_resource_name('ip')
         result = self.sms.create_reserved_ip_address(
             self.reserved_ip_address,
             'mylabel',
@@ -572,10 +559,11 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.bc.create_container(self.container_name,
                                  x_ms_blob_public_access='blob')
         resp = self.bc.copy_blob(self.container_name, blob_name,
-                                 credentials.getLinuxOSVHD())
+                                 self.settings.LINUX_OS_VHD)
         return self.bc.make_blob_url(self.container_name, blob_name)
 
     #--Test cases for http passthroughs --------------------------------------
+    @record
     def test_perform_get(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -583,7 +571,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         # Act
         response = self.sms.perform_get(
             '/{0}/services/hostedservices/{1}'.format(
-                credentials.getSubscriptionId(),
+                self.settings.SUBSCRIPTION_ID,
                 self.hosted_service_name
             )
         )
@@ -595,6 +583,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertNotEqual(
             response.body.decode().find(self.hosted_service_name), -1)
 
+    @record
     def test_perform_post(self):
         # Arrange
 
@@ -609,7 +598,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
 
         response = self.sms.perform_post(
             '/{0}/services/hostedservices'.format(
-                credentials.getSubscriptionId()
+                self.settings.SUBSCRIPTION_ID
             ),
             xml.format(
                 self.hosted_service_name,
@@ -627,6 +616,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(response.message, 'Created')
         self.assertTrue(self._hosted_service_exists(self.hosted_service_name))
 
+    @record
     def test_perform_put(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -639,7 +629,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
 
         response = self.sms.perform_put(
             '/{0}/services/hostedservices/{1}'.format(
-                credentials.getSubscriptionId(),
+                self.settings.SUBSCRIPTION_ID,
                 self.hosted_service_name
             ),
             xml.format(
@@ -657,6 +647,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(props.hosted_service_properties.label,
                          self.hosted_service_name + 'new')
 
+    @record
     def test_perform_delete(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -664,7 +655,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         # Act
         response = self.sms.perform_delete(
             '/{0}/services/hostedservices/{1}'.format(
-                credentials.getSubscriptionId(),
+                self.settings.SUBSCRIPTION_ID,
                 self.hosted_service_name
             )
         )
@@ -678,6 +669,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertFalse(self._hosted_service_exists(self.hosted_service_name))
 
     #--Test cases for subscriptions --------------------------------------
+    @record
     def test_list_role_sizes(self):
         # Arrange
 
@@ -700,6 +692,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsInstance(role_size.supported_by_web_worker_roles, bool)
 
     @unittest.skip('Can only be used with oauth')
+    @record
     def test_list_subscriptions(self):
         # Arrange
 
@@ -711,6 +704,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertTrue(len(result) > 0)
 
     #--Test cases for hosted services ------------------------------------
+    @record
     def test_list_hosted_services(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -746,6 +740,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             service.hosted_service_properties.extended_properties['ext2'])
         self.assertIsNone(service.deployments)
 
+    @record
     def test_get_hosted_service_properties(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -773,6 +768,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             result.hosted_service_properties.extended_properties['ext2'])
         self.assertIsNone(result.deployments)
 
+    @record
     def test_get_hosted_service_properties_with_embed_detail(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -844,6 +840,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(
             result.deployments[0].role_instance_list[0].role_name, 'WorkerRole1')
 
+    @record
     def test_create_hosted_service(self):
         # Arrange
         label = 'pythonlabel'
@@ -859,6 +856,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         # Assert
         self.assertTrue(self._hosted_service_exists(self.hosted_service_name))
 
+    @record
     def test_update_hosted_service(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -887,6 +885,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             props.hosted_service_properties.extended_properties['ext3'],
             'brandnew')
 
+    @record
     def test_delete_hosted_service(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -898,6 +897,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         # Assert
         self.assertFalse(self._hosted_service_exists(self.hosted_service_name))
 
+    @record
     def test_get_deployment_by_slot(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -915,6 +915,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsNotNone(result.label)
         self.assertIsNotNone(result.configuration)
 
+    @record
     def test_get_deployment_by_name(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -932,6 +933,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsNotNone(result.label)
         self.assertIsNotNone(result.configuration)
 
+    @record
     def test_create_deployment(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -949,6 +951,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertTrue(
             self._deployment_exists(self.hosted_service_name, 'WindowsAzure1'))
 
+    @record
     def test_delete_deployment(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -964,6 +967,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertFalse(
             self._deployment_exists(self.hosted_service_name, deployment_name))
 
+    @record
     def test_delete_deployment_with_vhd(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -987,12 +991,13 @@ class LegacyMgmtMiscTest(AzureTestCase):
             if count >= timeToSleep:
                 self.assertFalse(True, "Blob exists")
             else:
-                sleep(5)
+                self.sleep(5)
                 count += 5
         print("Time to run:", count)
         self.assertFalse(
             self._deployment_exists(self.hosted_service_name, deployment_name))
 
+    @record
     def test_swap_deployment(self):
         # Arrange
         production_deployment_name = 'utdeployprod'
@@ -1023,6 +1028,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(deploy.name, production_deployment_name)
         self.assertEqual(deploy.deployment_slot, 'Staging')
 
+    @record
     def test_change_deployment_configuration(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -1040,6 +1046,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self.hosted_service_name, deployment_name)
         self.assertTrue(props.configuration.find('Instances count="4"') >= 0)
 
+    @record
     def test_update_deployment_status(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -1056,6 +1063,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self.hosted_service_name, deployment_name)
         self.assertEqual(props.status, 'Suspended')
 
+    @record
     def test_upgrade_deployment(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -1076,6 +1084,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(props.label, 'upgraded')
         self.assertTrue(props.configuration.find('Instances count="4"') >= 0)
 
+    @record
     def test_walk_upgrade_domain(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -1099,6 +1108,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(props.label, 'upgraded')
         self.assertTrue(props.configuration.find('Instances count="4"') >= 0)
 
+    @record
     def test_rollback_update_or_upgrade(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -1124,6 +1134,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self.hosted_service_name, deployment_name)
         self.assertTrue(props.configuration.find('Instances count="2"') >= 0)
 
+    @record
     def test_reboot_role_instance(self):
         # Arrange
         role_instance_name = 'WorkerRole1_IN_0'
@@ -1148,6 +1159,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         status = self._get_role_instance_status(props, role_instance_name)
         self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
 
+    @record
     def test_reimage_role_instance(self):
         # Arrange
         role_instance_name = 'WorkerRole1_IN_0'
@@ -1172,6 +1184,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         status = self._get_role_instance_status(props, role_instance_name)
         self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
 
+    @record
     def test_rebuild_role_instance(self):
         # Arrange
         role_instance_name = 'WorkerRole1_IN_0'
@@ -1196,6 +1209,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         status = self._get_role_instance_status(props, role_instance_name)
         self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
 
+    @record
     def test_delete_role_instances(self):
         # Arrange
         role_instance_name = 'WorkerRole1_IN_0'
@@ -1220,6 +1234,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         status = self._get_role_instance_status(props, role_instance_name)
         self.assertIsNone(status)
 
+    @record
     def test_check_hosted_service_name_availability_not_available(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -1232,6 +1247,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertFalse(result.result)
 
+    @record
     def test_check_hosted_service_name_availability_available(self):
         # Arrange
 
@@ -1244,6 +1260,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertTrue(result.result)
 
     #--Test cases for service certificates -------------------------------
+    @record
     def test_list_service_certificates(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -1270,6 +1287,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(cert.thumbprint_algorithm, SERVICE_CERT_THUMBALGO)
         self.assertEqual(cert.data, SERVICE_CERT_DATA_PUBLIC)
 
+    @record
     def test_get_service_certificate(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -1289,6 +1307,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(result.thumbprint_algorithm, '')
         self.assertEqual(result.data, SERVICE_CERT_DATA_PUBLIC)
 
+    @record
     def test_add_service_certificate(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -1304,6 +1323,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self.hosted_service_name,
             SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT))
 
+    @record
     def test_delete_service_certificate(self):
         # Arrange
         self._create_hosted_service(self.hosted_service_name)
@@ -1323,6 +1343,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             SERVICE_CERT_THUMBALGO, SERVICE_CERT_THUMBPRINT))
 
     #--Test cases for retrieving operating system information ------------
+    @record
     def test_list_operating_systems(self):
         # Arrange
 
@@ -1339,6 +1360,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsNotNone(result[0].label)
         self.assertIsNotNone(result[0].version)
 
+    @record
     def test_list_operating_system_families(self):
         # Arrange
 
@@ -1357,6 +1379,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsNotNone(result[0].operating_systems[0].is_active)
 
     #--Test cases for retrieving subscription history --------------------
+    @record
     def test_get_subscription(self):
         # Arrange
 
@@ -1366,7 +1389,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
         self.assertEqual(result.subscription_id,
-                         credentials.getSubscriptionId())
+                         self.settings.SUBSCRIPTION_ID)
         self.assertIsNotNone(result.account_admin_live_email_id)
         self.assertIsNotNone(result.service_admin_live_email_id)
         self.assertIsNotNone(result.subscription_name)
@@ -1384,6 +1407,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertGreater(len(result.aad_tenant_id), 0)
 
     #--Test cases for retrieving subscription operations --------------------
+    @record
     def test_list_subscription_operations(self):
         # Arrange
 
@@ -1399,9 +1423,10 @@ class LegacyMgmtMiscTest(AzureTestCase):
 
 
     #--Test cases for reserved ip addresses  -----------------------------
+    @record
     def test_create_reserved_ip_address(self):
         # Arrange
-        self.reserved_ip_address = getUniqueName('ip')
+        self.reserved_ip_address = self.get_resource_name('ip')
 
         # Act
         result = self.sms.create_reserved_ip_address(
@@ -1414,6 +1439,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertTrue(
             self._reserved_ip_address_exists(self.reserved_ip_address))
 
+    @record
     def test_delete_reserved_ip_address(self):
         # Arrange
         self._create_reserved_ip_address()
@@ -1427,6 +1453,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertFalse(
             self._reserved_ip_address_exists(self.reserved_ip_address))
 
+    @record
     def test_get_reserved_ip_address(self):
         # Arrange
         self._create_reserved_ip_address()
@@ -1446,6 +1473,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(len(result.service_name), 0)
         self.assertEqual(len(result.deployment_name), 0)
 
+    @record
     def test_list_reserved_ip_addresses(self):
         # Arrange
         self._create_reserved_ip_address()
@@ -1461,6 +1489,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(len(found), 1)
 
     #--Test cases for virtual machines -----------------------------------
+    @record
     def test_get_role_linux(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1499,6 +1528,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsNotNone(
             result.configuration_sets[0].input_endpoints[0].local_port)
 
+    @record
     def test_get_role_windows(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1538,6 +1568,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             result.configuration_sets[0].input_endpoints[0].local_port)
         self.assertTrue(len(result.default_win_rm_certificate_thumbprint) > 0)
 
+    @record
     def test_create_virtual_machine_deployment_linux(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1568,10 +1599,11 @@ class LegacyMgmtMiscTest(AzureTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    @record
     def test_create_virtual_machine_deployment_linux_vm_image(self):
-        vm_image_name = credentials.getLinuxVMImageName()
+        vm_image_name = self.settings.LINUX_VM_IMAGE_NAME
         if not vm_image_name:
-            self.assertTrue(False, 'Missing linuxvmimagename entry in credentials file.')
+            self.assertTrue(False, 'LINUX_VM_IMAGE_NAME not set in test settings file.')
 
         # Arrange
         service_name = self.hosted_service_name
@@ -1604,6 +1636,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    @record
     def test_create_virtual_machine_deployment_linux_resource_extension(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1643,11 +1676,12 @@ class LegacyMgmtMiscTest(AzureTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    @record
     def test_create_virtual_machine_deployment_linux_remote_source_image(self):
-        source_image_link = credentials.getLinuxVMRemoteSourceImageLink()
+        source_image_link = self.settings.LINUX_VM_REMOTE_SOURCE_IMAGE_LINK
         if not source_image_link:
             self.assertTrue(False,
-                'Missing remotesourceimagelink entry in credentials file.')
+                'LINUX_VM_REMOTE_SOURCE_IMAGE_LINK not set in test settings file.')
 
         # Arrange
         service_name = self.hosted_service_name
@@ -1682,6 +1716,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    @record
     def test_create_virtual_machine_deployment_windows(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1712,6 +1747,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    @record
     def test_create_virtual_machine_deployment_windows_virtual_network(self):
         # this test requires the following manual resources to be created
         # use the azure portal to create them
@@ -1754,6 +1790,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    @record
     def test_add_role_linux(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1785,6 +1822,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(role_instances[1].host_name,
                          self._host_name_from_role_name(role_name2))
 
+    @record
     def test_add_role_windows(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1815,6 +1853,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(role_instances[1].host_name,
                          self._host_name_from_role_name(role_name2))
 
+    @record
     def test_update_role(self):
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
@@ -1838,6 +1877,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         role = self.sms.get_role(service_name, deployment_name, role_name)
         self.assertEqual(role.role_size, 'Medium')
 
+    @record
     def test_delete_role(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1858,6 +1898,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertFalse(
             self._role_exists(service_name, deployment_name, role_name2))
 
+    @record
     def test_shutdown_start_and_restart_role(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1888,6 +1929,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self._wait_for_role(service_name, deployment_name, role_name,
                             'StoppedDeallocated')
 
+    @record
     def test_shutdown_and_start_roles(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1914,6 +1956,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self._wait_for_role(service_name, deployment_name, role_name1)
         self._wait_for_role(service_name, deployment_name, role_name2)
 
+    @record
     def test_capture_role(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -1938,6 +1981,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         # Assert
         self.assertTrue(self._os_image_exists(self.os_image_name))
 
+    @record
     def test_list_resource_extensions(self):
         # Arrange
 
@@ -1953,6 +1997,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self.assertGreater(len(ext.publisher), 0)
             self.assertGreater(len(ext.version), 0)
 
+    @record
     def test_list_resource_extension_versions(self):
         # Arrange
         publisher = 'Chef.Bootstrap.WindowsAzure'
@@ -1971,6 +2016,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self.assertGreater(len(ext.label), 0)
             self.assertGreater(len(ext.version), 0)
 
+    @record
     def test_add_update_delete_dns_server(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -2000,6 +2046,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         # Assert
 
     #--Test cases for virtual machine images -----------------------------
+    @record
     def test_capture_vm_image(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -2036,6 +2083,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(found_image.os_disk_configuration.os_state, image.os_state)
         self.assertEqual(found_image.os_disk_configuration.os, 'Linux')
 
+    @record
     def test_create_vm_image(self):
         # Arrange
         image_name = self.hosted_service_name + 'image'
@@ -2067,6 +2115,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(found_image.os_disk_configuration.os_state, 'Specialized')
         self.assertEqual(found_image.os_disk_configuration.os, 'Linux')
 
+    @record
     def test_delete_vm_image(self):
         # Arrange
         image_name = self.hosted_service_name + 'image'
@@ -2081,6 +2130,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         found_images = [im for im in images if im.name == image_name]
         self.assertEqual(len(found_images), 0)
 
+    @record
     def test_list_vm_images(self):
         # Arrange
 
@@ -2100,6 +2150,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
                 self.assertIsNone(image.role_name)
                 self.assertIsNone(image.service_name)
 
+    @record
     def test_list_vm_images_location(self):
         # Arrange
         loc = 'West US'
@@ -2113,6 +2164,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             regions = image.location.split(';')
             self.assertIn(loc, regions)
 
+    @record
     def test_list_vm_images_location_publisher(self):
         # Arrange
         pub = 'Cloudera'
@@ -2125,6 +2177,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         for image in result:
             self.assertEqual(image.publisher_name, pub)
 
+    @record
     def test_list_vm_images_location_category(self):
         # Arrange
         cat = 'Public'
@@ -2137,6 +2190,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         for image in result:
             self.assertEqual(image.category, cat)
 
+    @record
     def test_list_vm_images_location_publisher_and_category(self):
         # Arrange
         pub = 'Cloudera'
@@ -2151,6 +2205,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self.assertEqual(image.category, cat)
             self.assertEqual(image.publisher_name, pub)
 
+    @record
     def test_update_vm_image(self):
         # Arrange
         image_name = self.hosted_service_name + 'image'
@@ -2176,9 +2231,10 @@ class LegacyMgmtMiscTest(AzureTestCase):
                          updated_image.os_disk_configuration.host_caching)
 
     #--Test cases for operating system images ----------------------------
+    @record
     def test_list_os_images(self):
         # Arrange
-        media_url = LINUX_OS_VHD_URL
+        media_url = self.settings.LINUX_OS_VHD
         os = 'Linux'
         self._create_os_image(self.os_image_name, media_url, os)
 
@@ -2207,6 +2263,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(image.name, self.os_image_name)
         self.assertEqual(image.os, os)
 
+    @record
     def test_list_os_images_public(self):
         # Arrange
 
@@ -2244,9 +2301,10 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertGreater(len(image.publisher_name), 0)
         self.assertIsNotNone(image.small_icon_uri)
 
+    @record
     def test_get_os_image(self):
         # Arrange
-        media_url = LINUX_OS_VHD_URL
+        media_url = self.settings.LINUX_OS_VHD
         os = 'Linux'
         self._create_os_image(self.os_image_name, media_url, os)
 
@@ -2266,24 +2324,26 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(result.name, self.os_image_name)
         self.assertEqual(result.os, os)
 
+    @record
     def test_add_os_image(self):
         # Arrange
 
         # Act
         result = self.sms.add_os_image(
-            'utcentosimg', LINUX_OS_VHD_URL, self.os_image_name, 'Linux')
+            'utcentosimg', self.settings.LINUX_OS_VHD, self.os_image_name, 'Linux')
         self._wait_for_async(result.request_id)
 
         # Assert
         self.assertTrue(self._os_image_exists(self.os_image_name))
 
+    @record
     def test_update_os_image(self):
         # Arrange
-        self._create_os_image(self.os_image_name, LINUX_OS_VHD_URL, 'Linux')
+        self._create_os_image(self.os_image_name, self.settings.LINUX_OS_VHD, 'Linux')
 
         # Act
         result = self.sms.update_os_image(
-            self.os_image_name, 'newlabel', LINUX_OS_VHD_URL,
+            self.os_image_name, 'newlabel', self.settings.LINUX_OS_VHD,
             self.os_image_name, 'Linux')
         self._wait_for_async(result.request_id)
 
@@ -2292,9 +2352,10 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(image.label, 'newlabel')
         self.assertEqual(image.os, 'Linux')
 
+    @record
     def test_delete_os_image(self):
         # Arrange
-        self._create_os_image(self.os_image_name, LINUX_OS_VHD_URL, 'Linux')
+        self._create_os_image(self.os_image_name, self.settings.LINUX_OS_VHD, 'Linux')
 
         # Act
         result = self.sms.delete_os_image(self.os_image_name)
@@ -2304,6 +2365,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertFalse(self._os_image_exists(self.os_image_name))
 
     #--Test cases for virtual machine disks ------------------------------
+    @record
     def test_get_data_disk(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -2339,6 +2401,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(result.lun, hd.lun)
         self.assertEqual(result.media_link, hd.media_link)
 
+    @record
     def test_add_data_disk_from_disk_name(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -2363,6 +2426,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self._data_disk_exists(service_name, deployment_name,
                                    role_name, lun))
 
+    @record
     def test_add_data_disk_from_blob_url(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -2387,6 +2451,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self._data_disk_exists(service_name, deployment_name,
                                    role_name, lun))
 
+    @record
     def test_update_data_disk(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -2417,6 +2482,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
             self._data_disk_exists(service_name, deployment_name,
                                    role_name, updated_lun))
 
+    @record
     def test_delete_data_disk(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -2444,6 +2510,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
                                    role_name, lun))
 
     #--Test cases for virtual machine disks ------------------------------
+    @record
     def test_list_disks(self):
         # Arrange
         url = self._upload_disk_to_storage_blob('disk')
@@ -2470,6 +2537,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsNotNone(disk.name)
         self.assertIsNotNone(disk.source_image_name)
 
+    @record
     def test_get_disk_unattached(self):
         # Arrange
         url = self._upload_disk_to_storage_blob('disk')
@@ -2488,6 +2556,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsNotNone(result.source_image_name)
         self.assertIsNone(result.attached_to)
 
+    @record
     def test_get_disk_attached(self):
         # Arrange
         service_name = self.hosted_service_name
@@ -2521,6 +2590,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(result.attached_to.hosted_service_name, service_name)
         self.assertEqual(result.attached_to.role_name, role_name)
 
+    @record
     def test_add_disk(self):
         # Arrange
         url = self._upload_disk_to_storage_blob('disk')
@@ -2533,6 +2603,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertIsNone(result)
         self.assertTrue(self._disk_exists(self.disk_name))
 
+    @record
     def test_update_disk(self):
         # Arrange
         url = self._upload_disk_to_storage_blob('disk')
@@ -2549,6 +2620,7 @@ class LegacyMgmtMiscTest(AzureTestCase):
         self.assertEqual(disk.label, 'ptvslabelupdate')
         self.assertEqual(disk.media_link, url)
 
+    @record
     def test_delete_disk(self):
         # Arrange
         url = self._upload_disk_to_storage_blob('disk')

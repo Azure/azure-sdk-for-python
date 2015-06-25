@@ -28,37 +28,37 @@ from azure.servicemanagement import (
     WebSpace,
     PublishData,
 )
-
-from .util import (
-    AzureTestCase,
-    create_service_management,
-    credentials,
-    getUniqueName,
+from .common_recordingtestcase import (
+    TestMode,
+    record,
 )
+from .legacy_mgmt_testcase import LegacyMgmtTestCase
 
-class LegacyMgmtWebsiteTest(AzureTestCase):
+
+class LegacyMgmtWebsiteTest(LegacyMgmtTestCase):
 
     def setUp(self):
-        self.wss = create_service_management(WebsiteManagementService)
+        super(LegacyMgmtWebsiteTest, self).setUp()
+
+        self.wss = self.create_service_management(WebsiteManagementService)
 
         self.created_site = None
         self.webspace_name = 'eastuswebspace'
         self.geo_region = 'East US'
 
     def tearDown(self):
-        self.cleanup()
-        return super(LegacyMgmtWebsiteTest, self).tearDown()
+        if not self.is_playback():
+            if self.created_site:
+                try:
+                    self.wss.delete_site(self.webspace_name, self.created_site)
+                except:
+                    pass
 
-    def cleanup(self):
-        if self.created_site:
-            try:
-                self.wss.delete_site(self.webspace_name, self.created_site)
-            except:
-                pass
+        return super(LegacyMgmtWebsiteTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _create_site(self):
-        self.created_site = getUniqueName('uts')
+        self.created_site = self.get_resource_name('uts')
         self.wss.create_site(
             self.webspace_name,
             self.created_site,
@@ -74,6 +74,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
             return False
 
     #--Operations for web sites ----------------------------------------
+    @record
     def test_list_web_spaces(self):
         # Arrange
 
@@ -94,6 +95,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertEqual(webspace.geo_location, 'BLU')
         self.assertEqual(webspace.geo_region, 'East US')
 
+    @record
     def test_get_web_space(self):
         # Arrange
 
@@ -106,6 +108,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertEqual(result.geo_location, 'BLU')
         self.assertEqual(result.geo_region, 'East US')
 
+    @record
     def test_list_web_sites(self):
         # Arrange
         self._create_site()
@@ -119,6 +122,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertTrue(len(result) > 0)
         self.assertTrue(self._site_exists(self.webspace_name, self.created_site))
 
+    @record
     def test_get_web_site(self):
         # Arrange
         self._create_site()
@@ -145,11 +149,12 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertEqual(result.usage_state, 'Normal')
         self.assertEqual(result.web_space, self.webspace_name)
 
+    @record
     def test_create_site(self):
         # Arrange
 
         # Act
-        self.created_site = getUniqueName('uts')
+        self.created_site = self.get_resource_name('uts')
         result = self.wss.create_site(
             self.webspace_name,
             self.created_site,
@@ -161,6 +166,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertTrue(self._site_exists(self.webspace_name, self.created_site))
 
+    @record
     def test_delete_site(self):
         # Arrange
         self._create_site()
@@ -173,6 +179,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertFalse(self._site_exists(self.webspace_name,
                                            self.created_site))
 
+    @record
     def test_delete_site_with_empty_farm(self):
         # Arrange
         self._create_site()
@@ -186,6 +193,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertFalse(self._site_exists(self.webspace_name,
                                            self.created_site))
 
+    @record
     def test_delete_site_with_metrics(self):
         # Arrange
         self._create_site()
@@ -199,6 +207,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertFalse(self._site_exists(self.webspace_name,
                                            self.created_site))
 
+    @record
     def test_delete_site_with_empty_farm_and_metrics(self):
         # Arrange
         self._create_site()
@@ -213,6 +222,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertFalse(self._site_exists(self.webspace_name,
                                            self.created_site))
 
+    @record
     def test_restart_site(self):
         # Arrange
         self._create_site()
@@ -223,6 +233,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         # Assert
         self.assertTrue(hasattr(result, 'request_id'))
 
+    @record
     def test_shutdown_start_site(self):
         # Arrange
         self._create_site()
@@ -243,6 +254,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         result = self.wss.get_site(self.webspace_name, self.created_site)
         self.assertEqual(result.state, 'Running')
 
+    @record
     def test_get_web_site_metrics(self):
         # Arrange
         self._create_site()
@@ -267,6 +279,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertGreater(len(availability.retention), 0)
         self.assertGreater(len(availability.time_grain), 0)
 
+    @record
     def test_get_historical_usage_metrics(self):
         # Arrange
         self._create_site()
@@ -292,6 +305,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertGreater(len(response.data.unit), 0)
         self.assertIsNotNone(response.data.values)
 
+    @record
     def test_get_publish_profile_xml(self):
         # Arrange
         self._create_site()
@@ -304,6 +318,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertTrue(result.startswith(u"<publishData>"))
 
+    @record
     def test_get_publish_profile(self):
         # Arrange
         self._create_site()
@@ -315,5 +330,7 @@ class LegacyMgmtWebsiteTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(result)
         self.assertIsInstance(result, PublishData)
-        
 
+#------------------------------------------------------------------------------
+if __name__ == '__main__':
+    unittest.main()

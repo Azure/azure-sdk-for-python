@@ -17,7 +17,7 @@
 import sys
 import datetime
 import unittest
-
+from requests import Session
 from azure.storage import (
     AccessPolicy,
     SharedAccessPolicy,
@@ -28,52 +28,52 @@ from azure.storage import (
 )
 from azure.common import WindowsAzureError
 from .util import (
-    AzureTestCase,
-    credentials,
-    getUniqueName,
     create_storage_service,
     set_service_options,
 )
+from .common_recordingtestcase import (
+    TestMode,
+    record,
+)
+from .storage_testcase import StorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'
 #------------------------------------------------------------------------------
 
 
-class StorageQueueTest(AzureTestCase):
+class StorageQueueTest(StorageTestCase):
 
     def setUp(self):
-        self.qs = create_storage_service(
-            QueueService,
-            credentials.getStorageServicesName(),
-            credentials.getStorageServicesKey(),
-        )
+        super(StorageQueueTest, self).setUp()
+
+        self.qs = create_storage_service(QueueService, self.settings)
 
         self.test_queues = []
         self.creatable_queues = []
         for i in range(10):
-            self.test_queues.append(getUniqueName(TEST_QUEUE_PREFIX + str(i)))
+            self.test_queues.append(self.get_resource_name(TEST_QUEUE_PREFIX + str(i)))
         for i in range(4):
             self.creatable_queues.append(
-                getUniqueName('mycreatablequeue' + str(i)))
-        for queue_name in self.test_queues:
-            self.qs.create_queue(queue_name)
+                self.get_resource_name('mycreatablequeue' + str(i)))
+
+        if not self.is_playback():
+            for queue_name in self.test_queues:
+                self.qs.create_queue(queue_name)
 
     def tearDown(self):
-        self.cleanup()
+        if not self.is_playback():
+            for queue_name in self.test_queues:
+                try:
+                    self.qs.delete_queue(queue_name)
+                except:
+                    pass
+            for queue_name in self.creatable_queues:
+                try:
+                    self.qs.delete_queue(queue_name)
+                except:
+                    pass
         return super(StorageQueueTest, self).tearDown()
-
-    def cleanup(self):
-        for queue_name in self.test_queues:
-            try:
-                self.qs.delete_queue(queue_name)
-            except:
-                pass
-        for queue_name in self.creatable_queues:
-            try:
-                self.qs.delete_queue(queue_name)
-            except:
-                pass
 
     def _get_shared_access_policy(self, permission):
         date_format = "%Y-%m-%dT%H:%M:%SZ"
@@ -87,6 +87,7 @@ class StorageQueueTest(AzureTestCase):
             )
         )
 
+    @record
     def test_get_service_properties(self):
         # This api doesn't apply to local storage
         if self.qs.use_local_storage:
@@ -107,6 +108,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertIsNotNone(properties.minute_metrics.retention_policy)
         self.assertIsNotNone(properties.minute_metrics.version)
 
+    @record
     def test_set_service_properties(self):
         # This api doesn't apply to local storage
         if self.qs.use_local_storage:
@@ -131,6 +133,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertIsNotNone(properties.minute_metrics.version)
         self.assertTrue(properties.logging.read)
 
+    @record
     def test_create_queue(self):
         # Action
         self.qs.create_queue(self.creatable_queues[0])
@@ -141,6 +144,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result['x-ms-approximate-messages-count'], '0')
 
+    @record
     def test_create_queue_already_exist(self):
         # Action
         created1 = self.qs.create_queue(self.creatable_queues[0])
@@ -150,6 +154,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertTrue(created1)
         self.assertFalse(created2)
 
+    @record
     def test_create_queue_fail_on_exist(self):
         # Action
         created = self.qs.create_queue(self.creatable_queues[0], None, True)
@@ -159,6 +164,7 @@ class StorageQueueTest(AzureTestCase):
         # Asserts
         self.assertTrue(created)
 
+    @record
     def test_create_queue_with_options(self):
         # Action
         self.qs.create_queue(
@@ -173,6 +179,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertEqual('test', result['x-ms-meta-val1'])
         self.assertEqual('blah', result['x-ms-meta-val2'])
 
+    @record
     def test_delete_queue_not_exist(self):
         # Action
         deleted = self.qs.delete_queue(self.creatable_queues[0])
@@ -180,6 +187,7 @@ class StorageQueueTest(AzureTestCase):
         # Asserts
         self.assertFalse(deleted)
 
+    @record
     def test_delete_queue_fail_not_exist_not_exist(self):
         # Action
         with self.assertRaises(WindowsAzureError):
@@ -187,6 +195,7 @@ class StorageQueueTest(AzureTestCase):
 
         # Asserts
 
+    @record
     def test_delete_queue_fail_not_exist_already_exist(self):
         # Action
         created = self.qs.create_queue(self.creatable_queues[0])
@@ -196,6 +205,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertTrue(created)
         self.assertTrue(deleted)
 
+    @record
     def test_list_queues(self):
         # Action
         queues = self.qs.list_queues()
@@ -208,6 +218,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertEqual(0, queues.max_results)
         self.assertTrue(len(self.test_queues) <= len(queues))
 
+    @record
     def test_list_queues_with_options(self):
         # Action
         queues_1 = self.qs.list_queues(prefix=TEST_QUEUE_PREFIX, maxresults=3)
@@ -233,6 +244,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertIsNotNone(queues_2[0].metadata)
         self.assertNotEqual('', queues_2[0].name)
 
+    @record
     def test_set_queue_metadata(self):
         # Action
         self.qs.create_queue(self.creatable_queues[2])
@@ -249,6 +261,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertEqual('test', result['x-ms-meta-val1'])
         self.assertEqual('blah', result['x-ms-meta-val2'])
 
+    @record
     def test_put_message(self):
         # Action.  No exception means pass. No asserts needed.
         self.qs.put_message(self.test_queues[0], 'message1')
@@ -256,6 +269,7 @@ class StorageQueueTest(AzureTestCase):
         self.qs.put_message(self.test_queues[0], 'message3')
         self.qs.put_message(self.test_queues[0], 'message4')
 
+    @record
     def test_get_messages(self):
         # Action
         self.qs.put_message(self.test_queues[1], 'message1')
@@ -277,6 +291,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertNotEqual('', message.expiration_time)
         self.assertNotEqual('', message.time_next_visible)
 
+    @record
     def test_get_messages_with_options(self):
         # Action
         self.qs.put_message(self.test_queues[2], 'message1')
@@ -300,6 +315,7 @@ class StorageQueueTest(AzureTestCase):
             self.assertNotEqual('', message.expiration_time)
             self.assertNotEqual('', message.time_next_visible)
 
+    @record
     def test_peek_messages(self):
         # Action
         self.qs.put_message(self.test_queues[3], 'message1')
@@ -321,6 +337,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertNotEqual('', message.expiration_time)
         self.assertEqual('', message.time_next_visible)
 
+    @record
     def test_peek_messages_with_options(self):
         # Action
         self.qs.put_message(self.test_queues[4], 'message1')
@@ -342,6 +359,7 @@ class StorageQueueTest(AzureTestCase):
             self.assertNotEqual('', message.expiration_time)
             self.assertEqual('', message.time_next_visible)
 
+    @record
     def test_clear_messages(self):
         # Action
         self.qs.put_message(self.test_queues[5], 'message1')
@@ -355,6 +373,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertEqual(0, len(result))
 
+    @record
     def test_delete_message(self):
         # Action
         self.qs.put_message(self.test_queues[6], 'message1')
@@ -370,6 +389,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertIsNotNone(result2)
         self.assertEqual(3, len(result2))
 
+    @record
     def test_update_message(self):
         # Action
         self.qs.put_message(self.test_queues[7], 'message1')
@@ -394,6 +414,10 @@ class StorageQueueTest(AzureTestCase):
         self.assertNotEqual('', message.time_next_visible)
 
     def test_sas_read(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self.qs.put_message(self.test_queues[0], 'message1')
         token = self.qs.generate_shared_access_signature(
@@ -402,8 +426,11 @@ class StorageQueueTest(AzureTestCase):
         )
 
         # Act
-        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
-        set_service_options(service)
+        service = QueueService(
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
+            sas_token=token,
+        )
+        set_service_options(service, self.settings)
         result = service.peek_messages(self.test_queues[0])
 
         # Assert
@@ -415,6 +442,10 @@ class StorageQueueTest(AzureTestCase):
         self.assertEqual('message1', message.message_text)
 
     def test_sas_add(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         token = self.qs.generate_shared_access_signature(
             self.test_queues[0],
@@ -422,8 +453,11 @@ class StorageQueueTest(AzureTestCase):
         )
 
         # Act
-        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
-        set_service_options(service)
+        service = QueueService(
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
+            sas_token=token,
+        )
+        set_service_options(service, self.settings)
         result = service.put_message(self.test_queues[0], 'addedmessage')
 
         # Assert
@@ -431,6 +465,10 @@ class StorageQueueTest(AzureTestCase):
         self.assertEqual('addedmessage', result[0].message_text)
 
     def test_sas_update(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self.qs.put_message(self.test_queues[0], 'message1')
         token = self.qs.generate_shared_access_signature(
@@ -440,8 +478,11 @@ class StorageQueueTest(AzureTestCase):
         result = self.qs.get_messages(self.test_queues[0])
 
         # Act
-        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
-        set_service_options(service)
+        service = QueueService(
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
+            sas_token=token,
+        )
+        set_service_options(service, self.settings)
         service.update_message(
             self.test_queues[0],
             result[0].message_id,
@@ -455,6 +496,10 @@ class StorageQueueTest(AzureTestCase):
         self.assertEqual('updatedmessage1', result[0].message_text)
 
     def test_sas_process(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self.qs.put_message(self.test_queues[0], 'message1')
         token = self.qs.generate_shared_access_signature(
@@ -463,8 +508,11 @@ class StorageQueueTest(AzureTestCase):
         )
 
         # Act
-        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
-        set_service_options(service)
+        service = QueueService(
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
+            sas_token=token,
+        )
+        set_service_options(service, self.settings)
         result = service.get_messages(self.test_queues[0])
 
         # Assert
@@ -476,6 +524,10 @@ class StorageQueueTest(AzureTestCase):
         self.assertEqual('message1', message.message_text)
 
     def test_sas_signed_identifier(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         si = SignedIdentifier()
         si.id = 'testid'
@@ -495,8 +547,11 @@ class StorageQueueTest(AzureTestCase):
         )
 
         # Act
-        service = QueueService(credentials.getStorageServicesName(), sas_token=token)
-        set_service_options(service)
+        service = QueueService(
+            account_name=self.settings.STORAGE_ACCOUNT_NAME,
+            sas_token=token,
+        )
+        set_service_options(service, self.settings)
         result = service.peek_messages(self.test_queues[0])
 
         # Assert
@@ -507,6 +562,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertNotEqual('', message.message_id)
         self.assertEqual('message1', message.message_text)
 
+    @record
     def test_get_queue_acl(self):
         # Arrange
 
@@ -517,6 +573,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.signed_identifiers), 0)
 
+    @record
     def test_get_queue_acl_iter(self):
         # Arrange
 
@@ -530,6 +587,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertEqual(len(acl.signed_identifiers), 0)
         self.assertEqual(len(acl), 0)
 
+    @record
     def test_get_queue_acl_with_non_existing_queue(self):
         # Arrange
 
@@ -539,6 +597,7 @@ class StorageQueueTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_set_queue_acl(self):
         # Arrange
 
@@ -550,6 +609,7 @@ class StorageQueueTest(AzureTestCase):
         acl = self.qs.get_queue_acl(self.test_queues[0])
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_queue_acl_with_empty_signed_identifiers(self):
         # Arrange
 
@@ -564,6 +624,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.signed_identifiers), 0)
 
+    @record
     def test_set_queue_acl_with_signed_identifiers(self):
         # Arrange
 
@@ -587,6 +648,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertEqual(acl.signed_identifiers[0].id, 'testid')
         self.assertEqual(acl[0].id, 'testid')
 
+    @record
     def test_set_queue_acl_with_non_existing_queue(self):
         # Arrange
 
@@ -596,6 +658,7 @@ class StorageQueueTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_with_filter(self):
         # Single filter
         called = []
@@ -624,6 +687,7 @@ class StorageQueueTest(AzureTestCase):
 
         self.assertEqual(called, ['b', 'a'])
 
+    @record
     def test_unicode_create_queue_unicode_name(self):
         # Action
         self.creatable_queues[0] = u'啊齄丂狛狜'
@@ -634,6 +698,7 @@ class StorageQueueTest(AzureTestCase):
 
         # Asserts
 
+    @record
     def test_unicode_get_messages_unicode_data(self):
         # Action
         self.qs.put_message(self.test_queues[1], u'message1㚈')
@@ -652,6 +717,7 @@ class StorageQueueTest(AzureTestCase):
         self.assertNotEqual('', message.expiration_time)
         self.assertNotEqual('', message.time_next_visible)
 
+    @record
     def test_unicode_update_message_unicode_data(self):
         # Action
         self.qs.put_message(self.test_queues[7], 'message1')

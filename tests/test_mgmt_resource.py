@@ -18,8 +18,8 @@ import unittest
 
 import azure.mgmt.resource
 from azure.common import AzureException
-from .testutil import HttpStatusCode, record
-from .mgmtutil import AzureMgmtTestCase
+from .common_recordingtestcase import record
+from .mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
 class MgmtResourceTest(AzureMgmtTestCase):
 

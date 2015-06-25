@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 23 Jun 2015 00:07:01 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/mycreatablequeue010fa1958?comp=acl
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The\
+        \ specified queue does not exist.\nRequestId:97734094-0003-006c-6a48-ad0168000000\n\
+        Time:2015-06-23T00:07:01.8838105Z</Message></Error>"}
+    headers:
+      Content-Length: ['217']
+      Content-Type: [application/xml]
+      Date: ['Tue, 23 Jun 2015 00:07:01 GMT']
+      Server: [Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [97734094-0003-006c-6a48-ad0168000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 404, message: The specified queue does not exist.}
+version: 1

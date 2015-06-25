@@ -20,31 +20,29 @@ from azure.common import (
     WindowsAzureMissingResourceError,
 )
 from azure.servicemanagement import ServiceBusManagementService
-from .util import (
-    AzureTestCase,
-    credentials,
-    getUniqueName,
-    set_service_options,
+from .common_recordingtestcase import (
+    TestMode,
+    record,
 )
+from .legacy_mgmt_testcase import LegacyMgmtTestCase
 
-#------------------------------------------------------------------------------
 
-
-class LegacyMgmtServiceBusTest(AzureTestCase):
+class LegacyMgmtServiceBusTest(LegacyMgmtTestCase):
 
     def setUp(self):
-        self.sms = ServiceBusManagementService(
-            credentials.getSubscriptionId(),
-            credentials.getManagementCertFile())
-        set_service_options(self.sms)
+        super(LegacyMgmtServiceBusTest, self).setUp()
 
-        self.sb_namespace = getUniqueName('uts')
+        self.sms = self.create_service_management(ServiceBusManagementService)
+
+        self.sb_namespace = self.get_resource_name('uts')
 
     def tearDown(self):
-        try:
-            self.sms.delete_namespace(self.sb_namespace)
-        except:
-            pass
+        if not self.is_playback():
+            try:
+                self.sms.delete_namespace(self.sb_namespace)
+            except:
+                pass
+        return super(LegacyMgmtServiceBusTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _namespace_exists(self, name):
@@ -68,6 +66,7 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
             ns = self.sms.get_namespace(name)
 
     #--Operations for service bus ----------------------------------------
+    @record
     def test_get_regions(self):
         # Arrange
 
@@ -81,6 +80,7 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
             self.assertTrue(len(region.code) > 0)
             self.assertTrue(len(region.fullname) > 0)
 
+    @record
     def test_list_namespaces(self):
         # Arrange
 
@@ -94,9 +94,10 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
             self.assertTrue(len(ns.name) > 0)
             self.assertTrue(len(ns.region) > 0)
 
+    @record
     def test_get_namespace(self):
         # Arrange
-        name = credentials.getServiceBusNamespace()
+        name = self.settings.SERVICEBUS_NAME
 
         # Act
         result = self.sms.get_namespace(name)
@@ -112,9 +113,10 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
         self.assertIsNotNone(result.servicebus_endpoint)
         self.assertIsNotNone(result.connection_string)
         self.assertEqual(result.subscription_id,
-                         credentials.getSubscriptionId().replace('-', ''))
+                         self.settings.SUBSCRIPTION_ID.replace('-', ''))
         self.assertTrue(result.enabled)
 
+    @record
     def test_get_namespace_with_non_existing_namespace(self):
         # Arrange
         name = self.sb_namespace
@@ -125,9 +127,10 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_check_namespace_availability_not_available(self):
         # arrange
-        name = credentials.getServiceBusNamespace()
+        name = self.settings.SERVICEBUS_NAME
 
         # act
         availability = self.sms.check_namespace_availability(name)
@@ -135,6 +138,7 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
         # assert
         self.assertFalse(availability.result)
 
+    @record
     def test_check_namespace_availability_available(self):
         # arrange
         name = 'someunusedname'
@@ -145,6 +149,7 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
         # assert
         self.assertTrue(availability.result)
 
+    @record
     def test_create_namespace(self):
         # Arrange
         name = self.sb_namespace
@@ -158,9 +163,10 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
         self.assertIsNone(result)
         self.assertTrue(self._namespace_exists(name))
         
+    @record
     def test_list_topics(self):
         # Arrange
-        name = credentials.getServiceBusNamespace()
+        name = self.settings.SERVICEBUS_NAME
 
         # Act
         result = self.sms.list_topics(name)
@@ -169,9 +175,10 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 
+    @record
     def test_list_queues(self):
         # Arrange
-        name = credentials.getServiceBusNamespace()
+        name = self.settings.SERVICEBUS_NAME
 
         # Act
         result = self.sms.list_queues(name)
@@ -180,9 +187,10 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 
+    @record
     def test_list_notification_hubs(self):
         # Arrange
-        name = credentials.getServiceBusNamespace()
+        name = self.settings.SERVICEBUS_NAME
 
         # Act
         result = self.sms.list_notification_hubs(name)
@@ -191,9 +199,10 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 
+    @record
     def test_list_relays(self):
         # Arrange
-        name = credentials.getServiceBusNamespace()
+        name = self.settings.SERVICEBUS_NAME
 
         # Act
         result = self.sms.list_relays(name)
@@ -202,6 +211,7 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 
+    @record
     def test_create_namespace_with_existing_namespace(self):
         # Arrange
         name = self.sb_namespace
@@ -215,6 +225,7 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_delete_namespace(self):
         # Arrange
         name = self.sb_namespace
@@ -229,6 +240,7 @@ class LegacyMgmtServiceBusTest(AzureTestCase):
         self.assertIsNone(result)
         self.assertFalse(self._namespace_exists(name))
 
+    @record
     def test_delete_namespace_with_non_existing_namespace(self):
         # Arrange
         name = self.sb_namespace

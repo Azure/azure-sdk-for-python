@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-blob-public-access: [blob]
+      x-ms-date: ['Tue, 23 Jun 2015 00:46:09 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer624d10bf?restype=container
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 23 Jun 2015 00:46:08 GMT']
+      ETag: ['"0x8D27B65210BC78D"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:46:08 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [d92ecc2a-0001-0043-034d-ad8052000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      YSBwdWJsaWMgYmxvYiBjYW4gYmUgcmVhZCB3aXRob3V0IGEgc2hhcmVkIGFjY2VzcyBzaWduYXR1
+      cmU=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['59']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-date: ['Tue, 23 Jun 2015 00:46:09 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer624d10bf/blob1.txt
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [j6l0UPTGPwk/3tcnDpRzcQ==]
+      Date: ['Tue, 23 Jun 2015 00:46:08 GMT']
+      ETag: ['"0x8D27B65212DF2EC"']
+      Last-Modified: ['Tue, 23 Jun 2015 00:46:09 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [d92ecc51-0001-0043-274d-ad8052000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.6.0 CPython/3.4.1 Windows/8]
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer624d10bf/blob1.txt
+  response:
+    body: {string: a public blob can be read without a shared access signature}
+    headers:
+      Content-Length: ['59']
+      Content-MD5: [j6l0UPTGPwk/3tcnDpRzcQ==]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      Date: ['Tue, 23 Jun 2015 00:46:08 GMT']
+      ETag: ['0x8D27B65212DF2EC']
+      Last-Modified: ['Tue, 23 Jun 2015 00:46:09 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Vary: [Origin]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-lease-status: [unlocked]
+      x-ms-request-id: [643b8f1c-0001-0006-534d-ad5dc3000000]
+      x-ms-version: ['2009-09-19']
+    status: {code: 200, message: OK}
+version: 1

@@ -54,39 +54,35 @@ from azure.storage.storageclient import (
     EMULATED,
 )
 from .util import (
-    AzureTestCase,
-    credentials,
     create_storage_service,
-    getUniqueName,
     set_service_options,
 )
+from .common_recordingtestcase import (
+    TestMode,
+    record,
+)
+from .storage_testcase import StorageTestCase
 
 
 #------------------------------------------------------------------------------
 
 
-class StorageBlobTest(AzureTestCase):
+class StorageBlobTest(StorageTestCase):
 
     def setUp(self):
-        self.bs = create_storage_service(
-            BlobService,
-            credentials.getStorageServicesName(),
-            credentials.getStorageServicesKey(),
-        )
+        super(StorageBlobTest, self).setUp()
 
-        remote_storage_service_name = credentials.getRemoteStorageServicesName()
-        remote_storage_service_key = credentials.getRemoteStorageServicesKey()
-        if remote_storage_service_key and remote_storage_service_name:
+        self.bs = create_storage_service(BlobService, self.settings)
+
+        if self.settings.REMOTE_STORAGE_ACCOUNT_NAME and self.settings.REMOTE_STORAGE_ACCOUNT_KEY:
             self.bs2 = create_storage_service(
                 BlobService,
-                remote_storage_service_name,
-                remote_storage_service_key,
+                self.settings,
+                self.settings.REMOTE_STORAGE_ACCOUNT_NAME,
+                self.settings.REMOTE_STORAGE_ACCOUNT_KEY,
             )
         else:
-            print("Remote Storage Account not configured. Add " \
-                  "'remotestorageserviceskey' and 'remotestorageservicesname'" \
-                  " to windowsazurecredentials.json to test functionality " \
-                  "involving multiple storage accounts.")
+            print("REMOTE_STORAGE_ACCOUNT_NAME and REMOTE_STORAGE_ACCOUNT_KEY not set in test settings file.")
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
@@ -94,45 +90,44 @@ class StorageBlobTest(AzureTestCase):
         self.bs._BLOB_MAX_DATA_SIZE = 64 * 1024
         self.bs._BLOB_MAX_CHUNK_DATA_SIZE = 4 * 1024
 
-        self.container_name = getUniqueName('utcontainer')
+        self.container_name = self.get_resource_name('utcontainer')
         self.container_lease_id = None
         self.additional_container_names = []
         self.remote_container_name = None
 
     def tearDown(self):
-        self.cleanup()
-        return super(StorageBlobTest, self).tearDown()
-
-    def cleanup(self):
-        if self.container_lease_id:
-            try:
-                self.bs.lease_container(
-                    self.container_name, 'release', self.container_lease_id)
-            except:
-                pass
-        try:
-            self.bs.delete_container(self.container_name)
-        except:
-            pass
-
-        for name in self.additional_container_names:
-            try:
-                self.bs.delete_container(name)
-            except:
-                pass
-
-        if self.remote_container_name:
-            try:
-                self.bs2.delete_container(self.remote_container_name)
-            except:
-                pass
-
-        for tmp_file in ['blob_input.temp.dat', 'blob_output.temp.dat']:
-            if os.path.isfile(tmp_file):
+        if not self.is_playback():
+            if self.container_lease_id:
                 try:
-                    os.remove(tmp_file)
+                    self.bs.lease_container(
+                        self.container_name, 'release', self.container_lease_id)
                 except:
                     pass
+            try:
+                self.bs.delete_container(self.container_name)
+            except:
+                pass
+
+            for name in self.additional_container_names:
+                try:
+                    self.bs.delete_container(name)
+                except:
+                    pass
+
+            if self.remote_container_name:
+                try:
+                    self.bs2.delete_container(self.remote_container_name)
+                except:
+                    pass
+
+            for tmp_file in ['blob_input.temp.dat', 'blob_output.temp.dat']:
+                if os.path.isfile(tmp_file):
+                    try:
+                        os.remove(tmp_file)
+                    except:
+                        pass
+
+        return super(StorageBlobTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _create_container(self, container_name):
@@ -161,7 +156,7 @@ class StorageBlobTest(AzureTestCase):
         block_list = []
         for i in range(0, block_count):
             block_id = '{0:04d}'.format(i)
-            block_data = os.urandom(block_size)
+            block_data = self._get_random_bytes(block_size)
             self.bs.put_block(container_name, blob_name, block_data, block_id)
             block_list.append(block_id)
         self.bs.put_block_list(container_name, blob_name, block_list)
@@ -175,7 +170,7 @@ class StorageBlobTest(AzureTestCase):
 
     def _create_remote_container_and_block_blob(self, source_blob_name, data,
                                                 x_ms_blob_public_access):
-        self.remote_container_name = getUniqueName('remotectnr')
+        self.remote_container_name = self.get_resource_name('remotectnr')
         self.bs2.create_container(
             self.remote_container_name,
             x_ms_blob_public_access=x_ms_blob_public_access)
@@ -209,7 +204,7 @@ class StorageBlobTest(AzureTestCase):
         '''Returns random binary data exceeding the size threshold for
         chunking blob upload.'''
         size = self.bs._BLOB_MAX_DATA_SIZE + 12345
-        return os.urandom(size)
+        return self._get_random_bytes(size)
 
     def _get_expected_progress(self, blob_size, unknown_size=False):
         result = []
@@ -221,11 +216,21 @@ class StorageBlobTest(AzureTestCase):
         result.append((blob_size, total))
         return result
 
+    def _get_random_bytes(self, size):
+        # Must not be really random, otherwise playback of recordings
+        # won't work. Data must be randomized, but the same for each run.
+        # Use the checksum of the qualified test name as the random seed.
+        rand = random.Random(self.checksum)
+        result = bytearray(size)
+        for i in range(size):
+            result[i] = rand.randint(0, 255)
+        return bytes(result)
+
     def _get_oversized_page_blob_binary_data(self):
         '''Returns random binary data exceeding the size threshold for
         chunking blob upload.'''
         size = self.bs._BLOB_MAX_DATA_SIZE + 16384
-        return os.urandom(size)
+        return self._get_random_bytes(size)
 
     def _get_oversized_text_data(self):
         '''Returns random unicode text data exceeding the size threshold for
@@ -262,6 +267,7 @@ class StorageBlobTest(AzureTestCase):
             return self.wrapped_file.read(count)
 
     #--Test cases for blob service --------------------------------------------
+    @record
     def test_create_blob_service_missing_arguments(self):
         # Arrange
         if AZURE_STORAGE_ACCOUNT in os.environ:
@@ -277,12 +283,13 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_create_blob_service_env_variables(self):
         # Arrange
         os.environ[
-            AZURE_STORAGE_ACCOUNT] = credentials.getStorageServicesName()
+            AZURE_STORAGE_ACCOUNT] = self.settings.STORAGE_ACCOUNT_NAME
         os.environ[
-            AZURE_STORAGE_ACCESS_KEY] = credentials.getStorageServicesKey()
+            AZURE_STORAGE_ACCESS_KEY] = self.settings.STORAGE_ACCOUNT_KEY
 
         # Act
         bs = BlobService()
@@ -294,10 +301,11 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
         self.assertIsNotNone(bs)
-        self.assertEqual(bs.account_name, credentials.getStorageServicesName())
-        self.assertEqual(bs.account_key, credentials.getStorageServicesKey())
+        self.assertEqual(bs.account_name, self.settings.STORAGE_ACCOUNT_NAME)
+        self.assertEqual(bs.account_key, self.settings.STORAGE_ACCOUNT_KEY)
         self.assertEqual(bs.is_emulated, False)
 
+    @record
     def test_create_blob_service_emulated_true(self):
         # Arrange
         os.environ[EMULATED] = 'true'
@@ -314,6 +322,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(bs.account_key, DEV_ACCOUNT_KEY)
         self.assertEqual(bs.is_emulated, True)
 
+    @record
     def test_create_blob_service_emulated_false(self):
         # Arrange
         os.environ[EMULATED] = 'false'
@@ -327,13 +336,14 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_create_blob_service_emulated_false_env_variables(self):
         # Arrange
         os.environ[EMULATED] = 'false'
         os.environ[
-            AZURE_STORAGE_ACCOUNT] = credentials.getStorageServicesName()
+            AZURE_STORAGE_ACCOUNT] = self.settings.STORAGE_ACCOUNT_NAME
         os.environ[
-            AZURE_STORAGE_ACCESS_KEY] = credentials.getStorageServicesKey()
+            AZURE_STORAGE_ACCESS_KEY] = self.settings.STORAGE_ACCOUNT_KEY
 
         # Act
         bs = BlobService()
@@ -347,28 +357,30 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
         self.assertIsNotNone(bs)
-        self.assertEqual(bs.account_name, credentials.getStorageServicesName())
-        self.assertEqual(bs.account_key, credentials.getStorageServicesKey())
+        self.assertEqual(bs.account_name, self.settings.STORAGE_ACCOUNT_NAME)
+        self.assertEqual(bs.account_key, self.settings.STORAGE_ACCOUNT_KEY)
         self.assertEqual(bs.is_emulated, False)
 
+    @record
     def test_create_blob_service_connection_string(self):
         # Arrange
         connection_string = 'DefaultEndpointsProtocol={};AccountName={};AccountKey={}'.format(
-                            'http', credentials.getStorageServicesName(),
-                            credentials.getStorageServicesKey())
+                            'http', self.settings.STORAGE_ACCOUNT_NAME,
+                            self.settings.STORAGE_ACCOUNT_KEY)
         
         # Act
         bs = BlobService(connection_string = connection_string)
         
         # Assert
         self.assertIsNotNone(bs)
-        self.assertEqual(bs.account_name, credentials.getStorageServicesName())
-        self.assertEqual(bs.account_key, credentials.getStorageServicesKey())
+        self.assertEqual(bs.account_name, self.settings.STORAGE_ACCOUNT_NAME)
+        self.assertEqual(bs.account_key, self.settings.STORAGE_ACCOUNT_KEY)
         self.assertEqual(bs.protocol, 'http')
         self.assertEqual(bs.host_base, BLOB_SERVICE_HOST_BASE)
         self.assertFalse(bs.is_emulated)
         
     #--Test cases for containers -----------------------------------------
+    @record
     def test_create_container_no_options(self):
         # Arrange
 
@@ -378,6 +390,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_container_no_options_fail_on_exist(self):
         # Arrange
 
@@ -388,6 +401,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_container_with_already_existing_container(self):
         # Arrange
 
@@ -399,6 +413,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertTrue(created1)
         self.assertFalse(created2)
 
+    @record
     def test_create_container_with_already_existing_container_fail_on_exist(self):
         # Arrange
 
@@ -410,6 +425,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertTrue(created)
 
+    @record
     def test_create_container_with_public_access_container(self):
         # Arrange
 
@@ -422,6 +438,7 @@ class StorageBlobTest(AzureTestCase):
         acl = self.bs.get_container_acl(self.container_name)
         self.assertIsNotNone(acl)
 
+    @record
     def test_create_container_with_public_access_blob(self):
         # Arrange
 
@@ -433,6 +450,7 @@ class StorageBlobTest(AzureTestCase):
         acl = self.bs.get_container_acl(self.container_name)
         self.assertIsNotNone(acl)
 
+    @record
     def test_create_container_with_metadata(self):
         # Arrange
 
@@ -447,6 +465,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(md['x-ms-meta-hello'], 'world')
         self.assertEqual(md['x-ms-meta-number'], '42')
 
+    @record
     def test_list_containers_no_options(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -462,6 +481,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(containers[0])
         self.assertNamedItemInContainer(containers, self.container_name)
 
+    @record
     def test_list_containers_with_prefix(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -476,6 +496,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(containers[0].name, self.container_name)
         self.assertIsNone(containers[0].metadata)
 
+    @record
     def test_list_containers_with_include_metadata(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -494,6 +515,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(containers[0].metadata['hello'], 'world')
         self.assertEqual(containers[0].metadata['number'], '43')
 
+    @record
     def test_list_containers_with_maxresults_and_marker(self):
         # Arrange
         self.additional_container_names = [self.container_name + 'a',
@@ -518,6 +540,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertNamedItemInContainer(containers2, self.container_name + 'c')
         self.assertNamedItemInContainer(containers2, self.container_name + 'd')
 
+    @record
     def test_set_container_metadata(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -533,6 +556,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(md['x-ms-meta-hello'], 'world')
         self.assertEqual(md['x-ms-meta-number'], '43')
 
+    @record
     def test_set_container_metadata_with_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -552,6 +576,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(md['x-ms-meta-hello'], 'world')
         self.assertEqual(md['x-ms-meta-number'], '43')
 
+    @record
     def test_set_container_metadata_with_non_matching_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -568,6 +593,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_set_container_metadata_with_non_existing_container(self):
         # Arrange
 
@@ -578,6 +604,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_container_metadata(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -596,6 +623,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(md['x-ms-meta-hello'], 'world')
         self.assertEqual(md['x-ms-meta-number'], '42')
 
+    @record
     def test_get_container_metadata_with_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -615,6 +643,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(md['x-ms-meta-hello'], 'world')
         self.assertEqual(md['x-ms-meta-number'], '42')
 
+    @record
     def test_get_container_metadata_with_non_matching_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -632,6 +661,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_container_metadata_with_non_existing_container(self):
         # Arrange
 
@@ -641,6 +671,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_container_properties(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -661,6 +692,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['x-ms-lease-state'], 'leased')
         self.assertEqual(props['x-ms-lease-status'], 'locked')
 
+    @record
     def test_get_container_properties_with_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -682,6 +714,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['x-ms-lease-status'], 'locked')
         self.assertEqual(props['x-ms-lease-state'], 'leased')
 
+    @record
     def test_get_container_properties_with_non_matching_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -699,6 +732,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_container_properties_with_non_existing_container(self):
         # Arrange
 
@@ -708,6 +742,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_container_acl(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -719,6 +754,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.signed_identifiers), 0)
 
+    @record
     def test_get_container_acl_iter(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -733,6 +769,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(len(acl.signed_identifiers), 0)
         self.assertEqual(len(acl), 0)
 
+    @record
     def test_get_container_acl_with_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -747,6 +784,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.signed_identifiers), 0)
 
+    @record
     def test_get_container_acl_with_non_matching_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -761,6 +799,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_container_acl_with_non_existing_container(self):
         # Arrange
 
@@ -770,6 +809,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_set_container_acl(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -782,6 +822,7 @@ class StorageBlobTest(AzureTestCase):
         acl = self.bs.get_container_acl(self.container_name)
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_container_acl_with_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -797,6 +838,7 @@ class StorageBlobTest(AzureTestCase):
         acl = self.bs.get_container_acl(self.container_name)
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_container_acl_with_non_matching_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -811,6 +853,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_set_container_acl_with_public_access_container(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -824,6 +867,7 @@ class StorageBlobTest(AzureTestCase):
         acl = self.bs.get_container_acl(self.container_name)
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_container_acl_with_public_access_blob(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -836,6 +880,7 @@ class StorageBlobTest(AzureTestCase):
         acl = self.bs.get_container_acl(self.container_name)
         self.assertIsNotNone(acl)
 
+    @record
     def test_set_container_acl_with_empty_signed_identifiers(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -851,6 +896,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(acl)
         self.assertEqual(len(acl.signed_identifiers), 0)
 
+    @record
     def test_set_container_acl_with_signed_identifiers(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -875,6 +921,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(acl.signed_identifiers[0].id, 'testid')
         self.assertEqual(acl[0].id, 'testid')
 
+    @record
     def test_set_container_acl_with_non_existing_container(self):
         # Arrange
 
@@ -884,6 +931,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_lease_container_acquire_and_release(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -899,6 +947,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_lease_container_renew(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -920,6 +969,7 @@ class StorageBlobTest(AzureTestCase):
         time.sleep(10)
         self.bs.delete_container(self.container_name)
 
+    @record
     def test_lease_container_break_period(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -939,6 +989,7 @@ class StorageBlobTest(AzureTestCase):
             self.bs.delete_container(
                 self.container_name, x_ms_lease_id=lease['x-ms-lease-id'])
 
+    @record
     def test_lease_container_break_released_lease_fails(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -954,6 +1005,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_lease_container_acquire_after_break_fails(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -968,6 +1020,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_lease_container_with_duration(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -984,6 +1037,7 @@ class StorageBlobTest(AzureTestCase):
         lease = self.bs.lease_container(self.container_name, 'acquire')
         self.container_lease_id = lease['x-ms-lease-id']
 
+    @record
     def test_lease_container_with_proposed_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -998,6 +1052,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(lease)
         self.assertEqual(lease['x-ms-lease-id'], lease_id)
 
+    @record
     def test_lease_container_change_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -1018,6 +1073,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertNotEqual(lease1['x-ms-lease-id'], lease_id)
         self.assertEqual(lease2['x-ms-lease-id'], lease_id)
 
+    @record
     def test_delete_container_with_existing_container(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -1030,6 +1086,7 @@ class StorageBlobTest(AzureTestCase):
         containers = self.bs.list_containers()
         self.assertNamedItemNotInContainer(containers, self.container_name)
 
+    @record
     def test_delete_container_with_existing_container_fail_not_exist(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -1042,6 +1099,7 @@ class StorageBlobTest(AzureTestCase):
         containers = self.bs.list_containers()
         self.assertNamedItemNotInContainer(containers, self.container_name)
 
+    @record
     def test_delete_container_with_non_existing_container(self):
         # Arrange
 
@@ -1051,6 +1109,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertFalse(deleted)
 
+    @record
     def test_delete_container_with_non_existing_container_fail_not_exist(self):
         # Arrange
 
@@ -1060,6 +1119,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_delete_container_with_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -1076,6 +1136,7 @@ class StorageBlobTest(AzureTestCase):
         containers = self.bs.list_containers()
         self.assertNamedItemNotInContainer(containers, self.container_name)
 
+    @record
     def test_delete_container_without_lease_id(self):
         # Arrange
         self.bs.create_container(self.container_name)
@@ -1090,6 +1151,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
 
     #--Test cases for blob service ---------------------------------------
+    @record
     def test_set_blob_service_properties(self):
         # Arrange
 
@@ -1103,6 +1165,7 @@ class StorageBlobTest(AzureTestCase):
         received_props = self.bs.get_blob_service_properties()
         self.assertFalse(received_props.hour_metrics.enabled)
 
+    @record
     def test_set_blob_service_properties_with_timeout(self):
         # Arrange
 
@@ -1116,6 +1179,7 @@ class StorageBlobTest(AzureTestCase):
         received_props = self.bs.get_blob_service_properties()
         self.assertTrue(received_props.logging.write)
 
+    @record
     def test_get_blob_service_properties(self):
         # Arrange
 
@@ -1128,6 +1192,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(props.minute_metrics, MinuteMetrics)
         self.assertIsInstance(props.hour_metrics, HourMetrics)
 
+    @record
     def test_get_blob_service_properties_with_timeout(self):
         # Arrange
 
@@ -1141,6 +1206,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(props.hour_metrics, HourMetrics)
 
     #--Test cases for blobs ----------------------------------------------
+    @record
     def test_make_blob_url(self):
         # Arrange
 
@@ -1148,9 +1214,10 @@ class StorageBlobTest(AzureTestCase):
         res = self.bs.make_blob_url('vhds', 'my.vhd')
 
         # Assert
-        self.assertEqual(res, 'https://' + credentials.getStorageServicesName()
+        self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
                          + '.blob.core.windows.net/vhds/my.vhd')
 
+    @record
     def test_make_blob_url_with_account_name(self):
         # Arrange
 
@@ -1161,6 +1228,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(
             res, 'https://myaccount.blob.core.windows.net/vhds/my.vhd')
 
+    @record
     def test_make_blob_url_with_protocol(self):
         # Arrange
 
@@ -1168,9 +1236,10 @@ class StorageBlobTest(AzureTestCase):
         res = self.bs.make_blob_url('vhds', 'my.vhd', protocol='http')
 
         # Assert
-        self.assertEqual(res, 'http://' + credentials.getStorageServicesName()
+        self.assertEqual(res, 'http://' + self.settings.STORAGE_ACCOUNT_NAME
                          + '.blob.core.windows.net/vhds/my.vhd')
 
+    @record
     def test_make_blob_url_with_host_base(self):
         # Arrange
 
@@ -1179,9 +1248,10 @@ class StorageBlobTest(AzureTestCase):
             'vhds', 'my.vhd', host_base='.blob.internal.net')
 
         # Assert
-        self.assertEqual(res, 'https://' + credentials.getStorageServicesName()
+        self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
                          + '.blob.internal.net/vhds/my.vhd')
 
+    @record
     def test_make_blob_url_with_all(self):
         # Arrange
 
@@ -1193,6 +1263,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertEqual(res, 'http://myaccount.blob.internal.net/vhds/my.vhd')
 
+    @record
     def test_list_blobs(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1215,6 +1286,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(resp[1].properties.content_type,
                          'application/octet-stream Charset=UTF-8')
 
+    @record
     def test_list_blobs_leased_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1237,6 +1309,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(resp[0].properties.lease_status, 'locked')
         self.assertEqual(resp[0].properties.lease_state, 'leased')
 
+    @record
     def test_list_blobs_with_prefix(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1257,6 +1330,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertNamedItemInContainer(resp, 'bloba1')
         self.assertNamedItemInContainer(resp, 'bloba2')
 
+    @record
     def test_list_blobs_with_prefix_and_delimiter(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1302,6 +1376,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertNamedItemInContainer(resp.prefixes, 'documents/music/pop/')
         self.assertNamedItemInContainer(resp.prefixes, 'documents/music/rock/')
 
+    @record
     def test_list_blobs_with_maxresults(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1320,6 +1395,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertNamedItemInContainer(blobs, 'bloba1')
         self.assertNamedItemInContainer(blobs, 'bloba2')
 
+    @record
     def test_list_blobs_with_maxresults_and_marker(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1342,6 +1418,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertNamedItemInContainer(blobs2, 'bloba3')
         self.assertNamedItemInContainer(blobs2, 'blobb1')
 
+    @record
     def test_list_blobs_with_include_snapshots(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1362,6 +1439,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(blobs[2].name, 'blob2')
         self.assertEqual(blobs[2].snapshot, '')
 
+    @record
     def test_list_blobs_with_include_metadata(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1384,6 +1462,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(blobs[1].metadata['number'], '2')
         self.assertEqual(blobs[1].metadata['name'], 'car')
 
+    @record
     def test_list_blobs_with_include_uncommittedblobs(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1403,6 +1482,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(blobs[0].name, 'blob1')
         self.assertEqual(blobs[1].name, 'blob2')
 
+    @record
     def test_list_blobs_with_include_copy(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1411,7 +1491,7 @@ class StorageBlobTest(AzureTestCase):
                          'BlockBlob',
                          x_ms_meta_name_values={'status': 'original'})
         sourceblob = 'https://{0}.blob.core.windows.net/{1}/{2}'.format(
-            credentials.getStorageServicesName(),
+            self.settings.STORAGE_ACCOUNT_NAME,
             self.container_name,
             'blob1')
         self.bs.copy_blob(self.container_name, 'blob1copy',
@@ -1439,6 +1519,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(blobs[1].properties.copy_progress, '11/11')
         self.assertNotEqual(blobs[1].properties.copy_completion_time, '')
 
+    @record
     def test_list_blobs_with_include_multiple(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1468,6 +1549,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(blobs[2].metadata['number'], '2')
         self.assertEqual(blobs[2].metadata['name'], 'car')
 
+    @record
     def test_put_blob_block_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1480,6 +1562,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_put_blob_block_blob_unicode_python_27(self):
         '''Test for auto-encoding of unicode text (backwards compatibility).'''
         if sys.version_info >= (3,):
@@ -1498,6 +1581,7 @@ class StorageBlobTest(AzureTestCase):
         blob = self.bs.get_blob(self.container_name, 'blob1')
         self.assertEqual(blob, data.encode('utf-8'))
 
+    @record
     def test_put_blob_block_blob_unicode_python_33(self):
         if sys.version_info < (3,):
             return
@@ -1513,6 +1597,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_put_blob_page_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1525,6 +1610,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_put_blob_with_lease_id(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1544,6 +1630,7 @@ class StorageBlobTest(AzureTestCase):
             self.container_name, 'blob1', x_ms_lease_id=lease_id)
         self.assertEqual(blob, b'hello world again')
 
+    @record
     def test_put_blob_with_metadata(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1560,6 +1647,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(md['x-ms-meta-hello'], 'world')
         self.assertEqual(md['x-ms-meta-number'], '42')
 
+    @record
     def test_get_blob_with_existing_blob(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1572,6 +1660,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(blob, BlobResult)
         self.assertEqual(blob, b'hello world')
 
+    @record
     def test_get_blob_with_snapshot(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1586,6 +1675,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(blob, BlobResult)
         self.assertEqual(blob, b'hello world')
 
+    @record
     def test_get_blob_with_snapshot_previous(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1605,6 +1695,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(blob_previous, b'hello world')
         self.assertEqual(blob_latest, b'hello world again')
 
+    @record
     def test_get_blob_with_range(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1618,6 +1709,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(blob, BlobResult)
         self.assertEqual(blob, b'hello ')
 
+    @record
     def test_get_blob_with_range_and_get_content_md5(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1634,6 +1726,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(
             blob.properties['content-md5'], '+BSJN3e8wilf/wXwDlCNpg==')
 
+    @record
     def test_get_blob_with_lease(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1650,6 +1743,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(blob, BlobResult)
         self.assertEqual(blob, b'hello world')
 
+    @record
     def test_get_blob_on_leased_blob_without_lease_id(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1664,6 +1758,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(blob, BlobResult)
         self.assertEqual(blob, b'hello world')
 
+    @record
     def test_get_blob_with_non_existing_container(self):
         # Arrange
 
@@ -1673,6 +1768,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_blob_with_non_existing_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1683,6 +1779,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_set_blob_properties_with_existing_blob(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1702,6 +1799,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['content-language'], 'spanish')
         self.assertEqual(props['content-disposition'], 'inline')
 
+    @record
     def test_set_blob_properties_with_non_existing_container(self):
         # Arrange
 
@@ -1713,6 +1811,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_set_blob_properties_with_non_existing_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1725,6 +1824,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_blob_properties_with_existing_blob(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1739,6 +1839,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['content-length'], '11')
         self.assertEqual(props['x-ms-lease-status'], 'unlocked')
 
+    @record
     def test_get_blob_properties_with_leased_blob(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1756,6 +1857,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['x-ms-lease-state'], 'leased')
         self.assertEqual(props['x-ms-lease-duration'], 'fixed')
 
+    @record
     def test_get_blob_properties_with_non_existing_container(self):
         # Arrange
 
@@ -1765,6 +1867,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_blob_properties_with_non_existing_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1775,6 +1878,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_blob_metadata_with_existing_blob(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1786,6 +1890,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertIsNotNone(md)
 
+    @record
     def test_set_blob_metadata_with_existing_blob(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1805,6 +1910,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(md['x-ms-meta-number'], '42')
         self.assertEqual(md['x-ms-meta-up'], 'UPval')
 
+    @record
     def test_delete_blob_with_existing_blob(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -1816,6 +1922,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_delete_blob_with_non_existing_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1826,6 +1933,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_delete_blob_snapshot(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1846,6 +1954,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(blobs[0].name, blob_name)
         self.assertEqual(blobs[0].snapshot, '')
 
+    @record
     def test_delete_blob_snapshots(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1865,6 +1974,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(len(blobs), 1)
         self.assertEqual(blobs[0].snapshot, '')
 
+    @record
     def test_delete_blob_with_snapshots(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1883,13 +1993,14 @@ class StorageBlobTest(AzureTestCase):
         blobs = self.bs.list_blobs(self.container_name, include='snapshots')
         self.assertEqual(len(blobs), 0)
 
+    @record
     def test_copy_blob_with_existing_blob(self):
         # Arrange
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        sourceblob = '/{0}/{1}/{2}'.format(credentials.getStorageServicesName(),
+        sourceblob = '/{0}/{1}/{2}'.format(self.settings.STORAGE_ACCOUNT_NAME,
                                            self.container_name,
                                            'blob1')
         resp = self.bs.copy_blob(self.container_name, 'blob1copy', sourceblob)
@@ -1901,6 +2012,7 @@ class StorageBlobTest(AzureTestCase):
         copy = self.bs.get_blob(self.container_name, 'blob1copy')
         self.assertEqual(copy, b'hello world')
 
+    @record
     def test_copy_blob_async_public_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1919,6 +2031,7 @@ class StorageBlobTest(AzureTestCase):
         self._wait_for_async_copy(self.container_name, target_blob_name)
         self.assertBlobEqual(self.container_name, target_blob_name, data)
 
+    @record
     def test_copy_blob_async_private_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1935,6 +2048,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_copy_blob_async_private_blob_with_sas(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1963,6 +2077,7 @@ class StorageBlobTest(AzureTestCase):
         self._wait_for_async_copy(self.container_name, target_blob_name)
         self.assertBlobEqual(self.container_name, target_blob_name, data)
 
+    @record
     def test_abort_copy_blob(self):
         # Arrange
         self._create_container(self.container_name)
@@ -1984,6 +2099,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(target_blob, b'')
         self.assertEqual(target_blob.properties['x-ms-copy-status'], 'aborted')
 
+    @record
     def test_abort_copy_blob_with_synchronous_copy_fails(self):
         # Arrange
         source_blob_name = 'sourceblob'
@@ -2005,6 +2121,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertEqual(copy_resp['x-ms-copy-status'], 'success')
 
+    @record
     def test_snapshot_blob(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2017,6 +2134,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(resp)
         self.assertIsNotNone(resp['x-ms-snapshot'])
 
+    @record
     def test_lease_blob_acquire_and_release(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2033,6 +2151,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(resp2)
         self.assertIsNotNone(resp3)
 
+    @record
     def test_lease_blob_with_duration(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2053,6 +2172,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(resp1)
         self.assertIsNone(resp2)
 
+    @record
     def test_lease_blob_with_proposed_lease_id(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2068,6 +2188,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(resp1)
         self.assertEqual(resp1['x-ms-lease-id'], lease_id)
 
+    @record
     def test_lease_blob_change_lease_id(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2086,6 +2207,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertNotEqual(resp1['x-ms-lease-id'], lease_id)
         self.assertEqual(resp2['x-ms-lease-id'], lease_id)
 
+    @record
     def test_lease_blob_renew_released_lease_fails(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2103,6 +2225,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(resp1)
         self.assertIsNotNone(resp2)
 
+    @record
     def test_lease_blob_break_period(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2127,6 +2250,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(resp2)
         self.assertIsNone(resp3)
 
+    @record
     def test_lease_blob_break_released_lease_fails(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2142,6 +2266,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_lease_blob_acquire_after_break_fails(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2156,6 +2281,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_lease_blob_acquire_and_renew(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2170,6 +2296,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(resp1)
         self.assertIsNotNone(resp2)
 
+    @record
     def test_lease_blob_acquire_twice_fails(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2186,6 +2313,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNotNone(resp1)
         self.assertIsNotNone(resp2)
 
+    @record
     def test_put_block(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2201,6 +2329,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_put_block_unicode_python_27(self):
         '''Test for auto-encoding of unicode text (backwards compatibility).'''
         if sys.version_info >= (3,):
@@ -2222,6 +2351,7 @@ class StorageBlobTest(AzureTestCase):
         blob = self.bs.get_blob(self.container_name, 'blob1')
         self.assertEqual(blob, u'啊齄丂狛狜'.encode('utf-8'))
 
+    @record
     def test_put_block_unicode_python_33(self):
         if sys.version_info < (3,):
             return
@@ -2236,6 +2366,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_put_block_list(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2253,6 +2384,7 @@ class StorageBlobTest(AzureTestCase):
         blob = self.bs.get_blob(self.container_name, 'blob1')
         self.assertEqual(blob, b'AAABBBCCC')
 
+    @record
     def test_put_block_list_invalid_block_id(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2272,6 +2404,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_block_list_no_blocks(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2287,6 +2420,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(len(block_list.uncommitted_blocks), 0)
         self.assertEqual(len(block_list.committed_blocks), 0)
 
+    @record
     def test_get_block_list_uncommitted_blocks(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2311,6 +2445,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(block_list.uncommitted_blocks[2].id, '3')
         self.assertEqual(block_list.uncommitted_blocks[2].size, 3)
 
+    @record
     def test_get_block_list_committed_blocks(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2336,6 +2471,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(block_list.committed_blocks[2].id, '3')
         self.assertEqual(block_list.committed_blocks[2].size, 3)
 
+    @record
     def test_put_page_update(self):
         # Arrange
         self._create_container_and_page_blob(
@@ -2349,6 +2485,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_put_page_clear(self):
         # Arrange
         self._create_container_and_page_blob(
@@ -2361,6 +2498,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_put_page_if_sequence_number_lt_success(self):
         # Arrange
         self._create_container(self.container_name)
@@ -2378,6 +2516,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, 'blob1', data)
 
+    @record
     def test_put_page_if_sequence_number_lt_failure(self):
         # Arrange
         self._create_container(self.container_name)
@@ -2395,6 +2534,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_put_page_if_sequence_number_lte_success(self):
         # Arrange
         self._create_container(self.container_name)
@@ -2411,6 +2551,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, 'blob1', data)
 
+    @record
     def test_put_page_if_sequence_number_lte_failure(self):
         # Arrange
         self._create_container(self.container_name)
@@ -2428,6 +2569,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_put_page_if_sequence_number_eq_success(self):
         # Arrange
         self._create_container(self.container_name)
@@ -2444,6 +2586,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, 'blob1', data)
 
+    @record
     def test_put_page_if_sequence_number_eq_failure(self):
         # Arrange
         self._create_container(self.container_name)
@@ -2461,6 +2604,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_put_page_unicode_python_27(self):
         '''Test for auto-encoding of unicode text (backwards compatibility).'''
         if sys.version_info >= (3,):
@@ -2479,6 +2623,7 @@ class StorageBlobTest(AzureTestCase):
         blob = self.bs.get_blob(self.container_name, 'blob1')
         self.assertEqual(blob, data.encode('utf-8'))
 
+    @record
     def test_put_page_unicode_python_33(self):
         '''Test for auto-encoding of unicode text (backwards compatibility).'''
         if sys.version_info < (3,):
@@ -2495,6 +2640,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_page_ranges_no_pages(self):
         # Arrange
         self._create_container_and_page_blob(
@@ -2508,6 +2654,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(ranges, PageList)
         self.assertEqual(len(ranges.page_ranges), 0)
 
+    @record
     def test_get_page_ranges_2_pages(self):
         # Arrange
         self._create_container_and_page_blob(
@@ -2530,6 +2677,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(ranges.page_ranges[1].start, 1024)
         self.assertEqual(ranges.page_ranges[1].end, 1535)
 
+    @record
     def test_get_page_ranges_iter(self):
         # Arrange
         self._create_container_and_page_blob(
@@ -2550,6 +2698,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(ranges[0], PageRange)
         self.assertIsInstance(ranges[1], PageRange)
 
+    @record
     def test_with_filter(self):
         # Single filter
         if sys.version_info < (3,):
@@ -2613,6 +2762,7 @@ class StorageBlobTest(AzureTestCase):
 
         self.assertEqual(called, ['b', 'a', 'b', 'a'])
 
+    @record
     def test_unicode_create_container_unicode_name(self):
         # Arrange
         self.container_name = self.container_name + u'啊齄丂狛狜'
@@ -2624,6 +2774,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_unicode_get_blob_unicode_name(self):
         # Arrange
         self._create_container_and_block_blob(
@@ -2636,6 +2787,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(blob, BlobResult)
         self.assertEqual(blob, b'hello world')
 
+    @record
     def test_put_blob_block_blob_unicode_data(self):
         # Arrange
         self._create_container(self.container_name)
@@ -2648,6 +2800,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @record
     def test_unicode_get_blob_unicode_data(self):
         # Arrange
         blob_data = u'hello world啊齄丂狛狜'.encode('utf-8')
@@ -2661,6 +2814,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(blob, BlobResult)
         self.assertEqual(blob, blob_data)
 
+    @record
     def test_unicode_get_blob_binary_data(self):
         # Arrange
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -2676,6 +2830,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsInstance(blob, BlobResult)
         self.assertEqual(blob, binary_data)
 
+    @record
     def test_no_sas_private_blob(self):
         # Arrange
         data = b'a private blob cannot be read without a shared access signature'
@@ -2694,6 +2849,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertFalse(response.ok)
         self.assertNotEqual(-1, response.text.find('ResourceNotFound'))
 
+    @record
     def test_no_sas_public_blob(self):
         # Arrange
         data = b'a public blob can be read without a shared access signature'
@@ -2709,6 +2865,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
 
+    @record
     def test_public_access_blob(self):
         # Arrange
         data = b'public access blob'
@@ -2717,14 +2874,22 @@ class StorageBlobTest(AzureTestCase):
         self.bs.put_blob(self.container_name, blob_name, data, 'BlockBlob')
 
         # Act
-        service = BlobService(credentials.getStorageServicesName())
-        set_service_options(service)
+        service = BlobService(
+            self.settings.STORAGE_ACCOUNT_NAME,
+            request_session=requests.Session(),
+        )
+        set_service_options(service, self.settings)
         result = service.get_blob_to_bytes(self.container_name, blob_name)
 
         # Assert
         self.assertEqual(data, result)
 
+    @record
     def test_sas_access_blob(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         data = b'shared access signature with read permission on blob'
         blob_name = 'blob1.txt'
@@ -2740,14 +2905,23 @@ class StorageBlobTest(AzureTestCase):
         )
 
         # Act
-        service = BlobService(credentials.getStorageServicesName(), sas_token=token)
-        set_service_options(service)
+        service = BlobService(
+            self.settings.STORAGE_ACCOUNT_NAME,
+            sas_token=token,
+            request_session=requests.Session(),
+        )
+        set_service_options(service, self.settings)
         result = service.get_blob_to_bytes(self.container_name, blob_name)
 
         # Assert
         self.assertEqual(data, result)
 
+    @record
     def test_sas_signed_identifier(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         data = b'shared access signature with signed identifier'
         blob_name = 'blob1.txt'
@@ -2774,14 +2948,23 @@ class StorageBlobTest(AzureTestCase):
         )
 
         # Act
-        service = BlobService(credentials.getStorageServicesName(), sas_token=token)
-        set_service_options(service)
+        service = BlobService(
+            self.settings.STORAGE_ACCOUNT_NAME,
+            sas_token=token,
+            request_session=requests.Session(),
+        )
+        set_service_options(service, self.settings)
         result = service.get_blob_to_bytes(self.container_name, blob_name)
 
         # Assert
         self.assertEqual(data, result)
 
+    @record
     def test_shared_read_access_blob(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         data = b'shared access signature with read permission on blob'
         blob_name = 'blob1.txt'
@@ -2808,7 +2991,12 @@ class StorageBlobTest(AzureTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
 
+    @record
     def test_shared_read_access_blob_with_content_query_params(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         data = b'shared access signature with read permission on blob'
         blob_name = 'blob1.txt'
@@ -2844,7 +3032,12 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(response.headers['content-language'], 'fr')
         self.assertEqual(response.headers['content-type'], 'text')
 
+    @record
     def test_shared_write_access_blob(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         data = b'shared access signature with write permission on blob'
         updated_data = b'updated blob data'
@@ -2874,7 +3067,12 @@ class StorageBlobTest(AzureTestCase):
         blob = self.bs.get_blob(self.container_name, 'blob1.txt')
         self.assertEqual(updated_data, blob)
 
+    @record
     def test_shared_delete_access_blob(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         data = b'shared access signature with delete permission on blob'
         blob_name = 'blob1.txt'
@@ -2902,7 +3100,12 @@ class StorageBlobTest(AzureTestCase):
         with self.assertRaises(WindowsAzureMissingResourceError):
             blob = self.bs.get_blob(self.container_name, blob_name)
 
+    @record
     def test_shared_access_container(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         data = b'shared access signature with read permission on container'
         blob_name = 'blob1.txt'
@@ -2929,6 +3132,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertTrue(response.ok)
         self.assertEqual(data, response.content)
 
+    @record
     def test_get_blob_to_bytes(self):
         # Arrange
         blob_name = 'blob1'
@@ -2942,6 +3146,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertEqual(data, resp)
 
+    @record
     def test_get_blob_to_bytes_chunked_download(self):
         # Arrange
         blob_name = 'blob1'
@@ -2956,6 +3161,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(data, resp)
 
     def test_get_blob_to_bytes_chunked_download_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         blob_name = 'blob1'
         data = self._get_oversized_binary_data()
@@ -2969,6 +3178,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertEqual(data, resp)
 
+    @record
     def test_get_blob_to_bytes_with_progress(self):
         # Arrange
         blob_name = 'blob1'
@@ -2989,6 +3199,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(data, resp)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_get_blob_to_bytes_with_progress_chunked_download(self):
         # Arrange
         blob_name = 'blob1'
@@ -3009,6 +3220,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(data, resp)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_get_blob_to_file(self):
         # Arrange
         blob_name = 'blob1'
@@ -3028,6 +3240,7 @@ class StorageBlobTest(AzureTestCase):
             actual = stream.read()
             self.assertEqual(data, actual)
 
+    @record
     def test_get_blob_to_file_chunked_download(self):
         # Arrange
         blob_name = 'blob1'
@@ -3048,6 +3261,10 @@ class StorageBlobTest(AzureTestCase):
             self.assertEqual(data, actual)
 
     def test_get_blob_to_file_chunked_download_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         blob_name = 'blob1'
         data = self._get_oversized_binary_data()
@@ -3067,6 +3284,7 @@ class StorageBlobTest(AzureTestCase):
             actual = stream.read()
             self.assertEqual(data, actual)
 
+    @record
     def test_get_blob_to_file_non_seekable_chunked_download(self):
         # Arrange
         blob_name = 'blob1'
@@ -3089,6 +3307,10 @@ class StorageBlobTest(AzureTestCase):
             self.assertEqual(data, actual)
 
     def test_get_blob_to_file_non_seekable_chunked_download_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         blob_name = 'blob1'
         data = self._get_oversized_binary_data()
@@ -3108,6 +3330,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_get_blob_to_file_with_progress(self):
         # Arrange
         blob_name = 'blob1'
@@ -3134,6 +3357,7 @@ class StorageBlobTest(AzureTestCase):
             self.assertEqual(data, actual)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_get_blob_to_file_with_progress_chunked_download(self):
         # Arrange
         blob_name = 'blob1'
@@ -3161,6 +3385,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
     def test_get_blob_to_file_with_progress_chunked_download_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         blob_name = 'blob1'
         data = self._get_oversized_binary_data()
@@ -3188,6 +3416,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(progress, sorted(progress))
         self.assertGreater(len(progress), 0)
 
+    @record
     def test_get_blob_to_path(self):
         # Arrange
         blob_name = 'blob1'
@@ -3206,6 +3435,7 @@ class StorageBlobTest(AzureTestCase):
             actual = stream.read()
             self.assertEqual(data, actual)
 
+    @record
     def test_get_blob_to_path_chunked_downlad(self):
         # Arrange
         blob_name = 'blob1'
@@ -3225,6 +3455,10 @@ class StorageBlobTest(AzureTestCase):
             self.assertEqual(data, actual)
 
     def test_get_blob_to_path_chunked_downlad_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         blob_name = 'blob1'
         data = self._get_oversized_binary_data()
@@ -3243,6 +3477,7 @@ class StorageBlobTest(AzureTestCase):
             actual = stream.read()
             self.assertEqual(data, actual)
 
+    @record
     def test_get_blob_to_path_with_progress(self):
         # Arrange
         blob_name = 'blob1'
@@ -3268,6 +3503,7 @@ class StorageBlobTest(AzureTestCase):
             self.assertEqual(data, actual)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_get_blob_to_path_with_progress_chunked_downlad(self):
         # Arrange
         blob_name = 'blob1'
@@ -3293,6 +3529,7 @@ class StorageBlobTest(AzureTestCase):
             self.assertEqual(data, actual)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_get_blob_to_path_with_mode(self):
         # Arrange
         blob_name = 'blob1'
@@ -3313,6 +3550,7 @@ class StorageBlobTest(AzureTestCase):
             actual = stream.read()
             self.assertEqual(b'abcdef' + data, actual)
 
+    @record
     def test_get_blob_to_path_with_mode_chunked_download(self):
         # Arrange
         blob_name = 'blob1'
@@ -3333,6 +3571,7 @@ class StorageBlobTest(AzureTestCase):
             actual = stream.read()
             self.assertEqual(b'abcdef' + data, actual)
 
+    @record
     def test_get_blob_to_text(self):
         # Arrange
         blob_name = 'blob1'
@@ -3347,6 +3586,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertEqual(text, resp)
 
+    @record
     def test_get_blob_to_text_with_encoding(self):
         # Arrange
         blob_name = 'blob1'
@@ -3362,6 +3602,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertEqual(text, resp)
 
+    @record
     def test_get_blob_to_text_chunked_download(self):
         # Arrange
         blob_name = 'blob1'
@@ -3377,6 +3618,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(text, resp)
 
     def test_get_blob_to_text_chunked_download_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         blob_name = 'blob1'
         text = self._get_oversized_text_data()
@@ -3391,6 +3636,7 @@ class StorageBlobTest(AzureTestCase):
         # Assert
         self.assertEqual(text, resp)
 
+    @record
     def test_get_blob_to_text_with_progress(self):
         # Arrange
         blob_name = 'blob1'
@@ -3412,6 +3658,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(text, resp)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_get_blob_to_text_with_encoding_and_progress(self):
         # Arrange
         blob_name = 'blob1'
@@ -3434,6 +3681,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(text, resp)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_put_block_blob_from_bytes(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3447,6 +3695,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNone(resp)
         self.assertEqual(data, self.bs.get_blob(self.container_name, 'blob1'))
 
+    @record
     def test_put_block_blob_from_bytes_with_progress(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3466,6 +3715,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(data, self.bs.get_blob(self.container_name, 'blob1'))
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_put_block_blob_from_bytes_with_index(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3480,6 +3730,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(b'defghijklmnopqrstuvwxyz',
                          self.bs.get_blob(self.container_name, 'blob1'))
 
+    @record
     def test_put_block_blob_from_bytes_with_index_and_count(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3494,6 +3745,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(
             b'defgh', self.bs.get_blob(self.container_name, 'blob1'))
 
+    @record
     def test_put_block_blob_from_bytes_with_index_and_count_and_properties(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3513,6 +3765,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['content-type'], 'image/png')
         self.assertEqual(props['content-language'], 'spanish')
 
+    @record
     def test_put_block_blob_from_bytes_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3529,6 +3782,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
 
     def test_put_block_blob_from_bytes_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -3544,6 +3801,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_put_block_blob_from_bytes_chunked_upload_with_properties(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3564,6 +3822,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['content-type'], 'image/png')
         self.assertEqual(props['content-language'], 'spanish')
 
+    @record
     def test_put_block_blob_from_bytes_with_progress_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3585,6 +3844,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_put_block_blob_from_bytes_chunked_upload_with_index_and_count(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3603,6 +3863,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name,
                              data[index:index + blob_size])
 
+    @record
     def test_put_block_blob_from_path_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3622,6 +3883,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
 
     def test_put_block_blob_from_path_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -3640,6 +3905,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_put_block_blob_from_path_with_progress_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3665,6 +3931,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_put_block_blob_from_path_chunked_upload_with_properties(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3688,6 +3955,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['content-type'], 'image/png')
         self.assertEqual(props['content-language'], 'spanish')
 
+    @record
     def test_put_block_blob_from_file_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3708,6 +3976,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
 
     def test_put_block_blob_from_file_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -3727,6 +3999,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_put_block_blob_from_file_non_seekable_chunked_upload_known_size(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3749,6 +4022,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
+    @record
     def test_put_block_blob_from_file_non_seekable_chunked_upload_unknown_size(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3771,6 +4045,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
 
     def test_put_block_blob_from_file_non_seekable_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -3791,6 +4069,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_put_block_blob_from_file_with_progress_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3820,6 +4099,10 @@ class StorageBlobTest(AzureTestCase):
             self._get_expected_progress(len(data), unknown_size=True))
 
     def test_put_block_blob_from_file_with_progress_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -3847,6 +4130,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(progress, sorted(progress))
         self.assertGreater(len(progress), 0)
 
+    @record
     def test_put_block_blob_from_file_chunked_upload_with_count(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3868,6 +4152,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
     def test_put_block_blob_from_file_chunked_upload_with_count_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -3888,6 +4176,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
+    @record
     def test_put_block_blob_from_file_chunked_upload_with_count_and_properties(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3913,6 +4202,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['content-type'], 'image/png')
         self.assertEqual(props['content-language'], 'spanish')
 
+    @record
     def test_put_block_blob_from_file_chunked_upload_with_properties(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3937,6 +4227,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(props['content-type'], 'image/png')
         self.assertEqual(props['content-language'], 'spanish')
 
+    @record
     def test_put_block_blob_from_text(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3953,6 +4244,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_put_block_blob_from_text_with_encoding(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3969,6 +4261,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_put_block_blob_from_text_with_encoding_and_progress(self):
         # Arrange
         self._create_container(self.container_name)
@@ -3992,6 +4285,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_put_block_blob_from_text_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4010,6 +4304,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, encoded_data)
 
     def test_put_block_blob_from_text_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -4027,12 +4325,13 @@ class StorageBlobTest(AzureTestCase):
             self.container_name, blob_name, len(encoded_data))
         self.assertBlobEqual(self.container_name, blob_name, encoded_data)
 
+    @record
     def test_put_page_blob_from_bytes(self):
         # Arrange
         self._create_container(self.container_name)
 
         # Act
-        data = os.urandom(2048)
+        data = self._get_random_bytes(2048)
         resp = self.bs.put_page_blob_from_bytes(
             self.container_name, 'blob1', data)
 
@@ -4040,6 +4339,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertIsNone(resp)
         self.assertEqual(data, self.bs.get_blob(self.container_name, 'blob1'))
 
+    @record
     def test_put_page_blob_from_bytes_with_progress(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4050,7 +4350,7 @@ class StorageBlobTest(AzureTestCase):
         def callback(current, total):
             progress.append((current, total))
 
-        data = os.urandom(2048)
+        data = self._get_random_bytes(2048)
         resp = self.bs.put_page_blob_from_bytes(
             self.container_name, 'blob1', data, progress_callback=callback)
 
@@ -4059,13 +4359,14 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(data, self.bs.get_blob(self.container_name, 'blob1'))
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_put_page_blob_from_bytes_with_index(self):
         # Arrange
         self._create_container(self.container_name)
         index = 1024
 
         # Act
-        data = os.urandom(2048)
+        data = self._get_random_bytes(2048)
         resp = self.bs.put_page_blob_from_bytes(
             self.container_name, 'blob1', data, index)
 
@@ -4074,6 +4375,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(data[index:],
                          self.bs.get_blob(self.container_name, 'blob1'))
 
+    @record
     def test_put_page_blob_from_bytes_with_index_and_count(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4081,7 +4383,7 @@ class StorageBlobTest(AzureTestCase):
         count = 1024
 
         # Act
-        data = os.urandom(2048)
+        data = self._get_random_bytes(2048)
         resp = self.bs.put_page_blob_from_bytes(
             self.container_name, 'blob1', data, index, count)
 
@@ -4090,6 +4392,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(data[index:index + count],
                          self.bs.get_blob(self.container_name, 'blob1'))
 
+    @record
     def test_put_page_blob_from_bytes_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4106,6 +4409,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
 
     def test_put_page_blob_from_bytes_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -4121,6 +4428,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_put_page_blob_from_bytes_chunked_upload_with_index_and_count(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4140,6 +4448,10 @@ class StorageBlobTest(AzureTestCase):
                              blob_name, data[index:index + count])
 
     def test_put_page_blob_from_bytes_chunked_upload_with_index_and_count_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -4158,6 +4470,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name,
                              blob_name, data[index:index + count])
 
+    @record
     def test_put_page_blob_from_path_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4177,6 +4490,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
 
     def test_put_page_blob_from_path_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -4195,6 +4512,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, len(data))
         self.assertBlobEqual(self.container_name, blob_name, data)
 
+    @record
     def test_put_page_blob_from_path_with_progress_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4220,6 +4538,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
+    @record
     def test_put_page_blob_from_file_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4241,6 +4560,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
     def test_put_page_blob_from_file_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -4261,6 +4584,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
+    @record
     def test_put_page_blob_from_file_non_seekable_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4284,6 +4608,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
     def test_put_page_blob_from_file_non_seekable_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -4305,6 +4633,7 @@ class StorageBlobTest(AzureTestCase):
 
         # Assert
 
+    @record
     def test_put_page_blob_from_file_with_progress_chunked_upload(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4333,6 +4662,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(progress, self._get_expected_progress(len(data)))
 
     def test_put_page_blob_from_file_with_progress_chunked_upload_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -4361,6 +4694,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertEqual(progress, sorted(progress))
         self.assertGreater(len(progress), 0)
 
+    @record
     def test_put_page_blob_from_file_chunked_upload_truncated(self):
         # Arrange
         self._create_container(self.container_name)
@@ -4382,6 +4716,10 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
     def test_put_page_blob_from_file_chunked_upload_truncated_parallel(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
         self._create_container(self.container_name)
         blob_name = 'blob1'
@@ -4402,6 +4740,7 @@ class StorageBlobTest(AzureTestCase):
         self.assertBlobLengthEqual(self.container_name, blob_name, blob_size)
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
+    @record
     def test_put_page_blob_from_file_with_progress_chunked_upload_truncated(self):
         # Arrange
         self._create_container(self.container_name)
