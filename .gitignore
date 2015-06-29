@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 
+# Virtual environment
+env/
+
 # PTVS analysis
 .ptvs/
 
