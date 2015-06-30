@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pjxl
+      bnRyeSB4bWxuczpkPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL2Fkby8yMDA3LzA4L2Rh
+      dGFzZXJ2aWNlcyIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAw
+      Ny8wOC9kYXRhc2VydmljZXMvbWV0YWRhdGEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1
+      L0F0b20iPjx0aXRsZT48L3RpdGxlPjx1cGRhdGVkPjIwMTUtMDYtMzBUMjE6NDE6NDYuMjIwNTM3
+      KzAwOjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWU+PC9uYW1lPjwvYXV0aG9yPjxpZD48L2lkPjxj
+      b250ZW50IHR5cGU9ImFwcGxpY2F0aW9uL3htbCI+PEV2ZW50SHViRGVzY3JpcHRpb24geG1sbnM6
+      aT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRw
+      Oi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL25ldHNlcnZpY2VzLzIwMTAvMTAvc2VydmljZWJ1cy9j
+      b25uZWN0Ij48L0V2ZW50SHViRGVzY3JpcHRpb24+PC9jb250ZW50PjwvZW50cnk+
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['561']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.0]
+    method: PUT
+    uri: https://fakehubnamespace.servicebus.windows.net/uthubb21d1bcb?api-version=2014-01
+  response:
+    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakehubnamespace.servicebus.windows.net/uthubb21d1bcb?api-version=2014-01</id><title
+        type="text">uthubb21d1bcb</title><published>2015-06-30T21:41:48Z</published><updated>2015-06-30T21:41:51Z</updated><author><name>fakehubnamespace</name></author><link
+        rel="self" href="https://fakehubnamespace.servicebus.windows.net/uthubb21d1bcb?api-version=2014-01"/><content
+        type="application/xml"><EventHubDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><MessageRetentionInDays>7</MessageRetentionInDays><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2015-06-30T21:41:48.443</CreatedAt><UpdatedAt>2015-06-30T21:41:51.817</UpdatedAt><PartitionCount>4</PartitionCount><PartitionIds
+        xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays"><d2p1:string>0</d2p1:string><d2p1:string>1</d2p1:string><d2p1:string>2</d2p1:string><d2p1:string>3</d2p1:string></PartitionIds></EventHubDescription></content></entry>'}
+    headers:
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 21:41:51 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [pyazure/0.20.0]
+    method: GET
+    uri: https://fakehubnamespace.servicebus.windows.net/uthubb21d1bcb
+  response:
+    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakehubnamespace.servicebus.windows.net/uthubb21d1bcb</id><title
+        type="text">uthubb21d1bcb</title><published>2015-06-30T21:41:48Z</published><updated>2015-06-30T21:41:51Z</updated><author><name>fakehubnamespace</name></author><link
+        rel="self" href="https://fakehubnamespace.servicebus.windows.net/uthubb21d1bcb"/><content
+        type="application/xml"><EventHubDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><MessageRetentionInDays>7</MessageRetentionInDays><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2015-06-30T21:41:48.443</CreatedAt><UpdatedAt>2015-06-30T21:41:51.817</UpdatedAt><PartitionCount>4</PartitionCount><PartitionIds
+        xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays"><d2p1:string>0</d2p1:string><d2p1:string>1</d2p1:string><d2p1:string>2</d2p1:string><d2p1:string>3</d2p1:string></PartitionIds></EventHubDescription></content></entry>'}
+    headers:
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 21:41:51 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 200, message: OK}
+version: 1
