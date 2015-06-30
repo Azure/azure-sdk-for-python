@@ -69,7 +69,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
                 request_session=Session(),
             )
 
-        set_service_options(self.sbs)
+        set_service_options(self.sbs, self.settings)
 
         self.queue_name = self.get_resource_name('utqueue')
         self.topic_name = self.get_resource_name('uttopic')
