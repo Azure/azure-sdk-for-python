@@ -20,7 +20,6 @@ import os
 import random
 import requests
 import sys
-import time
 import unittest
 
 from azure.common import (
@@ -120,12 +119,12 @@ class StorageBlobTest(StorageTestCase):
                 except:
                     pass
 
-            for tmp_file in ['blob_input.temp.dat', 'blob_output.temp.dat']:
-                if os.path.isfile(tmp_file):
-                    try:
-                        os.remove(tmp_file)
-                    except:
-                        pass
+        for tmp_file in ['blob_input.temp.dat', 'blob_output.temp.dat']:
+            if os.path.isfile(tmp_file):
+                try:
+                    os.remove(tmp_file)
+                except:
+                    pass
 
         return super(StorageBlobTest, self).tearDown()
 
@@ -188,7 +187,7 @@ class StorageBlobTest(StorageTestCase):
             if count > 5:
                 self.assertTrue(
                     False, 'Timed out waiting for async copy to complete.')
-            time.sleep(5)
+            self.sleep(5)
             props = self.bs.get_blob_properties(container_name, blob_name)
         self.assertEqual(props['x-ms-copy-status'], 'success')
 
@@ -958,7 +957,7 @@ class StorageBlobTest(StorageTestCase):
         lease = self.bs.lease_container(
             self.container_name, 'acquire', x_ms_lease_duration=15)
         self.container_lease_id = lease['x-ms-lease-id']
-        time.sleep(10)
+        self.sleep(10)
 
         # Act
         renewed_lease = self.bs.lease_container(
@@ -967,10 +966,10 @@ class StorageBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(lease['x-ms-lease-id'],
                          renewed_lease['x-ms-lease-id'])
-        time.sleep(5)
+        self.sleep(5)
         with self.assertRaises(WindowsAzureError):
             self.bs.delete_container(self.container_name)
-        time.sleep(10)
+        self.sleep(10)
         self.bs.delete_container(self.container_name)
 
     @record
@@ -988,7 +987,7 @@ class StorageBlobTest(StorageTestCase):
                                 'break',
                                 x_ms_lease_id=lease['x-ms-lease-id'],
                                 x_ms_lease_break_period=5)
-        time.sleep(5)
+        self.sleep(5)
         with self.assertRaises(WindowsAzureError):
             self.bs.delete_container(
                 self.container_name, x_ms_lease_id=lease['x-ms-lease-id'])
@@ -1037,7 +1036,7 @@ class StorageBlobTest(StorageTestCase):
         # Assert
         with self.assertRaises(WindowsAzureError):
             self.bs.lease_container(self.container_name, 'acquire')
-        time.sleep(15)
+        self.sleep(15)
         lease = self.bs.lease_container(self.container_name, 'acquire')
         self.container_lease_id = lease['x-ms-lease-id']
 
@@ -2167,7 +2166,7 @@ class StorageBlobTest(StorageTestCase):
         resp2 = self.bs.put_blob(self.container_name, 'blob1', b'hello 2',
                                  'BlockBlob',
                                  x_ms_lease_id=resp1['x-ms-lease-id'])
-        time.sleep(15)
+        self.sleep(15)
         with self.assertRaises(WindowsAzureError):
             self.bs.put_blob(self.container_name, 'blob1', b'hello 3',
                              'BlockBlob', x_ms_lease_id=resp1['x-ms-lease-id'])
@@ -2244,7 +2243,7 @@ class StorageBlobTest(StorageTestCase):
         resp3 = self.bs.put_blob(self.container_name, 'blob1', b'hello 2',
                                  'BlockBlob',
                                  x_ms_lease_id=resp1['x-ms-lease-id'])
-        time.sleep(5)
+        self.sleep(5)
         with self.assertRaises(WindowsAzureError):
             self.bs.put_blob(self.container_name, 'blob1', b'hello 3',
                              'BlockBlob', x_ms_lease_id=resp1['x-ms-lease-id'])
