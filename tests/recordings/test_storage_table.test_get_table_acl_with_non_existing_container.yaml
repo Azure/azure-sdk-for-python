@@ -2,31 +2,30 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/atom+xml]
       DataServiceVersion: [2.0;NetFx]
-      Date: ['Tue, 23 Jun 2015 00:12:20 GMT']
+      Date: ['Tue, 30 Jun 2015 22:57:11 GMT']
       MaxDataServiceVersion: [2.0;NetFx]
       User-Agent: [pyazure/0.20.0]
-      x-ms-date: ['Tue, 23 Jun 2015 00:12:20 GMT']
+      x-ms-date: ['Tue, 30 Jun 2015 22:57:11 GMT']
       x-ms-version: ['2014-02-14']
     method: GET
     uri: https://storagename.table.core.windows.net/uttable6e641ab0?comp=acl
   response:
-    body: {string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>MediaTypeNotSupported</m:code><m:message
-        xml:lang="en-US">None of the provided media types are supported
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>TableNotFound</m:code><m:message
+        xml:lang="en-US">The table specified does not exist.
 
-        RequestId:ad0ffa55-0002-0036-6c49-ad07e9000000
+        RequestId:70940168-0002-0048-2388-b39826000000
 
-        Time:2015-06-23T00:12:20.9768626Z</m:message></m:error>'}
+        Time:2015-06-30T22:57:12.9939352Z</m:message></m:error>'}
     headers:
-      Content-Length: ['335']
+      Content-Length: ['316']
       Content-Type: [application/xml]
-      Date: ['Tue, 23 Jun 2015 00:12:20 GMT']
+      Date: ['Tue, 30 Jun 2015 22:57:12 GMT']
       Server: [Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [ad0ffa55-0002-0036-6c49-ad07e9000000]
+      x-ms-request-id: [70940168-0002-0048-2388-b39826000000]
       x-ms-version: ['2014-02-14']
-    status: {code: 415, message: None of the provided media types are supported}
+    status: {code: 404, message: The table specified does not exist.}
 version: 1
