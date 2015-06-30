@@ -235,11 +235,15 @@ class StorageBlobTest(StorageTestCase):
     def _get_oversized_text_data(self):
         '''Returns random unicode text data exceeding the size threshold for
         chunking blob upload.'''
+        # Must not be really random, otherwise playback of recordings
+        # won't work. Data must be randomized, but the same for each run.
+        # Use the checksum of the qualified test name as the random seed.
+        rand = random.Random(self.checksum)
         size = self.bs._BLOB_MAX_DATA_SIZE + 12345
         text = u''
         words = [u'hello', u'world', u'python', u'啊齄丂狛狜']
         while (len(text) < size):
-            index = random.randint(0, len(words) - 1)
+            index = rand.randint(0, len(words) - 1)
             text = text + u' ' + words[index]
 
         return text
