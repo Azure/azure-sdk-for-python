@@ -15,7 +15,6 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import base64
-import time
 import unittest
 import sys
 import locale
