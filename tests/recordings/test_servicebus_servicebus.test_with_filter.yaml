@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pjxl
+      bnRyeSB4bWxuczpkPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL2Fkby8yMDA3LzA4L2Rh
+      dGFzZXJ2aWNlcyIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAw
+      Ny8wOC9kYXRhc2VydmljZXMvbWV0YWRhdGEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1
+      L0F0b20iPjx0aXRsZT48L3RpdGxlPjx1cGRhdGVkPjIwMTUtMDYtMzBUMjA6NTI6MDMuMjgxNzkz
+      KzAwOjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWU+PC9uYW1lPjwvYXV0aG9yPjxpZD48L2lkPjxj
+      b250ZW50IHR5cGU9ImFwcGxpY2F0aW9uL3htbCI+PFRvcGljRGVzY3JpcHRpb24geG1sbnM6aT0i
+      aHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRwOi8v
+      c2NoZW1hcy5taWNyb3NvZnQuY29tL25ldHNlcnZpY2VzLzIwMTAvMTAvc2VydmljZWJ1cy9jb25u
+      ZWN0Ij48L1RvcGljRGVzY3JpcHRpb24+PC9jb250ZW50PjwvZW50cnk+
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['555']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.0]
+    method: PUT
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic8b6911e30
+  response:
+    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic8b6911e30</id><title
+        type="text">uttopic8b6911e30</title><published>2015-06-30T20:52:05Z</published><updated>2015-06-30T20:52:05Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic8b6911e30"/><content
+        type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><CreatedAt>2015-06-30T20:52:05.427</CreatedAt><UpdatedAt>2015-06-30T20:52:05.567</UpdatedAt></TopicDescription></content></entry>'}
+    headers:
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 20:52:04 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.0]
+    method: DELETE
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic8b6911e30
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+      Date: ['Tue, 30 Jun 2015 20:52:05 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pjxl
+      bnRyeSB4bWxuczpkPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL2Fkby8yMDA3LzA4L2Rh
+      dGFzZXJ2aWNlcyIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAw
+      Ny8wOC9kYXRhc2VydmljZXMvbWV0YWRhdGEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1
+      L0F0b20iPjx0aXRsZT48L3RpdGxlPjx1cGRhdGVkPjIwMTUtMDYtMzBUMjA6NTI6MDUuNTE1OTIz
+      KzAwOjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWU+PC9uYW1lPjwvYXV0aG9yPjxpZD48L2lkPjxj
+      b250ZW50IHR5cGU9ImFwcGxpY2F0aW9uL3htbCI+PFRvcGljRGVzY3JpcHRpb24geG1sbnM6aT0i
+      aHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRwOi8v
+      c2NoZW1hcy5taWNyb3NvZnQuY29tL25ldHNlcnZpY2VzLzIwMTAvMTAvc2VydmljZWJ1cy9jb25u
+      ZWN0Ij48L1RvcGljRGVzY3JpcHRpb24+PC9jb250ZW50PjwvZW50cnk+
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['555']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.0]
+    method: PUT
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic8b6911e30
+  response:
+    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic8b6911e30</id><title
+        type="text">uttopic8b6911e30</title><published>2015-06-30T20:52:07Z</published><updated>2015-06-30T20:52:07Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic8b6911e30"/><content
+        type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><CreatedAt>2015-06-30T20:52:07.033</CreatedAt><UpdatedAt>2015-06-30T20:52:07.103</UpdatedAt></TopicDescription></content></entry>'}
+    headers:
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 20:52:06 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.0]
+    method: DELETE
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic8b6911e30
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+      Date: ['Tue, 30 Jun 2015 20:52:07 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+    status: {code: 200, message: OK}
+version: 1
