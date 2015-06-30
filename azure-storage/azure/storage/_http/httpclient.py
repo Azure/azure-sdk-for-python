@@ -115,7 +115,8 @@ class _HTTPClient(object):
             from .requestsclient import _RequestsConnection
             connection = _RequestsConnection(
                 target_host, protocol, self.request_session, self.timeout)
-            #TODO: proxy setup
+            proxy_host = self.proxy_host
+            proxy_port = self.proxy_port
         else:
             if ':' in target_host:
                 target_host, _, target_port = target_host.rpartition(':')
@@ -147,7 +148,7 @@ class _HTTPClient(object):
         return connection
 
     def send_request_headers(self, connection, request_headers):
-        if self.proxy_host:
+        if self.proxy_host and self.request_session is None:
             for i in connection._buffer:
                 if i.startswith(b"Host: "):
                     connection._buffer.remove(i)

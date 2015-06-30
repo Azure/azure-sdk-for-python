@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,11 +49,18 @@ class _RequestsConnection(object):
         self.uri = None
         self.timeout = timeout
 
+        # By default, requests adds an Accept:*/* to the session, which causes
+        # issues with some Azure REST APIs. Removing it here gives us the flexibility
+        # to add it back on a case by case basis via putheader.
+        if 'Accept' in self.session.headers:
+            del self.session.headers['Accept']
+
     def close(self):
         pass
 
     def set_tunnel(self, host, port=None, headers=None):
-        pass
+        self.session.proxies['http'] = 'http://{}:{}'.format(host, port)
+        self.session.proxies['https'] = 'https://{}:{}'.format(host, port)
 
     def set_proxy_credentials(self, user, password):
         pass

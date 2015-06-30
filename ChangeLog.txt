@@ -38,12 +38,7 @@ test_put_block_blob_from_text_chunked_upload
 
 StorageTableTest
 ----------------
-(fail in any mode)
-test_get_table_acl
-test_get_table_acl_iter
-test_set_table_acl
-test_set_table_acl_with_empty_signed_identifiers
-test_set_table_acl_with_empty_signed_identifiers
+<none>
 
 StorageQueueTest
 ----------------
