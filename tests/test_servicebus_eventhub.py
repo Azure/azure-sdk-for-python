@@ -52,7 +52,7 @@ class ServiceBusEventHubTest(ServiceBusTestCase):
             request_session=Session(),
         )
 
-        set_service_options(self.sbs)
+        set_service_options(self.sbs, self.settings)
 
         self.event_hub_name = self.get_resource_name('uthub')
 
