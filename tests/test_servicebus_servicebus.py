@@ -36,14 +36,14 @@ from azure.servicebus import (
     Subscription,
     Topic,
 )
-from .util import (
+from util import (
     set_service_options,
 )
-from .common_recordingtestcase import (
+from common_recordingtestcase import (
     TestMode,
     record,
 )
-from .servicebus_testcase import ServiceBusTestCase
+from servicebus_testcase import ServiceBusTestCase
 
 
 #------------------------------------------------------------------------------
@@ -510,7 +510,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self.assertEqual(
             received_msg.custom_properties['dob'], datetime(2011, 12, 14))
 
-    @unittest.skip
+    @unittest.skip('flaky')
     def test_receive_queue_message_timeout_5(self):
         # Arrange
         self._create_queue(self.queue_name)
@@ -526,7 +526,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self.assertIsNotNone(received_msg)
         self.assertIsNone(received_msg.body)
 
-    @unittest.skip
+    @unittest.skip('flaky')
     def test_receive_queue_message_timeout_50(self):
         # Arrange
         self._create_queue(self.queue_name)
@@ -543,7 +543,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self.assertIsNotNone(received_msg)
         self.assertIsNone(received_msg.body)
 
-    @unittest.skip
+    @unittest.skip('flaky')
     def test_receive_queue_message_timeout_50_http_timeout(self):
         # Arrange
         self._create_queue(self.queue_name)
@@ -630,6 +630,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self.assertTrue(created)
 
     @record
+    @unittest.skip('undesirable output, this is old enough, backwards compatibility can be deleted')
     def test_topic_backwards_compatibility_warning(self):
         # Arrange
         topic_options = Topic()
@@ -1372,7 +1373,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
 
         self.assertEqual(called, ['b', 'a', 'b', 'a'])
 
-    @unittest.skip
+    @unittest.skip('requires extra setup')
     def test_two_identities(self):
         # In order to run this test, 2 service bus service identities are
         # created using the sbaztool available at:

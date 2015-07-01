@@ -85,7 +85,7 @@ True
 True
 
 """
-from tests import servicebus_settings_real as settings
+import servicebus_settings_real as settings
 
 key_name = settings.SERVICEBUS_SAS_KEY_NAME
 key_value = settings.SERVICEBUS_SAS_KEY_VALUE

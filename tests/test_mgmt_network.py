@@ -17,8 +17,8 @@
 import unittest
 
 import azure.mgmt.network
-from .common_recordingtestcase import record
-from .mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
+from common_recordingtestcase import record
+from mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
 class MgmtNetworkTest(AzureMgmtTestCase):
 

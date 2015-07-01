@@ -40,14 +40,14 @@ from azure.servicemanagement import (
     get_certificate_from_publish_settings,
 )
 from azure.storage.blobservice import BlobService
-from .util import (
+from util import (
     create_storage_service,
 )
-from .common_recordingtestcase import (
+from common_recordingtestcase import (
     TestMode,
     record,
 )
-from .legacy_mgmt_testcase import LegacyMgmtTestCase
+from legacy_mgmt_testcase import LegacyMgmtTestCase
 
 
 SERVICE_CERT_FORMAT = 'pfx'

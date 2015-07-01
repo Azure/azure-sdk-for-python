@@ -20,11 +20,11 @@ from azure.common import (
     WindowsAzureMissingResourceError,
 )
 from azure.servicemanagement import ServiceBusManagementService
-from .common_recordingtestcase import (
+from common_recordingtestcase import (
     TestMode,
     record,
 )
-from .legacy_mgmt_testcase import LegacyMgmtTestCase
+from legacy_mgmt_testcase import LegacyMgmtTestCase
 
 
 class LegacyMgmtServiceBusTest(LegacyMgmtTestCase):

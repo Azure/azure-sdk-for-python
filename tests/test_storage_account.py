@@ -21,7 +21,7 @@ from azure.storage import (
     QueueService,
     TableService,
 )
-from .common_extendedtestcase import (
+from common_extendedtestcase import (
     ExtendedTestCase,
 )
 

@@ -19,11 +19,11 @@ import unittest
 
 from azure.common import WindowsAzureError
 from azure.servicemanagement import ServiceManagementService
-from .common_recordingtestcase import (
+from common_recordingtestcase import (
     TestMode,
     record,
 )
-from .legacy_mgmt_testcase import LegacyMgmtTestCase
+from legacy_mgmt_testcase import LegacyMgmtTestCase
 
 
 class LegacyMgmtStorageTest(LegacyMgmtTestCase):

@@ -25,7 +25,7 @@ from azure.storage.sharedaccesssignature import (
     QueryStringConstants,
     ResourceType,
 )
-from .common_extendedtestcase import (
+from common_extendedtestcase import (
     ExtendedTestCase,
 )
 

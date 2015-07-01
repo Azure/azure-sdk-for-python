@@ -29,14 +29,14 @@ from azure.servicebus import (
     EventHub,
     ServiceBusService,
 )
-from .util import (
+from util import (
     set_service_options,
 )
-from .common_recordingtestcase import (
+from common_recordingtestcase import (
     TestMode,
     record,
 )
-from .servicebus_testcase import ServiceBusTestCase
+from servicebus_testcase import ServiceBusTestCase
 #------------------------------------------------------------------------------
 
 

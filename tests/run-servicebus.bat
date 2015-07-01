@@ -23,10 +23,11 @@ if "%1%" == "" (
 )
 
 if "%PYTHONPATH%" == "" (
-	set PYTHONPATH=..
-) else (
-	set PYTHONPATH=%PYTHONPATH%;..
+	set PYTHONPATH=.
 )
+set PYTHONPATH=%PYTHONPATH%;..\azure-_core
+set PYTHONPATH=%PYTHONPATH%;..\azure-common
+set PYTHONPATH=%PYTHONPATH%;..\azure-servicebus
 
 echo Running tests using %PYTHONDIR%
 %PYTHONDIR%\python.exe -m unittest discover -p "test_servicebus_*.py"

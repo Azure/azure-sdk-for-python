@@ -23,11 +23,11 @@ from azure.servicemanagement import (
     CloudService,
     SchedulerManagementService,
 )
-from .common_recordingtestcase import (
+from common_recordingtestcase import (
     TestMode,
     record,
 )
-from .legacy_mgmt_testcase import LegacyMgmtTestCase
+from legacy_mgmt_testcase import LegacyMgmtTestCase
 
 
 class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
