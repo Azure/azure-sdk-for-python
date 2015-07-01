@@ -21,8 +21,8 @@ from collections import namedtuple
 import azure.mgmt.compute
 import azure.mgmt.network
 import azure.mgmt.storage
-from .common_recordingtestcase import record
-from .mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
+from common_recordingtestcase import record
+from mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
 ComputeResourceNames = namedtuple(
     'ComputeResourceNames',

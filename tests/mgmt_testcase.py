@@ -20,14 +20,14 @@ from azure.common import (
     AzureException,
     SubscriptionCloudCredentials,
 )
-from .common_recordingtestcase import (
+from common_recordingtestcase import (
     RecordingTestCase,
     TestMode,
 )
-from .util import (
+from util import (
     get_test_file_path,
 )
-from . import mgmt_settings_fake as fake_settings
+import mgmt_settings_fake as fake_settings
 
 
 class HttpStatusCode(object):

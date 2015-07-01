@@ -23,10 +23,15 @@ if "%1%" == "" (
 )
 
 if "%PYTHONPATH%" == "" (
-	set PYTHONPATH=..
-) else (
-	set PYTHONPATH=%PYTHONPATH%;..
+	set PYTHONPATH=.
 )
+set PYTHONPATH=%PYTHONPATH%;..\azure-_core
+set PYTHONPATH=%PYTHONPATH%;..\azure-common
+set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-_core
+set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-compute
+set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-network
+set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-resource
+set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-storage
 
 echo Running tests using %PYTHONDIR%
 %PYTHONDIR%\python.exe -m unittest discover -p "test_mgmt_*.py"

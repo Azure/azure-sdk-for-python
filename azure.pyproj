@@ -7,7 +7,7 @@
     <ProjectHome>
     </ProjectHome>
     <StartupFile>tests\doctest_tableservice.py</StartupFile>
-    <WorkingDirectory>.</WorkingDirectory>
+    <WorkingDirectory>tests\</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>azure</Name>
     <RootNamespace>azure</RootNamespace>

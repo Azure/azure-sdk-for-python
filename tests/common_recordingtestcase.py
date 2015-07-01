@@ -22,8 +22,8 @@ import time
 import vcr
 import zlib
 
-from .common_extendedtestcase import ExtendedTestCase
-from .util import get_test_file_path
+from common_extendedtestcase import ExtendedTestCase
+from util import get_test_file_path
 
 
 should_log = os.getenv('SDK_TESTS_LOG', '0')
@@ -60,7 +60,8 @@ class RecordingTestCase(ExtendedTestCase):
     def __init__(self, *args, **kwargs):
         super(RecordingTestCase, self).__init__(*args, **kwargs)
         try:
-            with open(os.path.join('tests', 'testsettings_local.json')) as testsettings_local_file:
+            path = get_test_file_path('testsettings_local.json')
+            with open(path) as testsettings_local_file:
                 test_settings = json.load(testsettings_local_file)
             self.test_mode = test_settings['mode']
         except:
@@ -112,7 +113,10 @@ class RecordingTestCase(ExtendedTestCase):
         # which is needed for playback.
         # Most resource names have a length limit, so we use a crc32
         self.checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xffffffff
-        return '{}{}'.format(name, hex(self.checksum)[2:])
+        name = '{}{}'.format(name, hex(self.checksum)[2:])
+        if name.endswith('L'):
+            name = name[:-1]
+        return name
 
     def _scrub_sensitive_request_info(self, request):
         if not TestMode.is_playback(self.test_mode):

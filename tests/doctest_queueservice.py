@@ -71,7 +71,7 @@ How To: Delete a Queue
 True
 
 """
-from tests import storage_settings_real as settings
+import storage_settings_real as settings
 
 name = settings.STORAGE_ACCOUNT_NAME
 key = settings.STORAGE_ACCOUNT_KEY

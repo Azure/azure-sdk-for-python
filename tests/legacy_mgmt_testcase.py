@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from .common_recordingtestcase import (
+from common_recordingtestcase import (
     RecordingTestCase,
     TestMode,
 )
-from . import legacy_mgmt_settings_fake as fake_settings
-from .util import (
+import legacy_mgmt_settings_fake as fake_settings
+from util import (
     set_service_options,
 )
 

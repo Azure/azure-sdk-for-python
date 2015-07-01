@@ -27,15 +27,15 @@ from azure.storage import (
     QueueSharedAccessPermissions,
 )
 from azure.common import WindowsAzureError
-from .util import (
+from util import (
     create_storage_service,
     set_service_options,
 )
-from .common_recordingtestcase import (
+from common_recordingtestcase import (
     TestMode,
     record,
 )
-from .storage_testcase import StorageTestCase
+from storage_testcase import StorageTestCase
 
 #------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'

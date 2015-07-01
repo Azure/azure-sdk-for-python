@@ -15,7 +15,7 @@
 import json
 import os.path
 
-from .util import (
+from util import (
     get_test_file_path,
 )
 
