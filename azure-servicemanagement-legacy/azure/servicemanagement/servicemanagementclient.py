@@ -267,7 +267,7 @@ class _ServiceManagementClient(object):
         '''
         loops = timeout // sleep_interval + 1
         start_time = time.time()
-        for _ in range(loops):
+        for _ in range(int(loops)):
             result = self.get_operation_status(request_id)
             elapsed = time.time() - start_time
             if result.status == wait_for_status:

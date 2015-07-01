@@ -73,6 +73,14 @@ class LegacyMgmtWebsiteTest(LegacyMgmtTestCase):
         except:
             return False
 
+    def _wait_for_async(self, request_id):
+        # Note that we keep the same ratio of timeout/sleep_interval in
+        # live and playback so we end up with same number of loops/requests
+        if self.is_playback():
+            self.wss.wait_for_operation_status(request_id, timeout=1.2, sleep_interval=0.2)
+        else:
+            self.wss.wait_for_operation_status(request_id, timeout=30, sleep_interval=5)
+
     #--Operations for web sites ----------------------------------------
     @record
     def test_list_web_spaces(self):
@@ -240,7 +248,7 @@ class LegacyMgmtWebsiteTest(LegacyMgmtTestCase):
 
         # Act
         result = self.wss.update_site(self.webspace_name, self.created_site, state="Stopped")
-        self.wss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         result = self.wss.get_site(self.webspace_name, self.created_site)
@@ -248,7 +256,7 @@ class LegacyMgmtWebsiteTest(LegacyMgmtTestCase):
 
         # Act
         result = self.wss.update_site(self.webspace_name, self.created_site, state="Running")
-        self.wss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         result = self.wss.get_site(self.webspace_name, self.created_site)

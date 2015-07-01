@@ -54,7 +54,7 @@ class LegacyMgmtStorageTest(LegacyMgmtTestCase):
             'West US',
             False,
             {'ext1': 'val1', 'ext2': 42})
-        self.sms.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
     def _storage_account_exists(self, name):
         try:
@@ -62,6 +62,14 @@ class LegacyMgmtStorageTest(LegacyMgmtTestCase):
             return props is not None
         except:
             return False
+
+    def _wait_for_async(self, request_id):
+        # Note that we keep the same ratio of timeout/sleep_interval in
+        # live and playback so we end up with same number of loops/requests
+        if self.is_playback():
+            self.sms.wait_for_operation_status(request_id, timeout=1.2, sleep_interval=0.2)
+        else:
+            self.sms.wait_for_operation_status(request_id, timeout=30, sleep_interval=5)
 
     #--Test cases for storage accounts -----------------------------------
     @record
@@ -201,7 +209,7 @@ class LegacyMgmtStorageTest(LegacyMgmtTestCase):
             'West US',
             True,
             {'ext1': 'val1', 'ext2': 42})
-        self.sms.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         self.assertTrue(
@@ -289,7 +297,7 @@ class LegacyMgmtStorageTest(LegacyMgmtTestCase):
                 'West US',
                 True,
                 {'ext1': 'val1', 'ext2': 42})
-            self.sms.wait_for_operation_status(result.request_id)
+            self._wait_for_async(result.request_id)
 
         # Assert
 
@@ -308,7 +316,7 @@ class LegacyMgmtStorageTest(LegacyMgmtTestCase):
             'West US',
             True,
             {'ext1': 'val1', 'ext2': 42})
-        self.sms.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         result = self.sms.get_storage_account_properties(
@@ -332,7 +340,7 @@ class LegacyMgmtStorageTest(LegacyMgmtTestCase):
             'West US',
             True,
             {'ext1': u'丂狛狜', 'ext2': 42})
-        self.sms.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         result = self.sms.get_storage_account_properties(

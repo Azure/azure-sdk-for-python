@@ -61,11 +61,11 @@ class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
             "description",
             "West Europe",
         )
-        self.ss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
     def _create_job_collection(self):
         result = self.ss.create_job_collection(self.service_id, self.coll_id)
-        self.ss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
     def _create_job(self):
         result = self.ss.create_job(
@@ -74,7 +74,7 @@ class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
             self.job_id,
             self._create_job_dict(),
         )
-        self.ss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
     def _create_job_dict(self):
         return {
@@ -100,6 +100,14 @@ class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
             },
             "state": "enabled"
         }
+
+    def _wait_for_async(self, request_id):
+        # Note that we keep the same ratio of timeout/sleep_interval in
+        # live and playback so we end up with same number of loops/requests
+        if self.is_playback():
+            self.ss.wait_for_operation_status(request_id, timeout=1.2, sleep_interval=0.2)
+        else:
+            self.ss.wait_for_operation_status(request_id, timeout=30, sleep_interval=5)
 
     #--Operations for scheduler ----------------------------------------
     @record
@@ -143,7 +151,7 @@ class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
             "description",
             "West Europe",
         )
-        self.ss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         self.assertIsNotNone(result)
@@ -167,7 +175,7 @@ class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
 
         # Act
         result = self.ss.create_job_collection(self.service_id, self.coll_id)
-        self.ss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         self.assertIsNotNone(result)
@@ -180,7 +188,7 @@ class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
 
         # Act
         result = self.ss.delete_job_collection(self.service_id, self.coll_id)
-        self.ss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         self.assertIsNotNone(result)
@@ -212,7 +220,7 @@ class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
             self.job_id,
             job,
         )
-        self.ss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         self.assertIsNotNone(result)
@@ -226,7 +234,7 @@ class LegacyMgmtSchedulerTest(LegacyMgmtTestCase):
 
         # Act
         result = self.ss.delete_job(self.service_id, self.coll_id, self.job_id)
-        self.ss.wait_for_operation_status(result.request_id)
+        self._wait_for_async(result.request_id)
 
         # Assert
         self.assertIsNotNone(result)
