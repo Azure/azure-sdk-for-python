@@ -176,7 +176,12 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     #--Helpers-----------------------------------------------------------------
     def _wait_for_async(self, request_id):
-        self.sms.wait_for_operation_status(request_id, timeout=600)
+        # Note that we keep the same ratio of timeout/sleep_interval in
+        # live and playback so we end up with same number of loops/requests
+        if self.is_playback():
+            self.sms.wait_for_operation_status(request_id, timeout=1.2, sleep_interval=0.01)
+        else:
+            self.sms.wait_for_operation_status(request_id, timeout=600, sleep_interval=5)
 
     def _wait_for_deployment(self, service_name, deployment_name,
                              status='Running'):
