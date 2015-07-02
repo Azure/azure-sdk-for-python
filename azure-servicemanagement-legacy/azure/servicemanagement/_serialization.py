@@ -47,8 +47,10 @@ from ._common_error import (
 from .models import (
     AvailabilityResponse,
     CreateServerResponse,
+    LinuxConfigurationSet,
     ServiceBusNamespace,
     ServiceBusRegion,
+    WindowsConfigurationSet,
 )
 
 METADATA_NS = 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'
