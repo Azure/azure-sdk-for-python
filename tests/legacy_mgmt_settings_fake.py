@@ -28,7 +28,7 @@ SERVICEBUS_NAME = "fakesbnamespace"
 CONNECTION_TYPE = CONN_TYPE_REQUESTS_TOKEN
 PFX_LOCATION = "CURRENT_USER\\my\\<certificate name here>"
 PEM_PATH = "<path to .pem file>"
-LINUX_OS_VHD = "http://ptvsazureunittests.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd"
+LINUX_OS_VHD = "http://storagename.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd"
 LINUX_VM_REMOTE_SOURCE_IMAGE_LINK = "https://portalvhds13tr49m9hm1m6.blob.core.windows.net/vhds/huvalotestub-image-os-2014-11-06.vhd"
 LINUX_VM_IMAGE_NAME = "unittest-donotdelete-ubuntu1404"
 

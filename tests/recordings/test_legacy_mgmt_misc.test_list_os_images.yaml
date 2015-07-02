@@ -23,9 +23,9 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['477']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Thu, 02 Jul 2015 01:16:08 GMT']
+      Date: ['Thu, 02 Jul 2015 21:06:56 GMT']
       Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [4b26de44b69db4e48417b71409a3e931]
+      x-ms-request-id: [3251c94a6923b734b97cacdb1d53f029]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -36,16 +36,16 @@ interactions:
       User-Agent: [pyazure/0.20.0]
       x-ms-version: ['2014-10-01']
     method: GET
-    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/4b26de44b69db4e48417b71409a3e931
+    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/3251c94a6923b734b97cacdb1d53f029
   response:
-    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>4b26de44-b69d-b4e4-8417-b71409a3e931</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>3251c94a-6923-b734-b97c-acdb1d53f029</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['232']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Thu, 02 Jul 2015 01:16:08 GMT']
+      Date: ['Thu, 02 Jul 2015 21:06:56 GMT']
       Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [89e05c06cc16b8838a4a439ca2bffe0e]
+      x-ms-request-id: [f01953347696bf71837a824c4173f8d5]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -2873,6 +2873,13 @@ interactions:
         \ Core edge 201507010558. This is a developer build of Ubuntu Snappy 15.04.\
         \ For more information see [Ubuntu Cloud|http://www.ubuntu.com/snappy|_blank].</Description><ImageFamily>Ubuntu\
         \ Core 15.04 edge</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-07-01T00:00:00Z</PublishedDate><IsPremium>false</IsPremium><IconUri>Ubuntu-cof-100.png</IconUri><PrivacyUri>http://www.ubuntu.com/aboutus/privacypolicy</PrivacyUri><PublisherName>Canonical</PublisherName><SmallIconUri>Ubuntu-cof-45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Ubuntu\
+        \ 15.04 Core edge (Snappy)</Label><Location>East Asia;Southeast Asia;Australia\
+        \ East;Australia Southeast;Brazil South;North Europe;West Europe;South India;Japan\
+        \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
+        \ US;West US</Location><LogicalSizeInGB>30</LogicalSizeInGB><Name>b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-15.04-Snappy-core-amd64-edge-201507020801-108-en-us-30GB</Name><OS>Linux</OS><Eula>http://www.ubuntu.com/project/about-ubuntu/licensing;http://www.ubuntu.com/aboutus/privacypolicy</Eula><Description>Ubuntu\
+        \ Core edge 201507020801. This is a developer build of Ubuntu Snappy 15.04.\
+        \ For more information see [Ubuntu Cloud|http://www.ubuntu.com/snappy|_blank].</Description><ImageFamily>Ubuntu\
+        \ Core 15.04 edge</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-07-02T00:00:00Z</PublishedDate><IsPremium>false</IsPremium><IconUri>Ubuntu-cof-100.png</IconUri><PrivacyUri>http://www.ubuntu.com/aboutus/privacypolicy</PrivacyUri><PublisherName>Canonical</PublisherName><SmallIconUri>Ubuntu-cof-45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Ubuntu\
         \ Server 15.04</Label><Location>East Asia;Southeast Asia;Australia East;Australia\
         \ Southeast;Brazil South;North Europe;West Europe;Japan East;Japan West;Central\
         \ US;East US;East US 2;North Central US;South Central US;West US</Location><LogicalSizeInGB>30</LogicalSizeInGB><Name>b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-15_04-amd64-server-20150422-en-us-30GB</Name><OS>Linux</OS><Eula>http://www.ubuntu.com/project/about-ubuntu/licensing;http://www.ubuntu.com/aboutus/privacypolicy</Eula><Description>Ubuntu\
@@ -4819,11 +4826,11 @@ interactions:
         \ US</Location><LogicalSizeInGB>30</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd</MediaLink><Name>utosimg61f010d3</Name><OS>Linux</OS><IsPremium>false</IsPremium><OSState>Generalized</OSState><IOType>Standard</IOType></OSImage></Images>"}
     headers:
       Cache-Control: [no-cache]
-      Content-Length: ['657749']
+      Content-Length: ['658894']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Thu, 02 Jul 2015 01:16:09 GMT']
+      Date: ['Thu, 02 Jul 2015 21:06:59 GMT']
       Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [b968282c96f7b0c597d2b2e00a497f0a]
+      x-ms-request-id: [2718513e525bb4efa5bba64f9b7cd338]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 version: 1

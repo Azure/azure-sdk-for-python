@@ -112,8 +112,6 @@ class LegacyMgmtServiceBusTest(LegacyMgmtTestCase):
         self.assertIsNotNone(result.acs_management_endpoint)
         self.assertIsNotNone(result.servicebus_endpoint)
         self.assertIsNotNone(result.connection_string)
-        self.assertEqual(result.subscription_id,
-                         self.settings.SUBSCRIPTION_ID.replace('-', ''))
         self.assertTrue(result.enabled)
 
     @record

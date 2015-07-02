@@ -1078,6 +1078,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertTrue(props.configuration.find('Instances count="4"') >= 0)
 
     @record
+    @unittest.skip('no longer works, upgrade completes too quickly?')
     def test_rollback_update_or_upgrade(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -1336,6 +1337,10 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
     #--Test cases for retrieving subscription operations --------------------
     @record
     def test_list_subscription_operations(self):
+        # This is based on the current date, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
 
         # Act
@@ -1453,6 +1458,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    @unittest.skip('The resource extension used here no longer exists, need to find a new one')
     @record
     def test_create_virtual_machine_deployment_linux_resource_extension(self):
         # Arrange
@@ -1533,6 +1539,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    @unittest.skip('Enable this manually if you have the required virtual network')
     @record
     def test_create_virtual_machine_deployment_windows_virtual_network(self):
         # this test requires the following manual resources to be created
