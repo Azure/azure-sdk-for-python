@@ -388,10 +388,15 @@ class QueueMessage(WindowsAzureData):
         self.message_text = u''
 
 
-class Entity(WindowsAzureData):
+class Entity(WindowsAzureData, dict):
 
     ''' Entity class. The attributes of entity will be created dynamically. '''
-    pass
+    def __getattr__(self, name):
+        return dict.__getitem__(self, name)
+    def __setattr__(self, name, value):
+        return dict.__setitem__(self, name, value)
+    def __delattr__(self, name):
+        return dict.__delitem__(self, name)
 
 
 class EntityProperty(WindowsAzureData):
