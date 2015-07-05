@@ -15,7 +15,6 @@
 import sys
 import threading
 import types
-import collections
 
 from datetime import datetime
 from dateutil import parser
