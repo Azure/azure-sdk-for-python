@@ -30,7 +30,7 @@ class ServiceBusTestCase(RecordingTestCase):
         if TestMode.is_playback(self.test_mode):
             self.settings = self.fake_settings
         else:
-            from . import servicebus_settings_real as real_settings
+            import servicebus_settings_real as real_settings
             self.settings = real_settings
 
     def _scrub(self, val):

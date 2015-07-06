@@ -93,25 +93,26 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.container_name = self.get_resource_name('utctnr')
         self.disk_name = self.get_resource_name('utdisk')
         self.os_image_name = self.get_resource_name('utosimg')
-        self.data_disk_info = None
+        self.data_disk_infos = []
         self.reserved_ip_address = None
 
     def tearDown(self):
         if not self.is_playback():
-            if self.data_disk_info is not None:
+            for data_disk_info in self.data_disk_infos:
                 try:
                     disk = self.sms.get_data_disk(
-                        self.data_disk_info[0], self.data_disk_info[1],
-                        self.data_disk_info[2], self.data_disk_info[3])
+                        data_disk_info[0], data_disk_info[1],
+                        data_disk_info[2], data_disk_info[3])
                     try:
                         result = self.sms.delete_data_disk(
-                            self.data_disk_info[0], self.data_disk_info[1],
-                            self.data_disk_info[2], self.data_disk_info[3])
+                            data_disk_info[0], data_disk_info[1],
+                            data_disk_info[2], data_disk_info[3],
+                            delete_vhd=True)
                         self._wait_for_async(result.request_id)
                     except:
                         pass
                     try:
-                        self.sms.delete_disk(disk.disk_name)
+                        self.sms.delete_disk(disk.disk_name, delete_vhd=True)
                     except:
                         pass
                 except:
@@ -130,7 +131,8 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
                             role_props = self.sms.get_role(
                                 self.hosted_service_name,
                                 deployment.name,
-                                role.role_name)
+                                role.role_name,
+                            )
                             if role_props.os_virtual_hard_disk.disk_name \
                                 not in disk_names:
                                 disk_names.append(
@@ -140,7 +142,10 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
                     try:
                         result = self.sms.delete_deployment(
-                            self.hosted_service_name, deployment.name)
+                            self.hosted_service_name,
+                            deployment.name,
+                            delete_vhd=True,
+                        )
                         self._wait_for_async(result.request_id)
                     except:
                         pass
@@ -156,7 +161,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
             for disk_name in disk_names:
                 try:
-                    self.sms.delete_disk(disk_name)
+                    self.sms.delete_disk(disk_name, delete_vhd=True)
                 except:
                     pass
 
@@ -408,9 +413,10 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         return 'hn' + role_name[-13:]
 
     def _image_from_publisher_name(self, publisher):
-        # return the first one listed, which should be the most stable
-        return [i.name for i in self.sms.list_os_images() \
-            if publisher in i.publisher_name][0]
+        images = self.sms.list_os_images()
+        images_from_publisher = [i for i in images if publisher in i.publisher_name]
+        images_in_gui = [i for i in images_from_publisher if i.show_in_gui]
+        return images_in_gui[-1].name
 
     def _windows_role(self, role_name, subnet_name=None, port='59913'):
         host_name = self._host_name_from_role_name(role_name)
@@ -846,7 +852,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             result.deployments[0].role_instance_list[0].role_name, 'WorkerRole1')
 
     @record
-    def test_create_hosted_service(self):
+    def test_create_update_delete_hosted_service(self):
         # Arrange
         label = 'pythonlabel'
         description = 'python hosted service description'
@@ -861,14 +867,9 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         # Assert
         self.assertTrue(self._hosted_service_exists(self.hosted_service_name))
 
-    @record
-    def test_update_hosted_service(self):
-        # Arrange
-        self._create_hosted_service(self.hosted_service_name)
+        # Act
         label = 'ptvslabelupdate'
         description = 'ptvs description update'
-
-        # Act
         result = self.sms.update_hosted_service(
             self.hosted_service_name, label, description,
             {'ext1': 'val1update', 'ext2': 'val2update', 'ext3': 'brandnew'})
@@ -890,11 +891,6 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             props.hosted_service_properties.extended_properties['ext3'],
             'brandnew')
 
-    @record
-    def test_delete_hosted_service(self):
-        # Arrange
-        self._create_hosted_service(self.hosted_service_name)
-
         # Act
         result = self.sms.delete_hosted_service(self.hosted_service_name)
         self._wait_for_async(result.request_id)
@@ -903,7 +899,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertFalse(self._hosted_service_exists(self.hosted_service_name))
 
     @record
-    def test_get_deployment_by_slot(self):
+    def test_create_get_delete_deployment(self):
         # Arrange
         deployment_name = 'utdeployment'
         self._create_hosted_service_with_deployment(
@@ -920,13 +916,6 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertIsNotNone(result.label)
         self.assertIsNotNone(result.configuration)
 
-    @record
-    def test_get_deployment_by_name(self):
-        # Arrange
-        deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(
-            self.hosted_service_name, deployment_name)
-
         # Act
         result = self.sms.get_deployment_by_name(
             self.hosted_service_name, deployment_name)
@@ -937,31 +926,6 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertEqual(result.deployment_slot, 'Production')
         self.assertIsNotNone(result.label)
         self.assertIsNotNone(result.configuration)
-
-    @record
-    def test_create_deployment(self):
-        # Arrange
-        self._create_hosted_service(self.hosted_service_name)
-        configuration = _encode_base64(DEPLOYMENT_ORIGINAL_CONFIG)
-        package_url = self._upload_default_package_to_storage_blob(
-            'WindowsAzure1Blob')
-
-        # Act
-        result = self.sms.create_deployment(
-            self.hosted_service_name, 'production', 'WindowsAzure1',
-            package_url, 'deploylabel', configuration)
-        self._wait_for_async(result.request_id)
-
-        # Assert
-        self.assertTrue(
-            self._deployment_exists(self.hosted_service_name, 'WindowsAzure1'))
-
-    @record
-    def test_delete_deployment(self):
-        # Arrange
-        deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(
-            self.hosted_service_name, deployment_name)
 
         # Act
         result = self.sms.delete_deployment(
@@ -1114,6 +1078,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertTrue(props.configuration.find('Instances count="4"') >= 0)
 
     @record
+    @unittest.skip('no longer works, upgrade completes too quickly?')
     def test_rollback_update_or_upgrade(self):
         # Arrange
         deployment_name = 'utdeployment'
@@ -1140,7 +1105,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertTrue(props.configuration.find('Instances count="2"') >= 0)
 
     @record
-    def test_reboot_role_instance(self):
+    def test_reboot_rebuild_reimage_delete_role_instance(self):
         # Arrange
         role_instance_name = 'WorkerRole1_IN_0'
         deployment_name = 'utdeployment'
@@ -1164,45 +1129,6 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         status = self._get_role_instance_status(props, role_instance_name)
         self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
 
-    @record
-    def test_reimage_role_instance(self):
-        # Arrange
-        role_instance_name = 'WorkerRole1_IN_0'
-        deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(
-            self.hosted_service_name, deployment_name)
-        result = self.sms.update_deployment_status(
-            self.hosted_service_name, deployment_name, 'Running')
-        self._wait_for_async(result.request_id)
-        self._wait_for_deployment(self.hosted_service_name, deployment_name)
-        self._wait_for_role(self.hosted_service_name, deployment_name,
-                            role_instance_name)
-
-        # Act
-        result = self.sms.reimage_role_instance(
-            self.hosted_service_name, deployment_name, role_instance_name)
-        self._wait_for_async(result.request_id)
-
-        # Assert
-        props = self.sms.get_deployment_by_name(
-            self.hosted_service_name, deployment_name)
-        status = self._get_role_instance_status(props, role_instance_name)
-        self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
-
-    @record
-    def test_rebuild_role_instance(self):
-        # Arrange
-        role_instance_name = 'WorkerRole1_IN_0'
-        deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(
-            self.hosted_service_name, deployment_name)
-        result = self.sms.update_deployment_status(
-            self.hosted_service_name, deployment_name, 'Running')
-        self._wait_for_async(result.request_id)
-        self._wait_for_deployment(self.hosted_service_name, deployment_name)
-        self._wait_for_role(self.hosted_service_name, deployment_name,
-                            role_instance_name)
-
         # Act
         result = self.sms.rebuild_role_instance(
             self.hosted_service_name, deployment_name, role_instance_name)
@@ -1214,19 +1140,16 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         status = self._get_role_instance_status(props, role_instance_name)
         self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
 
-    @record
-    def test_delete_role_instances(self):
-        # Arrange
-        role_instance_name = 'WorkerRole1_IN_0'
-        deployment_name = 'utdeployment'
-        self._create_hosted_service_with_deployment(
-            self.hosted_service_name, deployment_name)
-        result = self.sms.update_deployment_status(
-            self.hosted_service_name, deployment_name, 'Running')
+        # Act
+        result = self.sms.reimage_role_instance(
+            self.hosted_service_name, deployment_name, role_instance_name)
         self._wait_for_async(result.request_id)
-        self._wait_for_deployment(self.hosted_service_name, deployment_name)
-        self._wait_for_role(self.hosted_service_name, deployment_name,
-                            role_instance_name)
+
+        # Assert
+        props = self.sms.get_deployment_by_name(
+            self.hosted_service_name, deployment_name)
+        status = self._get_role_instance_status(props, role_instance_name)
+        self.assertTrue(status == 'StoppedVM' or status == 'ReadyRole')
 
         # Act
         result = self.sms.delete_role_instances(
@@ -1414,6 +1337,10 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
     #--Test cases for retrieving subscription operations --------------------
     @record
     def test_list_subscription_operations(self):
+        # This is based on the current date, so this test runs live only
+        if TestMode.need_recordingfile(self.test_mode):
+            return
+
         # Arrange
 
         # Act
@@ -1495,116 +1422,6 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     #--Test cases for virtual machines -----------------------------------
     @record
-    def test_get_role_linux(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-
-        self._create_vm_linux(service_name, deployment_name, role_name)
-
-        # Act
-        result = self.sms.get_role(service_name, deployment_name, role_name)
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertEqual(result.role_name, role_name)
-        self.assertIsNotNone(result.role_size)
-        self.assertIsNotNone(result.role_type)
-        self.assertIsNotNone(result.os_virtual_hard_disk)
-        self.assertIsNotNone(result.os_virtual_hard_disk.disk_label)
-        self.assertIsNotNone(result.os_virtual_hard_disk.disk_name)
-        self.assertIsNotNone(result.os_virtual_hard_disk.host_caching)
-        self.assertIsNotNone(result.os_virtual_hard_disk.media_link)
-        self.assertIsNotNone(result.os_virtual_hard_disk.os)
-        self.assertIsNotNone(result.os_virtual_hard_disk.source_image_name)
-        self.assertIsNotNone(result.data_virtual_hard_disks)
-        self.assertIsNotNone(result.configuration_sets)
-        self.assertIsNotNone(result.configuration_sets[0])
-        self.assertIsNotNone(
-            result.configuration_sets[0].configuration_set_type)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints)
-        self.assertIsNotNone(
-            result.configuration_sets[0].input_endpoints[0].protocol)
-        self.assertIsNotNone(
-            result.configuration_sets[0].input_endpoints[0].port)
-        self.assertIsNotNone(
-            result.configuration_sets[0].input_endpoints[0].name)
-        self.assertIsNotNone(
-            result.configuration_sets[0].input_endpoints[0].local_port)
-
-    @record
-    def test_get_role_windows(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-
-        self._create_vm_windows(service_name, deployment_name, role_name)
-
-        # Act
-        result = self.sms.get_role(service_name, deployment_name, role_name)
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertEqual(result.role_name, role_name)
-        self.assertIsNotNone(result.role_size)
-        self.assertIsNotNone(result.role_type)
-        self.assertIsNotNone(result.os_virtual_hard_disk)
-        self.assertIsNotNone(result.os_virtual_hard_disk.disk_label)
-        self.assertIsNotNone(result.os_virtual_hard_disk.disk_name)
-        self.assertIsNotNone(result.os_virtual_hard_disk.host_caching)
-        self.assertIsNotNone(result.os_virtual_hard_disk.media_link)
-        self.assertIsNotNone(result.os_virtual_hard_disk.os)
-        self.assertIsNotNone(result.os_virtual_hard_disk.source_image_name)
-        self.assertIsNotNone(result.data_virtual_hard_disks)
-        self.assertIsNotNone(result.configuration_sets)
-        self.assertIsNotNone(result.configuration_sets[0])
-        self.assertIsNotNone(
-            result.configuration_sets[0].configuration_set_type)
-        self.assertIsNotNone(result.configuration_sets[0].input_endpoints)
-        self.assertIsNotNone(
-            result.configuration_sets[0].input_endpoints[0].protocol)
-        self.assertIsNotNone(
-            result.configuration_sets[0].input_endpoints[0].port)
-        self.assertIsNotNone(
-            result.configuration_sets[0].input_endpoints[0].name)
-        self.assertIsNotNone(
-            result.configuration_sets[0].input_endpoints[0].local_port)
-        self.assertTrue(len(result.default_win_rm_certificate_thumbprint) > 0)
-
-    @record
-    def test_create_virtual_machine_deployment_linux(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-        deployment_label = deployment_name + 'label'
-
-        self._create_hosted_service(service_name)
-        self._create_service_certificate(
-            service_name,
-            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
-
-        # Act
-        system, os_hd, network = self._linux_role(role_name)
-
-        result = self.sms.create_virtual_machine_deployment(
-            service_name, deployment_name, 'production', deployment_label,
-            role_name, system, os_hd, network, role_size='Small')
-
-        self._wait_for_async(result.request_id)
-        self._wait_for_deployment(service_name, deployment_name)
-        self._wait_for_role(service_name, deployment_name, role_name)
-
-        # Assert
-        self.assertTrue(
-            self._role_exists(service_name, deployment_name, role_name))
-        deployment = self.sms.get_deployment_by_name(
-            service_name, deployment_name)
-        self.assertEqual(deployment.label, deployment_label)
-
-    @record
     def test_create_virtual_machine_deployment_linux_vm_image(self):
         vm_image_name = self.settings.LINUX_VM_IMAGE_NAME
         if not vm_image_name:
@@ -1641,6 +1458,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
+    @unittest.skip('The resource extension used here no longer exists, need to find a new one')
     @record
     def test_create_virtual_machine_deployment_linux_resource_extension(self):
         # Arrange
@@ -1721,37 +1539,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             service_name, deployment_name)
         self.assertEqual(deployment.label, deployment_label)
 
-    @record
-    def test_create_virtual_machine_deployment_windows(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-        deployment_label = deployment_name + 'label'
-
-        self._create_hosted_service(service_name)
-        self._create_service_certificate(
-            service_name,
-            SERVICE_CERT_DATA, SERVICE_CERT_FORMAT, SERVICE_CERT_PASSWORD)
-
-        # Act
-        system, os_hd, network = self._windows_role(role_name)
-
-        result = self.sms.create_virtual_machine_deployment(
-            service_name, deployment_name, 'production', deployment_label,
-            role_name, system, os_hd, network, role_size='Small')
-
-        self._wait_for_async(result.request_id)
-        self._wait_for_deployment(service_name, deployment_name)
-        self._wait_for_role(service_name, deployment_name, role_name)
-
-        # Assert
-        self.assertTrue(
-            self._role_exists(service_name, deployment_name, role_name))
-        deployment = self.sms.get_deployment_by_name(
-            service_name, deployment_name)
-        self.assertEqual(deployment.label, deployment_label)
-
+    @unittest.skip('Enable this manually if you have the required virtual network')
     @record
     def test_create_virtual_machine_deployment_windows_virtual_network(self):
         # this test requires the following manual resources to be created
@@ -1806,6 +1594,36 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self._create_vm_linux(service_name, deployment_name, role_name1)
 
         # Act
+        result = self.sms.get_role(service_name, deployment_name, role_name1)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(result.role_name, role_name1)
+        self.assertIsNotNone(result.role_size)
+        self.assertIsNotNone(result.role_type)
+        self.assertIsNotNone(result.os_virtual_hard_disk)
+        self.assertIsNotNone(result.os_virtual_hard_disk.disk_label)
+        self.assertIsNotNone(result.os_virtual_hard_disk.disk_name)
+        self.assertIsNotNone(result.os_virtual_hard_disk.host_caching)
+        self.assertIsNotNone(result.os_virtual_hard_disk.media_link)
+        self.assertIsNotNone(result.os_virtual_hard_disk.os)
+        self.assertIsNotNone(result.os_virtual_hard_disk.source_image_name)
+        self.assertIsNotNone(result.data_virtual_hard_disks)
+        self.assertIsNotNone(result.configuration_sets)
+        self.assertIsNotNone(result.configuration_sets[0])
+        self.assertIsNotNone(
+            result.configuration_sets[0].configuration_set_type)
+        self.assertIsNotNone(result.configuration_sets[0].input_endpoints)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].protocol)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].port)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].name)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].local_port)
+
+        # Act
         system, os_hd, network = self._linux_role(role_name2, port='59914')
         network = None
 
@@ -1828,62 +1646,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
                          self._host_name_from_role_name(role_name2))
 
     @record
-    def test_add_role_windows(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name1 = self.hosted_service_name + 'a'
-        role_name2 = self.hosted_service_name + 'b'
-
-        self._create_vm_windows(service_name, deployment_name, role_name1)
-
-        # Act
-        system, os_hd, network = self._windows_role(role_name2, port='59914')
-
-        result = self.sms.add_role(service_name, deployment_name, role_name2, 
-                                   system, os_hd, network)
-        self._wait_for_async(result.request_id)
-        self._wait_for_role(service_name, deployment_name, role_name2)
-
-        # Assert
-        self.assertTrue(
-            self._role_exists(service_name, deployment_name, role_name1))
-        self.assertTrue(
-            self._role_exists(service_name, deployment_name, role_name2))
-
-        svc = self.sms.get_hosted_service_properties(service_name, True)
-        role_instances = svc.deployments[0].role_instance_list
-        self.assertEqual(role_instances[0].host_name,
-                         self._host_name_from_role_name(role_name1))
-        self.assertEqual(role_instances[1].host_name,
-                         self._host_name_from_role_name(role_name2))
-
-    @record
-    def test_update_role(self):
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-
-        self._create_vm_windows(service_name, deployment_name, role_name)
-
-        network = ConfigurationSet()
-        network.configuration_set_type = 'NetworkConfiguration'
-        network.input_endpoints.input_endpoints.append(
-            ConfigurationSetInputEndpoint('endupdate', 'tcp', '50055', '5555'))
-
-        # Act
-        result = self.sms.update_role(service_name, deployment_name, role_name,
-                                      network_config=network,
-                                      role_size='Medium')
-        self._wait_for_async(result.request_id)
-        self._wait_for_role(service_name, deployment_name, role_name)
-
-        # Assert
-        role = self.sms.get_role(service_name, deployment_name, role_name)
-        self.assertEqual(role.role_size, 'Medium')
-
-    @record
-    def test_delete_role(self):
+    def test_add_update_delete_role_windows(self):
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
@@ -1892,6 +1655,52 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
         self._create_vm_windows(service_name, deployment_name, role_name1)
         self._add_role_windows(service_name, deployment_name, role_name2, '59914')
+
+        # Act
+        result = self.sms.get_role(service_name, deployment_name, role_name1)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(result.role_name, role_name1)
+        self.assertIsNotNone(result.role_size)
+        self.assertIsNotNone(result.role_type)
+        self.assertIsNotNone(result.os_virtual_hard_disk)
+        self.assertIsNotNone(result.os_virtual_hard_disk.disk_label)
+        self.assertIsNotNone(result.os_virtual_hard_disk.disk_name)
+        self.assertIsNotNone(result.os_virtual_hard_disk.host_caching)
+        self.assertIsNotNone(result.os_virtual_hard_disk.media_link)
+        self.assertIsNotNone(result.os_virtual_hard_disk.os)
+        self.assertIsNotNone(result.os_virtual_hard_disk.source_image_name)
+        self.assertIsNotNone(result.data_virtual_hard_disks)
+        self.assertIsNotNone(result.configuration_sets)
+        self.assertIsNotNone(result.configuration_sets[0])
+        self.assertIsNotNone(
+            result.configuration_sets[0].configuration_set_type)
+        self.assertIsNotNone(result.configuration_sets[0].input_endpoints)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].protocol)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].port)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].name)
+        self.assertIsNotNone(
+            result.configuration_sets[0].input_endpoints[0].local_port)
+        self.assertTrue(len(result.default_win_rm_certificate_thumbprint) > 0)
+
+        # Act
+        network = ConfigurationSet()
+        network.configuration_set_type = 'NetworkConfiguration'
+        network.input_endpoints.input_endpoints.append(
+            ConfigurationSetInputEndpoint('endupdate', 'tcp', '50055', '5555'))
+        result = self.sms.update_role(service_name, deployment_name, role_name1,
+                                      network_config=network,
+                                      role_size='Medium')
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name1)
+
+        # Assert
+        role = self.sms.get_role(service_name, deployment_name, role_name1)
+        self.assertEqual(role.role_size, 'Medium')
 
         # Act
         result = self.sms.delete_role(service_name, deployment_name, role_name2)
@@ -1904,38 +1713,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             self._role_exists(service_name, deployment_name, role_name2))
 
     @record
-    def test_shutdown_start_and_restart_role(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-
-        self._create_vm_windows(service_name, deployment_name, role_name)
-
-        # Act
-        result = self.sms.shutdown_role(service_name, deployment_name, role_name)
-        self._wait_for_async(result.request_id)
-        self._wait_for_role(service_name, deployment_name, role_name, 'StoppedVM')
-
-        # Act
-        result = self.sms.start_role(service_name, deployment_name, role_name)
-        self._wait_for_async(result.request_id)
-        self._wait_for_role(service_name, deployment_name, role_name)
-
-        # Act
-        result = self.sms.restart_role(service_name, deployment_name, role_name)
-        self._wait_for_async(result.request_id)
-        self._wait_for_role(service_name, deployment_name, role_name)
-
-        # Act
-        result = self.sms.shutdown_role(service_name, deployment_name,
-                                        role_name, 'StoppedDeallocated')
-        self._wait_for_async(result.request_id)
-        self._wait_for_role(service_name, deployment_name, role_name,
-                            'StoppedDeallocated')
-
-    @record
-    def test_shutdown_and_start_roles(self):
+    def test_shutdown_start_restart_role(self):
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
@@ -1944,6 +1722,21 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
         self._create_vm_windows(service_name, deployment_name, role_name1)
         self._add_role_windows(service_name, deployment_name, role_name2, '59914')
+
+        # Act
+        result = self.sms.shutdown_role(service_name, deployment_name, role_name1)
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name1, 'StoppedVM')
+
+        # Act
+        result = self.sms.start_role(service_name, deployment_name, role_name1)
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name1)
+
+        # Act
+        result = self.sms.restart_role(service_name, deployment_name, role_name1)
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name1)
 
         # Act
         result = self.sms.shutdown_roles(service_name, deployment_name,
@@ -1960,6 +1753,13 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self._wait_for_async(result.request_id)
         self._wait_for_role(service_name, deployment_name, role_name1)
         self._wait_for_role(service_name, deployment_name, role_name2)
+
+        # Act
+        result = self.sms.shutdown_role(service_name, deployment_name,
+                                        role_name1, 'StoppedDeallocated')
+        self._wait_for_async(result.request_id)
+        self._wait_for_role(service_name, deployment_name, role_name1,
+                            'StoppedDeallocated')
 
     @record
     def test_capture_role(self):
@@ -2369,28 +2169,40 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         # Assert
         self.assertFalse(self._os_image_exists(self.os_image_name))
 
-    #--Test cases for virtual machine disks ------------------------------
+    #--Test cases for virtual machine data disks -------------------------
     @record
-    def test_get_data_disk(self):
+    def test_add_data_disk_from_url(self):
         # Arrange
         service_name = self.hosted_service_name
         deployment_name = self.hosted_service_name
         role_name = self.hosted_service_name
 
-        self._create_vm_windows(service_name, deployment_name, role_name)
-
-        lun = 1
-        self._add_data_disk_from_blob_url(
-            service_name, deployment_name, role_name, lun, 'mylabel')
-        self.data_disk_info = (service_name, deployment_name, role_name, lun)
+        self._create_vm_linux(service_name, deployment_name, role_name)
 
         # Act
-        result = self.sms.get_data_disk(
-            service_name, deployment_name, role_name, lun)
+        lun = 0
+        label = 'disk' + str(lun)
+        url = self._upload_disk_to_storage_blob(label)
+        result = self.sms.add_data_disk(
+            service_name,
+            deployment_name,
+            role_name,
+            lun,
+            disk_label=label,
+            source_media_link=url,
+        )
+        self.data_disk_infos.append((service_name, deployment_name, role_name, lun))
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        self.assertTrue(self._data_disk_exists(service_name, deployment_name, role_name, lun))
+
+        # Act
+        result = self.sms.get_data_disk(service_name, deployment_name, role_name, lun)
 
         # Assert
         self.assertIsNotNone(result)
-        self.assertEqual(result.disk_label, 'mylabel')
+        self.assertEqual(result.disk_label, label)
         self.assertIsNotNone(result.disk_name)
         self.assertIsNotNone(result.host_caching)
         self.assertIsNotNone(result.logical_disk_size_in_gb)
@@ -2406,6 +2218,19 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertEqual(result.lun, hd.lun)
         self.assertEqual(result.media_link, hd.media_link)
 
+        # Act
+        result = self.sms.delete_data_disk(
+            service_name,
+            deployment_name,
+            role_name,
+            lun,
+            delete_vhd=True,
+        )
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        self.assertFalse(self._data_disk_exists(service_name, deployment_name, role_name, lun))
+
     @record
     def test_add_data_disk_from_disk_name(self):
         # Arrange
@@ -2415,111 +2240,67 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
         self._create_vm_linux(service_name, deployment_name, role_name)
 
-        lun = 0
-        url = self._upload_disk_to_storage_blob('disk')
-        self._create_disk(self.disk_name, 'Linux', url)
-        self.data_disk_info = (service_name, deployment_name, role_name, lun)
-
         # Act
-        result = self.sms.add_data_disk(
-            service_name, deployment_name, role_name, lun, None, None,
-            'testdisklabel', self.disk_name)
-        self._wait_for_async(result.request_id)
-
-        # Assert
-        self.assertTrue(
-            self._data_disk_exists(service_name, deployment_name,
-                                   role_name, lun))
-
-    @record
-    def test_add_data_disk_from_blob_url(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-
-        self._create_vm_linux(service_name, deployment_name, role_name)
-
         lun = 0
         label = 'disk' + str(lun)
-        url = self._upload_disk_to_storage_blob('disk')
-        self.data_disk_info = (service_name, deployment_name, role_name, lun)
-
-        # Act
+        url = self._upload_disk_to_storage_blob(label)
+        self._create_disk(self.disk_name, 'Linux', url)
         result = self.sms.add_data_disk(
-            service_name, deployment_name, role_name, lun, None, None, label,
-            None, None, url)
+            service_name,
+            deployment_name,
+            role_name,
+            lun,
+            disk_label=label,
+            disk_name=self.disk_name,
+        )
+        self.data_disk_infos.append((service_name, deployment_name, role_name, lun))
         self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertTrue(
-            self._data_disk_exists(service_name, deployment_name,
-                                   role_name, lun))
-
-    @record
-    def test_update_data_disk(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-
-        self._create_vm_windows(service_name, deployment_name, role_name)
-
-        lun = 1
-        updated_lun = 10
-        self._add_data_disk_from_blob_url(
-            service_name, deployment_name, role_name, lun, 'mylabel')
-        self.data_disk_info = (service_name, deployment_name, role_name, lun)
+        self.assertTrue(self._data_disk_exists(service_name, deployment_name, role_name, lun))
 
         # Act
-        result = self.sms.update_data_disk(
-            service_name, deployment_name, role_name, lun, None, None,
-            updated_lun)
-        self._wait_for_async(result.request_id)
-        self.data_disk_info = (
-            service_name, deployment_name, role_name, updated_lun)
+        result = self.sms.get_disk(self.disk_name)
 
         # Assert
-        self.assertFalse(
-            self._data_disk_exists(service_name, deployment_name,
-                                   role_name, lun))
-        self.assertTrue(
-            self._data_disk_exists(service_name, deployment_name,
-                                   role_name, updated_lun))
-
-    @record
-    def test_delete_data_disk(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-
-        self._create_vm_windows(service_name, deployment_name, role_name)
-
-        lun = 5
-        url = self._upload_disk_to_storage_blob('disk')
-        self._create_disk(self.disk_name, 'Windows', url)
-        result = self.sms.add_data_disk(
-            service_name, deployment_name, role_name, lun, None, None,
-            'testdisklabel', self.disk_name)
-        self._wait_for_async(result.request_id)
-
-        # Act
-        result = self.sms.delete_data_disk(
-            service_name, deployment_name, role_name, lun)
-        self._wait_for_async(result.request_id)
-
-        # Assert
-        self.assertFalse(
-            self._data_disk_exists(service_name, deployment_name,
-                                   role_name, lun))
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result.os)
+        self.assertIsNotNone(result.location)
+        self.assertIsNotNone(result.logical_disk_size_in_gb)
+        self.assertIsNotNone(result.media_link)
+        self.assertIsNotNone(result.name)
+        self.assertIsNotNone(result.source_image_name)
+        self.assertIsNotNone(result.attached_to)
+        self.assertEqual(result.attached_to.deployment_name, deployment_name)
+        self.assertEqual(result.attached_to.hosted_service_name, service_name)
+        self.assertEqual(result.attached_to.role_name, role_name)
 
     #--Test cases for virtual machine disks ------------------------------
     @record
-    def test_list_disks(self):
+    def test_add_update_delete_get_list_disk(self):
         # Arrange
         url = self._upload_disk_to_storage_blob('disk')
-        self._create_disk(self.disk_name, 'Windows', url)
+
+        # Act
+        result = self.sms.add_disk(
+            None, 'ptvslabel', url, self.disk_name, 'Windows')
+
+        # Assert
+        self.assertIsNone(result)
+        self.assertTrue(self._disk_exists(self.disk_name))
+
+        # Act
+        result = self.sms.get_disk(self.disk_name)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result.os)
+        self.assertIsNotNone(result.location)
+        self.assertIsNotNone(result.logical_disk_size_in_gb)
+        self.assertEqual(result.media_link, url)
+        self.assertEqual(result.name, self.disk_name)
+        self.assertIsNotNone(result.source_image_name)
+        self.assertIsNone(result.attached_to)
 
         # Act
         result = self.sms.list_disks()
@@ -2542,78 +2323,6 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertIsNotNone(disk.name)
         self.assertIsNotNone(disk.source_image_name)
 
-    @record
-    def test_get_disk_unattached(self):
-        # Arrange
-        url = self._upload_disk_to_storage_blob('disk')
-        self._create_disk(self.disk_name, 'Windows', url)
-
-        # Act
-        result = self.sms.get_disk(self.disk_name)
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertIsNotNone(result.os)
-        self.assertIsNotNone(result.location)
-        self.assertIsNotNone(result.logical_disk_size_in_gb)
-        self.assertEqual(result.media_link, url)
-        self.assertEqual(result.name, self.disk_name)
-        self.assertIsNotNone(result.source_image_name)
-        self.assertIsNone(result.attached_to)
-
-    @record
-    def test_get_disk_attached(self):
-        # Arrange
-        service_name = self.hosted_service_name
-        deployment_name = self.hosted_service_name
-        role_name = self.hosted_service_name
-
-        self._create_vm_windows(service_name, deployment_name, role_name)
-
-        lun = 6
-        url = self._upload_disk_to_storage_blob('disk')
-        self._create_disk(self.disk_name, 'Windows', url)
-        self.data_disk_info = (service_name, deployment_name, role_name, lun)
-        result = self.sms.add_data_disk(
-            service_name, deployment_name, role_name, lun, None, None,
-            'testdisklabel', self.disk_name)
-        self._wait_for_async(result.request_id)
-
-        # Act
-        result = self.sms.get_disk(self.disk_name)
-
-        # Assert
-        self.assertIsNotNone(result)
-        self.assertIsNotNone(result.os)
-        self.assertIsNotNone(result.location)
-        self.assertIsNotNone(result.logical_disk_size_in_gb)
-        self.assertIsNotNone(result.media_link)
-        self.assertIsNotNone(result.name)
-        self.assertIsNotNone(result.source_image_name)
-        self.assertIsNotNone(result.attached_to)
-        self.assertEqual(result.attached_to.deployment_name, deployment_name)
-        self.assertEqual(result.attached_to.hosted_service_name, service_name)
-        self.assertEqual(result.attached_to.role_name, role_name)
-
-    @record
-    def test_add_disk(self):
-        # Arrange
-        url = self._upload_disk_to_storage_blob('disk')
-
-        # Act
-        result = self.sms.add_disk(
-            None, 'ptvslabel', url, self.disk_name, 'Windows')
-
-        # Assert
-        self.assertIsNone(result)
-        self.assertTrue(self._disk_exists(self.disk_name))
-
-    @record
-    def test_update_disk(self):
-        # Arrange
-        url = self._upload_disk_to_storage_blob('disk')
-        self._create_disk(self.disk_name, 'Windows', url)
-
         # Act
         result = self.sms.update_disk(
             self.disk_name, None, 'ptvslabelupdate', None, None, None)
@@ -2624,12 +2333,6 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertEqual(disk.name, self.disk_name)
         self.assertEqual(disk.label, 'ptvslabelupdate')
         self.assertEqual(disk.media_link, url)
-
-    @record
-    def test_delete_disk(self):
-        # Arrange
-        url = self._upload_disk_to_storage_blob('disk')
-        self._create_disk(self.disk_name, 'Windows', url)
 
         # Act
         result = self.sms.delete_disk(self.disk_name)

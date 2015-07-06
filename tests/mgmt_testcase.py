@@ -50,7 +50,7 @@ class AzureMgmtTestCase(RecordingTestCase):
         if TestMode.is_playback(self.test_mode):
             self.settings = self.fake_settings
         else:
-            from . import mgmt_settings_real as real_settings
+            import mgmt_settings_real as real_settings
             self.settings = real_settings
 
         self.resource_client = self.create_mgmt_client(azure.mgmt.resource.ResourceManagementClient)
