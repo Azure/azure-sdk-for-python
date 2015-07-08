@@ -34,6 +34,14 @@ class DocumentClient(object):
         Query = 1
         SqlQuery = 2
 
+    # default number precisions
+    _DefaultNumberHashPrecision = 3
+    _DefaultNumberRangePrecision = -1
+
+    # default string precision
+    _DefaultStringHashPrecision = 3
+    _DefaultStringRangePrecision = -1
+
     def __init__(self,
                  url_connection,
                  auth,
@@ -190,12 +198,12 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def CreateCollection(self, database_link, body, options={}):
+    def CreateCollection(self, database_link, collection, options={}):
         """Creates a collection in a database.
 
         :Parameters:
             - `database_link`: str, the link to the database.
-            - `body`: dict, , the Azure DocumentDB collection to create.
+            - `collection`: dict, the Azure DocumentDB collection to create.
             - `options`: dict, the request options for the request.
 
         :Returns:
@@ -204,7 +212,8 @@ class DocumentClient(object):
         """
         path = '/' + database_link + 'colls/'
         database_id = base.GetIdFromLink(database_link)
-        return self.Create(body,
+        DocumentClient.__UseDefaultIndexingPolicy(collection)
+        return self.Create(collection,
                            path,
                            'colls',
                            database_id,
@@ -1734,3 +1743,45 @@ class DocumentClient(object):
             raise SystemError('Unexpected query compatibility mode.')
 
         return query_body
+
+    @staticmethod
+    def __UseDefaultIndexingPolicy(collection):
+        if not collection:
+            return
+        if not collection.get('indexingPolicy'):
+            collection['indexingPolicy'] = {}
+        if (collection['indexingPolicy'].get('indexingMode') != documents.IndexingMode.NoIndex and
+              not collection['indexingPolicy'].get('includedPaths') and
+              not collection['indexingPolicy'].get('excludedPaths')):
+            collection['indexingPolicy']['includedPaths'] = [
+                {
+                    'path': '/*'
+                }
+            ]
+        for index_path in collection['indexingPolicy']['includedPaths']:
+            if not index_path.get('indexes'):
+                index_path['indexes'] = [
+                    {
+                        'kind': documents.IndexKind.Hash,
+                        'dataType': documents.DataType.String,
+                        'precision': DocumentClient._DefaultStringHashPrecision
+                    },
+                    {
+                        'kind': documents.IndexKind.Range,
+                        'dataType': documents.DataType.Number,
+                        'precision': DocumentClient._DefaultNumberRangePrecision
+                    }
+                ]
+            for index in index_path['indexes']:
+                if index.get('kind') == documents.IndexKind.Hash:
+                    if not 'precision' in index:
+                        if index.get('dataType') == documents.DataType.String:
+                            index['precision'] = DocumentClient._DefaultStringHashPrecision
+                        elif index.get('dataType') == documents.DataType.Number:
+                            index['precision'] = DocumentClient._DefaultNumberHashPrecision
+                elif index.get('kind') == documents.IndexKind.Range:
+                    if not 'precision' in index:
+                        if index.get('dataType') == documents.DataType.String:
+                            index['precision'] = DocumentClient._DefaultStringRangePrecision
+                        elif index.get('dataType') == documents.DataType.Number:
+                            index['precision'] = DocumentClient._DefaultNumberRangePrecision
