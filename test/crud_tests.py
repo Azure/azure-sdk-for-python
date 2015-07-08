@@ -68,7 +68,7 @@ class CRUDTests(unittest.TestCase):
         self.assert_(databases,
                      'number of results for the query should be > 0')
 
-		# read database.
+        # read database.
         one_db_from_read = client.ReadDatabase(created_db['_self'])
 
         # delete database.
@@ -884,29 +884,122 @@ class CRUDTests(unittest.TestCase):
             'id': 'CollectionWithIndexingPolicy',
             'indexingPolicy': {
                 'automatic': True,
-                'indexingMode': 'Lazy',
-                'IncludedPaths': [
+                'indexingMode': documents.IndexingMode.Lazy,
+                'includedPaths': [
                     {
-                        'IndexType': 'Hash',
-                        'Path': '/'
+                        'path': '/',
+                        'indexes': [
+                            {
+                                'kind': documents.IndexKind.Hash,
+                                'dataType': documents.DataType.Number,
+                                'precision': 2
+                            }
+                        ]
                     }
                 ],
-                'ExcludedPaths': [
-                    '/"systemMetadata"/*'
+                'excludedPaths': [
+                    {
+                        'path': '/"systemMetadata"/*'
+                    }
                 ]
             }
         }
         client.DeleteCollection(consistent_collection['_self'])
-        collectio_with_indexing_policy = client.CreateCollection(
-            db['_self'], collection_definition)
+        collectio_with_indexing_policy = client.CreateCollection(db['_self'], collection_definition)
         self.assertEqual(2,
-                         len(collectio_with_indexing_policy[
-                             'indexingPolicy']['IncludedPaths']),
+                         len(collectio_with_indexing_policy['indexingPolicy']['includedPaths']),
                          'Unexpected includedPaths length')
         self.assertEqual(1,
-                         len(collectio_with_indexing_policy[
-                             'indexingPolicy']['ExcludedPaths']),
+                         len(collectio_with_indexing_policy['indexingPolicy']['excludedPaths']),
                          'Unexpected excluded path count')
+
+    def test_create_default_indexing_policy(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        # create database
+        db = client.CreateDatabase({ 'id': 'sample database' })
+
+        # no indexing policy specified
+        collection = client.CreateCollection(db['_self'], {'id': 'TestCreateDefaultPolicy01'})
+        self._check_default_indexing_policy_paths(collection['indexingPolicy']);
+
+        # partial policy specified
+        collection = client.CreateCollection(
+            db['_self'],
+            {
+                'id': 'TestCreateDefaultPolicy02',
+                'indexingPolicy': {
+                    'indexingMode': documents.IndexingMode.Lazy, 'automatic': True
+                }
+            })
+        self._check_default_indexing_policy_paths(collection['indexingPolicy'])
+
+        # default policy
+        collection = client.CreateCollection(
+            db['_self'],
+            {
+                'id': 'TestCreateDefaultPolicy03',
+                'indexingPolicy': { }
+            })
+        self._check_default_indexing_policy_paths(collection['indexingPolicy'])
+
+        # missing indexes
+        collection = client.CreateCollection(
+            db['_self'],
+            {
+                'id': 'TestCreateDefaultPolicy04',
+                'indexingPolicy': {
+                    'includedPaths': [
+                        {
+                            'path': '/*'
+                        }
+                    ]
+                }
+            })
+        self._check_default_indexing_policy_paths(collection['indexingPolicy'])
+
+        # missing precision
+        collection = client.CreateCollection(
+            db['_self'],
+            {
+                'id': 'TestCreateDefaultPolicy05',
+                'indexingPolicy': {
+                    'includedPaths': [
+                        {
+                            'path': '/*',
+                            'indexes': [
+                                {
+                                    'kind': documents.IndexKind.Hash,
+                                    'dataType': documents.DataType.String
+                                },
+                                {
+                                    'kind': documents.IndexKind.Range,
+                                    'dataType': documents.DataType.Number
+                                }
+                            ]
+                        }
+                    ]
+                }
+            })
+        self._check_default_indexing_policy_paths(collection['indexingPolicy'])
+
+    def _check_default_indexing_policy_paths(self, indexing_policy):
+        # no excluded paths.
+        self.assertEqual(0, len(indexing_policy['excludedPaths']))
+        # included paths should be 2 '_ts' and '/'.
+        self.assertEqual(2, len(indexing_policy['includedPaths']))
+
+        # check default paths.
+        self.assertEqual('/*', indexing_policy['includedPaths'][0]['path'])
+        self.assertEqual(2, len(indexing_policy['includedPaths'][0]['indexes']))
+        self.assertEqual(documents.IndexKind.Hash, indexing_policy['includedPaths'][0]['indexes'][0]['kind'])
+        self.assertEqual(documents.DataType.String, indexing_policy['includedPaths'][0]['indexes'][0]['dataType'])
+        self.assertEqual(3, indexing_policy['includedPaths'][0]['indexes'][0]['precision'])
+        self.assertEqual(documents.IndexKind.Range, indexing_policy['includedPaths'][0]['indexes'][1]['kind'])
+        self.assertEqual(documents.DataType.Number, indexing_policy['includedPaths'][0]['indexes'][1]['dataType'])
+        self.assertEqual(-1, indexing_policy['includedPaths'][0]['indexes'][1]['precision'])
+
+        # _ts
+        self.assertEqual('/"_ts"/?', indexing_policy['includedPaths'][1]['path'])
 
     def test_client_request_timeout(self):
         connection_policy = documents.ConnectionPolicy()

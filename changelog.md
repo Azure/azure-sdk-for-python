@@ -1,3 +1,7 @@
+## Changes in 1.1.0 : ##
+
+- Implements V2 indexing policy
+
 ## Changes in 1.0.1 : ##
 
-- Added support for proxy connection
+- Supports proxy connection

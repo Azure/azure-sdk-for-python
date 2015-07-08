@@ -196,8 +196,8 @@ class CookieHeaders:
 class Versions:
     """Constants of versions.
     """
-    CurrentVersion = '2015-04-08'
-    UserAgent = 'documentdb-python-sdk-1.0.1'
+    CurrentVersion = '2015-06-03'
+    UserAgent = 'documentdb-python-sdk-1.1.0'
 
 
 class Delimiters:

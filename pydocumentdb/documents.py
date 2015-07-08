@@ -85,9 +85,42 @@ class IndexingMode(object):
 
           With lazy indexing, queries are eventually consistent. The index is
           updated when the collection is idle.
+        - `NoIndex`: No index is provided.
+
+          Setting IndexingMode to "None" drops the index. Use this if you don't
+          want to maintain the index for a document collection, to save the
+          storage cost or improve the write throughput. Your queries will
+          degenerate to scans of the entire collection.
     """
     Consistent = 'consistent'
     Lazy = 'lazy'
+    NoIndex = 'none'
+
+
+class IndexKind(object):
+    """Specifies the index kind of index specs.
+
+    :Attributes:
+        - `Hash`: The index entries are hashed to serve point look up queries.
+          Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop = 5
+
+        - `Range`: The index entries are ordered. Range indexes are optimized for
+          inequality predicate queries with efficient range scans.
+          Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
+    """
+    Hash = 'Hash'
+    Range = 'Range'
+
+
+class DataType(object):
+    """Specifies the data type of index specs.
+
+    :Attributes:
+        - `Number`: Represents a numeric data type
+        - `String`: Represents a string data type.
+    """
+    Number = 'Number'
+    String = 'String'
 
 
 class IndexingDirective(object):
