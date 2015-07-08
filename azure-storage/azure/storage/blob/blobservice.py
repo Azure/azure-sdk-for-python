@@ -15,7 +15,7 @@
 from azure.common import (
     WindowsAzureError,
 )
-from ._common_error import (
+from .._common_error import (
     _dont_fail_not_exist,
     _dont_fail_on_exist,
     _validate_not_none,
@@ -23,13 +23,13 @@ from ._common_error import (
     _ERROR_VALUE_NEGATIVE,
     _ERROR_PAGE_BLOB_SIZE_ALIGNMENT,
 )
-from ._common_conversion import (
+from .._common_conversion import (
     _encode_base64,
     _int_or_none,
     _str,
     _str_or_none,
 )
-from ._common_serialization import (
+from .._common_serialization import (
     _convert_class_to_xml,
     _get_request_body,
     _get_request_body_bytes_only,
@@ -39,48 +39,52 @@ from ._common_serialization import (
     _update_request_uri_query_local_storage,
     _ETreeXmlToObject,
 )
-from ._http import HTTPRequest
+from .._http import HTTPRequest
 from ._chunking import (
     _BlockBlobChunkUploader,
     _PageBlobChunkUploader,
     _download_blob_chunks,
     _upload_blob_chunks,
 )
+from ..models import (
+    SignedIdentifiers,
+    StorageServiceProperties,
+)
 from .models import (
     Container,
     ContainerEnumResults,
     PageList,
     PageRange,
-    SignedIdentifiers,
-    StorageServiceProperties,
 )
-from .auth import (
+from ..auth import (
     StorageSASAuthentication,
     StorageSharedKeyAuthentication,
     StorageNoAuthentication,
 )
-from .connection import (
+from ..connection import (
     StorageConnectionParameters,
 )
-from .constants import (
+from ..constants import (
     BLOB_SERVICE_HOST_BASE,
     DEFAULT_HTTP_TIMEOUT,
     DEV_BLOB_HOST,
     X_MS_VERSION,
 )
+from .._serialization import (
+    _convert_signed_identifiers_to_xml,
+)
 from ._serialization import (
     _convert_block_list_to_xml,
     _convert_response_to_block_list,
-    _convert_signed_identifiers_to_xml,
     _create_blob_result,
     _parse_blob_enum_results_list,
     _update_storage_blob_header,
 )
-from .sharedaccesssignature import (
+from ..sharedaccesssignature import (
     SharedAccessSignature,
     ResourceType,
 )
-from .storageclient import _StorageClient
+from ..storageclient import _StorageClient
 from os import path
 import sys
 if sys.version_info >= (3,):

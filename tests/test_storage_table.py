@@ -30,12 +30,14 @@ from azure.common import (
 )
 from azure.storage import (
     AccessPolicy,
-    Entity,
-    EntityProperty,
     SharedAccessPolicy,
     SignedIdentifier,
     SignedIdentifiers,
     StorageServiceProperties,
+)
+from azure.storage.table import (
+    Entity,
+    EntityProperty,
     TableService,
     TableSharedAccessPermissions,
 )

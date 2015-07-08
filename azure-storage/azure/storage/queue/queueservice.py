@@ -16,19 +16,20 @@ from azure.common import (
     WindowsAzureConflictError,
     WindowsAzureError,
 )
-from .constants import (
+from ..constants import (
     DEFAULT_HTTP_TIMEOUT,
     DEV_QUEUE_HOST,
     QUEUE_SERVICE_HOST_BASE,
+    X_MS_VERSION,
 )
-from ._common_error import (
+from .._common_error import (
     _dont_fail_not_exist,
     _dont_fail_on_exist,
     _validate_not_none,
     _ERROR_CONFLICT,
     _ERROR_STORAGE_MISSING_INFO,
 )
-from ._common_serialization import (
+from .._common_serialization import (
     xml_escape,
     _convert_class_to_xml,
     _get_request_body,
@@ -37,39 +38,40 @@ from ._common_serialization import (
     _update_request_uri_query_local_storage,
     _ETreeXmlToObject,
 )
-from ._common_conversion import (
+from .._common_conversion import (
     _int_or_none,
     _str,
     _str_or_none,
 )
-from ._http import (
+from .._http import (
     HTTPRequest,
+)
+from ..models import (
+    SignedIdentifiers,
+    StorageServiceProperties,
 )
 from .models import (
     Queue,
     QueueEnumResults,
     QueueMessagesList,
-    SignedIdentifiers,
-    StorageServiceProperties,
 )
-from .auth import (
+from ..auth import (
     StorageSASAuthentication,
     StorageSharedKeyAuthentication,
 )
-from .connection import (
+from ..connection import (
     StorageConnectionParameters,
 )
-from ._serialization import (
+from .._serialization import (
     _convert_signed_identifiers_to_xml,
+)
+from ._serialization import (
     _update_storage_queue_header,
 )
-from .constants import (
-    X_MS_VERSION,
-)
-from .sharedaccesssignature import (
+from ..sharedaccesssignature import (
     SharedAccessSignature,
 )
-from .storageclient import _StorageClient
+from ..storageclient import _StorageClient
 
 
 _HTTP_RESPONSE_NO_CONTENT = 204

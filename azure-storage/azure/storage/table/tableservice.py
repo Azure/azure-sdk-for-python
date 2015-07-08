@@ -15,18 +15,18 @@
 from azure.common import (
     WindowsAzureError,
 )
-from ._common_conversion import (
+from .._common_conversion import (
     _int_or_none,
     _str,
     _str_or_none,
 )
-from ._common_error import (
+from .._common_error import (
     _dont_fail_not_exist,
     _dont_fail_on_exist,
     _validate_not_none,
     _ERROR_STORAGE_MISSING_INFO,
 )
-from ._common_serialization import (
+from .._common_serialization import (
     _convert_class_to_xml,
     _get_request_body,
     _parse_response_for_dict,
@@ -34,39 +34,43 @@ from ._common_serialization import (
     _update_request_uri_query_local_storage,
     _ETreeXmlToObject,
 )
-from ._http import HTTPRequest
-from ._http.batchclient import _BatchClient
-from .models import (
+from .._http import HTTPRequest
+from .._http.batchclient import _BatchClient
+from ..models import (
     SignedIdentifiers,
     StorageServiceProperties,
+)
+from .models import (
     TableSharedAccessPermissions,
 )
-from .auth import (
+from ..auth import (
     StorageSASAuthentication,
     StorageTableSharedKeyAuthentication,
 )
-from .connection import (
+from ..connection import (
     StorageConnectionParameters,
+)
+from .._serialization import (
+    _convert_signed_identifiers_to_xml,
 )
 from ._serialization import (
     _convert_entity_to_xml,
     _convert_etree_element_to_entity,
     _convert_etree_element_to_table,
     _convert_response_to_entity,
-    _convert_signed_identifiers_to_xml,
     _convert_table_to_xml,
     _update_storage_table_header,
 )
-from .constants import (
+from ..constants import (
     TABLE_SERVICE_HOST_BASE,
     DEFAULT_HTTP_TIMEOUT,
     DEV_TABLE_HOST,
     X_MS_VERSION,
 )
-from .sharedaccesssignature import (
+from ..sharedaccesssignature import (
     SharedAccessSignature,
 )
-from .storageclient import _StorageClient
+from ..storageclient import _StorageClient
 
 
 class TableService(_StorageClient):

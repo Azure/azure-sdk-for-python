@@ -28,24 +28,26 @@ from azure.common import (
     WindowsAzureMissingResourceError,
 )
 from azure.storage import (
-    BLOB_SERVICE_HOST_BASE,
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_KEY,
     AccessPolicy,
+    Logging,
+    HourMetrics,
+    MinuteMetrics,
+    SharedAccessPolicy,
+    SignedIdentifier,
+    SignedIdentifiers,
+    StorageServiceProperties,
+)
+from azure.storage.blob import (
+    BLOB_SERVICE_HOST_BASE,
     BlobBlockList,
     BlobResult,
     BlobService,
     BlobSharedAccessPermissions,
     ContainerSharedAccessPermissions,
-    Logging,
-    HourMetrics,
-    MinuteMetrics,
     PageList,
     PageRange,
-    SharedAccessPolicy,
-    SignedIdentifier,
-    SignedIdentifiers,
-    StorageServiceProperties,
 )
 from azure.storage.storageclient import (
     AZURE_STORAGE_ACCESS_KEY,

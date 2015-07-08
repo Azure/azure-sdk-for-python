@@ -16,8 +16,8 @@ import sys
 import threading
 
 from time import sleep
-from ._common_conversion import _encode_base64
-from ._common_serialization import url_quote
+from .._common_conversion import _encode_base64
+from .._common_serialization import url_quote
 
 
 class _BlobChunkDownloader(object):

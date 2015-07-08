@@ -15,15 +15,11 @@
 import unittest
 
 from azure.common import WindowsAzureError
-from azure.storage import (
-    BlobService,
-    CloudStorageAccount,
-    QueueService,
-    TableService,
-)
-from common_extendedtestcase import (
-    ExtendedTestCase,
-)
+from azure.storage import CloudStorageAccount
+from azure.storage.blob import BlobService
+from azure.storage.queue import QueueService
+from azure.storage.table import TableService
+from common_extendedtestcase import ExtendedTestCase
 
 #------------------------------------------------------------------------------
 

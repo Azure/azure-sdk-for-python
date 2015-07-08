@@ -138,7 +138,12 @@
     <Compile Include="azure-storage\azure\storage\auth.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="azure-storage\azure\storage\blobservice.py" />
+    <Compile Include="azure-storage\azure\storage\blob\blobservice.py" />
+    <Compile Include="azure-storage\azure\storage\blob\models.py" />
+    <Compile Include="azure-storage\azure\storage\blob\_serialization.py" />
+    <Compile Include="azure-storage\azure\storage\blob\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-storage\azure\storage\cloudstorageaccount.py" />
     <Compile Include="azure-storage\azure\storage\connection.py">
       <SubType>Code</SubType>
@@ -146,7 +151,17 @@
     <Compile Include="azure-storage\azure\storage\constants.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="azure-storage\azure\storage\_chunking.py">
+    <Compile Include="azure-storage\azure\storage\queue\models.py" />
+    <Compile Include="azure-storage\azure\storage\queue\_serialization.py" />
+    <Compile Include="azure-storage\azure\storage\queue\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\table\models.py" />
+    <Compile Include="azure-storage\azure\storage\table\_serialization.py" />
+    <Compile Include="azure-storage\azure\storage\table\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-storage\azure\storage\blob\_chunking.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="azure-storage\azure\storage\models.py">
@@ -168,10 +183,10 @@
     <Compile Include="azure-storage\azure\storage\_http\httpclient.py" />
     <Compile Include="azure-storage\azure\storage\_http\requestsclient.py" />
     <Compile Include="azure-storage\azure\storage\_http\__init__.py" />
-    <Compile Include="azure-storage\azure\storage\queueservice.py" />
+    <Compile Include="azure-storage\azure\storage\queue\queueservice.py" />
     <Compile Include="azure-storage\azure\storage\sharedaccesssignature.py" />
     <Compile Include="azure-storage\azure\storage\storageclient.py" />
-    <Compile Include="azure-storage\azure\storage\tableservice.py" />
+    <Compile Include="azure-storage\azure\storage\table\tableservice.py" />
     <Compile Include="azure-storage\azure\storage\_serialization.py">
       <SubType>Code</SubType>
     </Compile>
@@ -277,6 +292,9 @@
     <Folder Include="azure-storage\" />
     <Folder Include="azure-storage\azure\" />
     <Folder Include="azure-storage\azure\storage\" />
+    <Folder Include="azure-storage\azure\storage\blob\" />
+    <Folder Include="azure-storage\azure\storage\queue\" />
+    <Folder Include="azure-storage\azure\storage\table\" />
     <Folder Include="azure-storage\azure\storage\_http\" />
     <Folder Include="azure-_core\" />
     <Folder Include="azure-_core\azure\" />
