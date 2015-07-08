@@ -34,7 +34,7 @@ from .._common_serialization import (
     _etree_entity_feed_namespaces,
     _update_request_uri_query,
 )
-from .._serialization import (
+from ..table._serialization import (
     _update_storage_table_header,
 )
 from . import HTTPError, HTTPRequest, HTTPResponse

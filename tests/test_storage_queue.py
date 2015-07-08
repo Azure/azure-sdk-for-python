@@ -23,6 +23,8 @@ from azure.storage import (
     SharedAccessPolicy,
     SignedIdentifier,
     SignedIdentifiers,
+)
+from azure.storage.queue import (
     QueueService,
     QueueSharedAccessPermissions,
 )

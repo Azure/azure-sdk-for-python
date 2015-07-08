@@ -17,14 +17,46 @@ The following have moved from 'azure' to 'azure.servicebus':
 
 The following have moved from 'azure' to 'azure.storage':
     DEFAULT_HTTP_TIMEOUT
-    BLOB_SERVICE_HOST_BASE
-    QUEUE_SERVICE_HOST_BASE
-    TABLE_SERVICE_HOST_BASE
-    DEV_BLOB_HOST
-    DEV_QUEUE_HOST
-    DEV_TABLE_HOST
     DEV_ACCOUNT_NAME
     DEV_ACCOUNT_KEY
+
+The following have moved from 'azure.storage' to 'azure.storage.blob':
+    BLOB_SERVICE_HOST_BASE
+    DEV_BLOB_HOST
+    BlobService
+    ContainerEnumResults
+    Container
+    Properties
+    BlobEnumResults
+    BlobResult
+    Blob
+    BlobProperties
+    BlobPrefix
+    BlobBlock
+    BlobBlockList
+    PageRange
+    PageList
+    ContainerSharedAccessPermissions
+    BlobSharedAccessPermissions
+
+The following have moved from 'azure.storage' to 'azure.storage.queue':
+    QUEUE_SERVICE_HOST_BASE
+    DEV_QUEUE_HOST
+    QueueService
+    QueueEnumResults
+    Queue
+    QueueMessagesList
+    QueueMessage
+    QueueSharedAccessPermissions
+
+The following have moved from 'azure.storage' to 'azure.storage.table':
+    TABLE_SERVICE_HOST_BASE
+    DEV_TABLE_HOST
+    TableService
+    Entity
+    EntityProperty
+    Table
+    TableSharedAccessPermissions
 
 
 2015-06-16 Version 0.11.1

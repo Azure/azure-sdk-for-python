@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from .blobservice import BlobService
-from .tableservice import TableService
-from .queueservice import QueueService
 
+# Note that we import BlobService/QueueService/TableService on demand
+# because this module is imported by azure/storage/__init__
+# ie. we don't want 'import azure.storage' to trigger an automatic import
+# of blob/queue/table packages.
 
 class CloudStorageAccount(object):
 
@@ -30,10 +31,13 @@ class CloudStorageAccount(object):
         self.account_key = account_key
 
     def create_blob_service(self):
+        from .blob.blobservice import BlobService
         return BlobService(self.account_name, self.account_key)
 
     def create_table_service(self):
+        from .table.tableservice import TableService
         return TableService(self.account_name, self.account_key)
 
     def create_queue_service(self):
+        from .queue.queueservice import QueueService
         return QueueService(self.account_name, self.account_key)

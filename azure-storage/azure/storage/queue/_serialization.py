@@ -12,38 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-from .constants import (
-    __author__,
-    __version__,
-    X_MS_VERSION,
-    DEV_ACCOUNT_NAME,
-    DEV_ACCOUNT_KEY,
-    DEFAULT_HTTP_TIMEOUT,
-)
+import sys
+import types
 
-from .models import (
-    RetentionPolicy,
-    Logging,
-    HourMetrics,
-    MinuteMetrics,
-    StorageServiceProperties,
-    AccessPolicy,
-    SignedIdentifier,
-    SignedIdentifiers,
-)
+from time import time
+from wsgiref.handlers import format_date_time
+from .._serialization import _update_storage_header
 
-from .cloudstorageaccount import CloudStorageAccount
-from .sharedaccesssignature import (
-    SharedAccessSignature,
-    SharedAccessPolicy,
-)
-from .auth import (
-    _StorageSharedKeyAuthentication,
-    StorageNoAuthentication,
-    StorageSASAuthentication,
-    StorageSharedKeyAuthentication,
-    StorageTableSharedKeyAuthentication,
-)
-from .connection import (
-    StorageConnectionParameters,
-)
+
+def _update_storage_queue_header(request, authentication):
+    request = _update_storage_header(request)
+    current_time = format_date_time(time())
+    request.headers.append(('x-ms-date', current_time))
+    request.headers.append(
+        ('Content-Type', 'application/octet-stream Charset=UTF-8'))
+    authentication.sign_request(request)
+
+    return request.headers
