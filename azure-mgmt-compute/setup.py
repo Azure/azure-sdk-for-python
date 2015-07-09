@@ -44,6 +44,6 @@ setup(
     ],
     install_requires=[
         'azure-common==0.20.0',
-        'azure-mgmt-_core==0.20.0',
+        'azure-mgmt-_core==1.0.0',
     ],
 )

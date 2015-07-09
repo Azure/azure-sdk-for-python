@@ -43,7 +43,7 @@ setup(
         'azure.servicebus._http',
     ],
     install_requires=[
-        'azure-_core==0.20.0',
+        'azure-_core==1.0.0',
         'requests',
     ],
 )
