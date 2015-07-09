@@ -47,7 +47,7 @@ setup(
         'azure.storage.table',
     ],
     install_requires=[
-        'azure-_core==1.0.0',
+        'azure-nspkg==1.0.0',
         'azure-common==0.20.0',
         'python-dateutil',
         'requests',

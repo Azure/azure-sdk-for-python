@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
@@ -25,9 +25,9 @@ root_folder = os.path.abspath(os.path.dirname(__file__))
 
 # order is significant, start from the leaf nodes
 packages = [
-    'azure-_core',
+    'azure-nspkg',
     'azure-common',
-    'azure-mgmt-_core',
+    'azure-mgmt-nspkg',
     'azure-mgmt-compute',
     'azure-mgmt-network',
     'azure-mgmt-resource',

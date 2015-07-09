@@ -5,9 +5,9 @@
 #
 
 $packages = @(
-    "azure-_core",
+    "azure-nspkg",
     "azure-common",
-    "azure-mgmt-_core",
+    "azure-mgmt-nspkg",
     "azure-mgmt-compute",
     "azure-mgmt-network",
     "azure-mgmt-resource",

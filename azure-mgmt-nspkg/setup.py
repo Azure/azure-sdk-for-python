@@ -18,9 +18,9 @@
 from setuptools import setup
 
 setup(
-    name='azure-mgmt-_core',
+    name='azure-mgmt-nspkg',
     version='1.0.0',
-    description='Microsoft Azure Resource Management Core Client Library for Python [Internal]',
+    description='Microsoft Azure Resource Management Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
     author='Microsoft Corporation',
@@ -42,6 +42,6 @@ setup(
         'azure.mgmt',
     ],
     install_requires=[
-        'azure-_core==1.0.0',
+        'azure-nspkg==1.0.0',
     ],
 )
