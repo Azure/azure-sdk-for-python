@@ -42,9 +42,12 @@ setup(
         'azure',
         'azure.storage',
         'azure.storage._http',
+        'azure.storage.blob',
+        'azure.storage.queue',
+        'azure.storage.table',
     ],
     install_requires=[
-        'azure-_core==0.20.0',
+        'azure-_core==1.0.0',
         'azure-common==0.20.0',
         'python-dateutil',
         'requests',
