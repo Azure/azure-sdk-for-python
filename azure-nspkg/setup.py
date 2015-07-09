@@ -18,9 +18,9 @@
 from setuptools import setup
 
 setup(
-    name='azure-_core',
+    name='azure-nspkg',
     version='1.0.0',
-    description='Microsoft Azure Core Client Library for Python [Internal]',
+    description='Microsoft Azure Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
     author='Microsoft Corporation',

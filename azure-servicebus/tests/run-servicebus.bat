@@ -25,7 +25,7 @@ if "%1%" == "" (
 if "%PYTHONPATH%" == "" (
 	set PYTHONPATH=.
 )
-set PYTHONPATH=%PYTHONPATH%;..\azure-_core
+set PYTHONPATH=%PYTHONPATH%;..\azure-nspkg
 set PYTHONPATH=%PYTHONPATH%;..\azure-common
 set PYTHONPATH=%PYTHONPATH%;..\azure-servicebus
 

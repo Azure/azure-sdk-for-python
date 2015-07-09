@@ -24,7 +24,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-_core\;azure-common\;azure-storage\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-_core\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\</SearchPath>
+    <SearchPath>azure-nspkg\;azure-common\;azure-storage\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-nspkg\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -74,8 +74,8 @@
     <Compile Include="azure-mgmt-storage\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-storage\azure\__init__.py" />
     <Compile Include="azure-mgmt-storage\setup.py" />
-    <Compile Include="azure-mgmt-_core\azure\__init__.py" />
-    <Compile Include="azure-mgmt-_core\setup.py" />
+    <Compile Include="azure-mgmt-nspkg\azure\__init__.py" />
+    <Compile Include="azure-mgmt-nspkg\setup.py" />
     <Compile Include="azure-mgmt\tests\mgmt_settings_fake.py" />
     <Compile Include="azure-mgmt\tests\mgmt_settings_real.py" />
     <Compile Include="azure-mgmt\tests\mgmt_testcase.py" />
@@ -150,7 +150,7 @@
     </Compile>
     <Compile Include="azure-servicemanagement-legacy\azure\servicemanagement\__init__.py" />
     <Compile Include="azure-servicemanagement-legacy\azure\__init__.py" />
-    <Compile Include="azure-mgmt-_core\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-nspkg\azure\mgmt\__init__.py" />
     <Compile Include="azure-servicebus\azure\servicebus\servicebusservice.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\httpclient.py" />
     <Compile Include="azure-servicebus\azure\servicebus\_http\requestsclient.py" />
@@ -241,8 +241,8 @@
     <Compile Include="azure-storage\tests\test_storage_sas.py" />
     <Compile Include="azure-storage\tests\test_storage_table.py" />
     <Compile Include="azure-storage\tests\__init__.py" />
-    <Compile Include="azure-_core\azure\__init__.py" />
-    <Compile Include="azure-_core\setup.py" />
+    <Compile Include="azure-nspkg\azure\__init__.py" />
+    <Compile Include="azure-nspkg\setup.py" />
     <Compile Include="azure\setup.py" />
     <Compile Include="setup.py" />
   </ItemGroup>
@@ -275,9 +275,9 @@
     <Folder Include="azure-servicemanagement-legacy\azure\servicemanagement\" />
     <Folder Include="azure-servicemanagement-legacy\azure\servicemanagement\_http\" />
     <Folder Include="azure-mgmt-storage\" />
-    <Folder Include="azure-mgmt-_core\" />
-    <Folder Include="azure-mgmt-_core\azure\" />
-    <Folder Include="azure-mgmt-_core\azure\mgmt\" />
+    <Folder Include="azure-mgmt-nspkg\" />
+    <Folder Include="azure-mgmt-nspkg\azure\" />
+    <Folder Include="azure-mgmt-nspkg\azure\mgmt\" />
     <Folder Include="azure-servicebus\" />
     <Folder Include="azure-servicebus\azure\" />
     <Folder Include="azure-servicebus\azure\servicebus\" />
@@ -294,8 +294,8 @@
     <Folder Include="azure-storage\azure\storage\_http\" />
     <Folder Include="azure-storage\tests\" />
     <Folder Include="azure-storage\tests\recordings\" />
-    <Folder Include="azure-_core\" />
-    <Folder Include="azure-_core\azure\" />
+    <Folder Include="azure-nspkg\" />
+    <Folder Include="azure-nspkg\azure\" />
     <Folder Include="azure-common\" />
     <Folder Include="azure\" />
   </ItemGroup>
@@ -328,9 +328,9 @@
     <Content Include="azure-mgmt-storage\MANIFEST.in" />
     <Content Include="azure-mgmt-storage\README.rst" />
     <Content Include="azure-mgmt-storage\setup.cfg" />
-    <Content Include="azure-mgmt-_core\MANIFEST.in" />
-    <Content Include="azure-mgmt-_core\README.rst" />
-    <Content Include="azure-mgmt-_core\setup.cfg" />
+    <Content Include="azure-mgmt-nspkg\MANIFEST.in" />
+    <Content Include="azure-mgmt-nspkg\README.rst" />
+    <Content Include="azure-mgmt-nspkg\setup.cfg" />
     <Content Include="azure-mgmt\README.rst" />
     <Content Include="azure-mgmt\setup.cfg" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_compute.test_availability_sets.yaml" />
@@ -891,8 +891,8 @@
     <Content Include="azure-storage\tests\recordings\test_storage_table.test_with_filter_chained.yaml" />
     <Content Include="azure-storage\tests\recordings\test_storage_table.test_with_filter_single.yaml" />
     <Content Include="azure-storage\tests\run-storage.bat" />
-    <Content Include="azure-_core\README.rst" />
-    <Content Include="azure-_core\setup.cfg" />
+    <Content Include="azure-nspkg\README.rst" />
+    <Content Include="azure-nspkg\setup.cfg" />
     <Content Include="azure\README.rst" />
     <Content Include="azure\setup.cfg" />
     <Content Include="build.ps1" />
