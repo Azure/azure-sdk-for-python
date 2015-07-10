@@ -62,9 +62,6 @@ def _to_datetime(strtime):
     return datetime.strptime(strtime, "%Y-%m-%dT%H:%M:%S.%f")
 
 _KNOWN_SERIALIZATION_XFORMS = {
-    'include_apis': 'IncludeAPIs',
-    'message_id': 'MessageId',
-    'content_md5': 'Content-MD5',
     'last_modified': 'Last-Modified',
     'cache_control': 'Cache-Control',
     'account_admin_live_email_id': 'AccountAdminLiveEmailId',
