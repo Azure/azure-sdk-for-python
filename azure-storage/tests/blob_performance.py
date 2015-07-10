@@ -16,7 +16,7 @@ import os
 import datetime
 import sys
 
-from azure.storage import BlobService
+from azure.storage.blob import BlobService
 import tests.storage_settings_real as settings
 
 # Warning:

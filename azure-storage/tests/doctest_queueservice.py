@@ -16,7 +16,7 @@
 """
 How To: Create a Queue
 ----------------------
->>> from azure.storage import *
+>>> from azure.storage.queue import QueueService
 >>> queue_service = QueueService(name, key)
 >>> queue_service.create_queue('taskqueue')
 True

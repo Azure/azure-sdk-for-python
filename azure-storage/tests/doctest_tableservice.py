@@ -16,7 +16,7 @@
 """
 How To: Create a Table
 ----------------------
->>> from azure.storage import *
+>>> from azure.storage.table import TableService
 >>> table_service = TableService(name, key)
 >>> table_service.create_table('tasktable')
 True

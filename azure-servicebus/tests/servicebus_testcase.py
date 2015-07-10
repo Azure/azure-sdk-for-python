@@ -36,6 +36,15 @@ class ServiceBusTestCase(RecordingTestCase):
             import tests.servicebus_settings_real as real_settings
             self.settings = real_settings
 
+    def _set_service_options(self, service, settings):
+        if settings.USE_PROXY:
+            service.set_proxy(
+                settings.PROXY_HOST,
+                settings.PROXY_PORT,
+                settings.PROXY_USER,
+                settings.PROXY_PASSWORD,
+            )
+
     def _scrub(self, val):
         val = super(ServiceBusTestCase, self)._scrub(val)
         real_to_fake_dict = {

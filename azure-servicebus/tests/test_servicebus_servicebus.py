@@ -36,9 +36,6 @@ from azure.servicebus import (
     Subscription,
     Topic,
 )
-from testutils.util import (
-    set_service_options,
-)
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -69,7 +66,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
                 request_session=Session(),
             )
 
-        set_service_options(self.sbs, self.settings)
+        self._set_service_options(self.sbs, self.settings)
 
         self.queue_name = self.get_resource_name('utqueue')
         self.topic_name = self.get_resource_name('uttopic')

@@ -29,10 +29,6 @@ from azure.storage.queue import (
     QueueSharedAccessPermissions,
 )
 from azure.common import WindowsAzureError
-from testutils.util import (
-    create_storage_service,
-    set_service_options,
-)
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -49,7 +45,7 @@ class StorageQueueTest(StorageTestCase):
     def setUp(self):
         super(StorageQueueTest, self).setUp()
 
-        self.qs = create_storage_service(QueueService, self.settings)
+        self.qs = self._create_storage_service(QueueService, self.settings)
 
         self.test_queues = []
         self.creatable_queues = []
@@ -432,7 +428,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.peek_messages(self.test_queues[0])
 
         # Assert
@@ -459,7 +455,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.put_message(self.test_queues[0], 'addedmessage')
 
         # Assert
@@ -484,7 +480,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         service.update_message(
             self.test_queues[0],
             result[0].message_id,
@@ -514,7 +510,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.get_messages(self.test_queues[0])
 
         # Assert
@@ -553,7 +549,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.peek_messages(self.test_queues[0])
 
         # Assert

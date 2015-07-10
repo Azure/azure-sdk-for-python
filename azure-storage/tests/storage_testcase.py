@@ -15,6 +15,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import os.path
+from requests import Session
 from testutils.common_recordingtestcase import (
     RecordingTestCase,
     TestMode,
@@ -45,3 +46,24 @@ class StorageTestCase(RecordingTestCase):
         }
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
+
+    def _create_storage_service(self, service_class, settings, account_name=None, account_key=None):
+        account_name = account_name or settings.STORAGE_ACCOUNT_NAME
+        account_key = account_key or settings.STORAGE_ACCOUNT_KEY
+        session = Session()
+        service = service_class(
+            account_name,
+            account_key,
+            request_session=session,
+        )
+        self._set_service_options(service, settings)
+        return service
+
+    def _set_service_options(self, service, settings):
+        if settings.USE_PROXY:
+            service.set_proxy(
+                settings.PROXY_HOST,
+                settings.PROXY_PORT,
+                settings.PROXY_USER,
+                settings.PROXY_PASSWORD,
+            )
