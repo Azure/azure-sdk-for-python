@@ -41,10 +41,6 @@ from azure.storage.table import (
     TableService,
     TableSharedAccessPermissions,
 )
-from testutils.util import (
-    create_storage_service,
-    set_service_options,
-)
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -62,7 +58,7 @@ class StorageTableTest(StorageTestCase):
     def setUp(self):
         super(StorageTableTest, self).setUp()
 
-        self.ts = create_storage_service(TableService, self.settings)
+        self.ts = self._create_storage_service(TableService, self.settings)
 
         self.table_name = self.get_resource_name('uttable')
 
@@ -1456,7 +1452,7 @@ class StorageTableTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         resp = self.ts.query_entities(self.table_name, None, 'age,sex')
 
         # Assert
@@ -1483,7 +1479,7 @@ class StorageTableTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         service.insert_entity(
             self.table_name,
             {
@@ -1517,7 +1513,7 @@ class StorageTableTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         service.insert_entity(
             self.table_name,
             {
@@ -1551,7 +1547,7 @@ class StorageTableTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         with self.assertRaises(WindowsAzureMissingResourceError):
             service.insert_entity(
                 self.table_name,
@@ -1579,7 +1575,7 @@ class StorageTableTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         updated_entity = self._create_updated_entity_dict('MyPartition', '1')
         resp = service.update_entity(self.table_name, 'MyPartition', '1', updated_entity)
 
@@ -1603,7 +1599,7 @@ class StorageTableTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         service.delete_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
@@ -1639,7 +1635,7 @@ class StorageTableTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         resp = self.ts.query_entities(self.table_name, None, 'age,sex')
 
         # Assert

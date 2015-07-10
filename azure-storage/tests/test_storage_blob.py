@@ -54,10 +54,6 @@ from azure.storage.storageclient import (
     AZURE_STORAGE_ACCOUNT,
     EMULATED,
 )
-from testutils.util import (
-    create_storage_service,
-    set_service_options,
-)
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -73,10 +69,10 @@ class StorageBlobTest(StorageTestCase):
     def setUp(self):
         super(StorageBlobTest, self).setUp()
 
-        self.bs = create_storage_service(BlobService, self.settings)
+        self.bs = self._create_storage_service(BlobService, self.settings)
 
         if self.settings.REMOTE_STORAGE_ACCOUNT_NAME and self.settings.REMOTE_STORAGE_ACCOUNT_KEY:
-            self.bs2 = create_storage_service(
+            self.bs2 = self._create_storage_service(
                 BlobService,
                 self.settings,
                 self.settings.REMOTE_STORAGE_ACCOUNT_NAME,
@@ -2883,7 +2879,7 @@ class StorageBlobTest(StorageTestCase):
             self.settings.STORAGE_ACCOUNT_NAME,
             request_session=requests.Session(),
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.get_blob_to_bytes(self.container_name, blob_name)
 
         # Assert
@@ -2915,7 +2911,7 @@ class StorageBlobTest(StorageTestCase):
             sas_token=token,
             request_session=requests.Session(),
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.get_blob_to_bytes(self.container_name, blob_name)
 
         # Assert
@@ -2958,7 +2954,7 @@ class StorageBlobTest(StorageTestCase):
             sas_token=token,
             request_session=requests.Session(),
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.get_blob_to_bytes(self.container_name, blob_name)
 
         # Assert

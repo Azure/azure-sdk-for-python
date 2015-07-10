@@ -46,7 +46,6 @@
     <Compile Include="azure-common\testutils\common_extendedtestcase.py" />
     <Compile Include="azure-common\testutils\common_recordingtestcase.py" />
     <Compile Include="azure-common\testutils\create_credentials_file.py" />
-    <Compile Include="azure-common\testutils\util.py" />
     <Compile Include="azure-common\testutils\__init__.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\computemanagement.py" />
     <Compile Include="azure-mgmt-network\azure\mgmt\network\networkresourceprovider.py" />
@@ -315,7 +314,6 @@
     <Content Include="azure-common\MANIFEST.in" />
     <Content Include="azure-common\README.rst" />
     <Content Include="azure-common\setup.cfg" />
-    <Content Include="azure-common\testutils\testsettings_local.json" />
     <Content Include="azure-mgmt-resource\MANIFEST.in" />
     <Content Include="azure-mgmt-resource\README.rst" />
     <Content Include="azure-mgmt-resource\setup.cfg" />

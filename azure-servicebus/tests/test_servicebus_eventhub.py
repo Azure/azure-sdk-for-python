@@ -29,9 +29,6 @@ from azure.servicebus import (
     EventHub,
     ServiceBusService,
 )
-from testutils.util import (
-    set_service_options,
-)
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -52,7 +49,7 @@ class ServiceBusEventHubTest(ServiceBusTestCase):
             request_session=Session(),
         )
 
-        set_service_options(self.sbs, self.settings)
+        self._set_service_options(self.sbs, self.settings)
 
         self.event_hub_name = self.get_resource_name('uthub')
 

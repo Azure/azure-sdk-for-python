@@ -39,10 +39,7 @@ from azure.servicemanagement import (
     parse_response_for_async_op,
     get_certificate_from_publish_settings,
 )
-from azure.storage.blobservice import BlobService
-from testutils.util import (
-    create_storage_service,
-)
+from azure.storage.blob import BlobService
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -87,7 +84,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
         self.sms = self.create_service_management(ServiceManagementService)
 
-        self.bc = create_storage_service(BlobService, self.settings)
+        self.bc = self._create_storage_service(BlobService, self.settings)
 
         self.hosted_service_name = self.get_resource_name('utsvc')
         self.container_name = self.get_resource_name('utctnr')
