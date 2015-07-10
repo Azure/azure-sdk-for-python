@@ -14,6 +14,7 @@
 #--------------------------------------------------------------------------
 
 import os
+import os.path
 import requests
 import unittest
 from datetime import datetime, timedelta
@@ -327,10 +328,12 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         return url
 
     def _upload_default_package_to_storage_blob(self, blob_name):
-        return self._upload_file_to_block_blob(CSPKG_PATH, blob_name)
+        file_path = os.path.join(self.working_folder, CSPKG_PATH)
+        return self._upload_file_to_block_blob(file_path, blob_name)
 
     def _upload_disk_to_storage_blob(self, blob_name):
-        return self._upload_file_to_page_blob(DATA_VHD_PATH, blob_name)
+        file_path = os.path.join(self.working_folder, DATA_VHD_PATH)
+        return self._upload_file_to_page_blob(file_path, blob_name)
 
     def _add_deployment(self, service_name, deployment_name,
                         deployment_slot='Production'):
