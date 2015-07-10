@@ -8,7 +8,7 @@ To ensure a table exists, call **create\_table**:
 
 .. code:: python
 
-    from azure.storage import TableService
+    from azure.storage.table import TableService
     table_service = TableService(account_name, account_key)
     table_service.create_table('tasktable')
 
@@ -46,7 +46,8 @@ To generate a shared access signature, use:
 
 .. code:: python
 
-    from azure.storage import TableService, AccessPolicy, SharedAccessPolicy, TableSharedAccessPermissions
+    from azure.storage import AccessPolicy, SharedAccessPolicy
+    from azure.storage.table import TableService, TableSharedAccessPermissions
     table_service = TableService(account_name, account_key)
     ap = AccessPolicy(
         expiry='2016-10-12',
@@ -61,7 +62,8 @@ Alternatively, you can define a named access policy on the server:
 
 .. code:: python
 
-    from azure.storage import TableService, SharedAccessPolicy, TableSharedAccessPermissions, SignedIdentifier
+    from azure.storage import SharedAccessPolicy, SignedIdentifier
+    from azure.storage.table import TableService, TableSharedAccessPermissions
     table_service = TableService(account_name, account_key)
 
     policy_name = 'readonlyvaliduntilnextyear'
@@ -104,7 +106,7 @@ authenticate, instead of an account key:
 
 .. code:: python
 
-    from azure.storage import TableService
+    from azure.storage.table import TableService
     table_service = TableService(account_name, sas_token=sas_token)
     entity = table_service.get_entity('tasktable', 'tasksSeattle', '1')
 
@@ -117,7 +119,7 @@ which to store a blob:
 
 .. code:: python
 
-    from azure.storage import BlobService
+    from azure.storage.blob import BlobService
     blob_service = BlobService(account_name, account_key)
     blob_service.create_container('images')
 
@@ -126,7 +128,7 @@ To upload a file 'uploads/image.png' from disk to a blob named
 
 .. code:: python
 
-    from azure.storage import BlobService
+    from azure.storage.blob import BlobService
     blob_service = BlobService(account_name, account_key)
     blob_service.put_block_blob_from_path(
         'images',
@@ -166,7 +168,7 @@ To download a blob named 'image.png' to a file on disk
 
 .. code:: python
 
-    from azure.storage import BlobService
+    from azure.storage.blob import BlobService
     blob_service = BlobService(account_name, account_key)
     blob = blob_service.get_blob_to_path(
         'images',
@@ -221,7 +223,7 @@ omitting the ``account_key`` parameter:
 
 .. code:: python
 
-    from azure.storage import BlobService
+    from azure.storage.blob import BlobService
     blob_service = BlobService(account_name)
     blob = blob_service.get_blob_to_path(
         'images',
@@ -234,7 +236,7 @@ You can get a full URL for the blob (for use in a web browser, etc):
 
 .. code:: python
 
-    from azure.storage import BlobService
+    from azure.storage.blob import BlobService
     blob_service = BlobService(account_name)
     url = blob_service.make_blob_url(
         container_name='images',
@@ -252,7 +254,8 @@ To generate a shared access signature, use:
 
 .. code:: python
 
-    from azure.storage import BlobService, AccessPolicy, SharedAccessPolicy, BlobSharedAccessPermissions
+    from azure.storage import AccessPolicy, SharedAccessPolicy
+    from azure.storage.blob import BlobService, BlobSharedAccessPermissions
     blob_service = BlobService(account_name, account_key)
     ap = AccessPolicy(
         expiry='2016-10-12',
@@ -271,7 +274,8 @@ Alternatively, you can define a named access policy on the server:
 
 .. code:: python
 
-    from azure.storage import BlobService, AccessPolicy, SharedAccessPolicy, BlobSharedAccessPermissions, SignedIdentifier
+    from azure.storage import AccessPolicy, SharedAccessPolicy, SignedIdentifier
+    from azure.storage.blob import BlobService, BlobSharedAccessPermissions
     blob_service = BlobService(account_name, account_key)
 
     policy_name = 'readonlyvaliduntilnextyear'
@@ -315,7 +319,7 @@ authenticate, instead of an account key:
 
 .. code:: python
 
-    from azure.storage import BlobService
+    from azure.storage.blob import BlobService
     blob_service = BlobService(account_name, sas_token=sas_token)
     blob = blob_service.get_blob_to_path(
         'images',
@@ -328,7 +332,7 @@ You can get a full URL for the blob (for use in a web browser, etc):
 
 .. code:: python
 
-    from azure.storage import BlobService
+    from azure.storage.blob import BlobService
     blob_service = BlobService(account_name)
     url = blob_service.make_blob_url(
         container_name='images',
@@ -344,7 +348,7 @@ The **create\_queue** method can be used to ensure a queue exists:
 
 .. code:: python
 
-    from azure.storage import QueueService
+    from azure.storage.queue import QueueService
     queue_service = QueueService(account_name, account_key)
     queue_service.create_queue('taskqueue')
 
@@ -353,7 +357,7 @@ into the queue:
 
 .. code:: python
 
-    from azure.storage import QueueService
+    from azure.storage.queue import QueueService
     queue_service = QueueService(account_name, account_key)
     queue_service.put_message('taskqueue', 'Hello world!')
 
@@ -364,7 +368,7 @@ are removed from the queue.
 
 .. code:: python
 
-    from azure.storage import QueueService
+    from azure.storage.queue import QueueService
     queue_service = QueueService(account_name, account_key)
     messages = queue_service.get_messages('taskqueue')
     queue_service.delete_message('taskqueue', messages[0].message_id, messages[0].pop_receipt)
@@ -378,7 +382,8 @@ To generate a shared access signature, use:
 
 .. code:: python
 
-    from azure.storage import QueueService, AccessPolicy, SharedAccessPolicy, QueueSharedAccessPermissions
+    from azure.storage import AccessPolicy, SharedAccessPolicy
+    from azure.storage.queue import QueueService, QueueSharedAccessPermissions
     queue_service = QueueService(account_name, account_key)
     ap = AccessPolicy(
         expiry='2016-10-12',
@@ -393,7 +398,8 @@ Alternatively, you can define a named access policy on the server:
 
 .. code:: python
 
-    from azure.storage import QueueService, SharedAccessPolicy, QueueSharedAccessPermissions, SignedIdentifier
+    from azure.storage import SharedAccessPolicy, SignedIdentifier
+    from azure.storage.queue import QueueService, QueueSharedAccessPermissions
     queue_service = QueueService(account_name, account_key)
 
     policy_name = 'readonlyvaliduntilnextyear'
@@ -436,7 +442,7 @@ authenticate, instead of an account key:
 
 .. code:: python
 
-    from azure.storage import QueueService
+    from azure.storage.queue import QueueService
     queue_service = QueueService(account_name, sas_token=sas_token)
     messages = queue_service.peek_messages('taskqueue')
 
