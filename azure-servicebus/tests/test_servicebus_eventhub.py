@@ -33,7 +33,7 @@ from testutils.common_recordingtestcase import (
     TestMode,
     record,
 )
-from servicebus_testcase import ServiceBusTestCase
+from tests.servicebus_testcase import ServiceBusTestCase
 #------------------------------------------------------------------------------
 
 
