@@ -30,10 +30,10 @@ class SubscriptionCloudCredentials(object):
     """
     def __init__(self, subscription_id, access_token, access_token_type = 'Bearer'):
         if access_token is None:
-            raise ValueError('access_token cannot be None.')
+            raise AzureValueError('access_token cannot be None.')
 
         if subscription_id is None:
-            raise ValueError('subscription_id cannot be None.')
+            raise AzureValueError('subscription_id cannot be None.')
 
         self._subscription_id = subscription_id
         self._access_token = access_token
@@ -153,7 +153,7 @@ class Service(object):
     """
     def __init__(self, credentials, **kwargs):
         if credentials is None:
-            raise ValueError('credentials cannot be None.')
+            raise AzureValueError('credentials cannot be None.')
 
         self._credentials = credentials
         self._user_agent = kwargs.get('user_agent', azure.common.filters.DEFAULT_USER_AGENT)

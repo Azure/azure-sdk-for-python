@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+from azure.common import (
+    AzureValueError,
+)
 from ._common_error import (
     _validate_not_none,
 )
@@ -62,7 +65,7 @@ def get_certificate_from_publish_settings(publish_settings_path, path_to_write_c
 
     # validate that subscription was found
     if subscription is None:
-        raise ValueError("The provided subscription_id '{}' was not found in the publish settings file provided at '{}'".format(subscription_id, publish_settings_path))
+        raise AzureValueError("The provided subscription_id '{}' was not found in the publish settings file provided at '{}'".format(subscription_id, publish_settings_path))
 
     cert_string = _decode_base64_to_bytes(subscription.get('ManagementCertificate'))
 

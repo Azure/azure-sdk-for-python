@@ -16,6 +16,9 @@ import json
 import sys
 from datetime import datetime
 from xml.dom import minidom
+from azure.common import (
+    AzureValueError,
+)
 from ._common_models import (
     Feed,
     WindowsAzureData,
@@ -1617,7 +1620,7 @@ class _SchedulerManagementXmlSerializer(object):
         '''
 
         if plan not in ["Free", "Standard"]:
-            raise ValueError("Plan: Invalid option must be 'Standard' or 'Free'")
+            raise AzureValueError("Plan: Invalid option must be 'Standard' or 'Free'")
 
         body = '<Resource xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure"><IntrinsicSettings>'
         body += ''.join(['<plan>', plan, '</plan>'])

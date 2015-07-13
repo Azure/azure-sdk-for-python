@@ -35,6 +35,9 @@ try:
 except ImportError:
     from xml.etree import ElementTree as ETree
 
+from azure.common import (
+    AzureTypeError,
+)
 from ._common_conversion import (
     _str,
 )
@@ -172,7 +175,7 @@ def _get_request_body_bytes_only(param_name, param_value):
         warnings.warn(_WARNING_VALUE_SHOULD_BE_BYTES.format(param_name))
         return _get_request_body(param_value)
 
-    raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
+    raise AzureTypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
 
 
 def _get_request_body(request_body):
