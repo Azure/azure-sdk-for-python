@@ -14,7 +14,6 @@
 #--------------------------------------------------------------------------
 from azure.common import (
     AzureHttpError,
-    AzureTypeError,
 )
 from .._common_error import (
     _dont_fail_not_exist,
@@ -1209,7 +1208,7 @@ class BlobService(_StorageClient):
         _validate_type_bytes('blob', blob)
 
         if index < 0:
-            raise AzureTypeError(_ERROR_VALUE_NEGATIVE.format('index'))
+            raise TypeError(_ERROR_VALUE_NEGATIVE.format('index'))
 
         if count is None or count < 0:
             count = len(blob) - index
@@ -1542,10 +1541,10 @@ class BlobService(_StorageClient):
         _validate_not_none('count', count)
 
         if count < 0:
-            raise AzureTypeError(_ERROR_VALUE_NEGATIVE.format('count'))
+            raise TypeError(_ERROR_VALUE_NEGATIVE.format('count'))
 
         if count % _PAGE_SIZE != 0:
-            raise AzureTypeError(_ERROR_PAGE_BLOB_SIZE_ALIGNMENT.format(count))
+            raise TypeError(_ERROR_PAGE_BLOB_SIZE_ALIGNMENT.format(count))
 
         self.put_blob(
             container_name,
@@ -1668,7 +1667,7 @@ class BlobService(_StorageClient):
         _validate_type_bytes('blob', blob)
 
         if index < 0:
-            raise AzureTypeError(_ERROR_VALUE_NEGATIVE.format('index'))
+            raise TypeError(_ERROR_VALUE_NEGATIVE.format('index'))
 
         if count is None or count < 0:
             count = len(blob) - index

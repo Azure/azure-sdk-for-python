@@ -18,7 +18,6 @@ import time
 
 from azure.common import (
     AzureHttpError,
-    AzureTypeError,
 )
 from .constants import (
     AZURE_SERVICEBUS_NAMESPACE,
@@ -124,7 +123,7 @@ class ServiceBusService(object):
             self.service_namespace = os.environ.get(AZURE_SERVICEBUS_NAMESPACE)
 
         if not self.service_namespace:
-            raise AzureTypeError('You need to provide servicebus namespace')
+            raise TypeError('You need to provide servicebus namespace')
 
         if authentication:
             self.authentication = authentication
@@ -143,7 +142,7 @@ class ServiceBusService(object):
                     account_key,
                     issuer)
             else:
-                raise AzureTypeError(
+                raise TypeError(
                     'You need to provide servicebus access key and Issuer OR shared access key and value')
 
         self._httpclient = _HTTPClient(

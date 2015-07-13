@@ -13,7 +13,6 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 from azure.common import (
-    AzureTypeError,
     AzureHttpError,
 )
 from .._common_conversion import (
@@ -130,7 +129,7 @@ class TableService(_StorageClient):
         elif self.sas_token:
             self.authentication = StorageSASAuthentication(self.sas_token)
         else:
-            raise AzureTypeError(_ERROR_STORAGE_MISSING_INFO)
+            raise TypeError(_ERROR_STORAGE_MISSING_INFO)
 
     def generate_shared_access_signature(self, table_name,
                                          shared_access_policy=None,

@@ -24,9 +24,7 @@ import unittest
 from datetime import datetime
 from requests import Session
 from azure.common import (
-    AzureException,
     AzureHttpError,
-    AzureTypeError,
     AzureMissingResourceHttpError,
     AzureConflictHttpError,
 )
@@ -36,6 +34,7 @@ from azure.servicebus import (
     AZURE_SERVICEBUS_ACCESS_KEY,
     AZURE_SERVICEBUS_ISSUER,
     AzureServiceBusPeekLockError,
+    AzureServiceBusResourceNotFound,
     Message,
     Queue,
     Rule,
@@ -136,7 +135,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
             del os.environ[AZURE_SERVICEBUS_ISSUER]
 
         # Act
-        with self.assertRaises(AzureTypeError):
+        with self.assertRaises(TypeError):
             sbs = ServiceBusService()
 
         # Assert
@@ -259,7 +258,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(AzureException):
+        with self.assertRaises(AzureServiceBusResourceNotFound):
             resp = self.sbs.get_queue(self.queue_name)
 
         # Assert
@@ -669,7 +668,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(AzureException):
+        with self.assertRaises(AzureServiceBusResourceNotFound):
             self.sbs.get_topic(self.topic_name)
 
         # Assert

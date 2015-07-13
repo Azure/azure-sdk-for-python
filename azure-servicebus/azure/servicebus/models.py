@@ -31,6 +31,10 @@ class AzureServiceBusPeekLockError(AzureException):
     '''Indicates that peek-lock is required for this operation.'''
 
 
+class AzureServiceBusResourceNotFound(AzureException):
+    '''Indicates that the resource doesn't exist.'''
+
+
 class Queue(WindowsAzureData):
 
     ''' Queue class corresponding to Queue Description:

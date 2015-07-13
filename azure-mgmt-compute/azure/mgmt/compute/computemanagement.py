@@ -26,7 +26,7 @@ try:
     from urllib import quote, unquote
 except:
     from urllib.parse import quote, unquote
-from azure.common import AzureOperationResponse, AzureHttpError, AzureIndexError, AzureValueError, OperationStatusResponse, OperationStatus, Service
+from azure.common import AzureOperationResponse, AzureHttpError, OperationStatusResponse, OperationStatus, Service
 from azure.common.arm import ResourceBase, ResourceBaseExtended
 
 class ComputeLongRunningOperationResponse(AzureOperationResponse):
@@ -2872,7 +2872,7 @@ class ComputeManagementClient(Service):
         """
         # Validate
         if operation_status_link is None:
-            raise AzureValueError('operation_status_link cannot be None.')
+            raise ValueError('operation_status_link cannot be None.')
         
         # Tracing
         
@@ -3031,13 +3031,13 @@ class AvailabilitySetOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         # Tracing
         
@@ -3276,10 +3276,10 @@ class AvailabilitySetOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if availability_set_name is None:
-            raise AzureValueError('availability_set_name cannot be None.')
+            raise ValueError('availability_set_name cannot be None.')
         
         # Tracing
         
@@ -3352,10 +3352,10 @@ class AvailabilitySetOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if availability_set_name is None:
-            raise AzureValueError('availability_set_name cannot be None.')
+            raise ValueError('availability_set_name cannot be None.')
         
         # Tracing
         
@@ -3518,7 +3518,7 @@ class AvailabilitySetOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -3686,10 +3686,10 @@ class AvailabilitySetOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if availability_set_name is None:
-            raise AzureValueError('availability_set_name cannot be None.')
+            raise ValueError('availability_set_name cannot be None.')
         
         # Tracing
         
@@ -3822,13 +3822,13 @@ class UsageOperations(object):
         """
         # Validate
         if location is None:
-            raise AzureValueError('location cannot be None.')
+            raise ValueError('location cannot be None.')
         
         if location is not None and len(location) > 1000:
-            raise AzureIndexError('location is outside the valid range.')
+            raise IndexError('location is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', location) is not None) == False:
-            raise AzureIndexError('location is outside the valid range.')
+            raise IndexError('location is outside the valid range.')
         
         # Tracing
         
@@ -3962,16 +3962,16 @@ class VirtualMachineExtensionImageOperations(object):
         # Validate
         if parameters is not None:
             if parameters.location is None:
-                raise AzureValueError('parameters.location cannot be None.')
+                raise ValueError('parameters.location cannot be None.')
             
             if parameters.publisher_name is None:
-                raise AzureValueError('parameters.publisher_name cannot be None.')
+                raise ValueError('parameters.publisher_name cannot be None.')
             
             if parameters.type is None:
-                raise AzureValueError('parameters.type cannot be None.')
+                raise ValueError('parameters.type cannot be None.')
             
             if parameters.version is None:
-                raise AzureValueError('parameters.version cannot be None.')
+                raise ValueError('parameters.version cannot be None.')
             
         # Tracing
         
@@ -4108,10 +4108,10 @@ class VirtualMachineExtensionImageOperations(object):
         # Validate
         if parameters is not None:
             if parameters.location is None:
-                raise AzureValueError('parameters.location cannot be None.')
+                raise ValueError('parameters.location cannot be None.')
             
             if parameters.publisher_name is None:
-                raise AzureValueError('parameters.publisher_name cannot be None.')
+                raise ValueError('parameters.publisher_name cannot be None.')
             
         # Tracing
         
@@ -4217,13 +4217,13 @@ class VirtualMachineExtensionImageOperations(object):
         # Validate
         if parameters is not None:
             if parameters.location is None:
-                raise AzureValueError('parameters.location cannot be None.')
+                raise ValueError('parameters.location cannot be None.')
             
             if parameters.publisher_name is None:
-                raise AzureValueError('parameters.publisher_name cannot be None.')
+                raise ValueError('parameters.publisher_name cannot be None.')
             
             if parameters.type is None:
-                raise AzureValueError('parameters.type cannot be None.')
+                raise ValueError('parameters.type cannot be None.')
             
         # Tracing
         
@@ -4360,16 +4360,16 @@ class VirtualMachineExtensionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         if extension_parameters is None:
-            raise AzureValueError('extension_parameters cannot be None.')
+            raise ValueError('extension_parameters cannot be None.')
         
         if extension_parameters.location is None:
-            raise AzureValueError('extension_parameters.location cannot be None.')
+            raise ValueError('extension_parameters.location cannot be None.')
         
         # Tracing
         
@@ -4720,13 +4720,13 @@ class VirtualMachineExtensionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         if vm_extension_name is None:
-            raise AzureValueError('vm_extension_name cannot be None.')
+            raise ValueError('vm_extension_name cannot be None.')
         
         # Tracing
         
@@ -4880,13 +4880,13 @@ class VirtualMachineExtensionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         if vm_extension_name is None:
-            raise AzureValueError('vm_extension_name cannot be None.')
+            raise ValueError('vm_extension_name cannot be None.')
         
         # Tracing
         
@@ -5123,13 +5123,13 @@ class VirtualMachineExtensionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         if vm_extension_name is None:
-            raise AzureValueError('vm_extension_name cannot be None.')
+            raise ValueError('vm_extension_name cannot be None.')
         
         # Tracing
         
@@ -5379,19 +5379,19 @@ class VirtualMachineImageOperations(object):
         # Validate
         if parameters is not None:
             if parameters.location is None:
-                raise AzureValueError('parameters.location cannot be None.')
+                raise ValueError('parameters.location cannot be None.')
             
             if parameters.offer is None:
-                raise AzureValueError('parameters.offer cannot be None.')
+                raise ValueError('parameters.offer cannot be None.')
             
             if parameters.publisher_name is None:
-                raise AzureValueError('parameters.publisher_name cannot be None.')
+                raise ValueError('parameters.publisher_name cannot be None.')
             
             if parameters.skus is None:
-                raise AzureValueError('parameters.skus cannot be None.')
+                raise ValueError('parameters.skus cannot be None.')
             
             if parameters.version is None:
-                raise AzureValueError('parameters.version cannot be None.')
+                raise ValueError('parameters.version cannot be None.')
             
         # Tracing
         
@@ -5548,16 +5548,16 @@ class VirtualMachineImageOperations(object):
         # Validate
         if parameters is not None:
             if parameters.location is None:
-                raise AzureValueError('parameters.location cannot be None.')
+                raise ValueError('parameters.location cannot be None.')
             
             if parameters.offer is None:
-                raise AzureValueError('parameters.offer cannot be None.')
+                raise ValueError('parameters.offer cannot be None.')
             
             if parameters.publisher_name is None:
-                raise AzureValueError('parameters.publisher_name cannot be None.')
+                raise ValueError('parameters.publisher_name cannot be None.')
             
             if parameters.skus is None:
-                raise AzureValueError('parameters.skus cannot be None.')
+                raise ValueError('parameters.skus cannot be None.')
             
         # Tracing
         
@@ -5674,10 +5674,10 @@ class VirtualMachineImageOperations(object):
         # Validate
         if parameters is not None:
             if parameters.location is None:
-                raise AzureValueError('parameters.location cannot be None.')
+                raise ValueError('parameters.location cannot be None.')
             
             if parameters.publisher_name is None:
-                raise AzureValueError('parameters.publisher_name cannot be None.')
+                raise ValueError('parameters.publisher_name cannot be None.')
             
         # Tracing
         
@@ -5783,7 +5783,7 @@ class VirtualMachineImageOperations(object):
         # Validate
         if parameters is not None:
             if parameters.location is None:
-                raise AzureValueError('parameters.location cannot be None.')
+                raise ValueError('parameters.location cannot be None.')
             
         # Tracing
         
@@ -5885,13 +5885,13 @@ class VirtualMachineImageOperations(object):
         # Validate
         if parameters is not None:
             if parameters.location is None:
-                raise AzureValueError('parameters.location cannot be None.')
+                raise ValueError('parameters.location cannot be None.')
             
             if parameters.offer is None:
-                raise AzureValueError('parameters.offer cannot be None.')
+                raise ValueError('parameters.offer cannot be None.')
             
             if parameters.publisher_name is None:
-                raise AzureValueError('parameters.publisher_name cannot be None.')
+                raise ValueError('parameters.publisher_name cannot be None.')
             
         # Tracing
         
@@ -6023,22 +6023,22 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.destination_container_name is None:
-            raise AzureValueError('parameters.destination_container_name cannot be None.')
+            raise ValueError('parameters.destination_container_name cannot be None.')
         
         if parameters.overwrite is None:
-            raise AzureValueError('parameters.overwrite cannot be None.')
+            raise ValueError('parameters.overwrite cannot be None.')
         
         if parameters.virtual_hard_disk_name_prefix is None:
-            raise AzureValueError('parameters.virtual_hard_disk_name_prefix cannot be None.')
+            raise ValueError('parameters.virtual_hard_disk_name_prefix cannot be None.')
         
         # Tracing
         
@@ -6133,43 +6133,43 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.extensions is not None:
             for extensions_parameter_item in parameters.extensions:
                 if extensions_parameter_item.location is None:
-                    raise AzureValueError('parameters.extensions.location cannot be None.')
+                    raise ValueError('parameters.extensions.location cannot be None.')
                 
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         if parameters.storage_profile is not None:
             if parameters.storage_profile.data_disks is not None:
                 for data_disks_parameter_item in parameters.storage_profile.data_disks:
                     if data_disks_parameter_item.create_option is None:
-                        raise AzureValueError('parameters.storage_profile.data_disks.create_option cannot be None.')
+                        raise ValueError('parameters.storage_profile.data_disks.create_option cannot be None.')
                     
                     if data_disks_parameter_item.lun is None:
-                        raise AzureValueError('parameters.storage_profile.data_disks.lun cannot be None.')
+                        raise ValueError('parameters.storage_profile.data_disks.lun cannot be None.')
                     
                     if data_disks_parameter_item.name is None:
-                        raise AzureValueError('parameters.storage_profile.data_disks.name cannot be None.')
+                        raise ValueError('parameters.storage_profile.data_disks.name cannot be None.')
                     
                     if data_disks_parameter_item.virtual_hard_disk is None:
-                        raise AzureValueError('parameters.storage_profile.data_disks.virtual_hard_disk cannot be None.')
+                        raise ValueError('parameters.storage_profile.data_disks.virtual_hard_disk cannot be None.')
                     
             if parameters.storage_profile.os_disk is not None:
                 if parameters.storage_profile.os_disk.create_option is None:
-                    raise AzureValueError('parameters.storage_profile.os_disk.create_option cannot be None.')
+                    raise ValueError('parameters.storage_profile.os_disk.create_option cannot be None.')
                 
                 if parameters.storage_profile.os_disk.name is None:
-                    raise AzureValueError('parameters.storage_profile.os_disk.name cannot be None.')
+                    raise ValueError('parameters.storage_profile.os_disk.name cannot be None.')
                 
                 if parameters.storage_profile.os_disk.virtual_hard_disk is None:
-                    raise AzureValueError('parameters.storage_profile.os_disk.virtual_hard_disk cannot be None.')
+                    raise ValueError('parameters.storage_profile.os_disk.virtual_hard_disk cannot be None.')
                 
         # Tracing
         
@@ -7668,10 +7668,10 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         # Tracing
         
@@ -7747,10 +7747,10 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         # Tracing
         
@@ -7826,10 +7826,10 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         # Tracing
         
@@ -7905,10 +7905,10 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         # Tracing
         
@@ -7984,10 +7984,10 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         # Tracing
         
@@ -8203,10 +8203,10 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         # Tracing
         
@@ -8282,10 +8282,10 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         # Tracing
         
@@ -9179,10 +9179,10 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         # Tracing
         
@@ -10075,7 +10075,7 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -11873,10 +11873,10 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if vm_name is None:
-            raise AzureValueError('vm_name cannot be None.')
+            raise ValueError('vm_name cannot be None.')
         
         # Tracing
         
@@ -11997,7 +11997,7 @@ class VirtualMachineOperations(object):
         """
         # Validate
         if next_link is None:
-            raise AzureValueError('next_link cannot be None.')
+            raise ValueError('next_link cannot be None.')
         
         # Tracing
         
@@ -12991,13 +12991,13 @@ class VirtualMachineSizeOperations(object):
         """
         # Validate
         if location is None:
-            raise AzureValueError('location cannot be None.')
+            raise ValueError('location cannot be None.')
         
         if location is not None and len(location) > 1000:
-            raise AzureIndexError('location is outside the valid range.')
+            raise IndexError('location is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', location) is not None) == False:
-            raise AzureIndexError('location is outside the valid range.')
+            raise IndexError('location is outside the valid range.')
         
         # Tracing
         

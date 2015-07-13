@@ -25,7 +25,6 @@ from dateutil.tz import tzutc, tzoffset
 from requests import Session
 from azure.common import (
     AzureHttpError,
-    AzureTypeError,
     AzureConflictHttpError,
     AzureMissingResourceHttpError,
 )
@@ -1212,7 +1211,7 @@ class StorageTableTest(StorageTestCase):
         self.ts.insert_entity(self.table_name, entity)
 
         # Act
-        with self.assertRaises(AzureTypeError):
+        with self.assertRaises(TypeError):
             self.ts.begin_batch()
 
             entity = self._create_updated_entity_dict(
@@ -1241,7 +1240,7 @@ class StorageTableTest(StorageTestCase):
         self.ts.insert_entity(self.table_name, entity)
 
         # Act
-        with self.assertRaises(AzureTypeError):
+        with self.assertRaises(TypeError):
             self.ts.begin_batch()
 
             entity = self._create_updated_entity_dict(
@@ -1267,7 +1266,7 @@ class StorageTableTest(StorageTestCase):
         self._create_table(other_table_name)
 
         # Act
-        with self.assertRaises(AzureTypeError):
+        with self.assertRaises(TypeError):
             self.ts.begin_batch()
 
             entity = self._create_default_entity_dict(

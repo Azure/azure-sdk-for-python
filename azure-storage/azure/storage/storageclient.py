@@ -15,9 +15,6 @@
 import os
 import sys
 
-from azure.common import (
-    AzureTypeError,
-)
 from .constants import (
     AZURE_STORAGE_ACCOUNT,
     AZURE_STORAGE_ACCESS_KEY,
@@ -97,7 +94,7 @@ class _StorageClient(object):
                 self.account_key = os.environ.get(AZURE_STORAGE_ACCESS_KEY)
 
         if not self.account_name:
-            raise AzureTypeError(_ERROR_STORAGE_MISSING_INFO)
+            raise TypeError(_ERROR_STORAGE_MISSING_INFO)
 
         self._httpclient = _HTTPClient(
             service_instance=self,

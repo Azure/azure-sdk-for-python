@@ -16,9 +16,6 @@
 #--------------------------------------------------------------------------
 import os.path
 from requests import Session
-from azure.common import (
-    AzureValueError,
-)
 from testutils.common_recordingtestcase import (
     RecordingTestCase,
     TestMode,
@@ -82,7 +79,7 @@ class LegacyMgmtTestCase(RecordingTestCase):
                 self.settings.PEM_PATH,
             )
         else:
-            raise AzureValueError('Insupported value for "connectiontype" in settings:"{}"'.format(conn_type))
+            raise ValueError('Insupported value for "connectiontype" in settings:"{}"'.format(conn_type))
         self._set_service_options(service, self.settings)
         return service
 

@@ -27,7 +27,7 @@ try:
     from urllib import quote, unquote
 except:
     from urllib.parse import quote, unquote
-from azure.common import AzureOperationResponse, AzureHttpError, AzureIndexError, AzureValueError, OperationStatusResponse, OperationStatus, Service
+from azure.common import AzureOperationResponse, AzureHttpError, OperationStatusResponse, OperationStatus, Service
 from azure.common.arm import ResourceBase, ResourceBaseExtended
 
 class LongRunningOperationResponse(AzureOperationResponse):
@@ -2114,7 +2114,7 @@ class ResourceManagementClient(Service):
         """
         # Validate
         if operation_status_link is None:
-            raise AzureValueError('operation_status_link cannot be None.')
+            raise ValueError('operation_status_link cannot be None.')
         
         # Tracing
         
@@ -2190,19 +2190,19 @@ class DeploymentOperationOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if deployment_name is None:
-            raise AzureValueError('deployment_name cannot be None.')
+            raise ValueError('deployment_name cannot be None.')
         
         if operation_id is None:
-            raise AzureValueError('operation_id cannot be None.')
+            raise ValueError('operation_id cannot be None.')
         
         # Tracing
         
@@ -2343,16 +2343,16 @@ class DeploymentOperationOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if deployment_name is None:
-            raise AzureValueError('deployment_name cannot be None.')
+            raise ValueError('deployment_name cannot be None.')
         
         # Tracing
         
@@ -2499,7 +2499,7 @@ class DeploymentOperationOperations(object):
         """
         # Validate
         if next_link is None:
-            raise AzureValueError('next_link cannot be None.')
+            raise ValueError('next_link cannot be None.')
         
         # Tracing
         
@@ -2642,16 +2642,16 @@ class DeploymentOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if deployment_name is None:
-            raise AzureValueError('deployment_name cannot be None.')
+            raise ValueError('deployment_name cannot be None.')
         
         # Tracing
         
@@ -2727,28 +2727,28 @@ class DeploymentOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if deployment_name is None:
-            raise AzureValueError('deployment_name cannot be None.')
+            raise ValueError('deployment_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.properties is not None:
             if parameters.properties.parameters_link is not None:
                 if parameters.properties.parameters_link.uri is None:
-                    raise AzureValueError('parameters.properties.parameters_link.uri cannot be None.')
+                    raise ValueError('parameters.properties.parameters_link.uri cannot be None.')
                 
             if parameters.properties.template_link is not None:
                 if parameters.properties.template_link.uri is None:
-                    raise AzureValueError('parameters.properties.template_link.uri cannot be None.')
+                    raise ValueError('parameters.properties.template_link.uri cannot be None.')
                 
         # Tracing
         
@@ -3042,16 +3042,16 @@ class DeploymentOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if deployment_name is None:
-            raise AzureValueError('deployment_name cannot be None.')
+            raise ValueError('deployment_name cannot be None.')
         
         # Tracing
         
@@ -3305,7 +3305,7 @@ class DeploymentOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -3573,7 +3573,7 @@ class DeploymentOperations(object):
         """
         # Validate
         if next_link is None:
-            raise AzureValueError('next_link cannot be None.')
+            raise ValueError('next_link cannot be None.')
         
         # Tracing
         
@@ -3816,28 +3816,28 @@ class DeploymentOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if deployment_name is None:
-            raise AzureValueError('deployment_name cannot be None.')
+            raise ValueError('deployment_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.properties is not None:
             if parameters.properties.parameters_link is not None:
                 if parameters.properties.parameters_link.uri is None:
-                    raise AzureValueError('parameters.properties.parameters_link.uri cannot be None.')
+                    raise ValueError('parameters.properties.parameters_link.uri cannot be None.')
                 
             if parameters.properties.template_link is not None:
                 if parameters.properties.template_link.uri is None:
-                    raise AzureValueError('parameters.properties.template_link.uri cannot be None.')
+                    raise ValueError('parameters.properties.template_link.uri cannot be None.')
                 
         # Tracing
         
@@ -4178,7 +4178,7 @@ class ProviderOperations(object):
         """
         # Validate
         if resource_provider_namespace is None:
-            raise AzureValueError('resource_provider_namespace cannot be None.')
+            raise ValueError('resource_provider_namespace cannot be None.')
         
         # Tracing
         
@@ -4428,7 +4428,7 @@ class ProviderOperations(object):
         """
         # Validate
         if next_link is None:
-            raise AzureValueError('next_link cannot be None.')
+            raise ValueError('next_link cannot be None.')
         
         # Tracing
         
@@ -4538,7 +4538,7 @@ class ProviderOperations(object):
         """
         # Validate
         if resource_provider_namespace is None:
-            raise AzureValueError('resource_provider_namespace cannot be None.')
+            raise ValueError('resource_provider_namespace cannot be None.')
         
         # Tracing
         
@@ -4660,7 +4660,7 @@ class ProviderOperations(object):
         """
         # Validate
         if resource_provider_namespace is None:
-            raise AzureValueError('resource_provider_namespace cannot be None.')
+            raise ValueError('resource_provider_namespace cannot be None.')
         
         # Tracing
         
@@ -4802,13 +4802,13 @@ class ResourceGroupOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         # Tracing
         
@@ -4883,13 +4883,13 @@ class ResourceGroupOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         # Tracing
         
@@ -4962,19 +4962,19 @@ class ResourceGroupOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         # Tracing
         
@@ -5155,13 +5155,13 @@ class ResourceGroupOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         # Tracing
         
@@ -5413,7 +5413,7 @@ class ResourceGroupOperations(object):
         """
         # Validate
         if next_link is None:
-            raise AzureValueError('next_link cannot be None.')
+            raise ValueError('next_link cannot be None.')
         
         # Tracing
         
@@ -5525,19 +5525,19 @@ class ResourceGroupOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         # Tracing
         
@@ -5700,28 +5700,28 @@ class ResourceOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if identity is None:
-            raise AzureValueError('identity cannot be None.')
+            raise ValueError('identity cannot be None.')
         
         if identity.resource_name is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_api_version is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_namespace is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_type is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         # Tracing
         
@@ -5807,34 +5807,34 @@ class ResourceOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if identity is None:
-            raise AzureValueError('identity cannot be None.')
+            raise ValueError('identity cannot be None.')
         
         if identity.resource_name is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_api_version is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_namespace is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_type is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         # Tracing
         
@@ -6036,28 +6036,28 @@ class ResourceOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if identity is None:
-            raise AzureValueError('identity cannot be None.')
+            raise ValueError('identity cannot be None.')
         
         if identity.resource_name is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_api_version is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_namespace is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_type is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         # Tracing
         
@@ -6137,28 +6137,28 @@ class ResourceOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if resource_group_name is not None and len(resource_group_name) > 1000:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', resource_group_name) is not None) == False:
-            raise AzureIndexError('resource_group_name is outside the valid range.')
+            raise IndexError('resource_group_name is outside the valid range.')
         
         if identity is None:
-            raise AzureValueError('identity cannot be None.')
+            raise ValueError('identity cannot be None.')
         
         if identity.resource_name is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_api_version is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_namespace is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_type is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         # Tracing
         
@@ -6487,7 +6487,7 @@ class ResourceOperations(object):
         """
         # Validate
         if next_link is None:
-            raise AzureValueError('next_link cannot be None.')
+            raise ValueError('next_link cannot be None.')
         
         # Tracing
         
@@ -6625,10 +6625,10 @@ class ResourceOperations(object):
         """
         # Validate
         if source_resource_group_name is None:
-            raise AzureValueError('source_resource_group_name cannot be None.')
+            raise ValueError('source_resource_group_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         # Tracing
         
@@ -6735,19 +6735,19 @@ class ResourceProviderOperationDetailsOperations(object):
         """
         # Validate
         if identity is None:
-            raise AzureValueError('identity cannot be None.')
+            raise ValueError('identity cannot be None.')
         
         if identity.resource_name is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_api_version is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_provider_namespace is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         if identity.resource_type is None:
-            raise AzureValueError('identity. cannot be None.')
+            raise ValueError('identity. cannot be None.')
         
         # Tracing
         
@@ -6877,7 +6877,7 @@ class TagOperations(object):
         """
         # Validate
         if tag_name is None:
-            raise AzureValueError('tag_name cannot be None.')
+            raise ValueError('tag_name cannot be None.')
         
         # Tracing
         
@@ -7012,10 +7012,10 @@ class TagOperations(object):
         """
         # Validate
         if tag_name is None:
-            raise AzureValueError('tag_name cannot be None.')
+            raise ValueError('tag_name cannot be None.')
         
         if tag_value is None:
-            raise AzureValueError('tag_value cannot be None.')
+            raise ValueError('tag_value cannot be None.')
         
         # Tracing
         
@@ -7120,7 +7120,7 @@ class TagOperations(object):
         """
         # Validate
         if tag_name is None:
-            raise AzureValueError('tag_name cannot be None.')
+            raise ValueError('tag_name cannot be None.')
         
         # Tracing
         
@@ -7190,10 +7190,10 @@ class TagOperations(object):
         """
         # Validate
         if tag_name is None:
-            raise AzureValueError('tag_name cannot be None.')
+            raise ValueError('tag_name cannot be None.')
         
         if tag_value is None:
-            raise AzureValueError('tag_value cannot be None.')
+            raise ValueError('tag_value cannot be None.')
         
         # Tracing
         
@@ -7397,7 +7397,7 @@ class TagOperations(object):
         """
         # Validate
         if next_link is None:
-            raise AzureValueError('next_link cannot be None.')
+            raise ValueError('next_link cannot be None.')
         
         # Tracing
         

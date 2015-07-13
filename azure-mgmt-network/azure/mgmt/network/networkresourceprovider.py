@@ -27,7 +27,7 @@ try:
     from urllib import quote, unquote
 except:
     from urllib.parse import quote, unquote
-from azure.common import AzureOperationResponse, AzureHttpError, AzureIndexError, AzureValueError, OperationStatusResponse, OperationStatus, Service
+from azure.common import AzureOperationResponse, AzureHttpError, OperationStatusResponse, OperationStatus, Service
 from azure.common.arm import ResourceBase, ResourceBaseExtended
 
 class DnsNameAvailabilityResponse(AzureOperationResponse):
@@ -3102,10 +3102,10 @@ class NetworkResourceProviderClient(Service):
         """
         # Validate
         if location is None:
-            raise AzureValueError('location cannot be None.')
+            raise ValueError('location cannot be None.')
         
         if domain_name_label is None:
-            raise AzureValueError('domain_name_label cannot be None.')
+            raise ValueError('domain_name_label cannot be None.')
         
         # Tracing
         
@@ -3200,7 +3200,7 @@ class NetworkResourceProviderClient(Service):
         """
         # Validate
         if azure_async_operation is None:
-            raise AzureValueError('azure_async_operation cannot be None.')
+            raise ValueError('azure_async_operation cannot be None.')
         
         # Tracing
         
@@ -3330,49 +3330,49 @@ class LoadBalancerOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if load_balancer_name is None:
-            raise AzureValueError('load_balancer_name cannot be None.')
+            raise ValueError('load_balancer_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.inbound_nat_rules is not None:
             for inbound_nat_rules_parameter_item in parameters.inbound_nat_rules:
                 if inbound_nat_rules_parameter_item.enable_floating_ip is None:
-                    raise AzureValueError('parameters.inbound_nat_rules.enable_floating_ip cannot be None.')
+                    raise ValueError('parameters.inbound_nat_rules.enable_floating_ip cannot be None.')
                 
                 if inbound_nat_rules_parameter_item.frontend_port is None:
-                    raise AzureValueError('parameters.inbound_nat_rules.frontend_port cannot be None.')
+                    raise ValueError('parameters.inbound_nat_rules.frontend_port cannot be None.')
                 
                 if inbound_nat_rules_parameter_item.protocol is None:
-                    raise AzureValueError('parameters.inbound_nat_rules.protocol cannot be None.')
+                    raise ValueError('parameters.inbound_nat_rules.protocol cannot be None.')
                 
         if parameters.load_balancing_rules is not None:
             for load_balancing_rules_parameter_item in parameters.load_balancing_rules:
                 if load_balancing_rules_parameter_item.backend_address_pool is None:
-                    raise AzureValueError('parameters.load_balancing_rules.backend_address_pool cannot be None.')
+                    raise ValueError('parameters.load_balancing_rules.backend_address_pool cannot be None.')
                 
                 if load_balancing_rules_parameter_item.enable_floating_ip is None:
-                    raise AzureValueError('parameters.load_balancing_rules.enable_floating_ip cannot be None.')
+                    raise ValueError('parameters.load_balancing_rules.enable_floating_ip cannot be None.')
                 
                 if load_balancing_rules_parameter_item.frontend_port is None:
-                    raise AzureValueError('parameters.load_balancing_rules.frontend_port cannot be None.')
+                    raise ValueError('parameters.load_balancing_rules.frontend_port cannot be None.')
                 
                 if load_balancing_rules_parameter_item.protocol is None:
-                    raise AzureValueError('parameters.load_balancing_rules.protocol cannot be None.')
+                    raise ValueError('parameters.load_balancing_rules.protocol cannot be None.')
                 
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         if parameters.probes is not None:
             for probes_parameter_item in parameters.probes:
                 if probes_parameter_item.port is None:
-                    raise AzureValueError('parameters.probes.port cannot be None.')
+                    raise ValueError('parameters.probes.port cannot be None.')
                 
                 if probes_parameter_item.protocol is None:
-                    raise AzureValueError('parameters.probes.protocol cannot be None.')
+                    raise ValueError('parameters.probes.protocol cannot be None.')
                 
         # Tracing
         
@@ -4202,10 +4202,10 @@ class LoadBalancerOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if load_balancer_name is None:
-            raise AzureValueError('load_balancer_name cannot be None.')
+            raise ValueError('load_balancer_name cannot be None.')
         
         # Tracing
         
@@ -4368,10 +4368,10 @@ class LoadBalancerOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if load_balancer_name is None:
-            raise AzureValueError('load_balancer_name cannot be None.')
+            raise ValueError('load_balancer_name cannot be None.')
         
         # Tracing
         
@@ -4848,7 +4848,7 @@ class LoadBalancerOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -5835,16 +5835,16 @@ class LocalNetworkGatewayOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if local_network_gateway_name is None:
-            raise AzureValueError('local_network_gateway_name cannot be None.')
+            raise ValueError('local_network_gateway_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         # Tracing
         
@@ -6087,10 +6087,10 @@ class LocalNetworkGatewayOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if local_network_gateway_name is None:
-            raise AzureValueError('local_network_gateway_name cannot be None.')
+            raise ValueError('local_network_gateway_name cannot be None.')
         
         # Tracing
         
@@ -6263,10 +6263,10 @@ class LocalNetworkGatewayOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if local_network_gateway_name is None:
-            raise AzureValueError('local_network_gateway_name cannot be None.')
+            raise ValueError('local_network_gateway_name cannot be None.')
         
         # Tracing
         
@@ -6403,7 +6403,7 @@ class LocalNetworkGatewayOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -6569,16 +6569,16 @@ class NetworkInterfaceOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_interface_name is None:
-            raise AzureValueError('network_interface_name cannot be None.')
+            raise ValueError('network_interface_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         # Tracing
         
@@ -7018,10 +7018,10 @@ class NetworkInterfaceOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_interface_name is None:
-            raise AzureValueError('network_interface_name cannot be None.')
+            raise ValueError('network_interface_name cannot be None.')
         
         # Tracing
         
@@ -7185,10 +7185,10 @@ class NetworkInterfaceOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_interface_name is None:
-            raise AzureValueError('network_interface_name cannot be None.')
+            raise ValueError('network_interface_name cannot be None.')
         
         # Tracing
         
@@ -7435,7 +7435,7 @@ class NetworkInterfaceOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -7960,50 +7960,50 @@ class NetworkSecurityGroupOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_security_group_name is None:
-            raise AzureValueError('network_security_group_name cannot be None.')
+            raise ValueError('network_security_group_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.default_security_rules is not None:
             for default_security_rules_parameter_item in parameters.default_security_rules:
                 if default_security_rules_parameter_item.access is None:
-                    raise AzureValueError('parameters.default_security_rules.access cannot be None.')
+                    raise ValueError('parameters.default_security_rules.access cannot be None.')
                 
                 if default_security_rules_parameter_item.destination_address_prefix is None:
-                    raise AzureValueError('parameters.default_security_rules.destination_address_prefix cannot be None.')
+                    raise ValueError('parameters.default_security_rules.destination_address_prefix cannot be None.')
                 
                 if default_security_rules_parameter_item.direction is None:
-                    raise AzureValueError('parameters.default_security_rules.direction cannot be None.')
+                    raise ValueError('parameters.default_security_rules.direction cannot be None.')
                 
                 if default_security_rules_parameter_item.protocol is None:
-                    raise AzureValueError('parameters.default_security_rules.protocol cannot be None.')
+                    raise ValueError('parameters.default_security_rules.protocol cannot be None.')
                 
                 if default_security_rules_parameter_item.source_address_prefix is None:
-                    raise AzureValueError('parameters.default_security_rules.source_address_prefix cannot be None.')
+                    raise ValueError('parameters.default_security_rules.source_address_prefix cannot be None.')
                 
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         if parameters.security_rules is not None:
             for security_rules_parameter_item in parameters.security_rules:
                 if security_rules_parameter_item.access is None:
-                    raise AzureValueError('parameters.security_rules.access cannot be None.')
+                    raise ValueError('parameters.security_rules.access cannot be None.')
                 
                 if security_rules_parameter_item.destination_address_prefix is None:
-                    raise AzureValueError('parameters.security_rules.destination_address_prefix cannot be None.')
+                    raise ValueError('parameters.security_rules.destination_address_prefix cannot be None.')
                 
                 if security_rules_parameter_item.direction is None:
-                    raise AzureValueError('parameters.security_rules.direction cannot be None.')
+                    raise ValueError('parameters.security_rules.direction cannot be None.')
                 
                 if security_rules_parameter_item.protocol is None:
-                    raise AzureValueError('parameters.security_rules.protocol cannot be None.')
+                    raise ValueError('parameters.security_rules.protocol cannot be None.')
                 
                 if security_rules_parameter_item.source_address_prefix is None:
-                    raise AzureValueError('parameters.security_rules.source_address_prefix cannot be None.')
+                    raise ValueError('parameters.security_rules.source_address_prefix cannot be None.')
                 
         # Tracing
         
@@ -8497,10 +8497,10 @@ class NetworkSecurityGroupOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_security_group_name is None:
-            raise AzureValueError('network_security_group_name cannot be None.')
+            raise ValueError('network_security_group_name cannot be None.')
         
         # Tracing
         
@@ -8670,10 +8670,10 @@ class NetworkSecurityGroupOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_security_group_name is None:
-            raise AzureValueError('network_security_group_name cannot be None.')
+            raise ValueError('network_security_group_name cannot be None.')
         
         # Tracing
         
@@ -8963,7 +8963,7 @@ class NetworkSecurityGroupOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -9573,19 +9573,19 @@ class PublicIpAddressOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if public_ip_address_name is None:
-            raise AzureValueError('public_ip_address_name cannot be None.')
+            raise ValueError('public_ip_address_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         if parameters.public_ip_allocation_method is None:
-            raise AzureValueError('parameters.public_ip_allocation_method cannot be None.')
+            raise ValueError('parameters.public_ip_allocation_method cannot be None.')
         
         # Tracing
         
@@ -9872,10 +9872,10 @@ class PublicIpAddressOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if public_ip_address_name is None:
-            raise AzureValueError('public_ip_address_name cannot be None.')
+            raise ValueError('public_ip_address_name cannot be None.')
         
         # Tracing
         
@@ -10043,10 +10043,10 @@ class PublicIpAddressOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if public_ip_address_name is None:
-            raise AzureValueError('public_ip_address_name cannot be None.')
+            raise ValueError('public_ip_address_name cannot be None.')
         
         # Tracing
         
@@ -10214,7 +10214,7 @@ class PublicIpAddressOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -10578,31 +10578,31 @@ class SecurityRuleOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_security_group_name is None:
-            raise AzureValueError('network_security_group_name cannot be None.')
+            raise ValueError('network_security_group_name cannot be None.')
         
         if security_rule_name is None:
-            raise AzureValueError('security_rule_name cannot be None.')
+            raise ValueError('security_rule_name cannot be None.')
         
         if security_rule_parameters is None:
-            raise AzureValueError('security_rule_parameters cannot be None.')
+            raise ValueError('security_rule_parameters cannot be None.')
         
         if security_rule_parameters.access is None:
-            raise AzureValueError('security_rule_parameters.access cannot be None.')
+            raise ValueError('security_rule_parameters.access cannot be None.')
         
         if security_rule_parameters.destination_address_prefix is None:
-            raise AzureValueError('security_rule_parameters.destination_address_prefix cannot be None.')
+            raise ValueError('security_rule_parameters.destination_address_prefix cannot be None.')
         
         if security_rule_parameters.direction is None:
-            raise AzureValueError('security_rule_parameters.direction cannot be None.')
+            raise ValueError('security_rule_parameters.direction cannot be None.')
         
         if security_rule_parameters.protocol is None:
-            raise AzureValueError('security_rule_parameters.protocol cannot be None.')
+            raise ValueError('security_rule_parameters.protocol cannot be None.')
         
         if security_rule_parameters.source_address_prefix is None:
-            raise AzureValueError('security_rule_parameters.source_address_prefix cannot be None.')
+            raise ValueError('security_rule_parameters.source_address_prefix cannot be None.')
         
         # Tracing
         
@@ -10857,13 +10857,13 @@ class SecurityRuleOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_security_group_name is None:
-            raise AzureValueError('network_security_group_name cannot be None.')
+            raise ValueError('network_security_group_name cannot be None.')
         
         if security_rule_name is None:
-            raise AzureValueError('security_rule_name cannot be None.')
+            raise ValueError('security_rule_name cannot be None.')
         
         # Tracing
         
@@ -11040,13 +11040,13 @@ class SecurityRuleOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_security_group_name is None:
-            raise AzureValueError('network_security_group_name cannot be None.')
+            raise ValueError('network_security_group_name cannot be None.')
         
         if security_rule_name is None:
-            raise AzureValueError('security_rule_name cannot be None.')
+            raise ValueError('security_rule_name cannot be None.')
         
         # Tracing
         
@@ -11202,10 +11202,10 @@ class SecurityRuleOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if network_security_group_name is None:
-            raise AzureValueError('network_security_group_name cannot be None.')
+            raise ValueError('network_security_group_name cannot be None.')
         
         # Tracing
         
@@ -11389,19 +11389,19 @@ class SubnetOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_name is None:
-            raise AzureValueError('virtual_network_name cannot be None.')
+            raise ValueError('virtual_network_name cannot be None.')
         
         if subnet_name is None:
-            raise AzureValueError('subnet_name cannot be None.')
+            raise ValueError('subnet_name cannot be None.')
         
         if subnet_parameters is None:
-            raise AzureValueError('subnet_parameters cannot be None.')
+            raise ValueError('subnet_parameters cannot be None.')
         
         if subnet_parameters.address_prefix is None:
-            raise AzureValueError('subnet_parameters.address_prefix cannot be None.')
+            raise ValueError('subnet_parameters.address_prefix cannot be None.')
         
         # Tracing
         
@@ -11633,13 +11633,13 @@ class SubnetOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_name is None:
-            raise AzureValueError('virtual_network_name cannot be None.')
+            raise ValueError('virtual_network_name cannot be None.')
         
         if subnet_name is None:
-            raise AzureValueError('subnet_name cannot be None.')
+            raise ValueError('subnet_name cannot be None.')
         
         # Tracing
         
@@ -11812,13 +11812,13 @@ class SubnetOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_name is None:
-            raise AzureValueError('virtual_network_name cannot be None.')
+            raise ValueError('virtual_network_name cannot be None.')
         
         if subnet_name is None:
-            raise AzureValueError('subnet_name cannot be None.')
+            raise ValueError('subnet_name cannot be None.')
         
         # Tracing
         
@@ -11953,10 +11953,10 @@ class SubnetOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_name is None:
-            raise AzureValueError('virtual_network_name cannot be None.')
+            raise ValueError('virtual_network_name cannot be None.')
         
         # Tracing
         
@@ -12112,13 +12112,13 @@ class UsageOperations(object):
         """
         # Validate
         if location is None:
-            raise AzureValueError('location cannot be None.')
+            raise ValueError('location cannot be None.')
         
         if location is not None and len(location) > 1000:
-            raise AzureIndexError('location is outside the valid range.')
+            raise IndexError('location is outside the valid range.')
         
         if (re.search('^[-\\w\\._]+$', location) is not None) == False:
-            raise AzureIndexError('location is outside the valid range.')
+            raise IndexError('location is outside the valid range.')
         
         # Tracing
         
@@ -12260,28 +12260,28 @@ class VirtualNetworkGatewayConnectionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_gateway_connection_name is None:
-            raise AzureValueError('virtual_network_gateway_connection_name cannot be None.')
+            raise ValueError('virtual_network_gateway_connection_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.local_network_gateway2 is not None:
             if parameters.local_network_gateway2.location is None:
-                raise AzureValueError('parameters.local_network_gateway2.location cannot be None.')
+                raise ValueError('parameters.local_network_gateway2.location cannot be None.')
             
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         if parameters.virtual_network_gateway1 is not None:
             if parameters.virtual_network_gateway1.location is None:
-                raise AzureValueError('parameters.virtual_network_gateway1.location cannot be None.')
+                raise ValueError('parameters.virtual_network_gateway1.location cannot be None.')
             
         if parameters.virtual_network_gateway2 is not None:
             if parameters.virtual_network_gateway2.location is None:
-                raise AzureValueError('parameters.virtual_network_gateway2.location cannot be None.')
+                raise ValueError('parameters.virtual_network_gateway2.location cannot be None.')
             
         # Tracing
         
@@ -13002,10 +13002,10 @@ class VirtualNetworkGatewayConnectionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_gateway_connection_name is None:
-            raise AzureValueError('virtual_network_gateway_connection_name cannot be None.')
+            raise ValueError('virtual_network_gateway_connection_name cannot be None.')
         
         # Tracing
         
@@ -13090,13 +13090,13 @@ class VirtualNetworkGatewayConnectionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_gateway_connection_name is None:
-            raise AzureValueError('virtual_network_gateway_connection_name cannot be None.')
+            raise ValueError('virtual_network_gateway_connection_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         # Tracing
         
@@ -13260,13 +13260,13 @@ class VirtualNetworkGatewayConnectionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_gateway_connection_name is None:
-            raise AzureValueError('virtual_network_gateway_connection_name cannot be None.')
+            raise ValueError('virtual_network_gateway_connection_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         # Tracing
         
@@ -13520,10 +13520,10 @@ class VirtualNetworkGatewayConnectionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_gateway_connection_name is None:
-            raise AzureValueError('virtual_network_gateway_connection_name cannot be None.')
+            raise ValueError('virtual_network_gateway_connection_name cannot be None.')
         
         # Tracing
         
@@ -13947,10 +13947,10 @@ class VirtualNetworkGatewayConnectionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if connection_shared_key_name is None:
-            raise AzureValueError('connection_shared_key_name cannot be None.')
+            raise ValueError('connection_shared_key_name cannot be None.')
         
         # Tracing
         
@@ -14036,7 +14036,7 @@ class VirtualNetworkGatewayConnectionOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -14597,16 +14597,16 @@ class VirtualNetworkGatewayOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_gateway_name is None:
-            raise AzureValueError('virtual_network_gateway_name cannot be None.')
+            raise ValueError('virtual_network_gateway_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         # Tracing
         
@@ -14945,10 +14945,10 @@ class VirtualNetworkGatewayOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_gateway_name is None:
-            raise AzureValueError('virtual_network_gateway_name cannot be None.')
+            raise ValueError('virtual_network_gateway_name cannot be None.')
         
         # Tracing
         
@@ -15032,16 +15032,16 @@ class VirtualNetworkGatewayOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_gateway_name is None:
-            raise AzureValueError('virtual_network_gateway_name cannot be None.')
+            raise ValueError('virtual_network_gateway_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         # Tracing
         
@@ -15473,10 +15473,10 @@ class VirtualNetworkGatewayOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_gateway_name is None:
-            raise AzureValueError('virtual_network_gateway_name cannot be None.')
+            raise ValueError('virtual_network_gateway_name cannot be None.')
         
         # Tracing
         
@@ -15671,7 +15671,7 @@ class VirtualNetworkGatewayOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -15949,21 +15949,21 @@ class VirtualNetworkOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_name is None:
-            raise AzureValueError('virtual_network_name cannot be None.')
+            raise ValueError('virtual_network_name cannot be None.')
         
         if parameters is None:
-            raise AzureValueError('parameters cannot be None.')
+            raise ValueError('parameters cannot be None.')
         
         if parameters.location is None:
-            raise AzureValueError('parameters.location cannot be None.')
+            raise ValueError('parameters.location cannot be None.')
         
         if parameters.subnets is not None:
             for subnets_parameter_item in parameters.subnets:
                 if subnets_parameter_item.address_prefix is None:
-                    raise AzureValueError('parameters.subnets.address_prefix cannot be None.')
+                    raise ValueError('parameters.subnets.address_prefix cannot be None.')
                 
         # Tracing
         
@@ -16315,10 +16315,10 @@ class VirtualNetworkOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_name is None:
-            raise AzureValueError('virtual_network_name cannot be None.')
+            raise ValueError('virtual_network_name cannot be None.')
         
         # Tracing
         
@@ -16485,10 +16485,10 @@ class VirtualNetworkOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         if virtual_network_name is None:
-            raise AzureValueError('virtual_network_name cannot be None.')
+            raise ValueError('virtual_network_name cannot be None.')
         
         # Tracing
         
@@ -16684,7 +16684,7 @@ class VirtualNetworkOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise AzureValueError('resource_group_name cannot be None.')
+            raise ValueError('resource_group_name cannot be None.')
         
         # Tracing
         

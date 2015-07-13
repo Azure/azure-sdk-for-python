@@ -24,13 +24,13 @@ import unittest
 from datetime import datetime
 from requests import Session
 from azure.common import (
-    AzureException,
     AzureMissingResourceHttpError,
 )
 from azure.servicebus import (
     AuthorizationRule,
     EventHub,
     ServiceBusService,
+    AzureServiceBusResourceNotFound,
 )
 from testutils.common_recordingtestcase import (
     TestMode,
@@ -214,7 +214,7 @@ class ServiceBusEventHubTest(ServiceBusTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(AzureException):
+        with self.assertRaises(AzureServiceBusResourceNotFound):
             resp = self.sbs.get_event_hub(self.event_hub_name)
 
         # Assert

@@ -15,7 +15,6 @@
 
 from azure.common import (
     AzureHttpError,
-    AzureTypeError,
 )
 
 
@@ -37,4 +36,4 @@ def _general_error_handler(http_error):
 
 def _validate_not_none(param_name, param):
     if param is None:
-        raise AzureTypeError(_ERROR_VALUE_NONE.format(param_name))
+        raise TypeError(_ERROR_VALUE_NONE.format(param_name))

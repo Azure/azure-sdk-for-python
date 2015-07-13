@@ -23,7 +23,6 @@ import sys
 import unittest
 
 from azure.common import (
-    AzureTypeError,
     AzureHttpError,
     AzureConflictHttpError,
     AzureMissingResourceHttpError,
@@ -280,7 +279,7 @@ class StorageBlobTest(StorageTestCase):
             del os.environ[EMULATED]
 
         # Act
-        with self.assertRaises(AzureTypeError):
+        with self.assertRaises(TypeError):
             bs = BlobService()
 
         # Assert
@@ -330,7 +329,7 @@ class StorageBlobTest(StorageTestCase):
         os.environ[EMULATED] = 'false'
 
         # Act
-        with self.assertRaises(AzureTypeError):
+        with self.assertRaises(TypeError):
             bs = BlobService()
 
         if EMULATED in os.environ:

@@ -16,9 +16,6 @@ import os
 import sys
 import time
 
-from azure.common import (
-    AzureTypeError,
-)
 from .constants import (
     AZURE_MANAGEMENT_CERTFILE,
     AZURE_MANAGEMENT_SUBSCRIPTIONID,
@@ -78,7 +75,7 @@ class _ServiceManagementClient(object):
 
         if not self.request_session:
             if not self.cert_file or not self.subscription_id:
-                raise AzureTypeError(
+                raise TypeError(
                     'You need to provide subscription id and certificate file')
 
         self._httpclient = _HTTPClient(

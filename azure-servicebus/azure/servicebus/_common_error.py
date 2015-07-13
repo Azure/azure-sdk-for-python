@@ -16,7 +16,6 @@ from azure.common import (
     AzureHttpError,
     AzureConflictHttpError,
     AzureMissingResourceHttpError,
-    AzureTypeError,
 )
 
 
@@ -68,9 +67,9 @@ def _dont_fail_not_exist(error):
 
 def _validate_type_bytes(param_name, param):
     if not isinstance(param, bytes):
-        raise AzureTypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
+        raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
 
 
 def _validate_not_none(param_name, param):
     if param is None:
-        raise AzureTypeError(_ERROR_VALUE_NONE.format(param_name))
+        raise TypeError(_ERROR_VALUE_NONE.format(param_name))
