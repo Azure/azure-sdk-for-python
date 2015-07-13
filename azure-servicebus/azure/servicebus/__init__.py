@@ -25,6 +25,7 @@ from .constants import (
 )
 
 from .models import (
+    AzureServiceBusPeekLockError,
     Queue,
     Topic,
     Subscription,

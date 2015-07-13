@@ -242,6 +242,8 @@ class _HTTPClient(object):
                 request.path, request.query = self._update_request_uri_query(request)
                 return self.perform_request(request)
             if status >= 300:
+                # This exception will be caught by the general error handler
+                # and raised as an azure http exception
                 raise HTTPError(status, message, respheaders, respbody)
 
             return response

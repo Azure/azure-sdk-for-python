@@ -18,7 +18,7 @@ import sys
 
 from datetime import datetime
 from azure.common import (
-    WindowsAzureError,
+    AzureTypeError,
 )
 from .models import (
     Queue,
@@ -245,7 +245,7 @@ def _convert_etree_element_to_queue(entry_element):
                 invalid_queue = False
 
     if invalid_queue:
-        raise WindowsAzureError(_ERROR_QUEUE_NOT_FOUND)
+        raise AzureTypeError(_ERROR_QUEUE_NOT_FOUND)
 
     # extract id, updated and name value from feed entry and set them of queue.
     for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
@@ -298,7 +298,7 @@ def _convert_etree_element_to_topic(entry_element):
                 invalid_topic = False
 
     if invalid_topic:
-        raise WindowsAzureError(_ERROR_TOPIC_NOT_FOUND)
+        raise AzureTypeError(_ERROR_TOPIC_NOT_FOUND)
 
     # extract id, updated and name value from feed entry and set them of topic.
     for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
@@ -414,7 +414,7 @@ def _convert_etree_element_to_event_hub(entry_element):
                 hub.authorization_rules.append(rule)
 
     if invalid_event_hub:
-        raise WindowsAzureError(_ERROR_EVENT_HUB_NOT_FOUND)
+        raise AzureTypeError(_ERROR_EVENT_HUB_NOT_FOUND)
 
     # extract id, updated and name value from feed entry and set them of queue.
     for name, value in _ETreeXmlToObject.get_entry_properties_from_element(

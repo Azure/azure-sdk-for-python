@@ -16,8 +16,8 @@ import time
 import unittest
 
 from azure.common import (
-    WindowsAzureError,
-    WindowsAzureMissingResourceError,
+    AzureHttpError,
+    AzureMissingResourceHttpError,
 )
 from azure.servicemanagement import ServiceBusManagementService
 from testutils.common_recordingtestcase import (
@@ -120,7 +120,7 @@ class LegacyMgmtServiceBusTest(LegacyMgmtTestCase):
         name = self.sb_namespace
 
         # Act
-        with self.assertRaises(WindowsAzureMissingResourceError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.sms.get_namespace(name)
 
         # Assert
@@ -218,7 +218,7 @@ class LegacyMgmtServiceBusTest(LegacyMgmtTestCase):
         self._wait_for_namespace_active(name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.sms.create_namespace(name, region)
 
         # Assert
@@ -244,7 +244,7 @@ class LegacyMgmtServiceBusTest(LegacyMgmtTestCase):
         name = self.sb_namespace
 
         # Act
-        with self.assertRaises(WindowsAzureMissingResourceError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.sms.delete_namespace(name)
 
         # Assert

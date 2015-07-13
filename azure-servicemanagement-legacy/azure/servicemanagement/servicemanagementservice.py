@@ -13,7 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 from azure.common import (
-    WindowsAzureError,
+    AzureTypeError,
 )
 from .constants import (
     DEFAULT_HTTP_TIMEOUT,
@@ -215,10 +215,10 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('description', description)
         _validate_not_none('label', label)
         if affinity_group is None and location is None:
-            raise WindowsAzureError(
+            raise AzureTypeError(
                 'location or affinity_group must be specified')
         if affinity_group is not None and location is not None:
-            raise WindowsAzureError(
+            raise AzureTypeError(
                 'Only one of location or affinity_group needs to be specified')
         if geo_replication_enabled == False:
             account_type = 'Standard_LRS'
@@ -371,10 +371,10 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('service_name', service_name)
         _validate_not_none('label', label)
         if affinity_group is None and location is None:
-            raise WindowsAzureError(
+            raise AzureTypeError(
                 'location or affinity_group must be specified')
         if affinity_group is not None and location is not None:
-            raise WindowsAzureError(
+            raise AzureTypeError(
                 'Only one of location or affinity_group needs to be specified')
         return self._perform_post(self._get_hosted_service_path(),
                                   _XmlSerializer.create_hosted_service_to_xml(

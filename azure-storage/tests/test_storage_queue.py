@@ -28,7 +28,11 @@ from azure.storage.queue import (
     QueueService,
     QueueSharedAccessPermissions,
 )
-from azure.common import WindowsAzureError
+from azure.common import (
+    AzureHttpError,
+    AzureConflictHttpError,
+    AzureMissingResourceHttpError,
+)
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -156,7 +160,7 @@ class StorageQueueTest(StorageTestCase):
     def test_create_queue_fail_on_exist(self):
         # Action
         created = self.qs.create_queue(self.creatable_queues[0], None, True)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.qs.create_queue(self.creatable_queues[0], None, True)
 
         # Asserts
@@ -188,7 +192,7 @@ class StorageQueueTest(StorageTestCase):
     @record
     def test_delete_queue_fail_not_exist_not_exist(self):
         # Action
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.qs.delete_queue(self.creatable_queues[0], True)
 
         # Asserts
@@ -590,7 +594,7 @@ class StorageQueueTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.qs.get_queue_acl(self.creatable_queues[0])
 
         # Assert
@@ -651,7 +655,7 @@ class StorageQueueTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.qs.set_queue_acl(self.creatable_queues[0])
 
         # Assert
@@ -690,7 +694,7 @@ class StorageQueueTest(StorageTestCase):
         # Action
         self.creatable_queues[0] = u'啊齄丂狛狜'
 
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             # not supported - queue name must be alphanumeric, lowercase
             self.qs.create_queue(self.creatable_queues[0])
 

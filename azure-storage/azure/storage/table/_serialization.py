@@ -21,7 +21,7 @@ from dateutil.tz import tzutc
 from time import time
 from wsgiref.handlers import format_date_time
 from azure.common import (
-    WindowsAzureError,
+    AzureTypeError,
 )
 from .._common_models import (
     WindowsAzureData,
@@ -207,7 +207,7 @@ def _convert_entity_to_xml(source):
         if conv is None and sys.version_info >= (3,) and value is None:
             conv = _to_entity_none
         if conv is None:
-            raise WindowsAzureError(
+            raise AzureTypeError(
                 _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY.format(
                     type(value).__name__))
 

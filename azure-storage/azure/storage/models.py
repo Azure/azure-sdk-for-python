@@ -12,10 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+from azure.common import (
+    AzureHttpError,
+)
 from ._common_models import (
     WindowsAzureData,
     _list_of,
 )
+
+
+class AzureBatchOperationError(AzureHttpError):
+
+    '''Indicates that a batch operation failed'''
+
+    def __init__(self, message, status_code, batch_code):
+        super(AzureBatchOperationError, self).__init__(message, status_code)
+        self.code = batch_code
 
 
 class EnumResultsBase(object):

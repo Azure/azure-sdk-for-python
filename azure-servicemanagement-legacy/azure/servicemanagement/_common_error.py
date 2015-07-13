@@ -14,9 +14,8 @@
 #--------------------------------------------------------------------------
 
 from azure.common import (
-    WindowsAzureError,
-    WindowsAzureConflictError,
-    WindowsAzureMissingResourceError,
+    AzureHttpError,
+    AzureTypeError,
 )
 
 
@@ -30,21 +29,12 @@ _ERROR_ASYNC_OP_TIMEOUT = 'Timed out waiting for async operation to complete.'
 
 def _general_error_handler(http_error):
     ''' Simple error handler for azure.'''
-    if http_error.status == 409:
-        raise WindowsAzureConflictError(
-            _ERROR_CONFLICT.format(str(http_error)))
-    elif http_error.status == 404:
-        raise WindowsAzureMissingResourceError(
-            _ERROR_NOT_FOUND.format(str(http_error)))
-    else:
-        if http_error.respbody is not None:
-            raise WindowsAzureError(
-                _ERROR_UNKNOWN.format(str(http_error)) + '\n' + \
-                    http_error.respbody.decode('utf-8-sig'))
-        else:
-            raise WindowsAzureError(_ERROR_UNKNOWN.format(str(http_error)))
+    message = str(http_error)
+    if http_error.respbody is not None:
+        message += '\n' + http_error.respbody.decode('utf-8-sig')
+    raise AzureHttpError(message, http_error.status)
 
 
 def _validate_not_none(param_name, param):
     if param is None:
-        raise TypeError(_ERROR_VALUE_NONE.format(param_name))
+        raise AzureTypeError(_ERROR_VALUE_NONE.format(param_name))

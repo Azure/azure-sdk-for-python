@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,11 +14,10 @@
 #--------------------------------------------------------------------------
 
 from azure.common import (
-    WindowsAzureError,
-    WindowsAzureConflictError,
-    WindowsAzureMissingResourceError,
-    WindowsAzureBatchOperationError,
-    WindowsAzureAsyncOperationError,
+    AzureHttpError,
+    AzureConflictHttpError,
+    AzureMissingResourceHttpError,
+    AzureTypeError,
 )
 
 
@@ -61,7 +60,7 @@ _ERROR_PAGE_BLOB_SIZE_ALIGNMENT = \
 def _dont_fail_on_exist(error):
     ''' don't throw exception if the resource exists.
     This is called by create_* APIs with fail_on_exist=False'''
-    if isinstance(error, WindowsAzureConflictError):
+    if isinstance(error, AzureConflictHttpError):
         return False
     else:
         raise error
@@ -70,7 +69,7 @@ def _dont_fail_on_exist(error):
 def _dont_fail_not_exist(error):
     ''' don't throw exception if the resource doesn't exist.
     This is called by create_* APIs with fail_on_exist=False'''
-    if isinstance(error, WindowsAzureMissingResourceError):
+    if isinstance(error, AzureMissingResourceHttpError):
         return False
     else:
         raise error
@@ -78,28 +77,17 @@ def _dont_fail_not_exist(error):
 
 def _general_error_handler(http_error):
     ''' Simple error handler for azure.'''
-    if http_error.status == 409:
-        raise WindowsAzureConflictError(
-            _ERROR_CONFLICT.format(str(http_error)))
-    elif http_error.status == 404:
-        raise WindowsAzureMissingResourceError(
-            _ERROR_NOT_FOUND.format(str(http_error)))
-    else:
-        if http_error.respbody is not None:
-            raise WindowsAzureError(
-                _ERROR_UNKNOWN.format(str(http_error)) + '\n' + \
-                    http_error.respbody.decode('utf-8-sig'))
-        else:
-            raise WindowsAzureError(_ERROR_UNKNOWN.format(str(http_error)))
+    message = str(http_error)
+    if http_error.respbody is not None:
+        message += '\n' + http_error.respbody.decode('utf-8-sig')
+    raise AzureHttpError(message, http_error.status)
 
 
 def _validate_type_bytes(param_name, param):
     if not isinstance(param, bytes):
-        raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
+        raise AzureTypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
 
 
 def _validate_not_none(param_name, param):
     if param is None:
-        raise TypeError(_ERROR_VALUE_NONE.format(param_name))
-
-
+        raise AzureTypeError(_ERROR_VALUE_NONE.format(param_name))

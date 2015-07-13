@@ -24,11 +24,13 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc, tzoffset
 from requests import Session
 from azure.common import (
-    WindowsAzureError,
-    WindowsAzureBatchOperationError,
-    WindowsAzureMissingResourceError,
+    AzureHttpError,
+    AzureTypeError,
+    AzureConflictHttpError,
+    AzureMissingResourceHttpError,
 )
 from azure.storage import (
+    AzureBatchOperationError,
     AccessPolicy,
     SharedAccessPolicy,
     SignedIdentifier,
@@ -272,8 +274,7 @@ class StorageTableTest(StorageTestCase):
         table_properties.logging.retention_policy.enabled = False
         table_properties.logging.retention_policy.days = 5
 
-        # TODO: Better error, ValueError?
-        self.assertRaises(WindowsAzureError,
+        self.assertRaises(AzureHttpError,
                           self.ts.set_table_service_properties,
                           table_properties)
 
@@ -281,8 +282,7 @@ class StorageTableTest(StorageTestCase):
         table_properties.logging.retention_policy.days = None
         table_properties.logging.retention_policy.enabled = True
 
-        # TODO: Better error, ValueError?
-        self.assertRaises(WindowsAzureError,
+        self.assertRaises(AzureHttpError,
                           self.ts.set_table_service_properties,
                           table_properties)
 
@@ -337,7 +337,7 @@ class StorageTableTest(StorageTestCase):
 
         # Act
         created = self.ts.create_table(self.table_name)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.ts.create_table(self.table_name, True)
 
         # Assert
@@ -378,7 +378,7 @@ class StorageTableTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.ts.query_tables(self.table_name)
 
         # Assert
@@ -458,7 +458,7 @@ class StorageTableTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.ts.delete_table(self.table_name, True)
 
         # Assert
@@ -494,7 +494,7 @@ class StorageTableTest(StorageTestCase):
         self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.ts.insert_entity(
                 self.table_name,
                 self._create_default_entity_dict('MyPartition', '1'))
@@ -520,7 +520,7 @@ class StorageTableTest(StorageTestCase):
         self._create_table(self.table_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
@@ -700,7 +700,7 @@ class StorageTableTest(StorageTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition', '1')
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.ts.update_entity(
                 self.table_name, 'MyPartition', '1', sent_entity,
                 if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
@@ -794,7 +794,7 @@ class StorageTableTest(StorageTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition', '1')
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.ts.merge_entity(
                 self.table_name, 'MyPartition', '1', sent_entity)
 
@@ -824,7 +824,7 @@ class StorageTableTest(StorageTestCase):
 
         # Act
         sent_entity = self._create_updated_entity_dict('MyPartition', '1')
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.ts.merge_entity(
                 self.table_name, 'MyPartition', '1', sent_entity,
                 if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
@@ -841,7 +841,7 @@ class StorageTableTest(StorageTestCase):
 
         # Assert
         self.assertIsNone(resp)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
     @record
@@ -850,7 +850,7 @@ class StorageTableTest(StorageTestCase):
         self._create_table(self.table_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.ts.delete_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
@@ -866,7 +866,7 @@ class StorageTableTest(StorageTestCase):
 
         # Assert
         self.assertIsNone(resp)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
     @record
@@ -875,7 +875,7 @@ class StorageTableTest(StorageTestCase):
         entities = self._create_table_with_default_entities(self.table_name, 1)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.ts.delete_entity(
                 self.table_name, 'MyPartition', '1',
                 if_match=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"')
@@ -1038,11 +1038,11 @@ class StorageTableTest(StorageTestCase):
             self.table_name, 'MyPartition', '2', sent_entity2)
         try:
             self.ts.commit_batch()
-        except WindowsAzureBatchOperationError as error:
+        except AzureBatchOperationError as error:
             self.assertEqual(error.code, 'UpdateConditionNotSatisfied')
             self.assertTrue(str(error).startswith('0:The update condition specified in the request was not satisfied.'))
         else:
-            self.fail('WindowsAzureBatchOperationError was expected')
+            self.fail('AzureBatchOperationError was expected')
 
         # Assert
         received_entity = self.ts.get_entity(
@@ -1212,7 +1212,7 @@ class StorageTableTest(StorageTestCase):
         self.ts.insert_entity(self.table_name, entity)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureTypeError):
             self.ts.begin_batch()
 
             entity = self._create_updated_entity_dict(
@@ -1241,7 +1241,7 @@ class StorageTableTest(StorageTestCase):
         self.ts.insert_entity(self.table_name, entity)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureTypeError):
             self.ts.begin_batch()
 
             entity = self._create_updated_entity_dict(
@@ -1267,7 +1267,7 @@ class StorageTableTest(StorageTestCase):
         self._create_table(other_table_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureTypeError):
             self.ts.begin_batch()
 
             entity = self._create_default_entity_dict(
@@ -1321,7 +1321,7 @@ class StorageTableTest(StorageTestCase):
         self.table_name = self.table_name + u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             # not supported - table name must be alphanumeric, lowercase
             self.ts.create_table(self.table_name)
 
@@ -1548,7 +1548,7 @@ class StorageTableTest(StorageTestCase):
             sas_token=token,
         )
         self._set_service_options(service, self.settings)
-        with self.assertRaises(WindowsAzureMissingResourceError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             service.insert_entity(
                 self.table_name,
                 {
@@ -1603,7 +1603,7 @@ class StorageTableTest(StorageTestCase):
         service.delete_entity(self.table_name, 'MyPartition', '1')
 
         # Assert
-        with self.assertRaises(WindowsAzureMissingResourceError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.ts.get_entity(self.table_name, 'MyPartition', '1')
 
     @record
@@ -1678,7 +1678,7 @@ class StorageTableTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.ts.get_table_acl(self.table_name)
 
         # Assert
@@ -1742,7 +1742,7 @@ class StorageTableTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.ts.set_table_acl(self.table_name)
 
         # Assert

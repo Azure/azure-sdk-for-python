@@ -17,7 +17,8 @@ import os
 import time
 
 from azure.common import (
-    WindowsAzureError,
+    AzureHttpError,
+    AzureTypeError,
 )
 from .constants import (
     AZURE_SERVICEBUS_NAMESPACE,
@@ -123,7 +124,7 @@ class ServiceBusService(object):
             self.service_namespace = os.environ.get(AZURE_SERVICEBUS_NAMESPACE)
 
         if not self.service_namespace:
-            raise WindowsAzureError('You need to provide servicebus namespace')
+            raise AzureTypeError('You need to provide servicebus namespace')
 
         if authentication:
             self.authentication = authentication
@@ -142,7 +143,7 @@ class ServiceBusService(object):
                     account_key,
                     issuer)
             else:
-                raise WindowsAzureError(
+                raise AzureTypeError(
                     'You need to provide servicebus access key and Issuer OR shared access key and value')
 
         self._httpclient = _HTTPClient(
@@ -240,7 +241,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_on_exist(ex)
                 return False
         else:
@@ -268,7 +269,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_not_exist(ex)
                 return False
         else:
@@ -332,7 +333,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_on_exist(ex)
                 return False
         else:
@@ -360,7 +361,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_not_exist(ex)
                 return False
         else:
@@ -431,7 +432,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_on_exist(ex)
                 return False
         else:
@@ -468,7 +469,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_not_exist(ex)
                 return False
         else:
@@ -553,7 +554,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_on_exist(ex)
                 return False
         else:
@@ -586,7 +587,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_not_exist(ex)
                 return False
         else:
@@ -1002,7 +1003,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_on_exist(ex)
                 return False
         else:
@@ -1054,7 +1055,7 @@ class ServiceBusService(object):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_not_exist(ex)
                 return False
         else:

@@ -64,6 +64,7 @@ class AzureOperationResponse(object):
         self.request_id = None
         self.status_code = None
 
+
 class OperationStatusResponse(AzureOperationResponse):
     """
     Represent the response from a long running operation.
@@ -90,15 +91,6 @@ class OperationStatusResponse(AzureOperationResponse):
             self.code = None
             self.message = None
 
-class AzureError(object):
-    '''
-    Representation of the error object from the server.
-    '''
-    def __init__(self):
-        self.code = None
-        self.message = None
-        self.original_message = None
-        self.response_body = None
 
 class OperationStatus(object):
     '''
@@ -115,15 +107,44 @@ class OperationStatus(object):
     succeeded='Succeeded'
     failed='Failed'
 
+
 class AzureException(Exception):
-    '''
-    Exception when the response indicates an error occurred.
-    '''
-    def __init__(self, err):
-        self.error = err
-        self.status_code = None
-        msg = 'Operation failed. \n status_code: %r\n detail:%r' % (self.status_code, self.error)
-        super(AzureException, self).__init__(msg)
+    pass
+
+
+class AzureTypeError(AzureException, TypeError):
+    pass
+
+
+class AzureIndexError(AzureException, IndexError):
+    pass
+
+
+class AzureValueError(AzureException, ValueError):
+    pass
+
+
+class AzureHttpError(AzureException):
+    def __init__(self, message, status_code):
+        super(AzureHttpError, self).__init__(message)
+        self.status_code = status_code
+
+    def __new__(cls, message, status_code, *args, **kwargs):
+        if status_code == 404:
+            cls = AzureMissingResourceHttpError
+        elif status_code == 409:
+            cls = AzureConflictHttpError
+        return AzureException.__new__(cls, message, status_code, *args, **kwargs)
+
+
+class AzureConflictHttpError(AzureHttpError):
+    def __init__(self, message, status_code):
+        super(AzureConflictHttpError, self).__init__(message, status_code)
+
+
+class AzureMissingResourceHttpError(AzureHttpError):
+    def __init__(self, message, status_code):
+        super(AzureMissingResourceHttpError, self).__init__(message, status_code)
 
 
 class Service(object):
@@ -194,49 +215,3 @@ class Service(object):
         prepared_request = self._session.prepare_request(http_request)
         response = self._first_filter.send(prepared_request)
         return response
-
-
-# TODO: Rename and merge with the new exception classes used by ARM
-
-class WindowsAzureError(Exception):
-
-    ''' WindowsAzure Exception base class. '''
-
-    def __init__(self, message):
-        super(WindowsAzureError, self).__init__(message)
-
-
-class WindowsAzureConflictError(WindowsAzureError):
-
-    '''Indicates that the resource could not be created because it already
-    exists'''
-
-    def __init__(self, message):
-        super(WindowsAzureConflictError, self).__init__(message)
-
-
-class WindowsAzureMissingResourceError(WindowsAzureError):
-
-    '''Indicates that a request for a request for a resource (queue, table,
-    container, etc...) failed because the specified resource does not exist'''
-
-    def __init__(self, message):
-        super(WindowsAzureMissingResourceError, self).__init__(message)
-
-
-class WindowsAzureBatchOperationError(WindowsAzureError):
-
-    '''Indicates that a batch operation failed'''
-
-    def __init__(self, message, code):
-        super(WindowsAzureBatchOperationError, self).__init__(message)
-        self.code = code
-
-
-class WindowsAzureAsyncOperationError(WindowsAzureError):
-
-    '''Indicates that an async operation failed'''
-
-    def __init__(self, message, result):
-        super(WindowsAzureAsyncOperationError, self).__init__(message)
-        self.result = result

@@ -23,7 +23,10 @@ import unittest
 
 from datetime import datetime
 from requests import Session
-from azure.common import WindowsAzureError
+from azure.common import (
+    AzureException,
+    AzureMissingResourceHttpError,
+)
 from azure.servicebus import (
     AuthorizationRule,
     EventHub,
@@ -211,7 +214,7 @@ class ServiceBusEventHubTest(ServiceBusTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureException):
             resp = self.sbs.get_event_hub(self.event_hub_name)
 
         # Assert
@@ -253,7 +256,7 @@ class ServiceBusEventHubTest(ServiceBusTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.sbs.delete_event_hub(self.event_hub_name, True)
 
         # Assert

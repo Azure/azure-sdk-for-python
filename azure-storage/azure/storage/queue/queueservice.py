@@ -13,8 +13,9 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 from azure.common import (
-    WindowsAzureConflictError,
-    WindowsAzureError,
+    AzureConflictHttpError,
+    AzureHttpError,
+    AzureTypeError,
 )
 from ..constants import (
     DEFAULT_HTTP_TIMEOUT,
@@ -132,7 +133,7 @@ class QueueService(_StorageClient):
         elif self.sas_token:
             self.authentication = StorageSASAuthentication(self.sas_token)
         else:
-            raise WindowsAzureError(_ERROR_STORAGE_MISSING_INFO)
+            raise AzureTypeError(_ERROR_STORAGE_MISSING_INFO)
 
     def generate_shared_access_signature(self, queue_name,
                                          shared_access_policy=None,
@@ -255,14 +256,14 @@ class QueueService(_StorageClient):
                 if response.status == _HTTP_RESPONSE_NO_CONTENT:
                     return False
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_on_exist(ex)
                 return False
         else:
             response = self._perform_request(request)
             if response.status == _HTTP_RESPONSE_NO_CONTENT:
-                raise WindowsAzureConflictError(
-                    _ERROR_CONFLICT.format(response.message))
+                raise AzureConflictHttpError(
+                    _ERROR_CONFLICT.format(response.message), response.status)
             return True
 
     def delete_queue(self, queue_name, fail_not_exist=False):
@@ -287,7 +288,7 @@ class QueueService(_StorageClient):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_not_exist(ex)
                 return False
         else:

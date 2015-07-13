@@ -28,7 +28,7 @@ try:
     from urllib import quote, unquote
 except:
     from urllib.parse import quote, unquote
-from azure.common import AzureOperationResponse, AzureException, AzureError, OperationStatusResponse, OperationStatus, Service
+from azure.common import AzureOperationResponse, AzureHttpError, OperationStatusResponse, OperationStatus, Service
 from azure.common.arm import ResourceBase, ResourceBaseExtended
 
 class StorageAccountCreateResponse(AzureOperationResponse):
@@ -840,8 +840,7 @@ class StorageManagementClient(Service):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 500:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -1135,8 +1134,7 @@ class StorageAccountOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -1361,8 +1359,7 @@ class StorageAccountOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -1526,8 +1523,7 @@ class StorageAccountOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -1617,8 +1613,7 @@ class StorageAccountOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -1815,8 +1810,7 @@ class StorageAccountOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -2030,8 +2024,7 @@ class StorageAccountOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -2258,8 +2251,7 @@ class StorageAccountOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -2387,8 +2379,7 @@ class StorageAccountOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -2550,8 +2541,7 @@ class StorageAccountOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
