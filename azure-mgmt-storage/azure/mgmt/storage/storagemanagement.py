@@ -28,7 +28,7 @@ try:
     from urllib import quote, unquote
 except:
     from urllib.parse import quote, unquote
-from azure.common import AzureOperationResponse, AzureHttpError, OperationStatusResponse, OperationStatus, Service
+from azure.common import AzureOperationResponse, AzureHttpError, AzureIndexError, AzureValueError, OperationStatusResponse, OperationStatus, Service
 from azure.common.arm import ResourceBase, ResourceBaseExtended
 
 class StorageAccountCreateResponse(AzureOperationResponse):
@@ -727,7 +727,7 @@ class StorageManagementClient(Service):
         if 'Premium_LRS'.lower() == value.lower():
             return AccountType.PremiumLRS
         
-        raise IndexError('value is outside the valid range.')
+        raise AzureIndexError('value is outside the valid range.')
     
     def account_type_to_string(self, value):
         """
@@ -756,7 +756,7 @@ class StorageManagementClient(Service):
         if value == AccountType.PremiumLRS:
             return 'Premium_LRS'
         
-        raise IndexError('value is outside the valid range.')
+        raise AzureIndexError('value is outside the valid range.')
     
     def parse_key_name(self, value):
         """
@@ -776,7 +776,7 @@ class StorageManagementClient(Service):
         if 'key2'.lower() == value.lower():
             return KeyName.Key2
         
-        raise IndexError('value is outside the valid range.')
+        raise AzureIndexError('value is outside the valid range.')
     
     def key_name_to_string(self, value):
         """
@@ -796,7 +796,7 @@ class StorageManagementClient(Service):
         if value == KeyName.Key2:
             return 'key2'
         
-        raise IndexError('value is outside the valid range.')
+        raise AzureIndexError('value is outside the valid range.')
     
     def get_create_operation_status(self, operation_status_link):
         """
@@ -818,7 +818,7 @@ class StorageManagementClient(Service):
         """
         # Validate
         if operation_status_link is None:
-            raise ValueError('operation_status_link cannot be None.')
+            raise AzureValueError('operation_status_link cannot be None.')
         
         # Tracing
         
@@ -1043,29 +1043,29 @@ class StorageAccountOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise ValueError('resource_group_name cannot be None.')
+            raise AzureValueError('resource_group_name cannot be None.')
         
         if account_name is None:
-            raise ValueError('account_name cannot be None.')
+            raise AzureValueError('account_name cannot be None.')
         
         if len(account_name) < 3:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         if len(account_name) > 24:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         for account_name_char in account_name:
             if account_name_char.islower() == False and account_name_char.isdigit() == False:
-                raise IndexError('account_name is outside the valid range.')
+                raise AzureIndexError('account_name is outside the valid range.')
             
         if parameters is None:
-            raise ValueError('parameters cannot be None.')
+            raise AzureValueError('parameters cannot be None.')
         
         if parameters.account_type is None:
-            raise ValueError('parameters.account_type cannot be None.')
+            raise AzureValueError('parameters.account_type cannot be None.')
         
         if parameters.location is None:
-            raise ValueError('parameters.location cannot be None.')
+            raise AzureValueError('parameters.location cannot be None.')
         
         # Tracing
         
@@ -1304,7 +1304,7 @@ class StorageAccountOperations(object):
         """
         # Validate
         if account_name is None:
-            raise ValueError('account_name cannot be None.')
+            raise AzureValueError('account_name cannot be None.')
         
         # Tracing
         
@@ -1467,20 +1467,20 @@ class StorageAccountOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise ValueError('resource_group_name cannot be None.')
+            raise AzureValueError('resource_group_name cannot be None.')
         
         if account_name is None:
-            raise ValueError('account_name cannot be None.')
+            raise AzureValueError('account_name cannot be None.')
         
         if len(account_name) < 3:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         if len(account_name) > 24:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         for account_name_char in account_name:
             if account_name_char.islower() == False and account_name_char.isdigit() == False:
-                raise IndexError('account_name is outside the valid range.')
+                raise AzureIndexError('account_name is outside the valid range.')
             
         # Tracing
         
@@ -1557,20 +1557,20 @@ class StorageAccountOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise ValueError('resource_group_name cannot be None.')
+            raise AzureValueError('resource_group_name cannot be None.')
         
         if account_name is None:
-            raise ValueError('account_name cannot be None.')
+            raise AzureValueError('account_name cannot be None.')
         
         if len(account_name) < 3:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         if len(account_name) > 24:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         for account_name_char in account_name:
             if account_name_char.islower() == False and account_name_char.isdigit() == False:
-                raise IndexError('account_name is outside the valid range.')
+                raise AzureIndexError('account_name is outside the valid range.')
             
         # Tracing
         
@@ -1982,7 +1982,7 @@ class StorageAccountOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise ValueError('resource_group_name cannot be None.')
+            raise AzureValueError('resource_group_name cannot be None.')
         
         # Tracing
         
@@ -2194,20 +2194,20 @@ class StorageAccountOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise ValueError('resource_group_name cannot be None.')
+            raise AzureValueError('resource_group_name cannot be None.')
         
         if account_name is None:
-            raise ValueError('account_name cannot be None.')
+            raise AzureValueError('account_name cannot be None.')
         
         if len(account_name) < 3:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         if len(account_name) > 24:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         for account_name_char in account_name:
             if account_name_char.islower() == False and account_name_char.isdigit() == False:
-                raise IndexError('account_name is outside the valid range.')
+                raise AzureIndexError('account_name is outside the valid range.')
             
         # Tracing
         
@@ -2306,23 +2306,23 @@ class StorageAccountOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise ValueError('resource_group_name cannot be None.')
+            raise AzureValueError('resource_group_name cannot be None.')
         
         if account_name is None:
-            raise ValueError('account_name cannot be None.')
+            raise AzureValueError('account_name cannot be None.')
         
         if len(account_name) < 3:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         if len(account_name) > 24:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         for account_name_char in account_name:
             if account_name_char.islower() == False and account_name_char.isdigit() == False:
-                raise IndexError('account_name is outside the valid range.')
+                raise AzureIndexError('account_name is outside the valid range.')
             
         if regenerate_key is None:
-            raise ValueError('regenerate_key cannot be None.')
+            raise AzureValueError('regenerate_key cannot be None.')
         
         # Tracing
         
@@ -2444,27 +2444,27 @@ class StorageAccountOperations(object):
         """
         # Validate
         if resource_group_name is None:
-            raise ValueError('resource_group_name cannot be None.')
+            raise AzureValueError('resource_group_name cannot be None.')
         
         if account_name is None:
-            raise ValueError('account_name cannot be None.')
+            raise AzureValueError('account_name cannot be None.')
         
         if len(account_name) < 3:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         if len(account_name) > 24:
-            raise IndexError('account_name is outside the valid range.')
+            raise AzureIndexError('account_name is outside the valid range.')
         
         for account_name_char in account_name:
             if account_name_char.islower() == False and account_name_char.isdigit() == False:
-                raise IndexError('account_name is outside the valid range.')
+                raise AzureIndexError('account_name is outside the valid range.')
             
         if parameters is None:
-            raise ValueError('parameters cannot be None.')
+            raise AzureValueError('parameters cannot be None.')
         
         if parameters.custom_domain is not None:
             if parameters.custom_domain.name is None:
-                raise ValueError('parameters.custom_domain.name cannot be None.')
+                raise AzureValueError('parameters.custom_domain.name cannot be None.')
             
         # Tracing
         
