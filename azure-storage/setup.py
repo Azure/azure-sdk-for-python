@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
@@ -45,6 +45,7 @@ setup(
         'azure.storage.blob',
         'azure.storage.queue',
         'azure.storage.table',
+        'azure.storage.file',
     ],
     install_requires=[
         'azure-nspkg==1.0.0',
