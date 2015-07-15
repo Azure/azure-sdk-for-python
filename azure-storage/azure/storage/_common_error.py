@@ -89,4 +89,4 @@ def _validate_type_bytes(param_name, param):
 
 def _validate_not_none(param_name, param):
     if param is None:
-        raise TypeError(_ERROR_VALUE_NONE.format(param_name))
+        raise ValueError(_ERROR_VALUE_NONE.format(param_name))

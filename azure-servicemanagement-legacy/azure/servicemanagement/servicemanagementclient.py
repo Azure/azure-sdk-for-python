@@ -75,7 +75,7 @@ class _ServiceManagementClient(object):
 
         if not self.request_session:
             if not self.cert_file or not self.subscription_id:
-                raise TypeError(
+                raise ValueError(
                     'You need to provide subscription id and certificate file')
 
         self._httpclient = _HTTPClient(

@@ -48,7 +48,7 @@ class StorageAccountTest(ExtendedTestCase):
 
         # Act
         bad_account = CloudStorageAccount('', '')
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             service = bad_account.create_blob_service()
 
         # Assert

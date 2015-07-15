@@ -30,6 +30,7 @@ from azure.common import (
 )
 from azure.storage import (
     AzureBatchOperationError,
+    AzureBatchValidationError,
     AccessPolicy,
     SharedAccessPolicy,
     SignedIdentifier,
@@ -1211,7 +1212,7 @@ class StorageTableTest(StorageTestCase):
         self.ts.insert_entity(self.table_name, entity)
 
         # Act
-        with self.assertRaises(TypeError):
+        with self.assertRaises(AzureBatchValidationError):
             self.ts.begin_batch()
 
             entity = self._create_updated_entity_dict(
@@ -1240,7 +1241,7 @@ class StorageTableTest(StorageTestCase):
         self.ts.insert_entity(self.table_name, entity)
 
         # Act
-        with self.assertRaises(TypeError):
+        with self.assertRaises(AzureBatchValidationError):
             self.ts.begin_batch()
 
             entity = self._create_updated_entity_dict(
@@ -1266,7 +1267,7 @@ class StorageTableTest(StorageTestCase):
         self._create_table(other_table_name)
 
         # Act
-        with self.assertRaises(TypeError):
+        with self.assertRaises(AzureBatchValidationError):
             self.ts.begin_batch()
 
             entity = self._create_default_entity_dict(

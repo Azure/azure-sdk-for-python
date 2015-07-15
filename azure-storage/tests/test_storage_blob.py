@@ -279,7 +279,7 @@ class StorageBlobTest(StorageTestCase):
             del os.environ[EMULATED]
 
         # Act
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             bs = BlobService()
 
         # Assert
@@ -329,7 +329,7 @@ class StorageBlobTest(StorageTestCase):
         os.environ[EMULATED] = 'false'
 
         # Act
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             bs = BlobService()
 
         if EMULATED in os.environ:

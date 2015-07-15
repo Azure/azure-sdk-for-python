@@ -132,7 +132,7 @@ class QueueService(_StorageClient):
         elif self.sas_token:
             self.authentication = StorageSASAuthentication(self.sas_token)
         else:
-            raise TypeError(_ERROR_STORAGE_MISSING_INFO)
+            raise ValueError(_ERROR_STORAGE_MISSING_INFO)
 
     def generate_shared_access_signature(self, queue_name,
                                          shared_access_policy=None,

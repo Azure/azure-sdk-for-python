@@ -135,7 +135,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
             del os.environ[AZURE_SERVICEBUS_ISSUER]
 
         # Act
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             sbs = ServiceBusService()
 
         # Assert

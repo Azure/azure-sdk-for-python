@@ -20,6 +20,7 @@ from azure.common import (
 )
 from ..models import (
     AzureBatchOperationError,
+    AzureBatchValidationError,
 )
 from .._common_error import (
     _ERROR_CANNOT_FIND_PARTITION_KEY,
@@ -96,14 +97,14 @@ class _BatchClient(_HTTPClient):
             doc = ETree.fromstring(request.body)
             part_key = doc.find('./atom:content/m:properties/d:PartitionKey', _etree_entity_feed_namespaces)
             if part_key is None:
-                raise TypeError(_ERROR_CANNOT_FIND_PARTITION_KEY)
+                raise AzureBatchValidationError(_ERROR_CANNOT_FIND_PARTITION_KEY)
             return _get_etree_text(part_key)
         else:
             uri = url_unquote(request.path)
             pos1 = uri.find('PartitionKey=\'')
             pos2 = uri.find('\',', pos1)
             if pos1 == -1 or pos2 == -1:
-                raise TypeError(_ERROR_CANNOT_FIND_PARTITION_KEY)
+                raise AzureBatchValidationError(_ERROR_CANNOT_FIND_PARTITION_KEY)
             return uri[pos1 + len('PartitionKey=\''):pos2]
 
     def get_request_row_key(self, request):
@@ -119,14 +120,14 @@ class _BatchClient(_HTTPClient):
             doc = ETree.fromstring(request.body)
             row_key = doc.find('./atom:content/m:properties/d:RowKey', _etree_entity_feed_namespaces)
             if row_key is None:
-                raise TypeError(_ERROR_CANNOT_FIND_ROW_KEY)
+                raise AzureBatchValidationError(_ERROR_CANNOT_FIND_ROW_KEY)
             return _get_etree_text(row_key)
         else:
             uri = url_unquote(request.path)
             pos1 = uri.find('RowKey=\'')
             pos2 = uri.find('\')', pos1)
             if pos1 == -1 or pos2 == -1:
-                raise TypeError(_ERROR_CANNOT_FIND_ROW_KEY)
+                raise AzureBatchValidationError(_ERROR_CANNOT_FIND_ROW_KEY)
             row_key = uri[pos1 + len('RowKey=\''):pos2]
             return row_key
 
@@ -140,7 +141,7 @@ class _BatchClient(_HTTPClient):
         '''
         if self.batch_table:
             if self.get_request_table(request) != self.batch_table:
-                raise TypeError(_ERROR_INCORRECT_TABLE_IN_BATCH)
+                raise AzureBatchValidationError(_ERROR_INCORRECT_TABLE_IN_BATCH)
         else:
             self.batch_table = self.get_request_table(request)
 
@@ -155,7 +156,7 @@ class _BatchClient(_HTTPClient):
         if self.batch_partition_key:
             if self.get_request_partition_key(request) != \
                 self.batch_partition_key:
-                raise TypeError(_ERROR_INCORRECT_PARTITION_KEY_IN_BATCH)
+                raise AzureBatchValidationError(_ERROR_INCORRECT_PARTITION_KEY_IN_BATCH)
         else:
             self.batch_partition_key = self.get_request_partition_key(request)
 
@@ -169,7 +170,7 @@ class _BatchClient(_HTTPClient):
         '''
         if self.batch_row_keys:
             if self.get_request_row_key(request) in self.batch_row_keys:
-                raise TypeError(_ERROR_DUPLICATE_ROW_KEY_IN_BATCH)
+                raise AzureBatchValidationError(_ERROR_DUPLICATE_ROW_KEY_IN_BATCH)
         else:
             self.batch_row_keys.append(self.get_request_row_key(request))
 

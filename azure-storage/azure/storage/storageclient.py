@@ -94,7 +94,7 @@ class _StorageClient(object):
                 self.account_key = os.environ.get(AZURE_STORAGE_ACCESS_KEY)
 
         if not self.account_name:
-            raise TypeError(_ERROR_STORAGE_MISSING_INFO)
+            raise ValueError(_ERROR_STORAGE_MISSING_INFO)
 
         self._httpclient = _HTTPClient(
             service_instance=self,
