@@ -15,8 +15,10 @@
 """
 The flask application package.
 """
-
 from flask import Flask
+from .auth import is_logged_in
+
 app = Flask(__name__)
+app.jinja_env.globals.update(getattr=getattr, hasattr=hasattr, is_logged_in=is_logged_in)
 
 from . import views

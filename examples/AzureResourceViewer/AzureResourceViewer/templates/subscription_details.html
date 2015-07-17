@@ -7,8 +7,6 @@
     <li class="active">{{subscription_id}}</li>
 </ol>
 
-<h2>{{ title }}.</h2>
-
 <h3>Resource Groups</h3>
 <table class="table table-striped table-condensed">
     <thead>
@@ -44,13 +42,13 @@
             {% if provider.registration_state == 'Registered' %}
             <td>
                 <form action="{{ url_for('providerunregister', subscription_id=subscription_id, provider_namespace=provider.namespace) }}" method="post">
-                    <button class="btn btn-danger" type="submit">Unregister</button>
+                    <button class="btn btn-sm btn-danger" type="submit">Unregister</button>
                 </form>
             </td>
             {% else %}
             <td>
                 <form action="{{ url_for('providerregister', subscription_id=subscription_id, provider_namespace=provider.namespace) }}" method="post">
-                    <button class="btn btn-primary" type="submit">Register</button>
+                    <button class="btn btn-sm btn-primary" type="submit">Register</button>
                 </form>
             </td>
             {% endif %}
