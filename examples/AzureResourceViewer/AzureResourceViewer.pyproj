@@ -35,6 +35,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AzureResourceViewer\app_creds_sample.py" />
     <Compile Include="AzureResourceViewer\app_creds_real.py">
       <SubType>Code</SubType>
     </Compile>
