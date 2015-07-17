@@ -24,7 +24,6 @@ from flask import url_for, session, abort, redirect, request
 from . import app_creds_real as app_creds
 
 authorityUrl = app_creds.AUTHORITY_HOST_URL + '/' + app_creds.TENANT
-redirectUri = 'http://localhost:3939/authorized'
 resource = '00000002-0000-0000-c000-000000000000' #resource of Microsoft.Azure.ActiveDirectory
 resource = 'https://management.azure.com/'
 resource = 'https://management.core.windows.net/'
@@ -32,12 +31,9 @@ resource = 'https://management.core.windows.net/'
 templateAuthzUrl = 'https://login.windows.net/' + app_creds.TENANT + '/oauth2/authorize?response_type=code&client_id=<client_id>&redirect_uri=<redirect_uri>&state=<state>&resource=<resource>'
 
 
-def create_authorization_url(state, redirect_uri=None):
+def create_authorization_url(state):
   authorizationUrl = templateAuthzUrl.replace('<client_id>', app_creds.CLIENT_ID)
-  if redirect_uri:
-      authorizationUrl = authorizationUrl.replace('<redirect_uri>', redirect_uri)
-  else:
-      authorizationUrl = authorizationUrl.replace('<redirect_uri>', url_for('authorized', _external=True))
+  authorizationUrl = authorizationUrl.replace('<redirect_uri>', url_for('authorized', _external=True))
   authorizationUrl = authorizationUrl.replace('<state>', state)
   authorizationUrl = authorizationUrl.replace('<resource>', resource)
   return authorizationUrl
@@ -53,7 +49,7 @@ def get_tokens(auth_code):
         app_creds.CLIENT_ID,
         app_creds.CLIENT_SECRET,
         auth_code,
-        redirectUri,
+        url_for('authorized', _external=True),
         resource,
     )
     return token_response
