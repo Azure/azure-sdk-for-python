@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:01 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharef545140a?restype=share
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:11:00 GMT']
+      ETag: ['"0x8D292087FB3B11A"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:11:01 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [efaf131b-001a-000a-0cf1-c3e683000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:01 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharef545140a?restype=share
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The\
+        \ specified share already exists.\nRequestId:efaf131c-001a-000a-0df1-c3e683000000\n\
+        Time:2015-07-21T20:11:01.3057687Z</Message></Error>"}
+    headers:
+      Content-Length: ['222']
+      Content-Type: [application/xml]
+      Date: ['Tue, 21 Jul 2015 20:11:00 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [efaf131c-001a-000a-0df1-c3e683000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 409, message: The specified share already exists.}
+version: 1

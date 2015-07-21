@@ -1,0 +1,139 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:31 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare3f1e19fe?restype=share
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      ETag: ['"0x8D29208923F41F5"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [f27a29ab-001a-0012-02f1-c3cb16000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-content-length: ['1024']
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      x-ms-type: [file]
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare3f1e19fe/file1
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      ETag: ['"0x8D2920892593A0C"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [f27a29ad-001a-0012-03f1-c3cb16000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      5AKX0KURTQwfG10SBFgDsvRwGc178wExdlLDVphFBFHcq83pSSyLcwRF3jhHjU1to5bENwWDkYOh
+      ZCWYHf82rRIQn7Af9LTM30y2tO1NHWxK2MgZpiYTq/NEBc6eqdJiiFyPeCkHvH08Tyrvtjvbw4dp
+      uXd0ba/J//QNP9aVSxb1DaIOkQr1hspqPkMc/1CxPZwTQcsgegrEfhotMUjeMgpQKrGz5qc1mxmQ
+      qteAAckW98o4BEu2OIsFtcLUfgzM3zhWshvVs/reDPVdt9K+GOY3StI9N97bAUPqtjtBkdhezNkO
+      vyprfI7e+WVuM7Bsv1FwA+0I/sQc7m6XwRkrv23waCWkac+1Njvh15ttGFI6DsCUf3YbaeCVIg5G
+      k61hat145qNPHzct+c2mp3xrMiAjsJyZ6s2ZO3155U/6YzqGwvJaMb00OyxLAJz1Jz0EeyDcu/Iw
+      gpnxULGHmjqbhSpkhZNqppq8UNNi3BzQjqX1gEeYcPbAoMH6Rs8/yejk3s8jmqQqMA4WpLOl94Ri
+      JcjxpvAaH/k1sc6nBfoCXfOTnwzIcufOrtqAyAvh9a/ZRKBTcGVLHeoK071Ot15kf4B8ske4ZnuR
+      L18sZPaaD4LR+n3szHT5OuxWWkoe++huxRXXTwZdp/zzyKkYQAzhLIprEIcCTxItIkkBDSr3OQez
+      yn4OGJ4vyJL9xAt8aWxE8dXWNJgdImk4CIzoUPBv5F8+Q3HIVdW4obAzavgR1qkuvaNKHEXx10Jf
+      htA96WIKTyPkXuRV6SkoLBcDNbRyM7fuppE/oHPKG2M7YmyRuZ+wPZoDLYXBaEYIBTHgqCut2dMu
+      ZP/zPQCtrbkP9eZR8kLOGBaSJ6TJlvhhR6CuZ0mkjLCupPxJzKcpCGMYAPyuhaDd143HkzoqIoTL
+      j/UkFtNrx90rshDmoPYL0xOqeVoa0UOJgEClNxYxmDrIhmf3+lwR8tBmLGtDI0vth6DDeaESDJa8
+      m/PBNOAUoPwWL1gQdz/0ePLSYe9ZjLJsl9RzOCa95ZulpY0IxaNaEvOQ/1C19xDXqK+3unRrWzTb
+      BsvRkAezT/k4CdcpGPUCf+uQYmA+4c7HReHvy8lrUj+vEAPidjk+455FG4lBov66OJHR/w8PKxuf
+      lZHFazdPaYQ0lHpvJ7eohnN2VH+Jy1wdIDRkjGNGiXeCfHdb0I9BP+xRF9/qcd5JyFBVlAVFm3AO
+      Xte2Sdef5wTNzvbYp/oJZ2PHyBadhDRDrEnNPah8F4qkKHRg8b16x+sckBPImTeglKMwHcjj4ePg
+      tCOsAzaMZFlPvPtCJ0a/PWwUmP8fet8LBEs1ndhRHDndwaRwC8k3iRPOPcw5JrqyNpvojqrBsQ==
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['1024']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      x-ms-range: [bytes=0-1023]
+      x-ms-version: ['2014-02-14']
+      x-ms-write: [update]
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare3f1e19fe/file1?comp=range
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [VmnWSVCIUF0DXNgNTTfFoQ==]
+      Date: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      ETag: ['"0x8D29208925FF105"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [f27a29ae-001a-0012-04f1-c3cb16000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare3f1e19fe/file1
+  response:
+    body:
+      string: !!binary |
+        5AKX0KURTQwfG10SBFgDsvRwGc178wExdlLDVphFBFHcq83pSSyLcwRF3jhHjU1to5bENwWDkYOh
+        ZCWYHf82rRIQn7Af9LTM30y2tO1NHWxK2MgZpiYTq/NEBc6eqdJiiFyPeCkHvH08Tyrvtjvbw4dp
+        uXd0ba/J//QNP9aVSxb1DaIOkQr1hspqPkMc/1CxPZwTQcsgegrEfhotMUjeMgpQKrGz5qc1mxmQ
+        qteAAckW98o4BEu2OIsFtcLUfgzM3zhWshvVs/reDPVdt9K+GOY3StI9N97bAUPqtjtBkdhezNkO
+        vyprfI7e+WVuM7Bsv1FwA+0I/sQc7m6XwRkrv23waCWkac+1Njvh15ttGFI6DsCUf3YbaeCVIg5G
+        k61hat145qNPHzct+c2mp3xrMiAjsJyZ6s2ZO3155U/6YzqGwvJaMb00OyxLAJz1Jz0EeyDcu/Iw
+        gpnxULGHmjqbhSpkhZNqppq8UNNi3BzQjqX1gEeYcPbAoMH6Rs8/yejk3s8jmqQqMA4WpLOl94Ri
+        JcjxpvAaH/k1sc6nBfoCXfOTnwzIcufOrtqAyAvh9a/ZRKBTcGVLHeoK071Ot15kf4B8ske4ZnuR
+        L18sZPaaD4LR+n3szHT5OuxWWkoe++huxRXXTwZdp/zzyKkYQAzhLIprEIcCTxItIkkBDSr3OQez
+        yn4OGJ4vyJL9xAt8aWxE8dXWNJgdImk4CIzoUPBv5F8+Q3HIVdW4obAzavgR1qkuvaNKHEXx10Jf
+        htA96WIKTyPkXuRV6SkoLBcDNbRyM7fuppE/oHPKG2M7YmyRuZ+wPZoDLYXBaEYIBTHgqCut2dMu
+        ZP/zPQCtrbkP9eZR8kLOGBaSJ6TJlvhhR6CuZ0mkjLCupPxJzKcpCGMYAPyuhaDd143HkzoqIoTL
+        j/UkFtNrx90rshDmoPYL0xOqeVoa0UOJgEClNxYxmDrIhmf3+lwR8tBmLGtDI0vth6DDeaESDJa8
+        m/PBNOAUoPwWL1gQdz/0ePLSYe9ZjLJsl9RzOCa95ZulpY0IxaNaEvOQ/1C19xDXqK+3unRrWzTb
+        BsvRkAezT/k4CdcpGPUCf+uQYmA+4c7HReHvy8lrUj+vEAPidjk+455FG4lBov66OJHR/w8PKxuf
+        lZHFazdPaYQ0lHpvJ7eohnN2VH+Jy1wdIDRkjGNGiXeCfHdb0I9BP+xRF9/qcd5JyFBVlAVFm3AO
+        Xte2Sdef5wTNzvbYp/oJZ2PHyBadhDRDrEnNPah8F4qkKHRg8b16x+sckBPImTeglKMwHcjj4ePg
+        tCOsAzaMZFlPvPtCJ0a/PWwUmP8fet8LBEs1ndhRHDndwaRwC8k3iRPOPcw5JrqyNpvojqrBsQ==
+    headers:
+      Accept-Ranges: [bytes]
+      Content-Length: ['1024']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      Date: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      ETag: ['"0x8D29208925FF105"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:11:32 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Vary: [Origin]
+      x-ms-request-id: [f27a29af-001a-0012-05f1-c3cb16000000]
+      x-ms-type: [File]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+version: 1

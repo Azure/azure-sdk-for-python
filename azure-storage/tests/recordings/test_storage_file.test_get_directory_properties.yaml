@@ -1,0 +1,71 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:12:36 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshared1371381?restype=share
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:12:35 GMT']
+      ETag: ['"0x8D29208B8A18562"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:12:36 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [6e92ff75-001a-002e-26f1-c37fcd000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:12:37 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshared1371381/dir1?restype=directory
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:12:35 GMT']
+      ETag: ['"0x8D29208B8F3C2C2"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:12:37 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [6e92ff77-001a-002e-27f1-c37fcd000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:12:37 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshared1371381/dir1?restype=directory
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:12:35 GMT']
+      ETag: ['"0x8D29208B8F3C2C2"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:12:37 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      Vary: [Origin]
+      x-ms-request-id: [6e92ff78-001a-002e-28f1-c37fcd000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+version: 1
