@@ -43,6 +43,7 @@ setup(
         'azure.storage',
         'azure.storage._http',
         'azure.storage.blob',
+        'azure.storage.files',
         'azure.storage.queue',
         'azure.storage.table',
     ],
