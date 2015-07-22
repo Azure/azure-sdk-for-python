@@ -1,0 +1,26 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:09:26 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare8e1016d3%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=share
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
+        \ specifed resource name contains invalid characters.\nRequestId:1e06b53c-001a-0044-42f1-c32366000000\n\
+        Time:2015-07-21T20:09:27.4998619Z</Message></Error>"}
+    headers:
+      Content-Length: ['243']
+      Content-Type: [application/xml]
+      Date: ['Tue, 21 Jul 2015 20:09:26 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [1e06b53c-001a-0044-42f1-c32366000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 400, message: The specifed resource name contains invalid characters.}
+version: 1

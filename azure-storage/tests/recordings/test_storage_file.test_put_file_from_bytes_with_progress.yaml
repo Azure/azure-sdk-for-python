@@ -1,0 +1,175 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:53 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare93041741?restype=share
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:11:53 GMT']
+      ETag: ['"0x8D292089F2060D4"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:11:53 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [09decb5c-001a-0026-78f1-c364be000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-content-length: ['2048']
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:54 GMT']
+      x-ms-type: [file]
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare93041741/file1
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:11:54 GMT']
+      ETag: ['"0x8D292089F54B496"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:11:54 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [09decb5e-001a-0026-79f1-c364be000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['2048']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:54 GMT']
+      x-ms-range: [bytes=0-2047]
+      x-ms-version: ['2014-02-14']
+      x-ms-write: [update]
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare93041741/file1?comp=range
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [Jj6G36uF6vjKiuWRTcmilA==]
+      Date: ['Tue, 21 Jul 2015 20:11:54 GMT']
+      ETag: ['"0x8D292089F5B446B"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:11:54 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [09decb5f-001a-0026-7af1-c364be000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:11:54 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshare93041741/file1
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Accept-Ranges: [bytes]
+      Content-Length: ['2048']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      Date: ['Tue, 21 Jul 2015 20:11:54 GMT']
+      ETag: ['"0x8D292089F5B446B"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:11:54 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Vary: [Origin]
+      x-ms-request-id: [09decb60-001a-0026-7bf1-c364be000000]
+      x-ms-type: [File]
+      x-ms-version: ['2014-02-14']
+    status: {code: 200, message: OK}
+version: 1
