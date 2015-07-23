@@ -33,7 +33,7 @@ templateAuthzUrl = 'https://login.windows.net/' + app_creds.TENANT + '/oauth2/au
 
 def create_authorization_url(state):
   authorizationUrl = templateAuthzUrl.replace('<client_id>', app_creds.CLIENT_ID)
-  authorizationUrl = authorizationUrl.replace('<redirect_uri>', url_for('authorized', _external=True))
+  authorizationUrl = authorizationUrl.replace('<redirect_uri>', url_for('authorized_view', _external=True))
   authorizationUrl = authorizationUrl.replace('<state>', state)
   authorizationUrl = authorizationUrl.replace('<resource>', resource)
   return authorizationUrl
@@ -49,7 +49,7 @@ def get_tokens(auth_code):
         app_creds.CLIENT_ID,
         app_creds.CLIENT_SECRET,
         auth_code,
-        url_for('authorized', _external=True),
+        url_for('authorized_view', _external=True),
         resource,
     )
     return token_response
@@ -122,6 +122,6 @@ def require_login(v):
         if token_state == TokenState.ValidToken:
             return v(*args, **kwargs)
 
-        return redirect(url_for('login', redirect_uri=request.base_url))
+        return redirect(url_for('login_view', redirect_uri=request.base_url))
 
     return authenticating_view

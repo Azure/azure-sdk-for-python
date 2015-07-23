@@ -3,11 +3,11 @@
 {% block content %}
 
 <ol class="breadcrumb">
-    <li><a href="/">Home</a></li>
-    <li><a href="{{ url_for('resourcegroups', subscription_id=subscription_id) }}">{{subscription_id}}</a></li>
-    <li><a href="{{ url_for('resourcegroup', subscription_id=subscription_id, resource_group_name=resource_group_name) }}">{{resource_group_name}}</a></li>
-    <li><a href="{{ url_for('storageaccount', subscription_id=subscription_id, resource_group_name=resource_group_name, account_name=account_name) }}">{{account_name}}</a></li>
-    <li class="active">{{table_name}}</li>
+    <li><a href="{{ url_for('account_view') }}">Account</a></li>
+    <li><a href="{{ url_for('subscription_view', subscription_id=subscription_id) }}">{{subscription_id}}</a></li>
+    <li><a href="{{ url_for('resourcegroup_view', subscription_id=subscription_id, resource_group_name=resource_group_name) }}">{{resource_group_name}}</a></li>
+    <li><a href="{{ url_for('storageaccount_view', subscription_id=subscription_id, resource_group_name=resource_group_name, account_name=account_name) }}">{{account_name}}</a></li>
+    <li class="active">{{model.table_name}}</li>
 </ol>
 
 <h3>Entities</h3>
@@ -17,18 +17,18 @@
             <th>Partition Key</th>
             <th>Row Key</th>
             <th>Timestamp</th>
-            {% for field in custom_fields %}
+            {% for field in model.custom_fields %}
             <th>{{field}}</th>
             {% endfor %}
         </tr>
     </thead>
     <tbody>
-        {% for entity in entities %}
+        {% for entity in model.entities %}
         <tr>
             <td data-field-name="PartitionKey">{{entity.PartitionKey}}</td>
             <td data-field-name="RowKey">{{entity.RowKey}}</td>
             <td data-field-name="Timestamp">{{entity.Timestamp}}</td>
-            {% for field in custom_fields %}
+            {% for field in model.custom_fields %}
             <td data-field-name="{{field}}">{{getattr(entity, field, '')}}</td>
             {% endfor %}
         </tr>
@@ -36,17 +36,17 @@
     </tbody>
 </table>
 
-{% if hasattr(entities, 'x_ms_continuation') %}
+{% if hasattr(model.entities, 'x_ms_continuation') %}
 <button
     class="btn"
     id="loadmore"
     data-subscription-id="{{subscription_id}}"
     data-resource-group-name="{{resource_group_name}}"
     data-account-name="{{account_name}}"
-    data-table-name="{{table_name}}"
-    data-next-partition-key="{{entities.x_ms_continuation['NextPartitionKey']}}"
-    data-next-row-key="{{entities.x_ms_continuation['NextRowKey']}}"
-    data-field-names="{{custom_fields}}"
+    data-table-name="{{model.table_name}}"
+    data-next-partition-key="{{model.entities.x_ms_continuation['NextPartitionKey']}}"
+    data-next-row-key="{{model.entities.x_ms_continuation['NextRowKey']}}"
+    data-field-names="{{model.custom_fields}}"
 >Load More</button>
 {% endif %}
 

@@ -23,19 +23,19 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('home') }}">Home</a></li>
-                    <li><a href="{{ url_for('contact') }}">Contact</a></li>
-                    <li><a href="{{ url_for('subscriptions') }}">Subscriptions</a></li>
+                    <li><a href="{{ url_for('home_view') }}">Home</a></li>
+                    <li><a href="{{ url_for('contact_view') }}">Contact</a></li>
+                    <li><a href="{{ url_for('account_view') }}">Account</a></li>
                 </ul>
                 {% if is_logged_in() %}
-                <form id="logoutForm" action="{{ url_for('logout') }}" method="post" class="navbar-right">
+                <form id="logoutForm" action="{{ url_for('logout_post') }}" method="post" class="navbar-right">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
                     </ul>
                 </form>
                 {% else %}
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{{ url_for('login') }}">Log in</a></li>
+                    <li><a href="{{ url_for('login_view') }}">Log in</a></li>
                 </ul>
                 {% endif %}
             </div>

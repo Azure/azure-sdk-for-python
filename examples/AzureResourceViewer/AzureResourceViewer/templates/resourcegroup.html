@@ -3,8 +3,8 @@
 {% block content %}
 
 <ol class="breadcrumb">
-    <li><a href="/">Home</a></li>
-    <li><a href="{{ url_for('resourcegroups', subscription_id=subscription_id) }}">{{subscription_id}}</a></li>
+    <li><a href="{{ url_for('account_view') }}">Account</a></li>
+    <li><a href="{{ url_for('subscription_view', subscription_id=subscription_id) }}">{{subscription_id}}</a></li>
     <li class="active">{{resource_group_name}}</li>
 </ol>
 
@@ -21,9 +21,9 @@
         </tr>
     </thead>
     <tbody>
-        {% for account in accounts %}
+        {% for account in model.storage_accounts %}
         <tr data-account-name="{{account.name}}">
-            <td><a href="{{ url_for('storageaccount', subscription_id=subscription_id, resource_group_name=resource_group_name, account_name=account.name) }}">{{account.name}}</a></td>
+            <td><a href="{{ url_for('storageaccount_view', subscription_id=subscription_id, resource_group_name=resource_group_name, account_name=account.name) }}">{{account.name}}</a></td>
             <td>{{account.account_type}}</td>
             <td>{{account.location}}</td>
             <td>{{account.provisioning_state}}</td>
@@ -51,7 +51,7 @@
                     <div class="form-group">
                         <label for="newaccountlocation">Location</label>
                         <select name="newaccountlocation" class="form-control">
-                            {% for loc in locations %}
+                            {% for loc in model.storage_accounts_locations %}
                             <option value="{{loc}}">{{loc}}</option>
                             {% endfor %}
                         </select>
@@ -177,6 +177,7 @@ $(function () {
     }
 
     $("button#newaccountsubmit").click(function () {
+        displayStatus({ code: 0, status: 'Deleting' })
         var subscriptionid = $('input[name="newaccountsubscriptionid"]').val()
         var resourcegroup = $('input[name="newaccountresourcegroup"]').val();
         var name = $('input[name="newaccountname"]').val();
@@ -196,12 +197,14 @@ $(function () {
                 $("#newaccountsubmit").hide();
                 displayStatus(result);
                 if (result.operationStatusLink) {
+                    updateStatus(subscriptionid, result.operationStatusLink);
                     var intervalId = setInterval(function () {
                         updateStatus(subscriptionid, result.operationStatusLink);
                     }, 2000);
                     $("button#close").click(function () {
                         clearInterval(intervalId);
                         $("button#close").unbind('click');
+                        window.location.reload();
                     });
                 }
             },

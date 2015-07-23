@@ -3,7 +3,7 @@
 {% block content %}
 
 <ol class="breadcrumb">
-    <li class="active">Home</li>
+    <li class="active">Account</li>
 </ol>
 
 <h3>Tenants</h3>
@@ -14,7 +14,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for tenant in tenants %}
+        {% for tenant in model.tenants %}
         <tr>
             <td>{{tenant}}</td>
         </tr>
@@ -31,9 +31,9 @@
         </tr>
     </thead>
     <tbody>
-        {% for sub in subscriptions %}
+        {% for sub in model.subscriptions %}
         <tr>
-            <td><a href="{{ url_for('resourcegroups', subscription_id=sub.id) }}">{{sub.id}}</a></td>
+            <td><a href="{{ url_for('subscription_view', subscription_id=sub.id) }}">{{sub.id}}</a></td>
             <td>{{sub.name}}</td>
         </tr>
         {% endfor %}

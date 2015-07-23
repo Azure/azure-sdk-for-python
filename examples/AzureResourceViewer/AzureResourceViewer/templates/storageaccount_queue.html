@@ -3,11 +3,11 @@
 {% block content %}
 
 <ol class="breadcrumb">
-    <li><a href="/">Home</a></li>
-    <li><a href="{{ url_for('resourcegroups', subscription_id=subscription_id) }}">{{subscription_id}}</a></li>
-    <li><a href="{{ url_for('resourcegroup', subscription_id=subscription_id, resource_group_name=resource_group_name) }}">{{resource_group_name}}</a></li>
-    <li><a href="{{ url_for('storageaccount', subscription_id=subscription_id, resource_group_name=resource_group_name, account_name=account_name) }}">{{account_name}}</a></li>
-    <li class="active">{{queue_name}}</li>
+    <li><a href="{{ url_for('account_view') }}">Account</a></li>
+    <li><a href="{{ url_for('subscription_view', subscription_id=subscription_id) }}">{{subscription_id}}</a></li>
+    <li><a href="{{ url_for('resourcegroup_view', subscription_id=subscription_id, resource_group_name=resource_group_name) }}">{{resource_group_name}}</a></li>
+    <li><a href="{{ url_for('storageaccount_view', subscription_id=subscription_id, resource_group_name=resource_group_name, account_name=account_name) }}">{{account_name}}</a></li>
+    <li class="active">{{model.queue_name}}</li>
 </ol>
 
 <h3>Queue Metadata</h3>
@@ -19,7 +19,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for name, val in metadata.items() %}
+        {% for name, val in model.metadata.items() %}
         <tr>
             <td>{{name}}</td>
             <td>{{val}}</td>
@@ -40,7 +40,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for msg in messages %}
+        {% for msg in model.messages %}
         <tr>
             <td>{{msg.message_id}}</td>
             <td>{{msg.insertion_time}}</td>
