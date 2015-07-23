@@ -22,12 +22,14 @@ _USER_AGENT_STRING = 'pyazure/' + __version__
 
 # Live ServiceClient URLs
 BLOB_SERVICE_HOST_BASE = '.blob.core.windows.net'
+FILES_SERVICE_HOST_BASE = '.file.core.windows.net'
 QUEUE_SERVICE_HOST_BASE = '.queue.core.windows.net'
 TABLE_SERVICE_HOST_BASE = '.table.core.windows.net'
 FILE_SERVICE_HOST_BASE = '.file.core.windows.net'
 
 # Development ServiceClient URLs
 DEV_BLOB_HOST = '127.0.0.1:10000'
+DEV_FILES_HOST = '127.0.0.1:10003'
 DEV_QUEUE_HOST = '127.0.0.1:10001'
 DEV_TABLE_HOST = '127.0.0.1:10002'
 DEV_FILE_HOST = '127.0.0.1:10003'
