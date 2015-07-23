@@ -23,12 +23,18 @@ import unittest
 
 from datetime import datetime
 from requests import Session
-from azure.common import WindowsAzureError
+from azure.common import (
+    AzureHttpError,
+    AzureMissingResourceHttpError,
+    AzureConflictHttpError,
+)
 from azure.servicebus._http import HTTPError
 from azure.servicebus import (
     AZURE_SERVICEBUS_NAMESPACE,
     AZURE_SERVICEBUS_ACCESS_KEY,
     AZURE_SERVICEBUS_ISSUER,
+    AzureServiceBusPeekLockError,
+    AzureServiceBusResourceNotFound,
     Message,
     Queue,
     Rule,
@@ -129,7 +135,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
             del os.environ[AZURE_SERVICEBUS_ISSUER]
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(ValueError):
             sbs = ServiceBusService()
 
         # Assert
@@ -229,7 +235,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
 
         # Act
         created = self.sbs.create_queue(self.queue_name)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.sbs.create_queue(self.queue_name, None, True)
 
         # Assert
@@ -252,7 +258,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureServiceBusResourceNotFound):
             resp = self.sbs.get_queue(self.queue_name)
 
         # Assert
@@ -328,7 +334,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.sbs.delete_queue(self.queue_name, True)
 
         # Assert
@@ -382,7 +388,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
 
         # Act
         received_msg = self.sbs.receive_queue_message(self.queue_name, False)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureServiceBusPeekLockError):
             received_msg.delete()
 
         # Assert
@@ -395,7 +401,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
 
         # Act
         received_msg = self.sbs.receive_queue_message(self.queue_name, False)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureServiceBusPeekLockError):
             received_msg.unlock()
 
         # Assert
@@ -620,7 +626,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
 
         # Act
         created = self.sbs.create_topic(self.topic_name)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.sbs.create_topic(self.topic_name, None, True)
 
         # Assert
@@ -662,7 +668,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureServiceBusResourceNotFound):
             self.sbs.get_topic(self.topic_name)
 
         # Assert
@@ -738,7 +744,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.sbs.delete_topic(self.topic_name, True)
 
         # Assert
@@ -825,7 +831,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Act
         created = self.sbs.create_subscription(
             self.topic_name, 'MySubscription')
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.sbs.create_subscription(
                 self.topic_name, 'MySubscription', None, True)
 
@@ -864,7 +870,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription3')
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.sbs.get_subscription(self.topic_name, 'MySubscription4')
 
         # Assert
@@ -923,7 +929,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self._create_topic(self.topic_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.sbs.delete_subscription(
                 self.topic_name, 'MySubscription', True)
 
@@ -976,7 +982,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Act
         created = self.sbs.create_rule(
             self.topic_name, 'MySubscription', 'MyRule1')
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.sbs.create_rule(
                 self.topic_name, 'MySubscription', 'MyRule1', None, True)
 
@@ -1104,7 +1110,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.sbs.get_rule(self.topic_name,
                               'MySubscription', 'NonExistingRule')
 
@@ -1200,7 +1206,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.sbs.delete_rule(
                 self.topic_name, 'MySubscription', 'NonExistingRule', True)
 
@@ -1242,7 +1248,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Act
         received_msg = self.sbs.receive_subscription_message(
             self.topic_name, 'MySubscription', False)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureServiceBusPeekLockError):
             received_msg.delete()
 
         # Assert
@@ -1257,7 +1263,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Act
         received_msg = self.sbs.receive_subscription_message(
             self.topic_name, 'MySubscription', False)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureServiceBusPeekLockError):
             received_msg.unlock()
 
         # Assert
@@ -1422,9 +1428,9 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
             self.assertIsNone(msg.body)
 
             # Receive messages, failure
-            with self.assertRaises(HTTPError):
+            with self.assertRaises(AzureHttpError):
                 msg = sbs1.receive_queue_message(queue2_name, True, 1)
-            with self.assertRaises(HTTPError):
+            with self.assertRaises(AzureHttpError):
                 msg = sbs2.receive_queue_message(queue1_name, True, 1)
         finally:
             try:
@@ -1442,7 +1448,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self.queue_name = self.queue_name + u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             created = self.sbs.create_queue(self.queue_name)
 
         # Assert
@@ -1516,7 +1522,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self._create_topic(self.topic_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             created = self.sbs.create_subscription(
                 self.topic_name, u'MySubscription啊齄丂狛狜')
 
@@ -1528,7 +1534,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             created = self.sbs.create_rule(
                 self.topic_name, 'MySubscription', 'MyRule啊齄丂狛狜')
 

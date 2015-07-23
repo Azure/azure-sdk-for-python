@@ -17,7 +17,7 @@ import os.path
 import time
 import azure.mgmt.resource
 from azure.common import (
-    AzureException,
+    AzureHttpError,
     SubscriptionCloudCredentials,
 )
 from testutils.common_recordingtestcase import (
@@ -109,7 +109,7 @@ class AzureMgmtTestCase(RecordingTestCase):
     def delete_resource_group(self, wait_timeout):
         try:
             self.resource_client.resource_groups.delete(self.group_name)
-        except AzureException:
+        except AzureHttpError:
             pass
 
         if wait_timeout:
@@ -118,7 +118,7 @@ class AzureMgmtTestCase(RecordingTestCase):
                     result = self.resource_client.resource_groups.get(self.group_name)
                     if result.resource_group.provisioning_state != azure.mgmt.resource.ProvisioningState.deleting:
                         return
-                except AzureException as e:
+                except AzureHttpError as e:
                     if e.status_code == HttpStatusCode.NotFound:
                         return
                     raise

@@ -80,7 +80,7 @@ class _BlobChunkDownloader(object):
                     self.blob_name,
                     x_ms_range=range_id
                 )
-            except Exception:
+            except AzureHttpException:
                 if retries > 0:
                     retries -= 1
                     sleep(self.retry_wait)
@@ -172,7 +172,7 @@ class _BlobChunkUploader(object):
                 range_id = self._upload_chunk(chunk_offset, chunk_data) 
                 self._update_progress(len(chunk_data))
                 return range_id
-            except Exception:
+            except AzureHttpException:
                 if retries > 0:
                     retries -= 1
                     sleep(self.retry_wait)

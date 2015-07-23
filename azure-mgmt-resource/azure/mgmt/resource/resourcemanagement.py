@@ -27,7 +27,7 @@ try:
     from urllib import quote, unquote
 except:
     from urllib.parse import quote, unquote
-from azure.common import AzureOperationResponse, AzureException, AzureError, OperationStatusResponse, OperationStatus, Service
+from azure.common import AzureOperationResponse, AzureHttpError, OperationStatusResponse, OperationStatus, Service
 from azure.common.arm import ResourceBase, ResourceBaseExtended
 
 class LongRunningOperationResponse(AzureOperationResponse):
@@ -2136,8 +2136,7 @@ class ResourceManagementClient(Service):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -2248,8 +2247,7 @@ class DeploymentOperationOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -2401,8 +2399,7 @@ class DeploymentOperationOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -2524,8 +2521,7 @@ class DeploymentOperationOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -2698,8 +2694,7 @@ class DeploymentOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -2837,8 +2832,7 @@ class DeploymentOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3100,8 +3094,7 @@ class DeploymentOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3364,8 +3357,7 @@ class DeploymentOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3603,8 +3595,7 @@ class DeploymentOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3931,8 +3922,7 @@ class DeploymentOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 400:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4229,8 +4219,7 @@ class ProviderOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4351,8 +4340,7 @@ class ProviderOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4462,8 +4450,7 @@ class ProviderOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4593,8 +4580,7 @@ class ProviderOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4716,8 +4702,7 @@ class ProviderOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4864,8 +4849,7 @@ class ResourceGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4946,8 +4930,7 @@ class ResourceGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 204 and status_code != 404:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5058,8 +5041,7 @@ class ResourceGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5220,8 +5202,7 @@ class ResourceGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5348,8 +5329,7 @@ class ResourceGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5455,8 +5435,7 @@ class ResourceGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5625,8 +5604,7 @@ class ResourceGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5794,8 +5772,7 @@ class ResourceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 404:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5950,8 +5927,7 @@ class ResourceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6132,8 +6108,7 @@ class ResourceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6234,8 +6209,7 @@ class ResourceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6399,8 +6373,7 @@ class ResourceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6536,8 +6509,7 @@ class ResourceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6718,8 +6690,7 @@ class ResourceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6814,8 +6785,7 @@ class ResourceProviderOperationDetailsOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6948,8 +6918,7 @@ class TagOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7089,8 +7058,7 @@ class TagOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7193,8 +7161,7 @@ class TagOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7269,8 +7236,7 @@ class TagOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7330,8 +7296,7 @@ class TagOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7454,8 +7419,7 @@ class TagOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result

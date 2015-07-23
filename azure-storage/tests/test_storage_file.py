@@ -23,9 +23,9 @@ import sys
 import unittest
 
 from azure.common import (
-    WindowsAzureError,
-    WindowsAzureConflictError,
-    WindowsAzureMissingResourceError,
+    AzureHttpError,
+    AzureConflictHttpError,
+    AzureMissingResourceHttpError,
 )
 from azure.storage import (
     DEV_ACCOUNT_NAME,
@@ -190,7 +190,7 @@ class StorageFileTest(StorageTestCase):
             del os.environ[EMULATED]
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(ValueError):
             fs = FileService()
 
         # Assert
@@ -252,7 +252,7 @@ class StorageFileTest(StorageTestCase):
 
         # Act
         created = self.fs.create_share(self.share_name)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.fs.create_share(self.share_name, None, True)
 
         # Assert
@@ -381,7 +381,7 @@ class StorageFileTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.set_share_metadata(
                 self.share_name, {'hello': 'world', 'number': '43'})
 
@@ -408,7 +408,7 @@ class StorageFileTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.get_share_metadata(self.share_name)
 
         # Assert
@@ -433,7 +433,7 @@ class StorageFileTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.get_share_properties(self.share_name)
 
         # Assert
@@ -479,7 +479,7 @@ class StorageFileTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.delete_share(self.share_name, True)
 
         # Assert
@@ -503,7 +503,7 @@ class StorageFileTest(StorageTestCase):
         # Act
         created = self.fs.create_share(self.share_name)
         created = self.fs.create_directory(self.share_name, 'dir1')
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.fs.create_directory(self.share_name, 'dir1', True)
 
         # Assert
@@ -541,7 +541,7 @@ class StorageFileTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.get_directory_properties(self.share_name, 'dir1')
 
         # Assert
@@ -557,7 +557,7 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
         self.assertTrue(deleted)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.get_directory_properties(self.share_name, 'dir1')
 
     @record
@@ -571,7 +571,7 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
         self.assertTrue(deleted)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.get_directory_properties(self.share_name, 'dir1')
 
     @record
@@ -589,7 +589,7 @@ class StorageFileTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.delete_directory(self.share_name, 'dir1', True)
 
         # Assert
@@ -809,7 +809,7 @@ class StorageFileTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.get_file(self.share_name, None, 'file1')
 
         # Assert
@@ -820,7 +820,7 @@ class StorageFileTest(StorageTestCase):
         self.fs.create_share(self.share_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.get_file(self.share_name, None, 'file1')
 
         # Assert
@@ -866,7 +866,7 @@ class StorageFileTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.set_file_properties(
                 self.share_name, None, 'file1',
                 x_ms_content_language='spanish')
@@ -880,7 +880,7 @@ class StorageFileTest(StorageTestCase):
         self.fs.create_directory(self.share_name, 'dir1')
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.set_file_properties(
                 self.share_name, 'dir1', 'file1',
                 x_ms_content_language='spanish')
@@ -906,7 +906,7 @@ class StorageFileTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.get_file_properties(self.share_name, None, 'file1')
 
         # Assert
@@ -917,7 +917,7 @@ class StorageFileTest(StorageTestCase):
         self.fs.create_share(self.share_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.get_file_properties(self.share_name, None, 'file1')
 
         # Assert
@@ -973,7 +973,7 @@ class StorageFileTest(StorageTestCase):
         self.fs.create_share(self.share_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.fs.delete_file (self.share_name, None, 'file1')
 
         # Assert
@@ -1149,7 +1149,7 @@ class StorageFileTest(StorageTestCase):
         self.share_name = self.share_name + u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             # not supported - share name must be alphanumeric, lowercase
             self.fs.create_share(self.share_name)
 

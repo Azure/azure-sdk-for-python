@@ -16,10 +16,6 @@ import os
 import sys
 import time
 
-from azure.common import (
-    WindowsAzureError,
-    WindowsAzureAsyncOperationError,
-)
 from .constants import (
     AZURE_MANAGEMENT_CERTFILE,
     AZURE_MANAGEMENT_SUBSCRIPTIONID,
@@ -30,6 +26,7 @@ from .constants import (
 )
 from .models import (
     AsynchronousOperationResult,
+    AzureAsyncOperationHttpError,
     Operation,
 )
 from ._common_conversion import (
@@ -78,7 +75,7 @@ class _ServiceManagementClient(object):
 
         if not self.request_session:
             if not self.cert_file or not self.subscription_id:
-                raise WindowsAzureError(
+                raise ValueError(
                     'You need to provide subscription id and certificate file')
 
         self._httpclient = _HTTPClient(
@@ -276,7 +273,7 @@ class _ServiceManagementClient(object):
                 return result
             elif result.error:
                 if failure_callback is not None:
-                    ex = WindowsAzureAsyncOperationError(_ERROR_ASYNC_OP_FAILURE, result)
+                    ex = AzureAsyncOperationHttpError(_ERROR_ASYNC_OP_FAILURE, result.status, result)
                     failure_callback(elapsed, ex)
                 return result
             else:
@@ -285,7 +282,7 @@ class _ServiceManagementClient(object):
                 time.sleep(sleep_interval)
 
         if failure_callback is not None:
-            ex = WindowsAzureAsyncOperationError(_ERROR_ASYNC_OP_TIMEOUT, result)
+            ex = AzureAsyncOperationHttpError(_ERROR_ASYNC_OP_TIMEOUT, result.status, result)
             failure_callback(elapsed, ex)
         return result
 

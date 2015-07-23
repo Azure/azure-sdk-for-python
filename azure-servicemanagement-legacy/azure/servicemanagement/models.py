@@ -1,4 +1,4 @@
-#-------------------------------------------------------------------------
+﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+from azure.common import (
+    AzureHttpError,
+)
 from ._common_models import (
     Feed,
     WindowsAzureData,
@@ -22,6 +25,15 @@ from ._common_models import (
     _unicode_type,
     _xml_attribute,
 )
+
+
+class AzureAsyncOperationHttpError(AzureHttpError):
+
+    '''Indicates that a batch operation failed'''
+
+    def __init__(self, message, status_code, result):
+        super(AzureAsyncOperationHttpError, self).__init__(message, status_code)
+        self.result = result
 
 
 class StorageServices(WindowsAzureData):

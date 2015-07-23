@@ -17,7 +17,7 @@
 import time
 import unittest
 
-from azure.common import WindowsAzureError
+from azure.common import AzureHttpError
 from azure.servicemanagement import ServiceManagementService
 from testutils.common_recordingtestcase import (
     TestMode,
@@ -287,7 +287,7 @@ class LegacyMgmtStorageTest(LegacyMgmtTestCase):
         label = 'label'
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             # not supported - queue name must be alphanumeric, lowercase
             result = self.sms.create_storage_account(
                 self.storage_account_name,

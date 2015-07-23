@@ -13,7 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 from azure.common import (
-    WindowsAzureError,
+    AzureHttpError,
 )
 from .._common_error import (
     _dont_fail_not_exist,
@@ -247,7 +247,7 @@ class FileService(_StorageClient):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_on_exist(ex)
                 return False
         else:
@@ -347,7 +347,7 @@ class FileService(_StorageClient):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_not_exist(ex)
                 return False
         else:
@@ -386,7 +386,7 @@ class FileService(_StorageClient):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_on_exist(ex)
                 return False
         else:
@@ -428,7 +428,7 @@ class FileService(_StorageClient):
             try:
                 self._perform_request(request)
                 return True
-            except WindowsAzureError as ex:
+            except AzureHttpError as ex:
                 _dont_fail_not_exist(ex)
                 return False
         else:

@@ -26,7 +26,7 @@ try:
     from urllib import quote, unquote
 except:
     from urllib.parse import quote, unquote
-from azure.common import AzureOperationResponse, AzureException, AzureError, OperationStatusResponse, OperationStatus, Service
+from azure.common import AzureOperationResponse, AzureHttpError, OperationStatusResponse, OperationStatus, Service
 from azure.common.arm import ResourceBase, ResourceBaseExtended
 
 class ComputeLongRunningOperationResponse(AzureOperationResponse):
@@ -2893,8 +2893,7 @@ class ComputeManagementClient(Service):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3157,8 +3156,7 @@ class AvailabilitySetOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3326,8 +3324,7 @@ class AvailabilitySetOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3403,8 +3400,7 @@ class AvailabilitySetOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3566,8 +3562,7 @@ class AvailabilitySetOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3740,8 +3735,7 @@ class AvailabilitySetOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3878,8 +3872,7 @@ class UsageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4035,8 +4028,7 @@ class VirtualMachineExtensionImageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4169,8 +4161,7 @@ class VirtualMachineExtensionImageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4289,8 +4280,7 @@ class VirtualMachineExtensionImageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4542,8 +4532,7 @@ class VirtualMachineExtensionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4786,8 +4775,7 @@ class VirtualMachineExtensionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4947,8 +4935,7 @@ class VirtualMachineExtensionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5191,8 +5178,7 @@ class VirtualMachineExtensionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5466,8 +5452,7 @@ class VirtualMachineImageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5633,8 +5618,7 @@ class VirtualMachineImageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5743,8 +5727,7 @@ class VirtualMachineImageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5846,8 +5829,7 @@ class VirtualMachineImageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5963,8 +5945,7 @@ class VirtualMachineImageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6121,8 +6102,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6838,8 +6818,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7739,8 +7718,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7819,8 +7797,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7899,8 +7876,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7979,8 +7955,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -8059,8 +8034,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -8280,8 +8254,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -8359,8 +8332,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -9257,8 +9229,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -10149,8 +10120,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -11047,8 +11017,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -11955,8 +11924,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -12051,8 +12019,7 @@ class VirtualMachineOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -13074,8 +13041,7 @@ class VirtualMachineSizeOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
