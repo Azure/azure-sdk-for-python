@@ -178,14 +178,6 @@ def _get_request_body_bytes_only(param_name, param_value):
     if isinstance(param_value, bytes):
         return param_value
 
-    # Previous versions of the SDK allowed data types other than bytes to be
-    # passed in, and they would be auto-converted to bytes.  We preserve this
-    # behavior when running under 2.7, but issue a warning.
-    # Python 3 support is new, so we reject anything that's not bytes.
-    if sys.version_info < (3,):
-        warnings.warn(_WARNING_VALUE_SHOULD_BE_BYTES.format(param_name))
-        return _get_request_body(param_value)
-
     raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
 
 

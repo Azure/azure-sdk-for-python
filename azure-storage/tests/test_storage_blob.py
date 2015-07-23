@@ -1564,29 +1564,7 @@ class StorageBlobTest(StorageTestCase):
         self.assertIsNone(resp)
 
     @record
-    def test_put_blob_block_blob_unicode_python_27(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info >= (3,):
-            return
-
-        # Arrange
-        self._create_container(self.container_name)
-
-        # Act
-        data = u'啊齄丂狛狜'
-        resp = self.bs.put_blob(
-            self.container_name, 'blob1', data, 'BlockBlob')
-
-        # Assert
-        self.assertIsNone(resp)
-        blob = self.bs.get_blob(self.container_name, 'blob1')
-        self.assertEqual(blob, data.encode('utf-8'))
-
-    @record
-    def test_put_blob_block_blob_unicode_python_33(self):
-        if sys.version_info < (3,):
-            return
-
+    def test_put_blob_block_blob_unicode(self):
         # Arrange
         self._create_container(self.container_name)
 
@@ -2331,32 +2309,7 @@ class StorageBlobTest(StorageTestCase):
         # Assert
 
     @record
-    def test_put_block_unicode_python_27(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info >= (3,):
-            return
-
-        # Arrange
-        self._create_container_and_block_blob(
-            self.container_name, 'blob1', b'')
-
-        # Act
-        resp = self.bs.put_block(self.container_name, 'blob1', u'啊齄', '1')
-        self.assertIsNone(resp)
-        resp = self.bs.put_block(self.container_name, 'blob1', u'丂狛狜', '2')
-        self.assertIsNone(resp)
-        resp = self.bs.put_block_list(self.container_name, 'blob1', ['1', '2'])
-        self.assertIsNone(resp)
-
-        # Assert
-        blob = self.bs.get_blob(self.container_name, 'blob1')
-        self.assertEqual(blob, u'啊齄丂狛狜'.encode('utf-8'))
-
-    @record
-    def test_put_block_unicode_python_33(self):
-        if sys.version_info < (3,):
-            return
-
+    def test_put_block_unicode(self):
         # Arrange
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'')
@@ -2606,30 +2559,7 @@ class StorageBlobTest(StorageTestCase):
         # Assert
 
     @record
-    def test_put_page_unicode_python_27(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info >= (3,):
-            return
-
-        # Arrange
-        self._create_container_and_page_blob(self.container_name, 'blob1', 512)
-
-        # Act
-        data = u'abcdefghijklmnop' * 32
-        resp = self.bs.put_page(
-            self.container_name, 'blob1', data, 'bytes=0-511', 'update')
-
-        # Assert
-        self.assertIsNone(resp)
-        blob = self.bs.get_blob(self.container_name, 'blob1')
-        self.assertEqual(blob, data.encode('utf-8'))
-
-    @record
-    def test_put_page_unicode_python_33(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info < (3,):
-            return
-
+    def test_put_page_unicode(self):
         # Arrange
         self._create_container_and_page_blob(self.container_name, 'blob1', 512)
 

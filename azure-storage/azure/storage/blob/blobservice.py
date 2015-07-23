@@ -102,6 +102,9 @@ class BlobService(_StorageClient):
     This is the main class managing Blob resources.
     '''
 
+    _BLOB_MAX_DATA_SIZE = 64 * 1024 * 1024
+    _BLOB_MAX_CHUNK_DATA_SIZE = 4 * 1024 * 1024
+
     def __init__(self, account_name=None, account_key=None, protocol='https',
                  host_base=BLOB_SERVICE_HOST_BASE, dev_host=DEV_BLOB_HOST,
                  timeout=DEFAULT_HTTP_TIMEOUT, sas_token=None, connection_string=None,
@@ -141,8 +144,6 @@ class BlobService(_StorageClient):
             protocol = connection_params.protocol.lower()
             host_base = connection_params.host_base_blob
             
-        self._BLOB_MAX_DATA_SIZE = 64 * 1024 * 1024
-        self._BLOB_MAX_CHUNK_DATA_SIZE = 4 * 1024 * 1024
         super(BlobService, self).__init__(
             account_name, account_key, protocol, host_base, dev_host, timeout, sas_token, request_session)
 
@@ -179,17 +180,10 @@ class BlobService(_StorageClient):
             generate_shared_access_signature.
         '''
 
-        if not account_name:
-            account_name = self.account_name
-        if not protocol:
-            protocol = self.protocol
-        if not host_base:
-            host_base = self.host_base
-
         url = '{0}://{1}{2}/{3}/{4}'.format(
-            protocol,
-            account_name,
-            host_base,
+            protocol or self.protocol,
+            account_name or self.account_name,
+            host_base or self.host_base,
             container_name,
             blob_name,
         )

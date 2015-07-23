@@ -1,0 +1,93 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:12:20 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshared8ed185f?restype=share
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:12:21 GMT']
+      ETag: ['"0x8D29208AF5EA7A9"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:12:21 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [e799ba80-001a-0014-74f1-c33c6e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:12:20 GMT']
+      x-ms-version: ['2014-02-14']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshared8ed185f/dir1?restype=directory
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:12:21 GMT']
+      ETag: ['"0x8D29208AF4DF774"']
+      Last-Modified: ['Tue, 21 Jul 2015 20:12:21 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [e799ba82-001a-0014-75f1-c33c6e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:12:21 GMT']
+      x-ms-version: ['2014-02-14']
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshared8ed185f/dir1?restype=directory
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Tue, 21 Jul 2015 20:12:21 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [e799ba83-001a-0014-76f1-c33c6e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/octet-stream Charset=UTF-8]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-date: ['Tue, 21 Jul 2015 20:12:21 GMT']
+      x-ms-version: ['2014-02-14']
+    method: GET
+    uri: https://storagename.file.core.windows.net/utshared8ed185f/dir1?restype=directory
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The\
+        \ specified resource does not exist.\nRequestId:e799ba84-001a-0014-77f1-c33c6e000000\n\
+        Time:2015-07-21T20:12:21.3481143Z</Message></Error>"}
+    headers:
+      Content-Length: ['223']
+      Content-Type: [application/xml]
+      Date: ['Tue, 21 Jul 2015 20:12:21 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Vary: [Origin]
+      x-ms-request-id: [e799ba84-001a-0014-77f1-c33c6e000000]
+      x-ms-version: ['2014-02-14']
+    status: {code: 404, message: The specified resource does not exist.}
+version: 1
