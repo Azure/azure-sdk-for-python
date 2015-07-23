@@ -35,6 +35,7 @@ app_creds_real.py
 *.suo
 *.user
 *.sln.docstates
+.vs/
 
 # Windows image file caches
 Thumbs.db
