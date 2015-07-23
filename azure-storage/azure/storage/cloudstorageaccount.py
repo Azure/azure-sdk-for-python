@@ -21,7 +21,7 @@
 class CloudStorageAccount(object):
 
     """
-    Provides a factory for creating the blob, queue, and table services
+    Provides a factory for creating the blob, queue, table, and file services
     with a common account name and account key.  Users can either use the
     factory or can construct the appropriate service directly.
     """
@@ -41,3 +41,7 @@ class CloudStorageAccount(object):
     def create_queue_service(self):
         from .queue.queueservice import QueueService
         return QueueService(self.account_name, self.account_key)
+
+    def create_file_service(self):
+        from .file.fileservice import FileService
+        return FileService(self.account_name, self.account_key)

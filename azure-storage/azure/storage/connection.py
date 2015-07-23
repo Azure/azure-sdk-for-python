@@ -17,6 +17,7 @@ from .constants import (
     BLOB_SERVICE_HOST_BASE,
     TABLE_SERVICE_HOST_BASE,
     QUEUE_SERVICE_HOST_BASE,
+    FILE_SERVICE_HOST_BASE
 )
 
 
@@ -43,3 +44,5 @@ class StorageConnectionParameters(object):
                                else ".table.{}".format(endpoint_suffix)
         self.host_base_queue = QUEUE_SERVICE_HOST_BASE if endpoint_suffix is None \
                                else ".queue.{}".format(endpoint_suffix)
+        self.host_base_file = FILE_SERVICE_HOST_BASE if endpoint_suffix is None \
+                               else ".file.{}".format(endpoint_suffix)

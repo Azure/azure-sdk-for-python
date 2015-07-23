@@ -16,7 +16,7 @@
 """
 How to: Create a Container
 --------------------------
->>> from azure.storage import BlobService
+>>> from azure.storage.blob import BlobService
 >>> blob_service = BlobService(name, key)
 >>> blob_service.create_container('mycontainer')
 True

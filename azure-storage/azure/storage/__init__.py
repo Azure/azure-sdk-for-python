@@ -22,6 +22,8 @@ from .constants import (
 )
 
 from .models import (
+    AzureBatchOperationError,
+    AzureBatchValidationError,
     RetentionPolicy,
     Logging,
     HourMetrics,

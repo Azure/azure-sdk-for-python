@@ -14,7 +14,6 @@
 #--------------------------------------------------------------------------
 import unittest
 
-from azure.common import WindowsAzureError
 from azure.storage import CloudStorageAccount
 from azure.storage.blob import BlobService
 from azure.storage.queue import QueueService
@@ -49,7 +48,7 @@ class StorageAccountTest(ExtendedTestCase):
 
         # Act
         bad_account = CloudStorageAccount('', '')
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(ValueError):
             service = bad_account.create_blob_service()
 
         # Assert

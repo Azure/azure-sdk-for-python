@@ -15,10 +15,6 @@
 import json
 import os.path
 
-from util import (
-    get_test_file_path,
-)
-
 
 def get_token_from_username_password(authority_url, username, password):
     import adal
@@ -40,7 +36,7 @@ def get_token_from_client_credentials(authority, client_id, secret):
     return token_response.get('accessToken')
 
 
-def get_token_from_json_file():
+def get_token_from_json_file(working_folder):
     '''
     Read the token from a json file 'credentials_real.json' in this directory
     where the file looks like this:
@@ -48,7 +44,7 @@ def get_token_from_json_file():
       "authorization_header": "Bearer eyJ0...8f5w"
     }
     '''
-    with open(get_test_file_path(os.path.join('credentials_real.json'))) as credential_file:
+    with open(os.path.join(working_folder, 'credentials_real.json')) as credential_file:
         credential = json.load(credential_file)
         token = credential['authorization_header'].split()[1]
         return token

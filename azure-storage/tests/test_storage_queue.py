@@ -28,10 +28,10 @@ from azure.storage.queue import (
     QueueService,
     QueueSharedAccessPermissions,
 )
-from azure.common import WindowsAzureError
-from testutils.util import (
-    create_storage_service,
-    set_service_options,
+from azure.common import (
+    AzureHttpError,
+    AzureConflictHttpError,
+    AzureMissingResourceHttpError,
 )
 from testutils.common_recordingtestcase import (
     TestMode,
@@ -49,7 +49,7 @@ class StorageQueueTest(StorageTestCase):
     def setUp(self):
         super(StorageQueueTest, self).setUp()
 
-        self.qs = create_storage_service(QueueService, self.settings)
+        self.qs = self._create_storage_service(QueueService, self.settings)
 
         self.test_queues = []
         self.creatable_queues = []
@@ -160,7 +160,7 @@ class StorageQueueTest(StorageTestCase):
     def test_create_queue_fail_on_exist(self):
         # Action
         created = self.qs.create_queue(self.creatable_queues[0], None, True)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.qs.create_queue(self.creatable_queues[0], None, True)
 
         # Asserts
@@ -192,7 +192,7 @@ class StorageQueueTest(StorageTestCase):
     @record
     def test_delete_queue_fail_not_exist_not_exist(self):
         # Action
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.qs.delete_queue(self.creatable_queues[0], True)
 
         # Asserts
@@ -432,7 +432,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.peek_messages(self.test_queues[0])
 
         # Assert
@@ -459,7 +459,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.put_message(self.test_queues[0], 'addedmessage')
 
         # Assert
@@ -484,7 +484,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         service.update_message(
             self.test_queues[0],
             result[0].message_id,
@@ -514,7 +514,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.get_messages(self.test_queues[0])
 
         # Assert
@@ -553,7 +553,7 @@ class StorageQueueTest(StorageTestCase):
             account_name=self.settings.STORAGE_ACCOUNT_NAME,
             sas_token=token,
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.peek_messages(self.test_queues[0])
 
         # Assert
@@ -594,7 +594,7 @@ class StorageQueueTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.qs.get_queue_acl(self.creatable_queues[0])
 
         # Assert
@@ -655,7 +655,7 @@ class StorageQueueTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.qs.set_queue_acl(self.creatable_queues[0])
 
         # Assert
@@ -694,7 +694,7 @@ class StorageQueueTest(StorageTestCase):
         # Action
         self.creatable_queues[0] = u'啊齄丂狛狜'
 
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             # not supported - queue name must be alphanumeric, lowercase
             self.qs.create_queue(self.creatable_queues[0])
 

@@ -16,7 +16,7 @@ import sys
 
 from datetime import datetime
 from azure.common import (
-    WindowsAzureError,
+    AzureException,
 )
 from ._common_models import (
     WindowsAzureData,
@@ -25,6 +25,15 @@ from ._common_error import (
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
 )
+
+
+class AzureServiceBusPeekLockError(AzureException):
+    '''Indicates that peek-lock is required for this operation.'''
+
+
+class AzureServiceBusResourceNotFound(AzureException):
+    '''Indicates that the resource doesn't exist.'''
+
 
 class Queue(WindowsAzureData):
 
@@ -198,7 +207,7 @@ class Message(WindowsAzureData):
                 self.broker_properties['SequenceNumber'],
                 self.broker_properties['LockToken'])
         else:
-            raise WindowsAzureError(_ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE)
+            raise AzureServiceBusPeekLockError(_ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE)
 
     def unlock(self):
         ''' Unlocks itself if find queue name or topic name and subscription
@@ -215,7 +224,7 @@ class Message(WindowsAzureData):
                 self.broker_properties['SequenceNumber'],
                 self.broker_properties['LockToken'])
         else:
-            raise WindowsAzureError(_ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK)
+            raise AzureServiceBusPeekLockError(_ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK)
 
     def add_headers(self, request):
         ''' add addtional headers to request for message request.'''

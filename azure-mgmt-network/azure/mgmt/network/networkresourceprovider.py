@@ -27,7 +27,7 @@ try:
     from urllib import quote, unquote
 except:
     from urllib.parse import quote, unquote
-from azure.common import AzureOperationResponse, AzureException, AzureError, OperationStatusResponse, OperationStatus, Service
+from azure.common import AzureOperationResponse, AzureHttpError, OperationStatusResponse, OperationStatus, Service
 from azure.common.arm import ResourceBase, ResourceBaseExtended
 
 class DnsNameAvailabilityResponse(AzureOperationResponse):
@@ -3150,8 +3150,7 @@ class NetworkResourceProviderClient(Service):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3223,8 +3222,7 @@ class NetworkResourceProviderClient(Service):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -3721,8 +3719,7 @@ class LoadBalancerOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4253,8 +4250,7 @@ class LoadBalancerOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4420,8 +4416,7 @@ class LoadBalancerOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -4897,8 +4892,7 @@ class LoadBalancerOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5374,8 +5368,7 @@ class LoadBalancerOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -5948,8 +5941,7 @@ class LocalNetworkGatewayOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6144,8 +6136,7 @@ class LocalNetworkGatewayOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6320,8 +6311,7 @@ class LocalNetworkGatewayOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6456,8 +6446,7 @@ class LocalNetworkGatewayOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -6775,8 +6764,7 @@ class NetworkInterfaceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7078,8 +7066,7 @@ class NetworkInterfaceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7246,8 +7233,7 @@ class NetworkInterfaceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7493,8 +7479,7 @@ class NetworkInterfaceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -7740,8 +7725,7 @@ class NetworkInterfaceOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -8214,8 +8198,7 @@ class NetworkSecurityGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -8562,8 +8545,7 @@ class NetworkSecurityGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -8736,8 +8718,7 @@ class NetworkSecurityGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -9026,8 +9007,7 @@ class NetworkSecurityGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -9316,8 +9296,7 @@ class NetworkSecurityGroupOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -9718,8 +9697,7 @@ class PublicIpAddressOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -9943,8 +9921,7 @@ class PublicIpAddressOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -10115,8 +10092,7 @@ class PublicIpAddressOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -10281,8 +10257,7 @@ class PublicIpAddressOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -10447,8 +10422,7 @@ class PublicIpAddressOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -10722,8 +10696,7 @@ class SecurityRuleOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -10937,8 +10910,7 @@ class SecurityRuleOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -11121,8 +11093,7 @@ class SecurityRuleOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -11280,8 +11251,7 @@ class SecurityRuleOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -11523,8 +11493,7 @@ class SubnetOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -11717,8 +11686,7 @@ class SubnetOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -11897,8 +11865,7 @@ class SubnetOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -12035,8 +12002,7 @@ class SubnetOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -12196,8 +12162,7 @@ class UsageOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -12607,8 +12572,7 @@ class VirtualNetworkGatewayConnectionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -13087,8 +13051,7 @@ class VirtualNetworkGatewayConnectionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -13195,8 +13158,7 @@ class VirtualNetworkGatewayConnectionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -13366,8 +13328,7 @@ class VirtualNetworkGatewayConnectionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -13607,8 +13568,7 @@ class VirtualNetworkGatewayConnectionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -14036,8 +13996,7 @@ class VirtualNetworkGatewayConnectionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -14120,8 +14079,7 @@ class VirtualNetworkGatewayConnectionOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -14783,8 +14741,7 @@ class VirtualNetworkGatewayOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -15037,8 +14994,7 @@ class VirtualNetworkGatewayOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -15221,8 +15177,7 @@ class VirtualNetworkGatewayOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -15566,8 +15521,7 @@ class VirtualNetworkGatewayOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -15760,8 +15714,7 @@ class VirtualNetworkGatewayOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -16158,8 +16111,7 @@ class VirtualNetworkOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 201:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -16411,8 +16363,7 @@ class VirtualNetworkOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200 and status_code != 202 and status_code != 204:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -16582,8 +16533,7 @@ class VirtualNetworkOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -16778,8 +16728,7 @@ class VirtualNetworkOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result
@@ -16973,8 +16922,7 @@ class VirtualNetworkOperations(object):
         body = response.content
         status_code = response.status_code
         if status_code != 200:
-            error = AzureException(body)
-            error.status_code = response.status_code
+            error = AzureHttpError(body, response.status_code)
             raise error
         
         # Create Result

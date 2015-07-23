@@ -46,7 +46,6 @@
     <Compile Include="azure-common\testutils\common_extendedtestcase.py" />
     <Compile Include="azure-common\testutils\common_recordingtestcase.py" />
     <Compile Include="azure-common\testutils\create_credentials_file.py" />
-    <Compile Include="azure-common\testutils\util.py" />
     <Compile Include="azure-common\testutils\__init__.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\computemanagement.py" />
     <Compile Include="azure-mgmt-network\azure\mgmt\network\networkresourceprovider.py" />
@@ -186,6 +185,11 @@
     <Compile Include="azure-storage\azure\storage\constants.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="azure-storage\azure\storage\file\fileservice.py" />
+    <Compile Include="azure-storage\azure\storage\file\models.py" />
+    <Compile Include="azure-storage\azure\storage\file\_chunking.py" />
+    <Compile Include="azure-storage\azure\storage\file\_serialization.py" />
+    <Compile Include="azure-storage\azure\storage\file\__init__.py" />
     <Compile Include="azure-storage\azure\storage\queue\models.py" />
     <Compile Include="azure-storage\azure\storage\queue\_serialization.py" />
     <Compile Include="azure-storage\azure\storage\queue\__init__.py">
@@ -236,6 +240,7 @@
     <Compile Include="azure-storage\tests\storage_settings_real.py" />
     <Compile Include="azure-storage\tests\storage_testcase.py" />
     <Compile Include="azure-storage\tests\test_storage_account.py" />
+    <Compile Include="azure-storage\tests\test_storage_file.py" />
     <Compile Include="azure-storage\tests\test_storage_blob.py" />
     <Compile Include="azure-storage\tests\test_storage_queue.py" />
     <Compile Include="azure-storage\tests\test_storage_sas.py" />
@@ -289,6 +294,7 @@
     <Folder Include="azure-storage\azure\" />
     <Folder Include="azure-storage\azure\storage\" />
     <Folder Include="azure-storage\azure\storage\blob\" />
+    <Folder Include="azure-storage\azure\storage\file\" />
     <Folder Include="azure-storage\azure\storage\queue\" />
     <Folder Include="azure-storage\azure\storage\table\" />
     <Folder Include="azure-storage\azure\storage\_http\" />
@@ -315,7 +321,6 @@
     <Content Include="azure-common\MANIFEST.in" />
     <Content Include="azure-common\README.rst" />
     <Content Include="azure-common\setup.cfg" />
-    <Content Include="azure-common\testutils\testsettings_local.json" />
     <Content Include="azure-mgmt-resource\MANIFEST.in" />
     <Content Include="azure-mgmt-resource\README.rst" />
     <Content Include="azure-mgmt-resource\setup.cfg" />

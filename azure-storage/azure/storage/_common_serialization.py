@@ -112,36 +112,8 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'content_md5': 'Content-MD5',
     'last_modified': 'Last-Modified',
     'cache_control': 'Cache-Control',
-    'account_admin_live_email_id': 'AccountAdminLiveEmailId',
-    'service_admin_live_email_id': 'ServiceAdminLiveEmailId',
-    'subscription_id': 'SubscriptionID',
-    'fqdn': 'FQDN',
-    'private_id': 'PrivateID',
-    'os_virtual_hard_disk': 'OSVirtualHardDisk',
-    'logical_disk_size_in_gb': 'LogicalDiskSizeInGB',
-    'logical_size_in_gb': 'LogicalSizeInGB',
-    'os': 'OS',
-    'persistent_vm_downtime_info': 'PersistentVMDowntimeInfo',
     'copy_id': 'CopyId',
-    'os_state': 'OSState',
-    'vm_image': 'VMImage',
-    'vm_images': 'VMImages',
-    'os_disk_configuration': 'OSDiskConfiguration',
-    'public_ips': 'PublicIPs', 
-    'public_ip': 'PublicIP', 
-    'supported_os': 'SupportedOS',
-    'reserved_ip': 'ReservedIP',
-    'reserved_ips': 'ReservedIPs',
-    'aad_tenant_id': 'AADTenantID',
-    'start_ip_address': 'StartIPAddress',
-    'end_ip_address': 'EndIPAddress',
-    'operation_id': 'OperationId',
-    'operation_object_id': 'OperationObjectId',
-    'client_ip': 'ClientIP',
-    'status_id': 'ID',
-    'virtual_ips': 'VirtualIPs',
-    'virtual_ip': 'VirtualIP'
-    }
+}
 
 
 def _get_serialization_name(element_name):
@@ -205,14 +177,6 @@ def _get_request_body_bytes_only(param_name, param_value):
 
     if isinstance(param_value, bytes):
         return param_value
-
-    # Previous versions of the SDK allowed data types other than bytes to be
-    # passed in, and they would be auto-converted to bytes.  We preserve this
-    # behavior when running under 2.7, but issue a warning.
-    # Python 3 support is new, so we reject anything that's not bytes.
-    if sys.version_info < (3,):
-        warnings.warn(_WARNING_VALUE_SHOULD_BE_BYTES.format(param_name))
-        return _get_request_body(param_value)
 
     raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
 

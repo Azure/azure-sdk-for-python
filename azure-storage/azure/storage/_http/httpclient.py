@@ -64,9 +64,6 @@ class _HTTPClient(object):
             user agent string to set in http header.
         '''
         self.service_instance = service_instance
-        self.status = None
-        self.respheader = None
-        self.message = None
         self.cert_file = cert_file
         self.protocol = protocol
         self.proxy_host = None
@@ -215,13 +212,13 @@ class _HTTPClient(object):
                     pass
 
             resp = connection.getresponse()
-            self.status = int(resp.status)
-            self.message = resp.reason
-            self.respheader = headers = resp.getheaders()
+            status = int(resp.status)
+            message = resp.reason
+            respheaders = resp.getheaders()
 
             # for consistency across platforms, make header names lowercase
-            for i, value in enumerate(headers):
-                headers[i] = (value[0].lower(), value[1])
+            for i, value in enumerate(respheaders):
+                respheaders[i] = (value[0].lower(), value[1])
 
             respbody = None
             if resp.length is None:
@@ -237,16 +234,17 @@ class _HTTPClient(object):
                     pass
 
             response = HTTPResponse(
-                int(resp.status), resp.reason, headers, respbody)
-            if self.status == 307:
+                status, resp.reason, respheaders, respbody)
+            if status == 307:
                 new_url = urlparse(dict(headers)['location'])
                 request.host = new_url.hostname
                 request.path = new_url.path
                 request.path, request.query = self._update_request_uri_query(request)
                 return self.perform_request(request)
-            if self.status >= 300:
-                raise HTTPError(self.status, self.message,
-                                self.respheader, respbody)
+            if status >= 300:
+                # This exception will be caught by the general error handler
+                # and raised as an azure http exception
+                raise HTTPError(status, message, respheaders, respbody)
 
             return response
         finally:

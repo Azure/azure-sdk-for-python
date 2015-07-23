@@ -17,7 +17,6 @@
 import unittest
 
 import azure.mgmt.resource
-from azure.common import AzureException
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 

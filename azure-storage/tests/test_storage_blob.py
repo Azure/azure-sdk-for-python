@@ -23,9 +23,9 @@ import sys
 import unittest
 
 from azure.common import (
-    WindowsAzureError,
-    WindowsAzureConflictError,
-    WindowsAzureMissingResourceError,
+    AzureHttpError,
+    AzureConflictHttpError,
+    AzureMissingResourceHttpError,
 )
 from azure.storage import (
     DEV_ACCOUNT_NAME,
@@ -54,10 +54,6 @@ from azure.storage.storageclient import (
     AZURE_STORAGE_ACCOUNT,
     EMULATED,
 )
-from testutils.util import (
-    create_storage_service,
-    set_service_options,
-)
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -73,10 +69,10 @@ class StorageBlobTest(StorageTestCase):
     def setUp(self):
         super(StorageBlobTest, self).setUp()
 
-        self.bs = create_storage_service(BlobService, self.settings)
+        self.bs = self._create_storage_service(BlobService, self.settings)
 
         if self.settings.REMOTE_STORAGE_ACCOUNT_NAME and self.settings.REMOTE_STORAGE_ACCOUNT_KEY:
-            self.bs2 = create_storage_service(
+            self.bs2 = self._create_storage_service(
                 BlobService,
                 self.settings,
                 self.settings.REMOTE_STORAGE_ACCOUNT_NAME,
@@ -283,7 +279,7 @@ class StorageBlobTest(StorageTestCase):
             del os.environ[EMULATED]
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(ValueError):
             bs = BlobService()
 
         # Assert
@@ -333,7 +329,7 @@ class StorageBlobTest(StorageTestCase):
         os.environ[EMULATED] = 'false'
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(ValueError):
             bs = BlobService()
 
         if EMULATED in os.environ:
@@ -424,7 +420,7 @@ class StorageBlobTest(StorageTestCase):
 
         # Act
         created = self.bs.create_container(self.container_name)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureConflictHttpError):
             self.bs.create_container(self.container_name, None, None, True)
 
         # Assert
@@ -590,7 +586,7 @@ class StorageBlobTest(StorageTestCase):
 
         # Act
         non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.set_container_metadata(
                 self.container_name,
                 {'hello': 'world', 'number': '43'},
@@ -603,7 +599,7 @@ class StorageBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.set_container_metadata(
                 self.container_name, {'hello': 'world', 'number': '43'})
 
@@ -660,7 +656,7 @@ class StorageBlobTest(StorageTestCase):
 
         # Act
         non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_container_metadata(
                 self.container_name, non_matching_lease_id)
 
@@ -671,7 +667,7 @@ class StorageBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_container_metadata(self.container_name)
 
         # Assert
@@ -731,7 +727,7 @@ class StorageBlobTest(StorageTestCase):
 
         # Act
         non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_container_properties(
                 self.container_name, non_matching_lease_id)
 
@@ -742,7 +738,7 @@ class StorageBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_container_properties(self.container_name)
 
         # Assert
@@ -798,7 +794,7 @@ class StorageBlobTest(StorageTestCase):
 
         # Act
         non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_container_acl(
                 self.container_name, non_matching_lease_id)
 
@@ -809,7 +805,7 @@ class StorageBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_container_acl(self.container_name)
 
         # Assert
@@ -852,7 +848,7 @@ class StorageBlobTest(StorageTestCase):
 
         # Act
         non_matching_lease_id = '00000000-1111-2222-3333-444444444444'
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.set_container_acl(
                 self.container_name, x_ms_lease_id=non_matching_lease_id)
 
@@ -931,7 +927,7 @@ class StorageBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.set_container_acl(self.container_name, None, 'container')
 
         # Assert
@@ -969,7 +965,7 @@ class StorageBlobTest(StorageTestCase):
         self.assertEqual(lease['x-ms-lease-id'],
                          renewed_lease['x-ms-lease-id'])
         self.sleep(5)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.delete_container(self.container_name)
         self.sleep(10)
         self.bs.delete_container(self.container_name)
@@ -990,7 +986,7 @@ class StorageBlobTest(StorageTestCase):
                                 x_ms_lease_id=lease['x-ms-lease-id'],
                                 x_ms_lease_break_period=5)
         self.sleep(5)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.delete_container(
                 self.container_name, x_ms_lease_id=lease['x-ms-lease-id'])
 
@@ -1004,7 +1000,7 @@ class StorageBlobTest(StorageTestCase):
             self.container_name, 'release', lease['x-ms-lease-id'])
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.lease_container(
                 self.container_name, 'break', lease['x-ms-lease-id'])
 
@@ -1020,7 +1016,7 @@ class StorageBlobTest(StorageTestCase):
             self.container_name, 'break', lease['x-ms-lease-id'])
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.lease_container(self.container_name, 'acquire')
 
         # Assert
@@ -1036,7 +1032,7 @@ class StorageBlobTest(StorageTestCase):
         self.container_lease_id = lease['x-ms-lease-id']
 
         # Assert
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.lease_container(self.container_name, 'acquire')
         self.sleep(15)
         lease = self.bs.lease_container(self.container_name, 'acquire')
@@ -1119,7 +1115,7 @@ class StorageBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.bs.delete_container(self.container_name, True)
 
         # Assert
@@ -1150,7 +1146,7 @@ class StorageBlobTest(StorageTestCase):
         self.container_lease_id = lease['x-ms-lease-id']
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.delete_container(self.container_name)
 
         # Assert
@@ -1568,29 +1564,7 @@ class StorageBlobTest(StorageTestCase):
         self.assertIsNone(resp)
 
     @record
-    def test_put_blob_block_blob_unicode_python_27(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info >= (3,):
-            return
-
-        # Arrange
-        self._create_container(self.container_name)
-
-        # Act
-        data = u'啊齄丂狛狜'
-        resp = self.bs.put_blob(
-            self.container_name, 'blob1', data, 'BlockBlob')
-
-        # Assert
-        self.assertIsNone(resp)
-        blob = self.bs.get_blob(self.container_name, 'blob1')
-        self.assertEqual(blob, data.encode('utf-8'))
-
-    @record
-    def test_put_blob_block_blob_unicode_python_33(self):
-        if sys.version_info < (3,):
-            return
-
+    def test_put_blob_block_blob_unicode(self):
         # Arrange
         self._create_container(self.container_name)
 
@@ -1768,7 +1742,7 @@ class StorageBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_blob(self.container_name, 'blob1')
 
         # Assert
@@ -1779,7 +1753,7 @@ class StorageBlobTest(StorageTestCase):
         self._create_container(self.container_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_blob(self.container_name, 'blob1')
 
         # Assert
@@ -1809,7 +1783,7 @@ class StorageBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.set_blob_properties(
                 self.container_name, 'blob1',
                 x_ms_blob_content_language='spanish')
@@ -1822,7 +1796,7 @@ class StorageBlobTest(StorageTestCase):
         self._create_container(self.container_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.set_blob_properties(
                 self.container_name, 'blob1',
                 x_ms_blob_content_language='spanish')
@@ -1867,7 +1841,7 @@ class StorageBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_blob_properties(self.container_name, 'blob1')
 
         # Assert
@@ -1878,7 +1852,7 @@ class StorageBlobTest(StorageTestCase):
         self._create_container(self.container_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.get_blob_properties(self.container_name, 'blob1')
 
         # Assert
@@ -1933,7 +1907,7 @@ class StorageBlobTest(StorageTestCase):
         self._create_container(self.container_name)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.delete_blob (self.container_name, 'blob1')
 
         # Assert
@@ -2047,7 +2021,7 @@ class StorageBlobTest(StorageTestCase):
 
         # Act
         target_blob_name = 'targetblob'
-        with self.assertRaises(WindowsAzureMissingResourceError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             self.bs.copy_blob(self.container_name,
                               target_blob_name, source_blob_url)
 
@@ -2117,7 +2091,7 @@ class StorageBlobTest(StorageTestCase):
         target_blob_name = 'targetblob'
         copy_resp = self.bs.copy_blob(
             self.container_name, target_blob_name, source_blob_url)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.abort_copy_blob(
                 self.container_name,
                 target_blob_name,
@@ -2169,7 +2143,7 @@ class StorageBlobTest(StorageTestCase):
                                  'BlockBlob',
                                  x_ms_lease_id=resp1['x-ms-lease-id'])
         self.sleep(15)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.put_blob(self.container_name, 'blob1', b'hello 3',
                              'BlockBlob', x_ms_lease_id=resp1['x-ms-lease-id'])
 
@@ -2222,7 +2196,7 @@ class StorageBlobTest(StorageTestCase):
         resp1 = self.bs.lease_blob(self.container_name, 'blob1', 'acquire')
         resp2 = self.bs.lease_blob(
             self.container_name, 'blob1', 'release', resp1['x-ms-lease-id'])
-        with self.assertRaises(WindowsAzureConflictError):
+        with self.assertRaises(AzureConflictHttpError):
             self.bs.lease_blob(self.container_name, 'blob1',
                                'renew', resp1['x-ms-lease-id'])
 
@@ -2246,7 +2220,7 @@ class StorageBlobTest(StorageTestCase):
                                  'BlockBlob',
                                  x_ms_lease_id=resp1['x-ms-lease-id'])
         self.sleep(5)
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.put_blob(self.container_name, 'blob1', b'hello 3',
                              'BlockBlob', x_ms_lease_id=resp1['x-ms-lease-id'])
 
@@ -2265,7 +2239,7 @@ class StorageBlobTest(StorageTestCase):
                            'release', lease['x-ms-lease-id'])
 
         # Act
-        with self.assertRaises(WindowsAzureConflictError):
+        with self.assertRaises(AzureConflictHttpError):
             self.bs.lease_blob(self.container_name, 'blob1',
                                'break', lease['x-ms-lease-id'])
 
@@ -2281,7 +2255,7 @@ class StorageBlobTest(StorageTestCase):
                            'break', lease['x-ms-lease-id'])
 
         # Act
-        with self.assertRaises(WindowsAzureConflictError):
+        with self.assertRaises(AzureConflictHttpError):
             self.bs.lease_blob(self.container_name, 'blob1', 'acquire')
 
         # Assert
@@ -2309,7 +2283,7 @@ class StorageBlobTest(StorageTestCase):
         resp1 = self.bs.lease_blob(self.container_name, 'blob1', 'acquire')
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.lease_blob(self.container_name, 'blob1', 'acquire')
         resp2 = self.bs.lease_blob(
             self.container_name, 'blob1', 'release', resp1['x-ms-lease-id'])
@@ -2335,32 +2309,7 @@ class StorageBlobTest(StorageTestCase):
         # Assert
 
     @record
-    def test_put_block_unicode_python_27(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info >= (3,):
-            return
-
-        # Arrange
-        self._create_container_and_block_blob(
-            self.container_name, 'blob1', b'')
-
-        # Act
-        resp = self.bs.put_block(self.container_name, 'blob1', u'啊齄', '1')
-        self.assertIsNone(resp)
-        resp = self.bs.put_block(self.container_name, 'blob1', u'丂狛狜', '2')
-        self.assertIsNone(resp)
-        resp = self.bs.put_block_list(self.container_name, 'blob1', ['1', '2'])
-        self.assertIsNone(resp)
-
-        # Assert
-        blob = self.bs.get_blob(self.container_name, 'blob1')
-        self.assertEqual(blob, u'啊齄丂狛狜'.encode('utf-8'))
-
-    @record
-    def test_put_block_unicode_python_33(self):
-        if sys.version_info < (3,):
-            return
-
+    def test_put_block_unicode(self):
         # Arrange
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'')
@@ -2403,7 +2352,7 @@ class StorageBlobTest(StorageTestCase):
             resp = self.bs.put_block_list(
                 self.container_name, 'blob1', ['1', '2', '4'])
             self.assertTrue(False)
-        except WindowsAzureError as e:
+        except AzureHttpError as e:
             self.assertGreaterEqual(
                 str(e).find('specified block list is invalid'), 0)
 
@@ -2532,7 +2481,7 @@ class StorageBlobTest(StorageTestCase):
                          x_ms_blob_sequence_number=start_sequence)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.put_page(self.container_name, 'blob1', data, 'bytes=0-511',
                              'update',
                              x_ms_if_sequence_number_lt=start_sequence)
@@ -2567,7 +2516,7 @@ class StorageBlobTest(StorageTestCase):
                          x_ms_blob_sequence_number=start_sequence)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.put_page(self.container_name, 'blob1', data, 'bytes=0-511',
                              'update',
                              x_ms_if_sequence_number_lte=start_sequence - 1)
@@ -2602,7 +2551,7 @@ class StorageBlobTest(StorageTestCase):
                          x_ms_blob_sequence_number=start_sequence)
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             self.bs.put_page(self.container_name, 'blob1', data, 'bytes=0-511',
                              'update',
                              x_ms_if_sequence_number_eq=start_sequence - 1)
@@ -2610,30 +2559,7 @@ class StorageBlobTest(StorageTestCase):
         # Assert
 
     @record
-    def test_put_page_unicode_python_27(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info >= (3,):
-            return
-
-        # Arrange
-        self._create_container_and_page_blob(self.container_name, 'blob1', 512)
-
-        # Act
-        data = u'abcdefghijklmnop' * 32
-        resp = self.bs.put_page(
-            self.container_name, 'blob1', data, 'bytes=0-511', 'update')
-
-        # Assert
-        self.assertIsNone(resp)
-        blob = self.bs.get_blob(self.container_name, 'blob1')
-        self.assertEqual(blob, data.encode('utf-8'))
-
-    @record
-    def test_put_page_unicode_python_33(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info < (3,):
-            return
-
+    def test_put_page_unicode(self):
         # Arrange
         self._create_container_and_page_blob(self.container_name, 'blob1', 512)
 
@@ -2773,7 +2699,7 @@ class StorageBlobTest(StorageTestCase):
         self.container_name = self.container_name + u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(WindowsAzureError):
+        with self.assertRaises(AzureHttpError):
             # not supported - container name must be alphanumeric, lowercase
             self.bs.create_container(self.container_name)
 
@@ -2883,7 +2809,7 @@ class StorageBlobTest(StorageTestCase):
             self.settings.STORAGE_ACCOUNT_NAME,
             request_session=requests.Session(),
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.get_blob_to_bytes(self.container_name, blob_name)
 
         # Assert
@@ -2915,7 +2841,7 @@ class StorageBlobTest(StorageTestCase):
             sas_token=token,
             request_session=requests.Session(),
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.get_blob_to_bytes(self.container_name, blob_name)
 
         # Assert
@@ -2958,7 +2884,7 @@ class StorageBlobTest(StorageTestCase):
             sas_token=token,
             request_session=requests.Session(),
         )
-        set_service_options(service, self.settings)
+        self._set_service_options(service, self.settings)
         result = service.get_blob_to_bytes(self.container_name, blob_name)
 
         # Assert
@@ -3102,7 +3028,7 @@ class StorageBlobTest(StorageTestCase):
 
         # Assert
         self.assertTrue(response.ok)
-        with self.assertRaises(WindowsAzureMissingResourceError):
+        with self.assertRaises(AzureMissingResourceHttpError):
             blob = self.bs.get_blob(self.container_name, blob_name)
 
     @record
