@@ -65,8 +65,6 @@
     <Content Include="AzureResourceViewer\templates\storageaccountqueue_details.html" />
     <Content Include="AzureResourceViewer\templates\subscription_list.html" />
     <Content Include="AzureResourceViewer\templates\storageaccountcontainer_details.html" />
-    <None Include="huvaloarm - Web Deploy.pubxml" />
-    <None Include="huvaloarm - FTP.pubxml" />
     <Content Include="requirements.txt" />
     <Content Include="AzureResourceViewer\static\content\bootstrap.css" />
     <Content Include="AzureResourceViewer\static\content\bootstrap.min.css" />
