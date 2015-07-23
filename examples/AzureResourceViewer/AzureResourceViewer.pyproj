@@ -99,6 +99,8 @@
     <Content Include="AzureResourceViewer\templates\contact.html" />
     <Content Include="AzureResourceViewer\templates\index.html" />
     <Content Include="AzureResourceViewer\templates\layout.html" />
+    <Content Include="web.config" />
+    <None Include="web.debug.config" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
