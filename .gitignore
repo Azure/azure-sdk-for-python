@@ -29,11 +29,13 @@ servicebus_settings_real.py
 storage_settings_real.py
 legacy_mgmt_settings_real.py
 mgmt_settings_real.py
+app_creds_real.py
 
 # User-specific files
 *.suo
 *.user
 *.sln.docstates
+.vs/
 
 # Windows image file caches
 Thumbs.db

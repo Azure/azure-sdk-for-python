@@ -19,11 +19,12 @@
     <PythonWsgiHandler>$(MSBuildProjectName).app</PythonWsgiHandler>
     <Name>AzureResourceViewer</Name>
     <RootNamespace>StorageAccountViewer</RootNamespace>
-    <InterpreterId>{61d811cf-2e1d-4227-88b5-9324031510a8}</InterpreterId>
+    <InterpreterId>{18d87b9b-5b00-40ad-8256-9b19b0159aff}</InterpreterId>
     <InterpreterVersion>3.4</InterpreterVersion>
-    <WebBrowserUrl>
-    </WebBrowserUrl>
+    <WebBrowserUrl>/account/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourcegroups/Default-Storage-WestUS/storageaccounts/huguestrialwest1</WebBrowserUrl>
     <IsWindowsApplication>False</IsWindowsApplication>
+    <WebBrowserPort>3939</WebBrowserPort>
+    <NameOfLastUsedPublishProfile>huvaloarm - Web Deploy</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,7 +35,20 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AzureResourceViewer\app_creds_sample.py" />
+    <Compile Include="AzureResourceViewer\app_creds_real.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AzureResourceViewer\auth.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AzureResourceViewer\mgmt_extensions.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="AzureResourceViewer\models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AzureResourceViewer\storage_extensions.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="runserver.py" />
@@ -42,7 +56,6 @@
     <Compile Include="AzureResourceViewer\views.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="adalclient\" />
     <Folder Include="AzureResourceViewer\" />
     <Folder Include="AzureResourceViewer\static\" />
     <Folder Include="AzureResourceViewer\static\content\" />
@@ -52,14 +65,11 @@
     <Folder Include="wheelhouse\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="adalclient\AdalClient.exe" />
-    <Content Include="adalclient\Microsoft.IdentityModel.Clients.ActiveDirectory.dll" />
-    <Content Include="adalclient\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll" />
-    <Content Include="adalclient\Newtonsoft.Json.dll" />
-    <Content Include="adalclient\run.bat" />
-    <Content Include="adalclient\System.Spatial.dll" />
-    <Content Include="AzureResourceViewer\templates\subscription_list.html" />
-    <Content Include="AzureResourceViewer\templates\storageaccountcontainer_details.html" />
+    <Content Include="AzureResourceViewer\templates\login.html" />
+    <Content Include="AzureResourceViewer\templates\storageaccount_table.html" />
+    <Content Include="AzureResourceViewer\templates\storageaccount_queue.html" />
+    <Content Include="AzureResourceViewer\templates\account.html" />
+    <Content Include="AzureResourceViewer\templates\storageaccount_container.html" />
     <Content Include="requirements.txt" />
     <Content Include="AzureResourceViewer\static\content\bootstrap.css" />
     <Content Include="AzureResourceViewer\static\content\bootstrap.min.css" />
@@ -83,17 +93,18 @@
     <Content Include="AzureResourceViewer\static\scripts\respond.js" />
     <Content Include="AzureResourceViewer\static\scripts\respond.min.js" />
     <Content Include="AzureResourceViewer\static\scripts\_references.js" />
-    <Content Include="AzureResourceViewer\templates\storageaccount_details.html" />
-    <Content Include="AzureResourceViewer\templates\subscription_details.html" />
-    <Content Include="AzureResourceViewer\templates\resourcegroup_details.html" />
-    <Content Include="AzureResourceViewer\templates\about.html" />
+    <Content Include="AzureResourceViewer\templates\storageaccount.html" />
+    <Content Include="AzureResourceViewer\templates\subscription.html" />
+    <Content Include="AzureResourceViewer\templates\resourcegroup.html" />
     <Content Include="AzureResourceViewer\templates\contact.html" />
     <Content Include="AzureResourceViewer\templates\index.html" />
     <Content Include="AzureResourceViewer\templates\layout.html" />
+    <Content Include="web.config" />
+    <None Include="web.debug.config" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
-      <Id>{61d811cf-2e1d-4227-88b5-9324031510a8}</Id>
+      <Id>{18d87b9b-5b00-40ad-8256-9b19b0159aff}</Id>
       <BaseInterpreter>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</BaseInterpreter>
       <Version>3.4</Version>
       <Description>env (Python 3.4)</Description>

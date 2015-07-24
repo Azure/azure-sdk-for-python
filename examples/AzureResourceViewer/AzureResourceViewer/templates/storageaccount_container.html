@@ -3,14 +3,12 @@
 {% block content %}
 
 <ol class="breadcrumb">
-    <li><a href="/">Home</a></li>
-    <li><a href="{{ url_for('resourcegroups', subscription_id=subscription_id) }}">{{subscription_id}}</a></li>
-    <li><a href="{{ url_for('resourcegroup', subscription_id=subscription_id, resource_group_name=resource_group_name) }}">{{resource_group_name}}</a></li>
-    <li><a href="{{ url_for('storageaccount', subscription_id=subscription_id, resource_group_name=resource_group_name, account_name=account_name) }}">{{account_name}}</a></li>
-    <li class="active">{{container_name}}</li>
+    <li><a href="{{ url_for('account_view') }}">Account</a></li>
+    <li><a href="{{ url_for('subscription_view', subscription_id=subscription_id) }}">{{subscription_id}}</a></li>
+    <li><a href="{{ url_for('resourcegroup_view', subscription_id=subscription_id, resource_group_name=resource_group_name) }}">{{resource_group_name}}</a></li>
+    <li><a href="{{ url_for('storageaccount_view', subscription_id=subscription_id, resource_group_name=resource_group_name, account_name=account_name) }}">{{account_name}}</a></li>
+    <li class="active">{{model.container_name}}</li>
 </ol>
-
-<h2>{{ title }}.</h2>
 
 <h3>Blobs</h3>
 <table class="table table-striped table-condensed">
@@ -28,7 +26,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for blob in blobs %}
+        {% for blob in model.blobs %}
         <tr>
             <td>{{blob.name}}</td>
             <td>{{blob.properties.blob_type}}</td>
@@ -45,7 +43,7 @@
 </table>
 
 <p>
-* SAS URL is valid until {{sas_expiry}}.
+* SAS URL is valid until {{model.sas_policy.access_policy.expiry}}.
 </p>
 
 {% endblock %}

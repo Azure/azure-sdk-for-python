@@ -4,3 +4,4 @@ azure-mgmt-storage
 azure-mgmt-resource
 azure-storage
 Flask<1
+python-dateutil

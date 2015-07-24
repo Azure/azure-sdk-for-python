@@ -3,11 +3,9 @@
 {% block content %}
 
 <ol class="breadcrumb">
-    <li><a href="/">Home</a></li>
+    <li><a href="{{ url_for('account_view') }}">Account</a></li>
     <li class="active">{{subscription_id}}</li>
 </ol>
-
-<h2>{{ title }}.</h2>
 
 <h3>Resource Groups</h3>
 <table class="table table-striped table-condensed">
@@ -18,9 +16,9 @@
         </tr>
     </thead>
     <tbody>
-        {% for group in groups %}
+        {% for group in model.resource_groups %}
         <tr>
-            <td><a href="{{ url_for('resourcegroup', subscription_id=subscription_id, resource_group_name=group.name) }}">{{group.name}}</a></td>
+            <td><a href="{{ url_for('resourcegroup_view', subscription_id=subscription_id, resource_group_name=group.name) }}">{{group.name}}</a></td>
             <td>{{group.location}}</td>
         </tr>
         {% endfor %}
@@ -37,20 +35,20 @@
         </tr>
     </thead>
     <tbody>
-        {% for provider in providers %}
+        {% for provider in model.providers %}
         <tr>
             <td>{{provider.namespace}}</td>
             <td>{{provider.registration_state}}</td>
             {% if provider.registration_state == 'Registered' %}
             <td>
-                <form action="{{ url_for('providerunregister', subscription_id=subscription_id, provider_namespace=provider.namespace) }}" method="post">
-                    <button class="btn btn-danger" type="submit">Unregister</button>
+                <form action="{{ url_for('provider_unregister_post', subscription_id=subscription_id, provider_namespace=provider.namespace) }}" method="post">
+                    <button class="btn btn-sm btn-danger" type="submit">Unregister</button>
                 </form>
             </td>
             {% else %}
             <td>
-                <form action="{{ url_for('providerregister', subscription_id=subscription_id, provider_namespace=provider.namespace) }}" method="post">
-                    <button class="btn btn-primary" type="submit">Register</button>
+                <form action="{{ url_for('provider_register_post', subscription_id=subscription_id, provider_namespace=provider.namespace) }}" method="post">
+                    <button class="btn btn-sm btn-primary" type="submit">Register</button>
                 </form>
             </td>
             {% endif %}
