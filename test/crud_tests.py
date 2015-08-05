@@ -110,11 +110,12 @@ class CRUDTests(unittest.TestCase):
         collections = list(client.ReadCollections(created_db['_self']))
         # create a collection
         before_create_collections_count = len(collections)
-        collection_definition = { 'id': 'sample collection' }
+        collection_definition = { 'id': 'sample collection', 'indexingPolicy': {'indexingMode': 'consistent'} }
         created_collection = client.CreateCollection(created_db['_self'],
                                                      collection_definition)
-        self.assertEqual(created_collection['id'],
-                         collection_definition['id'])
+        self.assertEqual(collection_definition['id'], created_collection['id'])
+        self.assertEqual('consistent', created_collection['indexingPolicy']['indexingMode'])
+
         # read collections after creation
         collections = list(client.ReadCollections(created_db['_self']))
         self.assertEqual(len(collections),
@@ -129,6 +130,18 @@ class CRUDTests(unittest.TestCase):
                     { 'name':'@id', 'value': collection_definition['id'] }
                 ]
             }))
+        # Replacing indexing policy is allowed.
+        lazy_policy = {'indexingMode': 'lazy'}
+        created_collection['indexingPolicy'] = lazy_policy
+        replaced_collection = client.ReplaceCollection(created_collection['_self'], created_collection)
+        self.assertEqual('lazy', replaced_collection['indexingPolicy']['indexingMode'])
+        # Replacing collection Id should fail.
+        created_collection['id'] = 'try_change_id'
+        self.__AssertHTTPFailureWithStatus(400,
+                                           client.ReplaceCollection,
+                                           created_collection['_self'],
+                                           created_collection)
+
         self.assert_(collections)
         # delete collection
         client.DeleteCollection(created_collection['_self'])
@@ -237,6 +250,51 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadDocument,
                                            replaced_document['_self'])
+
+    def test_spatial_index(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        # partial policy specified
+        collection = client.CreateCollection(
+            db['_self'],
+            {
+                'id': 'collection with spatial index',
+                'indexingPolicy': {
+                    'includedPaths': [
+                        {
+                            'path': '/"Location"/?',
+                            'indexes': [
+                                {
+                                    'kind': 'Spatial',
+                                    'dataType': 'Point'
+                                }
+                            ]
+                        },
+                        {
+                            'path': '/'
+                        }
+                    ]
+                }
+            })
+        client.CreateDocument(collection['_self'], {
+            'id': 'loc1',
+            'Location': {
+                'type': 'Point',
+                'coordinates': [ 20.0, 20.0 ]
+            }
+        })
+        client.CreateDocument(collection['_self'], {
+            'id': 'loc2',
+            'Location': {
+                'type': 'Point',
+                'coordinates': [ 100.0, 100.0 ]
+            }
+        })
+        results = list(client.QueryDocuments(
+            collection['_self'],
+            "SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000) "))
+        self.assertEqual(1, len(results))
+        self.assertEqual('loc1', results[0]['id'])
 
     def test_attachment_crud(self):
         class ReadableStream(object):
@@ -476,7 +534,7 @@ class CRUDTests(unittest.TestCase):
             }))
         self.assert_(results)
 
-        # replace permission 
+        # replace permission
         permission['id'] = 'replaced permission'
         replaced_permission = client.ReplacePermission(permission['_self'],
                                                        permission)
@@ -543,7 +601,7 @@ class CRUDTests(unittest.TestCase):
                 'permissionMode': documents.PermissionMode.Read,
                 'resource': collection1['_self']
             }
-            # create permission for collection1 
+            # create permission for collection1
             permission_on_coll1 = client.CreatePermission(user1['_self'],
                                                           permission)
             self.assertTrue(permission_on_coll1['_token'] != None,
@@ -742,7 +800,7 @@ class CRUDTests(unittest.TestCase):
                     udf[property],
                     udf_definition[property],
                     'property {property} should match'.format(property=property))
-                            
+
         # read udfs after creation
         udfs = list(client.ReadUserDefinedFunctions(collection['_self']))
         self.assertEqual(len(udfs),
@@ -803,7 +861,7 @@ class CRUDTests(unittest.TestCase):
                     'property {property} should match'.format(property=property))
             else:
                 self.assertEqual(sproc['body'], 'function() {var x = 10;}')
-                            
+
         # read sprocs after creation
         sprocs = list(client.ReadStoredProcedures(collection['_self']))
         self.assertEqual(len(sprocs),
@@ -1429,6 +1487,27 @@ class CRUDTests(unittest.TestCase):
             database_account.ConsistencyPolicy['defaultConsistencyLevel']
             != None)
 
+    def test_index_progress_headers(self):
+        client = document_client.DocumentClient(host, { 'masterKey': masterKey })
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        consistent_coll = client.CreateCollection(created_db['_self'], { 'id': 'consistent_coll' })
+        client.ReadCollection(consistent_coll['_self'])
+        self.assertTrue(http_constants.HttpHeaders.IndexTransformationProgress in client.last_response_headers)
+        lazy_coll = client.CreateCollection(created_db['_self'],
+            {
+                'id': 'lazy_coll',
+                'indexingPolicy': { 'indexingMode' : documents.IndexingMode.Lazy }
+            })
+        client.ReadCollection(lazy_coll['_self'])
+        self.assertTrue(http_constants.HttpHeaders.IndexTransformationProgress in client.last_response_headers)
+        none_coll = client.CreateCollection(created_db['_self'],
+            {
+                'id': 'none_coll',
+                'indexingPolicy': { 'indexingMode': documents.IndexingMode.NoIndex, 'automatic': False }
+            })
+        client.ReadCollection(none_coll['_self'])
+        self.assertTrue(http_constants.HttpHeaders.IndexTransformationProgress in client.last_response_headers)
+
     # To run this test, please provide your own CA certs file or download one from
     #     http://curl.haxx.se/docs/caextract.html
     #
@@ -1451,6 +1530,45 @@ class CRUDTests(unittest.TestCase):
     #     client = document_client.DocumentClient(host, {'masterKey': masterKey}, connection_policy)
     #     # Read databases after creation.
     #     databases = list(client.ReadDatabases())
+
+    def test_id_validation(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        # Id shouldn't end with space.
+        database_definition = { 'id': 'id_with_space ' }
+        try:
+            client.CreateDatabase(database_definition)
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual('Id ends with a space.', e.message)
+        # Id shouldn't contain '/'.
+        database_definition = { 'id': 'id_with_illegal/_char' }
+        try:
+            client.CreateDatabase(database_definition)
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual('Id contains illegal chars.', e.message)
+        # Id shouldn't contain '\\'.
+        database_definition = { 'id': 'id_with_illegal\\_char' }
+        try:
+            client.CreateDatabase(database_definition)
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual('Id contains illegal chars.', e.message)
+        # Id shouldn't contain '?'.
+        database_definition = { 'id': 'id_with_illegal?_char' }
+        try:
+            client.CreateDatabase(database_definition)
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual('Id contains illegal chars.', e.message)
+        # Id shouldn't contain '#'.
+        database_definition = { 'id': 'id_with_illegal#_char' }
+        try:
+            client.CreateDatabase(database_definition)
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual('Id contains illegal chars.', e.message)
 
 
 if __name__ == '__main__':

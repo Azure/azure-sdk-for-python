@@ -99,19 +99,20 @@ class DocumentClient(object):
         # application/sql is no longer supported.
         self._query_compatibility_mode = DocumentClient._QueryCompatibilityMode.Default
 
-    def CreateDatabase(self, body, options={}):
+    def CreateDatabase(self, database, options={}):
         """Creates a database.
 
         :Parameters:
-            - `body`: dict, the Azure DocumentDB database to create.
+            - `database`: dict, the Azure DocumentDB database to create.
             - `options`: dict, the request options for the request.
 
         :Returns:
             dict
 
         """
+        DocumentClient.__ValidateResource(database)
         path = '/dbs'
-        return self.Create(body, path, 'dbs', None, None, options)
+        return self.Create(database, path, 'dbs', None, None, options)
 
     def ReadDatabase(self, database_link, options={}):
         """Reads a database.
@@ -210,6 +211,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(collection)
         path = '/' + database_link + 'colls/'
         database_id = base.GetIdFromLink(database_link)
         DocumentClient.__UseDefaultIndexingPolicy(collection)
@@ -220,6 +222,27 @@ class DocumentClient(object):
                            None,
                            options)
 
+    def ReplaceCollection(self, collection_link, collection, options={}):
+        """Replaces a collection and return it.
+
+        :Parameters:
+            - `collection_link`: str, the link to the collection entity.
+            - `collection`: dict, the collection to be used.
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            dict
+
+        """
+        DocumentClient.__ValidateResource(collection)
+        path = '/' + collection_link
+        collection_id = base.GetIdFromLink(collection_link)
+        return self.Replace(collection,
+                            path,
+                            'colls',
+                            collection_id,
+                            None,
+                            options)
 
     def ReadCollection(self, collection_link, options={}):
         """Reads a collection.
@@ -240,21 +263,22 @@ class DocumentClient(object):
                          None,
                          options)
 
-    def CreateUser(self, database_link, body, options={}):
+    def CreateUser(self, database_link, user, options={}):
         """Creates a user.
 
         :Parameters:
             - `database_link`: str, the link to the database.
-            - `body`: dict, the Azure DocumentDB user to create.
+            - `user`: dict, the Azure DocumentDB user to create.
             - `options`: dict, the request options for the request.
 
         :Returns:
             dict
 
         """
+        DocumentClient.__ValidateResource(user)
         path = '/' + database_link + 'users/'
         database_id = base.GetIdFromLink(database_link)
-        return self.Create(body,
+        return self.Create(user,
                            path,
                            'users',
                            database_id,
@@ -331,21 +355,22 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def CreatePermission(self, user_link, body, options={}):
+    def CreatePermission(self, user_link, permission, options={}):
         """Creates a permission for a user.
 
         :Parameters:
             - `user_link`: str, the link to the user entity.
-            - `body`: dict, the Azure DocumentDB user permission to create.
+            - `permission`: dict, the Azure DocumentDB user permission to create.
             - `options`: dict, the request options for the request.
 
         :Returns:
             dict
 
         """
+        DocumentClient.__ValidateResource(permission)
         path = '/' + user_link + 'permissions/'
         user_id = base.GetIdFromLink(user_link)
-        return self.Create(body,
+        return self.Create(permission,
                            path,
                            'permissions',
                            user_id,
@@ -420,6 +445,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(user)
         path = '/' + user_link
         user_id = base.GetIdFromLink(user_link)
         return self.Replace(user,
@@ -460,6 +486,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(permission)
         path = '/' + permission_link
         permission_id = base.GetIdFromLink(permission_link)
         return self.Replace(permission,
@@ -525,13 +552,13 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def CreateDocument(self, collection_link, body, options={}):
+    def CreateDocument(self, collection_link, document, options={}):
         """Creates a document in a collection.
 
         :Parameters:
             - `collection_link`: str, the link to the document collection.
-            - `body`: dict, the Azure DocumentDB document to create.
-            - `body['id']`: str, id of the document, MUST be unique for each
+            - `document`: dict, the Azure DocumentDB document to create.
+            - `document['id']`: str, id of the document, MUST be unique for each
               document.
             - `options`: dict, the request options for the request.
             - `options['disableAutomaticIdGeneration']`: bool, disables the
@@ -542,13 +569,14 @@ class DocumentClient(object):
             dict
 
         """
-        body = body.copy()
-        if (not body.get('id') and
+        DocumentClient.__ValidateResource(document)
+        document = document.copy()
+        if (not document.get('id') and
             not options.get('disableAutomaticIdGeneration')):
-            body['id'] = base.GenerateGuidId()
+            document['id'] = base.GenerateGuidId()
         path = '/' + collection_link + 'docs/'
         collection_id = base.GetIdFromLink(collection_link)
-        return self.Create(body,
+        return self.Create(document,
                            path,
                            'docs',
                            collection_id,
@@ -623,6 +651,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(trigger)
         trigger = trigger.copy()
         if  trigger.get('serverScript'):
             trigger['body'] = str(trigger.pop('serverScript', ''))
@@ -702,6 +731,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get('serverScript'):
             udf['body'] = str(udf.pop('serverScript', ''))
@@ -781,6 +811,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get('serverScript'):
             sproc['body'] = str(sproc.pop('serverScript', ''))
@@ -897,6 +928,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(new_document)
         path = '/' + document_link
         document_id = base.GetIdFromLink(document_link)
         return self.Replace(new_document,
@@ -925,21 +957,22 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def CreateAttachment(self, document_link, body, options={}):
+    def CreateAttachment(self, document_link, attachment, options={}):
         """Creates an attachment in a document.
 
         :Parameters:
             - `document_link`: str, the link to the document.
-            - `body`: dict, the Azure DocumentDB attachment to create.
+            - `attachment`: dict, the Azure DocumentDB attachment to create.
             - `options`: dict, the request options for the request.
 
         :Returns:
             dict
 
         """
+        DocumentClient.__ValidateResource(attachment)
         path = '/' + document_link + 'attachments/'
         document_id = base.GetIdFromLink(document_link)
-        return self.Create(body,
+        return self.Create(attachment,
                            path,
                            'attachments',
                            document_id,
@@ -1128,6 +1161,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(attachment)
         path = '/' + attachment_link
         attachment_id = base.GetIdFromLink(attachment_link)
         return self.Replace(attachment,
@@ -1168,12 +1202,13 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(trigger)
         trigger = trigger.copy()
         if trigger.get('serverScript'):
             trigger['body'] = str(trigger['serverScript'])
         elif trigger.get('body'):
             trigger['body'] = str(trigger['body'])
-            
+
         path = '/' + trigger_link
         trigger_id = base.GetIdFromLink(trigger_link)
         return self.Replace(trigger,
@@ -1214,6 +1249,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get('serverScript'):
             udf['body'] = str(udf['serverScript'])
@@ -1297,6 +1333,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get('serverScript'):
             sproc['body'] = str(sproc['serverScript'])
@@ -1361,6 +1398,7 @@ class DocumentClient(object):
             dict
 
         """
+        DocumentClient.__ValidateResource(offer)
         path = '/' + offer_link
         offer_id = base.GetIdFromLink(offer_link)
         return self.Replace(offer, path, 'offers', offer_id, None, None)
@@ -1758,20 +1796,21 @@ class DocumentClient(object):
                     'path': '/*'
                 }
             ]
-        for index_path in collection['indexingPolicy']['includedPaths']:
-            if not index_path.get('indexes'):
-                index_path['indexes'] = [
-                    {
-                        'kind': documents.IndexKind.Hash,
-                        'dataType': documents.DataType.String,
-                        'precision': DocumentClient._DefaultStringHashPrecision
-                    },
-                    {
-                        'kind': documents.IndexKind.Range,
-                        'dataType': documents.DataType.Number,
-                        'precision': DocumentClient._DefaultNumberRangePrecision
-                    }
-                ]
+        if collection['indexingPolicy'].get('includedPaths'):
+            for index_path in collection['indexingPolicy']['includedPaths']:
+                if not index_path.get('indexes'):
+                    index_path['indexes'] = [
+                        {
+                            'kind': documents.IndexKind.Hash,
+                            'dataType': documents.DataType.String,
+                            'precision': DocumentClient._DefaultStringHashPrecision
+                        },
+                        {
+                            'kind': documents.IndexKind.Range,
+                            'dataType': documents.DataType.Number,
+                            'precision': DocumentClient._DefaultNumberRangePrecision
+                        }
+                    ]
             for index in index_path['indexes']:
                 if index.get('kind') == documents.IndexKind.Hash:
                     if not 'precision' in index:
@@ -1785,3 +1824,13 @@ class DocumentClient(object):
                             index['precision'] = DocumentClient._DefaultStringRangePrecision
                         elif index.get('dataType') == documents.DataType.Number:
                             index['precision'] = DocumentClient._DefaultNumberRangePrecision
+
+    @staticmethod
+    def __ValidateResource(resource):
+        id = resource.get('id')
+        if id:
+            if id.find('/') != -1 or id.find('\\') != -1 or id.find('?') != -1 or id.find('#') != -1:
+                raise ValueError('Id contains illegal chars.')
+
+            if id[-1] == ' ':
+                raise ValueError('Id ends with a space.')
