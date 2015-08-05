@@ -134,6 +134,8 @@ class HttpHeaders:
     # Offer type.
     OfferType = 'x-ms-offer-type'
 
+    # Index progress headers.
+    IndexTransformationProgress = 'x-ms-documentdb-collection-index-transformation-progress'
 
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
@@ -197,7 +199,7 @@ class Versions:
     """Constants of versions.
     """
     CurrentVersion = '2015-06-03'
-    UserAgent = 'documentdb-python-sdk-1.1.0'
+    UserAgent = 'documentdb-python-sdk-1.2.0'
 
 
 class Delimiters:
