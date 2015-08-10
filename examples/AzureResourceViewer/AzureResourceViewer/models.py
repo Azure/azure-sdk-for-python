@@ -29,6 +29,9 @@ from azure.mgmt.compute import (
     ComputeManagementClient,
     VirtualMachineOperations,
 )
+from azure.mgmt.network import (
+    NetworkResourceProviderClient,
+)
 
 from azure.storage import AccessPolicy, CloudStorageAccount, SharedAccessPolicy
 from azure.storage.blob import BlobService, BlobSharedAccessPermissions
@@ -62,10 +65,12 @@ class SubscriptionDetails(object):
 
 class ResourceGroupDetails(object):
     def __init__(self, storage_accounts=None, storage_accounts_locations=None,
-                 vms=None):
+                 vms=None, public_ip_addresses=None, virtual_networks=None):
         self.storage_accounts = storage_accounts
         self.storage_accounts_locations = storage_accounts_locations
         self.vms = vms
+        self.public_ip_addresses = public_ip_addresses
+        self.virtual_networks = virtual_networks
 
 class StorageAccountDetails(object):
     def __init__(self, account_props=None, account_keys=None,
@@ -105,6 +110,11 @@ class VMDetails(object):
         self.name = name
         self.vm = vm
 
+class VirtualNetworkDetails(object):
+    def __init__(self, name=None, network=None):
+        self.name = name
+        self.network = network
+
 
 def get_account_details(auth_token):
     model = AccountDetails()
@@ -125,6 +135,7 @@ def get_resource_group_details(creds, resource_group_name):
     storage_client = StorageManagementClient(creds)
     resource_client = ResourceManagementClient(creds)
     compute_client = ComputeManagementClient(creds)
+    network_client = NetworkResourceProviderClient(creds)
 
     model = ResourceGroupDetails()
     model.storage_accounts = storage_client.storage_accounts.list_by_resource_group(resource_group_name).storage_accounts
@@ -134,6 +145,8 @@ def get_resource_group_details(creds, resource_group_name):
 
     # TODO: make an iterate function
     model.vms = compute_client.virtual_machines.list(resource_group_name).virtual_machines
+    model.public_ip_addresses = network_client.public_ip_addresses.list(resource_group_name).public_ip_addresses
+    model.virtual_networks = network_client.virtual_networks.list(resource_group_name).virtual_networks
 
     return model
 
@@ -143,6 +156,15 @@ def get_vm_details(creds, resource_group_name, vm_name):
     model = VMDetails(
         name=vm_name,
         vm=compute_client.virtual_machines.get(resource_group_name, vm_name).virtual_machine,
+    )
+    return model
+
+def get_virtual_network_details(creds, resource_group_name, network_name):
+    network_client = NetworkResourceProviderClient(creds)
+
+    model = VirtualNetworkDetails(
+        name=network_name,
+        network=network_client.virtual_networks.get(resource_group_name, network_name).virtual_network,
     )
     return model
 
