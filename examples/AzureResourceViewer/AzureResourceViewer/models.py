@@ -25,6 +25,10 @@ from azure.mgmt.storage import (
     StorageManagementClient,
     StorageAccountCreateParameters,
 )
+from azure.mgmt.compute import (
+    ComputeManagementClient,
+    VirtualMachineOperations,
+)
 
 from azure.storage import AccessPolicy, CloudStorageAccount, SharedAccessPolicy
 from azure.storage.blob import BlobService, BlobSharedAccessPermissions
@@ -57,9 +61,11 @@ class SubscriptionDetails(object):
         self.providers = providers
 
 class ResourceGroupDetails(object):
-    def __init__(self, storage_accounts=None, storage_accounts_locations=None):
+    def __init__(self, storage_accounts=None, storage_accounts_locations=None,
+                 vms=None):
         self.storage_accounts = storage_accounts
         self.storage_accounts_locations = storage_accounts_locations
+        self.vms = vms
 
 class StorageAccountDetails(object):
     def __init__(self, account_props=None, account_keys=None,
@@ -94,6 +100,11 @@ class StorageAccountTableDetails(object):
         self.entities = entities
         self.custom_fields = custom_fields
 
+class VMDetails(object):
+    def __init__(self, name=None, vm=None):
+        self.name = name
+        self.vm = vm
+
 
 def get_account_details(auth_token):
     model = AccountDetails()
@@ -113,6 +124,7 @@ def get_subscription_details(creds):
 def get_resource_group_details(creds, resource_group_name):
     storage_client = StorageManagementClient(creds)
     resource_client = ResourceManagementClient(creds)
+    compute_client = ComputeManagementClient(creds)
 
     model = ResourceGroupDetails()
     model.storage_accounts = storage_client.storage_accounts.list_by_resource_group(resource_group_name).storage_accounts
@@ -120,6 +132,18 @@ def get_resource_group_details(creds, resource_group_name):
     resource_type = [r for r in provider.resource_types if r.name == 'storageAccounts'][0]
     model.storage_accounts_locations = resource_type.locations
 
+    # TODO: make an iterate function
+    model.vms = compute_client.virtual_machines.list(resource_group_name).virtual_machines
+
+    return model
+
+def get_vm_details(creds, resource_group_name, vm_name):
+    compute_client = ComputeManagementClient(creds)
+
+    model = VMDetails(
+        name=vm_name,
+        vm=compute_client.virtual_machines.get(resource_group_name, vm_name).virtual_machine,
+    )
     return model
 
 def get_storage_account_details(creds, resource_group_name, account_name):
