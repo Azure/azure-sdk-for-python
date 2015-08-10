@@ -47,42 +47,52 @@ TableService.iterate_tables = storage_extensions.iterate_tables
 
 
 class AccountDetails(object):
-    subscriptions = None
-    tenants = None
+    def __init__(self, subscriptions=None, tenants=None):
+        self.subscriptions = subscriptions
+        self.tenants = tenants
 
 class SubscriptionDetails(object):
-    resource_groups = None
-    providers = None
+    def __init__(self, resource_groups=None, providers=None):
+        self.resource_groups = resource_groups
+        self.providers = providers
 
 class ResourceGroupDetails(object):
-    storage_accounts = None
-    storage_accounts_locations = None
+    def __init__(self, storage_accounts=None, storage_accounts_locations=None):
+        self.storage_accounts = storage_accounts
+        self.storage_accounts_locations = storage_accounts_locations
 
 class StorageAccountDetails(object):
-    account_props = None
-    account_keys = None
-    blob_containers = None
-    shares = None
-    tables = None
-    queues = None
-    blob_service_properties = None
-    queue_service_properties = None
-    table_service_properties = None
+    def __init__(self, account_props=None, account_keys=None,
+                 blob_containers=None, shares=None, tables=None, queues=None,
+                 blob_service_properties=None, queue_service_properties=None,
+                 table_service_properties=None):
+        self.account_props = account_props
+        self.account_keys = account_keys
+        self.blob_containers = blob_containers
+        self.shares = shares
+        self.tables = tables
+        self.queues = queues
+        self.blob_service_properties = blob_service_properties
+        self.queue_service_properties = queue_service_properties
+        self.table_service_properties = table_service_properties
 
 class StorageAccountContainerDetails(object):
-    container_name = None
-    sas_policy = None
-    blobs = None
+    def __init__(self, container_name=None, sas_policy=None, blobs=None):
+        self.container_name = container_name
+        self.sas_policy = sas_policy
+        self.blobs = blobs
 
 class StorageAccountQueueDetails(object):
-    queue_name = None
-    metadata = None
-    messages = None
+    def __init__(self, queue_name=None, metadata=None, messages=None):
+        self.queue_name = queue_name
+        self.metadata = metadata
+        self.messages = messages
 
 class StorageAccountTableDetails(object):
-    table_name = None
-    entities = None
-    custom_fields = None
+    def __init__(self, table_name=None, entities=None, custom_fields=None):
+        self.table_name = table_name
+        self.entities = entities
+        self.custom_fields = custom_fields
 
 
 def get_account_details(auth_token):
