@@ -138,6 +138,36 @@ def resourcegroup_view(subscription_id, resource_group_name):
         model=model,
     )
 
+@app.route('/account/<subscription_id>/resourcegroups/<resource_group_name>/vms/<vm_name>')
+@auth.require_login
+def vm_view(subscription_id, resource_group_name, vm_name):
+    """Renders the vm details."""
+    creds = _get_credentials(subscription_id)
+    model = models.get_vm_details(creds, resource_group_name, vm_name)
+    return render_template(
+        'vm.html',
+        title=vm_name,
+        year=datetime.now().year,
+        subscription_id=creds.subscription_id,
+        resource_group_name=resource_group_name,
+        model=model,
+    )
+
+@app.route('/account/<subscription_id>/resourcegroups/<resource_group_name>/virtualnetworks/<network_name>')
+@auth.require_login
+def virtual_network_view(subscription_id, resource_group_name, network_name):
+    """Renders the vm details."""
+    creds = _get_credentials(subscription_id)
+    model = models.get_virtual_network_details(creds, resource_group_name, network_name)
+    return render_template(
+        'virtual_network.html',
+        title=network_name,
+        year=datetime.now().year,
+        subscription_id=creds.subscription_id,
+        resource_group_name=resource_group_name,
+        model=model,
+    )
+
 @app.route('/account/<subscription_id>/resourcegroups/<resource_group_name>/storageaccounts/<account_name>')
 @auth.require_login
 def storageaccount_view(subscription_id, resource_group_name, account_name):

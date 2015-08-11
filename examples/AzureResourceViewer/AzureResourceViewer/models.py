@@ -25,6 +25,13 @@ from azure.mgmt.storage import (
     StorageManagementClient,
     StorageAccountCreateParameters,
 )
+from azure.mgmt.compute import (
+    ComputeManagementClient,
+    VirtualMachineOperations,
+)
+from azure.mgmt.network import (
+    NetworkResourceProviderClient,
+)
 
 from azure.storage import AccessPolicy, CloudStorageAccount, SharedAccessPolicy
 from azure.storage.blob import BlobService, BlobSharedAccessPermissions
@@ -47,42 +54,66 @@ TableService.iterate_tables = storage_extensions.iterate_tables
 
 
 class AccountDetails(object):
-    subscriptions = None
-    tenants = None
+    def __init__(self, subscriptions=None, tenants=None):
+        self.subscriptions = subscriptions
+        self.tenants = tenants
 
 class SubscriptionDetails(object):
-    resource_groups = None
-    providers = None
+    def __init__(self, resource_groups=None, providers=None):
+        self.resource_groups = resource_groups
+        self.providers = providers
 
 class ResourceGroupDetails(object):
-    storage_accounts = None
-    storage_accounts_locations = None
+    def __init__(self, storage_accounts=None, storage_accounts_locations=None,
+                 vms=None, public_ip_addresses=None, virtual_networks=None):
+        self.storage_accounts = storage_accounts
+        self.storage_accounts_locations = storage_accounts_locations
+        self.vms = vms
+        self.public_ip_addresses = public_ip_addresses
+        self.virtual_networks = virtual_networks
 
 class StorageAccountDetails(object):
-    account_props = None
-    account_keys = None
-    blob_containers = None
-    shares = None
-    tables = None
-    queues = None
-    blob_service_properties = None
-    queue_service_properties = None
-    table_service_properties = None
+    def __init__(self, account_props=None, account_keys=None,
+                 blob_containers=None, shares=None, tables=None, queues=None,
+                 blob_service_properties=None, queue_service_properties=None,
+                 table_service_properties=None):
+        self.account_props = account_props
+        self.account_keys = account_keys
+        self.blob_containers = blob_containers
+        self.shares = shares
+        self.tables = tables
+        self.queues = queues
+        self.blob_service_properties = blob_service_properties
+        self.queue_service_properties = queue_service_properties
+        self.table_service_properties = table_service_properties
 
 class StorageAccountContainerDetails(object):
-    container_name = None
-    sas_policy = None
-    blobs = None
+    def __init__(self, container_name=None, sas_policy=None, blobs=None):
+        self.container_name = container_name
+        self.sas_policy = sas_policy
+        self.blobs = blobs
 
 class StorageAccountQueueDetails(object):
-    queue_name = None
-    metadata = None
-    messages = None
+    def __init__(self, queue_name=None, metadata=None, messages=None):
+        self.queue_name = queue_name
+        self.metadata = metadata
+        self.messages = messages
 
 class StorageAccountTableDetails(object):
-    table_name = None
-    entities = None
-    custom_fields = None
+    def __init__(self, table_name=None, entities=None, custom_fields=None):
+        self.table_name = table_name
+        self.entities = entities
+        self.custom_fields = custom_fields
+
+class VMDetails(object):
+    def __init__(self, name=None, vm=None):
+        self.name = name
+        self.vm = vm
+
+class VirtualNetworkDetails(object):
+    def __init__(self, name=None, network=None):
+        self.name = name
+        self.network = network
 
 
 def get_account_details(auth_token):
@@ -103,6 +134,8 @@ def get_subscription_details(creds):
 def get_resource_group_details(creds, resource_group_name):
     storage_client = StorageManagementClient(creds)
     resource_client = ResourceManagementClient(creds)
+    compute_client = ComputeManagementClient(creds)
+    network_client = NetworkResourceProviderClient(creds)
 
     model = ResourceGroupDetails()
     model.storage_accounts = storage_client.storage_accounts.list_by_resource_group(resource_group_name).storage_accounts
@@ -110,6 +143,29 @@ def get_resource_group_details(creds, resource_group_name):
     resource_type = [r for r in provider.resource_types if r.name == 'storageAccounts'][0]
     model.storage_accounts_locations = resource_type.locations
 
+    # TODO: make an iterate function
+    model.vms = compute_client.virtual_machines.list(resource_group_name).virtual_machines
+    model.public_ip_addresses = network_client.public_ip_addresses.list(resource_group_name).public_ip_addresses
+    model.virtual_networks = network_client.virtual_networks.list(resource_group_name).virtual_networks
+
+    return model
+
+def get_vm_details(creds, resource_group_name, vm_name):
+    compute_client = ComputeManagementClient(creds)
+
+    model = VMDetails(
+        name=vm_name,
+        vm=compute_client.virtual_machines.get(resource_group_name, vm_name).virtual_machine,
+    )
+    return model
+
+def get_virtual_network_details(creds, resource_group_name, network_name):
+    network_client = NetworkResourceProviderClient(creds)
+
+    model = VirtualNetworkDetails(
+        name=network_name,
+        network=network_client.virtual_networks.get(resource_group_name, network_name).virtual_network,
+    )
     return model
 
 def get_storage_account_details(creds, resource_group_name, account_name):

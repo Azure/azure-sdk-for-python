@@ -1,5 +1,7 @@
 --find-links wheelhouse
 adal
+azure-mgmt-compute
+azure-mgmt-network
 azure-mgmt-storage
 azure-mgmt-resource
 azure-storage

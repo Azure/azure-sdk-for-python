@@ -55,3 +55,6 @@ src/build
 *.iml
 /doc/_build
 /.vs/config/applicationhost.config
+
+# Azure deployment credentials
+*.pubxml
