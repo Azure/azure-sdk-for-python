@@ -1854,7 +1854,7 @@ class ServiceManagementServiceTest(AzureTestCase):
         self._add_role_windows(service_name, deployment_name, role_name2, '59914')
 
         # Act
-        result = self.sms.delete_role(service_name, deployment_name, role_name2)
+        result = self.sms.delete_role(service_name, deployment_name, role_name2, True)
         self._wait_for_async(result.request_id)
 
         # Assert
