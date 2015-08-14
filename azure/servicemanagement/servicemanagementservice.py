@@ -279,7 +279,8 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         _validate_not_none('service_name', service_name)
         return self._perform_delete(
-            self._get_storage_service_path(service_name))
+            self._get_storage_service_path(service_name),
+            async=True)
 
     def check_storage_account_name_availability(self, service_name):
         '''
