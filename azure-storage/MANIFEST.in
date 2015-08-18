@@ -1,2 +1,0 @@
-include *.rst
-exclude azure/__init__.py
