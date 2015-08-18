@@ -22,12 +22,12 @@ Features
 
 -  `Service Management <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-servicemanagement-legacy>`__
 
--  Resource Management
+-  `Resource Management <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt>`__
 
-   -  `Compute: <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-compute>`__
-   -  `Network: <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-network>`__
-   -  `Resource: <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-resource>`__
-   -  `Storage: <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-storage>`__
+   -  `Compute <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-compute>`__
+   -  `Network <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-network>`__
+   -  `Resource <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-resource>`__
+   -  `Storage <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-storage>`__
 
 Looking for Azure Storage client library?  It moved to a `new GitHub repository <https://github.com/Azure/azure-storage-python>`__
 
