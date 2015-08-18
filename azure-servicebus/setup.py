@@ -43,7 +43,7 @@ setup(
         'azure.servicebus._http',
     ],
     install_requires=[
-        'azure-nspkg==1.0.0',
+        'azure-common==0.20.0',
         'requests',
     ],
 )

@@ -43,7 +43,7 @@ setup(
         'azure.servicemanagement._http',
     ],
     install_requires=[
-        'azure-nspkg==1.0.0',
+        'azure-common==0.20.0',
     ],
     extras_require = { 
         'get_certificate_from_publish_settings' : ['pyopenssl'] 

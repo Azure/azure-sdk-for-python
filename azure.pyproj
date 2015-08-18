@@ -24,7 +24,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-nspkg\;azure-common\;azure-storage\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-nspkg\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\</SearchPath>
+    <SearchPath>azure-nspkg\;azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-nspkg\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-common\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -36,10 +36,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="azure-common\azure\common\arm.py">
+    <Compile Include="azure-mgmt-common\azure\mgmt\common\arm.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="azure-common\azure\common\filters.py" />
+    <Compile Include="azure-mgmt-common\azure\mgmt\common\filters.py" />
     <Compile Include="azure-common\azure\__init__.py" />
     <Compile Include="azure-common\setup.py" />
     <Compile Include="azure-common\testutils\common_auth.py" />
@@ -47,6 +47,16 @@
     <Compile Include="azure-common\testutils\common_recordingtestcase.py" />
     <Compile Include="azure-common\testutils\create_credentials_file.py" />
     <Compile Include="azure-common\testutils\__init__.py" />
+    <Compile Include="azure-mgmt-common\azure\mgmt\common\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-mgmt-common\azure\mgmt\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-mgmt-common\azure\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-mgmt-common\setup.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\computemanagement.py" />
     <Compile Include="azure-mgmt-network\azure\mgmt\network\networkresourceprovider.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resourcemanagement.py" />
@@ -169,83 +179,6 @@
     <Compile Include="azure-servicemanagement-legacy\tests\test_legacy_mgmt_storage.py" />
     <Compile Include="azure-servicemanagement-legacy\tests\test_legacy_mgmt_website.py" />
     <Compile Include="azure-servicemanagement-legacy\tests\__init__.py" />
-    <Compile Include="azure-storage\azure\storage\auth.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\blob\blobservice.py" />
-    <Compile Include="azure-storage\azure\storage\blob\models.py" />
-    <Compile Include="azure-storage\azure\storage\blob\_serialization.py" />
-    <Compile Include="azure-storage\azure\storage\blob\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\cloudstorageaccount.py" />
-    <Compile Include="azure-storage\azure\storage\connection.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\constants.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\file\fileservice.py" />
-    <Compile Include="azure-storage\azure\storage\file\models.py" />
-    <Compile Include="azure-storage\azure\storage\file\_chunking.py" />
-    <Compile Include="azure-storage\azure\storage\file\_serialization.py" />
-    <Compile Include="azure-storage\azure\storage\file\__init__.py" />
-    <Compile Include="azure-storage\azure\storage\queue\models.py" />
-    <Compile Include="azure-storage\azure\storage\queue\_serialization.py" />
-    <Compile Include="azure-storage\azure\storage\queue\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\table\models.py" />
-    <Compile Include="azure-storage\azure\storage\table\_serialization.py" />
-    <Compile Include="azure-storage\azure\storage\table\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\blob\_chunking.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\models.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\_common_conversion.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\_common_error.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\_common_models.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\_common_serialization.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\_http\batchclient.py" />
-    <Compile Include="azure-storage\azure\storage\_http\httpclient.py" />
-    <Compile Include="azure-storage\azure\storage\_http\requestsclient.py" />
-    <Compile Include="azure-storage\azure\storage\_http\__init__.py" />
-    <Compile Include="azure-storage\azure\storage\queue\queueservice.py" />
-    <Compile Include="azure-storage\azure\storage\sharedaccesssignature.py" />
-    <Compile Include="azure-storage\azure\storage\storageclient.py" />
-    <Compile Include="azure-storage\azure\storage\table\tableservice.py" />
-    <Compile Include="azure-storage\azure\storage\_serialization.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-storage\azure\storage\__init__.py" />
-    <Compile Include="azure-storage\azure\__init__.py" />
-    <Compile Include="azure-storage\setup.py" />
-    <Compile Include="azure-storage\tests\blob_performance.py" />
-    <Compile Include="azure-storage\tests\doctest_blobservice.py" />
-    <Compile Include="azure-storage\tests\doctest_queueservice.py" />
-    <Compile Include="azure-storage\tests\doctest_tableservice.py" />
-    <Compile Include="azure-storage\tests\storage_settings_fake.py" />
-    <Compile Include="azure-storage\tests\storage_settings_real.py" />
-    <Compile Include="azure-storage\tests\storage_testcase.py" />
-    <Compile Include="azure-storage\tests\test_storage_account.py" />
-    <Compile Include="azure-storage\tests\test_storage_file.py" />
-    <Compile Include="azure-storage\tests\test_storage_blob.py" />
-    <Compile Include="azure-storage\tests\test_storage_queue.py" />
-    <Compile Include="azure-storage\tests\test_storage_sas.py" />
-    <Compile Include="azure-storage\tests\test_storage_table.py" />
-    <Compile Include="azure-storage\tests\__init__.py" />
     <Compile Include="azure-nspkg\azure\__init__.py" />
     <Compile Include="azure-nspkg\setup.py" />
     <Compile Include="azure\setup.py" />
@@ -253,6 +186,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="azure-common\testutils\" />
+    <Folder Include="azure-mgmt-common\azure\" />
+    <Folder Include="azure-mgmt-common\azure\mgmt\" />
+    <Folder Include="azure-mgmt-common\azure\mgmt\common\" />
     <Folder Include="azure-mgmt-resource\" />
     <Folder Include="azure-mgmt-resource\azure\" />
     <Folder Include="azure-mgmt-resource\azure\mgmt\" />
@@ -290,20 +226,11 @@
     <Folder Include="azure-servicemanagement-legacy\tests\" />
     <Folder Include="azure-servicemanagement-legacy\tests\data\" />
     <Folder Include="azure-servicemanagement-legacy\tests\recordings\" />
-    <Folder Include="azure-storage\" />
-    <Folder Include="azure-storage\azure\" />
-    <Folder Include="azure-storage\azure\storage\" />
-    <Folder Include="azure-storage\azure\storage\blob\" />
-    <Folder Include="azure-storage\azure\storage\file\" />
-    <Folder Include="azure-storage\azure\storage\queue\" />
-    <Folder Include="azure-storage\azure\storage\table\" />
-    <Folder Include="azure-storage\azure\storage\_http\" />
-    <Folder Include="azure-storage\tests\" />
-    <Folder Include="azure-storage\tests\recordings\" />
     <Folder Include="azure-nspkg\" />
     <Folder Include="azure-nspkg\azure\" />
     <Folder Include="azure-common\" />
     <Folder Include="azure\" />
+    <Folder Include="azure-mgmt-common\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.6" />
@@ -321,6 +248,9 @@
     <Content Include="azure-common\MANIFEST.in" />
     <Content Include="azure-common\README.rst" />
     <Content Include="azure-common\setup.cfg" />
+    <Content Include="azure-mgmt-common\MANIFEST.in" />
+    <Content Include="azure-mgmt-common\README.rst" />
+    <Content Include="azure-mgmt-common\setup.cfg" />
     <Content Include="azure-mgmt-resource\MANIFEST.in" />
     <Content Include="azure-mgmt-resource\README.rst" />
     <Content Include="azure-mgmt-resource\setup.cfg" />
@@ -594,308 +524,6 @@
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_restart_site.yaml" />
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_shutdown_start_site.yaml" />
     <Content Include="azure-servicemanagement-legacy\tests\run-legacy-mgmt.bat" />
-    <Content Include="azure-storage\MANIFEST.in" />
-    <Content Include="azure-storage\README.rst" />
-    <Content Include="azure-storage\setup.cfg" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_abort_copy_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_abort_copy_blob_with_synchronous_copy_fails.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_copy_blob_async_private_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_copy_blob_async_private_blob_with_sas.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_copy_blob_async_public_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_copy_blob_with_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_create_container_no_options.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_create_container_no_options_fail_on_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_create_container_with_already_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_create_container_with_already_existing_container_fail_on_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_create_container_with_metadata.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_create_container_with_public_access_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_create_container_with_public_access_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_blob_snapshot.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_blob_snapshots.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_blob_with_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_blob_with_non_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_blob_with_snapshots.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_container_without_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_container_with_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_container_with_existing_container_fail_not_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_container_with_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_container_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_delete_container_with_non_existing_container_fail_not_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_metadata_with_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_on_leased_blob_without_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_properties_with_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_properties_with_leased_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_properties_with_non_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_properties_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_service_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_service_properties_with_timeout.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_bytes.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_bytes_chunked_download.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_bytes_with_progress.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_bytes_with_progress_chunked_download.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_file.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_file_chunked_download.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_file_non_seekable_chunked_download.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_file_with_progress.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_file_with_progress_chunked_download.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_path.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_path_chunked_downlad.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_path_with_mode.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_path_with_mode_chunked_download.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_path_with_progress.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_path_with_progress_chunked_downlad.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_text.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_text_chunked_download.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_text_with_encoding.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_text_with_encoding_and_progress.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_to_text_with_progress.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_with_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_with_lease.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_with_non_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_with_range.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_with_range_and_get_content_md5.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_with_snapshot.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_blob_with_snapshot_previous.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_block_list_committed_blocks.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_block_list_no_blocks.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_block_list_uncommitted_blocks.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_acl.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_acl_iter.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_acl_with_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_acl_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_acl_with_non_matching_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_metadata.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_metadata_with_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_metadata_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_metadata_with_non_matching_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_properties_with_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_properties_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_container_properties_with_non_matching_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_page_ranges_2_pages.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_page_ranges_iter.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_get_page_ranges_no_pages.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_acquire_after_break_fails.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_acquire_and_release.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_acquire_and_renew.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_acquire_twice_fails.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_break_period.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_break_released_lease_fails.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_change_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_renew_released_lease_fails.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_with_duration.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_blob_with_proposed_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_container_acquire_after_break_fails.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_container_acquire_and_release.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_container_break_period.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_container_break_released_lease_fails.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_container_change_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_container_renew.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_container_with_duration.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_lease_container_with_proposed_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_leased_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_with_include_copy.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_with_include_metadata.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_with_include_multiple.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_with_include_snapshots.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_with_include_uncommittedblobs.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_with_maxresults.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_with_maxresults_and_marker.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_with_prefix.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_blobs_with_prefix_and_delimiter.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_containers_no_options.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_containers_with_include_metadata.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_containers_with_maxresults_and_marker.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_list_containers_with_prefix.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_no_sas_private_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_no_sas_public_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_public_access_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_blob_block_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_blob_block_blob_unicode_data.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_blob_block_blob_unicode_python_33.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_blob_page_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_blob_with_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_blob_with_metadata.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_bytes.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_bytes_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_bytes_chunked_upload_with_index_and_count.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_bytes_chunked_upload_with_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_bytes_with_index.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_bytes_with_index_and_count.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_bytes_with_index_and_count_and_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_bytes_with_progress.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_bytes_with_progress_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_file_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_file_chunked_upload_with_count.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_file_chunked_upload_with_count_and_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_file_chunked_upload_with_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_file_non_seekable_chunked_upload_known_size.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_file_non_seekable_chunked_upload_unknown_size.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_file_with_progress_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_path_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_path_chunked_upload_with_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_path_with_progress_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_text.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_text_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_text_with_encoding.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_blob_from_text_with_encoding_and_progress.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_list.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_list_invalid_block_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_block_unicode_python_33.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_bytes.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_bytes_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_bytes_chunked_upload_with_index_and_count.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_bytes_with_index.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_bytes_with_index_and_count.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_bytes_with_progress.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_file_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_file_chunked_upload_truncated.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_file_non_seekable_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_file_with_progress_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_file_with_progress_chunked_upload_truncated.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_path_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_blob_from_path_with_progress_chunked_upload.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_clear.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_if_sequence_number_eq_failure.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_if_sequence_number_eq_success.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_if_sequence_number_lte_failure.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_if_sequence_number_lte_success.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_if_sequence_number_lt_failure.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_if_sequence_number_lt_success.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_unicode_python_33.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_put_page_update.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_blob_metadata_with_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_blob_properties_with_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_blob_properties_with_non_existing_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_blob_properties_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_blob_service_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_blob_service_properties_with_timeout.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_acl.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_acl_with_empty_signed_identifiers.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_acl_with_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_acl_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_acl_with_non_matching_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_acl_with_public_access_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_acl_with_public_access_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_acl_with_signed_identifiers.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_metadata.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_metadata_with_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_metadata_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_set_container_metadata_with_non_matching_lease_id.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_snapshot_blob.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_unicode_create_container_unicode_name.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_unicode_get_blob_binary_data.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_unicode_get_blob_unicode_data.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_unicode_get_blob_unicode_name.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_blob.test_with_filter.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_clear_messages.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_create_queue.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_create_queue_already_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_create_queue_fail_on_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_create_queue_with_options.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_delete_message.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_delete_queue_fail_not_exist_already_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_delete_queue_fail_not_exist_not_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_delete_queue_not_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_get_messages.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_get_messages_with_options.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_get_queue_acl.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_get_queue_acl_iter.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_get_queue_acl_with_non_existing_queue.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_get_service_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_list_queues.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_list_queues_with_options.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_peek_messages.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_peek_messages_with_options.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_put_message.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_set_queue_acl.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_set_queue_acl_with_empty_signed_identifiers.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_set_queue_acl_with_non_existing_queue.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_set_queue_acl_with_signed_identifiers.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_set_queue_metadata.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_set_service_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_unicode_create_queue_unicode_name.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_unicode_get_messages_unicode_data.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_unicode_update_message_unicode_data.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_update_message.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_queue.test_with_filter.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_all_operations_together.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_delete.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_different_partition_operations_fail.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_different_table_operations_fail.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_insert.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_inserts.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_insert_merge.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_insert_replace.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_merge.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_same_row_operations_fail.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_update.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_update_if_doesnt_match.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_batch_update_if_match.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_binary_property_value.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_create_table.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_create_table_fail_on_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_create_table_with_already_existing_table.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_create_table_with_already_existing_table_fail_on_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_delete_entity.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_delete_entity_not_existing.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_delete_entity_with_if_doesnt_match.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_delete_entity_with_if_matches.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_delete_table_with_existing_table.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_delete_table_with_existing_table_fail_not_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_delete_table_with_non_existing_table.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_delete_table_with_non_existing_table_fail_not_exist.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_empty_and_spaces_property_value.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_get_entity.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_get_entity_not_existing.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_get_entity_with_select.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_get_set_table_service_properties.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_get_table_acl.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_get_table_acl_iter.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_get_table_acl_with_non_existing_container.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_insert_entity_class_instance.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_insert_entity_conflict.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_insert_entity_dictionary.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_insert_or_merge_entity_with_existing_entity.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_insert_or_merge_entity_with_non_existing_entity.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_insert_or_replace_entity_with_existing_entity.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_insert_or_replace_entity_with_non_existing_entity.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_locale.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_merge_entity.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_merge_entity_not_existing.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_merge_entity_with_if_doesnt_match.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_merge_entity_with_if_matches.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_none_property_value.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_entities.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_entities_large.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_entities_with_filter.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_entities_with_select.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_entities_with_top.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_entities_with_top_and_next.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_tables.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_tables_with_table_name.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_tables_with_table_name_no_tables.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_tables_with_top.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_query_tables_with_top_and_next_table_name.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_set_table_acl.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_set_table_acl_with_empty_signed_identifiers.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_set_table_acl_with_non_existing_table.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_set_table_acl_with_signed_identifiers.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_table_service_retention_single_set.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_table_service_set_both.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_timezone.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_unicode_create_table_unicode_name.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_unicode_property_name.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_unicode_property_value.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_update_entity.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_update_entity_with_if_doesnt_match.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_update_entity_with_if_matches.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_with_filter_chained.yaml" />
-    <Content Include="azure-storage\tests\recordings\test_storage_table.test_with_filter_single.yaml" />
-    <Content Include="azure-storage\tests\run-storage.bat" />
     <Content Include="azure-nspkg\README.rst" />
     <Content Include="azure-nspkg\setup.cfg" />
     <Content Include="azure\README.rst" />

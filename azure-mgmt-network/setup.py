@@ -44,6 +44,6 @@ setup(
     ],
     install_requires=[
         'azure-common==0.20.0',
-        'azure-mgmt-nspkg==1.0.0',
+        'azure-mgmt-common==0.20.0',
     ],
 )
