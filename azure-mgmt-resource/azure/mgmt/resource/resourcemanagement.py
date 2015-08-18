@@ -27,8 +27,9 @@ try:
     from urllib import quote, unquote
 except:
     from urllib.parse import quote, unquote
-from azure.common import AzureOperationResponse, AzureHttpError, OperationStatusResponse, OperationStatus, Service
-from azure.common.arm import ResourceBase, ResourceBaseExtended
+from azure.common import AzureHttpError
+from azure.mgmt.common import AzureOperationResponse, OperationStatusResponse, OperationStatus, Service
+from azure.mgmt.common.arm import ResourceBase, ResourceBaseExtended
 
 class LongRunningOperationResponse(AzureOperationResponse):
     """

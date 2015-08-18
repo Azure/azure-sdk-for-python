@@ -17,7 +17,7 @@ import logging
 import json
 
 
-DEFAULT_LOG_NAME = 'azure.common.filters'
+DEFAULT_LOG_NAME = 'azure.mgmt.common.filters'
 DEFAULT_LOG_LEVEL = logging.DEBUG
 DEFAULT_USER_AGENT = ''
 
@@ -73,7 +73,7 @@ class LogFilter(object):
     Log the request to a standard python logger.
     Example of enabling logging to the console:
         import logging
-        logger = logging.getLogger('azure.common.filters')
+        logger = logging.getLogger('azure.mgmt.common.filters')
         logger.setLevel(logging.DEBUG)
         logger.addHandler(logging.StreamHandler())
     '''

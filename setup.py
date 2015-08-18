@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
@@ -28,13 +28,13 @@ packages = [
     'azure-nspkg',
     'azure-common',
     'azure-mgmt-nspkg',
+    'azure-mgmt-common',
     'azure-mgmt-compute',
     'azure-mgmt-network',
     'azure-mgmt-resource',
     'azure-mgmt-storage',
     'azure-servicebus',
     'azure-servicemanagement-legacy',
-    'azure-storage',
 ]
 
 for pkg_name in packages:

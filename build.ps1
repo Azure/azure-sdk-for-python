@@ -8,13 +8,13 @@ $packages = @(
     "azure-nspkg",
     "azure-common",
     "azure-mgmt-nspkg",
+    "azure-mgmt-common",
     "azure-mgmt-compute",
     "azure-mgmt-network",
     "azure-mgmt-resource",
     "azure-mgmt-storage",
     "azure-servicebus",
-    "azure-servicemanagement-legacy",
-    "azure-storage"
+    "azure-servicemanagement-legacy"
 )
 
 $bundles = @(

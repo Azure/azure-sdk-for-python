@@ -25,14 +25,6 @@ import zlib
 from .common_extendedtestcase import ExtendedTestCase
 
 
-should_log = os.getenv('SDK_TESTS_LOG', '0')
-if should_log.lower() == 'true' or should_log == '1':
-    import logging
-    logger = logging.getLogger('azure.common.filters')
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler())
-
-
 class TestMode(object):
     none = 'None' # this will be for unit test, no need for any recordings
     playback = 'Playback'

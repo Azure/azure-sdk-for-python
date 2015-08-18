@@ -18,9 +18,9 @@
 from setuptools import setup
 
 setup(
-    name='azure-mgmt-resource',
+    name='azure-mgmt-common',
     version='0.20.0',
-    description='Microsoft Azure Resource Management Client Library for Python',
+    description='Microsoft Azure Resource Management Client Library for Python (Common)',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
     author='Microsoft Corporation',
@@ -40,10 +40,10 @@ setup(
     packages=[
         'azure',
         'azure.mgmt',
-        'azure.mgmt.resource',
+        'azure.mgmt.common',
     ],
     install_requires=[
         'azure-common==0.20.0',
-        'azure-mgmt-common==0.20.0',
+        'azure-mgmt-nspkg==1.0.0',
     ],
 )
