@@ -12,7 +12,9 @@ access the Microsoft Azure components such as ServiceManagement, Storage\*, and 
 
 The SDK supports Python 2.7, 3.3, 3.4.
 
-\*Looking for the Azure Storage client library?  It moved to a `new GitHub repository <https://github.com/Azure/azure-storage-python>`__
+\*Looking for the Azure Storage client library?  It moved to a `new GitHub repository <https://github.com/Azure/azure-storage-python>`__.
+
+See important information regarding the upcoming release of the Azure client libraries in `this issue <https://github.com/Azure/azure-sdk-for-python/issues/440>`__.
 
 
 Features
