@@ -1703,7 +1703,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertEqual(role.role_size, 'Medium')
 
         # Act
-        result = self.sms.delete_role(service_name, deployment_name, role_name2)
+        result = self.sms.delete_role(service_name, deployment_name, role_name2, True)
         self._wait_for_async(result.request_id)
 
         # Assert
