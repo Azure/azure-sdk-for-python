@@ -8,9 +8,11 @@ Microsoft Azure SDK for Python
         :target: http://www.quantifiedcode.com/app/project/7e8a70bc3a1d445b95561f55712fee5a
 
 This project provides a set of Python packages that make it easy to
-access the Microsoft Azure components such as ServiceManagement, Storage, and ServiceBus.
+access the Microsoft Azure components such as ServiceManagement, Storage\*, and ServiceBus.
 
 The SDK supports Python 2.7, 3.3, 3.4.
+
+\*Looking for the Azure Storage client library?  It moved to a `new GitHub repository <https://github.com/Azure/azure-storage-python>`__
 
 
 Features
@@ -29,8 +31,6 @@ Features
    -  `Resource <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-resource>`__
    -  `Storage <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-storage>`__
 
-Looking for Azure Storage client library?  It moved to a `new GitHub repository <https://github.com/Azure/azure-storage-python>`__
-
 
 Installation
 ============
@@ -44,14 +44,14 @@ To install via the Python Package Index (PyPI), type:
 
     pip.exe install azure
 
-This will install all of the azure client libraries.
+This will install all of the Azure client libraries.
 
 
 Usage
 =====
-For detailed documentation, please view our `documentation on ReadTheDocs <http://azure-sdk-for-python.readthedocs.org>`__
+For detailed documentation, please view our `documentation on ReadTheDocs <http://azure-sdk-for-python.readthedocs.org>`__.
 
-For further examples please visit the `Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__
+For further examples please visit the `Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__.
 
 
 Need Help?
