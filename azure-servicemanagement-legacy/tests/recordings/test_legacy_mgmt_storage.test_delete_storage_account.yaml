@@ -25,10 +25,10 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Wed, 01 Jul 2015 00:07:34 GMT']
+      Date: ['Wed, 19 Aug 2015 00:17:57 GMT']
       Location: ['https://management.core.windows.net/subscriptions/00000000-0000-0000-0000-000000000000/storage/utstor36c7155d']
-      Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [104ec7c5f224baf09c6f7814bef72c9f]
+      Server: [1.0.6198.254 (rd_rdfe_stable.150807-1029) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [c6daff49dad909b19ca78d4e23b4e1c5]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 202, message: Accepted}
 - request:
@@ -39,16 +39,16 @@ interactions:
       User-Agent: [pyazure/0.20.0]
       x-ms-version: ['2014-10-01']
     method: GET
-    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/104ec7c5f224baf09c6f7814bef72c9f
+    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/c6daff49dad909b19ca78d4e23b4e1c5
   response:
-    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>104ec7c5-f224-baf0-9c6f-7814bef72c9f</ID><Status>InProgress</Status></Operation>'}
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>c6daff49-dad9-09b1-9ca7-8d4e23b4e1c5</ID><Status>InProgress</Status></Operation>'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['197']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Wed, 01 Jul 2015 00:07:35 GMT']
-      Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [b5d0bcaed452b8068377bd8dd7d00b6f]
+      Date: ['Wed, 19 Aug 2015 00:17:57 GMT']
+      Server: [1.0.6198.254 (rd_rdfe_stable.150807-1029) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [138788d7ea9603b3bcfdfdfddf7a4f8d]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -59,16 +59,16 @@ interactions:
       User-Agent: [pyazure/0.20.0]
       x-ms-version: ['2014-10-01']
     method: GET
-    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/104ec7c5f224baf09c6f7814bef72c9f
+    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/c6daff49dad909b19ca78d4e23b4e1c5
   response:
-    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>104ec7c5-f224-baf0-9c6f-7814bef72c9f</ID><Status>InProgress</Status></Operation>'}
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>c6daff49-dad9-09b1-9ca7-8d4e23b4e1c5</ID><Status>InProgress</Status></Operation>'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['197']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Wed, 01 Jul 2015 00:07:40 GMT']
-      Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [85c380a4de76b58ba6c0dca6f6870bcb]
+      Date: ['Wed, 19 Aug 2015 00:18:03 GMT']
+      Server: [1.0.6198.254 (rd_rdfe_stable.150807-1029) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [9d71366597940ee7abfd2fc51f28d7d0]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -79,16 +79,16 @@ interactions:
       User-Agent: [pyazure/0.20.0]
       x-ms-version: ['2014-10-01']
     method: GET
-    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/104ec7c5f224baf09c6f7814bef72c9f
+    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/c6daff49dad909b19ca78d4e23b4e1c5
   response:
-    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>104ec7c5-f224-baf0-9c6f-7814bef72c9f</ID><Status>InProgress</Status></Operation>'}
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>c6daff49-dad9-09b1-9ca7-8d4e23b4e1c5</ID><Status>InProgress</Status></Operation>'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['197']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Wed, 01 Jul 2015 00:07:45 GMT']
-      Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [756007cb00f5b580a25e1252f304f86a]
+      Date: ['Wed, 19 Aug 2015 00:18:08 GMT']
+      Server: [1.0.6198.254 (rd_rdfe_stable.150807-1029) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [54e3324477500438bdeac564b9037cc7]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -99,16 +99,16 @@ interactions:
       User-Agent: [pyazure/0.20.0]
       x-ms-version: ['2014-10-01']
     method: GET
-    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/104ec7c5f224baf09c6f7814bef72c9f
+    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/c6daff49dad909b19ca78d4e23b4e1c5
   response:
-    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>104ec7c5-f224-baf0-9c6f-7814bef72c9f</ID><Status>InProgress</Status></Operation>'}
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>c6daff49-dad9-09b1-9ca7-8d4e23b4e1c5</ID><Status>InProgress</Status></Operation>'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['197']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Wed, 01 Jul 2015 00:07:51 GMT']
-      Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [3a26415a8905b1d693ce2d97ce332f96]
+      Date: ['Wed, 19 Aug 2015 00:18:13 GMT']
+      Server: [1.0.6198.254 (rd_rdfe_stable.150807-1029) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [f7b8825d12560bac904bd2629edf4aed]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -119,16 +119,16 @@ interactions:
       User-Agent: [pyazure/0.20.0]
       x-ms-version: ['2014-10-01']
     method: GET
-    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/104ec7c5f224baf09c6f7814bef72c9f
+    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/c6daff49dad909b19ca78d4e23b4e1c5
   response:
-    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>104ec7c5-f224-baf0-9c6f-7814bef72c9f</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>c6daff49-dad9-09b1-9ca7-8d4e23b4e1c5</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['232']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Wed, 01 Jul 2015 00:07:56 GMT']
-      Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [60675bf3c5ccbf3d99148e427bcb858a]
+      Date: ['Wed, 19 Aug 2015 00:18:18 GMT']
+      Server: [1.0.6198.254 (rd_rdfe_stable.150807-1029) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [0e47592e3e7904fab778fbaf2cca2fa6]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -147,9 +147,29 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Wed, 01 Jul 2015 00:08:05 GMT']
-      Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [00a027a722b5b132b5bbedb9ea5167b0]
+      Date: ['Wed, 19 Aug 2015 00:18:20 GMT']
+      Server: [1.0.6198.254 (rd_rdfe_stable.150807-1029) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [dc946b1ce70403f29e19b1f43c5b9161]
+      x-ms-servedbyregion: [ussouth3]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [pyazure/0.20.0]
+      x-ms-version: ['2014-10-01']
+    method: GET
+    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/dc946b1ce70403f29e19b1f43c5b9161
+  response:
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>dc946b1c-e704-03f2-9e19-b1f43c5b9161</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['232']
+      Content-Type: [application/xml; charset=utf-8]
+      Date: ['Wed, 19 Aug 2015 00:18:20 GMT']
+      Server: [1.0.6198.254 (rd_rdfe_stable.150807-1029) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [892e1d9532070e06a916aeaa30ecd56e]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -168,9 +188,9 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['216']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Wed, 01 Jul 2015 00:08:05 GMT']
-      Server: [1.0.6198.243 (rd_rdfe_stable.150618-1025) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [e6d808246d37b47195362490a015d115]
+      Date: ['Wed, 19 Aug 2015 00:18:20 GMT']
+      Server: [1.0.6198.254 (rd_rdfe_stable.150807-1029) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [00ce82737102036d9b8cb44b3b8ce863]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 404, message: Not Found}
 version: 1
