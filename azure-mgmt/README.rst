@@ -15,9 +15,9 @@ Features
 This version of the Azure Management package bundle consists of the
 following packages. Follow the links for more information on each package.
 
--  `azure-compute v0.20.0 <https://pypi.python.org/pypi/azure-compute/0.20.0>`
--  `azure-network v0.20.0 <https://pypi.python.org/pypi/azure-network/0.20.0>`
--  `azure-resource v0.20.0 <https://pypi.python.org/pypi/azure-resource/0.20.0>`
--  `azure-storage v0.20.0 <https://pypi.python.org/pypi/azure-storage/0.20.0>`
+-  `azure-compute v0.20.0 <https://pypi.python.org/pypi/azure-compute/0.20.0>`__
+-  `azure-network v0.20.0 <https://pypi.python.org/pypi/azure-network/0.20.0>`__
+-  `azure-resource v0.20.0 <https://pypi.python.org/pypi/azure-resource/0.20.0>`__
+-  `azure-storage v0.20.0 <https://pypi.python.org/pypi/azure-storage/0.20.0>`__
 
 Note that if you don't need all of these packages, you can install/uninstall them individually.
