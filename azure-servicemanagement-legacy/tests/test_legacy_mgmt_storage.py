@@ -248,9 +248,9 @@ class LegacyMgmtStorageTest(LegacyMgmtTestCase):
 
         # Act
         result = self.sms.delete_storage_account(self.storage_account_name)
+        self._wait_for_async(result.request_id)
 
         # Assert
-        self.assertIsNone(result)
         self.assertFalse(
             self._storage_account_exists(self.storage_account_name))
 
