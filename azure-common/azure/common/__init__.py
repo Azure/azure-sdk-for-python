@@ -27,10 +27,11 @@ class AzureHttpError(AzureException):
         self.status_code = status_code
 
     def __new__(cls, message, status_code, *args, **kwargs):
-        if status_code == 404:
-            cls = AzureMissingResourceHttpError
-        elif status_code == 409:
-            cls = AzureConflictHttpError
+        if cls is AzureHttpError:
+            if status_code == 404:
+                cls = AzureMissingResourceHttpError
+            elif status_code == 409:
+                cls = AzureConflictHttpError
         return AzureException.__new__(cls, message, status_code, *args, **kwargs)
 
 
