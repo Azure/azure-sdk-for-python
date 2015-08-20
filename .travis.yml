@@ -1,19 +1,9 @@
 sudo: false
 language: python
 python:
-  - #"2.6"  # discover module doesn't exist so script fails
-  - #"2.7"
-  - #"3.3"
   - "3.4"
-  - #"pypy"
-before_install:
-  - # Update and install any extra packages
 install:
   - pip install -r requirements.txt
 script: 
   - cd azure-servicebus/tests
   - bash run-servicebus
-  - #cd azure-servicemanagement-legacy/tests
-  - #bash run-legacy-mgmt
-  - #cd azure-mgmt/tests
-  - #bash run-mgmt
