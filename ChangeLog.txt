@@ -1,11 +1,15 @@
-XXXX-XX-XX Version X.Y.Z
+XXXX-XX-XX Version 1.0.0
 
-The following have moved from 'azure' to 'azure.common':
-    WindowsAzureError
-    WindowsAzureConflictError
-    WindowsAzureMissingResourceError
-    WindowsAzureBatchOperationError
-    WindowsAzureAsyncOperationError
+The following were renamed and moved from 'azure' to 'azure.common':
+    WindowsAzureError                -> AzureException and AzureHttpError
+    WindowsAzureConflictError        -> AzureConflictHttpError
+    WindowsAzureMissingResourceError -> AzureMissingResourceHttpError
+
+The following were renamed and moved from 'azure' to 'azure.servicemanagement':
+    WindowsAzureAsyncOperationError  -> AzureAsyncOperationHttpError
+
+The following were renamed and moved from 'azure' to 'azure.storage':
+    WindowsAzureBatchOperationError  -> AzureBatchOperationError
 
 The following have moved from 'azure' to 'azure.servicemanagement':
     DEFAULT_HTTP_TIMEOUT

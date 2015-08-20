@@ -1,9 +1,6 @@
 Microsoft Azure SDK for Python
 ==============================
 
-.. image:: https://pypip.in/d/azure/badge.svg
-        :target: https://pypi.python.org/pypi/azure/
-
 .. image:: http://www.quantifiedcode.com/api/v1/project/7e8a70bc3a1d445b95561f55712fee5a/badge.svg
         :target: http://www.quantifiedcode.com/app/project/7e8a70bc3a1d445b95561f55712fee5a
 
@@ -37,20 +34,12 @@ Features
 Installation
 ============
 
-Download Package
-----------------
-
-To install via the Python Package Index (PyPI), type:
-
-.. code:: shell
-
-    pip.exe install azure
-
-This will install all of the Azure client libraries.
+To install a bundle that includes all of the Azure client libraries listed above, see the `Azure bundle package <>`__.
 
 
 Usage
 =====
+
 For detailed documentation, please view our `documentation on ReadTheDocs <http://azure-sdk-for-python.readthedocs.org>`__.
 
 For further examples please visit the `Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__.
@@ -59,8 +48,8 @@ For further examples please visit the `Microsoft Azure Python Developer Center <
 Need Help?
 ==========
 
-Be sure to check out the Microsoft Azure `Developer Forums on Stack Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__ if you have
-trouble with the provided code.
+Be sure to check out the Microsoft Azure `Developer Forums on Stack Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__
+if you have trouble with the provided code.
 
 
 Contribute Code or Provide Feedback
