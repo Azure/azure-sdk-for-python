@@ -25,13 +25,13 @@ if "%1%" == "" (
 if "%PYTHONPATH%" == "" (
 	set PYTHONPATH=.
 )
-set PYTHONPATH=%PYTHONPATH%;..\azure-nspkg
-set PYTHONPATH=%PYTHONPATH%;..\azure-common
-set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-nspkg
-set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-compute
-set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-network
-set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-resource
-set PYTHONPATH=%PYTHONPATH%;..\azure-mgmt-storage
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-common
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-common
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-compute
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-network
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-resource
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-storage
 
 echo Running tests using %PYTHONDIR%
 %PYTHONDIR%\python.exe -m unittest discover -p "test_mgmt_*.py"

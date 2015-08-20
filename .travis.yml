@@ -1,20 +1,19 @@
 language: python
 python:
   - #"2.6"  # discover module doesn't exist so script fails
-  - "2.7"
-  - "3.3"
+  - #"2.7"
+  - #"3.3"
   - "3.4"
-  - "pypy"
+  - #"pypy"
 before_install:
-  - # Secret Decryption
-  - openssl aes-256-cbc -K $encrypted_2578f62ed121_key -iv $encrypted_2578f62ed121_iv -in secrets.tar.enc -out secrets.tar -d
-  - tar xvf secrets.tar
-  - mv test_cert.pem /home/travis/test_cert.pem
-  - mv azurecredentials.json /home/travis/azurecredentials.json
   - # Update and install any extra packages
   - sudo apt-get update
 install:
   - travis_retry pip install -r requirements.txt
 script: 
-  - cd tests
-  - bash run-travis-tests
+  - cd azure-servicebus/tests
+  - bash run-service-bus
+  - #cd azure-servicemanagement-legacy/tests
+  - #bash run-legacy-mgmt
+  - #cd azure-mgmt/tests
+  - #bash run-mgmt

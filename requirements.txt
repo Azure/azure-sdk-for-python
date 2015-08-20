@@ -2,3 +2,5 @@ futures
 python-dateutil
 requests
 vcrpy
+pyopenssl
+#azure-storage

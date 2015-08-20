@@ -1,0 +1,7 @@
+#!/bin/bash
+
+export PYTHONPATH=$PYTHONPATH:../../azure-common
+export PYTHONPATH=$PYTHONPATH:../../azure-servicemanagement-legacy
+
+echo "Running tests..."
+python -m unittest discover -p "test_legacy_mgmt_*.py"

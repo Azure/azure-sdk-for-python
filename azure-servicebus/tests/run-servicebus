@@ -1,0 +1,7 @@
+#!/bin/bash
+
+export PYTHONPATH=$PYTHONPATH:../../azure-common
+export PYTHONPATH=$PYTHONPATH:../../azure-servicebus
+
+echo "Running tests..."
+python -m unittest discover -p "test_servicebus_*.py"

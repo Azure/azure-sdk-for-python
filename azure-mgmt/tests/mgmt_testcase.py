@@ -18,6 +18,8 @@ import time
 import azure.mgmt.resource
 from azure.common import (
     AzureHttpError,
+)
+from azure.mgmt.common import (
     SubscriptionCloudCredentials,
 )
 from testutils.common_recordingtestcase import (
