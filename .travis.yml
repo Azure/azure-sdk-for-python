@@ -1,3 +1,4 @@
+sudo: false
 language: python
 python:
   - #"2.6"  # discover module doesn't exist so script fails
@@ -7,7 +8,6 @@ python:
   - #"pypy"
 before_install:
   - # Update and install any extra packages
-  - sudo apt-get update
 install:
   - travis_retry pip install -r requirements.txt
 script: 
