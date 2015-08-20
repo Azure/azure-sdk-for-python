@@ -9,7 +9,7 @@ python:
 before_install:
   - # Update and install any extra packages
 install:
-  - travis_retry pip install -r requirements.txt
+  - pip install -r requirements.txt
 script: 
   - cd azure-servicebus/tests
   - bash run-servicebus
