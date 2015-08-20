@@ -24,7 +24,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-nspkg\;azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-nspkg\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-common\</SearchPath>
+    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-common\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -244,7 +244,9 @@
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.5" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitattributes" />
     <Content Include=".gitignore" />
+    <Content Include=".travis.yml" />
     <Content Include="azure-common\MANIFEST.in" />
     <Content Include="azure-common\README.rst" />
     <Content Include="azure-common\setup.cfg" />
@@ -282,6 +284,7 @@
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_resource.test_providers.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_resource.test_resource_groups.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_storage.test_storage_accounts.yaml" />
+    <Content Include="azure-mgmt\tests\run-mgmt" />
     <Content Include="azure-mgmt\tests\run-mgmt.bat" />
     <Content Include="azure-servicebus\MANIFEST.in" />
     <Content Include="azure-servicebus\README.rst" />
@@ -384,6 +387,7 @@
     <Content Include="azure-servicebus\tests\recordings\test_servicebus_servicebus.test_unicode_receive_subscription_message_binary_data.yaml" />
     <Content Include="azure-servicebus\tests\recordings\test_servicebus_servicebus.test_unicode_receive_subscription_message_unicode_data.yaml" />
     <Content Include="azure-servicebus\tests\recordings\test_servicebus_servicebus.test_with_filter.yaml" />
+    <Content Include="azure-servicebus\tests\run-servicebus" />
     <Content Include="azure-servicebus\tests\run-servicebus.bat" />
     <Content Include="azure-servicemanagement-legacy\MANIFEST.in" />
     <Content Include="azure-servicemanagement-legacy\README.rst" />
@@ -523,6 +527,7 @@
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_list_web_spaces.yaml" />
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_restart_site.yaml" />
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_shutdown_start_site.yaml" />
+    <Content Include="azure-servicemanagement-legacy\tests\run-legacy-mgmt" />
     <Content Include="azure-servicemanagement-legacy\tests\run-legacy-mgmt.bat" />
     <Content Include="azure-nspkg\README.rst" />
     <Content Include="azure-nspkg\setup.cfg" />
@@ -532,9 +537,7 @@
     <Content Include="ChangeLog.txt" />
     <Content Include="HOWTO.txt" />
     <Content Include="LICENSE.txt" />
-    <Content Include="MANIFEST.in" />
     <Content Include="README.rst" />
-    <Content Include="optional-requirements.txt" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <PropertyGroup>

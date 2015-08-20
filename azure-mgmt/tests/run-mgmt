@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export PYTHONPATH=$PYTHONPATH:../../azure-common
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-common
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-compute
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-network
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-resource
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-storage
+
+echo "Running tests..."
+python -m unittest discover -p "test_mgmt_*.py"

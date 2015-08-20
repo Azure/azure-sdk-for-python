@@ -25,9 +25,8 @@ if "%1%" == "" (
 if "%PYTHONPATH%" == "" (
 	set PYTHONPATH=.
 )
-set PYTHONPATH=%PYTHONPATH%;..\azure-nspkg
-set PYTHONPATH=%PYTHONPATH%;..\azure-common
-set PYTHONPATH=%PYTHONPATH%;..\azure-servicemanagement-legacy
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-common
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-servicemanagement-legacy
 
 echo Running tests using %PYTHONDIR%
 %PYTHONDIR%\python.exe -m unittest discover -p "test_legacy_mgmt_*.py"
