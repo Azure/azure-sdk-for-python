@@ -3,6 +3,31 @@ Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Service Management Legacy Client Library.
 
+All packages in this bundle have been tested with Python 2.7, 3.3 and 3.4.
+
+For the newer Azure Resource Management (ARM) libraries, see `azure-mgmt <https://pypi.python.org/pypi/azure-mgmt>`__.
+
+For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
+
+
+Compatibility
+=============
+
+**IMPORTANT**: If you have an earlier version of the azure package
+(version < 1.0), you should uninstall it before installing this package.
+
+You can check the version using pip:
+
+.. code:: shell
+
+    pip freeze
+
+If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
+
+.. code:: shell
+
+    pip uninstall azure
+
 
 Features
 ========
@@ -26,7 +51,7 @@ To install via the Python Package Index (PyPI), type:
 
 .. code:: shell
 
-    pip.exe install azure-servicemanagement-legacy
+    pip install azure-servicemanagement-legacy
 
 
 Download Source Code
@@ -44,6 +69,9 @@ To get the source code of the SDK via **git** type:
 
 Usage
 =====
+
+Authentication
+--------------
 
 Set-up certificates
 ~~~~~~~~~~~~~~~~~~~
@@ -92,6 +120,10 @@ To create the .cer certificate, execute this:
 After you have created the certificate, you will need to upload the .cer
 file to Microsoft Azure via the "Upload" action of the "Settings" tab of
 the `management portal <http://manage.windows.com>`__.
+
+
+ServiceManagementService
+------------------------
 
 Initialization
 ~~~~~~~~~~~~~~
@@ -210,7 +242,7 @@ Contribute Code or Provide Feedback
 If you would like to become an active contributor to this project please
 follow the instructions provided in `Microsoft Azure Projects
 Contribution
-Guidelines <http://windowsazure.github.com/guidelines.html>`__.
+Guidelines <http://azure.github.io/guidelines.html>`__.
 
 If you encounter any bugs with the library please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
