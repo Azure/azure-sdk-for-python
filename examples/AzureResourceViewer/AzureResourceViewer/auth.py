@@ -48,7 +48,7 @@ def get_tokens(auth_code):
         authorityUrl,
         app_creds.CLIENT_ID,
         app_creds.CLIENT_SECRET,
-        auth_code,
+        str(auth_code),
         url_for('authorized_view', _external=True),
         resource,
     )
