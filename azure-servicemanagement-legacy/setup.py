@@ -19,7 +19,7 @@ from setuptools import setup
 
 setup(
     name='azure-servicemanagement-legacy',
-    version='0.20.0',
+    version='0.20.0rc1',
     description='Microsoft Azure Legacy Service Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -27,7 +27,7 @@ setup(
     author_email='ptvshelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -43,7 +43,7 @@ setup(
         'azure.servicemanagement._http',
     ],
     install_requires=[
-        'azure-common==0.20.0',
+        'azure-common',
     ],
     extras_require = { 
         'get_certificate_from_publish_settings' : ['pyopenssl'] 

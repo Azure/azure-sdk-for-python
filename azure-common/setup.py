@@ -19,7 +19,7 @@ from setuptools import setup
 
 setup(
     name='azure-common',
-    version='0.20.0',
+    version='1.0.0rc1',
     description='Microsoft Azure Client Library for Python (Common)',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -27,7 +27,7 @@ setup(
     author_email='ptvshelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -42,6 +42,6 @@ setup(
         'azure.common',
     ],
     install_requires=[
-        'azure-nspkg==1.0.0',
+        'azure-nspkg',
     ],
 )

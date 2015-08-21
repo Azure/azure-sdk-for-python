@@ -19,7 +19,7 @@ from setuptools import setup
 
 setup(
     name='azure-mgmt-common',
-    version='0.20.0',
+    version='0.20.0rc1',
     description='Microsoft Azure Resource Management Client Library for Python (Common)',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -27,7 +27,7 @@ setup(
     author_email='ptvshelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -43,7 +43,7 @@ setup(
         'azure.mgmt.common',
     ],
     install_requires=[
-        'azure-common==0.20.0',
-        'azure-mgmt-nspkg==1.0.0',
+        'azure-common',
+        'azure-mgmt-nspkg',
     ],
 )

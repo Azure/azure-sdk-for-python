@@ -19,7 +19,7 @@ from setuptools import setup
 
 setup(
     name='azure-mgmt-nspkg',
-    version='1.0.0',
+    version='1.0.0rc1',
     description='Microsoft Azure Resource Management Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -42,6 +42,6 @@ setup(
         'azure.mgmt',
     ],
     install_requires=[
-        'azure-nspkg==1.0.0',
+        'azure-nspkg',
     ],
 )

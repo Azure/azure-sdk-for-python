@@ -20,7 +20,8 @@ from datetime import datetime
 from flask import render_template, redirect, url_for, request, jsonify, make_response, abort, session
 from . import app
 from . import models, auth
-from azure.common import SubscriptionCloudCredentials, AzureException
+from azure.common import AzureException
+from azure.mgmt.common import SubscriptionCloudCredentials
 
 app.secret_key = auth.app_creds.SESSION_SECRET
 

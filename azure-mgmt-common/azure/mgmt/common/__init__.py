@@ -20,7 +20,7 @@ import json
 import azure.mgmt.common.filters
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.20.0'
+__version__ = '0.20.0rc1'
 
 
 class SubscriptionCloudCredentials(object):
