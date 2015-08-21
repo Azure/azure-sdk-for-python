@@ -19,7 +19,7 @@ from setuptools import setup
 
 setup(
     name='azure-nspkg',
-    version='1.0.0',
+    version='1.0.0rc1',
     description='Microsoft Azure Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',

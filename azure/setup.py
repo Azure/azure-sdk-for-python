@@ -19,7 +19,7 @@ from setuptools import setup
 
 setup(
     name='azure',
-    version='1.0.0',
+    version='1.0.0rc1',
     description='Microsoft Azure Client Libraries for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -38,9 +38,9 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        'azure-mgmt==0.20.0',
-        'azure-servicebus==0.20.0',
-        'azure-storage==0.20.0',
-        'azure-servicemanagement-legacy==0.20.0',
+        'azure-mgmt==0.20.0rc1',
+        'azure-servicebus==0.20.0rc1',
+        'azure-storage==0.20.0rc1',
+        'azure-servicemanagement-legacy==0.20.0rc1',
     ],
 )
