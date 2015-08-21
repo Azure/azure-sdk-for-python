@@ -34,7 +34,7 @@ Features
 Installation
 ============
 
-To install a bundle that includes all of the Azure client libraries listed above, see the `Azure bundle package <>`__.
+To install a bundle that includes all of the Azure client libraries listed above, see the `Azure bundle package <https://github.com/Azure/azure-sdk-for-python/tree/master/azure>`__.
 
 
 Usage
