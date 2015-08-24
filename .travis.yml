@@ -4,6 +4,9 @@ python:
   - "3.4"
 install:
   - pip install -r requirements.txt
+  - pip install azure-storage
 script: 
   - cd azure-servicebus/tests
   - bash run-servicebus
+  - cd azure-servicemanagement-legacy/tests
+  - bash run-legacy-mgmt
