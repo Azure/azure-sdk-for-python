@@ -8,5 +8,7 @@ install:
 script: 
   - cd azure-servicebus/tests
   - bash run-servicebus
+  - cd ../..
   - cd azure-servicemanagement-legacy/tests
   - bash run-legacy-mgmt
+  - cd ../..
