@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Management namespace package.
+This is the Microsoft Azure namespace package.
 
 This package is not intended to be installed directly by the end user.
 
