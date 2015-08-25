@@ -106,6 +106,24 @@ section and create an instance of the management client.
 
     resource_client = ResourceManagementClient(creds)
 
+Create resource group
+---------------------
+
+.. code:: python
+
+    from azure.mgmt.resource import ResourceGroup
+
+    group_name = 'mynewresourcegroup'
+    result = resource_client.resource_groups.create_or_update(
+        group_name,
+        ResourceGroup(
+            location='westus',
+            tags={
+                'tag1': 'value1',
+            },
+        )
+    )
+
 List resource groups
 --------------------
 
