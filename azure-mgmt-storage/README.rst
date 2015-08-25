@@ -59,8 +59,10 @@ Authentication
 
 Authentication with Azure Resource Manager is done via tokens.
 
-First, create a service principal using the instructions found
-`here <https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/>`__.
+First we need create a service principal go the following links to
+1) `Install the Azure-CLI <https://azure.microsoft.com/en-us/documentation/articles/xplat-cli-install/>`__.
+2) `Connect to the Azure-CLI <https://azure.microsoft.com/en-us/documentation/articles/xplat-cli-connect#use-the-publish-settings-file-method>`__.
+3) `Authenticate to your Service Principal using the Azure-CLI <https://azure.microsoft.com/en-us/documentation/articles/resource-group-authenticate-service-principal/#authenticate-service-principal-with-password---azure-cli>`__.
 
 Then, use the following code to obtain an authentication token.
 
