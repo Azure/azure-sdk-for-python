@@ -16,6 +16,23 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+import sys
+
+# Upgrading from 0.x is not supported
+# azure v0.x used to have a __version__ attribute (newer versions don't)
+try:
+    import azure
+    try:
+        ver = azure.__version__
+        msg = \
+            'Upgrading from azure=={} is not supported. '.format(ver) + \
+            'Uninstall it with "pip uninstall azure" before installing ' + \
+            'this version.'
+        raise Exception(msg)
+    except AttributeError:
+        pass
+except ImportError:
+    pass
 
 setup(
     name='azure',
