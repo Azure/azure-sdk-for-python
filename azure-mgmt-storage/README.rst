@@ -106,6 +106,22 @@ section and create an instance of the management client.
 
     storage_client = StorageManagementClient(creds)
 
+Registration
+------------
+
+Some operations in the storage ARM APIs require a one-time registration of the
+storage provider with your subscription.
+
+Use the following code with the `azure-mgmt-resource <https://pypi.python.org/pypi/azure-mgmt-resource>`__ package to do the registration.
+You can use the same credentials you created in the previous section.
+
+.. code:: python
+
+    from azure.mgmt.resource import ResourceManagementClient
+
+    resource_client = ResourceManagementClient(creds)
+    resource_client.providers.register('Microsoft.Storage')
+
 Create storage account
 ----------------------
 
