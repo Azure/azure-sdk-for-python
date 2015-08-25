@@ -93,7 +93,7 @@ Create the management client
 ----------------------------
 
 The following code uses the authentication token obtained in the previous
-section and create an instance of the management client.
+section and create an instance of the management client. You will need to provide your ``subscription_id`` which can be retrieved from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
 .. code:: python
 
