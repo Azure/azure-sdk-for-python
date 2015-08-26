@@ -24,11 +24,11 @@ try:
     import azure
     try:
         ver = azure.__version__
-        msg = \
-            'Upgrading from azure=={} is not supported. '.format(ver) + \
-            'Uninstall it with "pip uninstall azure" before installing ' + \
+        raise Exception(
+            'Upgrading from azure=={} is not supported. '.format(ver) +
+            'Uninstall it with "pip uninstall azure" before installing ' +
             'this version.'
-        raise Exception(msg)
+        )
     except AttributeError:
         pass
 except ImportError:
