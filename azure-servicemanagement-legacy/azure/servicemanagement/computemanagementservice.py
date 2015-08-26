@@ -165,6 +165,28 @@ class ComputeManagementService(_ServiceManagementClient):
             x_ms_version='2015-04-01'
         )
 
+    def share(self, vm_image_name, permission):
+        '''
+        Share an already replicated OS image. This operation is only for
+        publishers. You have to be registered as image publisher with Windows
+        Azure to be able to call this.
+
+        vm_image_name:
+            The name of the virtual machine image to share
+        permission:
+            The sharing permission: public, msdn, or private
+        '''
+        _validate_not_none('vm_image_name', vm_image_name)
+        _validate_not_none('permission', permission)
+
+        path = self._get_sharing_path_using_vm_image_name(vm_image_name)
+        query = '&permission=' + permission
+        path = path + '?' + query.lstrip('&')
+
+        return self._perform_put(
+            path, None, async=True, x_ms_version='2015-04-01'
+        )
+
     #--Helper functions --------------------------------------------------
     def _get_replication_path_using_vm_image_name(self, vm_image_name):
         return self._get_path(
@@ -174,4 +196,9 @@ class ComputeManagementService(_ServiceManagementClient):
     def _get_unreplication_path_using_vm_image_name(self, vm_image_name):
         return self._get_path(
             'services/images/' + _str(vm_image_name) + '/unreplicate', None
+        )
+
+    def _get_sharing_path_using_vm_image_name(self, vm_image_name):
+        return self._get_path(
+            'services/images/' + _str(vm_image_name) + '/shareasync', None
         )
