@@ -1,7 +1,7 @@
-azure.http.requestsclient module
+azure.mgmt.common.filters module
 ================================
 
-.. automodule:: azure.http.requestsclient
+.. automodule:: azure.mgmt.common.filters
     :members:
     :undoc-members:
     :show-inheritance:

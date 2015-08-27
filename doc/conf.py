@@ -111,11 +111,6 @@ autoclass_content = 'both'
 #html_theme = 'bootstrap'
 #html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
-pip.main(['install', 'cloud_sptheme'])
-import cloud_sptheme as csp
-html_theme = "cloud"
-html_theme_path = [csp.get_theme_dir()]
-
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.

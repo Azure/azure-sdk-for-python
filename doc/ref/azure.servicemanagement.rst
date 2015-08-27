@@ -6,6 +6,9 @@ Submodules
 
 .. toctree::
 
+   azure.servicemanagement.constants
+   azure.servicemanagement.models
+   azure.servicemanagement.publishsettings
    azure.servicemanagement.schedulermanagementservice
    azure.servicemanagement.servicebusmanagementservice
    azure.servicemanagement.servicemanagementclient
