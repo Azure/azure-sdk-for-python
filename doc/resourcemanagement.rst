@@ -31,7 +31,7 @@ The ARM libraries are separated into several packages:
 See :doc:`Storage Resource Management <resourcemanagementstorage>` for examples
 of managing storage accounts.
 
-See :doc:`Compute and Network Resource Management <resourcemanagementstorage>`
+See :doc:`Compute and Network Resource Management <resourcemanagementcomputenetwork>`
 for examples of managing virtual machines.
 
 See the examples below for managing resource groups.
