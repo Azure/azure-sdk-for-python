@@ -21,8 +21,8 @@ If you want to install ``azure`` from source::
    
 Documentation:
 --------------
-* :doc:`ServiceManagement<servicemanagement>` -- (:doc:`API <ref/azure.servicemanagement>`)
-* :doc:`ServiceBus<servicebus>` -- (:doc:`API <ref/azure.servicebus>`)
+* :doc:`Service Management<servicemanagement>` -- (:doc:`API <ref/azure.servicemanagement>`)
+* :doc:`Service Bus<servicebus>` -- (:doc:`API <ref/azure.servicebus>`)
 * `Storage <http://azure-storage.readthedocs.org>`__
 * :ref:`All Documentation <modindex>`
 
@@ -90,19 +90,6 @@ Guidelines <http://windowsazure.github.com/guidelines.html>`__.
 If you encounter any bugs with the library please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
 section of the project.
-
-To run tests:
-~~~~~~~~~~~~~
-To run the tests for the Azure SDK for Python::
-
-    TODO.
-
-To generate documentation:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-To generate the documentation run::
-
-    cd doc
-    BuildDocs.bat
 
 Learn More
 ==========

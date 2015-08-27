@@ -1,5 +1,5 @@
-Usage
-=====
+Service Bus
+===========
 
 ServiceBus Queues
 -----------------

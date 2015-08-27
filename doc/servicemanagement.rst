@@ -1,9 +1,8 @@
-Usage
-=====
-
-
 Service Management
-------------------
+==================
+
+Usage
+-----
 
 Set-up certificates
 ~~~~~~~~~~~~~~~~~~~
