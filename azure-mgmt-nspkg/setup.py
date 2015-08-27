@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-nspkg',
-    version='1.0.0rc1',
+    version='1.0.0rc2',
     description='Microsoft Azure Resource Management Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
