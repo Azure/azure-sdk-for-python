@@ -45,7 +45,7 @@ Create storage account
 ----------------------
 
 The following code creates a new storage account under an existing resource group.
-To create or manage resource groups, see the `azure-mgmt-resource <https://pypi.python.org/pypi/azure-mgmt-resource>`__ package.
+To create or manage resource groups, see :doc:`Resource Management<resourcemanagement>`.
 
 .. code:: python
 
