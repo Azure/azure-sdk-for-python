@@ -6,6 +6,8 @@ Submodules
 
 .. toctree::
 
+   azure.servicebus.constants
+   azure.servicebus.models
    azure.servicebus.servicebusservice
 
 Module contents

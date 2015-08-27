@@ -1,7 +1,7 @@
-azure.storage.queueservice module
+azure.servicebus.constants module
 =================================
 
-.. automodule:: azure.storage.queueservice
+.. automodule:: azure.servicebus.constants
     :members:
     :undoc-members:
     :show-inheritance:

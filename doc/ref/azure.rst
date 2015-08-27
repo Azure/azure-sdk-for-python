@@ -6,10 +6,10 @@ Subpackages
 
 .. toctree::
 
-    azure.http
+    azure.common
+    azure.mgmt
     azure.servicebus
     azure.servicemanagement
-    azure.storage
 
 Module contents
 ---------------

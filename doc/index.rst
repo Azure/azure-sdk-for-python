@@ -23,30 +23,18 @@ Documentation:
 --------------
 * :doc:`ServiceManagement<servicemanagement>` -- (:doc:`API <ref/azure.servicemanagement>`)
 * :doc:`ServiceBus<servicebus>` -- (:doc:`API <ref/azure.servicebus>`)
-* :doc:`Storage<storage>` -- (:doc:`API <ref/azure.storage>`)
+* `Storage<http://azure-storage.readthedocs.org/>`__
 * :ref:`All Documentation <modindex>`
 
 
 Features:
 ---------
 
--  Tables
+-  Storage Blob, File, Table, Queue
 
-   -  create and delete tables
-   -  create, query, insert, update, merge, and delete entities
-
--  Blobs
-
-   -  create, list, and delete containers, work with container metadata
-      and permissions, list blobs in container
-   -  create block and page blobs (from a stream, a file, or a string),
-      work with blob blocks and pages, delete blobs
-   -  work with blob properties, metadata, leases, snapshot a blob
-
--  Storage Queues
-
-   -  create, list, and delete queues, and work with queue metadata
-   -  create, get, peek, update, delete messages
+   -  see the Azure storage `Git repository <https://github.com/Azure/azure-storage-python>`__
+      or `readthedocs <http://azure-storage.readthedocs.org/>` for a
+      complete list of supported features.
 
 -  Service Bus
 
@@ -139,5 +127,4 @@ Indices and tables
 
   servicebus
   servicemanagement
-  storage
   ref/*  
