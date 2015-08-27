@@ -23,7 +23,7 @@ Documentation:
 --------------
 * :doc:`ServiceManagement<servicemanagement>` -- (:doc:`API <ref/azure.servicemanagement>`)
 * :doc:`ServiceBus<servicebus>` -- (:doc:`API <ref/azure.servicebus>`)
-* `Storage<http://azure-storage.readthedocs.org/>`__
+* `Storage <http://azure-storage.readthedocs.org>`__
 * :ref:`All Documentation <modindex>`
 
 
@@ -33,7 +33,7 @@ Features:
 -  Storage Blob, File, Table, Queue
 
    -  see the Azure storage `Git repository <https://github.com/Azure/azure-storage-python>`__
-      or `readthedocs <http://azure-storage.readthedocs.org/>` for a
+      or `readthedocs <http://azure-storage.readthedocs.org>`__ for a
       complete list of supported features.
 
 -  Service Bus
