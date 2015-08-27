@@ -138,28 +138,3 @@ tool <http://msdn.microsoft.com/en-us/library/gg432988.aspx>`__.
 
     operation = sms.get_operation_status(result.request_id)
     print('Operation status: ' + operation.status)
-
-Need Help?
-==========
-
-Be sure to check out the Microsoft Azure `Developer Forums on Stack
-Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__ if you have
-trouble with the provided code.
-
-Contribute Code or Provide Feedback
-===================================
-
-If you would like to become an active contributor to this project please
-follow the instructions provided in `Microsoft Azure Projects
-Contribution
-Guidelines <http://windowsazure.github.com/guidelines.html>`__.
-
-If you encounter any bugs with the library please file an issue in the
-`Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
-section of the project.
-
-Learn More
-==========
-
-`Microsoft Azure Python Developer
-Center <http://azure.microsoft.com/en-us/develop/python/>`__

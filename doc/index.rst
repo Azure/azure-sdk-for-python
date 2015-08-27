@@ -1,10 +1,5 @@
-.. pydocumentdb documentation master file, created by
-   sphinx-quickstart.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Azure SDK for Python.
-========================================
+Azure SDK for Python
+====================
 
 Installation:
 -------------
@@ -18,9 +13,14 @@ If you want to install ``azure`` from source::
     git clone git://github.com/Azure/azure-sdk-for-python.git
     cd azure-sdk-for-python
     python setup.py install
-   
+
+
 Documentation:
 --------------
+* :doc:`Resource Management<resourcemanagement>` -- (:doc:`API <ref/azure.mgmt.resource>`)
+   * :doc:`Compute Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.compute>`)
+   * :doc:`Network Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.network>`)
+   * :doc:`Storage Resource Management<resourcemanagementstorage>` -- (:doc:`API <ref/azure.mgmt.storage>`)
 * :doc:`Service Management<servicemanagement>` -- (:doc:`API <ref/azure.servicemanagement>`)
 * :doc:`Service Bus<servicebus>` -- (:doc:`API <ref/azure.servicebus>`)
 * `Storage <http://azure-storage.readthedocs.org>`__
@@ -42,6 +42,13 @@ Features:
       subscriptions; send, receive, unlock and delete messages
    -  Topics: create, list, and delete topics; create, list, and delete
       rules
+
+-  Resource Management (Preview)
+
+   -  Compute: create virtual machines and more
+   -  Network: create virtual networks, network interfaces, public ips and more
+   -  Resource: create resource groups, register providers and more
+   -  Storage: create storage accounts, list keys, and more
 
 -  Service Management
 
@@ -113,5 +120,9 @@ Indices and tables
   :glob:
 
   servicebus
+  resourcemanagement
+  resourcemanagementauthentication
+  resourcemanagementstorage
+  resourcemanagementcomputenetwork
   servicemanagement
   ref/*  
