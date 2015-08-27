@@ -1,5 +1,5 @@
-Usage
-=====
+Service Bus
+===========
 
 ServiceBus Queues
 -----------------
@@ -129,29 +129,3 @@ To send an event:
     sbs.send_event('myhub', '{ "DeviceId":"dev-01", "Temperature":"37.0" }')
 
 The event content is the event message or JSON-encoded string that contains multiple messages.
-
-
-Need Help?
-==========
-
-Be sure to check out the Microsoft Azure `Developer Forums on Stack
-Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__ if you have
-trouble with the provided code.
-
-Contribute Code or Provide Feedback
-===================================
-
-If you would like to become an active contributor to this project please
-follow the instructions provided in `Microsoft Azure Projects
-Contribution
-Guidelines <http://windowsazure.github.com/guidelines.html>`__.
-
-If you encounter any bugs with the library please file an issue in the
-`Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
-section of the project.
-
-Learn More
-==========
-
-`Microsoft Azure Python Developer
-Center <http://azure.microsoft.com/en-us/develop/python/>`__
