@@ -16,7 +16,6 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
-import sys
 
 # Upgrading from 0.x is not supported
 # azure v0.x used to have a __version__ attribute (newer versions don't)
