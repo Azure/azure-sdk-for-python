@@ -54,9 +54,6 @@ future versions.
 Usage
 =====
 
-Usage
-=====
-
 Authentication
 --------------
 

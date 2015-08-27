@@ -195,9 +195,14 @@ The following code creates a new virtual machine. Creating a virtual
 machine involves creating a resource group, storage accounts, virtual
 network resources, and finally the virtual machine.
 
-To create or manage resource groups, see the `azure-mgmt-resource <https://pypi.python.org/pypi/azure-mgmt-resource>`__ package.
-To create or manage storage accounts, see the `azure-mgmt-storage <https://pypi.python.org/pypi/azure-mgmt-storage>`__ package.
-To create or manage virtual networks, see the `azure-mgmt-network <https://pypi.python.org/pypi/azure-mgmt-network>`__ package.
+To create or manage resource groups, see the
+`azure-mgmt-resource <https://pypi.python.org/pypi/azure-mgmt-resource>`__ package.
+
+To create or manage storage accounts, see the
+`azure-mgmt-storage <https://pypi.python.org/pypi/azure-mgmt-storage>`__ package.
+
+To create or manage virtual networks, see the
+`azure-mgmt-network <https://pypi.python.org/pypi/azure-mgmt-network>`__ package.
 
 .. code:: python
 
