@@ -54,25 +54,98 @@ future versions.
 Usage
 =====
 
-Examples
---------
-
-We'll work on adding some documentation here, but for now, see the following
-for examples on using the ARM APIs.
-
--  `Azure Resource Viewer Web Application Sample <https://github.com/Azure/azure-sdk-for-python/tree/master/examples/AzureResourceViewer>`__
--  `Azure Resource Manager Unit tests <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt/tests>`__
+Usage
+=====
 
 Authentication
 --------------
 
-Authentication with ARM is done via tokens.
+Authentication with Azure Resource Manager is done via tokens.
 
-You can use the `ADAL <https://pypi.python.org/pypi/adal>`__ library to
-obtain authentication tokens.
+First we need create a service principal go the following links to
 
-TODO: Link to documentation on how to setup AAD.
-TODO: Code example for alternative to ADAL.
+1. `Install the Azure-CLI <https://azure.microsoft.com/en-us/documentation/articles/xplat-cli-install/>`__.
+2. `Connect to the Azure-CLI <https://azure.microsoft.com/en-us/documentation/articles/xplat-cli-connect#use-the-publish-settings-file-method>`__.
+3. `Authenticate to your Service Principal using the Azure-CLI <https://azure.microsoft.com/en-us/documentation/articles/resource-group-authenticate-service-principal/#authenticate-service-principal-with-password---azure-cli>`__.
+
+Then, use the following code to obtain an authentication token.
+
+.. code:: python
+
+    import requests
+
+    def get_token_from_client_credentials(endpoint, client_id, client_secret):
+        payload = {
+            'grant_type': 'client_credentials',
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'resource': 'https://management.core.windows.net/',
+        }
+        response = requests.post(endpoint, data=payload).json()
+        return response['access_token']
+
+    # TODO: Replace endpoint, client id and secret for your application
+    # In Azure portal, in your application configure page:
+    # - Click on View Endpoints, use the OAuth 2.0 Token Endpoint
+    # - The client id is already generated for you
+    # - The client secret is only displayed when the key is created the first time
+    auth_token = get_token_from_client_credentials(
+        endpoint='https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/token',
+        client_id='11111111-1111-1111-1111-111111111111',
+        client_secret='2222222222222222222222222222222222222222222=',
+    )
+
+Create the management client
+----------------------------
+
+The following code uses the authentication token obtained in the previous
+section and create an instance of the management client. You will need to
+provide your ``subscription_id`` which can be retrieved from
+`your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
+
+.. code:: python
+
+    from azure.mgmt.common import SubscriptionCloudCredentials
+    from azure.mgmt.network import NetworkResourceProviderClient
+
+    # TODO: Replace this with your subscription id
+    subscription_id = '33333333-3333-3333-3333-333333333333'
+    creds = SubscriptionCloudCredentials(subscription_id, auth_token)
+
+    network_client = NetworkResourceProviderClient(creds)
+
+Registration
+------------
+
+Some operations in the network ARM APIs require a one-time registration of the
+storage provider with your subscription.
+
+Use the following code with the `azure-mgmt-resource <https://pypi.python.org/pypi/azure-mgmt-resource>`__package to do the registration.
+You can use the same credentials you created in the previous section.
+
+.. code:: python
+
+    from azure.mgmt.resource import ResourceManagementClient
+
+    resource_client = ResourceManagementClient(creds)
+    resource_client.providers.register('Microsoft.Network')
+
+Create virtual machine
+----------------------
+
+See the readme for `azure-mgmt-compute <https://pypi.python.org/pypi/azure-mgmt-compute>`__
+package for an example of creating a virtual machine, which includes creating
+network resources.
+
+More examples
+-------------
+
+-  `Azure Resource Viewer Web Application Sample <https://github.com/Azure/azure-sdk-for-python/tree/master/examples/AzureResourceViewer>`__
+-  `Azure Resource Manager Unit tests <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt/tests>`__
+
+Note that the ADAL library used by the Azure Resource Viewer sample hasn't been
+officially released yet.  The application has a pre-release of ADAL in its
+wheelhouse folder.
 
 
 Provide Feedback
