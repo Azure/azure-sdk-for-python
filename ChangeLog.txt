@@ -1,5 +1,40 @@
 XXXX-XX-XX Version 1.0.0
 
+UPGRADE:
+
+If you are upgrading from v0.11.x or earlier, make sure to uninstall that
+version before installing the latest release.
+
+WHAT'S NEW:
+
+* Preliminary Azure Resource Manager (ARM) support.
+  Manage your Azure compute, network and storage resources.
+  This is a preview and is subject to changes in future releases.
+* Azure Storage File support.
+* Azure library is now more modular. You can choose to install bundles
+  or install only the packages you need. Packages now available on PyPI:
+    azure (bundle)
+      azure-mgmt (bundle)
+        azure-mgmt-compute
+        azure-mgmt-network
+        azure-mgmt-resource
+        azure-mgmt-storage
+      azure-servicebus
+      azure-servicemanagement-legacy
+      azure-storage
+* Azure Storage has moved.
+    https://github.com/Azure/azure-storage-python
+    http://azure-storage.readthedocs.org/en/latest/
+
+FIXES:
+
+* #437 Make delete_storage_account return async request id
+* #435 Add complete flag to delete_role
+* #448 Cast authorization code from unicode to string
+* #395 Azure.Storage Python 2.6 compatibility
+
+BREAKING CHANGES:
+
 The following were renamed and moved from 'azure' to 'azure.common':
     WindowsAzureError                -> AzureException and AzureHttpError
     WindowsAzureConflictError        -> AzureConflictHttpError
@@ -61,6 +96,8 @@ The following have moved from 'azure.storage' to 'azure.storage.table':
     EntityProperty
     Table
     TableSharedAccessPermissions
+
+Thank you to Sabbasth, schaefi, feoff3, JamieCressey for their contributions.
 
 
 2015-06-16 Version 0.11.1
