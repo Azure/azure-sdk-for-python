@@ -24,6 +24,8 @@ $bundles = @(
 
 function build-sdist($package, $target) {
     pushd $package
+    Remove-Item -Force -Recurse dist
+    Remove-Item -Force -Recurse *.egg-info
     py -3.4-32 setup.py sdist
     Copy-Item -Force "dist\*.zip" $($target)
     popd
@@ -34,6 +36,7 @@ function build-wheel($package) {
 }
 
 $sdist_target = Join-Path $PSScriptRoot dist
+Remove-Item -Force -Recurse $sdist_target
 mkdir $sdist_target -Force
 
 foreach ($package in ($packages + $bundles)) {
