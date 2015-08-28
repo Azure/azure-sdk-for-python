@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-common',
-    version='1.0.0rc2',
+    version='1.0.0',
     description='Microsoft Azure Client Library for Python (Common)',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
