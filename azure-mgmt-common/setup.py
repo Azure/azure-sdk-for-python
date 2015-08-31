@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-common',
-    version='0.20.0rc2',
+    version='0.20.0',
     description='Microsoft Azure Resource Management Client Library for Python (Common)',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',

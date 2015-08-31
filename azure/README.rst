@@ -15,10 +15,10 @@ Features
 This version of the Azure package bundle consists of the following
 packages. Follow the links for more information on each package.
 
--  `azure-mgmt v0.20.0rc2 <https://pypi.python.org/pypi/azure-mgmt/0.20.0rc2>`__
--  `azure-servicebus v0.20.0rc2 <https://pypi.python.org/pypi/azure-servicebus/0.20.0rc2>`__
--  `azure-servicemanagement-legacy v0.20.0rc2 <https://pypi.python.org/pypi/azure-servicemanagement-legacy/0.20.0rc2>`__
--  `azure-storage v0.20.0rc2 <https://pypi.python.org/pypi/azure-storage/0.20.0rc2>`__
+-  `azure-mgmt v0.20.0 <https://pypi.python.org/pypi/azure-mgmt/0.20.0>`__
+-  `azure-servicebus v0.20.0 <https://pypi.python.org/pypi/azure-servicebus/0.20.0>`__
+-  `azure-servicemanagement-legacy v0.20.0 <https://pypi.python.org/pypi/azure-servicemanagement-legacy/0.20.0>`__
+-  `azure-storage v0.20.0 <https://pypi.python.org/pypi/azure-storage/0.20.0>`__
 
 Note that if you don't need all of these packages, you can install/uninstall them individually.
 
