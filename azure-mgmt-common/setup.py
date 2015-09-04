@@ -60,5 +60,6 @@ setup(
     install_requires=[
         'azure-common',
         'azure-mgmt-nspkg',
+        'requests',
     ],
 )
