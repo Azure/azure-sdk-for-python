@@ -18,8 +18,6 @@ import sys
 
 if sys.version_info < (3,):
     from httplib import (
-        HTTPSConnection,
-        HTTPConnection,
         HTTP_PORT,
         HTTPS_PORT,
         )
@@ -27,8 +25,6 @@ if sys.version_info < (3,):
     from urllib2 import quote as url_quote
 else:
     from http.client import (
-        HTTPSConnection,
-        HTTPConnection,
         HTTP_PORT,
         HTTPS_PORT,
         )
@@ -52,8 +48,7 @@ class _HTTPClient(object):
         service_instance:
             service client instance.
         cert_file:
-            certificate file name/location. This is only used in hosted
-            service management.
+            certificate file path or location in windows certificate store.
         protocol:
             http or https.
         request_session:
@@ -73,33 +68,6 @@ class _HTTPClient(object):
         self.request_session = request_session
         self.timeout = timeout
         self.user_agent = user_agent
-        if request_session:
-            self.use_httplib = True
-        else:
-            self.use_httplib = self.should_use_httplib()
-
-    def should_use_httplib(self):
-        if sys.platform.lower().startswith('win') and self.cert_file:
-            # On Windows, auto-detect between Windows Store Certificate
-            # (winhttp) and OpenSSL .pem certificate file (httplib).
-            #
-            # We used to only support certificates installed in the Windows
-            # Certificate Store.
-            #   cert_file example: CURRENT_USER\my\CertificateName
-            #
-            # We now support using an OpenSSL .pem certificate file,
-            # for a consistent experience across all platforms.
-            #   cert_file example: account\certificate.pem
-            #
-            # When using OpenSSL .pem certificate file on Windows, make sure
-            # you are on CPython 2.7.4 or later.
-
-            # If it's not an existing file on disk, then treat it as a path in
-            # the Windows Certificate Store, which means we can't use httplib.
-            if not os.path.isfile(self.cert_file):
-                return False
-
-        return True
 
     def set_proxy(self, host, port, user, password):
         '''
@@ -141,52 +109,24 @@ class _HTTPClient(object):
                 target_host, protocol, self.request_session, self.timeout)
             proxy_host = self.proxy_host
             proxy_port = self.proxy_port
-        elif not self.use_httplib:
+        else:
             from .winhttp import _HTTPConnection
             connection = _HTTPConnection(
                 target_host, self.cert_file, protocol, self.timeout)
             proxy_host = self.proxy_host
             proxy_port = self.proxy_port
-        else:
-            if ':' in target_host:
-                target_host, _, target_port = target_host.rpartition(':')
-            if self.proxy_host:
-                proxy_host = target_host
-                proxy_port = target_port
-                host = self.proxy_host
-                port = self.proxy_port
-            else:
-                host = target_host
-                port = target_port
-
-            if protocol.lower() == 'http':
-                connection = HTTPConnection(host, int(port),
-                                            timeout=self.timeout)
-            else:
-                connection = HTTPSConnection(
-                    host, int(port), cert_file=self.cert_file,
-                    timeout=self.timeout)
 
         if self.proxy_host:
             headers = None
             if self.proxy_user and self.proxy_password:
                 auth = base64.encodestring(
-                    "{0}:{1}".format(self.proxy_user, self.proxy_password))
-                headers = {'Proxy-Authorization': 'Basic {0}'.format(auth)}
+                    "{0}:{1}".format(self.proxy_user, self.proxy_password).encode()).rstrip()
+                headers = {'Proxy-Authorization': 'Basic {0}'.format(auth.decode())}
             connection.set_tunnel(proxy_host, int(proxy_port), headers)
 
         return connection
 
     def send_request_headers(self, connection, request_headers):
-        if self.use_httplib:
-            if self.proxy_host and self.request_session is None:
-                for i in connection._buffer:
-                    if i.startswith(b"Host: "):
-                        connection._buffer.remove(i)
-                connection.putheader(
-                    'Host', "{0}:{1}".format(connection._tunnel_host,
-                                             connection._tunnel_port))
-
         for name, value in request_headers:
             if value:
                 connection.putheader(name, value)
@@ -198,8 +138,7 @@ class _HTTPClient(object):
         if request_body:
             assert isinstance(request_body, bytes)
             connection.send(request_body)
-        elif (not isinstance(connection, HTTPSConnection) and
-              not isinstance(connection, HTTPConnection)):
+        else:
             connection.send(None)
 
     def _update_request_uri_query(self, request):
@@ -235,7 +174,7 @@ class _HTTPClient(object):
         try:
             connection.putrequest(request.method, request.path)
 
-            if not self.use_httplib:
+            if not self.request_session:
                 if self.proxy_host and self.proxy_user:
                     connection.set_proxy_credentials(
                         self.proxy_user, self.proxy_password)
