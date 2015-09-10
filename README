@@ -11,7 +11,7 @@ Welcome to DocumentDB.
 
     If you use Microsoft Visual Studio as IDE (we use 2013), please install the
     following extension for Python.
-    http://pytools.codeplex.com/wikipage?title=PTVS%20Installation
+    http://microsoft.github.io/PTVS/
 
 
 1) Installation:
