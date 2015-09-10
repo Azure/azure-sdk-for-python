@@ -54,29 +54,26 @@ class LegacyMgmtTestCase(RecordingTestCase):
     def create_service_management(self, service_class):
         conn_type = self.settings.CONNECTION_TYPE
         if conn_type == 'requests_with_token' or conn_type == 'requests_with_cert':
-            import requests
-            session = requests.Session()
             if conn_type == 'requests_with_token':
+                import requests
+                session = requests.Session()
                 auth = 'Bearer {}'.format(self.settings.get_token())
                 session.headers['authorization'] = auth
+                service = service_class(
+                    self.settings.SUBSCRIPTION_ID,
+                    request_session=session,
+                )
             else:
                 # Note this works only with RunLiveNoRecord
-                session.cert = self.settings.PEM_PATH
-            service = service_class(
-                self.settings.SUBSCRIPTION_ID,
-                request_session=session,
-            )
+                service = service_class(
+                    self.settings.SUBSCRIPTION_ID,
+                    self.settings.PEM_PATH,
+                )
         elif conn_type == 'winhttp':
             # Note this works only with RunLiveNoRecord
             service = service_class(
                 self.settings.SUBSCRIPTION_ID,
                 self.settings.PFX_LOCATION,
-            )
-        elif conn_type == 'httplib':
-            # Note this works only with RunLiveNoRecord
-            service = service_class(
-                self.settings.SUBSCRIPTION_ID,
-                self.settings.PEM_PATH,
             )
         else:
             raise ValueError('Insupported value for "connectiontype" in settings:"{}"'.format(conn_type))

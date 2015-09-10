@@ -16,6 +16,8 @@ import os
 import sys
 import time
 
+import requests
+
 from .constants import (
     AZURE_MANAGEMENT_CERTFILE,
     AZURE_MANAGEMENT_SUBSCRIPTIONID,
@@ -78,11 +80,40 @@ class _ServiceManagementClient(object):
                 raise ValueError(
                     'You need to provide subscription id and certificate file')
 
+        if not self.request_session:
+            if _ServiceManagementClient.should_use_requests(self.cert_file):
+                self.request_session = requests.Session()
+                self.request_session.cert = self.cert_file
+
         self._httpclient = _HTTPClient(
             service_instance=self, cert_file=self.cert_file,
             request_session=self.request_session, timeout=timeout,
             user_agent=_USER_AGENT_STRING)
         self._filter = self._httpclient.perform_request
+
+    @staticmethod
+    def should_use_requests(cert_file):
+        if sys.platform.lower().startswith('win') and cert_file:
+            # On Windows, auto-detect between Windows Store Certificate
+            # (winhttp) and OpenSSL .pem certificate file (httplib).
+            #
+            # We used to only support certificates installed in the Windows
+            # Certificate Store.
+            #   cert_file example: CURRENT_USER\my\CertificateName
+            #
+            # We now support using an OpenSSL .pem certificate file,
+            # for a consistent experience across all platforms.
+            #   cert_file example: account\certificate.pem
+            #
+            # When using OpenSSL .pem certificate file on Windows, make sure
+            # you are on CPython 2.7.4 or later.
+
+            # If it's not an existing file on disk, then treat it as a path in
+            # the Windows Certificate Store, which means we can't use requests.
+            if not os.path.isfile(cert_file):
+                return False
+
+        return True
 
     def with_filter(self, filter):
         '''Returns a new service which will process requests with the

@@ -22,7 +22,6 @@ import time
 import unittest
 
 from datetime import datetime
-from requests import Session
 from azure.common import (
     AzureHttpError,
     AzureMissingResourceHttpError,
@@ -62,14 +61,12 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
                 self.settings.SERVICEBUS_NAME,
                 shared_access_key_name=self.settings.SERVICEBUS_SAS_KEY_NAME,
                 shared_access_key_value=self.settings.SERVICEBUS_SAS_KEY_VALUE,
-                request_session=Session(),
             )
         else:
             self.sbs = ServiceBusService(
                 self.settings.SERVICEBUS_NAME,
                 account_key=self.settings.SERVICEBUS_ACS_KEY,
                 issuer='owner',
-                request_session=Session(),
             )
 
         self._set_service_options(self.sbs, self.settings)

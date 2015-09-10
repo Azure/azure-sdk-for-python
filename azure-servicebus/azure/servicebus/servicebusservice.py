@@ -16,6 +16,8 @@ import datetime
 import os
 import time
 
+import requests
+
 from azure.common import (
     AzureHttpError,
 )
@@ -112,8 +114,7 @@ class ServiceBusService(object):
         timeout:
             Optional. Timeout for the http request, in seconds.
         request_session:
-            Optional. Session object to use for http requests. If this is
-            specified, it replaces the default use of httplib.
+            Optional. Session object to use for http requests.
         '''
         self.requestid = None
         self.service_namespace = service_namespace
@@ -148,7 +149,7 @@ class ServiceBusService(object):
         self._httpclient = _HTTPClient(
             service_instance=self,
             timeout=timeout,
-            request_session=request_session,
+            request_session=request_session or requests.Session(),
             user_agent=_USER_AGENT_STRING,
         )
         self._filter = self._httpclient.perform_request

@@ -59,6 +59,7 @@ setup(
     ],
     install_requires=[
         'azure-common',
+        'requests',
     ],
     extras_require = { 
         'get_certificate_from_publish_settings' : ['pyopenssl'] 

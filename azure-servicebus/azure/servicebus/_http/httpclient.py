@@ -18,8 +18,6 @@ import sys
 
 if sys.version_info < (3,):
     from httplib import (
-        HTTPSConnection,
-        HTTPConnection,
         HTTP_PORT,
         HTTPS_PORT,
         )
@@ -27,8 +25,6 @@ if sys.version_info < (3,):
     from urllib2 import quote as url_quote
 else:
     from http.client import (
-        HTTPSConnection,
-        HTTPConnection,
         HTTP_PORT,
         HTTPS_PORT,
         )
@@ -36,6 +32,8 @@ else:
     from urllib.parse import quote as url_quote
 
 from . import HTTPError, HTTPResponse
+from .requestsclient import _RequestsConnection
+
 
 DEBUG_REQUESTS = False
 DEBUG_RESPONSES = False
@@ -108,38 +106,17 @@ class _HTTPClient(object):
         target_host = request.host
         target_port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
 
-        if self.request_session:
-            from .requestsclient import _RequestsConnection
-            connection = _RequestsConnection(
-                target_host, protocol, self.request_session, self.timeout)
-            proxy_host = self.proxy_host
-            proxy_port = self.proxy_port
-        else:
-            if ':' in target_host:
-                target_host, _, target_port = target_host.rpartition(':')
-            if self.proxy_host:
-                proxy_host = target_host
-                proxy_port = target_port
-                host = self.proxy_host
-                port = self.proxy_port
-            else:
-                host = target_host
-                port = target_port
-
-            if protocol.lower() == 'http':
-                connection = HTTPConnection(host, int(port),
-                                            timeout=self.timeout)
-            else:
-                connection = HTTPSConnection(
-                    host, int(port), cert_file=self.cert_file,
-                    timeout=self.timeout)
+        connection = _RequestsConnection(
+            target_host, protocol, self.request_session, self.timeout)
+        proxy_host = self.proxy_host
+        proxy_port = self.proxy_port
 
         if self.proxy_host:
             headers = None
             if self.proxy_user and self.proxy_password:
                 auth = base64.encodestring(
-                    "{0}:{1}".format(self.proxy_user, self.proxy_password))
-                headers = {'Proxy-Authorization': 'Basic {0}'.format(auth)}
+                    "{0}:{1}".format(self.proxy_user, self.proxy_password).encode()).rstrip()
+                headers = {'Proxy-Authorization': 'Basic {0}'.format(auth.decode())}
             connection.set_tunnel(proxy_host, int(proxy_port), headers)
 
         return connection
@@ -164,8 +141,7 @@ class _HTTPClient(object):
         if request_body:
             assert isinstance(request_body, bytes)
             connection.send(request_body)
-        elif (not isinstance(connection, HTTPSConnection) and
-              not isinstance(connection, HTTPConnection)):
+        else:
             connection.send(None)
 
     def _update_request_uri_query(self, request):
