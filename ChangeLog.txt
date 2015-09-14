@@ -3,6 +3,7 @@
 * Use requests library by default in all libraries
   * Exception is azure-servicemanagement-legacy which can use requests or winhttp
   * Proxies that are automatically detected by requests don't require set_proxy call anymore
+* Fix dependencies for azure-storage by using separate 2.x and 3.x wheels
 
 
 2015-08-31 Version 1.0.0
