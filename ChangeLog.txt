@@ -1,3 +1,10 @@
+2015-09-14 Version 1.0.1
+
+* Use requests library by default in all libraries
+  * Exception is azure-servicemanagement-legacy which can use requests or winhttp
+  * Proxies that are automatically detected by requests don't require set_proxy call anymore
+
+
 2015-08-31 Version 1.0.0
 
 UPGRADE:
