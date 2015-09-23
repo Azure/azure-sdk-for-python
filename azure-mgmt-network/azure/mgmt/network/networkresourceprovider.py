@@ -7121,7 +7121,7 @@ class NetworkInterfaceOperations(object):
             time.sleep(delay_in_seconds)
             result = client2.get_long_running_operation_status(response.azure_async_operation)
             delay_in_seconds = result.retry_after
-            if delay_in_seconds == 0:
+            if delay_in_seconds == 0 or delay_in_seconds == None:
                 delay_in_seconds = 15
             
             if client2.long_running_operation_retry_timeout >= 0:
