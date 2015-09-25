@@ -83,7 +83,7 @@ class RetriableOperationResponse(ResourceProviderErrorResponse):
     
     def __init__(self, **kwargs):
         super(RetriableOperationResponse, self).__init__(**kwargs)
-        self._retry_after = kwargs.get('retry_after')
+        self._retry_after = kwargs.get('retry_after', 0)
     
     @property
     def retry_after(self):
