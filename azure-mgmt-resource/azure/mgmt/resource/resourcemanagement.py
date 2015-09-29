@@ -1993,6 +1993,14 @@ class DeploymentExtended(object):
     def properties(self, value):
         self._properties = value
 
+class ResourceIdentity: 
+    def __init__(self, **kwargs): 
+        self.resource_name = kwargs.get('resource_name') 
+        self.resource_provider_api_version = kwargs.get('api_version') 
+        self.resource_provider_namespace = kwargs.get('resource_namespace') 
+        self.resource_type = kwargs.get('resource_type') 
+        self.parent_resource_path = kwargs.get('parent_resource_path') 
+
 class ResourceManagementClient(Service):
     
     @property
