@@ -61,61 +61,130 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertEqual(result_list.status_code, HttpStatusCode.OK)
         self.assertGreater(len(result_list.resource_groups), 0)
 
-        #TODO: get this to work
-        #params_patch = azure.mgmt.resource.ResourceGroup()
-        #params_patch.location = self.region
-        #params_patch.tags['tag1'] = 'value1'
-        #params_patch.tags['tag2'] = 'value2'
-        #result_patch = self.resource_client.resource_groups.patch(
-        #    self.group_name,
-        #    params_patch,
-        #)
+        params_patch = azure.mgmt.resource.ResourceGroup(
+            location=self.region,
+            tags={
+                'tag1': 'valueA',
+                'tag2': 'valueB',
+            },
+        )
+        result_patch = self.resource_client.resource_groups.patch(
+            self.group_name,
+            params_patch,
+        )
+        self.assertEqual(result_patch.status_code, HttpStatusCode.OK)
+        self.assertEqual(result_patch.resource_group.tags['tag1'], 'valueA')
+        self.assertEqual(result_patch.resource_group.tags['tag2'], 'valueB')
 
         result_delete = self.resource_client.resource_groups.delete(self.group_name)
         self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
-    @unittest.skip('missing model classes')
     @record
     def test_resources(self):
         self.create_resource_group()
 
-        #TODO: error: ResourceIdentity doesn't exist!
+        resource_name = self.get_resource_name("pytestavset")
+
         resource_identity = azure.mgmt.resource.ResourceIdentity();
-        resource_identity.resource_name = self.group_name + "website1"
-        resource_identity.resource_provider_api_version = "2014-04-01"
-        resource_identity.resource_provider_namespace = "Microsoft.Web"
-        resource_identity.resource_type = "sites"
+        resource_identity.resource_name = resource_name
+        resource_identity.resource_provider_api_version = "2015-05-01-preview"
+        resource_identity.resource_provider_namespace = "Microsoft.Compute"
+        resource_identity.resource_type = "availabilitySets"
 
-        basic_resource = azure.mgmt.resource.GenericResource()
-        basic_resource.location = group_create_parameter.location
-        basic_resource.properties =  '{"name":"' + resource_identity.resource_name + '","siteMode": "Standard","computeMode":"Shared"}'
+        create_params = azure.mgmt.resource.GenericResource()
+        create_params.location = 'West US'
+        create_params.properties = '{}'
 
-        self.resource_client.resources.create_or_update(self.group_name, resource_identity, basic_resource)
+        create_result = self.resource_client.resources.create_or_update(
+            self.group_name,
+            resource_identity,
+            create_params,
+        )
+        self.assertEqual(create_result.status_code, HttpStatusCode.OK)
 
-        self.resource_client.resource_groups.get(self.group_name)
-        self.resource_client.resource_groups.delete(self.group_name);
+        get_result = self.resource_client.resources.get(
+            self.group_name,
+            resource_identity,
+        )
+        self.assertEqual(get_result.status_code, HttpStatusCode.OK)
+        self.assertEqual(get_result.resource.name, resource_name)
 
-    @unittest.skip('not ready')
+        delete_result = self.resource_client.resources.delete(
+            self.group_name,
+            resource_identity,
+        )
+        self.assertEqual(delete_result.status_code, HttpStatusCode.OK)
+
     @record
     def test_deployments(self):
         self.create_resource_group()
 
-        deployment_name = "pytestdeployment"
+        # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
+        deployment_name = self.get_resource_name("pytestdeployment")
+        template = """{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "allowedValues": [
+        "East US",
+        "West US",
+        "West Europe",
+        "East Asia",
+        "South East Asia"
+      ],
+      "metadata": {
+        "description": "Location to deploy to"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "availabilitySet1",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('location')]",
+      "properties": {}
+    }
+  ]
+}"""
+        # Note: when specifying values for parameters, omit the outer elements
+        parameters = '{"location": { "value": "West US"}}'
+        deployment_params = azure.mgmt.resource.Deployment(
+            properties = azure.mgmt.resource.DeploymentProperties(
+                mode = azure.mgmt.resource.DeploymentMode.incremental,
+                template=template,
+                parameters=parameters,
+            )
+        )
 
-        deploy_parameter = azure.mgmt.resource.Deployment()
-        deploy_parameter.mode = azure.mgmt.resource.DeploymentMode.incremental
-        deploy_parameter.parameters = '{"siteName": {"value": "mctest0101"},"hostingPlanName": {"value": "mctest0101"},"siteMode": {"value": "Limited"},"computeMode": {"value": "Shared"},"siteLocation": {"value": "North Europe"},"sku": {"value": "Free"},"workerSize": {"value": "0"}}'
+        deployment_create_result = self.resource_client.deployments.create_or_update(
+            self.group_name,
+            deployment_name,
+            deployment_params,
+        )
+        self.assertEqual(deployment_name, deployment_create_result.deployment.name)
 
-        template_uri = azure.mgmt.resource.TemplateLink()
-        template_uri.uri = 'https://testtemplates.blob.core.windows.net/templates/good-website.js'
-        deploy_parameter.template_link = template_uri
+        deployment_list_result = self.resource_client.deployments.list(
+            self.group_name,
+            None,
+        )
+        self.assertEqual(len(deployment_list_result.deployments), 1)
+        self.assertEqual(deployment_name, deployment_list_result.deployments[0].name)
 
-        result = self.resource_client.deployments.create_or_update(self.group_name, deployment_name, deploy_parameter);
+        deployment_get_result = self.resource_client.deployments.get(
+            self.group_name,
+            deployment_name,
+        )
+        self.assertEqual(deployment_name, deployment_get_result.deployment.name)
 
-        deployment_list_result = self.resource_client.deployments.list(self.group_name, None)
-        deployment_get_result = self.resource_client.deployments.get(self.group_name, deployment_name)
-
-        self.resource_client.resource_groups.delete(self.group_name);
+    @record
+    def test_provider_locations(self):
+        result_get = self.resource_client.providers.get('Microsoft.Web')
+        for resource in result_get.provider.resource_types:
+            if resource.name == 'sites':
+                self.assertIn('West US', resource.locations)
 
     @record
     def test_providers(self):

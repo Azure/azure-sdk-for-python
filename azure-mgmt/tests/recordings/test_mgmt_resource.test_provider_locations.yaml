@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.6.0 CPython/3.4.1 Windows/8]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2014-04-01-preview
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5O6qri6L
+        WV43d78opnXVVOft+Lv55KPRR8tskTerbJoT5O532bqdV3Xxgww9ffToF3+UrVZlMeU/z4BKRj3s
+        ZA+m29mnk0+39x/c+3T74N7uzvb9g/v37+8cPDh4MJ0RnLoq86f5ebEs7Jvn+w/y2cODyfZk59N7
+        2/vZfcI6pzf3Jw8n+/vn2YMH9+5/9Evo1byp1vU0f3O9ypuPHn3vFwefEKCmaPPmbv6uzZcNAW+o
+        u7ISFNH+oyd19oOiTF9XNBb67jRr2vS4KTLz+1ev6bfvZKtsmeJv+8d3c/7jRVW38/QkX7Z1Vkpj
+        +eh0XVeEwOgjhhy2wLuuAf/Fn3PTnHoxGARvoXv6Ld376PtE+lXxkzRdZhR7O7v3t3cOtnd2qaH8
+        8cD/41P/D/qf+2Pf/2PP/rG/vbvr/eEBoD/of7vbqzq/LPKr4MOPvv9LRgMz0JRV+6N5cGSkP+h/
+        7g8mn/njZ3EeimXTZsspCcuPJoD+5/5gupk/fhYnQAThR9Pg/qD/uT+YeuaPn8VpsBPwI53k/0H/
+        c38wCc0fP4tz0RGJH82I/wf9z/3BhDR//KzMyGo9KYtmXiwvvmoIZXrhRxPg/cF0M3/8rEwAEb9q
+        Wrjd2WVWlNmkxKh/NAneH0w788fPyiTIHycVDaUqfyQEP3T6W9Z/3WbTtz+agB/6BJANaF/DOB83
+        TXGxzGdvqm+TWnpBaole/tFkeH8wDc0fPBkxgoqnA9UOGj4pljMysT9i7A+gpXiNP6Io/vhQihKm
+        tdLsR/Sj/7k/+vTjP75BVTvN67Y4R9r0R9kA+oP+5/5gopk/flaoT0HOZV4/y+rFj4j/wyc+FDk1
+        +xHZvT+YWuaPnz2yi/2kxj8ivvcH08z88bNC/Hq9bAtaU6OWPuX/3zCIKL7CLIu8rYvp/yeRdiuL
+        /x9DnwVUB/H/YdT/v0h/5xToIP6/gPoA6v8fpP9FXtX5BSP1/z6Mb6/qRRao+aKg8Go2A8rheH5k
+        b/FHjHaI6ymeP11eFnW1XBAmP6JdjHbmj/dg4NvS++5iXbbFq6rMX1Y/yoLjD/qf+4NJaf742SD/
+        VVW/zesf0V7+oP+5P5iO5o+fDdqL6ezS/f+DQ/j/oPWPDiZQRTq2//+N6P8ns+VpLh3Y/8+G8//B
+        eZrlq7K6xoCeW3T/34f67Z3rotGpyt1ULWkhyC4dE4j/r4yOcEO805DZBLq06N1iiK/4s7zOZx/9
+        kv8HeLr6S90tAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Length: ['1094']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 29 Sep 2015 23:51:55 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [422e9601-5e32-4f07-bc37-6a2a43b8cb1a]
+      x-ms-ratelimit-remaining-subscription-reads: ['14995']
+      x-ms-request-id: [422e9601-5e32-4f07-bc37-6a2a43b8cb1a]
+      x-ms-routing-request-id: ['WESTUS:20150929T235156Z:422e9601-5e32-4f07-bc37-6a2a43b8cb1a']
+    status: {code: 200, message: OK}
+version: 1
