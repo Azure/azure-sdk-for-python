@@ -180,6 +180,47 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertEqual(deployment_name, deployment_get_result.deployment.name)
 
     @record
+    def test_deployments_linked_template(self):
+        self.create_resource_group()
+
+        # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
+        deployment_name = self.get_resource_name("pytestlinked")
+        template = azure.mgmt.resource.resourcemanagement.TemplateLink(
+            uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-create-availability-set/azuredeploy.json',
+        )
+        parameters = azure.mgmt.resource.resourcemanagement.ParametersLink(
+            uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-create-availability-set/azuredeploy.parameters.json',
+        )
+
+        deployment_params = azure.mgmt.resource.Deployment(
+            properties = azure.mgmt.resource.DeploymentProperties(
+                mode = azure.mgmt.resource.DeploymentMode.incremental,
+                template_link=template,
+                parameters_link=parameters,
+            )
+        )
+
+        deployment_create_result = self.resource_client.deployments.create_or_update(
+            self.group_name,
+            deployment_name,
+            deployment_params,
+        )
+        self.assertEqual(deployment_name, deployment_create_result.deployment.name)
+
+        deployment_list_result = self.resource_client.deployments.list(
+            self.group_name,
+            None,
+        )
+        self.assertEqual(len(deployment_list_result.deployments), 1)
+        self.assertEqual(deployment_name, deployment_list_result.deployments[0].name)
+
+        deployment_get_result = self.resource_client.deployments.get(
+            self.group_name,
+            deployment_name,
+        )
+        self.assertEqual(deployment_name, deployment_get_result.deployment.name)
+
+    @record
     def test_provider_locations(self):
         result_get = self.resource_client.providers.get('Microsoft.Web')
         for resource in result_get.provider.resource_types:
