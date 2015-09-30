@@ -96,6 +96,89 @@ List resource groups
     for group in result.resource_groups:
         print(group.name)
 
+Create resource
+---------------
+
+This creates an availability set using the generic resource API.
+
+.. code:: python
+
+    from azure.mgmt.resource import ResourceIdentity, GenericResource
+
+    resource_name = 'MyAvailabilitySet'
+
+    result = resource_client.resources.create_or_update(
+        group_name,
+        ResourceIdentity(
+            resource_name=resource_name,
+            resource_provider_api_version="2015-05-01-preview",
+            resource_provider_namespace="Microsoft.Compute",
+            resource_type="availabilitySets",
+        ),
+        GenericResource(
+            location='West US',
+            properties='{}',
+        ),
+    )
+
+Create deployment from template
+-------------------------------
+
+This creates resources specified in a JSON template.
+
+.. code:: python
+
+    from azure.mgmt.resource import Deployment
+    from azure.mgmt.resource import DeploymentProperties
+    from azure.mgmt.resource import DeploymentMode
+
+    deployment_name = 'MyDeployment'
+
+    template = """{
+      "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "location": {
+          "type": "string",
+          "allowedValues": [
+            "East US",
+            "West US",
+            "West Europe",
+            "East Asia",
+            "South East Asia"
+          ],
+          "metadata": {
+            "description": "Location to deploy to"
+          }
+        }
+      },
+      "resources": [
+        {
+          "type": "Microsoft.Compute/availabilitySets",
+          "name": "availabilitySet1",
+          "apiVersion": "2015-05-01-preview",
+          "location": "[parameters('location')]",
+          "properties": {}
+        }
+      ]
+    }"""
+
+    # Note: when specifying values for parameters, omit the outer elements $schema, contentVersion, parameters
+    parameters = '{"location": { "value": "West US"}}'
+
+    result = resource_client.deployments.create_or_update(
+        group_name,
+        deployment_name,
+        Deployment(
+            properties=DeploymentProperties(
+                mode=DeploymentMode.incremental,
+                template=template,
+                parameters=parameters,
+            )
+        )
+    )
+
+
 More examples
 -------------
 
