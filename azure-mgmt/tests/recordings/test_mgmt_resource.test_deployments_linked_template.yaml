@@ -1,0 +1,136 @@
+interactions:
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.6.0 CPython/3.4.1 Windows/8]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e?api-version=2014-04-01-preview
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e","name":"test_mgmt_resource_test_deployments_linked_template27ec152e","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['271']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 30 Sep 2015 00:38:30 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [4466c7f6-b6f3-488c-b445-4a2c38cc64a7]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [4466c7f6-b6f3-488c-b445-4a2c38cc64a7]
+      x-ms-routing-request-id: ['WESTUS:20150930T003830Z:4466c7f6-b6f3-488c-b445-4a2c38cc64a7']
+    status: {code: 201, message: Created}
+- request:
+    body: '{"properties": {"mode": "Incremental", "templateLink": {"uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-create-availability-set/azuredeploy.json"},
+      "parametersLink": {"uri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-create-availability-set/azuredeploy.parameters.json"}}}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['346']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.6.0 CPython/3.4.1 Windows/8]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/deployments/pytestlinked27ec152e?api-version=2014-04-01-preview
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e/deployments/pytestlinked27ec152e","name":"pytestlinked27ec152e","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-create-availability-set/azuredeploy.json","contentVersion":"1.0.0.0"},"parametersLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-create-availability-set/azuredeploy.parameters.json"},"parameters":{"location":{"type":"String","value":"West
+        US"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2015-09-30T00:38:31.2447105Z","duration":"PT0.1060558S","correlationId":"e0d59b98-71b8-4875-a15a-fc7aa3f64fe5","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[]}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['922']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 30 Sep 2015 00:38:30 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [e0d59b98-71b8-4875-a15a-fc7aa3f64fe5]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [e0d59b98-71b8-4875-a15a-fc7aa3f64fe5]
+      x-ms-routing-request-id: ['WESTUS:20150930T003831Z:e0d59b98-71b8-4875-a15a-fc7aa3f64fe5']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.6.0 CPython/3.4.1 Windows/8]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/deployments/?api-version=2014-04-01-preview
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
+        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXP3/OHsYPfBw3x7/975zvb+p9PJ9sOH09n2+YO9yXk2
+        2ck+vTe5W+dNta6n+ed1tV41d9u8aX//xcWi/f3NF78/fzTLV2V1vciXbfP7l8XybT6jzxerMmvz
+        vQf5dPf+Xn7Xa3N3dY3XpKVp8NHoo2W2IHw/Gvh2VVervG6LvPno0S/+yMB/Ts3w97ou6NV5266a
+        R3fv1tnV+KJo5+vJusnrabVsqd/xtFrcPf7Bus7vZvh3+xeti+nbps3qdtuAa+4usqbN67u7O7vb
+        0zqnj7azy6wos0lRFu31dpO38raMZ/zTTbUk5LSLn8zrhqhLmOyOd/DfR7+EEM9qGhgBbX6ukXWY
+        CN4BckCsrKYZ2AO/t9crzMbrti6WFzREZaePvkuTk371+qNfQm8vqhk+OltS75jarKSGNFGXBchA
+        771uCSlqcTyd5qs2n9HXbbEgCNliRR/v7eze3955uH1v583OzqN7B4/u7Y739vcf7O7c/ylqOlvX
+        is5HL9/sjHd3Pt25f//gNX0zreo6JxrQl2dg7nxndv/h5OHB9oPdycH2/sGD+9vZ7v1s+3z6IMvu
+        nX+6f57fp9cYtRkPlsQC/NassikQ/KKY1lVTnbfjk2qxWhPSo48Mk78hSsgb/if0kk/s13nb0DuG
+        gmj/0RUNdN189P1fQv/RaPJVvpzlyymz8Pe+/0t+yfd/yf8D3Jl4s6YDAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Length: ['671']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 30 Sep 2015 00:38:30 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [6351012b-f8fa-4f03-a6bb-40a713a99ce6]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [6351012b-f8fa-4f03-a6bb-40a713a99ce6]
+      x-ms-routing-request-id: ['WESTUS:20150930T003831Z:6351012b-f8fa-4f03-a6bb-40a713a99ce6']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python-requests/2.6.0 CPython/3.4.1 Windows/8]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template27ec152e/deployments/pytestlinked27ec152e?api-version=2014-04-01-preview
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
+        nuaf19V61dxt86b9/RcXi/b3N1/8/vzRLF+V1fUiX7bN718Wy7f5jD5frMqszfce5NPd+3v5Xa/N
+        3dU1XpOWpsFHo4+W2SInRAe+XdXVKq/bIm8+evSLPzLwn1Mz/L2uC3p13rar5tHdu3V2Nb4o2vl6
+        sm7yelotW+p3PK0Wd49/sK7zuxn+3f5F62L6tmmzut024Jq7i6xp8/ru7s7u9rTO6aPt7DIrymxS
+        lEV7vd3krbwt4xn/dFMtCTnt4ifzuiHqEia74x3899EvIcSzmgZGQJufa2QdJoJ3gBwQK6tpBvbA
+        7+31CrPxuq2L5QUN8TIr1/jguzQ56VevP/ol9PaimuGjsyX1jqnNSmpIE3VZgAz03uuWkKIWx9Np
+        vmrzGX3dFguCkC1W9PHezu797Z2H2/d23uzsPLp38Oje7nhvf//B7s79n6Kms3Wt6Hz08s3OeHfn
+        05379w9e0zfTqq5zogF9eQbmzndm9x9OHh5sP9idHGzvHzy4v53t3s+2z6cPsuze+af75/l9eo1R
+        m/Fgv/eLmd+aVTYFgl8U07pqqvN2fFItVmtCevSRYfI3RAl5w/+EXvKJ/TpvG3rHUBDtP7qiga6b
+        j77/S+g/Gk2+ypezfDllFv7e93/JL/l/AEWLHvyaAwAA
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Length: ['660']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 30 Sep 2015 00:38:30 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [8c03f95b-efea-4cc9-9299-526b55ffb179]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [8c03f95b-efea-4cc9-9299-526b55ffb179]
+      x-ms-routing-request-id: ['WESTUS:20150930T003831Z:8c03f95b-efea-4cc9-9299-526b55ffb179']
+    status: {code: 200, message: OK}
+version: 1

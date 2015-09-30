@@ -121,6 +121,41 @@ This creates an availability set using the generic resource API.
         ),
     )
 
+Create deployment from linked template
+--------------------------------------
+
+This creates resources specified in a linked JSON template.
+
+.. code:: python
+
+    from azure.mgmt.resource import Deployment
+    from azure.mgmt.resource import DeploymentProperties
+    from azure.mgmt.resource import DeploymentMode
+    from azure.mgmt.resource import ParametersLink
+    from azure.mgmt.resource import TemplateLink
+
+    deployment_name = 'MyDeployment'
+
+    template = TemplateLink(
+        uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-create-availability-set/azuredeploy.json',
+    )
+
+    parameters = ParametersLink(
+        uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-create-availability-set/azuredeploy.parameters.json',
+    )
+
+    result = resource_client.deployments.create_or_update(
+        group_name,
+        deployment_name,
+        Deployment(
+            properties=DeploymentProperties(
+                mode=DeploymentMode.incremental,
+                template_link=template,
+                parameters_link=parameters,
+            )
+        )
+    )
+
 Create deployment from template
 -------------------------------
 
