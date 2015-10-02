@@ -1,3 +1,19 @@
+2015-10-02 Version 1.0.2
+
+azure-mgmt-network 0.20.1
+  * Fix retry timeout default value for long running operations
+
+azure-mgmt-resource 0.20.1
+  * Add missing model class ResourceIdentity
+  * Add documentation examples for generic resource creation and deployment 
+    using JSON templates
+
+azure-storage 0.20.2
+  * Fix SAS encoding to work with premium storage
+
+Thank you to aarsan, trondhindenes for their contributions.
+
+
 2015-09-14 Version 1.0.1
 
 * Use requests library by default in all libraries
