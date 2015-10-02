@@ -14,6 +14,6 @@
 #--------------------------------------------------------------------------
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.20.0'
+__version__ = '0.20.1'
 
 from .networkresourceprovider import *
