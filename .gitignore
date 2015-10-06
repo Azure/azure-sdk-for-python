@@ -201,6 +201,15 @@ sdist/
 develop-eggs/
 .installed.cfg
 
+## ignore pypi credential config file
+config.pypirc
+
+##ignore python & c# vs project files
+*.csproj
+
+##ignore test runner
+RunTest.cmd
+
 # Installer logs
 pip-log.txt
 

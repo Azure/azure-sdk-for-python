@@ -1,5 +1,5 @@
-include README
-include LICENSE
+include README.md
+include LICENSE.txt
 recursive-include doc *.bat
 recursive-include doc *.py
 recursive-include doc *.rst
