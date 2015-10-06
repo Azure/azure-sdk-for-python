@@ -203,7 +203,7 @@ class Versions:
     """Constants of versions.
     """
     CurrentVersion = '2015-08-06'
-    UserAgent = 'documentdb-python-sdk-1.4.0'
+    UserAgent = 'documentdb-python-sdk-1.4.1'
 
 
 class Delimiters:
