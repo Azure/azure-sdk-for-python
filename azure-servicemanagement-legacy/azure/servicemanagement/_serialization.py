@@ -856,6 +856,11 @@ class _XmlSerializer(object):
                 xml += _XmlSerializer.data_to_xml([('SubnetName', name)])
         xml += '</SubnetNames>'
 
+        if configuration.static_virtual_network_ip_address:
+            xml += _XmlSerializer.data_to_xml(
+                [('StaticVirtualNetworkIPAddress',
+                  configuration.static_virtual_network_ip_address)])
+
         if configuration.public_ips:
             xml += '<PublicIPs>'
             for public_ip in configuration.public_ips:
