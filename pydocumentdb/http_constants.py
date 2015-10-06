@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
 
 """HTTP Constants.
 """
@@ -134,8 +134,12 @@ class HttpHeaders:
     # Offer type.
     OfferType = 'x-ms-offer-type'
 
+    # Upsert header
+    IsUpsert = 'x-ms-documentdb-is-upsert'
+
     # Index progress headers.
     IndexTransformationProgress = 'x-ms-documentdb-collection-index-transformation-progress'
+    LazyIndexingProgress = 'x-ms-documentdb-collection-lazy-indexing-progress'
 
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
@@ -198,8 +202,8 @@ class CookieHeaders:
 class Versions:
     """Constants of versions.
     """
-    CurrentVersion = '2015-06-03'
-    UserAgent = 'documentdb-python-sdk-1.2.0'
+    CurrentVersion = '2015-08-06'
+    UserAgent = 'documentdb-python-sdk-1.4.0'
 
 
 class Delimiters:

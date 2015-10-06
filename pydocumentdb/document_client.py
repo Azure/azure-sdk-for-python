@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
 
 """Document client.
 """
@@ -125,8 +125,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + database_link
-        database_id = base.GetIdFromLink(database_link)
+        path = base.GetPathFromLink(database_link)
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return self.Read(path, 'dbs', database_id, None, options)
 
     def ReadDatabases(self, options={}):
@@ -187,8 +187,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
-        path = '/' + database_link + 'colls/'
-        database_id = base.GetIdFromLink(database_link)
+        path = base.GetPathFromLink(database_link, 'colls')
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         def fetch_fn(options):
             return self.__QueryFeed(path,
                                     'colls',
@@ -212,9 +212,8 @@ class DocumentClient(object):
 
         """
         DocumentClient.__ValidateResource(collection)
-        path = '/' + database_link + 'colls/'
-        database_id = base.GetIdFromLink(database_link)
-        DocumentClient.__UseDefaultIndexingPolicy(collection)
+        path = base.GetPathFromLink(database_link, 'colls')
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return self.Create(collection,
                            path,
                            'colls',
@@ -235,8 +234,8 @@ class DocumentClient(object):
 
         """
         DocumentClient.__ValidateResource(collection)
-        path = '/' + collection_link
-        collection_id = base.GetIdFromLink(collection_link)
+        path = base.GetPathFromLink(collection_link)
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return self.Replace(collection,
                             path,
                             'colls',
@@ -255,8 +254,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + collection_link
-        collection_id = base.GetIdFromLink(collection_link)
+        path = base.GetPathFromLink(collection_link)
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return self.Read(path,
                          'colls',
                          collection_id,
@@ -275,15 +274,40 @@ class DocumentClient(object):
             dict
 
         """
-        DocumentClient.__ValidateResource(user)
-        path = '/' + database_link + 'users/'
-        database_id = base.GetIdFromLink(database_link)
+        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
         return self.Create(user,
                            path,
                            'users',
                            database_id,
                            None,
                            options)
+
+    def UpsertUser(self, database_link, user, options={}):
+        """Upserts a user.
+
+        :Parameters:
+            - `database_link`: str, the link to the database.
+            - `user`: dict, the Azure DocumentDB user to upsert.
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            dict
+
+        """
+        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
+        return self.Upsert(user,
+                           path,
+                           'users',
+                           database_id,
+                           None,
+                           options)
+
+    def _GetDatabaseIdWithPathForUser(self, database_link, user):
+        DocumentClient.__ValidateResource(user)
+        path = base.GetPathFromLink(database_link, 'users')
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
+        return database_id, path
+    
 
     def ReadUser(self, user_link, options={}):
         """Reads a user.
@@ -296,8 +320,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + user_link
-        user_id = base.GetIdFromLink(user_link)
+        path = base.GetPathFromLink(user_link)
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return self.Read(path, 'users', user_id, None, options)
 
     def ReadUsers(self, database_link, options={}):
@@ -324,8 +348,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
-        path = '/' + database_link + 'users/'
-        database_id = base.GetIdFromLink(database_link)
+        path = base.GetPathFromLink(database_link, 'users')
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         def fetch_fn(options):
             return self.__QueryFeed(path,
                                     'users',
@@ -347,8 +371,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + database_link
-        database_id = base.GetIdFromLink(database_link)
+        path = base.GetPathFromLink(database_link)
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return self.DeleteResource(path,
                                    'dbs',
                                    database_id,
@@ -367,15 +391,40 @@ class DocumentClient(object):
             dict
 
         """
-        DocumentClient.__ValidateResource(permission)
-        path = '/' + user_link + 'permissions/'
-        user_id = base.GetIdFromLink(user_link)
+        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
         return self.Create(permission,
                            path,
                            'permissions',
                            user_id,
                            None,
                            options)
+
+    def UpsertPermission(self, user_link, permission, options={}):
+        """Upserts a permission for a user.
+
+        :Parameters:
+            - `user_link`: str, the link to the user entity.
+            - `permission`: dict, the Azure DocumentDB user permission to upsert.
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            dict
+
+        """
+        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
+        return self.Upsert(permission,
+                            path,
+                            'permissions',
+                            user_id,
+                            None,
+                            options)
+
+    def _GetUserIdWithPathForPermission(self, permission, user_link):
+        DocumentClient.__ValidateResource(permission)
+        path = base.GetPathFromLink(user_link, 'permissions')
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
+        return path, user_id
+
 
     def ReadPermission(self, permission_link, options={}):
         """Reads a permission.
@@ -388,8 +437,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + permission_link
-        permission_id = base.GetIdFromLink(permission_link)
+        path = base.GetPathFromLink(permission_link)
+        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return self.Read(path,
                          'permissions',
                           permission_id,
@@ -421,8 +470,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
-        path = '/' + user_link + 'permissions/'
-        user_id = base.GetIdFromLink(user_link)
+        path = base.GetPathFromLink(user_link, 'permissions')
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         def fetch_fn(options):
             return self.__QueryFeed(path,
                                     'permissions',
@@ -446,8 +495,8 @@ class DocumentClient(object):
 
         """
         DocumentClient.__ValidateResource(user)
-        path = '/' + user_link
-        user_id = base.GetIdFromLink(user_link)
+        path = base.GetPathFromLink(user_link)
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return self.Replace(user,
                             path,
                             'users',
@@ -466,8 +515,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + user_link
-        user_id = base.GetIdFromLink(user_link)
+        path = base.GetPathFromLink(user_link)
+        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return self.DeleteResource(path,
                                    'users',
                                    user_id,
@@ -487,8 +536,8 @@ class DocumentClient(object):
 
         """
         DocumentClient.__ValidateResource(permission)
-        path = '/' + permission_link
-        permission_id = base.GetIdFromLink(permission_link)
+        path = base.GetPathFromLink(permission_link)
+        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return self.Replace(permission,
                             path,
                             'permissions',
@@ -507,8 +556,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + permission_link
-        permission_id = base.GetIdFromLink(permission_link)
+        path = base.GetPathFromLink(permission_link)
+        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return self.DeleteResource(path,
                                    'permissions',
                                    permission_id,
@@ -540,8 +589,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
-        path = '/' + collection_link + 'docs/'
-        collection_id = base.GetIdFromLink(collection_link)
+        path = base.GetPathFromLink(collection_link, 'docs')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         def fetch_fn(options):
             return self.__QueryFeed(path,
                                     'docs',
@@ -569,19 +618,49 @@ class DocumentClient(object):
             dict
 
         """
-        DocumentClient.__ValidateResource(document)
-        document = document.copy()
-        if (not document.get('id') and
-            not options.get('disableAutomaticIdGeneration')):
-            document['id'] = base.GenerateGuidId()
-        path = '/' + collection_link + 'docs/'
-        collection_id = base.GetIdFromLink(collection_link)
+        collection_id, document, path = self._GetCollectionIdWithPathForDocument(collection_link, document, options)
         return self.Create(document,
                            path,
                            'docs',
                            collection_id,
                            None,
                            options)
+
+    def UpsertDocument(self, collection_link, document, options={}):
+        """Upserts a document in a collection.
+
+        :Parameters:
+            - `collection_link`: str, the link to the document collection.
+            - `document`: dict, the Azure DocumentDB document to upsert.
+            - `document['id']`: str, id of the document, MUST be unique for each
+              document.
+            - `options`: dict, the request options for the request.
+            - `options['disableAutomaticIdGeneration']`: bool, disables the
+              automatic id generation. If id is missing in the body and this
+              option is true, an error will be returned.
+
+        :Returns:
+            dict
+
+        """
+        collection_id, document, path = self._GetCollectionIdWithPathForDocument(collection_link, document, options)
+        return self.Upsert(document,
+                           path,
+                           'docs',
+                           collection_id,
+                           None,
+                           options)
+
+    def _GetCollectionIdWithPathForDocument(self, collection_link, document, options):
+        DocumentClient.__ValidateResource(document)
+        document = document.copy()
+        if (not document.get('id') and
+            not options.get('disableAutomaticIdGeneration')):
+            document['id'] = base.GenerateGuidId()
+        path = base.GetPathFromLink(collection_link, 'docs')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return collection_id, document, path
+    
  
     def ReadDocument(self, document_link, options={}):
         """Reads a document.
@@ -594,8 +673,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + document_link
-        document_id = base.GetIdFromLink(document_link)
+        path = base.GetPathFromLink(document_link)
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.Read(path,
                          'docs',
                          document_id,
@@ -627,8 +706,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
-        path = '/' + collection_link + 'triggers/'
-        collection_id = base.GetIdFromLink(collection_link)
+        path = base.GetPathFromLink(collection_link, 'triggers')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         def fetch_fn(options):
             return self.__QueryFeed(path,
                                     'triggers',
@@ -651,21 +730,46 @@ class DocumentClient(object):
             dict
 
         """
-        DocumentClient.__ValidateResource(trigger)
-        trigger = trigger.copy()
-        if  trigger.get('serverScript'):
-            trigger['body'] = str(trigger.pop('serverScript', ''))
-        elif trigger.get('body'):
-            trigger['body'] = str(trigger['body'])
- 
-        path = '/' + collection_link + 'triggers/'
-        collection_id = base.GetIdFromLink(collection_link)
+        collection_id, path, trigger = self._GetCollectionIdWithPathForTrigger(collection_link, trigger)
         return self.Create(trigger,
                            path,
                            'triggers',
                            collection_id,
                            None,
                            options)
+
+    def UpsertTrigger(self, collection_link, trigger, options={}):
+        """Upserts a trigger in a collection.
+
+        :Parameters:
+            - `collection_link`: str, the link to the document collection.
+            - `trigger`: dict
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            dict
+
+        """
+        collection_id, path, trigger = self._GetCollectionIdWithPathForTrigger(collection_link, trigger)
+        return self.Upsert(trigger,
+                           path,
+                           'triggers',
+                           collection_id,
+                           None,
+                           options)
+
+    def _GetCollectionIdWithPathForTrigger(self, collection_link, trigger):
+        DocumentClient.__ValidateResource(trigger)
+        trigger = trigger.copy()
+        if  trigger.get('serverScript'):
+            trigger['body'] = str(trigger.pop('serverScript', ''))
+        elif trigger.get('body'):
+            trigger['body'] = str(trigger['body'])
+        
+        path = base.GetPathFromLink(collection_link, 'triggers')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return collection_id, path, trigger
+    
 
     def ReadTrigger(self, trigger_link, options={}):
         """Reads a trigger.
@@ -678,8 +782,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + trigger_link
-        trigger_id = base.GetIdFromLink(trigger_link)
+        path = base.GetPathFromLink(trigger_link)
+        trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
         return self.Read(path, 'triggers', trigger_id, None, options)
 
     def ReadUserDefinedFunctions(self, collection_link, options={}):
@@ -707,8 +811,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
-        path = '/' + collection_link + 'udfs/'
-        collection_id = base.GetIdFromLink(collection_link)
+        path = base.GetPathFromLink(collection_link, 'udfs')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         def fetch_fn(options):
             return self.__QueryFeed(path,
                                     'udfs',
@@ -731,21 +835,46 @@ class DocumentClient(object):
             dict
 
         """
-        DocumentClient.__ValidateResource(udf)
-        udf = udf.copy()
-        if udf.get('serverScript'):
-            udf['body'] = str(udf.pop('serverScript', ''))
-        elif udf.get('body'):
-            udf['body'] = str(udf['body'])
-
-        path = '/' + collection_link + 'udfs/'
-        collection_id = base.GetIdFromLink(collection_link)
+        collection_id, path, udf = self._GetCollectionIdWithPathForUDF(collection_link, udf)
         return self.Create(udf,
                            path,
                            'udfs',
                            collection_id,
                            None,
                            options)
+
+    def UpsertUserDefinedFunction(self, collection_link, udf, options={}):
+        """Upserts a user defined function in a collection.
+
+        :Parameters:
+            - `collection_link`: str, the link to the collection.
+            - `udf`: str
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            dict
+
+        """
+        collection_id, path, udf = self._GetCollectionIdWithPathForUDF(collection_link, udf)
+        return self.Upsert(udf,
+                           path,
+                           'udfs',
+                           collection_id,
+                           None,
+                           options)
+
+    def _GetCollectionIdWithPathForUDF(self, collection_link, udf):
+        DocumentClient.__ValidateResource(udf)
+        udf = udf.copy()
+        if udf.get('serverScript'):
+            udf['body'] = str(udf.pop('serverScript', ''))
+        elif udf.get('body'):
+            udf['body'] = str(udf['body'])
+        
+        path = base.GetPathFromLink(collection_link, 'udfs')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return collection_id, path, udf
+    
 
     def ReadUserDefinedFunction(self, udf_link, options={}):
         """Reads a user defined function.
@@ -758,8 +887,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + udf_link
-        udf_id = base.GetIdFromLink(udf_link)
+        path = base.GetPathFromLink(udf_link)
+        udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
         return self.Read(path, 'udfs', udf_id, None, options)
 
     def ReadStoredProcedures(self, collection_link, options={}):
@@ -787,8 +916,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
-        path = '/' + collection_link + 'sprocs/'
-        collection_id = base.GetIdFromLink(collection_link)
+        path = base.GetPathFromLink(collection_link, 'sprocs')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         def fetch_fn(options):
             return self.__QueryFeed(path,
                                     'sprocs',
@@ -811,20 +940,45 @@ class DocumentClient(object):
             dict
 
         """
-        DocumentClient.__ValidateResource(sproc)
-        sproc = sproc.copy()
-        if sproc.get('serverScript'):
-            sproc['body'] = str(sproc.pop('serverScript', ''))
-        elif sproc.get('body'):
-            sproc['body'] = str(sproc['body'])
-        path = '/' + collection_link + 'sprocs/'
-        collection_id = base.GetIdFromLink(collection_link)
+        collection_id, path, sproc = self._GetCollectionIdWithPathForSproc(collection_link, sproc)
         return self.Create(sproc,
                            path,
                            'sprocs',
                            collection_id,
                            None,
                            options)
+
+    def UpsertStoredProcedure(self, collection_link, sproc, options={}):
+        """Upserts a stored procedure in a collection.
+
+        :Parameters:
+            - `collection_link`: str, the link to the document collection.
+            - `sproc`: str
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            dict
+
+        """
+        collection_id, path, sproc = self._GetCollectionIdWithPathForSproc(collection_link, sproc)
+        return self.Upsert(sproc,
+                           path,
+                           'sprocs',
+                           collection_id,
+                           None,
+                           options)
+
+    def _GetCollectionIdWithPathForSproc(self, collection_link, sproc):
+        DocumentClient.__ValidateResource(sproc)
+        sproc = sproc.copy()
+        if sproc.get('serverScript'):
+            sproc['body'] = str(sproc.pop('serverScript', ''))
+        elif sproc.get('body'):
+            sproc['body'] = str(sproc['body'])
+        path = base.GetPathFromLink(collection_link, 'sprocs')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        return collection_id, path, sproc
+    
 
     def ReadStoredProcedure(self, sproc_link, options={}):
         """Reads a stored procedure.
@@ -837,8 +991,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + sproc_link
-        sproc_id = base.GetIdFromLink(sproc_link)
+        path = base.GetPathFromLink(sproc_link)
+        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
         return self.Read(path, 'sprocs', sproc_id, None, options)
 
     def ReadConflicts(self, collection_link, feed_options={}):
@@ -866,8 +1020,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
-        path = '/' + collection_link + 'conflicts/'
-        collection_id = base.GetIdFromLink(collection_link)
+        path = base.GetPathFromLink(collection_link, 'conflicts')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         def fetch_fn(options):
             return self.__QueryFeed(path,
                                     'conflicts',
@@ -889,8 +1043,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + conflict_link
-        conflict_id = base.GetIdFromLink(conflict_link)
+        path = base.GetPathFromLink(conflict_link)
+        conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
         return self.Read(path,
                          'conflicts',
                          conflict_id,
@@ -908,8 +1062,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + collection_link
-        collection_id = base.GetIdFromLink(collection_link)
+        path = base.GetPathFromLink(collection_link)
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return self.DeleteResource(path,
                                    'colls',
                                    collection_id,
@@ -929,8 +1083,8 @@ class DocumentClient(object):
 
         """
         DocumentClient.__ValidateResource(new_document)
-        path = '/' + document_link
-        document_id = base.GetIdFromLink(document_link)
+        path = base.GetPathFromLink(document_link)
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.Replace(new_document,
                             path,
                             'docs',
@@ -949,8 +1103,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + document_link
-        document_id = base.GetIdFromLink(document_link)
+        path = base.GetPathFromLink(document_link)
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.DeleteResource(path,
                                    'docs',
                                    document_id,
@@ -969,15 +1123,39 @@ class DocumentClient(object):
             dict
 
         """
-        DocumentClient.__ValidateResource(attachment)
-        path = '/' + document_link + 'attachments/'
-        document_id = base.GetIdFromLink(document_link)
+        document_id, path = self._GetDocumentIdWithPathForAttachment(attachment, document_link)
         return self.Create(attachment,
                            path,
                            'attachments',
                            document_id,
                            None,
                            options)
+
+    def UpsertAttachment(self, document_link, attachment, options={}):
+        """Upserts an attachment in a document.
+
+        :Parameters:
+            - `document_link`: str, the link to the document.
+            - `attachment`: dict, the Azure DocumentDB attachment to upsert.
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            dict
+
+        """
+        document_id, path = self._GetDocumentIdWithPathForAttachment(attachment, document_link)
+        return self.Upsert(attachment,
+                           path,
+                           'attachments',
+                           document_id,
+                           None,
+                           options)
+
+    def _GetDocumentIdWithPathForAttachment(self, attachment, document_link):
+        DocumentClient.__ValidateResource(attachment)
+        path = base.GetPathFromLink(document_link, 'attachments')
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
+        return document_id, path
 
     def CreateAttachmentAndUploadMedia(self,
                                        document_link,
@@ -994,27 +1172,55 @@ class DocumentClient(object):
             dict
 
         """
-        initial_headers = dict(self.default_headers)
-
-        # Add required headers slug and content-type.
-        if options.get('slug'):
-            initial_headers[http_constants.HttpHeaders.Slug] = options['slug']
-
-        if options.get('contentType'):
-            initial_headers[http_constants.HttpHeaders.ContentType] = (
-                options['contentType'])
-        else:
-            initial_headers[http_constants.HttpHeaders.ContentType] = (
-                runtime_constants.MediaTypes.OctetStream)
-
-        path = '/' + document_link + 'attachments/'
-        document_id = base.GetIdFromLink(document_link)
+        document_id, initial_headers, path = self._GetDocumentIdWithPathForAttachmentMedia(document_link, options)
         return self.Create(readable_stream,
                            path,
                            'attachments',
                            document_id,
                            initial_headers,
                            options)
+
+    def UpsertAttachmentAndUploadMedia(self,
+                                       document_link,
+                                       readable_stream,
+                                       options={}):
+        """Upserts an attachment and upload media.
+
+        :Parameters:
+            - `document_link`: str, the link to the document.
+            - `readable_stream`: file-like stream object
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            dict
+
+        """
+        document_id, initial_headers, path = self._GetDocumentIdWithPathForAttachmentMedia(document_link, options)
+        return self.Upsert(readable_stream,
+                           path,
+                           'attachments',
+                           document_id,
+                           initial_headers,
+                           options)
+
+    def _GetDocumentIdWithPathForAttachmentMedia(self, document_link, options):
+        initial_headers = dict(self.default_headers)
+        
+        # Add required headers slug and content-type.
+        if options.get('slug'):
+            initial_headers[http_constants.HttpHeaders.Slug] = options['slug']
+        
+        if options.get('contentType'):
+            initial_headers[http_constants.HttpHeaders.ContentType] = (
+                options['contentType'])
+        else:
+            initial_headers[http_constants.HttpHeaders.ContentType] = (
+                runtime_constants.MediaTypes.OctetStream)
+        
+        path = base.GetPathFromLink(document_link, 'attachments')
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
+        return document_id, initial_headers, path
+
 
     def ReadAttachment(self, attachment_link, options={}):
         """Reads an attachment.
@@ -1027,8 +1233,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + attachment_link
-        attachment_id = base.GetIdFromLink(attachment_link)
+        path = base.GetPathFromLink(attachment_link)
+        attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
         return self.Read(path,
                          'attachments',
                          attachment_id,
@@ -1060,8 +1266,8 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
-        path = '/' + document_link + 'attachments/'
-        document_id = base.GetIdFromLink(document_link)
+        path = base.GetPathFromLink(document_link, 'attachments')
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
 
         def fetch_fn(options):
             return self.__QueryFeed(path,
@@ -1090,8 +1296,8 @@ class DocumentClient(object):
         """
         default_headers = self.default_headers
         url_connection = self.url_connection
-        path = '/' + media_link
-        media_id = base.GetIdFromLink(media_link)
+        path = base.GetPathFromLink(media_link)
+        media_id = base.GetResourceIdOrFullNameFromLink(media_link)
         attachment_id = base.GetAttachmentIdFromMediaId(media_id)
         headers = base.GetHeaders(self,
                                   default_headers,
@@ -1132,8 +1338,8 @@ class DocumentClient(object):
                 runtime_constants.MediaTypes.OctetStream)
 
         url_connection = self.url_connection
-        path = '/' + media_link
-        media_id = base.GetIdFromLink(media_link)
+        path = base.GetPathFromLink(media_link)
+        media_id = base.GetResourceIdOrFullNameFromLink(media_link)
         attachment_id = base.GetAttachmentIdFromMediaId(media_id)
         headers = base.GetHeaders(self,
                                   initial_headers,
@@ -1162,8 +1368,8 @@ class DocumentClient(object):
 
         """
         DocumentClient.__ValidateResource(attachment)
-        path = '/' + attachment_link
-        attachment_id = base.GetIdFromLink(attachment_link)
+        path = base.GetPathFromLink(attachment_link)
+        attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
         return self.Replace(attachment,
                             path,
                             'attachments',
@@ -1182,8 +1388,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + attachment_link
-        attachment_id = base.GetIdFromLink(attachment_link)
+        path = base.GetPathFromLink(attachment_link)
+        attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
         return self.DeleteResource(path,
                                    'attachments',
                                    attachment_id,
@@ -1209,8 +1415,8 @@ class DocumentClient(object):
         elif trigger.get('body'):
             trigger['body'] = str(trigger['body'])
 
-        path = '/' + trigger_link
-        trigger_id = base.GetIdFromLink(trigger_link)
+        path = base.GetPathFromLink(trigger_link)
+        trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
         return self.Replace(trigger,
                             path,
                             'triggers',
@@ -1229,8 +1435,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + trigger_link
-        trigger_id = base.GetIdFromLink(trigger_link)
+        path = base.GetPathFromLink(trigger_link)
+        trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
         return self.DeleteResource(path,
                                    'triggers',
                                    trigger_id,
@@ -1256,8 +1462,8 @@ class DocumentClient(object):
         elif udf.get('body'):
             udf['body'] = str(udf['body'])
 
-        path = '/' + udf_link
-        udf_id = base.GetIdFromLink(udf_link)
+        path = base.GetPathFromLink(udf_link)
+        udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
         return self.Replace(udf,
                             path,
                             'udfs',
@@ -1276,8 +1482,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + udf_link
-        udf_id = base.GetIdFromLink(udf_link)
+        path = base.GetPathFromLink(udf_link)
+        udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
         return self.DeleteResource(path,
                                    'udfs',
                                    udf_id,
@@ -1305,8 +1511,8 @@ class DocumentClient(object):
             params = [params]
 
         url_connection = self.url_connection
-        path = '/' + sproc_link
-        sproc_id = base.GetIdFromLink(sproc_link)
+        path = base.GetPathFromLink(sproc_link)
+        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
         headers = base.GetHeaders(self,
                                   initial_headers,
                                   'post',
@@ -1340,8 +1546,8 @@ class DocumentClient(object):
         elif sproc.get('body'):
             sproc['body'] = str(sproc['body'])
 
-        path = '/' + sproc_link
-        sproc_id = base.GetIdFromLink(sproc_link)
+        path = base.GetPathFromLink(sproc_link)
+        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
         return self.Replace(sproc,
                             path,
                             'sprocs',
@@ -1360,8 +1566,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + sproc_link
-        sproc_id = base.GetIdFromLink(sproc_link)
+        path = base.GetPathFromLink(sproc_link)
+        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
         return self.DeleteResource(path,
                                    'sprocs',
                                    sproc_id,
@@ -1379,8 +1585,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + conflict_link
-        conflict_id = base.GetIdFromLink(conflict_link)
+        path = base.GetPathFromLink(conflict_link)
+        conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
         return self.DeleteResource(path,
                                    'conflicts',
                                    conflict_id,
@@ -1399,8 +1605,8 @@ class DocumentClient(object):
 
         """
         DocumentClient.__ValidateResource(offer)
-        path = '/' + offer_link
-        offer_id = base.GetIdFromLink(offer_link)
+        path = base.GetPathFromLink(offer_link)
+        offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
         return self.Replace(offer, path, 'offers', offer_id, None, None)
 
     def ReadOffer(self, offer_link):
@@ -1413,8 +1619,8 @@ class DocumentClient(object):
             dict
 
         """
-        path = '/' + offer_link
-        offer_id = base.GetIdFromLink(offer_link)
+        path = base.GetPathFromLink(offer_link)
+        offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
         return self.Read(path, 'offers', offer_id, None, {})
 
     def ReadOffers(self, options={}):
@@ -1507,6 +1713,38 @@ class DocumentClient(object):
                                   id,
                                   type,
                                   options)
+        result, self.last_response_headers = self.__Post(self.url_connection,
+                                                         path,
+                                                         body,
+                                                         headers)
+        return result
+
+    def Upsert(self, body, path, type, id, initial_headers, options={}):
+        """Upserts a DocumentDB resource and returns it.
+
+        :Parameters:
+            - `body`: dict
+            - `path`: str
+            - `type`: str
+            - `id`: str
+            - `initial_headers`: dict
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            dict
+
+        """
+        initial_headers = initial_headers or self.default_headers
+        headers = base.GetHeaders(self,
+                                  initial_headers,
+                                  'post',
+                                  path,
+                                  id,
+                                  type,
+                                  options)
+
+        headers[http_constants.HttpHeaders.IsUpsert] = True
+
         result, self.last_response_headers = self.__Post(self.url_connection,
                                                          path,
                                                          body,
@@ -1781,49 +2019,6 @@ class DocumentClient(object):
             raise SystemError('Unexpected query compatibility mode.')
 
         return query_body
-
-    @staticmethod
-    def __UseDefaultIndexingPolicy(collection):
-        if not collection:
-            return
-        if not collection.get('indexingPolicy'):
-            collection['indexingPolicy'] = {}
-        if (collection['indexingPolicy'].get('indexingMode') != documents.IndexingMode.NoIndex and
-              not collection['indexingPolicy'].get('includedPaths') and
-              not collection['indexingPolicy'].get('excludedPaths')):
-            collection['indexingPolicy']['includedPaths'] = [
-                {
-                    'path': '/*'
-                }
-            ]
-        if collection['indexingPolicy'].get('includedPaths'):
-            for index_path in collection['indexingPolicy']['includedPaths']:
-                if not index_path.get('indexes'):
-                    index_path['indexes'] = [
-                        {
-                            'kind': documents.IndexKind.Hash,
-                            'dataType': documents.DataType.String,
-                            'precision': DocumentClient._DefaultStringHashPrecision
-                        },
-                        {
-                            'kind': documents.IndexKind.Range,
-                            'dataType': documents.DataType.Number,
-                            'precision': DocumentClient._DefaultNumberRangePrecision
-                        }
-                    ]
-            for index in index_path['indexes']:
-                if index.get('kind') == documents.IndexKind.Hash:
-                    if not 'precision' in index:
-                        if index.get('dataType') == documents.DataType.String:
-                            index['precision'] = DocumentClient._DefaultStringHashPrecision
-                        elif index.get('dataType') == documents.DataType.Number:
-                            index['precision'] = DocumentClient._DefaultNumberHashPrecision
-                elif index.get('kind') == documents.IndexKind.Range:
-                    if not 'precision' in index:
-                        if index.get('dataType') == documents.DataType.String:
-                            index['precision'] = DocumentClient._DefaultStringRangePrecision
-                        elif index.get('dataType') == documents.DataType.Number:
-                            index['precision'] = DocumentClient._DefaultNumberRangePrecision
 
     @staticmethod
     def __ValidateResource(resource):

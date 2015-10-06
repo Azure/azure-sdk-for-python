@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
 
 """Authorization helper functions.
 """
@@ -12,7 +12,7 @@ import pydocumentdb.http_constants as http_constants
 def GetAuthorizationHeader(document_client,
                            verb,
                            path,
-                           resource_id,
+                           resource_id_or_fullname,
                            resource_type,
                            headers):
     """Gets the authorization header.
@@ -21,7 +21,7 @@ def GetAuthorizationHeader(document_client,
         - `document_client`: document_client.DocumentClient
         - `verb`: str
         - `path`: str
-        - `resource_id`: str
+        - `resource_id_or_fullname`: str
         - `resource_type`: str
         - `headers`: dict
 
@@ -31,17 +31,17 @@ def GetAuthorizationHeader(document_client,
     """
     if document_client.master_key:
         return __GetAuthorizationTokenUsingMasterKey(verb,
-                                                    resource_id,
+                                                    resource_id_or_fullname,
                                                     resource_type,
                                                     headers,
                                                     document_client.master_key)
     elif document_client.resource_tokens:
         return __GetAuthorizationTokenUsingResourceTokens(
-            document_client.resource_tokens, path, resource_id)
+            document_client.resource_tokens, path, resource_id_or_fullname)
 
 
 def __GetAuthorizationTokenUsingMasterKey(verb,
-                                         resource_id,
+                                         resource_id_or_fullname,
                                          resource_type,
                                          headers,
                                          master_key):
@@ -49,7 +49,7 @@ def __GetAuthorizationTokenUsingMasterKey(verb,
 
     :Parameters:
         - `verb`: str
-        - `resource_id`: str
+        - `resource_id_or_fullname`: str
         - `resource_type`: str
         - `headers`: dict
         - `master_key`: st
@@ -60,14 +60,15 @@ def __GetAuthorizationTokenUsingMasterKey(verb,
     """
     key = master_key.decode('base64')
 
-    text = '{verb}\n{resource_type}\n{resource_id}\n{x_date}\n{http_date}\n'.format(
-        verb=(verb or ''),
-        resource_type=(resource_type or ''),
-        resource_id=(resource_id or ''),
-        x_date=headers.get(http_constants.HttpHeaders.XDate, ''),
-        http_date=headers.get(http_constants.HttpHeaders.HttpDate, ''))
+    # Skipping lower casing of resource_id_or_fullname since it may now contain "ID" of the resource as part of the fullname
+    text = '{verb}\n{resource_type}\n{resource_id_or_fullname}\n{x_date}\n{http_date}\n'.format(
+        verb=(verb.lower() or ''),
+        resource_type=(resource_type.lower() or ''),
+        resource_id_or_fullname=(resource_id_or_fullname or ''),
+        x_date=headers.get(http_constants.HttpHeaders.XDate, '').lower(),
+        http_date=headers.get(http_constants.HttpHeaders.HttpDate, '').lower())
    
-    body = text.lower().decode('utf8')
+    body = text.decode('utf8')
 
     hm = hmac.new(key, body, sha256)
     signature = hm.digest().encode('base64')
@@ -81,20 +82,20 @@ def __GetAuthorizationTokenUsingMasterKey(verb,
 
 def __GetAuthorizationTokenUsingResourceTokens(resource_tokens,
                                               path,
-                                              resource_id):
+                                              resource_id_or_fullname):
     """Get the authorization token using `resource_tokens`.
 
     :Parameters:
         - `resource_tokens`: dict
         - `path`: str
-        - `resource_id`: str
+        - `resource_id_or_fullname`: str
 
     :Returns:
         dict
 
     """
-    if resource_tokens.get(resource_id):
-        return resource_tokens[resource_id]
+    if resource_tokens.get(resource_id_or_fullname):
+        return resource_tokens[resource_id_or_fullname]
     else:
         path_parts = path.split('/')
         resource_types = ['dbs', 'colls', 'docs', 'sprocs', 'udfs', 'triggers',

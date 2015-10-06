@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
 
 """End to end test.
 """
@@ -41,9 +41,15 @@ class CRUDTests(unittest.TestCase):
         if not databases:
             return
         for database in databases:
-            client.DeleteDatabase(database['_self'])
+            client.DeleteDatabase(self.GetDatabaseLink(database, False))
 
-    def test_database_crud(self):
+    def test_database_crud_self_link(self):
+        self._test_database_crud(False)
+
+    def test_database_crud_name_based(self):
+        self._test_database_crud(True)
+
+    def _test_database_crud(self, is_name_based):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # read databases.
@@ -69,14 +75,14 @@ class CRUDTests(unittest.TestCase):
                      'number of results for the query should be > 0')
 
         # read database.
-        one_db_from_read = client.ReadDatabase(created_db['_self'])
+        one_db_from_read = client.ReadDatabase(self.GetDatabaseLink(created_db, is_name_based))
 
         # delete database.
-        client.DeleteDatabase(created_db['_self'])
+        client.DeleteDatabase(self.GetDatabaseLink(created_db, is_name_based))
         # read database after deletion
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadDatabase,
-                                           created_db['_self'])
+                                           self.GetDatabaseLink(created_db, is_name_based))
 
     def test_sql_query_crud(self):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
@@ -102,28 +108,34 @@ class CRUDTests(unittest.TestCase):
         databases = list(client.QueryDatabases('SELECT * FROM root r WHERE r.id="database 2"'))
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
 
-    def test_collection_crud(self):
+    def test_collection_crud_self_link(self):
+        self._test_collection_crud(False)
+
+    def test_collection_crud_name_based(self):
+        self._test_collection_crud(True)
+
+    def _test_collection_crud(self, is_name_based):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
         created_db = client.CreateDatabase({ 'id': 'sample database' })
-        collections = list(client.ReadCollections(created_db['_self']))
+        collections = list(client.ReadCollections(self.GetDatabaseLink(created_db, is_name_based)))
         # create a collection
         before_create_collections_count = len(collections)
         collection_definition = { 'id': 'sample collection', 'indexingPolicy': {'indexingMode': 'consistent'} }
-        created_collection = client.CreateCollection(created_db['_self'],
+        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based),
                                                      collection_definition)
         self.assertEqual(collection_definition['id'], created_collection['id'])
         self.assertEqual('consistent', created_collection['indexingPolicy']['indexingMode'])
 
         # read collections after creation
-        collections = list(client.ReadCollections(created_db['_self']))
+        collections = list(client.ReadCollections(self.GetDatabaseLink(created_db, is_name_based)))
         self.assertEqual(len(collections),
                          before_create_collections_count + 1,
                          'create should increase the number of collections')
         # query collections
         collections = list(client.QueryCollections(
-            created_db['_self'],
+            self.GetDatabaseLink(created_db, is_name_based),
             {
                 'query': 'SELECT * FROM root r WHERE r.id=@id',
                 'parameters': [
@@ -133,35 +145,43 @@ class CRUDTests(unittest.TestCase):
         # Replacing indexing policy is allowed.
         lazy_policy = {'indexingMode': 'lazy'}
         created_collection['indexingPolicy'] = lazy_policy
-        replaced_collection = client.ReplaceCollection(created_collection['_self'], created_collection)
+        replaced_collection = client.ReplaceCollection(self.GetDocumentCollectionLink(created_db, created_collection, is_name_based), created_collection)
         self.assertEqual('lazy', replaced_collection['indexingPolicy']['indexingMode'])
         # Replacing collection Id should fail.
-        created_collection['id'] = 'try_change_id'
+        change_collection = created_collection.copy()
+        change_collection['id'] = 'try_change_id'
         self.__AssertHTTPFailureWithStatus(400,
                                            client.ReplaceCollection,
-                                           created_collection['_self'],
-                                           created_collection)
+                                           self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
+                                           change_collection)
 
         self.assert_(collections)
         # delete collection
-        client.DeleteCollection(created_collection['_self'])
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection, is_name_based))
         # read collection after deletion
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadCollection,
-                                           created_collection['_self'])
+                                           self.GetDocumentCollectionLink(created_db, created_collection, is_name_based))
 
-    def test_document_crud(self):
+    
+    def test_document_crud_self_link(self):
+        self._test_document_crud(False)
+
+    def test_document_crud_name_based(self):
+        self._test_document_crud(True)
+        
+    def _test_document_crud(self, is_name_based):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         # create collection
         created_collection = client.CreateCollection(
-            created_db['_self'],
+            self.GetDatabaseLink(created_db, is_name_based),
             { 'id': 'sample collection' })
         # read documents
         documents = list(client.ReadDocuments(
-            created_collection['_self']))
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
         # create a document
         before_create_documents_count = len(documents)
         document_definition = {'name': 'sample document',
@@ -171,19 +191,19 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             400,
             client.CreateDocument,
-            created_collection['_self'],
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
             document_definition,
             {'disableAutomaticIdGeneration': True})
 
         created_document = client.CreateDocument(
-            created_collection['_self'],
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
             document_definition)
         self.assertEqual(created_document['name'],
                          document_definition['name'])
         self.assertTrue(created_document['id'] != None)
         # duplicated documents are allowed when 'id' is not provided.
         duplicated_document = client.CreateDocument(
-            created_collection['_self'],
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
             document_definition)
         self.assertEqual(duplicated_document['name'],
                          document_definition['name'])
@@ -195,18 +215,18 @@ class CRUDTests(unittest.TestCase):
         duplicated_definition_with_id['id'] = created_document['id']
         self.__AssertHTTPFailureWithStatus(409,
                                            client.CreateDocument,
-                                           created_collection['_self'],
+                                           self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
                                            duplicated_definition_with_id)
         # read documents after creation
         documents = list(client.ReadDocuments(
-            created_collection['_self']))
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
         self.assertEqual(
             len(documents),
             before_create_documents_count + 2,
             'create should increase the number of documents')
         # query documents
         documents = list(client.QueryDocuments(
-            created_collection['_self'],
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
             {
                 'query': 'SELECT * FROM root r WHERE r.name=@name',
                 'parameters': [
@@ -215,7 +235,7 @@ class CRUDTests(unittest.TestCase):
             }))
         self.assert_(documents)
         documents = list(client.QueryDocuments(
-            created_collection['_self'],
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
             {
                 'query': 'SELECT * FROM root r WHERE r.name=@name',
                 'parameters': [
@@ -228,7 +248,7 @@ class CRUDTests(unittest.TestCase):
         created_document['name'] = 'replaced document'
         created_document['spam'] = 'not eggs'
         replaced_document = client.ReplaceDocument(
-            created_document['_self'],
+            self.GetDocumentLink(created_db, created_collection, created_document, is_name_based),
             created_document)
         self.assertEqual(replaced_document['name'],
                          'replaced document',
@@ -241,22 +261,139 @@ class CRUDTests(unittest.TestCase):
                          'document id should stay the same')
         # read document
         one_document_from_read = client.ReadDocument(
-            replaced_document['_self'])
+            self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based))
         self.assertEqual(replaced_document['id'],
                          one_document_from_read['id'])
         # delete document
-        client.DeleteDocument(replaced_document['_self'])
+        client.DeleteDocument(self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based))
         # read documents after deletion
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadDocument,
-                                           replaced_document['_self'])
+                                           self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based))
 
-    def test_spatial_index(self):
+    # Upsert test for Document resource - selflink version
+    def test_document_upsert_self_link(self):
+        self._test_document_upsert(False)
+
+    # Upsert test for Document resource - name based routing version
+    def test_document_upsert_name_based(self):
+        self._test_document_upsert(True)
+        
+    def _test_document_upsert(self, is_name_based):
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+
+        # create database
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+
+        # create collection
+        created_collection = client.CreateCollection(
+            self.GetDatabaseLink(created_db, is_name_based),
+            { 'id': 'sample collection' })
+
+        # read documents and check count
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        before_create_documents_count = len(documents)
+
+        # create document definition
+        document_definition = {'id': 'doc',
+                               'name': 'sample document',
+                               'spam': 'eggs',
+                               'key': 'value'}
+
+        # create document using Upsert API
+        created_document = client.UpsertDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
+            document_definition)
+
+        # verify id property
+        self.assertEqual(created_document['id'],
+                         document_definition['id'])
+
+        # read documents after creation and verify updated count
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        self.assertEqual(
+            len(documents),
+            before_create_documents_count + 1,
+            'create should increase the number of documents')
+
+        # update document
+        created_document['name'] = 'replaced document'
+        created_document['spam'] = 'not eggs'
+        
+        # should replace document since it already exists
+        upserted_document = client.UpsertDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
+            created_document)
+        
+        # verify the changed properties
+        self.assertEqual(upserted_document['name'],
+                         created_document['name'],
+                         'document id property should change')
+        self.assertEqual(upserted_document['spam'],
+                         created_document['spam'],
+                         'property should have changed')
+
+        # verify id property
+        self.assertEqual(upserted_document['id'],
+                         created_document['id'],
+                         'document id should stay the same')
+        
+        # read documents after upsert and verify count doesn't increases again
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        self.assertEqual(
+            len(documents),
+            before_create_documents_count + 1,
+            'number of documents should remain same')
+
+        created_document['id'] = 'new id'
+
+        # Upsert should create new document since the id is different
+        new_document = client.UpsertDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
+            created_document)
+        
+        # verify id property
+        self.assertEqual(created_document['id'],
+                         new_document['id'],
+                         'document id should be same')
+        
+        # read documents after upsert and verify count increases
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        self.assertEqual(
+            len(documents),
+            before_create_documents_count + 2,
+            'upsert should increase the number of documents')
+
+        # delete documents
+        client.DeleteDocument(self.GetDocumentLink(created_db, created_collection, upserted_document, is_name_based))
+        client.DeleteDocument(self.GetDocumentLink(created_db, created_collection, new_document, is_name_based))
+
+        # read documents after delete and verify count is same as original
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based)))
+        self.assertEqual(
+            len(documents),
+            before_create_documents_count,
+            'number of documents should remain same')
+        
+
+    def test_spatial_index_self_link(self):
+        self._test_spatial_index(False);
+
+    def test_spatial_index_name_based(self):
+        self._test_spatial_index(True);
+        
+    def _test_spatial_index(self, is_name_based):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
         db = client.CreateDatabase({ 'id': 'sample database' })
         # partial policy specified
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             {
                 'id': 'collection with spatial index',
                 'indexingPolicy': {
@@ -276,14 +413,14 @@ class CRUDTests(unittest.TestCase):
                     ]
                 }
             })
-        client.CreateDocument(collection['_self'], {
+        client.CreateDocument(self.GetDocumentCollectionLink(db, collection, is_name_based), {
             'id': 'loc1',
             'Location': {
                 'type': 'Point',
                 'coordinates': [ 20.0, 20.0 ]
             }
         })
-        client.CreateDocument(collection['_self'], {
+        client.CreateDocument(self.GetDocumentCollectionLink(db, collection, is_name_based), {
             'id': 'loc2',
             'Location': {
                 'type': 'Point',
@@ -291,12 +428,19 @@ class CRUDTests(unittest.TestCase):
             }
         })
         results = list(client.QueryDocuments(
-            collection['_self'],
+            self.GetDocumentCollectionLink(db, collection, is_name_based),
             "SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000) "))
         self.assertEqual(1, len(results))
         self.assertEqual('loc1', results[0]['id'])
 
-    def test_attachment_crud(self):
+    
+    def test_attachment_crud_self_link(self):
+        self._test_attachment_crud(False);
+
+    def test_attachment_crud_name_based(self):
+        self._test_attachment_crud(True);
+        
+    def _test_attachment_crud(self, is_name_based):
         class ReadableStream(object):
             """Customized file-like stream.
             """
@@ -338,15 +482,15 @@ class CRUDTests(unittest.TestCase):
         db = client.CreateDatabase({ 'id': 'sample database' })
         # create collection
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             { 'id': 'sample collection' })
         # create document
-        document = client.CreateDocument(collection['_self'],
+        document = client.CreateDocument(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                          { 'id': 'sample document',
                                            'spam': 'eggs',
                                            'key': 'value' })
         # list all attachments
-        attachments = list(client.ReadAttachments(document['_self']))
+        attachments = list(client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
         initial_count = len(attachments)
         valid_media_options = { 'slug': 'attachment name',
                                 'contentType': 'application/text' }
@@ -357,13 +501,13 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             400,
             client.CreateAttachmentAndUploadMedia,
-            document['_self'],
+            self.GetDocumentLink(db, collection, document, is_name_based),
             content_stream,
             invalid_media_options)
         content_stream = ReadableStream()
         # create streamed attachment with valid content-type
         valid_attachment = client.CreateAttachmentAndUploadMedia(
-            document['_self'], content_stream, valid_media_options)
+            self.GetDocumentLink(db, collection, document, is_name_based), content_stream, valid_media_options)
         self.assertEqual(valid_attachment['id'],
                          'attachment name',
                          'id of created attachment should be the'
@@ -373,7 +517,7 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             409,
             client.CreateAttachmentAndUploadMedia,
-            document['_self'],
+            self.GetDocumentLink(db, collection, document, is_name_based),
             content_stream,
             valid_media_options)
 
@@ -387,7 +531,7 @@ class CRUDTests(unittest.TestCase):
             'Title':'My Book Title',
             'contentType':'application/text'
         }
-        attachment = client.CreateAttachment(document['_self'],
+        attachment = client.CreateAttachment(self.GetDocumentLink(db, collection, document, is_name_based),
                                              dynamic_attachment)
         self.assertEqual(attachment['MediaType'],
                          'Book',
@@ -396,13 +540,13 @@ class CRUDTests(unittest.TestCase):
                          'My Book Author',
                          'invalid property value')
         # list all attachments
-        attachments = list(client.ReadAttachments(document['_self']))
+        attachments = list(client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
         self.assertEqual(len(attachments),
                          initial_count + 2,
                          'number of attachments should\'ve increased by 2')
         attachment['Author'] = 'new author'
         # replace the attachment
-        client.ReplaceAttachment(attachment['_self'], attachment)
+        client.ReplaceAttachment(self.GetAttachmentLink(db, collection, document, attachment, is_name_based), attachment)
         self.assertEqual(attachment['MediaType'],
                          'Book',
                          'invalid media type')
@@ -431,13 +575,13 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(media_response.read(),
                          'modified first chunk modified second chunk')
         # share attachment with a second document
-        document = client.CreateDocument(collection['_self'],
+        document = client.CreateDocument(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                          {'id': 'document 2'})
         second_attachment = {
             'id': valid_attachment['id'],
             'contentType': valid_attachment['contentType'],
             'media': valid_attachment['media'] }
-        attachment = client.CreateAttachment(document['_self'],
+        attachment = client.CreateAttachment(self.GetDocumentLink(db, collection, document, is_name_based),
                                              second_attachment)
         self.assertEqual(valid_attachment['id'],
                          attachment['id'],
@@ -449,29 +593,205 @@ class CRUDTests(unittest.TestCase):
                          attachment['contentType'],
                          'contentType mismatch')
         # deleting attachment
-        client.DeleteAttachment(attachment['_self'])
+        client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, attachment, is_name_based))
         # read attachments after deletion
-        attachments = list(client.ReadAttachments(document['_self']))
+        attachments = list(client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
         self.assertEqual(len(attachments), 0)
 
-    def test_user_crud(self):
+    # Upsert test for Attachment resource - selflink version
+    def test_attachment_upsert_self_link(self):
+        self._test_attachment_upsert(False);
+
+    # Upsert test for Attachment resource - name based routing version
+    def test_attachment_upsert_name_based(self):
+        self._test_attachment_upsert(True);
+        
+    def _test_attachment_upsert(self, is_name_based):
+        class ReadableStream(object):
+            """Customized file-like stream.
+            """
+
+            def __init__(self, chunks = ['first chunk ', 'second chunk']):
+                """Initialization.
+
+                :Parameters:
+                    - `chunks`: list
+
+                """
+                self._chunks = list(chunks)
+
+            def read(self, n=-1):
+                """Simulates the read method in a file stream.
+
+                :Parameters:
+                    - `n`: int
+
+                :Returns:
+                    str
+
+                """
+                if self._chunks:
+                    return self._chunks.pop(0)
+                else:
+                    return ''
+
+            def __len__(self):
+                """To make len(ReadableStream) work.
+                """
+                return sum([len(chunk) for chunk in self._chunks])
+
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+        
+        # create database
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        # create collection
+        collection = client.CreateCollection(
+            self.GetDatabaseLink(db, is_name_based),
+            { 'id': 'sample collection' })
+        
+        # create document
+        document = client.CreateDocument(self.GetDocumentCollectionLink(db, collection, is_name_based),
+                                         { 'id': 'sample document',
+                                           'spam': 'eggs',
+                                           'key': 'value' })
+        
+        # list all attachments and check count
+        attachments = list(client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
+        initial_count = len(attachments)
+        
+        valid_media_options = { 'slug': 'attachment name',
+                                'contentType': 'application/text' }
+        content_stream = ReadableStream()
+        
+        # create streamed attachment with valid content-type using Upsert API
+        valid_attachment = client.UpsertAttachmentAndUploadMedia(
+            self.GetDocumentLink(db, collection, document, is_name_based), content_stream, valid_media_options)
+        
+        # verify id property
+        self.assertEqual(valid_attachment['id'],
+                         'attachment name',
+                         'id of created attachment should be the same')
+
+        valid_media_options = { 'slug': 'new attachment name',
+                                'contentType': 'application/text' }
+        content_stream = ReadableStream()
+        
+        # Upsert should create new attachment since since id is different
+        new_valid_attachment = client.UpsertAttachmentAndUploadMedia(
+            self.GetDocumentLink(db, collection, document, is_name_based), content_stream, valid_media_options)
+        
+        # verify id property
+        self.assertEqual(new_valid_attachment['id'],
+                         'new attachment name',
+                         'id of new attachment should be the same')
+
+        # read all attachments and verify updated count
+        attachments = list(client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
+        self.assertEqual(len(attachments),
+                         initial_count + 2,
+                         'number of attachments should have increased by 2')
+        
+        # create attachment with media link
+        attachment_definition = {
+            'id': 'dynamic attachment',
+            'media': 'http://xstore.',
+            'MediaType': 'Book',
+            'Author':'My Book Author',
+            'Title':'My Book Title',
+            'contentType':'application/text'
+        }
+
+        # create dynamic attachment using Upsert API
+        dynamic_attachment = client.UpsertAttachment(self.GetDocumentLink(db, collection, document, is_name_based),
+                                             attachment_definition)
+
+        # verify id property
+        self.assertEqual(dynamic_attachment['id'],
+                         attachment_definition['id'],
+                         'id of attachment should be the same')
+
+        # read all attachments and verify updated count
+        attachments = list(client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
+        self.assertEqual(len(attachments),
+                         initial_count + 3,
+                         'number of attachments should have increased by 3')
+
+        dynamic_attachment['Author'] = 'new author'
+        
+        # replace the attachment using Upsert API
+        upserted_attachment = client.UpsertAttachment(self.GetDocumentLink(db, collection, document, is_name_based), dynamic_attachment)
+
+        # verify id property remains same
+        self.assertEqual(dynamic_attachment['id'],
+                         upserted_attachment['id'],
+                         'id should stay the same')
+
+        # verify author property gets updated
+        self.assertEqual(upserted_attachment['Author'],
+                         dynamic_attachment['Author'],
+                         'invalid property value')
+
+        # read all attachments and verify count doesn't increases again
+        attachments = list(client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
+        self.assertEqual(len(attachments),
+                         initial_count + 3,
+                         'number of attachments should remain same')
+
+        dynamic_attachment['id'] = 'new dynamic attachment'
+        
+        # Upsert should create new attachment since id is different
+        new_attachment = client.UpsertAttachment(self.GetDocumentLink(db, collection, document, is_name_based), dynamic_attachment)
+
+        # verify id property remains same
+        self.assertEqual(dynamic_attachment['id'],
+                         new_attachment['id'],
+                         'id should be same')
+
+        # read all attachments and verify count increases
+        attachments = list(client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
+        self.assertEqual(len(attachments),
+                         initial_count + 4,
+                         'number of attachments should have increased')
+
+        # deleting attachments
+        client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, valid_attachment, is_name_based))
+        client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, new_valid_attachment, is_name_based))
+        client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, upserted_attachment, is_name_based))
+        client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, new_attachment, is_name_based))
+
+        # read all attachments and verify count remains same
+        attachments = list(client.ReadAttachments(self.GetDocumentLink(db, collection, document, is_name_based)))
+        self.assertEqual(len(attachments),
+                         initial_count,
+                         'number of attachments should remain the same')
+        
+
+    def test_user_crud_self_link(self):
+        self._test_user_crud(False);
+
+    def test_user_crud_name_based(self):
+        self._test_user_crud(True);
+        
+    def _test_user_crud(self, is_name_based):
         # Should do User CRUD operations successfully.
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
         db = client.CreateDatabase({ 'id': 'sample database' })
         # list users
-        users = list(client.ReadUsers(db['_self']))
+        users = list(client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
         before_create_count = len(users)
         # create user
-        user = client.CreateUser(db['_self'], { 'id': 'new user' })
+        user = client.CreateUser(self.GetDatabaseLink(db, is_name_based), { 'id': 'new user' })
         self.assertEqual(user['id'], 'new user', 'user id error')
         # list users after creation
-        users = list(client.ReadUsers(db['_self']))
+        users = list(client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
         self.assertEqual(len(users), before_create_count + 1)
         # query users
         results = list(client.QueryUsers(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             {
                 'query': 'SELECT * FROM root r WHERE r.id=@id',
                 'parameters': [
@@ -481,8 +801,9 @@ class CRUDTests(unittest.TestCase):
         self.assert_(results)
 
         # replace user
+        change_user = user.copy()
         user['id'] = 'replaced user'
-        replaced_user = client.ReplaceUser(user['_self'], user)
+        replaced_user = client.ReplaceUser(self.GetUserLink(db, change_user, is_name_based), user)
         self.assertEqual(replaced_user['id'],
                          'replaced user',
                          'user id should change')
@@ -490,25 +811,94 @@ class CRUDTests(unittest.TestCase):
                          replaced_user['id'],
                          'user id should stay the same')
         # read user
-        user = client.ReadUser(replaced_user['_self'])
+        user = client.ReadUser(self.GetUserLink(db, replaced_user, is_name_based))
         self.assertEqual(replaced_user['id'], user['id'])
         # delete user
-        client.DeleteUser(user['_self'])
+        client.DeleteUser(self.GetUserLink(db, user, is_name_based))
         # read user after deletion
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadUser,
-                                           user['_self'])
+                                           self.GetUserLink(db, user, is_name_based))
 
-    def test_permission_crud(self):
+    
+    # Upsert test for User resource - selflink version
+    def test_user_upsert_self_link(self):
+        self._test_user_upsert(False);
+
+    # Upsert test for User resource - named based routing version
+    def test_user_upsert_name_based(self):
+        self._test_user_upsert(True);
+        
+    def _test_user_upsert(self, is_name_based):
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+        
+        # create database
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        # read users and check count
+        users = list(client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
+        before_create_count = len(users)
+        
+        # create user using Upsert API
+        user = client.UpsertUser(self.GetDatabaseLink(db, is_name_based), { 'id': 'user' })
+
+        # verify id property
+        self.assertEqual(user['id'], 'user', 'user id error')
+        
+        # read users after creation and verify updated count
+        users = list(client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
+        self.assertEqual(len(users), before_create_count + 1)
+        
+        # Should replace the user since it already exists, there is no public property to change here
+        upserted_user = client.UpsertUser(self.GetDatabaseLink(db, is_name_based), user)
+        
+        # verify id property
+        self.assertEqual(upserted_user['id'],
+                         user['id'],
+                         'user id should remain same')
+
+        # read users after upsert and verify count doesn't increases again
+        users = list(client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
+        self.assertEqual(len(users), before_create_count + 1)
+
+        user['id'] = 'new user'
+
+        # Upsert should create new user since id is different
+        new_user = client.UpsertUser(self.GetDatabaseLink(db, is_name_based), user)
+
+        # verify id property
+        self.assertEqual(new_user['id'], user['id'], 'user id error')
+        
+        # read users after upsert and verify count increases
+        users = list(client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
+        self.assertEqual(len(users), before_create_count + 2)
+
+        # delete users
+        client.DeleteUser(self.GetUserLink(db, upserted_user, is_name_based))
+        client.DeleteUser(self.GetUserLink(db, new_user, is_name_based))
+
+        # read users after delete and verify count remains the same
+        users = list(client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
+        self.assertEqual(len(users), before_create_count)
+
+
+    def test_permission_crud_self_link(self):
+        self._test_permission_crud(False);
+
+    def test_permission_crud_name_based(self):
+        self._test_permission_crud(True);
+        
+    def _test_permission_crud(self, is_name_based):
         # Should do Permission CRUD operations successfully
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
         db = client.CreateDatabase({ 'id': 'sample database' })
         # create user
-        user = client.CreateUser(db['_self'], { 'id': 'new user' })
+        user = client.CreateUser(self.GetDatabaseLink(db, is_name_based), { 'id': 'new user' })
         # list permissions
-        permissions = list(client.ReadPermissions(user['_self']))
+        permissions = list(client.ReadPermissions(self.GetUserLink(db, user, is_name_based)))
         before_create_count = len(permissions)
         permission = {
             'id': 'new permission',
@@ -516,16 +906,16 @@ class CRUDTests(unittest.TestCase):
             'resource': 'dbs/AQAAAA==/colls/AQAAAJ0fgTc='  # A random one.
         }
         # create permission
-        permission = client.CreatePermission(user['_self'], permission)
+        permission = client.CreatePermission(self.GetUserLink(db, user, is_name_based), permission)
         self.assertEqual(permission['id'],
                          'new permission',
                          'permission id error')
         # list permissions after creation
-        permissions = list(client.ReadPermissions(user['_self']))
+        permissions = list(client.ReadPermissions(self.GetUserLink(db, user, is_name_based)))
         self.assertEqual(len(permissions), before_create_count + 1)
         # query permissions
         results = list(client.QueryPermissions(
-            user['_self'],
+            self.GetUserLink(db, user, is_name_based),
             {
                 'query': 'SELECT * FROM root r WHERE r.id=@id',
                 'parameters': [
@@ -535,8 +925,9 @@ class CRUDTests(unittest.TestCase):
         self.assert_(results)
 
         # replace permission
+        change_permission = permission.copy()
         permission['id'] = 'replaced permission'
-        replaced_permission = client.ReplacePermission(permission['_self'],
+        replaced_permission = client.ReplacePermission(self.GetPermissionLink(db, user, change_permission, is_name_based),
                                                        permission)
         self.assertEqual(replaced_permission['id'],
                          'replaced permission',
@@ -545,15 +936,105 @@ class CRUDTests(unittest.TestCase):
                          replaced_permission['id'],
                          'permission id should stay the same')
         # read permission
-        permission = client.ReadPermission(replaced_permission['_self'])
+        permission = client.ReadPermission(self.GetPermissionLink(db, user, replaced_permission, is_name_based))
         self.assertEqual(replaced_permission['id'], permission['id'])
         # delete permission
-        client.DeletePermission(replaced_permission['_self'])
+        client.DeletePermission(self.GetPermissionLink(db, user, replaced_permission, is_name_based))
         # read permission after deletion
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadPermission,
-                                           permission['_self'])
+                                           self.GetPermissionLink(db, user, permission, is_name_based))
 
+    # Upsert test for Permission resource - selflink version
+    def test_permission_upsert_self_link(self):
+        self._test_permission_upsert(False);
+
+    # Upsert test for Permission resource - name based routing version
+    def test_permission_upsert_name_based(self):
+        self._test_permission_upsert(True);
+        
+    def _test_permission_upsert(self, is_name_based):
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+        
+        # create database
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        # create user
+        user = client.CreateUser(self.GetDatabaseLink(db, is_name_based), { 'id': 'new user' })
+        
+        # read permissions and check count
+        permissions = list(client.ReadPermissions(self.GetUserLink(db, user, is_name_based)))
+        before_create_count = len(permissions)
+        
+        permission_definition = {
+            'id': 'permission',
+            'permissionMode': documents.PermissionMode.Read,
+            'resource': 'dbs/AQAAAA==/colls/AQAAAJ0fgTc='  # A random one.
+        }
+        
+        # create permission using Upsert API
+        created_permission = client.UpsertPermission(self.GetUserLink(db, user, is_name_based), permission_definition)
+        
+        # verify id property
+        self.assertEqual(created_permission['id'],
+                         permission_definition['id'],
+                         'permission id error')
+        
+        # read permissions after creation and verify updated count
+        permissions = list(client.ReadPermissions(self.GetUserLink(db, user, is_name_based)))
+        self.assertEqual(len(permissions), before_create_count + 1)
+        
+        # update permission mode
+        permission_definition['permissionMode'] = documents.PermissionMode.All
+
+        # should repace the permission since it already exists
+        upserted_permission = client.UpsertPermission(self.GetUserLink(db, user, is_name_based),
+                                                       permission_definition)
+        # verify id property
+        self.assertEqual(upserted_permission['id'],
+                         created_permission['id'],
+                         'permission id should remain same')
+        
+        # verify changed property
+        self.assertEqual(upserted_permission['permissionMode'],
+                         permission_definition['permissionMode'],
+                         'permissionMode should change')
+        
+        # read permissions and verify count doesn't increases again
+        permissions = list(client.ReadPermissions(self.GetUserLink(db, user, is_name_based)))
+        self.assertEqual(len(permissions), before_create_count + 1)
+
+        # update permission id
+        created_permission['id'] = 'new permission'
+        # resource needs to be changed along with the id in order to create a new permission
+        created_permission['resource'] = 'dbs/N9EdAA==/colls/N9EdAIugXgA='
+
+        # should create new permission since id has changed
+        new_permission = client.UpsertPermission(self.GetUserLink(db, user, is_name_based),
+                                                       created_permission)
+        # verify id and resource property
+        self.assertEqual(new_permission['id'],
+                         created_permission['id'],
+                         'permission id should be same')
+
+        self.assertEqual(new_permission['resource'],
+                         created_permission['resource'],
+                         'permission resource should be same')
+        
+        # read permissions and verify count increases
+        permissions = list(client.ReadPermissions(self.GetUserLink(db, user, is_name_based)))
+        self.assertEqual(len(permissions), before_create_count + 2)
+
+        # delete permissions
+        client.DeletePermission(self.GetPermissionLink(db, user, upserted_permission, is_name_based))
+        client.DeletePermission(self.GetPermissionLink(db, user, new_permission, is_name_based))
+
+        # read permissions and verify count remains the same
+        permissions = list(client.ReadPermissions(self.GetUserLink(db, user, is_name_based)))
+        self.assertEqual(len(permissions), before_create_count)
+
+    
     def test_authorization(self):
         def __SetupEntities(client):
             """Sets up entities for this test.
@@ -696,17 +1177,23 @@ class CRUDTests(unittest.TestCase):
                          doc['CustomProperty1'],
                          'document should have been created successfully')
 
-    def test_trigger_crud(self):
+    def test_trigger_crud_self_link(self):
+        self._test_trigger_crud(False);
+
+    def test_trigger_crud_name_based(self):
+        self._test_trigger_crud(True);
+        
+    def _test_trigger_crud(self, is_name_based):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
         db = client.CreateDatabase({ 'id': 'sample database' })
         # create collection
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             { 'id': 'sample collection' })
         # read triggers
-        triggers = list(client.ReadTriggers(collection['_self']))
+        triggers = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection, is_name_based)))
         # create a trigger
         before_create_triggers_count = len(triggers)
         trigger_definition = {
@@ -715,7 +1202,7 @@ class CRUDTests(unittest.TestCase):
             'triggerType': documents.TriggerType.Pre,
             'triggerOperation': documents.TriggerOperation.All
         }
-        trigger = client.CreateTrigger(collection['_self'],
+        trigger = client.CreateTrigger(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                        trigger_definition)
         for property in trigger_definition:
             if property != "serverScript":
@@ -728,13 +1215,13 @@ class CRUDTests(unittest.TestCase):
                                      'function() {var x = 10;}')
 
         # read triggers after creation
-        triggers = list(client.ReadTriggers(collection['_self']))
+        triggers = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection, is_name_based)))
         self.assertEqual(len(triggers),
                          before_create_triggers_count + 1,
                          'create should increase the number of triggers')
         # query triggers
         triggers = list(client.QueryTriggers(
-            collection['_self'],
+            self.GetDocumentCollectionLink(db, collection, is_name_based),
             {
                 'query': 'SELECT * FROM root r WHERE r.id=@id',
                 'parameters': [
@@ -743,19 +1230,10 @@ class CRUDTests(unittest.TestCase):
             }))
         self.assert_(triggers)
 
-        results = list(client.QueryTriggers(
-            collection['_self'],
-            {
-                'query': 'SELECT * FROM root r WHERE r.id=@id',
-                'parameters': [
-                    { 'name': '@id', 'value':trigger_definition['id'] }
-                ]
-            }))
-        self.assert_(results)
-
         # replace trigger
+        change_trigger = trigger.copy()
         trigger['body'] = 'function() {var x = 20;}'
-        replaced_trigger = client.ReplaceTrigger(trigger['_self'], trigger)
+        replaced_trigger = client.ReplaceTrigger(self.GetTriggerLink(db, collection, change_trigger, is_name_based), trigger)
         for property in trigger_definition:
             if property != "serverScript":
                 self.assertEqual(
@@ -767,33 +1245,132 @@ class CRUDTests(unittest.TestCase):
                                  'function() {var x = 20;}')
 
         # read trigger
-        trigger = client.ReadTrigger(replaced_trigger['_self'])
+        trigger = client.ReadTrigger(self.GetTriggerLink(db, collection, replaced_trigger, is_name_based))
         self.assertEqual(replaced_trigger['id'], trigger['id'])
         # delete trigger
-        res = client.DeleteTrigger(replaced_trigger['_self'])
+        res = client.DeleteTrigger(self.GetTriggerLink(db, collection, replaced_trigger, is_name_based))
         # read triggers after deletion
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadTrigger,
-                                           replaced_trigger['_self'])
+                                           self.GetTriggerLink(db, collection, replaced_trigger, is_name_based))
 
-    def test_udf_crud(self):
+    # Upsert test for Trigger resource - selflink version
+    def test_trigger_upsert_self_link(self):
+        self._test_trigger_upsert(False);
+
+    # Upsert test for Trigger resource - name based routing version
+    def test_trigger_upsert_name_based(self):
+        self._test_trigger_upsert(True);
+        
+    def _test_trigger_upsert(self, is_name_based):
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+        
+        # create database
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        # create collection
+        collection = client.CreateCollection(
+            self.GetDatabaseLink(db, is_name_based),
+            { 'id': 'sample collection' })
+        
+        # read triggers and check count
+        triggers = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        before_create_triggers_count = len(triggers)
+
+        # create a trigger
+        trigger_definition = {
+            'id': 'sample trigger',
+            'serverScript': 'function() {var x = 10;}',
+            'triggerType': documents.TriggerType.Pre,
+            'triggerOperation': documents.TriggerOperation.All
+        }
+
+        # create trigger using Upsert API
+        created_trigger = client.UpsertTrigger(self.GetDocumentCollectionLink(db, collection, is_name_based),
+                                       trigger_definition)
+
+        # verify id property
+        self.assertEqual(created_trigger['id'],
+                         trigger_definition['id'])
+
+        # read triggers after creation and verify updated count
+        triggers = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(triggers),
+                         before_create_triggers_count + 1,
+                         'create should increase the number of triggers')
+        
+        # update trigger
+        created_trigger['body'] = 'function() {var x = 20;}'
+
+        # should replace trigger since it already exists
+        upserted_trigger = client.UpsertTrigger(self.GetDocumentCollectionLink(db, collection, is_name_based), created_trigger)
+
+        # verify id property
+        self.assertEqual(created_trigger['id'],
+                         upserted_trigger['id'])
+
+        # verify changed properties
+        self.assertEqual(upserted_trigger['body'],
+                                 created_trigger['body'])
+
+        # read triggers after upsert and verify count remains same
+        triggers = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(triggers),
+                         before_create_triggers_count + 1,
+                         'upsert should keep the number of triggers same')
+
+        # update trigger
+        created_trigger['id'] = 'new trigger'
+
+        # should create new trigger since id is changed
+        new_trigger = client.UpsertTrigger(self.GetDocumentCollectionLink(db, collection, is_name_based), created_trigger)
+
+        # verify id property
+        self.assertEqual(created_trigger['id'],
+                         new_trigger['id'])
+
+        # read triggers after upsert and verify count increases
+        triggers = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(triggers),
+                         before_create_triggers_count + 2,
+                         'upsert should increase the number of triggers')
+        
+        # delete triggers
+        res = client.DeleteTrigger(self.GetTriggerLink(db, collection, upserted_trigger, is_name_based))
+        res = client.DeleteTrigger(self.GetTriggerLink(db, collection, new_trigger, is_name_based))
+
+        # read triggers after delete and verify count remains the same
+        triggers = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(triggers),
+                         before_create_triggers_count,
+                         'delete should bring the number of triggers to original')
+
+
+    def test_udf_crud_self_link(self):
+        self._test_udf_crud(False);
+
+    def test_udf_crud_name_based(self):
+        self._test_udf_crud(True);
+        
+    def _test_udf_crud(self, is_name_based):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
         db = client.CreateDatabase({ 'id': 'sample database' })
         # create collection
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             { 'id': 'sample collection' })
         # read udfs
-        udfs = list(client.ReadUserDefinedFunctions(collection['_self']))
+        udfs = list(client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
         # create a udf
         before_create_udfs_count = len(udfs)
         udf_definition = {
             'id': 'sample udf',
             'body': 'function() {var x = 10;}'
         }
-        udf = client.CreateUserDefinedFunction(collection['_self'],
+        udf = client.CreateUserDefinedFunction(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                                udf_definition)
         for property in udf_definition:
                 self.assertEqual(
@@ -802,13 +1379,13 @@ class CRUDTests(unittest.TestCase):
                     'property {property} should match'.format(property=property))
 
         # read udfs after creation
-        udfs = list(client.ReadUserDefinedFunctions(collection['_self']))
+        udfs = list(client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
         self.assertEqual(len(udfs),
                          before_create_udfs_count + 1,
                          'create should increase the number of udfs')
         # query udfs
         results = list(client.QueryUserDefinedFunctions(
-            collection['_self'],
+            self.GetDocumentCollectionLink(db, collection, is_name_based),
             {
                 'query': 'SELECT * FROM root r WHERE r.id=@id',
                 'parameters': [
@@ -817,41 +1394,139 @@ class CRUDTests(unittest.TestCase):
             }))
         self.assert_(results)
         # replace udf
+        change_udf = udf.copy()
         udf['body'] = 'function() {var x = 20;}'
-        replaced_udf = client.ReplaceUserDefinedFunction(udf['_self'], udf)
+        replaced_udf = client.ReplaceUserDefinedFunction(self.GetUserDefinedFunctionLink(db, collection, change_udf, is_name_based), udf)
         for property in udf_definition:
                 self.assertEqual(
                     replaced_udf[property],
                     udf[property],
                     'property {property} should match'.format(property=property))
         # read udf
-        udf = client.ReadUserDefinedFunction(replaced_udf['_self'])
+        udf = client.ReadUserDefinedFunction(self.GetUserDefinedFunctionLink(db, collection, replaced_udf, is_name_based))
         self.assertEqual(replaced_udf['id'], udf['id'])
         # delete udf
-        res = client.DeleteUserDefinedFunction(replaced_udf['_self'])
+        res = client.DeleteUserDefinedFunction(self.GetUserDefinedFunctionLink(db, collection, replaced_udf, is_name_based))
         # read udfs after deletion
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadUserDefinedFunction,
-                                           replaced_udf['_self'])
+                                           self.GetUserDefinedFunctionLink(db, collection, replaced_udf, is_name_based))
 
-    def test_sproc_crud(self):
+
+    # Upsert test for User Defined Function resource - selflink version
+    def test_udf_upsert_self_link(self):
+        self._test_udf_upsert(False);
+
+    # Upsert test for User Defined Function resource - name based routing version
+    def test_udf_upsert_name_based(self):
+        self._test_udf_upsert(True);
+        
+    def _test_udf_upsert(self, is_name_based):
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+        
+        # create database
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        # create collection
+        collection = client.CreateCollection(
+            self.GetDatabaseLink(db, is_name_based),
+            { 'id': 'sample collection' })
+        
+        # read udfs and check count
+        udfs = list(client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        before_create_udfs_count = len(udfs)
+        
+        # create a udf definition
+        udf_definition = {
+            'id': 'sample udf',
+            'body': 'function() {var x = 10;}'
+        }
+
+        # create udf using Upsert API
+        created_udf = client.UpsertUserDefinedFunction(self.GetDocumentCollectionLink(db, collection, is_name_based),
+                                               udf_definition)
+
+        # verify id property
+        self.assertEqual(created_udf['id'],
+                         udf_definition['id'])
+
+        # read udfs after creation and verify updated count
+        udfs = list(client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(udfs),
+                         before_create_udfs_count + 1,
+                         'create should increase the number of udfs')
+
+        # update udf
+        created_udf['body'] = 'function() {var x = 20;}'
+        
+        # should replace udf since it already exists
+        upserted_udf = client.UpsertUserDefinedFunction(self.GetDocumentCollectionLink(db, collection, is_name_based), created_udf)
+
+        # verify id property
+        self.assertEqual(created_udf['id'],
+                         upserted_udf['id'])
+
+        # verify changed property
+        self.assertEqual(upserted_udf['body'],
+                                 created_udf['body'])
+
+        # read udf and verify count doesn't increases again
+        udfs = list(client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(udfs),
+                         before_create_udfs_count + 1,
+                         'upsert should keep the number of udfs same')
+
+        created_udf['id'] = 'new udf'
+        
+        # should create new udf since the id is different
+        new_udf = client.UpsertUserDefinedFunction(self.GetDocumentCollectionLink(db, collection, is_name_based), created_udf)
+
+        # verify id property
+        self.assertEqual(created_udf['id'],
+                         new_udf['id'])
+        
+        # read udf and verify count increases
+        udfs = list(client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(udfs),
+                         before_create_udfs_count + 2,
+                         'upsert should keep the number of udfs same')
+        
+        # delete udfs
+        client.DeleteUserDefinedFunction(self.GetUserDefinedFunctionLink(db, collection, upserted_udf, is_name_based))
+        client.DeleteUserDefinedFunction(self.GetUserDefinedFunctionLink(db, collection, new_udf, is_name_based))
+
+        # read udf and verify count remains the same
+        udfs = list(client.ReadUserDefinedFunctions(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(udfs),
+                         before_create_udfs_count,
+                         'delete should keep the number of udfs same')
+
+
+    def test_sproc_crud_self_link(self):
+        self._test_sproc_crud(False);
+
+    def test_sproc_crud_name_based(self):
+        self._test_sproc_crud(True);
+        
+    def _test_sproc_crud(self, is_name_based):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
         db = client.CreateDatabase({ 'id': 'sample database' })
         # create collection
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             { 'id': 'sample collection' })
         # read sprocs
-        sprocs = list(client.ReadStoredProcedures(collection['_self']))
+        sprocs = list(client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
         # create a sproc
         before_create_sprocs_count = len(sprocs)
         sproc_definition = {
             'id': 'sample sproc',
             'serverScript': 'function() {var x = 10;}'
         }
-        sproc = client.CreateStoredProcedure(collection['_self'],
+        sproc = client.CreateStoredProcedure(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                              sproc_definition)
         for property in sproc_definition:
             if property != "serverScript":
@@ -863,13 +1538,13 @@ class CRUDTests(unittest.TestCase):
                 self.assertEqual(sproc['body'], 'function() {var x = 10;}')
 
         # read sprocs after creation
-        sprocs = list(client.ReadStoredProcedures(collection['_self']))
+        sprocs = list(client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
         self.assertEqual(len(sprocs),
                          before_create_sprocs_count + 1,
                          'create should increase the number of sprocs')
         # query sprocs
         sprocs = list(client.QueryStoredProcedures(
-            collection['_self'],
+            self.GetDocumentCollectionLink(db, collection, is_name_based),
             {
                 'query': 'SELECT * FROM root r WHERE r.id=@id',
                 'parameters':[
@@ -878,8 +1553,9 @@ class CRUDTests(unittest.TestCase):
             }))
         self.assert_(sprocs)
         # replace sproc
+        change_sproc = sproc.copy()
         sproc['body'] = 'function() {var x = 20;}'
-        replaced_sproc = client.ReplaceStoredProcedure(sproc['_self'],
+        replaced_sproc = client.ReplaceStoredProcedure(self.GetStoredProcedureLink(db, collection, change_sproc, is_name_based),
                                                        sproc)
         for property in sproc_definition:
             if property != 'serverScript':
@@ -891,23 +1567,122 @@ class CRUDTests(unittest.TestCase):
                 self.assertEqual(replaced_sproc['body'],
                                  "function() {var x = 20;}")
         # read sproc
-        sproc = client.ReadStoredProcedure(replaced_sproc['_self'])
+        sproc = client.ReadStoredProcedure(self.GetStoredProcedureLink(db, collection, replaced_sproc, is_name_based))
         self.assertEqual(replaced_sproc['id'], sproc['id'])
         # delete sproc
-        res = client.DeleteStoredProcedure(replaced_sproc['_self'])
+        res = client.DeleteStoredProcedure(self.GetStoredProcedureLink(db, collection, replaced_sproc, is_name_based))
         # read sprocs after deletion
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadStoredProcedure,
-                                           replaced_sproc['_self'])
+                                           self.GetStoredProcedureLink(db, collection, replaced_sproc, is_name_based))
 
-    def test_collection_indexing_policy(self):
+    # Upsert test for sproc resource - selflink version
+    def test_sproc_upsert_self_link(self):
+        self._test_sproc_upsert(False);
+
+    # Upsert test for sproc resource - name based routing version
+    def test_sproc_upsert_name_based(self):
+        self._test_sproc_upsert(True);
+        
+    def _test_sproc_upsert(self, is_name_based):
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+        
+        # create database
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        # create collection
+        collection = client.CreateCollection(
+            self.GetDatabaseLink(db, is_name_based),
+            { 'id': 'sample collection' })
+        
+        # read sprocs and check count
+        sprocs = list(client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        before_create_sprocs_count = len(sprocs)
+
+        # create a sproc definition
+        sproc_definition = {
+            'id': 'sample sproc',
+            'serverScript': 'function() {var x = 10;}'
+        }
+
+        # create sproc using Upsert API
+        created_sproc = client.UpsertStoredProcedure(self.GetDocumentCollectionLink(db, collection, is_name_based),
+                                             sproc_definition)
+
+        # verify id property
+        self.assertEqual(created_sproc['id'],
+                         sproc_definition['id'])
+        
+        # read sprocs after creation and verify updated count
+        sprocs = list(client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(sprocs),
+                         before_create_sprocs_count + 1,
+                         'create should increase the number of sprocs')
+
+        # update sproc
+        created_sproc['body'] = 'function() {var x = 20;}'
+
+        # should replace sproc since it already exists
+        upserted_sproc = client.UpsertStoredProcedure(self.GetDocumentCollectionLink(db, collection, is_name_based),
+                                                       created_sproc)
+
+        # verify id property
+        self.assertEqual(created_sproc['id'],
+                         upserted_sproc['id'])
+
+        # verify changed property
+        self.assertEqual(upserted_sproc['body'],
+                                 created_sproc['body'])
+
+        # read sprocs after upsert and verify count remains the same
+        sprocs = list(client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(sprocs),
+                         before_create_sprocs_count + 1,
+                         'upsert should keep the number of sprocs same')
+
+        # update sproc
+        created_sproc['id'] = 'new sproc'
+
+        # should create new sproc since id is different
+        new_sproc = client.UpsertStoredProcedure(self.GetDocumentCollectionLink(db, collection, is_name_based),
+                                                       created_sproc)
+
+        # verify id property
+        self.assertEqual(created_sproc['id'],
+                         new_sproc['id'])
+        
+        # read sprocs after upsert and verify count increases
+        sprocs = list(client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(sprocs),
+                         before_create_sprocs_count + 2,
+                         'upsert should keep the number of sprocs same')
+        
+        # delete sprocs
+        client.DeleteStoredProcedure(self.GetStoredProcedureLink(db, collection, upserted_sproc, is_name_based))
+        client.DeleteStoredProcedure(self.GetStoredProcedureLink(db, collection, new_sproc, is_name_based))
+
+        # read sprocs after delete and verify count remains same
+        sprocs = list(client.ReadStoredProcedures(self.GetDocumentCollectionLink(db, collection, is_name_based)))
+        self.assertEqual(len(sprocs),
+                         before_create_sprocs_count,
+                         'delete should keep the number of sprocs same')
+        
+
+    def test_collection_indexing_policy_self_link(self):
+        self._test_collection_indexing_policy(False);
+
+    def test_collection_indexing_policy_name_based(self):
+        self._test_collection_indexing_policy(True);
+
+    def _test_collection_indexing_policy(self, is_name_based):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
         db = client.CreateDatabase({ 'id': 'sample database' })
         # create collection
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             { 'id': "sample collection" })
         self.assertEqual(collection['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Consistent,
@@ -918,9 +1693,9 @@ class CRUDTests(unittest.TestCase):
                 'indexingMode': documents.IndexingMode.Lazy
             }
         }
-        coll = client.DeleteCollection(collection['_self'])
+        coll = client.DeleteCollection(self.GetDocumentCollectionLink(db, collection, is_name_based))
         lazy_collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             lazy_collection_definition)
         self.assertEqual(lazy_collection['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Lazy,
@@ -932,9 +1707,9 @@ class CRUDTests(unittest.TestCase):
                 'indexingMode': documents.IndexingMode.Consistent
             }
         }
-        coll = client.DeleteCollection(lazy_collection['_self'])
+        coll = client.DeleteCollection(self.GetDocumentCollectionLink(db, lazy_collection, is_name_based))
         consistent_collection = client.CreateCollection(
-            db['_self'], consistent_collection_definition)
+            self.GetDatabaseLink(db, is_name_based), consistent_collection_definition)
         self.assertEqual(collection['indexingPolicy']['indexingMode'],
                          documents.IndexingMode.Consistent,
                          'indexing mode should be consistent')
@@ -962,8 +1737,8 @@ class CRUDTests(unittest.TestCase):
                 ]
             }
         }
-        client.DeleteCollection(consistent_collection['_self'])
-        collectio_with_indexing_policy = client.CreateCollection(db['_self'], collection_definition)
+        client.DeleteCollection(self.GetDocumentCollectionLink(db, consistent_collection, is_name_based))
+        collectio_with_indexing_policy = client.CreateCollection(self.GetDatabaseLink(db, is_name_based), collection_definition)
         self.assertEqual(2,
                          len(collectio_with_indexing_policy['indexingPolicy']['includedPaths']),
                          'Unexpected includedPaths length')
@@ -971,18 +1746,24 @@ class CRUDTests(unittest.TestCase):
                          len(collectio_with_indexing_policy['indexingPolicy']['excludedPaths']),
                          'Unexpected excluded path count')
 
-    def test_create_default_indexing_policy(self):
+    def test_create_default_indexing_policy_self_link(self):
+        self._test_create_default_indexing_policy(False);
+
+    def test_create_default_indexing_policy_name_based(self):
+        self._test_create_default_indexing_policy(True);
+        
+    def _test_create_default_indexing_policy(self, is_name_based):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
         # create database
         db = client.CreateDatabase({ 'id': 'sample database' })
 
         # no indexing policy specified
-        collection = client.CreateCollection(db['_self'], {'id': 'TestCreateDefaultPolicy01'})
+        collection = client.CreateCollection(self.GetDatabaseLink(db, is_name_based), {'id': 'TestCreateDefaultPolicy01'})
         self._check_default_indexing_policy_paths(collection['indexingPolicy']);
 
         # partial policy specified
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             {
                 'id': 'TestCreateDefaultPolicy02',
                 'indexingPolicy': {
@@ -993,7 +1774,7 @@ class CRUDTests(unittest.TestCase):
 
         # default policy
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             {
                 'id': 'TestCreateDefaultPolicy03',
                 'indexingPolicy': { }
@@ -1002,7 +1783,7 @@ class CRUDTests(unittest.TestCase):
 
         # missing indexes
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             {
                 'id': 'TestCreateDefaultPolicy04',
                 'indexingPolicy': {
@@ -1017,7 +1798,7 @@ class CRUDTests(unittest.TestCase):
 
         # missing precision
         collection = client.CreateCollection(
-            db['_self'],
+            self.GetDatabaseLink(db, is_name_based),
             {
                 'id': 'TestCreateDefaultPolicy05',
                 'indexingPolicy': {
@@ -1041,23 +1822,32 @@ class CRUDTests(unittest.TestCase):
         self._check_default_indexing_policy_paths(collection['indexingPolicy'])
 
     def _check_default_indexing_policy_paths(self, indexing_policy):
+        def __get_first(array):
+            if array:
+                return array[0]
+            else:
+                return None
+
         # no excluded paths.
         self.assertEqual(0, len(indexing_policy['excludedPaths']))
-        # included paths should be 2 '_ts' and '/'.
+        # included paths should be 2: '_ts' and '/'.
         self.assertEqual(2, len(indexing_policy['includedPaths']))
 
-        # check default paths.
-        self.assertEqual('/*', indexing_policy['includedPaths'][0]['path'])
-        self.assertEqual(2, len(indexing_policy['includedPaths'][0]['indexes']))
-        self.assertEqual(documents.IndexKind.Hash, indexing_policy['includedPaths'][0]['indexes'][0]['kind'])
-        self.assertEqual(documents.DataType.String, indexing_policy['includedPaths'][0]['indexes'][0]['dataType'])
-        self.assertEqual(3, indexing_policy['includedPaths'][0]['indexes'][0]['precision'])
-        self.assertEqual(documents.IndexKind.Range, indexing_policy['includedPaths'][0]['indexes'][1]['kind'])
-        self.assertEqual(documents.DataType.Number, indexing_policy['includedPaths'][0]['indexes'][1]['dataType'])
-        self.assertEqual(-1, indexing_policy['includedPaths'][0]['indexes'][1]['precision'])
+        root_included_path = __get_first([included_path for included_path in indexing_policy['includedPaths']
+                              if included_path['path'] == '/*'])
+        ts_included_path = __get_first([included_path for included_path in indexing_policy['includedPaths']
+                              if included_path['path'] == '/*'])
+        self.assert_(root_included_path);
+        self.assert_(ts_included_path);
 
-        # _ts
-        self.assertEqual('/"_ts"/?', indexing_policy['includedPaths'][1]['path'])
+        # There should be one HashIndex of String type and one RangeIndex of Number type in the root included path.
+        hash_index = __get_first([index for index in root_included_path['indexes'] if index['kind'] == 'Hash'])
+        range_index = __get_first([index for index in root_included_path['indexes'] if index['kind'] == 'Range'])
+
+        self.assert_(hash_index)
+        self.assertEqual("String", hash_index['dataType'])
+        self.assert_(range_index)
+        self.assertEqual("Number", range_index['dataType'])
 
     def test_client_request_timeout(self):
         connection_policy = documents.ConnectionPolicy()
@@ -1153,7 +1943,13 @@ class CRUDTests(unittest.TestCase):
                          len(results.fetch_next_block()),
                          'Then its empty.')
 
-    def test_trigger_functionality(self):
+    def test_trigger_functionality_self_link(self):
+        self._test_trigger_functionality(False);
+
+    def test_trigger_functionality_name_based(self):
+        self._test_trigger_functionality(True);
+        
+    def _test_trigger_functionality(self, is_name_based):
         triggers_in_collection1 = [
         {
             'id': 't1',
@@ -1221,7 +2017,7 @@ class CRUDTests(unittest.TestCase):
             'triggerOperation': documents.TriggerOperation.Delete,
         }]
 
-        def __CreateTriggers(client, collection, triggers):
+        def __CreateTriggers(client, database, collection, triggers, is_name_based):
             """Creates triggers.
 
             :Parameters:
@@ -1230,7 +2026,7 @@ class CRUDTests(unittest.TestCase):
 
             """
             for trigger_i in triggers:
-                trigger = client.CreateTrigger(collection['_self'],
+                trigger = client.CreateTrigger(self.GetDocumentCollectionLink(database, collection, is_name_based),
                                                trigger_i)
                 for property in trigger_i:
                     self.assertEqual(
@@ -1244,19 +2040,19 @@ class CRUDTests(unittest.TestCase):
         db = client.CreateDatabase({ 'id': 'sample database' })
         # create collections
         collection1 = client.CreateCollection(
-            db['_self'], { 'id': 'sample collection 1' })
+            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 1' })
         collection2 = client.CreateCollection(
-            db['_self'], { 'id': 'sample collection 2' })
+            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 2' })
         collection3 = client.CreateCollection(
-            db['_self'], { 'id': 'sample collection 3' })
+            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 3' })
         # create triggers
-        __CreateTriggers(client, collection1, triggers_in_collection1)
-        __CreateTriggers(client, collection2, triggers_in_collection2)
-        __CreateTriggers(client, collection3, triggers_in_collection3)
+        __CreateTriggers(client, db, collection1, triggers_in_collection1, is_name_based)
+        __CreateTriggers(client, db, collection2, triggers_in_collection2, is_name_based)
+        __CreateTriggers(client, db, collection3, triggers_in_collection3, is_name_based)
         # create document
-        triggers_1 = list(client.ReadTriggers(collection1['_self']))
+        triggers_1 = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection1, is_name_based)))
         self.assertEqual(len(triggers_1), 3)
-        document_1_1 = client.CreateDocument(collection1['_self'],
+        document_1_1 = client.CreateDocument(self.GetDocumentCollectionLink(db, collection1, is_name_based),
                                              { 'id': 'doc1',
                                                'key': 'value' },
                                              { 'preTriggerInclude': 't1' })
@@ -1264,46 +2060,52 @@ class CRUDTests(unittest.TestCase):
                          'DOC1t1',
                          'id should be capitalized')
         document_1_2 = client.CreateDocument(
-            collection1['_self'],
+            self.GetDocumentCollectionLink(db, collection1, is_name_based),
             { 'id': 'testing post trigger' },
             { 'postTriggerInclude': 'response1',
               'preTriggerInclude': 't1' })
         self.assertEqual(document_1_2['id'], 'TESTING POST TRIGGERt1')
-        document_1_3 = client.CreateDocument(collection1['_self'],
+        document_1_3 = client.CreateDocument(self.GetDocumentCollectionLink(db, collection1, is_name_based),
                                              { 'id': 'responseheaders' },
                                              { 'preTriggerInclude': 't1' })
         self.assertEqual(document_1_3['id'], "RESPONSEHEADERSt1")
 
-        triggers_2 = list(client.ReadTriggers(collection2['_self']))
+        triggers_2 = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection2, is_name_based)))
         self.assertEqual(len(triggers_2), 2)
-        document_2_1 = client.CreateDocument(collection2['_self'],
+        document_2_1 = client.CreateDocument(self.GetDocumentCollectionLink(db, collection2, is_name_based),
                                              { 'id': 'doc2',
                                                'key2': 'value2' },
                                              { 'preTriggerInclude': 't2' })
         self.assertEqual(document_2_1['id'],
                          'doc2',
                          'id shouldn\'t change')
-        document_2_2 = client.CreateDocument(collection2['_self'],
+        document_2_2 = client.CreateDocument(self.GetDocumentCollectionLink(db, collection2, is_name_based),
                                              { 'id': 'Doc3',
                                                'prop': 'empty' },
                                              { 'preTriggerInclude': 't3' })
         self.assertEqual(document_2_2['id'], 'doc3t3')
 
-        triggers_3 = list(client.ReadTriggers(collection3['_self']))
+        triggers_3 = list(client.ReadTriggers(self.GetDocumentCollectionLink(db, collection3, is_name_based)))
         self.assertEqual(len(triggers_3), 1)
         with self.assertRaises(Exception):
-            client.CreateDocument(collection3['_self'],
+            client.CreateDocument(self.GetDocumentCollectionLink(db, collection3, is_name_based),
                                   { 'id': 'Docoptype' },
                                   { 'postTriggerInclude': 'triggerOpType' })
 
-    def test_stored_procedure_functionality(self):
+    def test_stored_procedure_functionality_self_link(self):
+        self._test_stored_procedure_functionality(False);
+
+    def test_stored_procedure_functionality_name_based(self):
+        self._test_stored_procedure_functionality(True);
+        
+    def _test_stored_procedure_functionality(self, is_name_based):
         client = document_client.DocumentClient(host,
                                                 { 'masterKey': masterKey })
         # create database
         db = client.CreateDatabase({ 'id': 'sample database' })
         # create collection
         collection = client.CreateCollection(
-            db['_self'], { 'id': 'sample collection' })
+            self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection' })
         sproc1 = {
             'id': 'storedProcedure1',
             'body': (
@@ -1316,9 +2118,9 @@ class CRUDTests(unittest.TestCase):
                 '}')
         }
 
-        retrieved_sproc = client.CreateStoredProcedure(collection['_self'],
+        retrieved_sproc = client.CreateStoredProcedure(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                                        sproc1)
-        result = client.ExecuteStoredProcedure(retrieved_sproc['_self'],
+        result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(db, collection, retrieved_sproc, is_name_based),
                                                None)
         self.assertEqual(result, 999)
         sproc2 = {
@@ -1330,9 +2132,9 @@ class CRUDTests(unittest.TestCase):
                 '  }' +
                 '}')
         }
-        retrieved_sproc2 = client.CreateStoredProcedure(collection['_self'],
+        retrieved_sproc2 = client.CreateStoredProcedure(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                                         sproc2)
-        result = client.ExecuteStoredProcedure(retrieved_sproc2['_self'],
+        result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(db, collection, retrieved_sproc2, is_name_based),
                                                None)
         self.assertEqual(int(result), 123456789)
         sproc3 = {
@@ -1343,9 +2145,9 @@ class CRUDTests(unittest.TestCase):
                     '      \'a\' + input.temp);' +
                 '}')
         }
-        retrieved_sproc3 = client.CreateStoredProcedure(collection['_self'],
+        retrieved_sproc3 = client.CreateStoredProcedure(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                                         sproc3)
-        result = client.ExecuteStoredProcedure(retrieved_sproc3['_self'],
+        result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(db, collection, retrieved_sproc3, is_name_based),
                                                {'temp': 'so'})
         self.assertEqual(result, 'aso')
 
@@ -1469,7 +2271,7 @@ class CRUDTests(unittest.TestCase):
                                                   masterKey })
         database_account = client.GetDatabaseAccount()
         self.assertEqual(database_account.DatabasesLink, '/dbs/')
-        self.assertEqual(database_account.MediaLink , '/media/')
+        self.assertEqual(database_account.MediaLink, '/media/')
         if (http_constants.HttpHeaders.MaxMediaStorageUsageInMB in
             client.last_response_headers):
             self.assertEqual(
@@ -1487,25 +2289,34 @@ class CRUDTests(unittest.TestCase):
             database_account.ConsistencyPolicy['defaultConsistencyLevel']
             != None)
 
-    def test_index_progress_headers(self):
+    def test_index_progress_headers_self_link(self):
+        self._test_index_progress_headers(False);
+
+    def test_index_progress_headers_name_based(self):
+        self._test_index_progress_headers(True);
+        
+    def _test_index_progress_headers(self, is_name_based):
         client = document_client.DocumentClient(host, { 'masterKey': masterKey })
         created_db = client.CreateDatabase({ 'id': 'sample database' })
-        consistent_coll = client.CreateCollection(created_db['_self'], { 'id': 'consistent_coll' })
-        client.ReadCollection(consistent_coll['_self'])
+        consistent_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based), { 'id': 'consistent_coll' })
+        client.ReadCollection(self.GetDocumentCollectionLink(created_db, consistent_coll, is_name_based))
+        self.assertFalse(http_constants.HttpHeaders.LazyIndexingProgress in client.last_response_headers)
         self.assertTrue(http_constants.HttpHeaders.IndexTransformationProgress in client.last_response_headers)
-        lazy_coll = client.CreateCollection(created_db['_self'],
+        lazy_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based),
             {
                 'id': 'lazy_coll',
                 'indexingPolicy': { 'indexingMode' : documents.IndexingMode.Lazy }
             })
-        client.ReadCollection(lazy_coll['_self'])
+        client.ReadCollection(self.GetDocumentCollectionLink(created_db, lazy_coll, is_name_based))
+        self.assertTrue(http_constants.HttpHeaders.LazyIndexingProgress in client.last_response_headers)
         self.assertTrue(http_constants.HttpHeaders.IndexTransformationProgress in client.last_response_headers)
-        none_coll = client.CreateCollection(created_db['_self'],
+        none_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based),
             {
                 'id': 'none_coll',
                 'indexingPolicy': { 'indexingMode': documents.IndexingMode.NoIndex, 'automatic': False }
             })
-        client.ReadCollection(none_coll['_self'])
+        client.ReadCollection(self.GetDocumentCollectionLink(created_db, none_coll, is_name_based))
+        self.assertFalse(http_constants.HttpHeaders.LazyIndexingProgress in client.last_response_headers)
         self.assertTrue(http_constants.HttpHeaders.IndexTransformationProgress in client.last_response_headers)
 
     # To run this test, please provide your own CA certs file or download one from
@@ -1570,6 +2381,125 @@ class CRUDTests(unittest.TestCase):
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.message)
 
+        # Id can begin with space
+        database_definition = { 'id': ' id_begin_space' }
+        client.CreateDatabase(database_definition)
+        self.assertTrue(True)
+
+    def test_id_case_validation(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        # create database
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+
+        # pascalCase
+        collection_definition1 = { 'id': 'sampleCollection' }
+
+        # CamelCase
+        collection_definition2 = { 'id': 'SampleCollection' }
+
+        # Verify that no collections exist
+        collections = list(client.ReadCollections(self.GetDatabaseLink(created_db, True)))
+        self.assertEqual(len(collections), 0)
+        
+        # create 2 collections with different casing of IDs
+        created_collection1 = client.CreateCollection(self.GetDatabaseLink(created_db, True),
+                                                     collection_definition1)
+
+        created_collection2 = client.CreateCollection(self.GetDatabaseLink(created_db, True),
+                                                     collection_definition2)
+
+        collections = list(client.ReadCollections(self.GetDatabaseLink(created_db, True)))
+        
+        # verify if a total of 2 collections got created
+        self.assertEqual(len(collections), 2)
+        
+        # verify that collections are created with specified IDs
+        self.assertEqual(collection_definition1['id'], created_collection1['id'])
+        self.assertEqual(collection_definition2['id'], created_collection2['id'])
+
+    def test_id_unicode_validation(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        # create database
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+
+        # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
+        collection_definition1 = { 'id': u'हिन्दी भारत की राष्ट्रीय भाषा है' }
+
+        # Special chars for Id
+        collection_definition2 = { 'id': "!@$%^&*()-~`'_[]{}|;:,.<>" } 
+
+        # verify that collections are created with specified IDs
+        created_collection1 = client.CreateCollection(self.GetDatabaseLink(created_db, True),
+                                                     collection_definition1)
+
+        created_collection2 = client.CreateCollection(self.GetDatabaseLink(created_db, True),
+                                                     collection_definition2)
+        
+        self.assertEqual(collection_definition1['id'], created_collection1['id'])
+        self.assertEqual(collection_definition2['id'], created_collection2['id'])
+
+
+    def GetDatabaseLink(self, database, is_name_based):
+        if is_name_based:
+            return 'dbs/' + database['id']
+        else:
+            return database['_self']
+
+    def GetUserLink(self, database, user, is_name_based):
+        if is_name_based:
+            return self.GetDatabaseLink(database, True) + '/users/' + user['id']
+        else:
+            return user['_self']
+
+    def GetPermissionLink(self, database, user, permission, is_name_based):
+        if is_name_based:
+            return self.GetUserLink(database, user, True) + '/permissions/' + permission['id']
+        else:
+            return permission['_self']
+
+    def GetDocumentCollectionLink(self, database, document_collection, is_name_based):
+        if is_name_based:
+            return self.GetDatabaseLink(database, True) + '/colls/' + document_collection['id']
+        else:
+            return document_collection['_self']
+
+    def GetDocumentLink(self, database, document_collection, document, is_name_based):
+        if is_name_based:
+            return self.GetDocumentCollectionLink(database, document_collection, True) + '/docs/' + document['id']
+        else:
+            return document['_self']
+
+    def GetAttachmentLink(self, database, document_collection, document, attachment, is_name_based):
+        if is_name_based:
+            return self.GetDocumentLink(database, document_collection, document, True) + '/attachments/' + attachment['id']
+        else:
+            return attachment['_self']
+
+    def GetTriggerLink(self, database, document_collection, trigger, is_name_based):
+        if is_name_based:
+            return self.GetDocumentCollectionLink(database, document_collection, True) + '/triggers/' + trigger['id']
+        else:
+            return trigger['_self']
+
+    def GetUserDefinedFunctionLink(self, database, document_collection, user_defined_function, is_name_based):
+        if is_name_based:
+            return self.GetDocumentCollectionLink(database, document_collection, True) + '/udfs/' + user_defined_function['id']
+        else:
+            return user_defined_function['_self']
+
+    def GetStoredProcedureLink(self, database, document_collection, stored_procedure, is_name_based):
+        if is_name_based:
+            return self.GetDocumentCollectionLink(database, document_collection, True) + '/sprocs/' + stored_procedure['id']
+        else:
+            return stored_procedure['_self']
+
+    def GetConflictLink(self, database, document_collection, conflict, is_name_based):
+        if is_name_based:
+            return self.GetDocumentCollectionLink(database, document_collection, True) + '/conflicts/' + conflict['id']
+        else:
+            return conflict['_self']
 
 if __name__ == '__main__':
     try:
