@@ -1,3 +1,7 @@
+## Changes in 1.4.2 : ##
+
+- Functionally same as 1.4.1. Fixing the error in the included wheel of the project.
+
 ## Changes in 1.4.1 : ##
 
 - Same as 1.4.0. Had to bump the version in order to include the wheel for the project.
