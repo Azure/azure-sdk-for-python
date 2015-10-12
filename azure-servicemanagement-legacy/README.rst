@@ -3,7 +3,7 @@ Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Service Management Legacy Client Library.
 
-All packages in this bundle have been tested with Python 2.7, 3.3 and 3.4.
+All packages in this bundle have been tested with Python 2.7, 3.3, 3.4 and 3.5.
 
 For the newer Azure Resource Management (ARM) libraries, see `azure-mgmt <https://pypi.python.org/pypi/azure-mgmt>`__.
 

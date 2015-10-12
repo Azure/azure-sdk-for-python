@@ -3,7 +3,7 @@ Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Service Bus Runtime Client Library.
 
-This package has been tested with Python 2.7, 3.3 and 3.4.
+This package has been tested with Python 2.7, 3.3, 3.4 and 3.5.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 

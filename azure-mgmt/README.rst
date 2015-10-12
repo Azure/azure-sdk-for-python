@@ -9,7 +9,7 @@ replace the old Azure Service Management (ASM).
 This package does not contain any code in itself. It installs a set
 of packages that provide management APIs for the various Azure services.
 
-All packages in this bundle have been tested with Python 2.7, 3.3 and 3.4.
+All packages in this bundle have been tested with Python 2.7, 3.3, 3.4 and 3.5.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 

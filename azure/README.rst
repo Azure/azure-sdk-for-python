@@ -6,7 +6,7 @@ This is the Microsoft Azure bundle.
 This package does not contain any code in itself. It installs a set
 of packages that provide Microsoft Azure functionality.
 
-All packages in this bundle have been tested with Python 2.7, 3.3 and 3.4.
+All packages in this bundle have been tested with Python 2.7, 3.3, 3.4 and 3.5.
 
 
 Features
