@@ -7,7 +7,7 @@ Microsoft Azure SDK for Python
 This project provides a set of Python packages that make it easy to
 access the Microsoft Azure components such as ServiceManagement, Storage\*, and ServiceBus.
 
-The SDK supports Python 2.7, 3.3, 3.4.
+The SDK supports Python 2.7, 3.3, 3.4 and 3.5.
 
 \*Looking for the Azure Storage client library?  It moved to a `new GitHub repository <https://github.com/Azure/azure-storage-python>`__.
 
