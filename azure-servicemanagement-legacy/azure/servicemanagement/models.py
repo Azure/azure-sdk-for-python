@@ -1094,6 +1094,7 @@ class ConfigurationSet(WindowsAzureData):
         self.input_endpoints = ConfigurationSetInputEndpoints()
         self.subnet_names = _scalar_list_of(_unicode_type, 'SubnetName')
         self.public_ips = PublicIPs()
+        self.static_virtual_network_ip_address = None
 
 
 class ConfigurationSetInputEndpoints(WindowsAzureData):
