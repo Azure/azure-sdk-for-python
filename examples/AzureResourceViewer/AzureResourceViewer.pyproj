@@ -19,7 +19,7 @@
     <PythonWsgiHandler>$(MSBuildProjectName).app</PythonWsgiHandler>
     <Name>AzureResourceViewer</Name>
     <RootNamespace>StorageAccountViewer</RootNamespace>
-    <InterpreterId>{18d87b9b-5b00-40ad-8256-9b19b0159aff}</InterpreterId>
+    <InterpreterId>{73711fd3-a4d5-4754-a7ab-49e27bfb5880}</InterpreterId>
     <InterpreterVersion>3.4</InterpreterVersion>
     <WebBrowserUrl>/account/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourcegroups/Default-Storage-WestUS/storageaccounts/huguestrialwest1</WebBrowserUrl>
     <IsWindowsApplication>False</IsWindowsApplication>
@@ -62,7 +62,6 @@
     <Folder Include="AzureResourceViewer\static\fonts\" />
     <Folder Include="AzureResourceViewer\static\scripts\" />
     <Folder Include="AzureResourceViewer\templates\" />
-    <Folder Include="wheelhouse\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AzureResourceViewer\templates\login.html" />
@@ -106,7 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
-      <Id>{18d87b9b-5b00-40ad-8256-9b19b0159aff}</Id>
+      <Id>{73711fd3-a4d5-4754-a7ab-49e27bfb5880}</Id>
       <BaseInterpreter>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</BaseInterpreter>
       <Version>3.4</Version>
       <Description>env (Python 3.4)</Description>
