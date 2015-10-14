@@ -93,7 +93,11 @@ topic:
 
     from azure.servicebus import Message
 
-    msg = Message('Hello World!')
+    msg = Message('Hello World!') 
+    
+    # When using Python 3.x Message body has to be of type byte.
+    # msg = Message('Hello World!'.encode('utf-8')) 
+    
     sbs.send_topic_message('taskdiscussion', msg)
 
 A client can then create a subscription and start consuming messages by
