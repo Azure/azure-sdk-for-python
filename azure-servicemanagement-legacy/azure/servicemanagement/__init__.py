@@ -27,7 +27,6 @@ from .publishsettings import get_certificate_from_publish_settings
 from .servicemanagementclient import parse_response_for_async_op
 
 from .servicemanagementservice import ServiceManagementService
-from .computemanagementservice import ComputeManagementService
 from .servicebusmanagementservice import ServiceBusManagementService
 from .websitemanagementservice import WebsiteManagementService
 from .sqldatabasemanagementservice import SqlDatabaseManagementService

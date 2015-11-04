@@ -1804,6 +1804,98 @@ class ServiceManagementService(_ServiceManagementClient):
                                  ResourceExtensions)
 
     #--Operations for virtual machine images -----------------------------
+    def replicate_vm_image(self, vm_image_name, regions, offer, sku, version):
+        '''
+        Replicate a VM image to multiple target locations. This operation
+        is only for publishers. You have to be registered as image publisher
+        with Microsoft Azure to be able to call this.
+
+        vm_image_name:
+            Specifies the name of the VM Image that is to be used for
+            replication
+        regions:
+            Specified a list of regions to replicate the image to
+            Note: The regions in the request body are not additive. If a VM
+            Image has already been replicated to Regions A, B, and C, and
+            a request is made to replicate to Regions A and D, the VM
+            Image will remain in Region A, will be replicated in Region D,
+            and will be unreplicated from Regions B and C
+        offer:
+            Specifies the publisher defined name of the offer. The allowed
+            characters are uppercase or lowercase letters, digit,
+            hypen(-), period (.).The maximum allowed length is 64 characters.
+        sku:
+            Specifies the publisher defined name of the Sku. The allowed
+            characters are uppercase or lowercase letters, digit,
+            hypen(-), period (.). The maximum allowed length is 64 characters.
+        version:
+            Specifies the publisher defined version of the image.
+            The allowed characters are digit and period.
+            Format: <MajorVersion>.<MinorVersion>.<Patch>
+            Example: '1.0.0' or '1.1.0' The 3 version number to
+            follow standard of most of the RPs. See http://semver.org
+        '''
+        _validate_not_none('vm_image_name', vm_image_name)
+        _validate_not_none('regions', regions)
+        _validate_not_none('offer', offer)
+        _validate_not_none('sku', sku)
+        _validate_not_none('version', version)
+
+        return self._perform_put(
+            self._get_replication_path_using_vm_image_name(vm_image_name),
+            _XmlSerializer.replicate_image_to_xml(
+                regions,
+                offer,
+                sku,
+                version
+            ),
+            async=True,
+            x_ms_version='2015-04-01'
+        )
+
+    def unreplicate_vm_image(self, vm_image_name):
+        '''
+        Unreplicate a VM image from all regions This operation
+        is only for publishers. You have to be registered as image publisher
+        with Microsoft Azure to be able to call this
+
+        vm_image_name:
+            Specifies the name of the VM Image that is to be used for
+            unreplication. The VM Image Name should be the user VM Image,
+            not the published name of the VM Image.
+
+        '''
+        _validate_not_none('vm_image_name', vm_image_name)
+
+        return self._perform_put(
+            self._get_unreplication_path_using_vm_image_name(vm_image_name),
+            None,
+            async=True,
+            x_ms_version='2015-04-01'
+        )
+
+    def share_vm_image(self, vm_image_name, permission):
+        '''
+        Share an already replicated OS image. This operation is only for
+        publishers. You have to be registered as image publisher with Windows
+        Azure to be able to call this.
+
+        vm_image_name:
+            The name of the virtual machine image to share
+        permission:
+            The sharing permission: public, msdn, or private
+        '''
+        _validate_not_none('vm_image_name', vm_image_name)
+        _validate_not_none('permission', permission)
+
+        path = self._get_sharing_path_using_vm_image_name(vm_image_name)
+        query = '&permission=' + permission
+        path = path + '?' + query.lstrip('&')
+
+        return self._perform_put(
+            path, None, async=True, x_ms_version='2015-04-01'
+        )
+
     def capture_vm_image(self, service_name, deployment_name, role_name, options):
         '''
         Creates a copy of the operating system virtual hard disk (VHD) and all
@@ -2401,7 +2493,22 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         return self._perform_get(self._get_virtual_network_site_path(), VirtualNetworkSites)
   
-      #--Helper functions --------------------------------------------------
+    #--Helper functions --------------------------------------------------
+    def _get_replication_path_using_vm_image_name(self, vm_image_name):
+        return self._get_path(
+            'services/images/' + _str(vm_image_name) + '/replicate', None
+        )
+
+    def _get_unreplication_path_using_vm_image_name(self, vm_image_name):
+        return self._get_path(
+            'services/images/' + _str(vm_image_name) + '/unreplicate', None
+        )
+
+    def _get_sharing_path_using_vm_image_name(self, vm_image_name):
+        return self._get_path(
+            'services/images/' + _str(vm_image_name) + '/shareasync', None
+        )
+
     def _get_role_sizes_path(self):
         return self._get_path('rolesizes', None)
 
