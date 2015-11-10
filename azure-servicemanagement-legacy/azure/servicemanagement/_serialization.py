@@ -1030,6 +1030,24 @@ class _XmlSerializer(object):
         return _XmlSerializer.doc_from_xml('CaptureRoleOperation', xml)
 
     @staticmethod
+    def replicate_image_to_xml(regions, offer, sku, version):
+        xml = '<TargetLocations>'
+        for region in regions:
+            xml += _XmlSerializer.data_to_xml([('Region', region)])
+        xml += '</TargetLocations>'
+        xml += '<ComputeImageAttributes>'
+        xml += _XmlSerializer.data_to_xml(
+            [
+                ('Offer', offer),
+                ('Sku', sku),
+                ('Version', version)
+            ]
+        )
+        xml += '</ComputeImageAttributes>'
+
+        return _XmlSerializer.doc_from_xml('ReplicationInput', xml)
+
+    @staticmethod
     def virtual_machine_deployment_to_xml(deployment_name, deployment_slot,
                                           label, role_name,
                                           system_configuration_set,
