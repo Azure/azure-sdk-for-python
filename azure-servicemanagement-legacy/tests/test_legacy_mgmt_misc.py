@@ -2158,6 +2158,35 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertEqual(image.os, 'Linux')
 
     @record
+    def test_update_os_image_from_image_reference(self):
+        # Arrange
+        self._create_os_image(
+            self.os_image_name, self.settings.LINUX_OS_VHD, 'Linux'
+        )
+
+        # Act
+        os_image = self.sms.get_os_image(self.os_image_name)
+        os_image.label = 'newlabel'
+        os_image.media_link = self.settings.LINUX_OS_VHD
+        os_image.os = 'Linux'
+        os_image.name = self.os_image_name
+        result = self.sms.update_os_image_from_image_reference(
+            self.os_image_name, os_image
+        )
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        image = self.sms.get_os_image(
+            self.os_image_name
+        )
+        self.assertEqual(
+            image.label, 'newlabel'
+        )
+        self.assertEqual(
+            image.os, 'Linux'
+        )
+
+    @record
     def test_delete_os_image(self):
         # Arrange
         self._create_os_image(self.os_image_name, self.settings.LINUX_OS_VHD, 'Linux')
