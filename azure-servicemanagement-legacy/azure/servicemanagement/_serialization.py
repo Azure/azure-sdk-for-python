@@ -632,15 +632,6 @@ class _XmlSerializer(object):
              ('SubscriptionCertificateData', data)])
 
     @staticmethod
-    def os_image_to_xml(label, media_link, name, os):
-        return _XmlSerializer.doc_from_data(
-            'OSImage',
-            [('Label', label),
-             ('MediaLink', media_link),
-             ('Name', name),
-             ('OS', os)])
-
-    @staticmethod
     def data_virtual_hard_disk_to_xml(host_caching, disk_label, disk_name, lun,
                                       logical_disk_size_in_gb, media_link,
                                       source_media_link):
@@ -1189,6 +1180,31 @@ class _XmlSerializer(object):
             ('ShowInGui', image.show_in_gui, _lower)])
 
         return _XmlSerializer.doc_from_xml('VMImage', xml)
+
+    @staticmethod
+    def update_os_image_to_xml(image):
+        xml = _XmlSerializer.data_to_xml(
+            [
+                ('Label', image.label),
+                ('Description', image.description),
+                ('MediaLink', image.media_link),
+                ('Name', image.name),
+                ('OS', image.os)
+            ]
+        )
+        xml += _XmlSerializer.data_to_xml(
+            [
+                ('Language', image.language),
+                ('ImageFamily', image.image_family),
+                ('RecommendedVMSize', image.recommended_vm_size),
+                ('Eula', image.eula),
+                ('IconUri', image.icon_uri),
+                ('SmallIconUri', image.small_icon_uri),
+                ('PrivacyUri', image.privacy_uri),
+                ('PublishedDate', image.published_date)
+            ]
+        )
+        return _XmlSerializer.doc_from_xml('OSImage', xml)
 
     @staticmethod
     def create_website_to_xml(webspace_name, website_name, geo_region, plan,
