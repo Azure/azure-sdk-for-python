@@ -2206,6 +2206,58 @@ class ServiceManagementService(_ServiceManagementClient):
                                      label, media_link, name, os),
                                  async=True)
 
+    def update_os_image_from_image_reference(self, image_name, os_image):
+        '''
+        Updates metadata elements from a given OS image reference.
+
+        image_name:
+            The name of the image to update.
+        os_image:
+            An instance of OSImage class.
+        os_image.label: Optional. Specifies an identifier for the image.
+        os_image.description: Optional. Specifies the description of the image.
+        os_image.language: Optional. Specifies the language of the image.
+        os_image.image_family:
+            Optional. Specifies a value that can be used to group VM Images.
+        os_image.recommended_vm_size:
+            Optional. Specifies the size to use for the Virtual Machine that
+            is created from the VM Image.
+        os_image.eula:
+            Optional. Specifies the End User License Agreement that is
+            associated with the image. The value for this element is a string,
+            but it is recommended that the value be a URL that points to a EULA.
+        os_image.icon_uri:
+            Optional. Specifies the URI to the icon that is displayed for the
+            image in the Management Portal.
+        os_image.small_icon_uri:
+            Optional. Specifies the URI to the small icon that is displayed for
+            the image in the Management Portal.
+        os_image.privacy_uri:
+            Optional. Specifies the URI that points to a document that contains
+            the privacy policy related to the image.
+        os_image.published_date:
+            Optional. Specifies the date when the image was added to the image
+            repository.
+        os.image.media_link:
+            Required: Specifies the location of the blob in Windows Azure
+            blob store where the media for the image is located. The blob
+            location must belong to a storage account in the subscription
+            specified by the <subscription-id> value in the operation call.
+            Example:
+            http://example.blob.core.windows.net/disks/mydisk.vhd
+        os_image.name:
+            Specifies a name for the OS image that Windows Azure uses to
+            identify the image when creating one or more VM Roles.
+        os_image.os:
+            The operating system type of the OS image. Possible values are:
+            Linux, Windows
+        '''
+        _validate_not_none('image_name', image_name)
+        _validate_not_none('os_image', os_image)
+        return self._perform_put(self._get_image_path(image_name),
+            _XmlSerializer.update_os_image_to_xml(os_image), async=True
+        )
+
     def delete_os_image(self, image_name, delete_vhd=False):
         '''
         Deletes the specified OS image from your image repository.
