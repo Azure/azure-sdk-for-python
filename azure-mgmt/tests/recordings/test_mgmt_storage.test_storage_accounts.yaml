@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts?api-version=2014-04-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts43b8102a?api-version=2014-04-01-preview'
   response:
     body: {string: !!python/unicode '{"id":"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_storage_test_storage_accounts","name":"test_mgmt_storage_test_storage_accounts","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
     headers:
@@ -71,7 +71,7 @@ interactions:
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
       x-ms-client-request-id: [1305199b-1bda-4c36-bb66-151c98337e61]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode 'null'}
     headers:
@@ -160,7 +160,7 @@ interactions:
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
       x-ms-client-request-id: [871af809-6a7f-46df-9b71-9058c6e022bf]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -199,7 +199,7 @@ interactions:
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
       x-ms-client-request-id: [c00a7cb1-1358-4449-97ec-75680abac4ad]
     method: POST
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage/listKeys?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/listKeys?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -236,7 +236,7 @@ interactions:
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
       x-ms-client-request-id: [8199f50f-9923-4204-8a7e-9f84425460a3]
     method: POST
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage/regenerateKey?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/regenerateKey?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -271,7 +271,7 @@ interactions:
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
       x-ms-client-request-id: [89f8f215-d8e8-4535-acca-ee80b0b3efd7]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -310,7 +310,7 @@ interactions:
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
       x-ms-client-request-id: [c6131315-fc9e-4c9c-92ae-ba2614f8d47b]
     method: DELETE
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts/providers/Microsoft.Storage/storageAccounts/pyarmstorage?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode ''}
     headers:
