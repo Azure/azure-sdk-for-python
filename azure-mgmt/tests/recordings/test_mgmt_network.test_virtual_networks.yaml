@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_network_test_virtual_networks?api-version=2014-04-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_network_test_virtual_networks4725106e?api-version=2014-04-01-preview'
   response:
     body: {string: !!python/unicode '{"id":"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_network_test_virtual_networks","name":"test_mgmt_network_test_virtual_networks","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
     headers:
@@ -39,7 +39,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks/providers/Microsoft.Network/virtualnetworks/pyvnet?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks/pyvnet4725106e?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode "{\r\n  \"name\": \"pyvnet\",\r\n  \"id\": \"\
         /subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_network_test_virtual_networks/providers/Microsoft.Network/virtualNetworks/pyvnet\"\
@@ -148,7 +148,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks/providers/Microsoft.Network/virtualnetworks/pyvnet?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks/pyvnet4725106e?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -188,7 +188,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks/providers/Microsoft.Network/virtualnetworks?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -269,7 +269,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: DELETE
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks/providers/Microsoft.Network/virtualnetworks/pyvnet?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks/pyvnet4725106e?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode ''}
     headers:
@@ -361,7 +361,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks/providers/Microsoft.Network/virtualnetworks?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |

@@ -12,3 +12,6 @@ script:
   - cd azure-servicemanagement-legacy/tests
   - bash run-legacy-mgmt
   - cd ../..
+  - cd azure-mgmt/tests
+  - bash run-mgmt
+  - cd ../..

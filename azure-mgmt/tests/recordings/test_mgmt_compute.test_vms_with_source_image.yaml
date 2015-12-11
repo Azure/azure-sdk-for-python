@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_compute_test_vms_with_source_image?api-version=2014-04-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_compute_test_vms_with_source_image9cdf1241?api-version=2014-04-01-preview'
   response:
     body: {string: !!python/unicode '{"id":"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_compute_test_vms_with_source_image","name":"test_mgmt_compute_test_vms_with_source_image","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
     headers:
@@ -36,7 +36,7 @@ interactions:
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
       x-ms-client-request-id: [d0263175-58b0-4fdd-8d68-252bb324a0c4]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image/providers/Microsoft.Storage/storageAccounts/pyvmsmstor?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image9cdf1241/providers/Microsoft.Storage/storageAccounts/pyvmsmstor9cdf1241?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode 'null'}
     headers:
@@ -129,7 +129,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image/providers/Microsoft.Network/virtualnetworks/pyvmsmnet?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image9cdf1241/providers/Microsoft.Network/virtualnetworks/pyvmsmnet9cdf1241?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode "{\r\n  \"name\": \"pyvmsmnet\",\r\n  \"id\":\
         \ \"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_compute_test_vms_with_source_image/providers/Microsoft.Network/virtualNetworks/pyvmsmnet\"\
@@ -201,7 +201,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image/providers/Microsoft.Network/virtualnetworks/pyvmsmnet/subnets/pyvmsmsub?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image9cdf1241/providers/Microsoft.Network/virtualnetworks/pyvmsmnet9cdf1241/subnets/pyvmsmsub9cdf1241?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -242,7 +242,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image/providers/Microsoft.Network/networkInterfaces/pyvmsmnic?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image9cdf1241/providers/Microsoft.Network/networkInterfaces/pyvmsmnic9cdf1241?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode "{\r\n  \"name\": \"pyvmsmnic\",\r\n  \"id\":\
         \ \"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_compute_test_vms_with_source_image/providers/Microsoft.Network/networkInterfaces/pyvmsmnic\"\
@@ -312,7 +312,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image/providers/Microsoft.Network/networkInterfaces/pyvmsmnic?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image9cdf1241/providers/Microsoft.Network/networkInterfaces/pyvmsmnic9cdf1241?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -360,7 +360,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image/providers/Microsoft.Compute/virtualMachines/pyvmsmvm?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vms_with_source_image9cdf1241/providers/Microsoft.Compute/virtualMachines/pyvmsmvm9cdf1241?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode "{\r\n  \"properties\": {\r\n    \"hardwareProfile\"\
         : {\r\n      \"vmSize\": \"Standard_A0\"\r\n    },\r\n    \"storageProfile\"\
