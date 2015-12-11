@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_compute_test_availability_sets?api-version=2014-04-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_compute_test_availability_sets53ac1097?api-version=2014-04-01-preview'
   response:
     body: {string: !!python/unicode '{"id":"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_compute_test_availability_sets","name":"test_mgmt_compute_test_availability_sets","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
     headers:
@@ -39,7 +39,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets/providers/Microsoft.Compute/availabilitySets/pyarmset?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -75,7 +75,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets/providers/Microsoft.Compute/availabilitySets/pyarmset?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -111,7 +111,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets/providers/Microsoft.Compute/availabilitySets?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -148,7 +148,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets/providers/Microsoft.Compute/availabilitySets/pyarmset/vmSizes?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097/vmSizes?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -195,7 +195,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: DELETE
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets/providers/Microsoft.Compute/availabilitySets/pyarmset?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode ''}
     headers:

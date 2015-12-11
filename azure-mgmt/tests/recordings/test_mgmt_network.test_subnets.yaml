@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_network_test_subnets?api-version=2014-04-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_network_test_subnetsc2cc0c8f?api-version=2014-04-01-preview'
   response:
     body: {string: !!python/unicode '{"id":"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_network_test_subnets","name":"test_mgmt_network_test_subnets","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
     headers:
@@ -38,7 +38,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnets/providers/Microsoft.Network/virtualnetworks/pysubnet?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualnetworks/pysubnetc2cc0c8f?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode "{\r\n  \"name\": \"pysubnet\",\r\n  \"id\": \"\
         /subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_network_test_subnets/providers/Microsoft.Network/virtualNetworks/pysubnet\"\
@@ -144,7 +144,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: PUT
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnets/providers/Microsoft.Network/virtualnetworks/pysubnet/subnets/pysubnettwo?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualnetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode "{\r\n  \"name\": \"pysubnettwo\",\r\n  \"id\"\
         : \"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_network_test_subnets/providers/Microsoft.Network/virtualNetworks/pysubnet/subnets/pysubnettwo\"\
@@ -240,7 +240,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnets/providers/Microsoft.Network/virtualnetworks/pysubnet?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualnetworks/pysubnetc2cc0c8f?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -280,7 +280,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnets/providers/Microsoft.Network/virtualnetworks/pysubnet/subnets/pysubnettwo?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualnetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -317,7 +317,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnets/providers/Microsoft.Network/virtualnetworks/pysubnet/subnets?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualnetworks/pysubnetc2cc0c8f/subnets?api-version=2015-05-01-preview'
   response:
     body:
       string: !!binary |
@@ -355,7 +355,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: DELETE
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnets/providers/Microsoft.Network/virtualnetworks/pysubnet/subnets/pysubnettwo?api-version=2015-05-01-preview'
+    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_subnetsc2cc0c8f/providers/Microsoft.Network/virtualnetworks/pysubnetc2cc0c8f/subnets/pysubnettwoc2cc0c8f?api-version=2015-05-01-preview'
   response:
     body: {string: !!python/unicode ''}
     headers:
