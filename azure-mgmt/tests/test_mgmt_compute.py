@@ -308,7 +308,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
-    @unittest.skip
     @record
     def test_vm_extension_images(self):
         result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
