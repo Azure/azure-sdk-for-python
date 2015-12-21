@@ -1191,6 +1191,31 @@ class _XmlSerializer(object):
         return _XmlSerializer.doc_from_xml('VMImage', xml)
 
     @staticmethod
+    def update_os_image_to_xml(image):
+        xml = _XmlSerializer.data_to_xml(
+            [
+                ('Label', image.label),
+                ('Description', image.description),
+                ('MediaLink', image.media_link),
+                ('Name', image.name),
+                ('OS', image.os)
+            ]
+        )
+        xml += _XmlSerializer.data_to_xml(
+            [
+                ('Language', image.language),
+                ('ImageFamily', image.image_family),
+                ('RecommendedVMSize', image.recommended_vm_size),
+                ('Eula', image.eula),
+                ('IconUri', image.icon_uri),
+                ('SmallIconUri', image.small_icon_uri),
+                ('PrivacyUri', image.privacy_uri),
+                ('PublishedDate', image.published_date)
+            ]
+        )
+        return _XmlSerializer.doc_from_xml('OSImage', xml)
+
+    @staticmethod
     def create_website_to_xml(webspace_name, website_name, geo_region, plan,
                               host_names, compute_mode, server_farm, site_mode):
         xml = '<HostNames xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">'
