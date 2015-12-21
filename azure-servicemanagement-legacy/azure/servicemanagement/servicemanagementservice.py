@@ -306,6 +306,11 @@ class ServiceManagementService(_ServiceManagementClient):
     def list_hosted_services(self):
         '''
         Lists the hosted services available under the current subscription.
+
+        Note that you will receive a list of HostedService instances, without
+        all details inside. For instance, deployments will be None. If you
+        want deployments information for a specific host service, you have to
+        call get_hosted_service_properties with embed_detail=True.
         '''
         return self._perform_get(self._get_hosted_service_path(),
                                  HostedServices)
