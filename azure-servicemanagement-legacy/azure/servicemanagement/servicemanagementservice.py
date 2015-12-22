@@ -1297,7 +1297,7 @@ class ServiceManagementService(_ServiceManagementClient):
             network configuration set you will not be able to access the VM
             through VIPs over the internet. If your virtual machine belongs to
             a virtual network you can not specify which subnet address space
-            it resides under.
+            it resides under. Use an instance of ConfigurationSet.
         availability_set_name:
             Specifies the name of an availability set to which to add the
             virtual machine. This value controls the virtual machine
@@ -1325,7 +1325,8 @@ class ServiceManagementService(_ServiceManagementClient):
         resource_extension_references:
             Optional. Contains a collection of resource extensions that are to
             be installed on the Virtual Machine. This element is used if
-            provision_guest_agent is set to True.
+            provision_guest_agent is set to True. Use an iterable of instances
+            of ResourceExtensionReference.
         provision_guest_agent:
             Optional. Indicates whether the VM Agent is installed on the
             Virtual Machine. To run a resource extension in a Virtual Machine,
