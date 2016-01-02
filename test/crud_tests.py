@@ -21,8 +21,8 @@ from struct import *
 from __builtin__ import *
 
 # localhost
-masterKey = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-host = 'https://localhost:443'
+masterKey = '[YOUR_KEY_HERE]'
+host = '[YOUR_ENDPOINT_HERE]'
 
 
 class CRUDTests(unittest.TestCase):
