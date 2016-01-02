@@ -10,7 +10,15 @@ import pydocumentdb.documents as documents
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
 import pydocumentdb.http_constants as http_constants
+import pydocumentdb.hash_partition_resolver as hash_partition_resolver
+import pydocumentdb.range_partition_resolver as range_partition_resolver
+import pydocumentdb.murmur_hash as murmur_hash
+import pydocumentdb.consistent_hash_ring as consistent_hash_ring
+import pydocumentdb.range as partition_range
+import test_partition_resolver as test_partition_resolver
 
+from struct import *
+from __builtin__ import *
 
 # localhost
 masterKey = '[YOUR_KEY_HERE]'
@@ -270,6 +278,429 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(404,
                                            client.ReadDocument,
                                            self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based))
+    
+    def test_partitioning(self):
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+        # create test database
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        # Create bunch of collections participating in partitioning
+        collection0 = client.CreateCollection(
+            self.GetDatabaseLink(created_db, True),
+            { 'id': 'coll_0' })
+        collection1 = client.CreateCollection(
+            self.GetDatabaseLink(created_db, True),
+            { 'id': 'coll_1' })
+        collection2 = client.CreateCollection(
+            self.GetDatabaseLink(created_db, True),
+            { 'id': 'coll_2' })
+
+        # Register the collection links for partitioning through partition resolver
+        collection_links = [self.GetDocumentCollectionLink(created_db, collection0, True), self.GetDocumentCollectionLink(created_db, collection1, True), self.GetDocumentCollectionLink(created_db, collection2, True)]
+        partition_resolver = test_partition_resolver.TestPartitionResolver(collection_links)
+        client.RegisterPartitionResolver(self.GetDatabaseLink(created_db, True), partition_resolver)
+
+        # create a document using the document definition
+        document_definition = { 'id': '0',
+                                'name': 'sample document',
+                                'key': 'value' }
+        
+        client.CreateDocument(
+            self.GetDatabaseLink(created_db, True),
+            document_definition)
+
+        # Read the documents in collection1 and verify that the count is 1 now
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, collection0, True)))
+        self.assertEqual(1, len(documents))
+        
+        # Verify that it contains the document with Id 0
+        self.assertEqual('0', documents[0]['id'])
+
+        document_definition['id'] = '1'
+
+        client.CreateDocument(
+            self.GetDatabaseLink(created_db, True),
+            document_definition)
+
+        # Read the documents in collection1 and verify that the count is 1 now
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, collection1, True)))
+        self.assertEqual(1, len(documents))
+
+        # Verify that it contains the document with Id 1
+        self.assertEqual('1', documents[0]['id'])
+
+        document_definition['id'] = '2'
+
+        client.CreateDocument(
+            self.GetDatabaseLink(created_db, True),
+            document_definition)
+
+        # Read the documents in collection2 and verify that the count is 1 now
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, collection2, True)))
+        self.assertEqual(1, len(documents))
+
+        # Verify that it contains the document with Id 2
+        self.assertEqual('2', documents[0]['id'])
+
+        # Updating the value of "key" property to test UpsertDocument(replace scenario)
+        document_definition['id'] = '0'
+        document_definition['key'] = 'new value'
+
+        client.UpsertDocument(
+            self.GetDatabaseLink(created_db, True),
+            document_definition)
+
+        # Read the documents in collection0 and verify that the count is still 1
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, collection0, True)))
+        self.assertEqual(1, len(documents))
+
+        # Verify that it contains the document with new key value
+        self.assertEqual(document_definition['key'], documents[0]['key'])
+
+        # Query documents in all collections(since no partition key specified) using query string
+        documents = list(client.QueryDocuments(
+            self.GetDatabaseLink(created_db, True),
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=\'2\''
+            }))
+        self.assertEqual(1, len(documents))
+
+        # Updating the value of id property to test UpsertDocument(create scenario)
+        document_definition['id'] = '4'
+
+        client.UpsertDocument(
+            self.GetDatabaseLink(created_db, True),
+            document_definition)
+
+        # Read the documents in collection1 and verify that the count is 2 now
+        documents = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, collection1, True)))
+        self.assertEqual(2, len(documents))
+
+        # Query documents in all collections(since no partition key specified) using query spec
+        documents = list(client.QueryDocuments(
+            self.GetDatabaseLink(created_db, True),
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters': [
+                    { 'name':'@id', 'value':document_definition['id'] }
+                ]
+            }))
+        self.assertEqual(1, len(documents))
+
+        # Query documents in collection(with partition key of '4' specified) which resolves to collection1
+        documents = list(client.QueryDocuments(
+            self.GetDatabaseLink(created_db, True),
+            {
+                'query': 'SELECT * FROM root r'
+            }, {}, document_definition['id']))
+        self.assertEqual(2, len(documents))
+
+        # Query documents in collection(with partition key '5' specified) which resolves to collection2 but non existent document in that collection
+        documents = list(client.QueryDocuments(
+            self.GetDatabaseLink(created_db, True),
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=@id',
+                'parameters': [
+                    { 'name':'@id', 'value':document_definition['id'] }
+                ]
+            }, {}, '5'))
+        self.assertEqual(0, len(documents))
+
+    
+    # Partitioning test(with paging)
+    def test_partition_paging(self):
+        client = document_client.DocumentClient(host,
+                                                {'masterKey': masterKey})
+        # create test database
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        # Create bunch of collections participating in partitioning
+        collection0 = client.CreateCollection(
+            self.GetDatabaseLink(created_db, True),
+            { 'id': 'coll_0' })
+        collection1 = client.CreateCollection(
+            self.GetDatabaseLink(created_db, True),
+            { 'id': 'coll_1' })
+        
+        # Register the collection links for partitioning through partition resolver
+        collection_links = [self.GetDocumentCollectionLink(created_db, collection0, True), self.GetDocumentCollectionLink(created_db, collection1, True)]
+        partition_resolver = test_partition_resolver.TestPartitionResolver(collection_links)
+        client.RegisterPartitionResolver(self.GetDatabaseLink(created_db, True), partition_resolver)
+        
+        # Create document definition used to create documents
+        document_definition = { 'id': '0',
+                                'name': 'sample document',
+                                'key': 'value' }
+        
+        # Create 10 documents each with a different id starting from 0 to 9
+        for i in range(0, 10):
+            document_definition['id'] = str(i);
+            client.CreateDocument(
+                self.GetDatabaseLink(created_db, True),
+                document_definition)
+
+        # Query the documents to ensure that you get the correct count(no paging)
+        documents = list(client.QueryDocuments(
+            self.GetDatabaseLink(created_db, True),
+            {
+                'query': 'SELECT * FROM root r WHERE r.id < \'7\''
+            }))
+        self.assertEqual(7, len(documents))
+
+        # Query the documents with maxItemCount to restrict the max number of documents returned
+        queryIterable = client.QueryDocuments(
+            self.GetDatabaseLink(created_db, True),
+            {
+                'query': 'SELECT * FROM root r WHERE r.id < \'7\''
+            }, {'maxItemCount':3})
+
+        # Query again and count the number of documents(with paging)
+        docCount = 0
+        for doc in queryIterable:
+            docCount += 1
+
+        self.assertEqual(7, docCount)
+
+        # Query again to test fetch_next_block to ensure that it returns the correct number of documents everytime it's called
+        queryIterable = client.QueryDocuments(
+            self.GetDatabaseLink(created_db, True),
+            {
+                'query': 'SELECT * FROM root r WHERE r.id < \'7\''
+            }, {'maxItemCount':3})
+
+        # Documents with id 0, 2, 4(in collection0)
+        self.assertEqual(3, len(queryIterable.fetch_next_block()))
+
+        # Documents with id 6(in collection0)
+        self.assertEqual(1, len(queryIterable.fetch_next_block()))
+
+        # Documents with id 1, 3, 5(in collection1)
+        self.assertEqual(3, len(queryIterable.fetch_next_block()))
+
+        # No more documents
+        self.assertEqual(0, len(queryIterable.fetch_next_block()))
+
+        # Set maxItemCount to -1 to lift the limit on max documents returned by the query
+        queryIterable = client.QueryDocuments(
+            self.GetDatabaseLink(created_db, True),
+            {
+                'query': 'SELECT * FROM root r WHERE r.id < \'7\''
+            }, {'maxItemCount':-1})
+
+        # Documents with id 0, 2, 4, 6(all docs in collection0 adhering to query condition)
+        self.assertEqual(4, len(queryIterable.fetch_next_block()))
+
+        # Documents with id 1, 3, 5(all docs in collection1 adhering to query condition)
+        self.assertEqual(3, len(queryIterable.fetch_next_block()))
+
+        # No more documents
+        self.assertEqual(0, len(queryIterable.fetch_next_block()))
+        
+    def test_hash_partition_resolver(self):
+        created_db = { 'id': 'sample database' }
+        
+        # Create bunch of collections participating in partitioning
+        collection0 = { 'id': 'coll_0' }
+        collection1 = { 'id': 'coll_1' }
+
+        collection_links = [self.GetDocumentCollectionLink(created_db, collection0, True), self.GetDocumentCollectionLink(created_db, collection1, True)]
+
+        id_partition_key_extractor = lambda document: document['id']
+        
+        hashpartition_resolver = hash_partition_resolver.HashPartitionResolver(id_partition_key_extractor, collection_links)
+
+        # create a document using the document definition
+        document_definition = { 'id': '0',
+                                'name': 'sample document',
+                                'key': 'value' }
+        
+        document_definition['id'] = '2'
+
+        collection_link = hashpartition_resolver.ResolveForCreate(document_definition)
+
+        read_collection_links = hashpartition_resolver.ResolveForRead(document_definition['id'])
+
+        self.assertEqual(1, len(read_collection_links))
+        self.assertEqual(collection_link, read_collection_links[0])
+
+    def test_consistent_hash_ring(self):
+        created_db = { 'id': 'db' }
+
+        collection_links = list()
+        expected_partition_list = list()
+        
+        total_collections_count = 2
+
+        collection = { 'id': 'coll' }
+
+        for i in range(0, total_collections_count):
+            collection['id'] = 'coll' + str(i)
+            collection_link = self.GetDocumentCollectionLink(created_db, collection, True)
+            collection_links.append(collection_link)
+
+        expected_partition_list.append(('dbs/db/colls/coll0', 1076200484L))
+        expected_partition_list.append(('dbs/db/colls/coll0', 1302652881L))
+        expected_partition_list.append(('dbs/db/colls/coll0', 2210251988L))
+        expected_partition_list.append(('dbs/db/colls/coll1', 2341558382L))
+        expected_partition_list.append(('dbs/db/colls/coll0', 2348251587L))
+        expected_partition_list.append(('dbs/db/colls/coll0', 2887945459L))
+        expected_partition_list.append(('dbs/db/colls/coll1', 2894403633L))
+        expected_partition_list.append(('dbs/db/colls/coll1', 3031617259L))
+        expected_partition_list.append(('dbs/db/colls/coll1', 3090861424L))
+        expected_partition_list.append(('dbs/db/colls/coll1', 4222475028L))
+
+        id_partition_key_extractor = lambda document: document['id']
+        
+        hashpartition_resolver = hash_partition_resolver.HashPartitionResolver(id_partition_key_extractor, collection_links, 5)
+
+        actual_partition_list = hashpartition_resolver.consistent_hash_ring._GetSerializedPartitionList()
+
+        self.assertEqual(len(expected_partition_list), len(actual_partition_list))
+
+        for i in range(0, len(expected_partition_list)):
+            self.assertEqual(actual_partition_list[i][0], expected_partition_list[i][0])
+            self.assertEqual(actual_partition_list[i][1], expected_partition_list[i][1])
+
+        # Querying for a document and verifying that it's in the expected collection
+        read_collection_links = hashpartition_resolver.ResolveForRead("beadledom")
+
+        self.assertEqual(1, len(read_collection_links))
+
+        collection['id'] = 'coll1'
+        collection_link = self.GetDocumentCollectionLink(created_db, collection, True)
+
+        self.assertTrue(collection_link in read_collection_links)
+
+        # Querying for a document and verifying that it's in the expected collection
+        read_collection_links = hashpartition_resolver.ResolveForRead("999")
+
+        self.assertEqual(1, len(read_collection_links))
+
+        collection['id'] = 'coll0'
+        collection_link = self.GetDocumentCollectionLink(created_db, collection, True)
+
+        self.assertTrue(collection_link in read_collection_links)
+
+    def test_murmur_hash(self):
+        str = 'afdgdd'
+        bytes = bytearray(str, encoding='utf-8')
+
+        hash_value = murmur_hash._MurmurHash._ComputeHash(bytes)
+        self.assertEqual(1099701186L, hash_value)
+
+        num = 374.0
+        bytes = bytearray(pack('d', num))
+
+        hash_value = murmur_hash._MurmurHash._ComputeHash(bytes)
+        self.assertEqual(3717946798L, hash_value)
+
+        self._validate_bytes("", 0x1B873593, bytearray(b'\xEE\xA8\xA2\x67'), 1738713326L);
+        self._validate_bytes("1", 0xE82562E4, bytearray(b'\xD0\x92\x24\xED'), 3978597072L);
+        self._validate_bytes("00", 0xB4C39035, bytearray(b'\xFA\x09\x64\x1B'), 459540986L);
+        self._validate_bytes("eyetooth", 0x8161BD86, bytearray(b'\x98\x62\x1C\x6F'), 1864131224L);
+        self._validate_bytes("acid", 0x4DFFEAD7, bytearray(b'\x36\x92\xC0\xB9'), 3116405302L);
+        self._validate_bytes("elevation", 0x1A9E1828, bytearray(b'\xA9\xB6\x40\xDF'), 3745560233L);
+        self._validate_bytes("dent", 0xE73C4579, bytearray(b'\xD4\x59\xE1\xD3'), 3554761172L);
+        self._validate_bytes("homeland", 0xB3DA72CA, bytearray(b'\x06\x4D\x72\xBB'), 3144830214L);
+        self._validate_bytes("glamor", 0x8078A01B, bytearray(b'\x89\x89\xA2\xA7'), 2812447113L);
+        self._validate_bytes("flags", 0x4D16CD6C, bytearray(b'\x52\x87\x66\x02'), 40273746L);
+        self._validate_bytes("democracy", 0x19B4FABD, bytearray(b'\xE4\x55\xD6\xB0'), 2966836708L);
+        self._validate_bytes("bumble", 0xE653280E, bytearray(b'\xFE\xD7\xC3\x0C'), 214161406L);
+        self._validate_bytes("catch", 0xB2F1555F, bytearray(b'\x98\x4B\xB6\xCD'), 3451276184L);
+        self._validate_bytes("omnomnomnivore", 0x7F8F82B0, bytearray(b'\x38\xC4\xCD\xFF'), 4291675192L);
+        self._validate_bytes("The quick brown fox jumps over the lazy dog", 0x4C2DB001, bytearray(b'\x6D\xAB\x8D\xC9'), 3381504877L)
+
+    def _validate_bytes(self, str, seed, expected_hash_bytes, expected_value):
+        hash_value = murmur_hash._MurmurHash._ComputeHash(bytearray(str, encoding='utf-8'), seed)
+        bytes = bytearray(pack('I', hash_value))
+        self.assertEqual(expected_value, hash_value)
+        self.assertEqual(expected_hash_bytes, bytes)
+
+    def test_get_bytes(self):
+        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("documentdb")
+        expected_bytes = bytearray(b'\x64\x6F\x63\x75\x6D\x65\x6E\x74\x64\x62')
+        self.assertEqual(expected_bytes, actual_bytes)
+
+        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("azure")
+        expected_bytes = bytearray(b'\x61\x7A\x75\x72\x65')
+        self.assertEqual(expected_bytes, actual_bytes)
+
+        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("json")
+        expected_bytes = bytearray(b'\x6A\x73\x6F\x6E')
+        self.assertEqual(expected_bytes, actual_bytes)
+
+        actual_bytes = consistent_hash_ring._ConsistentHashRing._GetBytes("nosql")
+        expected_bytes = bytearray(b'\x6E\x6F\x73\x71\x6C')
+        self.assertEqual(expected_bytes, actual_bytes)
+
+    def test_range_partition_resolver(self):
+        # create test database
+        created_db = { 'id': 'sample database' }
+        
+        # Create bunch of collections participating in partitioning
+        collection0 = { 'id': 'coll_0' }
+        collection1 = { 'id': 'coll_1' }
+        collection2 = { 'id': 'coll_2' }
+
+        collection_links = [self.GetDocumentCollectionLink(created_db, collection0, True), self.GetDocumentCollectionLink(created_db, collection1, True), self.GetDocumentCollectionLink(created_db, collection2, True)]
+        
+        val_partition_key_extractor = lambda document: document['val']
+
+        ranges =[partition_range.Range(0,400), partition_range.Range(401,800), partition_range.Range(501,1200)]
+
+        partition_map = dict([(ranges[0],collection_links[0]), (ranges[1],collection_links[1]), (ranges[2],collection_links[2])])
+
+        rangepartition_resolver = range_partition_resolver.RangePartitionResolver(val_partition_key_extractor, partition_map)
+        
+        # create a document using the document definition
+        document_definition = { 'id': '0',
+                                'name': 'sample document',
+                                'val': 0 }
+        
+        document_definition['val'] = 400
+
+        collection_link = rangepartition_resolver.ResolveForCreate(document_definition)
+        self.assertEquals(collection_links[0], collection_link)
+
+        read_collection_links = rangepartition_resolver.ResolveForRead(600)
+
+        self.assertEqual(2, len(read_collection_links))
+        self.assertTrue(collection_links[1] in read_collection_links)
+        self.assertTrue(collection_links[2] in read_collection_links)
+
+        read_collection_links = rangepartition_resolver.ResolveForRead(partition_range.Range(250, 500))
+
+        self.assertEqual(2, len(read_collection_links))
+        self.assertTrue(collection_links[0] in read_collection_links)
+        self.assertTrue(collection_links[1] in read_collection_links)
+
+        read_collection_links = rangepartition_resolver.ResolveForRead(list([partition_range.Range(250, 500), partition_range.Range(600, 1000)]))
+
+        self.assertEqual(3, len(read_collection_links))
+        self.assertTrue(collection_links[0] in read_collection_links)
+        self.assertTrue(collection_links[1] in read_collection_links)
+        self.assertTrue(collection_links[2] in read_collection_links)
+
+        read_collection_links = rangepartition_resolver.ResolveForRead(list([50, 100, 600, 1000]))
+
+        self.assertEqual(3, len(read_collection_links))
+        self.assertTrue(collection_links[0] in read_collection_links)
+        self.assertTrue(collection_links[1] in read_collection_links)
+        self.assertTrue(collection_links[2] in read_collection_links)
+
+        read_collection_links = rangepartition_resolver.ResolveForRead(list([100, None]))
+
+        self.assertEqual(3, len(read_collection_links))
+        self.assertTrue(collection_links[0] in read_collection_links)
+        self.assertTrue(collection_links[1] in read_collection_links)
+        self.assertTrue(collection_links[2] in read_collection_links)
+
 
     # Upsert test for Document resource - selflink version
     def test_document_upsert_self_link(self):

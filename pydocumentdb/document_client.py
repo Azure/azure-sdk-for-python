@@ -80,6 +80,8 @@ class DocumentClient(object):
 
         self.retry_policy = documents.RetryPolicy()
 
+        self.partition_resolvers = {}
+
         self.default_headers = {
             http_constants.HttpHeaders.CacheControl: 'no-cache',
             http_constants.HttpHeaders.Version:
@@ -99,6 +101,39 @@ class DocumentClient(object):
         # application/sql is no longer supported.
         self._query_compatibility_mode = DocumentClient._QueryCompatibilityMode.Default
 
+    def RegisterPartitionResolver(self, database_link, partition_resolver):
+        """Registers the partition resolver associated with the database link
+
+        :Parameters:
+            - `database_link`: str, database Self Link or ID based link
+            - `partition_resolver`: object, an instance of PartitionResolver
+        
+        """
+        if not database_link:
+            raise ValueError("database_link is None or empty.")
+
+        if partition_resolver is None:
+            raise ValueError("partition_resolver is None.")
+
+        self.partition_resolvers = {base.TrimBeginningAndEndingSlashes(database_link): partition_resolver}
+
+
+    def GetPartitionResolver(self, database_link):
+        """Gets the partition resolver associated with the database link
+
+        :Parameters:
+            - `database_link`: str, database self link or ID based link
+
+        :Returns:
+            object, an instance of PartitionResolver
+        
+        """
+        if not database_link:
+            raise ValueError("database_link is None or empty.")
+
+        return self.partition_resolvers.get(base.TrimBeginningAndEndingSlashes(database_link))
+
+        
     def CreateDatabase(self, database, options={}):
         """Creates a database.
 
@@ -577,35 +612,40 @@ class DocumentClient(object):
         """
         return self.QueryDocuments(collection_link, None, feed_options)
 
-    def QueryDocuments(self, collection_link, query, options={}):
+    def QueryDocuments(self, database_or_collection_link, query, options={}, partition_key=None):
         """Queries documents in a collection.
 
         :Parameters:
-            - `collection_link`: str, the link to the document collection.
+            - `database_or_collection_link`: str, the link to the database when using partitioning, otherwise link to the document collection.
             - `query`: str or dict.
             - `options`: dict, the request options for the request.
+            - `partition_key`: str, partition key for the query(default value None)
 
         :Returns:
             query_iterable.QueryIterable
 
         """
-        path = base.GetPathFromLink(collection_link, 'docs')
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-        def fetch_fn(options):
-            return self.__QueryFeed(path,
-                                    'docs',
-                                    collection_id,
-                                    lambda r: r['Documents'],
-                                    lambda _, b: b,
-                                    query,
-                                    options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        if(base.IsDatabaseLink(database_or_collection_link)):
+            # Python doesn't have a good way of specifying an overloaded constructor, and this is how it's generally overloaded constructors are specified(by calling a @classmethod) and returning the 'self' instance
+            return query_iterable.QueryIterable.PartitioningQueryIterable(self, options, self.retry_policy, database_or_collection_link, query, partition_key)
+        else:    
+            path = base.GetPathFromLink(database_or_collection_link, 'docs')
+            collection_id = base.GetResourceIdOrFullNameFromLink(database_or_collection_link)
+            def fetch_fn(options):
+                return self.__QueryFeed(path,
+                                        'docs',
+                                        collection_id,
+                                        lambda r: r['Documents'],
+                                        lambda _, b: b,
+                                        query,
+                                        options), self.last_response_headers
+            return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def CreateDocument(self, collection_link, document, options={}):
+    def CreateDocument(self, database_or_collection_link, document, options={}):
         """Creates a document in a collection.
 
         :Parameters:
-            - `collection_link`: str, the link to the document collection.
+            - `database_or_collection_link`: str, the link to the database when using partitioning, otherwise link to the document collection.
             - `document`: dict, the Azure DocumentDB document to create.
             - `document['id']`: str, id of the document, MUST be unique for each
               document.
@@ -618,7 +658,7 @@ class DocumentClient(object):
             dict
 
         """
-        collection_id, document, path = self._GetCollectionIdWithPathForDocument(collection_link, document, options)
+        collection_id, document, path = self._GetCollectionIdWithPathForDocument(database_or_collection_link, document, options)
         return self.Create(document,
                            path,
                            'docs',
@@ -626,11 +666,11 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def UpsertDocument(self, collection_link, document, options={}):
+    def UpsertDocument(self, database_or_collection_link, document, options={}):
         """Upserts a document in a collection.
 
         :Parameters:
-            - `collection_link`: str, the link to the document collection.
+            - `database_or_collection_link`: str, the link to the database when using partitioning, otherwise link to the document collection.
             - `document`: dict, the Azure DocumentDB document to upsert.
             - `document['id']`: str, id of the document, MUST be unique for each
               document.
@@ -643,7 +683,7 @@ class DocumentClient(object):
             dict
 
         """
-        collection_id, document, path = self._GetCollectionIdWithPathForDocument(collection_link, document, options)
+        collection_id, document, path = self._GetCollectionIdWithPathForDocument(database_or_collection_link, document, options)
         return self.Upsert(document,
                            path,
                            'docs',
@@ -651,12 +691,33 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def _GetCollectionIdWithPathForDocument(self, collection_link, document, options):
+    PartitionResolverErrorMessage = "Couldn't find any partition resolvers for the database link provided. Ensure that the link you used when registering the partition resolvers matches the link provided or you need to register both types of database link(self link as well as ID based link)."
+
+    # Gets the collection id and path for the document
+    def _GetCollectionIdWithPathForDocument(self, database_or_collection_link, document, options):
+        
+        if not database_or_collection_link:
+            raise ValueError("database_or_collection_link is None or empty.")
+
+        if document is None:
+            raise ValueError("document is None.")
+
         DocumentClient.__ValidateResource(document)
         document = document.copy()
         if (not document.get('id') and
             not options.get('disableAutomaticIdGeneration')):
             document['id'] = base.GenerateGuidId()
+        
+        collection_link = database_or_collection_link
+
+        if(base.IsDatabaseLink(database_or_collection_link)):
+            partition_resolver = self.GetPartitionResolver(database_or_collection_link)
+        
+            if(partition_resolver != None):
+                collection_link = partition_resolver.ResolveForCreate(document)
+            else:
+                raise ValueError(PartitionResolverErrorMessage)
+        
         path = base.GetPathFromLink(collection_link, 'docs')
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, document, path
@@ -1920,6 +1981,27 @@ class DocumentClient(object):
                                                         query_params=None,
                                                         headers=headers)
 
+    def QueryFeed(self, path, collection_id, query, options):
+        """Query Feed for Document Collection resource.
+
+        :Parameters:
+            - `path`: str, path to the document collection
+            - `collection_id`: str, id of the document collection
+            - `query`: str or dict
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            tuple
+
+        """
+        return self.__QueryFeed(path,
+                                'docs',
+                                collection_id,
+                                lambda r: r['Documents'],
+                                lambda _, b: b,
+                                query,
+                                options), self.last_response_headers
+    
     def __QueryFeed(self,
                     path,
                     type,

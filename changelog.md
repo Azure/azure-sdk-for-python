@@ -1,3 +1,7 @@
+## Changes in 1.5.0 : ##
+
+- Added Client-side sharding framework to the SDK. Implemented HashPartionResolver and RangePartitionResolver classes.
+
 ## Changes in 1.4.2 : ##
 
 - Functionally same as 1.4.1. Fixing the error in the included wheel of the project.

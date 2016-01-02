@@ -261,6 +261,38 @@ def IsNameBased(link):
 
     return False;
 
+def IsDatabaseLink(link):
+    """Finds whether the link is a database Self Link or a database ID based link
+
+    :Parameters:
+        - `link`: str, link to analyze
+
+    :Returns:
+        boolean, True or False.
+
+    """
+    if not link:
+        return False
+
+    # trimming the leading and trailing "/" from the input string
+    link = TrimBeginningAndEndingSlashes(link)
+
+    # Splitting the link(separated by "/") into parts 
+    parts = link.split('/')
+
+    if len(parts) != 2:
+    	return False
+
+    # First part should be "dbs" 
+    if not parts[0] or not parts[0].lower() == 'dbs':
+        return False
+
+    # The second part is the database id(ResourceID or Name) and cannot be empty
+    if not parts[1]:
+    	return False
+
+    return True;
+
 def DecodeBase64String(string_to_decode):
     """Decodes a Base64 encoded string by replacing '-' with '/' 
 

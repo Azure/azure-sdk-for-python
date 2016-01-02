@@ -22,9 +22,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="README.md" />
+    <Compile Include="pydocumentdb\consistent_hash_ring.py" />
     <Compile Include="pydocumentdb\errors.py" />
+    <Compile Include="pydocumentdb\hash_partition_resolver.py" />
     <Compile Include="pydocumentdb\http_constants.py" />
+    <Compile Include="pydocumentdb\murmur_hash.py" />
+    <Compile Include="pydocumentdb\partition.py" />
     <Compile Include="pydocumentdb\query_iterable.py" />
+    <Compile Include="pydocumentdb\range.py" />
+    <Compile Include="pydocumentdb\range_partition_resolver.py" />
     <Compile Include="pydocumentdb\runtime_constants.py" />
     <Compile Include="setup.py" />
     <Compile Include="test\crud_tests.py" />
@@ -36,6 +42,7 @@
     <Compile Include="pydocumentdb\https_connection.py" />
     <Compile Include="pydocumentdb\synchronized_request.py" />
     <Compile Include="pydocumentdb\__init__.py" />
+    <Compile Include="test\test_partition_resolver.py" />
     <Compile Include="test\__init__.py" />
   </ItemGroup>
   <ItemGroup>
