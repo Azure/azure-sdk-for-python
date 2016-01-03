@@ -4,14 +4,6 @@
 
 ## Changes in 1.4.2 : ##
 
-- Functionally same as 1.4.1. Fixing the error in the included wheel of the project.
-
-## Changes in 1.4.1 : ##
-
-- Same as 1.4.0. Had to bump the version in order to include the wheel for the project.
-
-## Changes in 1.4.0 : ##
-
 - Implement Upsert. New UpsertXXX methods added to support Upsert feature.
 - Implement ID Based Routing. No public API changes, all changes internal.
 
