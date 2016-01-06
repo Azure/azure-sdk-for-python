@@ -1655,7 +1655,8 @@ class VirtualMachineInstanceView(ResourceInstanceView):
         self._vm_agent = kwargs.get('vm_agent')
         self._disks = kwargs.get('disks')
         self._extensions = kwargs.get('extensions')
-    
+        self._statuses = kwargs.get('statuses')
+
     @property
     def disks(self):
         """
@@ -1711,6 +1712,17 @@ class VirtualMachineInstanceView(ResourceInstanceView):
     def remote_desktop_thumbprint(self, value):
         self._remote_desktop_thumbprint = value
     
+    @property
+    def statuses(self):
+        """
+         Gets or sets the VM status.
+        """
+        return self._statuses
+
+    @statuses.setter
+    def statuses(self, value):
+        self._statuses = value
+
     @property
     def vm_agent(self):
         """
