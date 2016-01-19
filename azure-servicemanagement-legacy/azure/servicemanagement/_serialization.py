@@ -1195,22 +1195,16 @@ class _XmlSerializer(object):
         xml = _XmlSerializer.data_to_xml(
             [
                 ('Label', image.label),
-                ('Description', image.description),
-                ('MediaLink', image.media_link),
-                ('Name', image.name),
-                ('OS', image.os)
-            ]
-        )
-        xml += _XmlSerializer.data_to_xml(
-            [
-                ('Language', image.language),
-                ('ImageFamily', image.image_family),
-                ('RecommendedVMSize', image.recommended_vm_size),
                 ('Eula', image.eula),
-                ('IconUri', image.icon_uri),
-                ('SmallIconUri', image.small_icon_uri),
+                ('Description', image.description),
+                ('ImageFamily', image.image_family),
+                ('PublishedDate', image.published_date),
+                ('ShowInGui', image.show_in_gui, _lower),
                 ('PrivacyUri', image.privacy_uri),
-                ('PublishedDate', image.published_date)
+                ('IconUri', image.icon_uri),
+                ('RecommendedVMSize', image.recommended_vm_size),
+                ('SmallIconUri', image.small_icon_uri),
+                ('Language', image.language)
             ]
         )
         return _XmlSerializer.doc_from_xml('OSImage', xml)
