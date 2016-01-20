@@ -58,6 +58,6 @@ setup(
         'azure-mgmt==0.20.2',
         'azure-servicebus==0.20.1',
         'azure-storage==0.20.3',
-        'azure-servicemanagement-legacy==0.20.1',
+        'azure-servicemanagement-legacy==0.20.2',
     ],
 )
