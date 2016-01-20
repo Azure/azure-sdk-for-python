@@ -16,7 +16,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['530']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2012-03-01']
     method: PUT
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/serviceBus/Namespaces/uts57c71e01
@@ -41,7 +41,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2012-03-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/serviceBus/Namespaces/uts57c71e01
@@ -66,7 +66,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2012-03-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/serviceBus/Namespaces/uts57c71e01
@@ -91,7 +91,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2012-03-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/serviceBus/Namespaces/uts57c71e01
@@ -116,7 +116,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2012-03-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/serviceBus/Namespaces/uts57c71e01
@@ -153,7 +153,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['530']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2012-03-01']
     method: PUT
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/serviceBus/Namespaces/uts57c71e01
