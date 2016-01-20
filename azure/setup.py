@@ -35,7 +35,7 @@ except ImportError:
 
 setup(
     name='azure',
-    version='1.0.2',
+    version='1.0.3',
     description='Microsoft Azure Client Libraries for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',

@@ -10,7 +10,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['214']
       Content-Type: [application/xml]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/sqlservers/servers
@@ -37,7 +37,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['203']
       Content-Type: [application/xml]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/sqlservers/servers/h4olqh8ajq/databases
@@ -65,7 +65,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['105']
       Content-Type: [application/xml]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: PUT
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/sqlservers/servers/h4olqh8ajq/databases/temp
@@ -90,7 +90,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/sqlservers/servers//h4olqh8ajq/databases?contentview=generic

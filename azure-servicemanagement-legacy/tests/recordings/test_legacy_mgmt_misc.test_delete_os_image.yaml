@@ -12,7 +12,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['304']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images
@@ -33,7 +33,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/308bbf6bc0e2b571bad2972e71fc7146
@@ -55,7 +55,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: DELETE
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimg71c61117
@@ -74,7 +74,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/9cd364d7d6b0b688b94c725515afa7ad
@@ -94,7 +94,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimg71c61117

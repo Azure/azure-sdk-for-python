@@ -10,7 +10,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['223']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: PUT
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/cloudservices/cloud_service_22111509
@@ -30,7 +30,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/2bee59eed982b4fea68495c65accd810
@@ -50,7 +50,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/2bee59eed982b4fea68495c65accd810
@@ -70,7 +70,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/cloudservices
