@@ -1,3 +1,18 @@
+2015-01-20 Version 1.0.3
+
+  * #491 #502 #422 Update documentation
+
+azure-mgmt-compute 0.20.1
+  * #510 Missing "statuses" property in VirtualMachineInstanceView
+
+azure-servicemanagement-legacy 0.20.2
+  * #487 #488 Add StaticVirtualNetworkIPAddress to network configuration
+  * #497      Add replicate_vm_image, unreplicate_vm_image, share_vm_image
+  * #501 #511 Add update_os_image_from_image_reference
+
+Thank you to bear454, ekesken, kingliantop, mamoo, schaefi for their contributions.
+
+
 2015-10-02 Version 1.0.2
 
 azure-mgmt-network 0.20.1
