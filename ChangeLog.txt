@@ -1,6 +1,8 @@
 2015-01-20 Version 1.0.3
 
   * #491 #502 #422 Update documentation
+  * Update azure-storage dependency to 0.20.3
+  * Update azure-mgmt dependency to 0.20.2
 
 azure-mgmt-compute 0.20.1
   * #510 Missing "statuses" property in VirtualMachineInstanceView
