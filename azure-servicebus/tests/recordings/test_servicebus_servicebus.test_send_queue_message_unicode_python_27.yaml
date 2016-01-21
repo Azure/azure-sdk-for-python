@@ -1,0 +1,65 @@
+interactions:
+- request:
+    body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2016-01-21T22:34:14.492000+00:00</updated><author><name></name></author><id></id><content
+      type="application/xml"><QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></QueueDescription></content></entry>
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['555']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.1]
+    method: PUT
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueuece6d1bc3
+  response:
+    body: {string: !!python/unicode '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/utqueuece6d1bc3</id><title
+        type="text">utqueuece6d1bc3</title><published>2016-01-21T22:34:15Z</published><updated>2016-01-21T22:34:15Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/utqueuece6d1bc3"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><CreatedAt>2016-01-21T22:34:15.25</CreatedAt><UpdatedAt>2016-01-21T22:34:15.33</UpdatedAt></QueueDescription></content></entry>'}
+    headers:
+      content-type: [application/atom+xml;type=entry;charset=utf-8]
+      date: ['Thu, 21 Jan 2016 22:34:15 GMT']
+      server: [Microsoft-HTTPAPI/2.0]
+      transfer-encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: !!python/str "receive message\u554A\u9F44\u4E02\u72DB\u72DC"
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['30']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.1]
+    method: POST
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueuece6d1bc3/messages
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      content-type: [application/xml; charset=utf-8]
+      date: ['Thu, 21 Jan 2016 22:34:15 GMT']
+      server: [Microsoft-HTTPAPI/2.0]
+      transfer-encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.1]
+    method: DELETE
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueuece6d1bc3/messages/head?timeout=60
+  response:
+    body: {string: "receive message\u554A\u9F44\u4E02\u72DB\u72DC"}
+    headers:
+      brokerproperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":0,"EnqueuedTimeUtc":"Thu,
+          21 Jan 2016 22:34:15 GMT","MessageId":"990f18d070244f9cb386d53e25a766a6","SequenceNumber":1,"State":"Active","TimeToLive":922337203685.47754}']
+      content-type: [application/atom+xml;type=entry;charset=utf-8]
+      date: ['Thu, 21 Jan 2016 22:34:15 GMT']
+      server: [Microsoft-HTTPAPI/2.0]
+      transfer-encoding: [chunked]
+    status: {code: 200, message: OK}
+version: 1
