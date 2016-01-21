@@ -359,7 +359,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
                         version,
                     ))
 
-    @unittest.skip
     @record
     def test_vm_images(self):
         result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
@@ -426,6 +425,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                             skus,
                             version,
                         ))
+                        return
 
     @record
     def test_availability_sets(self):
