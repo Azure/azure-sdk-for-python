@@ -12,7 +12,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['305']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.1]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images
@@ -33,7 +33,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.1]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/f16fdd1efb4c5a07ae22691a41d53d02
@@ -53,7 +53,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.1]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimg38cc19aa
@@ -86,7 +86,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['524']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.1]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: PUT
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimg38cc19aa
@@ -107,7 +107,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.1]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/8b35f3b7f1325a9a82d118f4c1a0aab5
@@ -127,7 +127,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.1]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimg38cc19aa

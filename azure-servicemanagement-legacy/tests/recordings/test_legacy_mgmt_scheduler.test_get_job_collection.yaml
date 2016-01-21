@@ -10,7 +10,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['223']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: PUT
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/cloudservices/cloud_service_b011479
@@ -30,7 +30,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/9a680d9e46efb4bca285f6741d68556b
@@ -50,7 +50,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/9a680d9e46efb4bca285f6741d68556b
@@ -76,7 +76,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['183']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: PUT
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/cloudservices/cloud_service_b011479/resources/scheduler/jobCollections/job_collection_b011479
@@ -96,7 +96,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/3aabf3c31550bfb7ab0fbb6038839edc
@@ -116,7 +116,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/3aabf3c31550bfb7ab0fbb6038839edc
@@ -136,7 +136,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/cloudservices/cloud_service_b011479/resources/scheduler/~/jobCollections/job_collection_b011479?api-version=2014-04-01

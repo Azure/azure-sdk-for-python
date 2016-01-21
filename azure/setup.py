@@ -35,7 +35,7 @@ except ImportError:
 
 setup(
     name='azure',
-    version='1.0.2',
+    version='1.0.3',
     description='Microsoft Azure Client Libraries for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -55,9 +55,9 @@ setup(
     ],
     zip_safe=False,
     install_requires=[
-        'azure-mgmt==0.20.1',
+        'azure-mgmt==0.20.2',
         'azure-servicebus==0.20.1',
-        'azure-storage==0.20.2',
-        'azure-servicemanagement-legacy==0.20.1',
+        'azure-storage==0.20.3',
+        'azure-servicemanagement-legacy==0.20.2',
     ],
 )
