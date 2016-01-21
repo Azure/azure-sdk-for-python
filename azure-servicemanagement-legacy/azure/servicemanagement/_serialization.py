@@ -1200,8 +1200,8 @@ class _XmlSerializer(object):
                 ('ImageFamily', image.image_family),
                 ('PublishedDate', image.published_date),
                 ('ShowInGui', image.show_in_gui, _lower),
-                ('PrivacyUri', image.privacy_uri),
                 ('IconUri', image.icon_uri),
+                ('PrivacyUri', image.privacy_uri),
                 ('RecommendedVMSize', image.recommended_vm_size),
                 ('SmallIconUri', image.small_icon_uri),
                 ('Language', image.language)
