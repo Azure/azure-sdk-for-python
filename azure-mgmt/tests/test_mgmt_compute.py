@@ -360,7 +360,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                     ))
 
     @unittest.skip
-    @record
+    # @record
     def test_vm_images(self):
         result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
             azure.mgmt.compute.VirtualMachineImageListPublishersParameters(
