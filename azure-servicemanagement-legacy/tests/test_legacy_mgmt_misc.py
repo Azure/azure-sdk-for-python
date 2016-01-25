@@ -2130,6 +2130,32 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertEqual(result.os, os)
 
     @record
+    def test_get_os_image_details(self):
+        # Arrange
+        media_url = self.settings.LINUX_OS_VHD
+        os = 'Linux'
+        self._create_os_image(self.os_image_name, media_url, os)
+        os_image = self.sms.get_os_image(self.os_image_name)
+        locations = ['West US', 'West Europe']
+        result = self.sms.replicate_vm_image(
+            self.os_image_name,
+            locations,
+            'test-offer',
+            'test-sku',
+            '1.2.3'
+        )
+        self._wait_for_async(result.request_id)
+
+        # Act
+        result = self.sms.get_os_image_details(self.os_image_name)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertIsNotNone(result.replication_progress)
+        result_locations = [e.location for e in result.replication_progress]
+        self.assertEqual(locations.sort(), result_locations.sort())
+
+    @record
     def test_add_os_image(self):
         # Arrange
 

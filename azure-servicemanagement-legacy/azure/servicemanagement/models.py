@@ -996,6 +996,52 @@ class OSImage(WindowsAzureData):
         self.language = u''
 
 
+class OSImageDetails(WindowsAzureData):
+
+    def __init__(self):
+        self.category = u''
+        self.label = u''
+        self.location = u''
+        self.logical_size_in_gb = 0
+        self.media_link = u''
+        self.name = u''
+        self.os = u''
+        self.eula = u''
+        self.description = u''
+        self.image_family = u''
+        self.show_in_gui = True
+        self.published_date = u''
+        self.is_premium = True
+        self.icon_uri = u''
+        self.privacy_uri = u''
+        self.recommended_vm_size = u''
+        self.small_icon_uri = u''
+        self.language = u''
+        self.replication_progress = ReplicationProgress()
+
+
+class ReplicationProgress(WindowsAzureData):
+
+    def __init__(self):
+        self.replication_progress_elements = _list_of(ReplicationProgressElement)
+
+    def __iter__(self):
+        return iter(self.replication_progress_elements)
+
+    def __len__(self):
+        return len(self.replication_progress_elements)
+
+    def __getitem__(self, index):
+        return self.replication_progress_elements[index]
+
+
+class ReplicationProgressElement(WindowsAzureData):
+
+    def __init__(self):
+        self.location = u''
+        self.progress = 0
+
+
 class Disks(WindowsAzureData):
 
     def __init__(self):
