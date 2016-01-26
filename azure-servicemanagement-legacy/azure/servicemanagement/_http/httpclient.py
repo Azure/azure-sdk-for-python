@@ -17,17 +17,9 @@ import os
 import sys
 
 if sys.version_info < (3,):
-    from httplib import (
-        HTTP_PORT,
-        HTTPS_PORT,
-        )
     from urlparse import urlparse
     from urllib2 import quote as url_quote
 else:
-    from http.client import (
-        HTTP_PORT,
-        HTTPS_PORT,
-        )
     from urllib.parse import urlparse
     from urllib.parse import quote as url_quote
 
@@ -92,8 +84,7 @@ class _HTTPClient(object):
         protocol = request.protocol_override \
             if request.protocol_override else self.protocol
         protocol = protocol.lower()
-        port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
-        return protocol + '://' + request.host + ':' + str(port) + request.path
+        return protocol + '://' + request.host + ':' + request.path
 
     def get_connection(self, request):
         ''' Create connection for the request. '''
@@ -101,7 +92,6 @@ class _HTTPClient(object):
             if request.protocol_override else self.protocol
         protocol = protocol.lower()
         target_host = request.host
-        target_port = HTTP_PORT if protocol == 'http' else HTTPS_PORT
 
         if self.request_session:
             from .requestsclient import _RequestsConnection
