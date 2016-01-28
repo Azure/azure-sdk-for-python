@@ -2140,8 +2140,8 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         result = self.sms.replicate_vm_image(
             self.os_image_name,
             locations,
-            'test-offer',
-            'test-sku',
+            self.os_image_name,
+            self.os_image_name,
             '1.2.3'
         )
         self._wait_for_async(result.request_id)
