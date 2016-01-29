@@ -7,6 +7,7 @@ import logging
 import time
 
 import pydocumentdb.errors as errors
+import pydocumentdb.http_constants as http_constants
 
 
 def Execute(callback_fn, resource_throttle_retry_policy):
@@ -24,8 +25,8 @@ def Execute(callback_fn, resource_throttle_retry_policy):
         except Exception, e:
             should_retry = resource_throttle_retry_policy.ShouldRetry(e)
             if not should_retry:
-                raise e
-        time.sleep(resource_throttle_retry_policy.retry_after_in_milliseconds)
+                raise
+        time.sleep(resource_throttle_retry_policy.retry_after_in_milliseconds / 1000.0)
 
 
 class ResourceThrottleRetryPolicy(object):
@@ -65,11 +66,13 @@ class ResourceThrottleRetryPolicy(object):
     def _CheckIfRetryNeeded(self, exception):
         self.retry_after_in_milliseconds = 0
 
-        if (isinstance(exception, errors.DocumentDBError) and exception.status_code == 429):
-            self.retry_after_in_milliseconds = exception.retry_after_in_milliseconds
+        if (isinstance(exception, errors.HTTPFailure) and exception.status_code == 429):
+
+            if http_constants.HttpHeaders.RetryAfterInMilliseconds in exception.headers:
+                self.retry_after_in_milliseconds = int(exception.headers[http_constants.HttpHeaders.RetryAfterInMilliseconds])
 
             if self.retry_after_in_milliseconds == 0:
-                self.retry_after_in_milliseconds = ResourceThrottleRetryPolicy._default_retry_in_seconds
+                self.retry_after_in_milliseconds = ResourceThrottleRetryPolicy._default_retry_in_seconds * 1000
 
             return True
 

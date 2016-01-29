@@ -86,13 +86,13 @@ def _InternalRequest(connection_policy, request_options, request_body):
                        request_body,
                        request_options['headers'])
     response = connection.getresponse()
-    headers = response.getheaders()
+    headers = dict(response.getheaders())
 
     # In case of media response, return the response to the user and the user
     # will need to handle reading the response.
     if (is_media and
         connection_policy.MediaReadMode == documents.MediaReadMode.Streamed):
-        return  (response, dict(headers))
+        return (response, headers)
 
     data = response.read()
     if response.status >= 400:
@@ -108,7 +108,7 @@ def _InternalRequest(connection_policy, request_options, request_body):
             except:
                 raise errors.JSONParseFailure(data)
 
-    return (result, dict(headers))
+    return (result, headers)
 
 
 def SynchronizedRequest(connection_policy,
