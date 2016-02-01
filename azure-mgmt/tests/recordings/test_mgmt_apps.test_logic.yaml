@@ -1,0 +1,79 @@
+interactions:
+- request:
+    body: !!binary |
+      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAibmFtZSI6ICJ0ZXN0X21nbXRfYXBwc190ZXN0X2xvZ2lj
+      ODZhNjBhNDMifQ==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['67']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 resourcemanagementclient/2015-11-01]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b2ced188-d4dd-11e5-a80d-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_apps_test_logic86a60a43?api-version=2015-11-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43","name":"test_mgmt_apps_test_logic86a60a43","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['219']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 16 Feb 2016 18:47:15 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [a6e37499-5e2e-44df-a4c6-5014697e8dfe]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [a6e37499-5e2e-44df-a4c6-5014697e8dfe]
+      x-ms-routing-request-id: ['WESTUS:20160216T184716Z:a6e37499-5e2e-44df-a4c6-5014697e8dfe']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      eyJsb2NhdGlvbiI6ICJXZXN0IFVTIiwgInNrdSI6IHsidGllciI6ICJGcmVlIiwgIm5hbWUiOiAi
+      RjEifX0=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['62']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 websitemanagementclient/2015-08-01]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b308dd1e-d4dd-11e5-8a36-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Web/serverfarms/pyarmappserviceplan86a60a43?api-version=2015-08-01
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
+        nuaf19V61dxt86b9/RcXi/b3z1ar5vfnP8vqopgefJp9upPt37u7qqvLYpbXzd0vimldNdV5O/5u
+        Prnb5PVlXp9n9aK5u7qmHwBAnxXTfFVmS/P+R6OPltkiJ2w3N2qvV2g02Ac1KatphpFSs+8SnulX
+        r+nDNrtoPnq0XJfl6CNCdZXXbZHTJ7/4I3n5Gb18RsTauSUeV1X9Nq9fFz+gpvSO+1OByAdvirx+
+        weCk5+V6McnrL8+/y99S99Ryuq7rfNnKR4AQ/1Th6ucvIoCaNmvX8utVPnm9yqYE6iOeqk0ztw0i
+        ffWaXmn4FQLksQtBuA2/0FvZbFEsXxdt7g94XjVtsbw4XV4WdbVcEObD37ysq/OitK8usnfFYr3o
+        jXSXJpDmQnr56CeLul1n5dN8VtCs57OX9JVB5tV62RaLvIvTtFqs1m3+RTWjj4hYDX0vf8j3F3n1
+        Kr+QsYM2wkDEMQD0epqVhPZHj86zssndjOI7Qo7A9QeGqRPQPhe+LZb280DaqFuCtXnSPvolhPfb
+        NfhX2fXZLiFJPF3j9zrneSS2wV/45jxbFOU1/qI/phnNdNHSnzu/5Jf8P5Fbiu8lBAAA
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json]
+      Date: ['Tue, 16 Feb 2016 18:47:18 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [1ed8854f-490a-4884-b02f-aee2397f6411]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [75784070-fc9d-4771-868e-494729f8aeb1]
+      x-ms-routing-request-id: ['WESTUS:20160216T184719Z:1ed8854f-490a-4884-b02f-aee2397f6411']
+    status: {code: 200, message: OK}
+version: 1

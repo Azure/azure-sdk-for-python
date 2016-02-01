@@ -15,12 +15,10 @@
 import json
 import os.path
 import time
-import azure.mgmt.resource
-from azure.common import (
-    AzureHttpError,
-)
-from azure.mgmt.common import (
-    SubscriptionCloudCredentials,
+import azure.mgmt.resource.resources
+
+from msrestazure.azure_exceptions import (
+    CloudError
 )
 from testutils.common_recordingtestcase import (
     RecordingTestCase,
@@ -59,7 +57,10 @@ class AzureMgmtTestCase(RecordingTestCase):
             import tests.mgmt_settings_real as real_settings
             self.settings = real_settings
 
-        self.resource_client = self.create_mgmt_client(azure.mgmt.resource.ResourceManagementClient)
+        self.resource_client = self.create_mgmt_client(
+            azure.mgmt.resource.resources.ResourceManagementClientConfiguration,
+            azure.mgmt.resource.resources.ResourceManagementClient
+        )
 
         # Every test uses a different resource group name calculated from its
         # qualified test name.
@@ -89,28 +90,32 @@ class AzureMgmtTestCase(RecordingTestCase):
             self.delete_resource_group(wait_timeout=None)
         return super(AzureMgmtTestCase, self).tearDown()
 
-    def create_mgmt_client(self, client_class):
-        creds = SubscriptionCloudCredentials(
-            self.settings.SUBSCRIPTION_ID,
-            self.settings.get_token(),
+    def create_mgmt_client(self, configuration_class, client_class, **kwargs):
+        client = client_class(
+            configuration_class(
+                credentials=self.settings.get_credentials(),
+                subscription_id=self.settings.SUBSCRIPTION_ID,
+                **kwargs
+            )
         )
-        client = client_class(creds)
         if self.is_playback():
-            client.long_running_operation_initial_timeout = 0
-            client.long_running_operation_retry_timeout = 0
+            client.config.long_running_operation_timeout = 0
         return client
 
     def _scrub(self, val):
         val = super(AzureMgmtTestCase, self)._scrub(val)
         real_to_fake_dict = {
             self.settings.SUBSCRIPTION_ID: self.fake_settings.SUBSCRIPTION_ID,
+            self.settings.AD_DOMAIN:  self.fake_settings.AD_DOMAIN
         }
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
 
     def create_resource_group(self):
-        group = azure.mgmt.resource.ResourceGroup()
-        group.location = self.region
+        group = azure.mgmt.resource.resources.models.ResourceGroup(
+            name=self.group_name,
+            location=self.region
+        )
         result = self.resource_client.resource_groups.create_or_update(
             self.group_name,
             group,
@@ -118,20 +123,12 @@ class AzureMgmtTestCase(RecordingTestCase):
 
     def delete_resource_group(self, wait_timeout):
         try:
-            self.resource_client.resource_groups.delete(self.group_name)
-        except AzureHttpError:
+            azure_poller = self.resource_client.resource_groups.delete(self.group_name)
+        except CloudError:
             pass
 
         if wait_timeout:
-            while wait_timeout > 0:
-                try:
-                    result = self.resource_client.resource_groups.get(self.group_name)
-                    if result.resource_group.provisioning_state != azure.mgmt.resource.ProvisioningState.deleting:
-                        return
-                except AzureHttpError as e:
-                    if e.status_code == HttpStatusCode.NotFound:
-                        return
-                    raise
-                time.sleep(10)
-                wait_timeout -= 10
+            azure_poller.wait(wait_timeout)
+            if azure_poller.done():
+                return
             self.assertTrue(False, 'Timed out waiting for resource group to be deleted.')
