@@ -25,7 +25,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtStorageTest, self).setUp()
-        self.storage_client = self.create_mgmt_client(azure.mgmt.storage.StorageManagementClient)
+        self.storage_client = self.create_mgmt_client(
+            azure.mgmt.storage.StorageManagementClientConfiguration,
+            azure.mgmt.storage.StorageManagementClient
+        )
 
     @record
     def test_storage_accounts(self):
@@ -34,27 +37,29 @@ class MgmtStorageTest(AzureMgmtTestCase):
         account_name = self.get_resource_name('pyarmstorage')
 
         result_check = self.storage_client.storage_accounts.check_name_availability(
-            account_name,
+            name=account_name,
+            type="Microsoft.Storage/storageAccounts"
         )
-        self.assertEqual(result_check.status_code, HttpStatusCode.OK)
-        self.assertTrue(result_check.name_available)
+        #self.assertEqual(result_check.status_code, HttpStatusCode.OK)
+        self.assertTrue(result_check)
 
-        params_create = azure.mgmt.storage.StorageAccountCreateParameters(
+        params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
             location=self.region,
-            account_type=azure.mgmt.storage.AccountType.standard_lrs,
+            account_type=azure.mgmt.storage.models.AccountType.standard_lrs,
         )
         result_create = self.storage_client.storage_accounts.create(
             self.group_name,
             account_name,
             params_create,
         )
-        self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        result_create.wait()
 
         result_get = self.storage_client.storage_accounts.get_properties(
             self.group_name,
             account_name,
         )
-        self.assertEqual(result_get.status_code, HttpStatusCode.OK)
+        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
         #self.assertEqual(result_get.storage_account.name, account_name)
         #self.assertEqual(
         #    result_get.storage_account.location,
@@ -69,23 +74,23 @@ class MgmtStorageTest(AzureMgmtTestCase):
             self.group_name,
             account_name,
         )
-        self.assertEqual(result_list_keys.status_code, HttpStatusCode.OK)
-        self.assertGreater(len(result_list_keys.storage_account_keys.key1), 0)
-        self.assertGreater(len(result_list_keys.storage_account_keys.key2), 0)
+        #self.assertEqual(result_list_keys.status_code, HttpStatusCode.OK)
+        self.assertGreater(len(result_list_keys.key1), 0)
+        self.assertGreater(len(result_list_keys.key2), 0)
 
         result_regen_keys = self.storage_client.storage_accounts.regenerate_key(
             self.group_name,
             account_name,
-            azure.mgmt.storage.KeyName.key1,
+            "key1"
         )
-        self.assertEqual(result_regen_keys.status_code, HttpStatusCode.OK)
+        #self.assertEqual(result_regen_keys.status_code, HttpStatusCode.OK)
         self.assertNotEqual(
-            result_regen_keys.storage_account_keys.key1,
-            result_list_keys.storage_account_keys.key1,
+            result_regen_keys.key1,
+            result_list_keys.key1,
         )
         self.assertEqual(
-            result_regen_keys.storage_account_keys.key2,
-            result_list_keys.storage_account_keys.key2,
+            result_regen_keys.key2,
+            result_list_keys.key2,
         )
 
         #params_update = azure.mgmt.storage.StorageAccountUpdateParameters()
@@ -110,8 +115,9 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result_list = self.storage_client.storage_accounts.list_by_resource_group(
             self.group_name,
         )
-        self.assertEqual(result_list.status_code, HttpStatusCode.OK)
-        self.assertGreater(len(result_list.storage_accounts), 0)
+        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
+        result_list = list(result_list)
+        self.assertGreater(len(result_list), 0)
         #self.assertEqual(
         #    result_list.storage_accounts[0].name,
         #    account_name,
@@ -121,7 +127,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             self.group_name,
             account_name,
         )
-        self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
+        #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
