@@ -19,9 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from .resource import Resource
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class GenericResource(Resource):
+    """
+    Resource information.
+
+    :param str id: Resource Id
+    :param str name: Resource name
+    :param str type: Resource type
+    :param str location: Resource location
+    :param dict tags: Resource tags
+    :param Plan plan: Gets or sets the plan of the resource.
+    :param object properties: Gets or sets the resource properties.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'plan': {'key': 'plan', 'type': 'Plan'},
+        'properties': {'key': 'properties', 'type': 'object'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, properties=None):
+        super(GenericResource, self).__init__(location, id=id, name=name, type=type, tags=tags)
+        self.plan = plan
+        self.properties = properties

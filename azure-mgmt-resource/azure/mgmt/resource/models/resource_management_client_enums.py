@@ -19,9 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from enum import Enum
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class DeploymentMode(Enum):
+
+    incremental = "Incremental"
+    complete = "Complete"

@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class BasicDependency(Model):
+    """
+    Deployment dependency information.
+
+    :param str id: Gets or sets the ID of the dependency.
+    :param str resource_type: Gets or sets the dependency resource type.
+    :param str resource_name: Gets or sets the dependency resource name.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'resource_name': {'key': 'resourceName', 'type': 'str'},
+    }
+
+    def __init__(self, id=None, resource_type=None, resource_name=None):
+        self.id = id
+        self.resource_type = resource_type
+        self.resource_name = resource_name

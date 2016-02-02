@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class Deployment(Model):
+    """
+    Deployment operation parameters.
+
+    :param DeploymentProperties properties: Gets or sets the deployment
+     properties.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
+    }
+
+    def __init__(self, properties=None):
+        self.properties = properties

@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class PolicyDefinition(Model):
+    """
+    Policy definition.
+
+    :param PolicyDefinitionProperties properties: Gets or sets the policy
+     definition properties.
+    :param str name: Gets or sets the policy definition name.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'PolicyDefinitionProperties'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, properties=None, name=None):
+        self.properties = properties
+        self.name = name

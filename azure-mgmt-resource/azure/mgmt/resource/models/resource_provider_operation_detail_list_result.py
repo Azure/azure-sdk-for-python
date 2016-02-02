@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class ResourceProviderOperationDetailListResult(Model):
+    """
+    List of resource provider operations.
+
+    :param list value: Gets or sets the list of resource provider operations.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ResourceProviderOperationDefinition]'},
+    }
+
+    def __init__(self, value=None):
+        self.value = value

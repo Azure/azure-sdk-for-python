@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class PolicyDefinitionProperties(Model):
+    """
+    Policy definition properties.
+
+    :param str description: Gets or sets the policy definition description.
+    :param str display_name: Gets or sets the policy definition display name.
+    :param object policy_rule: The policy rule json.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'policy_rule': {'key': 'policyRule', 'type': 'object'},
+    }
+
+    def __init__(self, description=None, display_name=None, policy_rule=None):
+        self.description = description
+        self.display_name = display_name
+        self.policy_rule = policy_rule

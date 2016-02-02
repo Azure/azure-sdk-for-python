@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class DeploymentExtendedFilter(Model):
+    """
+    Deployment filter.
+
+    :param str provisioning_state: Gets or sets the provisioning state.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, provisioning_state=None):
+        self.provisioning_state = provisioning_state

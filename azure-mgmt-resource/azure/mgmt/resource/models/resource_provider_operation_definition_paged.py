@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class ResourceProviderOperationDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of ResourceProviderOperationDefinition object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceProviderOperationDefinition]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceProviderOperationDefinitionPaged, self).__init__(*args, **kwargs)

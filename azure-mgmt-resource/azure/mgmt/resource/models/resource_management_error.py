@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class ResourceManagementError(Model):
+    """ResourceManagementError
+
+    :param str code: Gets or sets the error code returned from the server.
+    :param str message: Gets or sets the error message returned from the
+     server.
+    :param str target: Gets or sets the target of the error.
+    """
+
+    _required = ['code', 'message']
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(self, code, message, target=None):
+        self.code = code
+        self.message = message
+        self.target = target

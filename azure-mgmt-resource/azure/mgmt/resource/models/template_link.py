@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class TemplateLink(Model):
+    """
+    Entity representing the reference to the template.
+
+    :param str uri: URI referencing the template.
+    :param str content_version: If included it must match the ContentVersion
+     in the template.
+    """
+
+    _required = ['uri']
+
+    _attribute_map = {
+        'uri': {'key': 'uri', 'type': 'str'},
+        'content_version': {'key': 'contentVersion', 'type': 'str'},
+    }
+
+    def __init__(self, uri, content_version=None):
+        self.uri = uri
+        self.content_version = content_version
