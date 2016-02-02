@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class ResourceGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of ResourceGroup object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceGroupPaged, self).__init__(*args, **kwargs)

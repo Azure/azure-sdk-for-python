@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class TagCount(Model):
+    """
+    Tag count.
+
+    :param str type: Type of count.
+    :param str value: Value of count.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, type=None, value=None):
+        self.type = type
+        self.value = value

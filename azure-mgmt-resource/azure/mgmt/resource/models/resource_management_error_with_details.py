@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from .resource_management_error import ResourceManagementError
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class ResourceManagementErrorWithDetails(ResourceManagementError):
+    """ResourceManagementErrorWithDetails
+
+    :param str code: Gets or sets the error code returned from the server.
+    :param str message: Gets or sets the error message returned from the
+     server.
+    :param str target: Gets or sets the target of the error.
+    :param list details: Gets or sets validation error.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'details': {'key': 'details', 'type': '[ResourceManagementError]'},
+    }
+
+    def __init__(self, code, message, target=None, details=None):
+        super(ResourceManagementErrorWithDetails, self).__init__(code, message, target=target)
+        self.details = details

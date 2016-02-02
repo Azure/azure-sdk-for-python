@@ -19,9 +19,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class SubResource(Model):
+    """SubResource
+
+    :param str id: Resource Id
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id

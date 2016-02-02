@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from .deployments_operations import DeploymentsOperations
+from .providers_operations import ProvidersOperations
+from .resource_groups_operations import ResourceGroupsOperations
+from .resources_operations import ResourcesOperations
+from .tags_operations import TagsOperations
+from .deployment_operations_operations import DeploymentOperationsOperations
+from .resource_provider_operation_details_operations import ResourceProviderOperationDetailsOperations
+from .policy_definitions_operations import PolicyDefinitionsOperations
+from .policy_assignments_operations import PolicyAssignmentsOperations
 
 __all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
+    'DeploymentsOperations',
+    'ProvidersOperations',
+    'ResourceGroupsOperations',
+    'ResourcesOperations',
+    'TagsOperations',
+    'DeploymentOperationsOperations',
+    'ResourceProviderOperationDetailsOperations',
+    'PolicyDefinitionsOperations',
+    'PolicyAssignmentsOperations',
 ]

@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class DeploymentOperation(Model):
+    """
+    Deployment operation information.
+
+    :param str id: Gets or sets full deployment operation id.
+    :param str operation_id: Gets or sets deployment operation id.
+    :param DeploymentOperationProperties properties: Gets or sets deployment
+     properties.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DeploymentOperationProperties'},
+    }
+
+    def __init__(self, id=None, operation_id=None, properties=None):
+        self.id = id
+        self.operation_id = operation_id
+        self.properties = properties

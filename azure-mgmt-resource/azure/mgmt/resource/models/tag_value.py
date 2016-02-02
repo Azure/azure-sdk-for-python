@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class TagValue(Model):
+    """
+    Tag information.
+
+    :param str id: Gets or sets the tag ID.
+    :param str tag_value: Gets or sets the tag value.
+    :param TagCount count: Gets or sets the tag value count.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'tag_value': {'key': 'tagValue', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'TagCount'},
+    }
+
+    def __init__(self, id=None, tag_value=None, count=None):
+        self.id = id
+        self.tag_value = tag_value
+        self.count = count

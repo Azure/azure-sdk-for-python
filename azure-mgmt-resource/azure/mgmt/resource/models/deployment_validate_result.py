@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class DeploymentValidateResult(Model):
+    """
+    Information from validate template deployment response.
+
+    :param ResourceManagementErrorWithDetails error: Gets or sets validation
+     error.
+    :param DeploymentPropertiesExtended properties: Gets or sets the template
+     deployment properties.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ResourceManagementErrorWithDetails'},
+        'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
+    }
+
+    def __init__(self, error=None, properties=None):
+        self.error = error
+        self.properties = properties

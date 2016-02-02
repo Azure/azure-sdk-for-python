@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class PolicyAssignmentProperties(Model):
+    """
+    Policy Assignment properties.
+
+    :param str scope: Gets or sets the policy assignment scope.
+    :param str display_name: Gets or sets the policy assignment display name.
+    :param str policy_definition_id: Gets or sets the policy definition Id.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'scope': {'key': 'scope', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+    }
+
+    def __init__(self, scope=None, display_name=None, policy_definition_id=None):
+        self.scope = scope
+        self.display_name = display_name
+        self.policy_definition_id = policy_definition_id

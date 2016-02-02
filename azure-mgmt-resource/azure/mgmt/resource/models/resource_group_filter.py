@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+
+class ResourceGroupFilter(Model):
+    """
+    Resource group filter.
+
+    :param str tag_name: Gets or sets the tag name.
+    :param str tag_value: Gets or sets the tag value.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'tag_name': {'key': 'tagName', 'type': 'str'},
+        'tag_value': {'key': 'tagValue', 'type': 'str'},
+    }
+
+    def __init__(self, tag_name=None, tag_value=None):
+        self.tag_name = tag_name
+        self.tag_value = tag_value
