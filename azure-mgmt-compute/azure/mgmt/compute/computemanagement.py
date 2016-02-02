@@ -11859,10 +11859,10 @@ class VirtualMachineOperations(object):
                                 tags_value2 = tags_sequence_element2[property2]
                                 virtual_machine_json_instance.tags[tags_key2] = tags_value2
                             
-                odatanext_link_value = response_doc.get('@odata.nextLink', None)
-                if odatanext_link_value is not None:
-                    odatanext_link_instance = odatanext_link_value
-                    result.next_link = odatanext_link_instance
+                next_link_value = response_doc.get('nextLink', None)
+                if next_link_value is not None:
+                    next_link_instance = next_link_value
+                    result.next_link = next_link_instance
                 
         result.status_code = status_code
         result.request_id = response.headers.get('x-ms-request-id')
