@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class PublicIPAddressPaged(Paged):
+    """
+    A paging container for iterating over a list of PublicIPAddress object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PublicIPAddress]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PublicIPAddressPaged, self).__init__(*args, **kwargs)

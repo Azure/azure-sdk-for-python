@@ -19,9 +19,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class Error(Model):
+    """Error
+
+    :param str code:
+    :param str message:
+    :param str target:
+    :param list details:
+    :param str inner_error:
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetails]'},
+        'inner_error': {'key': 'innerError', 'type': 'str'},
+    }
+
+    def __init__(self, code=None, message=None, target=None, details=None, inner_error=None):
+        self.code = code
+        self.message = message
+        self.target = target
+        self.details = details
+        self.inner_error = inner_error

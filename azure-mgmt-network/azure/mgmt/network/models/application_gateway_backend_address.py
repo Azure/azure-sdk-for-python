@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ApplicationGatewayBackendAddress(Model):
+    """
+    Backend Address of application gateway
+
+    :param str fqdn: Gets or sets the dns name
+    :param str ip_address: Gets or sets the ip address
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+    }
+
+    def __init__(self, fqdn=None, ip_address=None):
+        self.fqdn = fqdn
+        self.ip_address = ip_address

@@ -19,9 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class AddressSpace(Model):
+    """
+    AddressSpace contains an array of IP address ranges that can be used by
+    subnets
+
+    :param list address_prefixes: Gets or sets List of address blocks
+     reserved for this virtual network in CIDR notation
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
+    }
+
+    def __init__(self, address_prefixes=None):
+        self.address_prefixes = address_prefixes

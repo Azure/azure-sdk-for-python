@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ExpressRouteCircuitSku(Model):
+    """
+    Contains sku in an ExpressRouteCircuit
+
+    :param str name: Gets or sets name of the sku.
+    :param str tier: Gets or sets tier of the sku. Possible values include:
+     'Standard', 'Premium'
+    :param str family: Gets or sets family of the sku. Possible values
+     include: 'UnlimitedData', 'MeteredData'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'ExpressRouteCircuitSkuTier'},
+        'family': {'key': 'family', 'type': 'ExpressRouteCircuitSkuFamily'},
+    }
+
+    def __init__(self, name=None, tier=None, family=None):
+        self.name = name
+        self.tier = tier
+        self.family = family

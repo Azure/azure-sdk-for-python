@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ConnectionSharedKeyResult(Model):
+    """
+    Response for CheckConnectionSharedKey Api servive call
+
+    :param str value: The virtual network connection shared key value
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, value=None):
+        self.value = value

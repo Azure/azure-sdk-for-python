@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class VirtualNetworkGatewaySku(Model):
+    """
+    VirtualNetworkGatewaySku details
+
+    :param str name: Gateway sku name -Basic/HighPerformance/Standard.
+     Possible values include: 'Basic', 'HighPerformance', 'Standard'
+    :param str tier: Gateway sku tier -Basic/HighPerformance/Standard.
+     Possible values include: 'Basic', 'HighPerformance', 'Standard'
+    :param int capacity: The capacity
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'VirtualNetworkGatewaySkuName'},
+        'tier': {'key': 'tier', 'type': 'VirtualNetworkGatewaySkuTier'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
+    }
+
+    def __init__(self, name=None, tier=None, capacity=None):
+        self.name = name
+        self.tier = tier
+        self.capacity = capacity

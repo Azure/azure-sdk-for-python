@@ -19,9 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class DhcpOptions(Model):
+    """
+    DHCPOptions contains an array of DNS servers available to VMs deployed in
+    the virtual networkStandard DHCP option for a subnet overrides VNET DHCP
+    options.
+
+    :param list dns_servers: Gets or sets list of DNS servers IP addresses
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
+    }
+
+    def __init__(self, dns_servers=None):
+        self.dns_servers = dns_servers

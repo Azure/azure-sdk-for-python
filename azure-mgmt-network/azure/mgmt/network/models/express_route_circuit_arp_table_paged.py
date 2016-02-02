@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ExpressRouteCircuitArpTablePaged(Paged):
+    """
+    A paging container for iterating over a list of ExpressRouteCircuitArpTable object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExpressRouteCircuitArpTable]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExpressRouteCircuitArpTablePaged, self).__init__(*args, **kwargs)

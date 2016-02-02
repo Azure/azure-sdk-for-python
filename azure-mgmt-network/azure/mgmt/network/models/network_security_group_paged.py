@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class NetworkSecurityGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of NetworkSecurityGroup object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NetworkSecurityGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NetworkSecurityGroupPaged, self).__init__(*args, **kwargs)
