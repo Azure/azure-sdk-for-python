@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VaultSecretGroup(Model):
+    """
+    Describes a set of certificates which are all in the same Key Vault.
+
+    :param SubResource source_vault: Gets or sets the Relative URL of the Key
+     Vault containing all of the certificates in VaultCertificates.
+    :param list vault_certificates: Gets or sets the list of key vault
+     references in SourceVault which contain certificates
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
+        'vault_certificates': {'key': 'vaultCertificates', 'type': '[VaultCertificate]'},
+    }
+
+    def __init__(self, source_vault=None, vault_certificates=None):
+        self.source_vault = source_vault
+        self.vault_certificates = vault_certificates

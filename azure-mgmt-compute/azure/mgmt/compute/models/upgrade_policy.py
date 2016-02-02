@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class UpgradePolicy(Model):
+    """
+    Describes an upgrade policy - automatic or manual.
+
+    :param str mode: Gets or sets the upgrade mode. Possible values include:
+     'Automatic', 'Manual'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'UpgradeMode'},
+    }
+
+    def __init__(self, mode=None):
+        self.mode = mode

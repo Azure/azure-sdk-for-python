@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class AvailabilitySetPaged(Paged):
+    """
+    A paging container for iterating over a list of AvailabilitySet object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AvailabilitySet]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AvailabilitySetPaged, self).__init__(*args, **kwargs)

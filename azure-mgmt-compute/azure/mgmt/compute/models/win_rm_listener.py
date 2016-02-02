@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class WinRMListener(Model):
+    """
+    Describes Protocol and thumbprint of Windows Remote Management listener
+
+    :param str protocol: Gets or sets the Protocol used by WinRM listener.
+     Currently only Http and Https are supported. Possible values include:
+     'Http', 'Https'
+    :param str certificate_url: Gets or sets the Certificate URL in KMS for
+     Https listeners. Should be null for Http listeners.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'protocol': {'key': 'protocol', 'type': 'ProtocolTypes'},
+        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+    }
+
+    def __init__(self, protocol=None, certificate_url=None):
+        self.protocol = protocol
+        self.certificate_url = certificate_url

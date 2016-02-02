@@ -19,9 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class Plan(Model):
+    """
+    Plan for the resource.
+
+    :param str name: Gets or sets the plan ID.
+    :param str publisher: Gets or sets the publisher ID.
+    :param str product: Gets or sets the offer ID.
+    :param str promotion_code: Gets or sets the promotion code.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'publisher': {'key': 'publisher', 'type': 'str'},
+        'product': {'key': 'product', 'type': 'str'},
+        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
+    }
+
+    def __init__(self, name=None, publisher=None, product=None, promotion_code=None):
+        self.name = name
+        self.publisher = publisher
+        self.product = product
+        self.promotion_code = promotion_code

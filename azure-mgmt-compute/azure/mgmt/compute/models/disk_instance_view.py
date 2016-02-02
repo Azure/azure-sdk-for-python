@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class DiskInstanceView(Model):
+    """
+    The instance view of the disk.
+
+    :param str name: Gets or sets the disk name.
+    :param list statuses: Gets or sets the resource status information.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+    }
+
+    def __init__(self, name=None, statuses=None):
+        self.name = name
+        self.statuses = statuses

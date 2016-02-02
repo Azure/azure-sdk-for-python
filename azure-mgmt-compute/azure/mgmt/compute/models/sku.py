@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class Sku(Model):
+    """
+    Describes a virtual machine scale set sku.
+
+    :param str name: Gets or sets the sku name.
+    :param str tier: Gets or sets the sku tier.
+    :param long capacity: Gets or sets the sku capacity.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'long'},
+    }
+
+    def __init__(self, name=None, tier=None, capacity=None):
+        self.name = name
+        self.tier = tier
+        self.capacity = capacity

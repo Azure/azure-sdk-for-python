@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class DiagnosticsProfile(Model):
+    """
+    Describes a diagnostics profile.
+
+    :param BootDiagnostics boot_diagnostics: Gets or sets the boot
+     diagnostics.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnostics'},
+    }
+
+    def __init__(self, boot_diagnostics=None):
+        self.boot_diagnostics = boot_diagnostics

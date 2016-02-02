@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from .sub_resource import SubResource
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineImageResource(SubResource):
+    """
+    Virtual machine image resource information.
+
+    :param str id: Resource Id
+    :param str name: Gets or sets the name of the resource.
+    :param str location: Gets or sets the location of the resource.
+    :param dict tags: Gets or sets the tags attached to the resource.
+    """
+
+    _required = ['name', 'location']
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, name, location, id=None, tags=None):
+        super(VirtualMachineImageResource, self).__init__(id=id)
+        self.name = name
+        self.location = location
+        self.tags = tags

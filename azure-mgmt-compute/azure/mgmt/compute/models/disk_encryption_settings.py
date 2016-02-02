@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class DiskEncryptionSettings(Model):
+    """
+    Describes a Encryption Settings for a Disk
+
+    :param KeyVaultSecretReference disk_encryption_key: Gets or sets the disk
+     encryption key which is a KeyVault Secret.
+    :param KeyVaultKeyReference key_encryption_key: Gets or sets the key
+     encryption key which is KeyVault Key.
+    """
+
+    _required = ['disk_encryption_key']
+
+    _attribute_map = {
+        'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultSecretReference'},
+        'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultKeyReference'},
+    }
+
+    def __init__(self, disk_encryption_key, key_encryption_key=None):
+        self.disk_encryption_key = disk_encryption_key
+        self.key_encryption_key = key_encryption_key

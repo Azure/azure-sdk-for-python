@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VaultCertificate(Model):
+    """
+    Describes a single certificate reference in a Key Vault, and where the
+    certificate should reside on the VM.
+
+    :param str certificate_url: Gets or sets the URL referencing a secret in
+     a Key Vault which contains a properly formatted certificate.
+    :param str certificate_store: Gets or sets the Certificate store in
+     LocalMachine to add the certificate to on Windows, leave empty on Linux.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+        'certificate_store': {'key': 'certificateStore', 'type': 'str'},
+    }
+
+    def __init__(self, certificate_url=None, certificate_store=None):
+        self.certificate_url = certificate_url
+        self.certificate_store = certificate_store

@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class BootDiagnosticsInstanceView(Model):
+    """
+    The instance view of a virtual machine boot diagnostics.
+
+    :param str console_screenshot_blob_uri: Gets or sets the console
+     screenshot blob Uri.
+    :param str serial_console_log_blob_uri: Gets or sets the Linux serial
+     console log blob Uri.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'console_screenshot_blob_uri': {'key': 'consoleScreenshotBlobUri', 'type': 'str'},
+        'serial_console_log_blob_uri': {'key': 'serialConsoleLogBlobUri', 'type': 'str'},
+    }
+
+    def __init__(self, console_screenshot_blob_uri=None, serial_console_log_blob_uri=None):
+        self.console_screenshot_blob_uri = console_screenshot_blob_uri
+        self.serial_console_log_blob_uri = serial_console_log_blob_uri

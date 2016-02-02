@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class KeyVaultKeyReference(Model):
+    """
+    Describes a reference to Key Vault Key
+
+    :param str key_url: Gets or sets the URL referencing a key in a Key Vault.
+    :param SubResource source_vault: Gets or sets the Relative URL of the Key
+     Vault containing the key
+    """
+
+    _required = ['key_url', 'source_vault']
+
+    _attribute_map = {
+        'key_url': {'key': 'keyUrl', 'type': 'str'},
+        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
+    }
+
+    def __init__(self, key_url, source_vault):
+        self.key_url = key_url
+        self.source_vault = source_vault

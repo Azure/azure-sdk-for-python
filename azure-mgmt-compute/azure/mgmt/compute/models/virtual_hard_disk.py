@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualHardDisk(Model):
+    """
+    Describes the uri of a disk.
+
+    :param str uri: Gets or sets the virtual hard disk's uri. It should be a
+     valid Uri to a virtual hard disk.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'uri': {'key': 'uri', 'type': 'str'},
+    }
+
+    def __init__(self, uri=None):
+        self.uri = uri

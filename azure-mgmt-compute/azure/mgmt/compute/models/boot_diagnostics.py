@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class BootDiagnostics(Model):
+    """
+    Describes Boot Diagnostics.
+
+    :param bool enabled: Gets or sets whether VM Agent should be provisioned
+     on the Virtual Machine.
+    :param str storage_uri: Gets or sets the boot diagnostics storage Uri. It
+     should be a valid Uri
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'storage_uri': {'key': 'storageUri', 'type': 'str'},
+    }
+
+    def __init__(self, enabled=None, storage_uri=None):
+        self.enabled = enabled
+        self.storage_uri = storage_uri

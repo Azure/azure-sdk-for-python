@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
+    """
+    Specifies the list of virtual machine scale set instance IDs.
+
+    :param list instance_ids: Gets or sets the virtual machine scale set
+     instance ids.
+    """
+
+    _required = ['instance_ids']
+
+    _attribute_map = {
+        'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
+    }
+
+    def __init__(self, instance_ids):
+        self.instance_ids = instance_ids

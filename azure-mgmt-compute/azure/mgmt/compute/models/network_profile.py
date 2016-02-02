@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class NetworkProfile(Model):
+    """
+    Describes a network profile.
+
+    :param list network_interfaces: Gets or sets the network interfaces.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterfaceReference]'},
+    }
+
+    def __init__(self, network_interfaces=None):
+        self.network_interfaces = network_interfaces

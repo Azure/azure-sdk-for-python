@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class LinuxConfiguration(Model):
+    """
+    Describes Windows Configuration of the OS Profile.
+
+    :param bool disable_password_authentication: Gets or sets whether
+     Authentication using user name and password is allowed or not
+    :param SshConfiguration ssh: Gets or sets the SSH configuration for linux
+     VMs
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'disable_password_authentication': {'key': 'disablePasswordAuthentication', 'type': 'bool'},
+        'ssh': {'key': 'ssh', 'type': 'SshConfiguration'},
+    }
+
+    def __init__(self, disable_password_authentication=None, ssh=None):
+        self.disable_password_authentication = disable_password_authentication
+        self.ssh = ssh
