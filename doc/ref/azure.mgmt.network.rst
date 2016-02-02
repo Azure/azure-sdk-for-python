@@ -6,7 +6,8 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.network.networkresourceprovider
+   azure.mgmt.network.models
+   azure.mgmt.network.operations
 
 Module contents
 ---------------

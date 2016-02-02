@@ -6,12 +6,18 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.compute.computemanagement
+   azure.mgmt.compute.models
+   azure.mgmt.compute.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.compute
+.. autoclass:: azure.mgmt.compute.ComputeManagementClientConfiguration
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: azure.mgmt.compute.ComputeManagementClient
     :members:
     :undoc-members:
     :show-inheritance:

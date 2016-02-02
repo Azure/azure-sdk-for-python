@@ -14,13 +14,31 @@ If you want to install ``azure`` from source::
     cd azure-sdk-for-python
     python setup.py install
 
+DISCLAIMER
+----------
+
+This is an alpha release. Future releases may introduce some breaking changes.
+
+Some of the new generated libraries have not yet been tested extensively, and some have known issues (such as azure-mgmt-web).
+
+Our goal is to release a stable version by the end of March 2016.  Please send us your feedback!
 
 Documentation:
 --------------
-* :doc:`Resource Management<resourcemanagement>` -- (:doc:`API <ref/azure.mgmt.resource>`)
+* Azure Resource Management
+   * :doc:`Authorization Resource Management<resourcemanagementauthorization>` -- (:doc:`API <ref/azure.mgmt.authorization>`)
+   * :doc:`CDN Resource Management<resourcemanagementcdn>` -- (:doc:`API <ref/azure.mgmt.cdn>`)
    * :doc:`Compute Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.compute>`)
+   * Apps
+      * :doc:`Logic Apps Resource Management<resourcemanagementapps>` -- (:doc:`API <ref/azure.mgmt.logic>`)
+      * :doc:`Web Apps Management<resourcemanagementapps>` -- (:doc:`API <ref/azure.mgmt.web>`)
    * :doc:`Network Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.network>`)
+   * :doc:`Notification Hubs Resource Management<resourcemanagementnotificationhubs>` -- (:doc:`API <ref/azure.mgmt.notificationhubs>`)
+   * :doc:`Redis Cache Resource Management<resourcemanagementredis>` -- (:doc:`API <ref/azure.mgmt.redis>`)
+   * :doc:`Resource Management<resourcemanagement>` -- (:doc:`API <ref/azure.mgmt.resource>`)   
+   * :doc:`Scheduler Management<resourcemanagementscheduler>` -- (:doc:`API <ref/azure.mgmt.scheduler>`)
    * :doc:`Storage Resource Management<resourcemanagementstorage>` -- (:doc:`API <ref/azure.mgmt.storage>`)
+* :doc:`Azure Active Directory Graph RBAC<graphrbac>` -- (:doc:`API <ref/azure.graphrbac>`)
 * :doc:`Service Management<servicemanagement>` -- (:doc:`API <ref/azure.servicemanagement>`)
 * :doc:`Service Bus<servicebus>` -- (:doc:`API <ref/azure.servicebus>`)
 * `Storage <http://azure-storage.readthedocs.org>`__
@@ -43,11 +61,33 @@ Features:
    -  Topics: create, list, and delete topics; create, list, and delete
       rules
 
--  Resource Management (Preview)
+- Azure Active Directory Graph RBAC API
+  
+   - Users
+   - Applications
+   - and more
+      
+-  Resource Management
 
+   -  Authorization: permissions, subscriptions, roles and more
+   -  CDN: profiles, endpoints creation and more
    -  Compute: create virtual machines and more
+   -  Apps:
+
+      - Logic Apps: Workflow and job management
+      - Web Apps: App Service Plan, web sites, certificate, domains and more
+
    -  Network: create virtual networks, network interfaces, public ips and more
-   -  Resource: create resource groups, register providers and more
+   -  Notification Hubs: Namespaces, hub creation/deletion and more
+   -  Redis: create cache and more
+   -  Resource:
+   
+        - resources :  create resource groups, register providers and more
+        - features : manage features of provider and more
+        - authorization : manage resource group lock and more
+        - subscriptions : manage subscriptions and more
+
+   -  Scheduler: create job collections, create job and more
    -  Storage: create storage accounts, list keys, and more
 
 -  Service Management
@@ -120,9 +160,16 @@ Indices and tables
   :glob:
 
   servicebus
+  graphrbac
   resourcemanagement
   resourcemanagementauthentication
+  resourcemanagamentauthorization
+  resourcemanagementcdn
+  resourcemanagementapps
   resourcemanagementstorage
   resourcemanagementcomputenetwork
+  resourcemanagementscheduler
+  resourcemanagementredis
+  resourcemanagementnotificationhubs
   servicemanagement
   ref/*  

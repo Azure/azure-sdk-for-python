@@ -1,7 +1,7 @@
-azure.mgmt.resource.resourcemanagement module
+azure.mgmt.resource.models module
 =============================================
 
-.. automodule:: azure.mgmt.resource.resourcemanagement
+.. automodule:: azure.mgmt.resource.models
     :members:
     :undoc-members:
     :show-inheritance:
