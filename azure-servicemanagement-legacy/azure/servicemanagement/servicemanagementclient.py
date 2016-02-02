@@ -397,10 +397,12 @@ class _ServiceManagementClient(object):
 
         return None
 
-    def _get_path(self, resource, name):
+    def _get_path(self, resource, name, suffix=None):
         path = '/' + self.subscription_id + '/' + resource
         if name is not None:
             path += '/' + _str(name)
+        if suffix is not None:
+            path += '/' + suffix
         return path
 
     def _get_cloud_services_path(self, cloud_service_id, resource=None, name=None):
