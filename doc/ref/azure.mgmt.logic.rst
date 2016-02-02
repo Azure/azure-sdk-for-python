@@ -1,4 +1,4 @@
-azure.mgmt.storage package
+azure.mgmt.logic package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.storage.models
-   azure.mgmt.storage.operations
+   azure.mgmt.logic.models
+   azure.mgmt.logic.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.storage
+.. automodule:: azure.mgmt.logic
     :members:
     :undoc-members:
     :show-inheritance:

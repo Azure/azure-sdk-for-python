@@ -1,7 +1,7 @@
-azure.mgmt.compute.computemanagement module
+azure.mgmt.scheduler.models module
 ===========================================
 
-.. automodule:: azure.mgmt.compute.computemanagement
+.. automodule:: azure.mgmt.scheduler.models
     :members:
     :undoc-members:
     :show-inheritance:

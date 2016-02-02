@@ -1,4 +1,4 @@
-azure.mgmt.storage package
+azure.mgmt.redis package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.storage.models
-   azure.mgmt.storage.operations
+   azure.mgmt.redis.models
+   azure.mgmt.redis.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.storage
+.. automodule:: azure.mgmt.redis
     :members:
     :undoc-members:
     :show-inheritance:

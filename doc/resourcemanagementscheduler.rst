@@ -1,0 +1,76 @@
+Scheduler Management
+====================
+
+For general information on resource management, see :doc:`Resource Management<resourcemanagement>`.
+
+Create the management client
+----------------------------
+
+The following code creates an instance of the management client.
+
+You will need to provide your ``subscription_id`` which can be retrieved
+from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
+
+See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
+for details on getting a Credentials instance.
+
+.. code:: python
+
+    from azure.mgmt.scheduler import SchedulerManagementClient, SchedulerManagementClientConfiguration
+
+    # TODO: Replace this with your subscription id
+    subscription_id = '33333333-3333-3333-3333-333333333333'
+    # TODO: must be an instance of 
+    # - msrestazure.azure_active_directory.UserPassCredentials
+    # - msrestazure.azure_active_directory.ServicePrincipalCredentials
+    credentials = ...
+
+    scheduler_client = SchedulerManagementClient(
+        SchedulerManagementClientConfiguration(
+            credentials,
+            subscription_id
+        )
+    )
+
+Registration
+------------
+
+Some operations in the storage ARM APIs require a one-time registration of the
+storage provider with your subscription.
+
+Use the following code to do the registration. You can use the same
+credentials you created in the previous section.
+
+.. code:: python
+
+    from azure.mgmt.resource.resources import ResourceManagementClient
+
+    resource_client = ResourceManagementClient(creds)
+    resource_client.providers.register('Microsoft.Scheduler')
+
+Create a job collection
+-----------------------
+
+The following code creates a job collection under an existing resource group.
+To create or manage resource groups, see :doc:`Resource Management<resourcemanagement>`.
+
+.. code:: python
+
+    from azure.mgmt.scheduler.models import JobCollectionDefinition, JobCollectionProperties, Sku
+
+    group_name = 'myresourcegroup'
+    job_collection_name = "myjobcollection"
+    scheduler_client.job_collections.create_or_update(
+        group_name,
+        job_collection_name,
+        JobCollectionDefinition(
+            location = "West US",
+            properties = JobCollectionProperties(
+                sku = Sku(
+                    name="Free"
+                )
+            )
+        )
+    )
+    # scheduler_client is a JobCollectionDefinition instance
+

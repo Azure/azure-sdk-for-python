@@ -1,4 +1,4 @@
-azure.mgmt.storage package
+azure.mgmt.dns package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.storage.models
-   azure.mgmt.storage.operations
+   azure.mgmt.dns.models
+   azure.mgmt.dns.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.storage
+.. automodule:: azure.mgmt.dns
     :members:
     :undoc-members:
     :show-inheritance:

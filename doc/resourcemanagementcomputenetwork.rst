@@ -12,20 +12,34 @@ You will need to provide your ``subscription_id`` which can be retrieved
 from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
 See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
-for details on getting an authentication token.
+for details on getting a Credentials instance.
 
 .. code:: python
 
-    from azure.mgmt.common import SubscriptionCloudCredentials
-    import azure.mgmt.compute
-    import azure.mgmt.network
+    from azure.mgmt.compute import ComputeManagementClient, ComputeManagementClientConfiguration
+    from azure.mgmt.network import NetworkManagementClient, NetworkManagementClientConfiguration
 
     # TODO: Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
-    creds = SubscriptionCloudCredentials(subscription_id, auth_token)
+    # TODO: must be an instance of 
+    # - msrestazure.azure_active_directory.UserPassCredentials
+    # - msrestazure.azure_active_directory.ServicePrincipalCredentials
+    credentials = ...
 
-    compute_client = azure.mgmt.compute.ComputeManagementClient(creds)
-    network_client = azure.mgmt.network.NetworkResourceProviderClient(creds)
+    compute_client = ComputeManagementClient(
+        ComputeManagementClientConfiguration(
+            credentials,
+            subscription_id
+        )
+    )
+
+    network_client = NetworkManagementClient(
+        NetworkManagementClientConfiguration(
+            credentials,
+            subscription_id
+        )
+    )
+
 
 Registration
 ------------
@@ -38,9 +52,9 @@ credentials you created in the previous section.
 
 .. code:: python
 
-    import azure.mgmt.resource
+    from azure.mgmt.resource.resources import ResourceManagementClient
 
-    resource_client = azure.mgmt.resource.ResourceManagementClient(creds)
+    resource_client = ResourceManagementClient(creds)
     resource_client.providers.register('Microsoft.Compute')
     resource_client.providers.register('Microsoft.Network')
 
@@ -55,47 +69,37 @@ creating virtual machines, including all skus and versions.
     region = 'eastus2'
 
     result_list_pub = compute_client.virtual_machine_images.list_publishers(
-        azure.mgmt.compute.VirtualMachineImageListPublishersParameters(
-            location=region,
-        ),
+        region,
     )
 
-    for publisher in result_list_pub.resources:
+    for publisher in result_list_pub:
         result_list_offers = compute_client.virtual_machine_images.list_offers(
-            azure.mgmt.compute.VirtualMachineImageListOffersParameters(
-                location=region,
-                publisher_name=publisher.name,
-            ),
+            region,
+            publisher.name,
         )
 
-        for offer in result_list_offers.resources:
+        for offer in result_list_offers:
             result_list_skus = compute_client.virtual_machine_images.list_skus(
-                azure.mgmt.compute.VirtualMachineImageListSkusParameters(
-                    location=region,
-                    publisher_name=publisher.name,
-                    offer=offer.name,
-                ),
+                region,
+                publisher.name,
+                offer.name,
             )
 
-            for sku in result_list_skus.resources:
+            for sku in result_list_skus:
                 result_list = compute_client.virtual_machine_images.list(
-                    azure.mgmt.compute.VirtualMachineImageListParameters(
-                        location=region,
-                        publisher_name=publisher.name,
-                        offer=offer.name,
-                        skus=sku.name,
-                    ),
+                    region,
+                    publisher.name,
+                    offer.name,
+                    sku.name,
                 )
 
-                for version in result_list.resources:
+                for version in result_list:
                     result_get = compute_client.virtual_machine_images.get(
-                        azure.mgmt.compute.VirtualMachineImageGetParameters(
-                            location=region,
-                            publisher_name=publisher.name,
-                            offer=offer.name,
-                            skus=sku.name,
-                            version=version.name,
-                        ),
+                        region,
+                        publisher.name,
+                        offer.name,
+                        sku.name,
+                        version.name,
                     )
 
                     print('PUBLISHER: {0}, OFFER: {1}, SKU: {2}, VERSION: {3}'.format(
@@ -123,10 +127,10 @@ To create or manage storage accounts, see :doc:`Storage Resource Management<reso
     import azure.mgmt.resource
     import azure.mgmt.storage
 
-    resource_client = azure.mgmt.resource.ResourceManagementClient(creds)
-    storage_client = azure.mgmt.storage.StorageManagementClient(creds)
-    compute_client = azure.mgmt.compute.ComputeManagementClient(creds)
-    network_client = azure.mgmt.network.NetworkResourceProviderClient(creds)
+    resource_client = azure.mgmt.resource.ResourceManagementClient(res_config)
+    storage_client = azure.mgmt.storage.StorageManagementClient(storage_config)
+    compute_client = azure.mgmt.compute.ComputeManagementClient(compute_config)
+    network_client = azure.mgmt.network.NetworkResourceProviderClient(network_config)
 
     BASE_NAME = 'pythonexample'
 
@@ -150,7 +154,7 @@ To create or manage storage accounts, see :doc:`Storage Resource Management<reso
     # 1. Create a resource group
     result = resource_client.resource_groups.create_or_update(
         GROUP_NAME,
-        azure.mgmt.resource.ResourceGroup(
+        azure.mgmt.resource.models.ResourceGroup(
             location=REGION,
         ),
     )
@@ -159,11 +163,12 @@ To create or manage storage accounts, see :doc:`Storage Resource Management<reso
     result = storage_client.storage_accounts.create(
         GROUP_NAME,
         STORAGE_NAME,
-        azure.mgmt.storage.StorageAccountCreateParameters(
+        azure.mgmt.storage.models.StorageAccountCreateParameters(
             location=REGION,
-            account_type=azure.mgmt.storage.AccountType.standard_lrs,
+            account_type=azure.mgmt.storage.models.AccountType.standard_lrs,
         ),
     )
+    result.wait() # async operation
 
     # 3. Create the network interface using a helper function (defined below)
     nic_id = create_network_interface(
@@ -179,37 +184,37 @@ To create or manage storage accounts, see :doc:`Storage Resource Management<reso
     # 4. Create the virtual machine
     result = compute_client.virtual_machines.create_or_update(
         GROUP_NAME,
-        azure.mgmt.compute.VirtualMachine(
+        azure.mgmt.compute.models.VirtualMachine(
             location=REGION,
             name=VM_NAME,
-            os_profile=azure.mgmt.compute.OSProfile(
+            os_profile=azure.mgmt.compute.models.OSProfile(
                 admin_username=ADMIN_USERNAME,
                 admin_password=ADMIN_PASSWORD,
                 computer_name=COMPUTER_NAME,
             ),
-            hardware_profile=azure.mgmt.compute.HardwareProfile(
-                virtual_machine_size=azure.mgmt.compute.VirtualMachineSizeTypes.standard_a0
+            hardware_profile=azure.mgmt.compute.models.HardwareProfile(
+                virtual_machine_size=azure.mgmt.compute.models.VirtualMachineSizeTypes.standard_a0
             ),
-            network_profile=azure.mgmt.compute.NetworkProfile(
+            network_profile=azure.mgmt.compute.models.NetworkProfile(
                 network_interfaces=[
-                    azure.mgmt.compute.NetworkInterfaceReference(
+                    azure.mgmt.compute.models.NetworkInterfaceReference(
                         reference_uri=nic_id,
                     ),
                 ],
             ),
-            storage_profile=azure.mgmt.compute.StorageProfile(
-                os_disk=azure.mgmt.compute.OSDisk(
-                    caching=azure.mgmt.compute.CachingTypes.none,
-                    create_option=azure.mgmt.compute.DiskCreateOptionTypes.from_image,
+            storage_profile=azure.mgmt.compute.models.StorageProfile(
+                os_disk=azure.mgmt.compute.models.OSDisk(
+                    caching=azure.mgmt.compute.models.CachingTypes.none,
+                    create_option=azure.mgmt.compute.models.DiskCreateOptionTypes.from_image,
                     name=OS_DISK_NAME,
-                    virtual_hard_disk=azure.mgmt.compute.VirtualHardDisk(
+                    vhd=azure.mgmt.compute.models.VirtualHardDisk(
                         uri='https://{0}.blob.core.windows.net/vhds/{1}.vhd'.format(
                             STORAGE_NAME,
                             OS_DISK_NAME,
                         ),
                     ),
                 ),
-                image_reference = azure.mgmt.compute.ImageReference(
+                image_reference = azure.mgmt.compute.models.ImageReference(
                     publisher=IMAGE_PUBLISHER,
                     offer=IMAGE_OFFER,
                     sku=IMAGE_SKU,
@@ -221,8 +226,8 @@ To create or manage storage accounts, see :doc:`Storage Resource Management<reso
 
     # Display the public ip address
     # You can now connect to the machine using SSH
-    result = network_client.public_ip_addresses.get(GROUP_NAME, PUBLIC_IP_NAME)
-    print('VM available at {}'.format(result.public_ip_address.ip_address))
+    public_ip_address = network_client.public_ip_addresses.get(GROUP_NAME, PUBLIC_IP_NAME)
+    print('VM available at {}'.format(public_ip_address.ip_address))
 
 
 This is the helper function that creates the network resources, such as
@@ -236,15 +241,15 @@ virtual network, public ip and network interface.
         result = network_client.virtual_networks.create_or_update(
             group_name,
             network_name,
-            azure.mgmt.network.VirtualNetwork(
+            azure.mgmt.network.models.VirtualNetwork(
                 location=region,
-                address_space=azure.mgmt.network.AddressSpace(
+                address_space=azure.mgmt.network.models.AddressSpace(
                     address_prefixes=[
                         '10.1.0.0/16',
                     ],
                 ),
                 subnets=[
-                    azure.mgmt.network.Subnet(
+                    azure.mgmt.network.models.Subnet(
                         name=subnet_name,
                         address_prefix='10.1.0.0/24',
                     ),
@@ -252,34 +257,33 @@ virtual network, public ip and network interface.
             ),
         )
 
-        result = network_client.subnets.get(group_name, network_name, subnet_name)
-        subnet = result.subnet
+        subnet = network_client.subnets.get(group_name, network_name, subnet_name)
 
         result = network_client.public_ip_addresses.create_or_update(
             group_name,
             ip_name,
-            azure.mgmt.network.PublicIpAddress(
+            azure.mgmt.network.models.PublicIPAddress(
                 location=region,
-                public_ip_allocation_method='Dynamic',
+                public_ip_allocation_method=azure.mgmt.network.models.IPAllocationMethod.dynamic,
                 idle_timeout_in_minutes=4,
             ),
         )
 
-        result = network_client.public_ip_addresses.get(group_name, ip_name)
-        public_ip_id = result.public_ip_address.id
+        public_ip_address = network_client.public_ip_addresses.get(group_name, ip_name)
+        public_ip_id = public_ip_address.id
 
         result = network_client.network_interfaces.create_or_update(
             group_name,
             interface_name,
-            azure.mgmt.network.NetworkInterface(
+            azure.mgmt.network.models.NetworkInterface(
                 name=interface_name,
                 location=region,
                 ip_configurations=[
-                    azure.mgmt.network.NetworkInterfaceIpConfiguration(
+                    azure.mgmt.network.models.NetworkInterfaceIPConfiguration(
                         name='default',
-                        private_ip_allocation_method=azure.mgmt.network.IpAllocationMethod.dynamic,
+                        private_ip_allocation_method=azure.mgmt.network.models.IPAllocationMethod.dynamic,
                         subnet=subnet,
-                        public_ip_address=azure.mgmt.network.ResourceId(
+                        public_ip_address=azure.mgmt.network.models.ResourceId(
                             id=public_ip_id,
                         ),
                     ),
@@ -287,9 +291,9 @@ virtual network, public ip and network interface.
             ),
         )
 
-        result = network_client.network_interfaces.get(
+        network_interface = network_client.network_interfaces.get(
             group_name,
             interface_name,
         )
 
-        return result.network_interface.id
+        return network_interface.id

@@ -1,4 +1,4 @@
-azure.mgmt.storage package
+azure.mgmt.scheduler package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.storage.models
-   azure.mgmt.storage.operations
+   azure.mgmt.scheduler.models
+   azure.mgmt.scheduler.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.storage
+.. automodule:: azure.mgmt.scheduler
     :members:
     :undoc-members:
     :show-inheritance:

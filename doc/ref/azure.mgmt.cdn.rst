@@ -1,4 +1,4 @@
-azure.mgmt.storage package
+azure.mgmt.cdn package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.storage.models
-   azure.mgmt.storage.operations
+   azure.mgmt.cdn.models
+   azure.mgmt.cdn.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.storage
+.. automodule:: azure.mgmt.cdn
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,4 +1,4 @@
-azure.mgmt.storage package
+azure.mgmt.web package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.storage.models
-   azure.mgmt.storage.operations
+   azure.mgmt.web.models
+   azure.mgmt.web.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.storage
+.. automodule:: azure.mgmt.web
     :members:
     :undoc-members:
     :show-inheritance:

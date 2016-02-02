@@ -1,4 +1,4 @@
-azure.mgmt.storage package
+azure.mgmt.authorization package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.storage.models
-   azure.mgmt.storage.operations
+   azure.mgmt.authorization.models
+   azure.mgmt.authorization.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.storage
+.. automodule:: azure.mgmt.authorization
     :members:
     :undoc-members:
     :show-inheritance:
