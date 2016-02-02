@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class PurchasePlan(Model):
+    """
+    Used for establishing the purchase context of any 3rd Party artifact
+    through MarketPlace.
+
+    :param str publisher: Gets or sets the publisher ID.
+    :param str name: Gets or sets the plan ID.
+    :param str product: Gets or sets the product ID.
+    """
+
+    _required = ['publisher', 'name', 'product']
+
+    _attribute_map = {
+        'publisher': {'key': 'publisher', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'product': {'key': 'product', 'type': 'str'},
+    }
+
+    def __init__(self, publisher, name, product):
+        self.publisher = publisher
+        self.name = name
+        self.product = product

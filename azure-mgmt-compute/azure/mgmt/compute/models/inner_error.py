@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class InnerError(Model):
+    """
+    Inner error details.
+
+    :param str exceptiontype: Gets or sets the exception type.
+    :param str errordetail: Gets or sets the internal error message or
+     exception dump.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
+        'errordetail': {'key': 'errordetail', 'type': 'str'},
+    }
+
+    def __init__(self, exceptiontype=None, errordetail=None):
+        self.exceptiontype = exceptiontype
+        self.errordetail = errordetail

@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class ComputeLongRunningOperationProperties(Model):
+    """
+    Compute-specific operation properties, including output
+
+    :param object output: Operation output data (raw JSON)
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'output': {'key': 'output', 'type': 'object'},
+    }
+
+    def __init__(self, output=None):
+        self.output = output

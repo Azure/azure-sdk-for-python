@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class ApiErrorBase(Model):
+    """
+    Api error base.
+
+    :param str code: Gets or sets the error code.
+    :param str target: Gets or sets the target of the particular error.
+    :param str message: Gets or sets the error message.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, code=None, target=None, message=None):
+        self.code = code
+        self.target = target
+        self.message = message

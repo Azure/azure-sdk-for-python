@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class KeyVaultSecretReference(Model):
+    """
+    Describes a reference to Key Vault Secret
+
+    :param str secret_url: Gets or sets the URL referencing a secret in a Key
+     Vault.
+    :param SubResource source_vault: Gets or sets the Relative URL of the Key
+     Vault containing the secret.
+    """
+
+    _required = ['secret_url', 'source_vault']
+
+    _attribute_map = {
+        'secret_url': {'key': 'secretUrl', 'type': 'str'},
+        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
+    }
+
+    def __init__(self, secret_url, source_vault):
+        self.secret_url = secret_url
+        self.source_vault = source_vault

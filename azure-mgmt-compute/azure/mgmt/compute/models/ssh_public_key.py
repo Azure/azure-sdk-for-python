@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class SshPublicKey(Model):
+    """
+    Contains information about SSH certificate public key and the path on the
+    Linux VM where the public key is placed.
+
+    :param str path: Gets or sets the full path on the created VM where SSH
+     public key is stored. If the file already exists, the specified key is
+     appended to the file.
+    :param str key_data: Gets or sets Certificate public key used to
+     authenticate with VM through SSH.The certificate must be in Pem format
+     with or without headers.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'path': {'key': 'path', 'type': 'str'},
+        'key_data': {'key': 'keyData', 'type': 'str'},
+    }
+
+    def __init__(self, path=None, key_data=None):
+        self.path = path
+        self.key_data = key_data

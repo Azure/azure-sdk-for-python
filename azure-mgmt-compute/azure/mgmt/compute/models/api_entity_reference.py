@@ -19,9 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class ApiEntityReference(Model):
+    """
+    The API entity reference.
+
+    :param str id: Gets or sets the relative URL in the previous Service
+     Management API's namespace. For Example:
+     /subscriptions/{SubcriptionId}/resourceGroups/{ResourceGroupName}/...
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id

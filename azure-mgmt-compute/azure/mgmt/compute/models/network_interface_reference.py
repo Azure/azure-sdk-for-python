@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from .sub_resource import SubResource
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class NetworkInterfaceReference(SubResource):
+    """
+    Describes a network interface reference.
+
+    :param str id: Resource Id
+    :param bool primary: Gets or sets whether this is a primary NIC on a
+     virtual machine
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'primary': {'key': 'properties.primary', 'type': 'bool', 'flatten': True},
+    }
+
+    def __init__(self, id=None, primary=None):
+        super(NetworkInterfaceReference, self).__init__(id=id)
+        self.primary = primary

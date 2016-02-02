@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class WinRMConfiguration(Model):
+    """
+    Describes Windows Remote Management configuration of the VM
+
+    :param list listeners: Gets or sets the list of Windows Remote Management
+     listeners
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'listeners': {'key': 'listeners', 'type': '[WinRMListener]'},
+    }
+
+    def __init__(self, listeners=None):
+        self.listeners = listeners

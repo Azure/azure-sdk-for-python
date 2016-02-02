@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineScaleSetSku(Model):
+    """
+    Describes an available virtual machine scale set sku.
+
+    :param str resource_type: Gets the type of resource the sku applies to.
+    :param Sku sku: Gets the Sku.
+    :param VirtualMachineScaleSetSkuCapacity capacity: Gets available scaling
+     information.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'capacity': {'key': 'capacity', 'type': 'VirtualMachineScaleSetSkuCapacity'},
+    }
+
+    def __init__(self, resource_type=None, sku=None, capacity=None):
+        self.resource_type = resource_type
+        self.sku = sku
+        self.capacity = capacity

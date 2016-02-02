@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class UsageName(Model):
+    """
+    The Usage Names.
+
+    :param str value: Gets or sets a string describing the resource name.
+    :param str localized_value: Gets or sets a localized string describing
+     the resource name.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(self, value=None, localized_value=None):
+        self.value = value
+        self.localized_value = localized_value

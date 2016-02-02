@@ -19,9 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from .sub_resource import SubResource
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineCaptureResult(SubResource):
+    """
+    Resource Id.
+
+    :param str id: Resource Id
+    :param object output: Operation output data (raw JSON)
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'output': {'key': 'properties.output', 'type': 'object', 'flatten': True},
+    }
+
+    def __init__(self, id=None, output=None):
+        super(VirtualMachineCaptureResult, self).__init__(id=id)
+        self.output = output

@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineScaleSetVMExtensionsSummary(Model):
+    """
+    Extensions summary for virtual machines of a virtual machine scale set.
+
+    :param str name: Gets the extension name.
+    :param list statuses_summary: Gets the extensions information.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
+    }
+
+    def __init__(self, name=None, statuses_summary=None):
+        self.name = name
+        self.statuses_summary = statuses_summary

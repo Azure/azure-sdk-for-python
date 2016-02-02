@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineScaleSetNetworkProfile(Model):
+    """
+    Describes a virtual machine scale set network profile.
+
+    :param list network_interface_configurations: Gets or sets the list of
+     network configurations.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetNetworkConfiguration]'},
+    }
+
+    def __init__(self, network_interface_configurations=None):
+        self.network_interface_configurations = network_interface_configurations

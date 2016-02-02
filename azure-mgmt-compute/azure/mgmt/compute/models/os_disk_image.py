@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class OSDiskImage(Model):
+    """
+    Contains the os disk image information.
+
+    :param str operating_system: Gets or sets the operating system of the
+     osDiskImage. Possible values include: 'Windows', 'Linux'
+    """
+
+    _required = ['operating_system']
+
+    _attribute_map = {
+        'operating_system': {'key': 'operatingSystem', 'type': 'OperatingSystemTypes'},
+    }
+
+    def __init__(self, operating_system):
+        self.operating_system = operating_system

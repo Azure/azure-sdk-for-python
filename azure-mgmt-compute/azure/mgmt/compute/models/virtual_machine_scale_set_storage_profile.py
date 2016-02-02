@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineScaleSetStorageProfile(Model):
+    """
+    Describes a virtual machine scale set storage profile.
+
+    :param ImageReference image_reference: Gets or sets the image reference.
+    :param VirtualMachineScaleSetOSDisk os_disk: Gets or sets the OS disk.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
+        'os_disk': {'key': 'osDisk', 'type': 'VirtualMachineScaleSetOSDisk'},
+    }
+
+    def __init__(self, image_reference=None, os_disk=None):
+        self.image_reference = image_reference
+        self.os_disk = os_disk

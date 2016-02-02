@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-compute',
-    version='0.20.1',
+    version='2.0.0rc1',
     description='Microsoft Azure Compute Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -57,8 +57,12 @@ setup(
         'azure',
         'azure.mgmt',
         'azure.mgmt.compute',
+        'azure.mgmt.compute.models',
+        'azure.mgmt.compute.operations',
     ],
     install_requires=[
-        'azure-mgmt-common',
+        'azure-mgmt-nspkg',
+		'azure-common',
+        'msrestazure'
     ],
 )

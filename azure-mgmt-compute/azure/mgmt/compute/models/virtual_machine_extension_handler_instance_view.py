@@ -19,9 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineExtensionHandlerInstanceView(Model):
+    """
+    The instance view of a virtual machine extension handler.
+
+    :param str type: Gets or sets full type of the extension handler which
+     includes both publisher and type.
+    :param str type_handler_version: Gets or sets the type version of the
+     extension handler.
+    :param InstanceViewStatus status: Gets or sets the extension handler
+     status.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'InstanceViewStatus'},
+    }
+
+    def __init__(self, type=None, type_handler_version=None, status=None):
+        self.type = type
+        self.type_handler_version = type_handler_version
+        self.status = status

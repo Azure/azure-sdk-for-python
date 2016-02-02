@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineStatusCodeCount(Model):
+    """
+    The status code and count of the virtual machine scale set instance view
+    status summary.
+
+    :param str code: Gets the instance view status code.
+    :param int count: Gets the number of instances having a particular status
+     code.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+    }
+
+    def __init__(self, code=None, count=None):
+        self.code = code
+        self.count = count

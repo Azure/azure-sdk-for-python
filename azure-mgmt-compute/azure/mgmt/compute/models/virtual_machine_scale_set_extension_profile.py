@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'ComputeManagementClient',
-    'ComputeManagementClientConfiguration'
-]
+
+class VirtualMachineScaleSetExtensionProfile(Model):
+    """
+    Describes a virtual machine scale set extension profile.
+
+    :param list extensions: Gets the virtual machine scale set child
+     extension resources.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetExtension]'},
+    }
+
+    def __init__(self, extensions=None):
+        self.extensions = extensions
