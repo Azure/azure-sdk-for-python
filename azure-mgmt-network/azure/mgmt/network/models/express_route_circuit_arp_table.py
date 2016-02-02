@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ExpressRouteCircuitArpTable(Model):
+    """
+    The arp table associated with the ExpressRouteCircuit
+
+    :param str ip_address: Gets ipAddress.
+    :param str mac_address: Gets macAddress.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'mac_address': {'key': 'macAddress', 'type': 'str'},
+    }
+
+    def __init__(self, ip_address=None, mac_address=None):
+        self.ip_address = ip_address
+        self.mac_address = mac_address

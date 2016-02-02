@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class SubnetPaged(Paged):
+    """
+    A paging container for iterating over a list of Subnet object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Subnet]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SubnetPaged, self).__init__(*args, **kwargs)

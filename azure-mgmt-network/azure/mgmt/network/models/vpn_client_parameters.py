@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class VpnClientParameters(Model):
+    """
+    VpnClientParameters
+
+    :param str processor_architecture: VPN client Processor Architecture
+     -Amd64/X86. Possible values include: 'Amd64', 'X86'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'processor_architecture': {'key': 'ProcessorArchitecture', 'type': 'ProcessorArchitecture'},
+    }
+
+    def __init__(self, processor_architecture=None):
+        self.processor_architecture = processor_architecture

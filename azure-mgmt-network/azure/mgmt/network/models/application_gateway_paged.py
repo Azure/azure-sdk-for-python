@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ApplicationGatewayPaged(Paged):
+    """
+    A paging container for iterating over a list of ApplicationGateway object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ApplicationGateway]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ApplicationGatewayPaged, self).__init__(*args, **kwargs)

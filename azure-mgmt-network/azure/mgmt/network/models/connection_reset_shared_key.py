@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ConnectionResetSharedKey(Model):
+    """ConnectionResetSharedKey
+
+    :param long key_length: The virtual network connection reset shared key
+     length
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'key_length': {'key': 'keyLength', 'type': 'long'},
+    }
+
+    def __init__(self, key_length=None):
+        self.key_length = key_length

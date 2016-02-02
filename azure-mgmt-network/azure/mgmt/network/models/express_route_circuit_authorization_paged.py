@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ExpressRouteCircuitAuthorizationPaged(Paged):
+    """
+    A paging container for iterating over a list of ExpressRouteCircuitAuthorization object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExpressRouteCircuitAuthorization]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExpressRouteCircuitAuthorizationPaged, self).__init__(*args, **kwargs)

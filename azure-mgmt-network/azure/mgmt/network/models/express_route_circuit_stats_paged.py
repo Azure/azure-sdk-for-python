@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ExpressRouteCircuitStatsPaged(Paged):
+    """
+    A paging container for iterating over a list of ExpressRouteCircuitStats object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExpressRouteCircuitStats]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExpressRouteCircuitStatsPaged, self).__init__(*args, **kwargs)

@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ExpressRouteServiceProviderBandwidthsOffered(Model):
+    """
+    Contains Bandwidths offered in ExpressRouteServiceProviders
+
+    :param str offer_name: Gets the OfferName
+    :param int value_in_mbps: Gets the ValueInMbps.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'offer_name': {'key': 'offerName', 'type': 'str'},
+        'value_in_mbps': {'key': 'valueInMbps', 'type': 'int'},
+    }
+
+    def __init__(self, offer_name=None, value_in_mbps=None):
+        self.offer_name = offer_name
+        self.value_in_mbps = value_in_mbps

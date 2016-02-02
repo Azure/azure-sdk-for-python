@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class SecurityRulePaged(Paged):
+    """
+    A paging container for iterating over a list of SecurityRule object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecurityRule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecurityRulePaged, self).__init__(*args, **kwargs)

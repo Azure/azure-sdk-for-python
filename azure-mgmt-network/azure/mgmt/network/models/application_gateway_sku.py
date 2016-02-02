@@ -19,9 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class ApplicationGatewaySku(Model):
+    """
+    SKU of application gateway
+
+    :param str name: Gets or sets name of application gateway SKU. Possible
+     values include: 'Standard_Small', 'Standard_Medium', 'Standard_Large'
+    :param str tier: Gets or sets tier of application gateway. Possible
+     values include: 'Standard'
+    :param int capacity: Gets or sets capacity (instance count) of
+     application gateway
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'ApplicationGatewaySkuName'},
+        'tier': {'key': 'tier', 'type': 'ApplicationGatewayTier'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
+    }
+
+    def __init__(self, name=None, tier=None, capacity=None):
+        self.name = name
+        self.tier = tier
+        self.capacity = capacity

@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+
+class DnsNameAvailabilityResult(Model):
+    """
+    Response for CheckDnsNameAvailability Api servive call
+
+    :param bool available: Domain availability (True/False)
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'available': {'key': 'available', 'type': 'bool'},
+    }
+
+    def __init__(self, available=None):
+        self.available = available
