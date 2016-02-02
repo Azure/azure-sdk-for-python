@@ -15,7 +15,7 @@ Features
 This version of the Azure package bundle consists of the following
 packages. Follow the links for more information on each package.
 
--  `azure-mgmt v0.20.2 <https://pypi.python.org/pypi/azure-mgmt/0.20.2>`__
+-  `azure-mgmt v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt/2.0.0rc1>`__
 -  `azure-servicebus v0.20.1 <https://pypi.python.org/pypi/azure-servicebus/0.20.1>`__
 -  `azure-servicemanagement-legacy v0.20.2 <https://pypi.python.org/pypi/azure-servicemanagement-legacy/0.20.2>`__
 -  `azure-storage v0.20.3 <https://pypi.python.org/pypi/azure-storage/0.20.3>`__
@@ -67,12 +67,20 @@ Use the following script to uninstall all of them.
 
     pip uninstall azure
     pip uninstall azure-mgmt
+    pip uninstall azure-mgmt-authorization
+    pip uninstall azure-mgmt-cdn
     pip uninstall azure-mgmt-compute
+    pip uninstall azure-mgmt-dns
+    pip uninstall azure-mgmt-logic
     pip uninstall azure-mgmt-network
+    pip uninstall azure-mgmt-notificationhubs
+    pip uninstall azure-mgmt-redis
     pip uninstall azure-mgmt-resource
+    pip uninstall azure-mgmt-scheduler
     pip uninstall azure-mgmt-storage
-    pip uninstall azure-mgmt-common
+    pip uninstall azure-mgmt-web
     pip uninstall azure-mgmt-nspkg
+    pip uninstall azure-graphrbac
     pip uninstall azure-servicebus
     pip uninstall azure-storage
     pip uninstall azure-common
