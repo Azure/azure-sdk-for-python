@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-storage',
-    version='0.20.0',
+    version='2.0.0rc1',
     description='Microsoft Azure Storage Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -57,8 +57,12 @@ setup(
         'azure',
         'azure.mgmt',
         'azure.mgmt.storage',
+        'azure.mgmt.storage.models',
+        'azure.mgmt.storage.operations',
     ],
     install_requires=[
-        'azure-mgmt-common',
+        'azure-mgmt-nspkg',
+        'azure-common',
+        'msrestazure'
     ],
 )

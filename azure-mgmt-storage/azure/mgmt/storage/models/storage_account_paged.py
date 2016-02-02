@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_management_client import StorageManagementClient, StorageManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'StorageManagementClient',
-    'StorageManagementClientConfiguration'
-]
+
+class StorageAccountPaged(Paged):
+    """
+    A paging container for iterating over a list of StorageAccount object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[StorageAccount]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(StorageAccountPaged, self).__init__(*args, **kwargs)
