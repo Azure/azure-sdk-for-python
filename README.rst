@@ -21,18 +21,27 @@ See important information regarding the upcoming release of the Azure client lib
 Features
 ========
 
--  `Storage Runtime - Table, Blob, File, Queue <https://github.com/Azure/azure-storage-python>`__
+-  `Storage Runtime - Table, Blob, File, Queue </azure-storage-python>`__
 
--  `Service Bus Runtime <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-servicebus>`__
+-  `Service Bus Runtime </azure-servicebus>`__
 
--  `Service Management <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-servicemanagement-legacy>`__
+-  `Service Management </azure-servicemanagement-legacy>`__
 
--  `Resource Management <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt>`__
+-  `Graph RBAC </azure-graphrbac>`__
 
-   -  `Compute <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-compute>`__
-   -  `Network <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-network>`__
-   -  `Resource <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-resource>`__
-   -  `Storage <https://github.com/Azure/azure-sdk-for-python/tree/master/azure-mgmt-storage>`__
+-  `Resource Management </azure-mgmt>`__
+
+   -  `Authorization </azure-mgmt-authorization>`__
+   -  `CDN </azure-mgmt-cdn>`__
+   -  `Compute </azure-mgmt-compute>`__
+   -  `Logic Apps </azure-mgmt-logic>`__
+   -  `Network </azure-mgmt-network>`__
+   -  `Notification Hubs </azure-mgmt-notificationhubs>`__
+   -  `Redis Cache </azure-mgmt-redis>`__
+   -  `Resource </azure-mgmt-resource>`__
+   -  `Scheduler </azure-mgmt-scheduler>`__
+   -  `Storage </azure-mgmt-storage>`__
+   -  `Web Apps </azure-mgmt-web>`__
 
 
 Installation
