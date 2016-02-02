@@ -33,10 +33,13 @@ from .models import (
     OperatingSystems,
     OperatingSystemFamilies,
     OSImage,
+    OSImageDetails,
     PersistentVMRole,
     ResourceExtensions,
     ReservedIP,
     ReservedIPs,
+    ReplicationProgress,
+    ReplicationProgressElement,
     RoleSize,
     RoleSizes,
     StorageService,
@@ -2150,6 +2153,14 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_get(self._get_image_path(image_name),
                                  OSImage)
 
+    def get_os_image_details(self, image_name):
+        '''
+        Retrieves an OS image from the image repository, including replication
+        progress.
+        '''
+        return self._perform_get(self._get_image_details_path(image_name),
+                                 OSImageDetails)
+
     def add_os_image(self, label, media_link, name, os):
         '''
         Adds an OS image that is currently stored in a storage account in your
@@ -2646,3 +2657,6 @@ class ServiceManagementService(_ServiceManagementClient):
 
     def _get_image_path(self, image_name=None):
         return self._get_path('services/images', image_name)
+
+    def _get_image_details_path(self, image_name=None):
+        return self._get_path('services/images', image_name, 'details')
