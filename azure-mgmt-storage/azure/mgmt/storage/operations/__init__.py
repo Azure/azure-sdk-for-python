@@ -19,9 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_management_client import StorageManagementClient, StorageManagementClientConfiguration
+from .storage_accounts_operations import StorageAccountsOperations
+from .usage_operations import UsageOperations
 
 __all__ = [
-    'StorageManagementClient',
-    'StorageManagementClientConfiguration'
+    'StorageAccountsOperations',
+    'UsageOperations',
 ]

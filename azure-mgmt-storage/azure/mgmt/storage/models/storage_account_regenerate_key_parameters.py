@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_management_client import StorageManagementClient, StorageManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'StorageManagementClient',
-    'StorageManagementClientConfiguration'
-]
+
+class StorageAccountRegenerateKeyParameters(Model):
+    """StorageAccountRegenerateKeyParameters
+
+    :param str key_name: Specifies name of the key which should be
+     regenerated: key1 or key2. Possible values include: 'key1', 'key2'
+    """
+
+    _required = ['key_name']
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'KeyName'},
+    }
+
+    def __init__(self, key_name):
+        self.key_name = key_name
