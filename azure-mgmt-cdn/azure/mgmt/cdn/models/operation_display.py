@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class OperationDisplay(Model):
+    """OperationDisplay
+
+    :param str provider: Service provider: Microsoft.Cdn
+    :param str resource: Resource on which the operation is performed:
+     profile, endpoint,.. etc
+    :param str operation: Operation type: read, write, delete,.. etc
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+    }
+
+    def __init__(self, provider=None, resource=None, operation=None):
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation

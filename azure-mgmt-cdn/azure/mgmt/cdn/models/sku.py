@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class Sku(Model):
+    """
+    Defines a pricing tier for a profile
+
+    :param str name: Name of the resource sku. Possible values include:
+     'Standard', 'Premium'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'SkuName'},
+    }
+
+    def __init__(self, name=None):
+        self.name = name

@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class CheckNameAvailabilityInput(Model):
+    """
+    Input of check name availability API
+
+    :param str name: The resource name to validate
+    :param str type: The type of the resource whose name is to be validated
+    """
+
+    _required = ['name', 'type']
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, name, type):
+        self.name = name
+        self.type = type

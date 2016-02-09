@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class ProfileUpdateParameters(Model):
+    """
+    Profile properties required for profile update
+
+    :param dict tags: Profile tags
+    """
+
+    _required = ['tags']
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, tags):
+        self.tags = tags

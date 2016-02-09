@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class OriginParameters(Model):
+    """
+    Origin properties needed for origin creation or update
+
+    :param str host_name: The host name of the origin
+    :param int http_port: The value of the http port, must be between 1 and
+     65535
+    :param int https_port: The value of the https port, must be between 1 and
+     65535
+    """
+
+    _required = ['host_name']
+
+    _attribute_map = {
+        'host_name': {'key': 'properties.hostName', 'type': 'str', 'flatten': True},
+        'http_port': {'key': 'properties.httpPort', 'type': 'int', 'flatten': True},
+        'https_port': {'key': 'properties.httpsPort', 'type': 'int', 'flatten': True},
+    }
+
+    def __init__(self, host_name, http_port=None, https_port=None):
+        self.host_name = host_name
+        self.http_port = http_port
+        self.https_port = https_port

@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class OriginPaged(Paged):
+    """
+    A paging container for iterating over a list of Origin object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Origin]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OriginPaged, self).__init__(*args, **kwargs)

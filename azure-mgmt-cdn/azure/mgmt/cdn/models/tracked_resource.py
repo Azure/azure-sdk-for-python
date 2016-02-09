@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from .resource import Resource
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class TrackedResource(Resource):
+    """
+    ARM tracked resource
+
+    :param str id: Resource Id
+    :param str name: Resource Name
+    :param str type: Resource type
+    :param str location: Resource location
+    :param dict tags: Resource tags
+    """
+
+    _required = ['location', 'tags']
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, location, tags, id=None, name=None, type=None):
+        super(TrackedResource, self).__init__(id=id, name=name, type=type)
+        self.location = location
+        self.tags = tags

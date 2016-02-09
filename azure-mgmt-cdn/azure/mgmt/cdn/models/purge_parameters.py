@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class PurgeParameters(Model):
+    """
+    Parameters required for endpoint purge
+
+    :param list content_paths: The path to the content to be purged, can
+     describe a file path or a wild card directory.
+    """
+
+    _required = ['content_paths']
+
+    _attribute_map = {
+        'content_paths': {'key': 'contentPaths', 'type': '[str]'},
+    }
+
+    def __init__(self, content_paths):
+        self.content_paths = content_paths
