@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class HttpAuthentication(Model):
+    """HttpAuthentication
+
+    :param str type: Gets or sets the http authentication type. Possible
+     values include: 'NotSpecified', 'ClientCertificate',
+     'ActiveDirectoryOAuth', 'Basic'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
+    }
+
+    def __init__(self, type=None):
+        self.type = type

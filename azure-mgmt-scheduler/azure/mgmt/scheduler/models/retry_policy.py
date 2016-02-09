@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class RetryPolicy(Model):
+    """RetryPolicy
+
+    :param str retry_type: Gets or sets the retry strategy to be used.
+     Possible values include: 'None', 'Fixed'
+    :param timedelta retry_interval: Gets or sets the retry interval between
+     retries.
+    :param int retry_count: Gets or sets the number of times a retry should
+     be attempted.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'retry_type': {'key': 'retryType', 'type': 'RetryType'},
+        'retry_interval': {'key': 'retryInterval', 'type': 'duration'},
+        'retry_count': {'key': 'retryCount', 'type': 'int'},
+    }
+
+    def __init__(self, retry_type=None, retry_interval=None, retry_count=None):
+        self.retry_type = retry_type
+        self.retry_interval = retry_interval
+        self.retry_count = retry_count

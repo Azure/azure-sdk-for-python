@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class ServiceBusAuthentication(Model):
+    """ServiceBusAuthentication
+
+    :param str sas_key: Gets or sets the SAS key.
+    :param str sas_key_name: Gets or sets the SAS key name.
+    :param str type: Gets or sets the authentication type. Possible values
+     include: 'NotSpecified', 'SharedAccessKey'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'sas_key': {'key': 'sasKey', 'type': 'str'},
+        'sas_key_name': {'key': 'sasKeyName', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ServiceBusAuthenticationType'},
+    }
+
+    def __init__(self, sas_key=None, sas_key_name=None, type=None):
+        self.sas_key = sas_key
+        self.sas_key_name = sas_key_name
+        self.type = type

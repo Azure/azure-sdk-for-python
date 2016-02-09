@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class JobCollectionQuota(Model):
+    """JobCollectionQuota
+
+    :param int max_job_count: Gets or set the maximum job count.
+    :param int max_job_occurrence: Gets or sets the maximum job occurrence.
+    :param JobMaxRecurrence max_recurrence: Gets or set the maximum
+     recurrence.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'max_job_count': {'key': 'maxJobCount', 'type': 'int'},
+        'max_job_occurrence': {'key': 'maxJobOccurrence', 'type': 'int'},
+        'max_recurrence': {'key': 'maxRecurrence', 'type': 'JobMaxRecurrence'},
+    }
+
+    def __init__(self, max_job_count=None, max_job_occurrence=None, max_recurrence=None):
+        self.max_job_count = max_job_count
+        self.max_job_occurrence = max_job_occurrence
+        self.max_recurrence = max_recurrence

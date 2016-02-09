@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from .http_authentication import HttpAuthentication
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class BasicAuthentication(HttpAuthentication):
+    """BasicAuthentication
+
+    :param str type: Gets or sets the http authentication type. Possible
+     values include: 'NotSpecified', 'ClientCertificate',
+     'ActiveDirectoryOAuth', 'Basic'
+    :param str username: Gets or sets the username.
+    :param str password: Gets or sets the password.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'username': {'key': 'username', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(self, type=None, username=None, password=None):
+        super(BasicAuthentication, self).__init__(type=type)
+        self.username = username
+        self.password = password

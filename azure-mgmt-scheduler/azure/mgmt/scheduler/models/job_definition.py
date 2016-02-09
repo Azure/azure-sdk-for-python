@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class JobDefinition(Model):
+    """JobDefinition
+
+    :param str id: Gets the job resource identifier.
+    :param str type: Gets the job resource type.
+    :param str name: Gets the job resource name.
+    :param JobProperties properties: Gets or sets the job properties.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'JobProperties'},
+    }
+
+    def __init__(self, id=None, type=None, name=None, properties=None):
+        self.id = id
+        self.type = type
+        self.name = name
+        self.properties = properties

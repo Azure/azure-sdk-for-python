@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class JobHistoryFilter(Model):
+    """JobHistoryFilter
+
+    :param str status: Gets or sets the job execution status. Possible values
+     include: 'Completed', 'Failed', 'Postponed'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'JobExecutionStatus'},
+    }
+
+    def __init__(self, status=None):
+        self.status = status

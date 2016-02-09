@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class Sku(Model):
+    """Sku
+
+    :param str name: Gets or set the SKU. Possible values include:
+     'Standard', 'Free', 'Premium'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'SkuDefinition'},
+    }
+
+    def __init__(self, name=None):
+        self.name = name

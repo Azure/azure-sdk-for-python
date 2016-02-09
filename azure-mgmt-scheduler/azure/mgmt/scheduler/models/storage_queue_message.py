@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class StorageQueueMessage(Model):
+    """StorageQueueMessage
+
+    :param str storage_account: Gets or sets the storage account name.
+    :param str queue_name: Gets or sets the queue name.
+    :param str sas_token: Gets or sets the SAS key.
+    :param str message: Gets or sets the message.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'storage_account': {'key': 'storageAccount', 'type': 'str'},
+        'queue_name': {'key': 'queueName', 'type': 'str'},
+        'sas_token': {'key': 'sasToken', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, storage_account=None, queue_name=None, sas_token=None, message=None):
+        self.storage_account = storage_account
+        self.queue_name = queue_name
+        self.sas_token = sas_token
+        self.message = message
