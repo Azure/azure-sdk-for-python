@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class JobStateFilter(Model):
+    """JobStateFilter
+
+    :param str state: Gets or sets the job state. Possible values include:
+     'Enabled', 'Disabled', 'Faulted', 'Completed'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'state': {'key': 'state', 'type': 'JobState'},
+    }
+
+    def __init__(self, state=None):
+        self.state = state

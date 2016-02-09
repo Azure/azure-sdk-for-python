@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class JobRecurrenceScheduleMonthlyOccurrence(Model):
+    """JobRecurrenceScheduleMonthlyOccurrence
+
+    :param str day: Gets or sets the day. Must be one of monday, tuesday,
+     wednesday, thursday, friday, saturday, sunday. Possible values include:
+     'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
+     'Sunday'
+    :param int occurrence: Gets or sets the occurrence. Must be between -5
+     and 5.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'day': {'key': 'day', 'type': 'JobScheduleDay'},
+        'occurrence': {'key': 'Occurrence', 'type': 'int'},
+    }
+
+    def __init__(self, day=None, occurrence=None):
+        self.day = day
+        self.occurrence = occurrence

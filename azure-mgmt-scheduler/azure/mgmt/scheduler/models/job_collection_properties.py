@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class JobCollectionProperties(Model):
+    """JobCollectionProperties
+
+    :param Sku sku: Gets or sets the SKU.
+    :param str state: Gets or sets the state. Possible values include:
+     'Enabled', 'Disabled', 'Suspended', 'Deleted'
+    :param JobCollectionQuota quota: Gets or sets the job collection quota.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'state': {'key': 'state', 'type': 'JobCollectionState'},
+        'quota': {'key': 'quota', 'type': 'JobCollectionQuota'},
+    }
+
+    def __init__(self, sku=None, state=None, quota=None):
+        self.sku = sku
+        self.state = state
+        self.quota = quota

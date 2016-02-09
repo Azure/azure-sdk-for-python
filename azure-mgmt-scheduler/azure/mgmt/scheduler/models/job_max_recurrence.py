@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class JobMaxRecurrence(Model):
+    """JobMaxRecurrence
+
+    :param str frequency: Gets or sets the frequency of recurrence (second,
+     minute, hour, day, week, month). Possible values include: 'Minute',
+     'Hour', 'Day', 'Week', 'Month'
+    :param int interval: Gets or sets the interval between retries.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
+        'interval': {'key': 'interval', 'type': 'int'},
+    }
+
+    def __init__(self, frequency=None, interval=None):
+        self.frequency = frequency
+        self.interval = interval

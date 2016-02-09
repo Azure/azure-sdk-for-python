@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+
+class JobCollectionDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of JobCollectionDefinition object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[JobCollectionDefinition]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(JobCollectionDefinitionPaged, self).__init__(*args, **kwargs)
