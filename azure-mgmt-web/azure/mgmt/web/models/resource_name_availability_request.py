@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class ResourceNameAvailabilityRequest(Model):
+    """
+    Resource name availability request content
+
+    :param str name: Resource name to verify
+    :param str type: Resource type used for verification
+    :param bool is_fqdn: Is fully qualified domain name
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'is_fqdn': {'key': 'isFqdn', 'type': 'bool'},
+    }
+
+    def __init__(self, name=None, type=None, is_fqdn=None):
+        self.name = name
+        self.type = type
+        self.is_fqdn = is_fqdn

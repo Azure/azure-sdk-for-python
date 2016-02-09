@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class AutoHealCustomAction(Model):
+    """
+    AutoHealCustomAction - Describes the custom action to be executed
+    when an auto heal rule is triggered.
+
+    :param str exe: Executable to be run
+    :param str parameters: Parameters for the executable
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'exe': {'key': 'exe', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'str'},
+    }
+
+    def __init__(self, exe=None, parameters=None):
+        self.exe = exe
+        self.parameters = parameters

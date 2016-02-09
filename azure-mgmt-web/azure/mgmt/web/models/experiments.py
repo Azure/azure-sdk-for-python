@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class Experiments(Model):
+    """
+    Class containing Routing in production experiments
+
+    :param list ramp_up_rules: List of
+     {Microsoft.Web.Hosting.Administration.RampUpRule} objects.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'ramp_up_rules': {'key': 'rampUpRules', 'type': '[RampUpRule]'},
+    }
+
+    def __init__(self, ramp_up_rules=None):
+        self.ramp_up_rules = ramp_up_rules

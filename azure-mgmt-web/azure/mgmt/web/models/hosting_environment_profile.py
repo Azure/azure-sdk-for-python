@@ -19,9 +19,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class HostingEnvironmentProfile(Model):
+    """
+    Specification for a hostingEnvironment (App Service Environment) to use
+    for this resource
+
+    :param str id: Resource id of the hostingEnvironment (App Service
+     Environment)
+    :param str name: Name of the hostingEnvironment (App Service Environment)
+     (read only)
+    :param str type: Resource type of the hostingEnvironment (App Service
+     Environment) (read only)
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, id=None, name=None, type=None):
+        self.id = id
+        self.name = name
+        self.type = type

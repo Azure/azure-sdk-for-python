@@ -19,9 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class VirtualNetworkProfile(Model):
+    """
+    Specification for using a virtual network
+
+    :param str id: Resource id of the virtual network
+    :param str name: Name of the virtual network (read-only)
+    :param str type: Resource type of the virtual network (read-only)
+    :param str subnet: Subnet within the virtual network
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'subnet': {'key': 'subnet', 'type': 'str'},
+    }
+
+    def __init__(self, id=None, name=None, type=None, subnet=None):
+        self.id = id
+        self.name = name
+        self.type = type
+        self.subnet = subnet

@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class HostingEnvironmentDiagnostics(Model):
+    """
+    Diagnostics for a hosting environment (App Service Environment)
+
+    :param str name: Name/identifier of the diagnostics
+    :param str diagnosics_output: Diagnostics output
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'diagnosics_output': {'key': 'diagnosicsOutput', 'type': 'str'},
+    }
+
+    def __init__(self, name=None, diagnosics_output=None):
+        self.name = name
+        self.diagnosics_output = diagnosics_output

@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class ResourceMetricName(Model):
+    """
+    Name of a metric for any resource
+
+    :param str value: metric name value
+    :param str localized_value: Localized metric name value
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(self, value=None, localized_value=None):
+        self.value = value
+        self.localized_value = localized_value

@@ -19,9 +19,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class Resource(Model):
+    """Resource
+
+    :param str id: Resource Id
+    :param str name: Resource Name
+    :param str location: Resource Location
+    :param str type: Resource type
+    :param dict tags: Resource tags
+    """
+
+    _required = ['location']
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None):
+        self.id = id
+        self.name = name
+        self.location = location
+        self.type = type
+        self.tags = tags

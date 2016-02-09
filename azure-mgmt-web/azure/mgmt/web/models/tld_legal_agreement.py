@@ -19,9 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class TldLegalAgreement(Model):
+    """
+    Represents a legal agreement for top level domain
+
+    :param str agreement_key: Unique identifier for the agreement
+    :param str title: Agreement title
+    :param str content: Agreement details
+    :param str url: Url where a copy of the agreement details is hosted
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'agreement_key': {'key': 'agreementKey', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'str'},
+        'content': {'key': 'content', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+    }
+
+    def __init__(self, agreement_key=None, title=None, content=None, url=None):
+        self.agreement_key = agreement_key
+        self.title = title
+        self.content = content
+        self.url = url

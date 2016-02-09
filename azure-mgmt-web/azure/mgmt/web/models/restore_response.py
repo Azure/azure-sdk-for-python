@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from .resource import Resource
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class RestoreResponse(Resource):
+    """
+    Response for a restore site request
+
+    :param str id: Resource Id
+    :param str name: Resource Name
+    :param str location: Resource Location
+    :param str type: Resource type
+    :param dict tags: Resource tags
+    :param str operation_id: When server starts the restore process, it will
+     return an OperationId identifying that particular restore operation
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'operation_id': {'key': 'properties.operationId', 'type': 'str', 'flatten': True},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, operation_id=None):
+        super(RestoreResponse, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+        self.operation_id = operation_id

@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class DomainAvailablilityCheckResult(Model):
+    """
+    Domain availablility check result
+
+    :param str name: Name of the domain
+    :param bool available: If true then domain can be purchased using
+     CreateDomain Api
+    :param str domain_type: Domain type. Possible values include: 'Regular',
+     'SoftDeleted'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'available': {'key': 'available', 'type': 'bool'},
+        'domain_type': {'key': 'domainType', 'type': 'DomainType'},
+    }
+
+    def __init__(self, name=None, available=None, domain_type=None):
+        self.name = name
+        self.available = available
+        self.domain_type = domain_type

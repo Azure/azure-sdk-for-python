@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class VirtualApplication(Model):
+    """VirtualApplication
+
+    :param str virtual_path:
+    :param str physical_path:
+    :param bool preload_enabled:
+    :param list virtual_directories:
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'virtual_path': {'key': 'virtualPath', 'type': 'str'},
+        'physical_path': {'key': 'physicalPath', 'type': 'str'},
+        'preload_enabled': {'key': 'preloadEnabled', 'type': 'bool'},
+        'virtual_directories': {'key': 'virtualDirectories', 'type': '[VirtualDirectory]'},
+    }
+
+    def __init__(self, virtual_path=None, physical_path=None, preload_enabled=None, virtual_directories=None):
+        self.virtual_path = virtual_path
+        self.physical_path = physical_path
+        self.preload_enabled = preload_enabled
+        self.virtual_directories = virtual_directories

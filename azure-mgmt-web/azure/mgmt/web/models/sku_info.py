@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class SkuInfo(Model):
+    """
+    Sku discovery information
+
+    :param str resource_type: Resource type that this sku applies to
+    :param SkuDescription sku: Name and tier of the sku
+    :param SkuCapacity capacity: Min, max, and default scale values of the sku
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'SkuDescription'},
+        'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
+    }
+
+    def __init__(self, resource_type=None, sku=None, capacity=None):
+        self.resource_type = resource_type
+        self.sku = sku
+        self.capacity = capacity

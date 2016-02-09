@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class SlotConfigNames(Model):
+    """
+    Class containing names for connection strings and application settings to
+    be marked as sticky to the slot
+    and not moved during swap operation
+    This is valid for all deployment slots under the site
+
+    :param list connection_string_names: List of connection string names
+    :param list app_setting_names: List of application settings names
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'connection_string_names': {'key': 'connectionStringNames', 'type': '[str]'},
+        'app_setting_names': {'key': 'appSettingNames', 'type': '[str]'},
+    }
+
+    def __init__(self, connection_string_names=None, app_setting_names=None):
+        self.connection_string_names = connection_string_names
+        self.app_setting_names = app_setting_names

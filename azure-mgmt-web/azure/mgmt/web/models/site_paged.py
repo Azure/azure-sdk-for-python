@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class SitePaged(Paged):
+    """
+    A paging container for iterating over a list of Site object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Site]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SitePaged, self).__init__(*args, **kwargs)

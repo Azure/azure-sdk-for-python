@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class DomainControlCenterSsoRequest(Model):
+    """
+    Single sign on request information for domain management
+
+    :param str url: Url where the single sign on request is to be made
+    :param str post_parameter_key: Post parameter key
+    :param str post_parameter_value: Post parameter value. Client should use
+     'application/x-www-form-urlencoded' encoding for this value.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'url': {'key': 'url', 'type': 'str'},
+        'post_parameter_key': {'key': 'postParameterKey', 'type': 'str'},
+        'post_parameter_value': {'key': 'postParameterValue', 'type': 'str'},
+    }
+
+    def __init__(self, url=None, post_parameter_key=None, post_parameter_value=None):
+        self.url = url
+        self.post_parameter_key = post_parameter_key
+        self.post_parameter_value = post_parameter_value

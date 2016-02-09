@@ -19,9 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class DomainPurchaseConsent(Model):
+    """
+    Domain purchase consent object representing acceptance of applicable legal
+    agreements
+
+    :param list agreement_keys: List of applicable legal agreement keys. This
+     list can be retrieved using ListLegalAgreements Api under TopLevelDomain
+     resource
+    :param str agreed_by: Client IP address
+    :param datetime agreed_at: Timestamp when the agreements were accepted
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'agreement_keys': {'key': 'agreementKeys', 'type': '[str]'},
+        'agreed_by': {'key': 'agreedBy', 'type': 'str'},
+        'agreed_at': {'key': 'agreedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, agreement_keys=None, agreed_by=None, agreed_at=None):
+        self.agreement_keys = agreement_keys
+        self.agreed_by = agreed_by
+        self.agreed_at = agreed_at

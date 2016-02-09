@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class AzureTableStorageApplicationLogsConfig(Model):
+    """
+    Application logs to azure table storage configuration
+
+    :param str level: Log level. Possible values include: 'Off', 'Verbose',
+     'Information', 'Warning', 'Error'
+    :param str sas_url: SAS url to an azure table with add/query/delete
+     permissions
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'level': {'key': 'level', 'type': 'LogLevel'},
+        'sas_url': {'key': 'sasUrl', 'type': 'str'},
+    }
+
+    def __init__(self, level=None, sas_url=None):
+        self.level = level
+        self.sas_url = sas_url

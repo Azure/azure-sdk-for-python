@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class CorsSettings(Model):
+    """
+    Cross-Origin Resource Sharing (CORS) settings for the web app.
+
+    :param list allowed_origins: Gets or sets the list of origins that should
+     be allowed to make cross-origin
+     calls (for example: http://example.com:12345). Use "*" to
+     allow all.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'allowed_origins': {'key': 'allowedOrigins', 'type': '[str]'},
+    }
+
+    def __init__(self, allowed_origins=None):
+        self.allowed_origins = allowed_origins

@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class SiteInstanceCollection(Model):
+    """
+    Collection of site instances
+
+    :param list value: Collection of resources
+    :param str next_link: Link to next page of resources
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SiteInstance]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, value=None, next_link=None):
+        self.value = value
+        self.next_link = next_link

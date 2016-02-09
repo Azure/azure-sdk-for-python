@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class LocalizableString(Model):
+    """
+    LocalizableString object containing the name and a localized value.
+
+    :param str value: Non localized name
+    :param str localized_value: Localized name
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(self, value=None, localized_value=None):
+        self.value = value
+        self.localized_value = localized_value

@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class CsmMoveResourceEnvelope(Model):
+    """
+    Class containing a list of the resources that need to be moved and the
+    resource group they should be moved to
+
+    :param str target_resource_group:
+    :param list resources:
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
+        'resources': {'key': 'resources', 'type': '[str]'},
+    }
+
+    def __init__(self, target_resource_group=None, resources=None):
+        self.target_resource_group = target_resource_group
+        self.resources = resources

@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class HttpLogsConfig(Model):
+    """
+    Http logs configuration
+
+    :param FileSystemHttpLogsConfig file_system: Http logs to file system
+     configuration
+    :param AzureBlobStorageHttpLogsConfig azure_blob_storage: Http logs to
+     azure blob storage configuration
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'file_system': {'key': 'fileSystem', 'type': 'FileSystemHttpLogsConfig'},
+        'azure_blob_storage': {'key': 'azureBlobStorage', 'type': 'AzureBlobStorageHttpLogsConfig'},
+    }
+
+    def __init__(self, file_system=None, azure_blob_storage=None):
+        self.file_system = file_system
+        self.azure_blob_storage = azure_blob_storage

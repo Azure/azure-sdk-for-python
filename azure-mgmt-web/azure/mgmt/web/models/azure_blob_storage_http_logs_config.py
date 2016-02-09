@@ -19,9 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class AzureBlobStorageHttpLogsConfig(Model):
+    """
+    Http logs to azure blob storage configuration
+
+    :param str sas_url: SAS url to a azure blob container with
+     read/write/list/delete permissions
+    :param int retention_in_days: Retention in days.
+     Remove blobs older than X days.
+     0 or lower means no retention.
+    :param bool enabled: Enabled
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'sas_url': {'key': 'sasUrl', 'type': 'str'},
+        'retention_in_days': {'key': 'retentionInDays', 'type': 'int'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, sas_url=None, retention_in_days=None, enabled=None):
+        self.sas_url = sas_url
+        self.retention_in_days = retention_in_days
+        self.enabled = enabled
