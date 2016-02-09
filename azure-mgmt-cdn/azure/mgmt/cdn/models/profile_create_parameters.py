@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class ProfileCreateParameters(Model):
+    """
+    Profile properties required for profile creation
+
+    :param str location: Profile location
+    :param dict tags: Profile tags
+    :param Sku sku: Profile sku
+    """
+
+    _required = ['location', 'sku']
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'properties.sku', 'type': 'Sku', 'flatten': True},
+    }
+
+    def __init__(self, location, sku, tags=None):
+        self.location = location
+        self.tags = tags
+        self.sku = sku

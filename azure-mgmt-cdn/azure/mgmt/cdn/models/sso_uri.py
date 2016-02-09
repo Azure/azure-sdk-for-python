@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class SsoUri(Model):
+    """
+    Sso uri required to login to third party web portal
+
+    :param str sso_uri_value: The uri used to login to third party web portal
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'sso_uri_value': {'key': 'ssoUriValue', 'type': 'str'},
+    }
+
+    def __init__(self, sso_uri_value=None):
+        self.sso_uri_value = sso_uri_value

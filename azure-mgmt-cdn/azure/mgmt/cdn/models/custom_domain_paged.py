@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class CustomDomainPaged(Paged):
+    """
+    A paging container for iterating over a list of CustomDomain object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CustomDomain]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CustomDomainPaged, self).__init__(*args, **kwargs)

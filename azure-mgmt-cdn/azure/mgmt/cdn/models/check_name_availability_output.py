@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class CheckNameAvailabilityOutput(Model):
+    """
+    Output of check name availability API
+
+    :param bool name_available: Indicates whether the name is available
+    :param str reason: The reason why the name is not available
+    :param str message: The detailed error message on why the name is not
+     available
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name_available': {'key': 'NameAvailable', 'type': 'bool'},
+        'reason': {'key': 'Reason', 'type': 'str'},
+        'message': {'key': 'Message', 'type': 'str'},
+    }
+
+    def __init__(self, name_available=None, reason=None, message=None):
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message

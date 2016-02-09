@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'CdnManagementClient',
-    'CdnManagementClientConfiguration'
-]
+
+class ValidateCustomDomainOutput(Model):
+    """
+    Output of custom domain validation
+
+    :param bool custom_domain_validated: Indicates whether the custom domain
+     is validated or not
+    :param str reason: The reason why the custom domain is not valid
+    :param str message: The message on why the custom domain is not valid
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'custom_domain_validated': {'key': 'CustomDomainValidated', 'type': 'bool'},
+        'reason': {'key': 'Reason', 'type': 'str'},
+        'message': {'key': 'Message', 'type': 'str'},
+    }
+
+    def __init__(self, custom_domain_validated=None, reason=None, message=None):
+        self.custom_domain_validated = custom_domain_validated
+        self.reason = reason
+        self.message = message
