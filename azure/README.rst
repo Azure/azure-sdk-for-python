@@ -72,6 +72,7 @@ Use the following script to uninstall all of them.
     pip uninstall azure-mgmt-compute
     pip uninstall azure-mgmt-dns
     pip uninstall azure-mgmt-logic
+    pip uninstall azure-mgmt-graphrbac
     pip uninstall azure-mgmt-network
     pip uninstall azure-mgmt-notificationhubs
     pip uninstall azure-mgmt-redis

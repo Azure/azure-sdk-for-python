@@ -44,6 +44,7 @@ following packages. Follow the links for more information on each package.
 -  `azure-mgmt-compute v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-compute/2.0.0rc1>`__
 -  `azure-mgmt-dns v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-dns/2.0.0rc1>`__
 -  `azure-mgmt-logic v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-logic/2.0.0rc1>`__
+-  `azure-mgmt-graphrbac v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-graphrbac/2.0.0rc1>`__
 -  `azure-mgmt-network v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-network/2.0.0rc1>`__
 -  `azure-mgmt-notificationhubs v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-notificationhubs/2.0.0rc1>`__
 -  `azure-mgmt-redis v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-redis/2.0.0rc1>`__
