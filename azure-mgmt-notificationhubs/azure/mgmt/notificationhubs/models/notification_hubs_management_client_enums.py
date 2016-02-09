@@ -19,10 +19,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from enum import Enum
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class NamespaceType(Enum):
+
+    messaging = "Messaging"
+    notification_hub = "NotificationHub"
+
+
+class AccessRights(Enum):
+
+    manage = "Manage"
+    send = "Send"
+    listen = "Listen"

@@ -19,10 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class ResourceListKeys(Model):
+    """
+    Namespace/NotificationHub Connection String
+
+    :param str primary_connection_string: Gets or sets the
+     primaryConnectionString of the created Namespace AuthorizationRule.
+    :param str secondary_connection_string: Gets or sets the
+     secondaryConnectionString of the created Namespace AuthorizationRule
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
+        'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
+    }
+
+    def __init__(self, primary_connection_string=None, secondary_connection_string=None):
+        self.primary_connection_string = primary_connection_string
+        self.secondary_connection_string = secondary_connection_string

@@ -19,10 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class SharedAccessAuthorizationRuleResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of SharedAccessAuthorizationRuleResource object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SharedAccessAuthorizationRuleResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SharedAccessAuthorizationRuleResourcePaged, self).__init__(*args, **kwargs)

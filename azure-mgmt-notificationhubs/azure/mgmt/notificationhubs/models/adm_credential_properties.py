@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class AdmCredentialProperties(Model):
+    """
+    Description of a NotificationHub AdmCredential.
+
+    :param str client_id: Gets or sets the client identifier.
+    :param str client_secret: Gets or sets the credential secret access key.
+    :param str auth_token_url: Gets or sets the URL of the authorization
+     token.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_secret': {'key': 'clientSecret', 'type': 'str'},
+        'auth_token_url': {'key': 'authTokenUrl', 'type': 'str'},
+    }
+
+    def __init__(self, client_id=None, client_secret=None, auth_token_url=None):
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.auth_token_url = auth_token_url

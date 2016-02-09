@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class MpnsCredentialProperties(Model):
+    """
+    Description of a NotificationHub MpnsCredential.
+
+    :param str mpns_certificate: Gets or sets the MPNS certificate.
+    :param str certificate_key: Gets or sets the certificate key for this
+     credential.
+    :param str thumbprint: Gets or sets the Mpns certificate Thumbprint
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'mpns_certificate': {'key': 'mpnsCertificate', 'type': 'str'},
+        'certificate_key': {'key': 'certificateKey', 'type': 'str'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+    }
+
+    def __init__(self, mpns_certificate=None, certificate_key=None, thumbprint=None):
+        self.mpns_certificate = mpns_certificate
+        self.certificate_key = certificate_key
+        self.thumbprint = thumbprint

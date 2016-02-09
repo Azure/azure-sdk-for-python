@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
+    """
+    Parameters supplied to the CreateOrUpdate Namespace AuthorizationRules.
+
+    :param str location: Gets or sets Namespace data center location.
+    :param str name: Gets or sets Name of the Namespace AuthorizationRule.
+    :param SharedAccessAuthorizationRuleProperties properties: Gets or sets
+     properties of the Namespace AuthorizationRules.
+    """
+
+    _required = ['properties']
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'SharedAccessAuthorizationRuleProperties'},
+    }
+
+    def __init__(self, properties, location=None, name=None):
+        self.location = location
+        self.name = name
+        self.properties = properties

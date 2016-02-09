@@ -19,10 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class WnsCredential(Model):
+    """
+    Description of a NotificationHub WnsCredential.
+
+    :param WnsCredentialProperties properties: Gets or sets properties of
+     NotificationHub WnsCredential.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'WnsCredentialProperties'},
+    }
+
+    def __init__(self, properties=None):
+        self.properties = properties

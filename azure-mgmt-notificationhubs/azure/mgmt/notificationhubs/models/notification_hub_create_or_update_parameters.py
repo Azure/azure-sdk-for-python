@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class NotificationHubCreateOrUpdateParameters(Model):
+    """
+    Parameters supplied to the CreateOrUpdate NotificationHub operation.
+
+    :param str location: Gets or sets NotificationHub data center location.
+    :param dict tags: Gets or sets NotificationHub tags.
+    :param NotificationHubProperties properties: Gets or sets properties of
+     the NotificationHub.
+    """
+
+    _required = ['location', 'properties']
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'NotificationHubProperties'},
+    }
+
+    def __init__(self, location, properties, tags=None):
+        self.location = location
+        self.tags = tags
+        self.properties = properties
