@@ -19,10 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class BaiduCredential(Model):
+    """
+    Description of a NotificationHub BaiduCredential.
+
+    :param BaiduCredentialProperties properties: Gets or sets properties of
+     NotificationHub BaiduCredential.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'BaiduCredentialProperties'},
+    }
+
+    def __init__(self, properties=None):
+        self.properties = properties

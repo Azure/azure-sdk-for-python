@@ -19,10 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class NotificationHubResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of NotificationHubResource object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NotificationHubResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NotificationHubResourcePaged, self).__init__(*args, **kwargs)

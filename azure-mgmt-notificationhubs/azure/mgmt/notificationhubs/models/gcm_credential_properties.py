@@ -19,10 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class GcmCredentialProperties(Model):
+    """
+    Description of a NotificationHub GcmCredential.
+
+    :param str gcm_endpoint: Gets or sets the GCM endpoint.
+    :param str google_api_key: Gets or sets the Google API key.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'gcm_endpoint': {'key': 'gcmEndpoint', 'type': 'str'},
+        'google_api_key': {'key': 'googleApiKey', 'type': 'str'},
+    }
+
+    def __init__(self, gcm_endpoint=None, google_api_key=None):
+        self.gcm_endpoint = gcm_endpoint
+        self.google_api_key = google_api_key

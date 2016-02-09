@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .namespaces_operations import NamespacesOperations
-from .notification_hubs_operations import NotificationHubsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+
+class NamespaceCreateOrUpdateParameters(Model):
+    """
+    Parameters supplied to the CreateOrUpdate Namespace operation.
+
+    :param str location: Gets or sets Namespace data center location.
+    :param dict tags: Gets or sets Namespace tags.
+    :param NamespaceProperties properties: Gets or sets properties of the
+     Namespace.
+    """
+
+    _required = ['location', 'properties']
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'NamespaceProperties'},
+    }
+
+    def __init__(self, location, properties, tags=None):
+        self.location = location
+        self.tags = tags
+        self.properties = properties
