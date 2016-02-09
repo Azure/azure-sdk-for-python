@@ -19,16 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .classic_administrators_operations import ClassicAdministratorsOperations
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'ClassicAdministratorsOperations',
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
-]
+
+class ClassicAdministratorProperties(Model):
+    """
+    Classic Administrator properties.
+
+    :param str email_address: Gets or sets the email address
+    :param str role: Gets or sets the role
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'email_address': {'key': 'emailAddress', 'type': 'str'},
+        'role': {'key': 'role', 'type': 'str'},
+    }
+
+    def __init__(self, email_address=None, role=None):
+        self.email_address = email_address
+        self.role = role

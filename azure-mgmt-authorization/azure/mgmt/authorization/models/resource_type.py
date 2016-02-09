@@ -19,16 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .classic_administrators_operations import ClassicAdministratorsOperations
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'ClassicAdministratorsOperations',
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
-]
+
+class ResourceType(Model):
+    """
+    Resource Type
+
+    :param str name: Gets or sets the resource type name
+    :param str display_name: Gets or sets the resource type display name
+    :param list operations: Gets or sets the resource type operations
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'operations': {'key': 'operations', 'type': '[ProviderOperation]'},
+    }
+
+    def __init__(self, name=None, display_name=None, operations=None):
+        self.name = name
+        self.display_name = display_name
+        self.operations = operations

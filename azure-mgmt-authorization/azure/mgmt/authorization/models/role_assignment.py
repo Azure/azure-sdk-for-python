@@ -19,16 +19,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .classic_administrators_operations import ClassicAdministratorsOperations
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'ClassicAdministratorsOperations',
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
-]
+
+class RoleAssignment(Model):
+    """
+    Role Assignments
+
+    :param str id: Gets or sets role assignment id.
+    :param str name: Gets or sets role assignment name.
+    :param str type: Gets or sets role assignment type.
+    :param RoleAssignmentPropertiesWithScope properties: Gets or sets role
+     assignment properties.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'RoleAssignmentPropertiesWithScope'},
+    }
+
+    def __init__(self, id=None, name=None, type=None, properties=None):
+        self.id = id
+        self.name = name
+        self.type = type
+        self.properties = properties

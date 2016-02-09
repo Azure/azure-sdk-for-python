@@ -19,16 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .classic_administrators_operations import ClassicAdministratorsOperations
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'ClassicAdministratorsOperations',
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
-]
+
+class RoleDefinitionFilter(Model):
+    """
+    Role Definitions filter
+
+    :param str role_name: Returns role definition with the specific name.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'role_name': {'key': 'roleName', 'type': 'str'},
+    }
+
+    def __init__(self, role_name=None):
+        self.role_name = role_name

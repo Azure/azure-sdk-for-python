@@ -19,16 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .classic_administrators_operations import ClassicAdministratorsOperations
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'ClassicAdministratorsOperations',
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
-]
+
+class Permission(Model):
+    """
+    Role definition permissions.
+
+    :param list actions: Role definition allowed actions.
+    :param list not_actions: Role definition denied actions.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'actions': {'key': 'actions', 'type': '[str]'},
+        'not_actions': {'key': 'notActions', 'type': '[str]'},
+    }
+
+    def __init__(self, actions=None, not_actions=None):
+        self.actions = actions
+        self.not_actions = not_actions
