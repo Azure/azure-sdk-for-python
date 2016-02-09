@@ -12,6 +12,7 @@ $packages = @(
     "azure-mgmt-cdn",
     "azure-mgmt-compute",
     "azure-mgmt-logic",
+    "azure-mgmt-graphrbac",
     "azure-mgmt-network",
     "azure-mgmt-notificationhubs",
     "azure-mgmt-redis",

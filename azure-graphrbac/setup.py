@@ -33,9 +33,9 @@ except ImportError:
     pass
 
 setup(
-    name='azure-mgmt',
+    name='azure-mgmt-graphrbac',
     version='2.0.0rc1',
-    description='Microsoft Azure Resource Management Client Libraries for Python',
+    description='Microsoft Azure Graph RBAC Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
     author='Microsoft Corporation',
@@ -53,19 +53,14 @@ setup(
         'License :: OSI Approved :: Apache Software License',
     ],
     zip_safe=False,
+    packages=[
+        'azure',
+        'azure.graphrbac',
+        'azure.graphrbac.models',
+        'azure.graphrbac.operations',
+    ],
     install_requires=[
-        'azure-mgmt-authorization==2.0.0rc1',
-        'azure-mgmt-cdn==2.0.0rc1',
-        'azure-mgmt-compute==2.0.0rc1',
-        'azure-mgmt-dns==2.0.0rc1',
-        'azure-mgmt-graphrbac==2.0.0rc1',
-        'azure-mgmt-logic==2.0.0rc1',
-        'azure-mgmt-network==2.0.0rc1',
-        'azure-mgmt-notificationhubs==2.0.0rc1',
-        'azure-mgmt-redis==2.0.0rc1',
-        'azure-mgmt-resource==2.0.0rc1',
-        'azure-mgmt-scheduler==2.0.0rc1',
-        'azure-mgmt-storage==2.0.0rc1',
-        'azure-mgmt-web==2.0.0rc1',
+        'azure-common',
+        'msrestazure'
     ],
 )
