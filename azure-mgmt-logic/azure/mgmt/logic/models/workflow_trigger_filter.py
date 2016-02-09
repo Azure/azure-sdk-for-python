@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class WorkflowTriggerFilter(Model):
+    """WorkflowTriggerFilter
+
+    :param str state: Gets or sets the state of workflow trigger. Possible
+     values include: 'NotSpecified', 'Enabled', 'Disabled', 'Deleted',
+     'Suspended'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'state': {'key': 'state', 'type': 'WorkflowState'},
+    }
+
+    def __init__(self, state=None):
+        self.state = state

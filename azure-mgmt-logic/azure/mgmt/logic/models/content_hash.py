@@ -19,9 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class ContentHash(Model):
+    """ContentHash
+
+    :param str algorithm: Gets or sets the algorithm.
+    :param str value: Gets or sets the value.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'algorithm': {'key': 'algorithm', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, algorithm=None, value=None):
+        self.algorithm = algorithm
+        self.value = value

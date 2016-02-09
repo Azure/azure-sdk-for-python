@@ -19,9 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class RegenerateSecretKeyParameters(Model):
+    """RegenerateSecretKeyParameters
+
+    :param str key_type: Gets or sets the key type. Possible values include:
+     'NotSpecified', 'Primary', 'Secondary'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'key_type': {'key': 'keyType', 'type': 'KeyType'},
+    }
+
+    def __init__(self, key_type=None):
+        self.key_type = key_type

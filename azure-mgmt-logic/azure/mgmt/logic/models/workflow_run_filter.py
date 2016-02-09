@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class WorkflowRunFilter(Model):
+    """WorkflowRunFilter
+
+    :param str status: Gets or sets the status of workflow run. Possible
+     values include: 'NotSpecified', 'Paused', 'Running', 'Waiting',
+     'Succeeded', 'Skipped', 'Suspended', 'Cancelled', 'Failed'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'WorkflowStatus'},
+    }
+
+    def __init__(self, status=None):
+        self.status = status
