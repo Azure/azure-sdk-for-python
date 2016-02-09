@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class SiteLimits(Model):
+    """
+    Represents metric limits set on a web app.
+
+    :param float max_percentage_cpu: Maximum allowed CPU usage percentage
+    :param long max_memory_in_mb: Maximum allowed memory usage in MB
+    :param long max_disk_size_in_mb: Maximum allowed disk size usage in MB
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'max_percentage_cpu': {'key': 'maxPercentageCpu', 'type': 'float'},
+        'max_memory_in_mb': {'key': 'maxMemoryInMb', 'type': 'long'},
+        'max_disk_size_in_mb': {'key': 'maxDiskSizeInMb', 'type': 'long'},
+    }
+
+    def __init__(self, max_percentage_cpu=None, max_memory_in_mb=None, max_disk_size_in_mb=None):
+        self.max_percentage_cpu = max_percentage_cpu
+        self.max_memory_in_mb = max_memory_in_mb
+        self.max_disk_size_in_mb = max_disk_size_in_mb

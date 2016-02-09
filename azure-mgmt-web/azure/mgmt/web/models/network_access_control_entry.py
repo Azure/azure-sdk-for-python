@@ -19,9 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class NetworkAccessControlEntry(Model):
+    """NetworkAccessControlEntry
+
+    :param str action: Possible values include: 'Permit', 'Deny'
+    :param str description:
+    :param int order:
+    :param str remote_subnet:
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'action': {'key': 'action', 'type': 'AccessControlEntryAction'},
+        'description': {'key': 'description', 'type': 'str'},
+        'order': {'key': 'order', 'type': 'int'},
+        'remote_subnet': {'key': 'remoteSubnet', 'type': 'str'},
+    }
+
+    def __init__(self, action=None, description=None, order=None, remote_subnet=None):
+        self.action = action
+        self.description = description
+        self.order = order
+        self.remote_subnet = remote_subnet

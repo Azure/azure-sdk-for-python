@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class CsmSlotEntity(Model):
+    """
+    Class containing deployment slot parameters
+
+    :param str target_slot: Set the destination deployment slot during swap
+     operation
+    :param bool preserve_vnet: Get or set the flag indicating it should
+     preserve VNet to the slot during swap
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'target_slot': {'key': 'targetSlot', 'type': 'str'},
+        'preserve_vnet': {'key': 'preserveVnet', 'type': 'bool'},
+    }
+
+    def __init__(self, target_slot=None, preserve_vnet=None):
+        self.target_slot = target_slot
+        self.preserve_vnet = preserve_vnet

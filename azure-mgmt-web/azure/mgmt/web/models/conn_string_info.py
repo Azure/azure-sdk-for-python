@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class ConnStringInfo(Model):
+    """
+    Represents database connection string information
+
+    :param str name: Name of connection string
+    :param str connection_string: Connection string value
+    :param str type: Type of database. Possible values include: 'MySql',
+     'SQLServer', 'SQLAzure', 'Custom'
+    """
+
+    _required = ['type']
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'DatabaseServerType'},
+    }
+
+    def __init__(self, type, name=None, connection_string=None):
+        self.name = name
+        self.connection_string = connection_string
+        self.type = type

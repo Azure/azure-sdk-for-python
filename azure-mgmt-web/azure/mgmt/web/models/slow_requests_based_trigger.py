@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class SlowRequestsBasedTrigger(Model):
+    """
+    SlowRequestsBasedTrigger
+
+    :param str time_taken: TimeTaken
+    :param int count: Count
+    :param str time_interval: TimeInterval
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'time_taken': {'key': 'timeTaken', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+        'time_interval': {'key': 'timeInterval', 'type': 'str'},
+    }
+
+    def __init__(self, time_taken=None, count=None, time_interval=None):
+        self.time_taken = time_taken
+        self.count = count
+        self.time_interval = time_interval

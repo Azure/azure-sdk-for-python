@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from .resource import Resource
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class StringDictionary(Resource):
+    """
+    String dictionary resource
+
+    :param str id: Resource Id
+    :param str name: Resource Name
+    :param str location: Resource Location
+    :param str type: Resource type
+    :param dict tags: Resource tags
+    :param dict properties: Settings
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': '{str}'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, properties=None):
+        super(StringDictionary, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+        self.properties = properties

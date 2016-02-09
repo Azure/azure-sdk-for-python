@@ -65,5 +65,6 @@ setup(
         'azure-mgmt-resource==2.0.0rc1',
         'azure-mgmt-scheduler==2.0.0rc1',
         'azure-mgmt-storage==2.0.0rc1',
+        'azure-mgmt-web==2.0.0rc1',
     ],
 )

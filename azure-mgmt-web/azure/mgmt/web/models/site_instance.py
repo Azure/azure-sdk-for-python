@@ -19,9 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from .resource import Resource
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class SiteInstance(Resource):
+    """
+    Instance of a web app
+
+    :param str id: Resource Id
+    :param str name: Resource Name
+    :param str location: Resource Location
+    :param str type: Resource type
+    :param dict tags: Resource tags
+    :param str site_instance_name: Name of instance
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'site_instance_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, site_instance_name=None):
+        super(SiteInstance, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+        self.site_instance_name = site_instance_name

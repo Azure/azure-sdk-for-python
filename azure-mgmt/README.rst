@@ -50,6 +50,7 @@ following packages. Follow the links for more information on each package.
 -  `azure-mgmt-resource v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-resource/2.0.0rc1>`__
 -  `azure-mgmt-scheduler v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-scheduler/2.0.0rc1>`__
 -  `azure-mgmt-storage v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-storage/2.0.0rc1>`__
+-  `azure-mgmt-web v2.0.0rc1 <https://pypi.python.org/pypi/azure-mgmt-web/2.0.0rc1>`__
 
 Note that if you don't need all of these packages, you can install/uninstall them individually.
 

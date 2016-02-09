@@ -19,9 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class VirtualIPMapping(Model):
+    """
+    Class that represents a VIP mapping
+
+    :param str virtual_ip: Virtual IP address
+    :param int internal_http_port: Internal HTTP port
+    :param int internal_https_port: Internal HTTPS port
+    :param bool in_use: Is VIP mapping in use
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'virtual_ip': {'key': 'virtualIP', 'type': 'str'},
+        'internal_http_port': {'key': 'internalHttpPort', 'type': 'int'},
+        'internal_https_port': {'key': 'internalHttpsPort', 'type': 'int'},
+        'in_use': {'key': 'inUse', 'type': 'bool'},
+    }
+
+    def __init__(self, virtual_ip=None, internal_http_port=None, internal_https_port=None, in_use=None):
+        self.virtual_ip = virtual_ip
+        self.internal_http_port = internal_http_port
+        self.internal_https_port = internal_https_port
+        self.in_use = in_use

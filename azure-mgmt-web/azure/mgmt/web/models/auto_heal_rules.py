@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class AutoHealRules(Model):
+    """
+    AutoHealRules - describes the rules which can be defined for auto-heal
+
+    :param AutoHealTriggers triggers: Triggers - Conditions that describe
+     when to execute the auto-heal actions
+    :param AutoHealActions actions: Actions - Actions to be executed when a
+     rule is triggered
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'triggers': {'key': 'triggers', 'type': 'AutoHealTriggers'},
+        'actions': {'key': 'actions', 'type': 'AutoHealActions'},
+    }
+
+    def __init__(self, triggers=None, actions=None):
+        self.triggers = triggers
+        self.actions = actions

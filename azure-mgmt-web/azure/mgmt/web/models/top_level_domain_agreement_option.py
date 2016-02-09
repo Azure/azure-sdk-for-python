@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class TopLevelDomainAgreementOption(Model):
+    """
+    Options for retrieving the list of top level domain legal agreements
+
+    :param bool include_privacy: If true then the list of agreements will
+     inclue agreements for domain privacy as well.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'include_privacy': {'key': 'includePrivacy', 'type': 'bool'},
+    }
+
+    def __init__(self, include_privacy=None):
+        self.include_privacy = include_privacy

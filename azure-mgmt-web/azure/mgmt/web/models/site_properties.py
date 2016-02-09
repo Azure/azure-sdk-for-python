@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class SiteProperties(Model):
+    """SiteProperties
+
+    :param list metadata:
+    :param list properties:
+    :param list app_settings:
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'metadata': {'key': 'metadata', 'type': '[NameValuePair]'},
+        'properties': {'key': 'properties', 'type': '[NameValuePair]'},
+        'app_settings': {'key': 'appSettings', 'type': '[NameValuePair]'},
+    }
+
+    def __init__(self, metadata=None, properties=None, app_settings=None):
+        self.metadata = metadata
+        self.properties = properties
+        self.app_settings = app_settings

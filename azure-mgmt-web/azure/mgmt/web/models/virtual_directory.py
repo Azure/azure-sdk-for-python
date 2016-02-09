@@ -19,9 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class VirtualDirectory(Model):
+    """VirtualDirectory
+
+    :param str virtual_path:
+    :param str physical_path:
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'virtual_path': {'key': 'virtualPath', 'type': 'str'},
+        'physical_path': {'key': 'physicalPath', 'type': 'str'},
+    }
+
+    def __init__(self, virtual_path=None, physical_path=None):
+        self.virtual_path = virtual_path
+        self.physical_path = physical_path

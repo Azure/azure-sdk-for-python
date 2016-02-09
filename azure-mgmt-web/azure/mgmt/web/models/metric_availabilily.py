@@ -19,9 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class MetricAvailabilily(Model):
+    """
+    Class repesenting metrics availability and retention
+
+    :param str time_grain: Time grain
+    :param str retention: Retention period for the current
+     {Microsoft.Web.Hosting.Administration.MetricAvailabilily.TimeGrain}
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'time_grain': {'key': 'timeGrain', 'type': 'str'},
+        'retention': {'key': 'retention', 'type': 'str'},
+    }
+
+    def __init__(self, time_grain=None, retention=None):
+        self.time_grain = time_grain
+        self.retention = retention

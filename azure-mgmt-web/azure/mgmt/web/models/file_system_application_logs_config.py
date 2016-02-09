@@ -19,9 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+
+class FileSystemApplicationLogsConfig(Model):
+    """
+    Application logs to file system configuration
+
+    :param str level: Log level. Possible values include: 'Off', 'Verbose',
+     'Information', 'Warning', 'Error'
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'level': {'key': 'level', 'type': 'LogLevel'},
+    }
+
+    def __init__(self, level=None):
+        self.level = level
