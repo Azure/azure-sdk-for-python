@@ -19,16 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .classic_administrators_operations import ClassicAdministratorsOperations
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'ClassicAdministratorsOperations',
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
-]
+
+class RoleAssignmentCreateParameters(Model):
+    """
+    Role assignment create parameters.
+
+    :param RoleAssignmentProperties properties: Gets or sets role assignment
+     properties.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'RoleAssignmentProperties'},
+    }
+
+    def __init__(self, properties=None):
+        self.properties = properties

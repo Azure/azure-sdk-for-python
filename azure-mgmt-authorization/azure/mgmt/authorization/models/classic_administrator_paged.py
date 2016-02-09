@@ -19,16 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .classic_administrators_operations import ClassicAdministratorsOperations
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'ClassicAdministratorsOperations',
-    'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
-    'RoleDefinitionsOperations',
-]
+
+class ClassicAdministratorPaged(Paged):
+    """
+    A paging container for iterating over a list of ClassicAdministrator object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ClassicAdministrator]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ClassicAdministratorPaged, self).__init__(*args, **kwargs)
