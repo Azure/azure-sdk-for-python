@@ -57,6 +57,8 @@ setup(
         'azure',
         'azure.mgmt',
         'azure.mgmt.redis',
+        'azure.mgmt.redis.models',
+        'azure.mgmt.redis.operations',		
     ],
     install_requires=[
         'azure-common',

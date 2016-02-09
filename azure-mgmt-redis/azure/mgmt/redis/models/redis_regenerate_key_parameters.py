@@ -19,8 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .redis_operations import RedisOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'RedisOperations',
-]
+
+class RedisRegenerateKeyParameters(Model):
+    """
+    Specifies which redis access keys to reset.
+
+    :param str key_type: Which redis access key to reset. Possible values
+     include: 'Primary', 'Secondary'
+    """
+
+    _required = ['key_type']
+
+    _attribute_map = {
+        'key_type': {'key': 'keyType', 'type': 'RedisKeyType'},
+    }
+
+    def __init__(self, key_type):
+        self.key_type = key_type

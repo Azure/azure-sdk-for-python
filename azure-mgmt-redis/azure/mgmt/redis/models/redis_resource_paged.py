@@ -19,8 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .redis_operations import RedisOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'RedisOperations',
-]
+
+class RedisResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of RedisResource object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RedisResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RedisResourcePaged, self).__init__(*args, **kwargs)
