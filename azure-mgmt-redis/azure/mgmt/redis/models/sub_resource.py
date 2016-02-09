@@ -19,8 +19,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .redis_operations import RedisOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'RedisOperations',
-]
+
+class SubResource(Model):
+    """SubResource
+
+    :param str id: Resource Id
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id

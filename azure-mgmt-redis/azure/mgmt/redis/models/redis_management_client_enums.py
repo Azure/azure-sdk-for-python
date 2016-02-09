@@ -19,8 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .redis_operations import RedisOperations
+from enum import Enum
 
-__all__ = [
-    'RedisOperations',
-]
+
+class SkuName(Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class SkuFamily(Enum):
+
+    c = "C"
+    p = "P"
+
+
+class RedisKeyType(Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"
