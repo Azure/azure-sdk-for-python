@@ -19,9 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class RunWorkflowParameters(Model):
+    """RunWorkflowParameters
+
+    :param str name: Gets or sets the name of workflow run trigger.
+    :param object outputs: Gets or sets the outputs of workflow run trigger.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'outputs': {'key': 'outputs', 'type': 'object'},
+    }
+
+    def __init__(self, name=None, outputs=None):
+        self.name = name
+        self.outputs = outputs

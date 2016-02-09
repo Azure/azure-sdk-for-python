@@ -19,9 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.paging import Paged
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class WorkflowTriggerHistoryPaged(Paged):
+    """
+    A paging container for iterating over a list of WorkflowTriggerHistory object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkflowTriggerHistory]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkflowTriggerHistoryPaged, self).__init__(*args, **kwargs)

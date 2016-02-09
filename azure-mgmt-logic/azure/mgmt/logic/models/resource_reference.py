@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class ResourceReference(Model):
+    """ResourceReference
+
+    :param str id: Gets or sets the resource id.
+    :param str name: Gets the resource name.
+    :param str type: Gets the resource type.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, id=None, name=None, type=None):
+        self.id = id
+        self.name = name
+        self.type = type

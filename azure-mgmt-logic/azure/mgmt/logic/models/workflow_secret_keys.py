@@ -19,9 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class WorkflowSecretKeys(Model):
+    """WorkflowSecretKeys
+
+    :param str primary_secret_key: Gets the primary secret key.
+    :param str secondary_secret_key: Gets the secondary secret key.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'primary_secret_key': {'key': 'primarySecretKey', 'type': 'str'},
+        'secondary_secret_key': {'key': 'secondarySecretKey', 'type': 'str'},
+    }
+
+    def __init__(self, primary_secret_key=None, secondary_secret_key=None):
+        self.primary_secret_key = primary_secret_key
+        self.secondary_secret_key = secondary_secret_key

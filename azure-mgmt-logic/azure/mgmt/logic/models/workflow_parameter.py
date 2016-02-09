@@ -19,9 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class WorkflowParameter(Model):
+    """WorkflowParameter
+
+    :param str type: Gets or sets the type. Possible values include:
+     'NotSpecified', 'String', 'SecureString', 'Int', 'Float', 'Bool',
+     'Array', 'Object', 'SecureObject'
+    :param object value: Gets or sets the value.
+    :param object metadata: Gets or sets the metadata.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'ParameterType'},
+        'value': {'key': 'value', 'type': 'object'},
+        'metadata': {'key': 'metadata', 'type': 'object'},
+    }
+
+    def __init__(self, type=None, value=None, metadata=None):
+        self.type = type
+        self.value = value
+        self.metadata = metadata

@@ -19,9 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from msrest.serialization import Model
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class Sku(Model):
+    """Sku
+
+    :param str name: Gets or sets the name. Possible values include:
+     'NotSpecified', 'Free', 'Shared', 'Basic', 'Standard', 'Premium'
+    :param ResourceReference plan: Gets or sets the reference to plan.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'SkuName'},
+        'plan': {'key': 'plan', 'type': 'ResourceReference'},
+    }
+
+    def __init__(self, name=None, plan=None):
+        self.name = name
+        self.plan = plan

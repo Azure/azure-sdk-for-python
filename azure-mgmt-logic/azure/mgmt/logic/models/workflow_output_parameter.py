@@ -19,9 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from .workflow_parameter import WorkflowParameter
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+
+class WorkflowOutputParameter(WorkflowParameter):
+    """WorkflowOutputParameter
+
+    :param str type: Gets or sets the type. Possible values include:
+     'NotSpecified', 'String', 'SecureString', 'Int', 'Float', 'Bool',
+     'Array', 'Object', 'SecureObject'
+    :param object value: Gets or sets the value.
+    :param object metadata: Gets or sets the metadata.
+    :param object error: Gets the error.
+    """
+
+    _required = []
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'object'},
+    }
+
+    def __init__(self, type=None, value=None, metadata=None, error=None):
+        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata)
+        self.error = error
