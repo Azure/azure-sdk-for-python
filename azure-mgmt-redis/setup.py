@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-redis',
-    version='2.0.0rc1',
+    version='0.30.0a1',
     description='Microsoft Azure Redis Cache Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
