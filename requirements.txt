@@ -3,5 +3,5 @@ python-dateutil
 requests
 vcrpy
 pyopenssl
--e git+https://github.com/Azure/autorest.git@master#egg=msrest&subdirectory=ClientRuntimes/Python/msrest
--e git+https://github.com/Azure/autorest.git@master#egg=msrestazure&subdirectory=ClientRuntimes/Python/msrestazure
+msrest
+msrestazure
