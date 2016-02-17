@@ -45,21 +45,25 @@ class ResourcesOperations(object):
         self.config = config
 
     def move_resources(
-            self, source_resource_group_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, source_resource_group_name, resources=None, target_resource_group=None, custom_headers={}, raw=False, **operation_config):
         """
         Begin moving resources.To determine whether the operation has finished
         processing the request, call GetLongRunningOperationStatus.
 
         :param source_resource_group_name: Source resource group name.
         :type source_resource_group_name: str
-        :param parameters: move resources' parameters.
-        :type parameters: ResourcesMoveInfo
+        :param resources: Gets or sets the ids of the resources.
+        :type resources: list
+        :param target_resource_group: The target resource group.
+        :type target_resource_group: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
         :rtype: None
         :rtype: msrest.pipeline.ClientRawResponse if raw=True
         """
+        parameters = models.ResourcesMoveInfo(resources=resources, target_resource_group=target_resource_group)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources'
         path_format_arguments = {

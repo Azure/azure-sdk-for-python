@@ -170,7 +170,7 @@ class DeploymentsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, deployment_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, properties=None, custom_headers={}, raw=False, **operation_config):
         """
         Create a named template deployment using a template.
 
@@ -179,14 +179,16 @@ class DeploymentsOperations(object):
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation.
-        :type parameters: Deployment
+        :param properties: Gets or sets the deployment properties.
+        :type properties: DeploymentProperties
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
         :rtype: DeploymentExtended
         :rtype: msrest.pipeline.ClientRawResponse if raw=True
         """
+        parameters = models.Deployment(properties=properties)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'
         path_format_arguments = {
@@ -366,7 +368,7 @@ class DeploymentsOperations(object):
             return client_raw_response
 
     def validate(
-            self, resource_group_name, deployment_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, properties=None, custom_headers={}, raw=False, **operation_config):
         """
         Validate a deployment template.
 
@@ -375,14 +377,16 @@ class DeploymentsOperations(object):
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
-        :param parameters: Deployment to validate.
-        :type parameters: Deployment
+        :param properties: Gets or sets the deployment properties.
+        :type properties: DeploymentProperties
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
         :rtype: DeploymentValidateResult
         :rtype: msrest.pipeline.ClientRawResponse if raw=True
         """
+        parameters = models.Deployment(properties=properties)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'
         path_format_arguments = {
