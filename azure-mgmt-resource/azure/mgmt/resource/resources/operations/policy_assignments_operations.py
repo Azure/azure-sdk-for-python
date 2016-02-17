@@ -250,7 +250,7 @@ class PolicyAssignmentsOperations(object):
         return deserialized
 
     def create(
-            self, scope, policy_assignment_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, scope, policy_assignment_name, properties=None, name=None, custom_headers={}, raw=False, **operation_config):
         """
         Create policy assignment.
 
@@ -258,14 +258,18 @@ class PolicyAssignmentsOperations(object):
         :type scope: str
         :param policy_assignment_name: Policy assignment name.
         :type policy_assignment_name: str
-        :param parameters: Policy assignment.
-        :type parameters: PolicyAssignment
+        :param properties: Gets or sets the policy assignment properties.
+        :type properties: PolicyAssignmentProperties
+        :param name: Gets or sets the policy assignment name.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
         :rtype: PolicyAssignment
         :rtype: msrest.pipeline.ClientRawResponse if raw=True
         """
+        parameters = models.PolicyAssignment(properties=properties, name=name)
+
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'
         path_format_arguments = {
@@ -427,20 +431,24 @@ class PolicyAssignmentsOperations(object):
         return deserialized
 
     def create_by_id(
-            self, policy_assignment_id, parameters, custom_headers={}, raw=False, **operation_config):
+            self, policy_assignment_id, properties=None, name=None, custom_headers={}, raw=False, **operation_config):
         """
         Create policy assignment by Id.
 
         :param policy_assignment_id: Policy assignment Id
         :type policy_assignment_id: str
-        :param parameters: Policy assignment.
-        :type parameters: PolicyAssignment
+        :param properties: Gets or sets the policy assignment properties.
+        :type properties: PolicyAssignmentProperties
+        :param name: Gets or sets the policy assignment name.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
         :rtype: PolicyAssignment
         :rtype: msrest.pipeline.ClientRawResponse if raw=True
         """
+        parameters = models.PolicyAssignment(properties=properties, name=name)
+
         # Construct URL
         url = '/{policyAssignmentId}'
         path_format_arguments = {

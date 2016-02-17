@@ -44,20 +44,24 @@ class PolicyDefinitionsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, policy_definition_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, policy_definition_name, properties=None, name=None, custom_headers={}, raw=False, **operation_config):
         """
         Create or update policy definition.
 
         :param policy_definition_name: The policy definition name.
         :type policy_definition_name: str
-        :param parameters: The policy definition properties
-        :type parameters: PolicyDefinition
+        :param properties: Gets or sets the policy definition properties.
+        :type properties: PolicyDefinitionProperties
+        :param name: Gets or sets the policy definition name.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
         :rtype: PolicyDefinition
         :rtype: msrest.pipeline.ClientRawResponse if raw=True
         """
+        parameters = models.PolicyDefinition(properties=properties, name=name)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
         path_format_arguments = {
