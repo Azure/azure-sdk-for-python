@@ -40,7 +40,8 @@ from azure.servicemanagement import (
     parse_response_for_async_op,
     get_certificate_from_publish_settings,
 )
-from azure.storage.blob import BlobService
+from azure.storage.blob import PageBlobService, BlockBlobService
+from azure.storage.blob.models import PublicAccess
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -85,7 +86,8 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
         self.sms = self.create_service_management(ServiceManagementService)
 
-        self.bc = self._create_storage_service(BlobService, self.settings)
+        self.bc = self._create_storage_service(PageBlobService, self.settings)
+        self.bbc = self._create_storage_service(BlockBlobService, self.settings)
 
         self.hosted_service_name = self.get_resource_name('utsvc')
         self.container_name = self.get_resource_name('utctnr')
@@ -283,16 +285,14 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
     def _create_container_and_block_blob(self, container_name, blob_name,
                                          blob_data):
         self.bc.create_container(container_name, None, 'container', False)
-        resp = self.bc.put_blob(
-            container_name, blob_name, blob_data, 'BlockBlob')
+        resp = self.bbc.create_blob_from_bytes(
+            container_name, blob_name, blob_data)
         self.assertIsNone(resp)
 
     def _create_container_and_page_blob(self, container_name, blob_name,
                                         content_length):
         self.bc.create_container(container_name, None, 'container', False)
-        resp = self.bc.put_blob(container_name, blob_name, b'',
-                                'PageBlob',
-                                x_ms_blob_content_length=str(content_length))
+        resp = self.bc.create_blob_from_bytes(container_name, blob_name, b'')
         self.assertIsNone(resp)
 
     def _upload_file_to_block_blob(self, file_path, blob_name):
@@ -310,10 +310,9 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
                 data = f.read(chunk_size)
                 if data:
                     length = len(data)
-                    self.bc.put_page(
+                    self.bc.update_page(
                         self.container_name, blob_name, data,
-                        'bytes=' + str(index) + '-' + str(index + length - 1),
-                        'update')
+                        index, index + length - 1)
                     index += length
                 else:
                     break
@@ -568,7 +567,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
     def _copy_linux_os_vhd_to_container(self):
         blob_name = 'imagecopy.vhd'
         self.bc.create_container(self.container_name,
-                                 x_ms_blob_public_access='blob')
+                                 public_access=PublicAccess.Blob)
         resp = self.bc.copy_blob(self.container_name, blob_name,
                                  self.settings.LINUX_OS_VHD)
         return self.bc.make_blob_url(self.container_name, blob_name)
