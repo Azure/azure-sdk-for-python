@@ -3,10 +3,19 @@
 export PYTHONPATH=$PYTHONPATH:../../azure-common
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-common
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-authorization
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-cdn
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-compute
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-logic
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-network
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-notificationhubs
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-redis
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-resource
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-scheduler
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-storage
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-web
+export PYTHONPATH=$PYTHONPATH:../../azure-graphrbac
+
 
 echo "Running tests..."
 python -m unittest discover -p "test_mgmt_*.py"

@@ -28,10 +28,18 @@ if "%PYTHONPATH%" == "" (
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-common
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-common
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-authorization
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-cdn
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-compute
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-logic
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-network
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-notificationhubs
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-redis
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-resource
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-scheduler
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-storage
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-web
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-graphrbac
 
 echo Running tests using %PYTHONDIR%
 %PYTHONDIR%\python.exe -m unittest discover -p "test_mgmt_*.py"

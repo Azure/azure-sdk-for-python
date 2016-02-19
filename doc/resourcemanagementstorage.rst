@@ -12,18 +12,25 @@ You will need to provide your ``subscription_id`` which can be retrieved
 from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
 See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
-for details on getting an authentication token.
+for details on getting a Credentials instance.
 
 .. code:: python
 
-    from azure.mgmt.common import SubscriptionCloudCredentials
-    from azure.mgmt.storage import StorageManagementClient
+    from azure.mgmt.storage import StorageManagementClient, StorageManagementClientConfiguration
 
     # TODO: Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
-    creds = SubscriptionCloudCredentials(subscription_id, auth_token)
+    # TODO: must be an instance of 
+    # - msrestazure.azure_active_directory.UserPassCredentials
+    # - msrestazure.azure_active_directory.ServicePrincipalCredentials
+    credentials = ...
 
-    storage_client = StorageManagementClient(creds)
+    storage_client = StorageManagementClient(
+        StorageManagementClientConfiguration(
+            credentials,
+            subscription_id
+        )
+    )
 
 Registration
 ------------
@@ -36,7 +43,7 @@ credentials you created in the previous section.
 
 .. code:: python
 
-    from azure.mgmt.resource import ResourceManagementClient
+    from azure.mgmt.resource.resources import ResourceManagementClient
 
     resource_client = ResourceManagementClient(creds)
     resource_client.providers.register('Microsoft.Storage')
@@ -49,7 +56,7 @@ To create or manage resource groups, see :doc:`Resource Management<resourcemanag
 
 .. code:: python
 
-    from azure.mgmt.storage import StorageAccountCreateParameters, AccountType
+    from azure.mgmt.storage.models import StorageAccountCreateParameters, AccountType
 
     group_name = 'myresourcegroup'
     account_name = 'mystorageaccountname'
@@ -60,7 +67,10 @@ To create or manage resource groups, see :doc:`Resource Management<resourcemanag
             location='westus',
             account_type=AccountType.standard_lrs,
         ),
-    ) 
+    )
+    # result is a msrestazure.azure_operation.AzureOperationPoller instance
+    # wait insure polling the underlying async operation until it's done.
+    result.wait()
 
 List storage accounts
 ---------------------
@@ -68,8 +78,8 @@ List storage accounts
 .. code:: python
 
     group_name = 'myresourcegroup'
-    result = storage_client.storage_accounts.list_by_resource_group(group_name)
-    for storage_account in result.storage_accounts:
+    storage_accounts = storage_client.storage_accounts.list_by_resource_group(group_name)
+    for storage_account in storage_accounts:
         print(storage_account.name)
         print(storage_account.account_type)
         print(storage_account.location)
@@ -83,6 +93,6 @@ Get storage account keys
 
     group_name = 'myresourcegroup'
     account_name = 'mystorageaccountname'
-    result = storage_client.storage_accounts.list_keys(group_name, account_name)
-    print(result.storage_account_keys.key1)
-    print(result.storage_account_keys.key2)
+    storage_account_keys = storage_client.storage_accounts.list_keys(group_name, account_name)
+    print(storage_account_keys.key1)
+    print(storage_account_keys.key2)

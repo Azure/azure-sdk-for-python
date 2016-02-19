@@ -33,37 +33,23 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
     pip uninstall azure
 
 
-This is a preview release
-=========================
-
-The ARM libraries are being released as a preview, to solicit feedback.
-
-**Future releases are subject to breaking changes**.
-
-The Python code generator used to create this version of the ARM
-libraries is being replaced, and may not generate code that is compatible
-with this version of the ARM libraries.
-
-Although future revisions will likely have breaking changes, the ARM concepts
-along with the REST APIs that the library is wrapping should remain the same.
-
-Please try the libraries and give us feedback, which we can incorporate into
-future versions.
-
-If you prefer to use the older Azure Service Management (ASM) APIs, see the
-`azure-servicemanagement-legacy <https://pypi.python.org/pypi/azure-servicemanagement-legacy>`__ library.
-
-
 Features
 ========
 
 This version of the Azure Management package bundle consists of the
 following packages. Follow the links for more information on each package.
 
--  `azure-mgmt-compute v0.20.1 <https://pypi.python.org/pypi/azure-mgmt-compute/0.20.1>`__
--  `azure-mgmt-network v0.20.1 <https://pypi.python.org/pypi/azure-mgmt-network/0.20.1>`__
--  `azure-mgmt-resource v0.20.1 <https://pypi.python.org/pypi/azure-mgmt-resource/0.20.1>`__
--  `azure-mgmt-storage v0.20.0 <https://pypi.python.org/pypi/azure-mgmt-storage/0.20.0>`__
+-  `azure-mgmt-authorization v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-authorization/0.30.0a1>`__
+-  `azure-mgmt-cdn v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-cdn/0.30.0a1>`__
+-  `azure-mgmt-compute v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-compute/0.30.0a1>`__
+-  `azure-mgmt-logic v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-logic/0.30.0a1>`__
+-  `azure-mgmt-network v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-network/0.30.0a1>`__
+-  `azure-mgmt-notificationhubs v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-notificationhubs/0.30.0a1>`__
+-  `azure-mgmt-redis v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-redis/0.30.0a1>`__
+-  `azure-mgmt-resource v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-resource/0.30.0a1>`__
+-  `azure-mgmt-scheduler v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-scheduler/0.30.0a1>`__
+-  `azure-mgmt-storage v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-storage/0.30.0a1>`__
+-  `azure-mgmt-web v0.30.0a1 <https://pypi.python.org/pypi/azure-mgmt-web/0.30.0a1>`__
 
 Note that if you don't need all of these packages, you can install/uninstall them individually.
 

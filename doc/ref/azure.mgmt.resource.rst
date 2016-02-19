@@ -6,7 +6,8 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.resource.resourcemanagement
+   azure.mgmt.resource.models
+   azure.mgmt.resource.operations
 
 Module contents
 ---------------

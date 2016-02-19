@@ -1,3 +1,46 @@
+2016-02-18 Version 2.0.0a1
+
+DISCLAIMER:
+
+This is an alpha release. Future releases may introduce some breaking changes.
+Some of the new generated libraries have not yet been tested extensively, and some have known issues (such as azure-mgmt-web).
+Our goal is to release a stable version by the end of March 2016.  Please send us your feedback!
+
+WHAT'S NEW:
+* New ARM generated code based on `Swagger specification of the Azure REST APIs<https://github.com/Azure/azure-rest-api-specs>`__
+* New libraries
+
+  * Azure Active Directory Graph API
+  * Authorization: permissions, subscriptions, roles and more
+  * CDN: profiles, endpoints creation and more
+  * Apps:
+
+    * Logic Apps: Workflow and job management
+    * Web Apps: App Service Plan, web sites, certificate, domains and more
+
+  * Notification Hubs: Namespaces, hub creation/deletion and more
+  * Redis: create cache and more
+  * Scheduler: create job collections, create job and more
+
+* Enhanced libraries compared to 1.0.0 preview
+
+  * Storage: create storage accounts, list keys, and more
+  * Resource:
+
+    * resources : create resource groups, register providers and more
+    * features : manage features of provider and more
+    * authorization : manage resource group lock and more
+    * subscriptions : manage subscriptions and more
+
+  * Network: create virtual networks, network interfaces, public ips and more
+  * Compute: create virtual machines and more
+
+BREAKING CHANGES:
+We made our possible to document the breaking from ARM 1.0.0 version to 2.0.0 `here<https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.0-ARM-preview-to-2.0.0>`__.
+
+azure-storage 0.30.0
+  * Major version. `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
+
 2015-01-20 Version 1.0.3
 
   * #491 #502 #422 Update documentation

@@ -1,0 +1,107 @@
+interactions:
+- request:
+    body: !!binary |
+      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAibmFtZSI6ICJ0ZXN0X21nbXRfcmVkaXNfdGVzdF9yZWRp
+      czkxMzAwYWFmIn0=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['68']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 resourcemanagementclient/2015-11-01]
+      accept-language: [en-US]
+      x-ms-client-request-id: [1d03cfe8-d4df-11e5-888c-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_redis_test_redis91300aaf?api-version=2015-11-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf","name":"test_mgmt_redis_test_redis91300aaf","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['221']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 16 Feb 2016 18:57:23 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [73402f94-5127-4e87-afa8-33495d40928a]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-request-id: [73402f94-5127-4e87-afa8-33495d40928a]
+      x-ms-routing-request-id: ['WESTUS:20160216T185723Z:73402f94-5127-4e87-afa8-33495d40928a']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      eyJwcm9wZXJ0aWVzIjogeyJza3UiOiB7ImNhcGFjaXR5IjogMSwgIm5hbWUiOiAiQmFzaWMiLCAi
+      ZmFtaWx5IjogIkMifX0sICJsb2NhdGlvbiI6ICJXZXN0IFVTIn0=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 redismanagementclient/2015-08-01]
+      accept-language: [en-US]
+      x-ms-client-request-id: [1d5e342e-d4df-11e5-8293-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename?api-version=2015-08-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename","location":"West
+        US","name":"mycachename","type":"Microsoft.Cache/Redis","tags":{},"properties":{"provisioningState":"Creating","redisVersion":"3.0","sku":{"name":"Basic","family":"C","capacity":1},"enableNonSslPort":false,"redisConfiguration":{"maxclients":"1000","maxmemory-reserved":"50","maxmemory-delta":"50"},"accessKeys":{"primaryKey":"IdnZPx4I3TrE2GFydQyNPLyoLzzH/9rHYH/NVp82IS4=","secondaryKey":"QKM+172wz4llGWnzgTpHvAw4gXspFMVfLWdkDPm5t10="},"hostName":"mycachename.redis.cache.windows.net","port":6379,"sslPort":6380}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['683']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 16 Feb 2016 18:57:26 GMT']
+      Expires: ['-1']
+      Location: ['https://prod-rp-wus.cacheinfra.windows.net:10225/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [56605acd-d4e1-4602-ab1f-ead129addc85]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-request-id: [ee345d06-0976-4f8e-90f4-8917fe7e8306]
+      x-ms-routing-request-id: ['WESTUS:20160216T185726Z:56605acd-d4e1-4602-ab1f-ead129addc85']
+      x-rp-server-mvid: [09dcc455-d4a4-4e76-82a3-a2280413ef7b]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 redismanagementclient/2015-08-01]
+      accept-language: [en-US]
+      x-ms-client-request-id: [1f160f86-d4df-11e5-a73f-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename?api-version=2015-08-01
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
+        nuaf19V61dxt86b9/RcXi/b3r/NZ0fz+/Df/+nD33s5Olp3fXdXVZTHL6+buF8W0rprqvB2fZNN5
+        fvcV2t1dXE/x1zJb5B+NPiqraQZ0CL3vEqz0q9f0IX/36KOwZXu9wodRoPg6u2g+evSLf8noI0Jg
+        lddtkeNv/HVZNNRDsbx43WYtYJzUOXW6vKDXGPefJGypBX1zb7xDHzZv13iVO3700ZOsKab06Xm2
+        KMpr+uCE/phmq2xatPTnLnVJOE7K/EW1fN2UL6u6/ejReVY2uYI/qZbnxcW6pj7RyS/+aJG9m5ZF
+        vmwJw492d3bQJ322yBdVfb1NJM/ryxwzdj/8ZpaXbSYfU6fZdJo3ze+VXxOU5bosRx/Nq6Z9IUh7
+        tBszEmP+e3xVLGfVVTNe5i2BXjGun9578JAGbVD/9N7Bzi/5Jf8PryAe+TQCAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 16 Feb 2016 18:57:26 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [8e0f6553-4e07-4668-bd1d-0fc4321cbe5c]
+      x-ms-ratelimit-remaining-subscription-reads: ['14972']
+      x-ms-request-id: [394f42d0-a485-4928-b53e-2696cfe25f60]
+      x-ms-routing-request-id: ['WESTUS:20160216T185727Z:8e0f6553-4e07-4668-bd1d-0fc4321cbe5c']
+      x-rp-server-mvid: [09dcc455-d4a4-4e76-82a3-a2280413ef7b]
+    status: {code: 200, message: OK}
+version: 1
