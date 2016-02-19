@@ -3,4 +3,5 @@ python-dateutil
 requests
 vcrpy
 pyopenssl
-#azure-storage
+msrest
+msrestazure

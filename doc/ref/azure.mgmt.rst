@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    azure.mgmt.common
+    azure.mgmt.authorization
     azure.mgmt.compute
     azure.mgmt.network
     azure.mgmt.resource

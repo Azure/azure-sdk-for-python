@@ -33,24 +33,6 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
     pip uninstall azure
 
 
-This is a preview release
-=========================
-
-The ARM libraries are being released as a preview, to solicit feedback.
-
-**Future releases are subject to breaking changes**.
-
-The Python code generator used to create this version of the ARM
-libraries is being replaced, and may not generate code that is compatible
-with this version of the ARM libraries.
-
-Although future revisions will likely have breaking changes, the ARM concepts
-along with the REST APIs that the library is wrapping should remain the same.
-
-Please try the libraries and give us feedback, which we can incorporate into
-future versions.
-
-
 Usage
 =====
 

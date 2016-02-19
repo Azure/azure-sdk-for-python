@@ -13,7 +13,17 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
-SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
+from msrest.authentication import (
+    BasicTokenAuthentication
+)
 
-def get_token():
-    return 'faked_token'
+SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
+# GraphRBAC tests
+AD_DOMAIN = "myaddomain.onmicrosoft.com"
+
+def get_credentials():
+    return BasicTokenAuthentication(
+        token = {
+            'access_token':'faked_token'
+        }
+    )

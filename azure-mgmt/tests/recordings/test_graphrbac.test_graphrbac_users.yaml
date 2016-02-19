@@ -1,0 +1,462 @@
+interactions:
+- request:
+    body: !!binary |
+      eyJhY2NvdW50RW5hYmxlZCI6IGZhbHNlLCAicGFzc3dvcmRQcm9maWxlIjogeyJwYXNzd29yZCI6
+      ICJNeVN0cjBuZ1A0c3N3b3JkIiwgImZvcmNlQ2hhbmdlUGFzc3dvcmROZXh0TG9naW4iOiB0cnVl
+      fSwgInVzZXJQcmluY2lwYWxOYW1lIjogInRlc3RidWRkeUBteWFkZG9tYWluIiwgIm1haWxOaWNr
+      bmFtZSI6ICJ0ZXN0YnVkZHkiLCAiZGlzcGxheU5hbWUiOiAiVGVzdCBCdWRkeSJ9
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['241']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [03250a1a-d504-11e5-ab1c-54ee7574ca37]
+    method: POST
+    uri: https://graph.windows.net/myaddomain/users?api-version=1.42-previewInternal
+  response:
+    body: {string: '{"odata.metadata":"https://graph.windows.net/myaddomain/$metadata#directoryObjects/Microsoft.WindowsAzure.ActiveDirectory.User/@Element","odata.type":"Microsoft.WindowsAzure.ActiveDirectory.User","objectType":"User","objectId":"c3d56dd2-52d5-484e-9fe1-b5543750236d","softDeletionTimestamp":null,"acceptedAs":null,"acceptedOn":null,"accountEnabled":false,"alternativeSecurityIds":[],"appMetadata":null,"assignedLicenses":[],"assignedPlans":[],"city":null,"country":null,"creationType":null,"department":null,"dirSyncEnabled":null,"displayName":"Test
+        Buddy","extensionAttribute1":null,"extensionAttribute2":null,"extensionAttribute3":null,"extensionAttribute4":null,"extensionAttribute5":null,"extensionAttribute6":null,"extensionAttribute7":null,"extensionAttribute8":null,"extensionAttribute9":null,"extensionAttribute10":null,"extensionAttribute11":null,"extensionAttribute12":null,"extensionAttribute13":null,"extensionAttribute14":null,"extensionAttribute15":null,"facsimileTelephoneNumber":null,"givenName":null,"immutableId":null,"invitedOn":null,"inviteReplyUrl":[],"inviteResources":[],"inviteTicket":[],"isCompromised":null,"jobTitle":null,"jrnlAddress":null,"lastDirSyncTime":null,"logonIdentifiers":[],"mail":null,"mailNickname":"testbuddy","mobile":null,"netId":"1003000096468801","onPremiseSecurityIdentifier":null,"otherMails":[],"passwordPolicies":null,"passwordProfile":null,"physicalDeliveryOfficeName":null,"postalCode":null,"preferredLanguage":null,"primarySMTPAddress":null,"provisionedPlans":[],"provisioningErrors":[],"proxyAddresses":[],"searchableDeviceKey":[],"selfServePasswordResetData":null,"signInName":"testbuddy@myaddomain","sipProxyAddress":null,"smtpAddresses":[],"state":null,"streetAddress":null,"surname":null,"telephoneNumber":null,"usageLocation":null,"userPrincipalName":"testbuddy@myaddomain","userState":null,"userStateChangedOn":null,"userType":"Member"}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      Content-Length: ['1961']
+      Content-Type: [application/json;odata=minimalmetadata;streaming=true;charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Tue, 16 Feb 2016 23:21:31 GMT']
+      Duration: ['8171789']
+      Expires: ['-1']
+      Location: ['https://graph.windows.net/myaddomain/directoryObjects/c3d56dd2-52d5-484e-9fe1-b5543750236d/Microsoft.WindowsAzure.ActiveDirectory.User']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [d29d06e5-16cb-4a34-beba-a8f04602eaaf]
+      ocp-aad-diagnostics-server-name: [PsdA7PkyAvi9ISC2/j5GADuk5Hlkgp7V82CwYNLGNR4=]
+      ocp-aad-session-key: [JXYWqqNAarcrVc-Nl8pMSFz8ig8ieXm6wT9UV4O7vqfvlraOYiYvW65I3G1RltjiUtJ-nYIkMykNh7tJ9OdeuXKD9zo-KM0B9NE4UYVc9yrSiZdxVsI28ubbBqydxIrL4YEIhIYlwu1pEZCs5wH-IA.wSOfY9aZh_23Dv3CqXptoKIT5UG40HgE0pjEBL21AyU]
+      request-id: [98bd255d-e0cd-4383-b257-51338d62e43c]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [03c9270c-d504-11e5-9ea7-54ee7574ca37]
+    method: GET
+    uri: https://graph.windows.net/myaddomain/users/c3d56dd2-52d5-484e-9fe1-b5543750236d?api-version=1.42-previewInternal
+  response:
+    body: {string: '{"odata.metadata":"https://graph.windows.net/myaddomain/$metadata#directoryObjects/Microsoft.WindowsAzure.ActiveDirectory.User/@Element","odata.type":"Microsoft.WindowsAzure.ActiveDirectory.User","objectType":"User","objectId":"c3d56dd2-52d5-484e-9fe1-b5543750236d","softDeletionTimestamp":null,"acceptedAs":null,"acceptedOn":null,"accountEnabled":false,"alternativeSecurityIds":[],"appMetadata":null,"assignedLicenses":[],"assignedPlans":[],"city":null,"country":null,"creationType":null,"department":null,"dirSyncEnabled":null,"displayName":"Test
+        Buddy","extensionAttribute1":null,"extensionAttribute2":null,"extensionAttribute3":null,"extensionAttribute4":null,"extensionAttribute5":null,"extensionAttribute6":null,"extensionAttribute7":null,"extensionAttribute8":null,"extensionAttribute9":null,"extensionAttribute10":null,"extensionAttribute11":null,"extensionAttribute12":null,"extensionAttribute13":null,"extensionAttribute14":null,"extensionAttribute15":null,"facsimileTelephoneNumber":null,"givenName":null,"immutableId":null,"invitedOn":null,"inviteReplyUrl":[],"inviteResources":[],"inviteTicket":[],"isCompromised":null,"jobTitle":null,"jrnlAddress":null,"lastDirSyncTime":null,"logonIdentifiers":[],"mail":null,"mailNickname":"testbuddy","mobile":null,"netId":"1003000096468801","onPremiseSecurityIdentifier":null,"otherMails":[],"passwordPolicies":null,"passwordProfile":null,"physicalDeliveryOfficeName":null,"postalCode":null,"preferredLanguage":null,"primarySMTPAddress":null,"provisionedPlans":[],"provisioningErrors":[],"proxyAddresses":[],"searchableDeviceKey":[],"selfServePasswordResetData":null,"signInName":"testbuddy@myaddomain","sipProxyAddress":null,"smtpAddresses":[],"state":null,"streetAddress":null,"surname":null,"telephoneNumber":null,"usageLocation":null,"userPrincipalName":"testbuddy@myaddomain","userState":null,"userStateChangedOn":null,"userType":"Member"}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      Content-Length: ['1961']
+      Content-Type: [application/json;odata=minimalmetadata;streaming=true;charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Tue, 16 Feb 2016 23:21:32 GMT']
+      Duration: ['956380']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [39183f34-1d82-4cb7-8954-a1ce06d239a0]
+      ocp-aad-diagnostics-server-name: [OJEDlpO1nWkFXNc0DSj2m0k+EJetYq/Grjd02KZTLl8=]
+      ocp-aad-session-key: [bJx0mlN7oCO2Ie2zrDFSBJBbADEAOFyIEx-0asivKkz-DN3XDcfacC35JsoLfmfcKhl-ntuwU3lJSbc14W3FYnaS0sdwrLCLpo0zSGrINzwjy7Zm6edgnKKKw9-7OvlnS78StAJzAMGsTQExrqhAqw.Gh7OyWBlJJ4ot5axbQlWPR2jem5G7IJ8_LLwlPsAYQ8]
+      request-id: [15da4b9e-f7eb-4329-adc5-380fe74852ff]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [03f58b5a-d504-11e5-a26b-54ee7574ca37]
+    method: GET
+    uri: https://graph.windows.net/myaddomain/users?$filter=displayName%20eq%20%27Test%20Buddy%27&api-version=1.42-previewInternal
+  response:
+    body: {string: '{"odata.metadata":"https://graph.windows.net/myaddomain/$metadata#directoryObjects/Microsoft.WindowsAzure.ActiveDirectory.User","value":[{"odata.type":"Microsoft.WindowsAzure.ActiveDirectory.User","objectType":"User","objectId":"c3d56dd2-52d5-484e-9fe1-b5543750236d","softDeletionTimestamp":null,"acceptedAs":null,"acceptedOn":null,"accountEnabled":false,"alternativeSecurityIds":[],"appMetadata":null,"assignedLicenses":[],"assignedPlans":[],"city":null,"country":null,"creationType":null,"department":null,"dirSyncEnabled":null,"displayName":"Test
+        Buddy","extensionAttribute1":null,"extensionAttribute2":null,"extensionAttribute3":null,"extensionAttribute4":null,"extensionAttribute5":null,"extensionAttribute6":null,"extensionAttribute7":null,"extensionAttribute8":null,"extensionAttribute9":null,"extensionAttribute10":null,"extensionAttribute11":null,"extensionAttribute12":null,"extensionAttribute13":null,"extensionAttribute14":null,"extensionAttribute15":null,"facsimileTelephoneNumber":null,"givenName":null,"immutableId":null,"invitedOn":null,"inviteReplyUrl":[],"inviteResources":[],"inviteTicket":[],"isCompromised":null,"jobTitle":null,"jrnlAddress":null,"lastDirSyncTime":null,"logonIdentifiers":[],"mail":null,"mailNickname":"testbuddy","mobile":null,"netId":"1003000096468801","onPremiseSecurityIdentifier":null,"otherMails":[],"passwordPolicies":null,"passwordProfile":null,"physicalDeliveryOfficeName":null,"postalCode":null,"preferredLanguage":null,"primarySMTPAddress":null,"provisionedPlans":[],"provisioningErrors":[],"proxyAddresses":[],"searchableDeviceKey":[],"selfServePasswordResetData":null,"signInName":"testbuddy@myaddomain","sipProxyAddress":null,"smtpAddresses":[],"state":null,"streetAddress":null,"surname":null,"telephoneNumber":null,"usageLocation":null,"userPrincipalName":"testbuddy@myaddomain","userState":null,"userStateChangedOn":null,"userType":"Member"}]}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      Content-Length: ['1964']
+      Content-Type: [application/json;odata=minimalmetadata;streaming=true;charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Tue, 16 Feb 2016 23:21:32 GMT']
+      Duration: ['1038057']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [60971476-bb03-425f-a17c-a8594289a6b2]
+      ocp-aad-diagnostics-server-name: [F2LOr8r7qijtW7xVmU1aLk3kz6clyv8DNEw2XQfFr2A=]
+      ocp-aad-session-key: [BTZXDXj7xduAVbCx7yCrr7qnncsXoRlvfq_AT89zWs0NyKjtulX49Z3ZRIDyTOuGpL-HkO1ZZf8Z1zCwWS1mvKuR3B2oBTnD6jMtr8nNVRBkElX3iBXplW6qYvMzdSIrp8fhdys5SLgZa9XvnsU6OA.m8g-MxPeJidYhOmnhQZZBfXZeokv8ZYa6RXlpbuzJdU]
+      request-id: [90d4aa29-9b4c-4673-960f-71a23f6ad096]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      bnVsbA==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['4']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [0425d558-d504-11e5-b2a3-54ee7574ca37]
+    method: DELETE
+    uri: https://graph.windows.net/myaddomain/users/c3d56dd2-52d5-484e-9fe1-b5543750236d?api-version=1.42-previewInternal
+  response:
+    body: {string: ''}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      DataServiceVersion: [1.0;]
+      Date: ['Tue, 16 Feb 2016 23:21:33 GMT']
+      Duration: ['8198337']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [98c94a1e-9a81-41c8-b0b6-7edb804ece87]
+      ocp-aad-diagnostics-server-name: [MZl/hA8XpttsVIldt7MY8/8xS+QCIPIdkqsWyJMNDKo=]
+      ocp-aad-session-key: [Q2lu-gcCR8cxbLbEN7ph7M_czKkNeAd06wJi3WtUr4fD1Xy7JEMIY1uwAbOge2jWH60imnFoYat9XFeQOdMXRkaX1TlQ_NVu8t0vI4RrxA-wbr8_MeB3P_kLZTpcUO_HFWRdL_wrgTbOwJKKf2sjPw.jxLi6cceRms1p4NaMQ8NyDpEkt3JqHSVltTUoFU2TXc]
+      request-id: [c09e58b4-1295-4181-bae2-fad3071ba1ab]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 204, message: No Content}
+- request:
+    body: !!binary |
+      eyJhY2NvdW50RW5hYmxlZCI6IGZhbHNlLCAicGFzc3dvcmRQcm9maWxlIjogeyJwYXNzd29yZCI6
+      ICJNeVN0cjBuZ1A0c3N3b3JkIiwgImZvcmNlQ2hhbmdlUGFzc3dvcmROZXh0TG9naW4iOiB0cnVl
+      fSwgInVzZXJQcmluY2lwYWxOYW1lIjogInRlc3RidWRkeUBteWFkZG9tYWluIiwgImRpc3BsYXlO
+      YW1lIjogIlRlc3QgQnVkZHkiLCAibWFpbE5pY2tuYW1lIjogInRlc3RidWRkeSJ9
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['241']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [38380168-d505-11e5-b41b-54ee7574ca37]
+    method: POST
+    uri: https://graph.windows.net/myaddomain/users?api-version=1.42-previewInternal
+  response:
+    body: {string: '{"odata.metadata":"https://graph.windows.net/myaddomain/$metadata#directoryObjects/Microsoft.WindowsAzure.ActiveDirectory.User/@Element","odata.type":"Microsoft.WindowsAzure.ActiveDirectory.User","objectType":"User","objectId":"e27f8fa3-f6e6-401d-ad65-4b28e42d92a4","softDeletionTimestamp":null,"acceptedAs":null,"acceptedOn":null,"accountEnabled":false,"alternativeSecurityIds":[],"appMetadata":null,"assignedLicenses":[],"assignedPlans":[],"city":null,"country":null,"creationType":null,"department":null,"dirSyncEnabled":null,"displayName":"Test
+        Buddy","extensionAttribute1":null,"extensionAttribute2":null,"extensionAttribute3":null,"extensionAttribute4":null,"extensionAttribute5":null,"extensionAttribute6":null,"extensionAttribute7":null,"extensionAttribute8":null,"extensionAttribute9":null,"extensionAttribute10":null,"extensionAttribute11":null,"extensionAttribute12":null,"extensionAttribute13":null,"extensionAttribute14":null,"extensionAttribute15":null,"facsimileTelephoneNumber":null,"givenName":null,"immutableId":null,"invitedOn":null,"inviteReplyUrl":[],"inviteResources":[],"inviteTicket":[],"isCompromised":null,"jobTitle":null,"jrnlAddress":null,"lastDirSyncTime":null,"logonIdentifiers":[],"mail":null,"mailNickname":"testbuddy","mobile":null,"netId":"1003000096469419","onPremiseSecurityIdentifier":null,"otherMails":[],"passwordPolicies":null,"passwordProfile":null,"physicalDeliveryOfficeName":null,"postalCode":null,"preferredLanguage":null,"primarySMTPAddress":null,"provisionedPlans":[],"provisioningErrors":[],"proxyAddresses":[],"searchableDeviceKey":[],"selfServePasswordResetData":null,"signInName":"testbuddy@myaddomain","sipProxyAddress":null,"smtpAddresses":[],"state":null,"streetAddress":null,"surname":null,"telephoneNumber":null,"usageLocation":null,"userPrincipalName":"testbuddy@myaddomain","userState":null,"userStateChangedOn":null,"userType":"Member"}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      Content-Length: ['1961']
+      Content-Type: [application/json;odata=minimalmetadata;streaming=true;charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Tue, 16 Feb 2016 23:30:11 GMT']
+      Duration: ['8519014']
+      Expires: ['-1']
+      Location: ['https://graph.windows.net/myaddomain/directoryObjects/e27f8fa3-f6e6-401d-ad65-4b28e42d92a4/Microsoft.WindowsAzure.ActiveDirectory.User']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [dd8c1105-2c81-4d40-ae28-7829aa4109d7]
+      ocp-aad-diagnostics-server-name: [psiMyCgGNont5UUlRDFb8UPKF3o96E4QwvclgKDSjsQ=]
+      ocp-aad-session-key: [mb8PkY7trXaPK_H0Rlcn039EkfPbfFs-woO3v_ab7lOATcJxb-hYIGv7ydpEAj2d-o4to-iRMCXj4ElJhsN-FwfyrF6SXZajgGuUOux0InJbJC-Cxz0GPepg-DKnG52Lsa2CSHXRMmWZaUQV18SVxw.-bY_Ne4vQEo8esHCridraF3ZJrpB994BnQ6mbI_lmXY]
+      request-id: [a2c6ed1d-4466-4db7-a7d2-7c198ffce06a]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [38ddce54-d505-11e5-82ad-54ee7574ca37]
+    method: GET
+    uri: https://graph.windows.net/myaddomain/users/e27f8fa3-f6e6-401d-ad65-4b28e42d92a4?api-version=1.42-previewInternal
+  response:
+    body: {string: '{"odata.metadata":"https://graph.windows.net/myaddomain/$metadata#directoryObjects/Microsoft.WindowsAzure.ActiveDirectory.User/@Element","odata.type":"Microsoft.WindowsAzure.ActiveDirectory.User","objectType":"User","objectId":"e27f8fa3-f6e6-401d-ad65-4b28e42d92a4","softDeletionTimestamp":null,"acceptedAs":null,"acceptedOn":null,"accountEnabled":false,"alternativeSecurityIds":[],"appMetadata":null,"assignedLicenses":[],"assignedPlans":[],"city":null,"country":null,"creationType":null,"department":null,"dirSyncEnabled":null,"displayName":"Test
+        Buddy","extensionAttribute1":null,"extensionAttribute2":null,"extensionAttribute3":null,"extensionAttribute4":null,"extensionAttribute5":null,"extensionAttribute6":null,"extensionAttribute7":null,"extensionAttribute8":null,"extensionAttribute9":null,"extensionAttribute10":null,"extensionAttribute11":null,"extensionAttribute12":null,"extensionAttribute13":null,"extensionAttribute14":null,"extensionAttribute15":null,"facsimileTelephoneNumber":null,"givenName":null,"immutableId":null,"invitedOn":null,"inviteReplyUrl":[],"inviteResources":[],"inviteTicket":[],"isCompromised":null,"jobTitle":null,"jrnlAddress":null,"lastDirSyncTime":null,"logonIdentifiers":[],"mail":null,"mailNickname":"testbuddy","mobile":null,"netId":"1003000096469419","onPremiseSecurityIdentifier":null,"otherMails":[],"passwordPolicies":null,"passwordProfile":null,"physicalDeliveryOfficeName":null,"postalCode":null,"preferredLanguage":null,"primarySMTPAddress":null,"provisionedPlans":[],"provisioningErrors":[],"proxyAddresses":[],"searchableDeviceKey":[],"selfServePasswordResetData":null,"signInName":"testbuddy@myaddomain","sipProxyAddress":null,"smtpAddresses":[],"state":null,"streetAddress":null,"surname":null,"telephoneNumber":null,"usageLocation":null,"userPrincipalName":"testbuddy@myaddomain","userState":null,"userStateChangedOn":null,"userType":"Member"}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      Content-Length: ['1961']
+      Content-Type: [application/json;odata=minimalmetadata;streaming=true;charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Tue, 16 Feb 2016 23:30:11 GMT']
+      Duration: ['933643']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [3383bb97-7dd7-44a4-b996-9efd8693a3d5]
+      ocp-aad-diagnostics-server-name: [DwiZqbw4kpvacRTHgNp62Clzs32ouQbIngVZZ/qji78=]
+      ocp-aad-session-key: [A8ruCoXf42Mxu-JLS2mWmuWvAT4sgkDnCguvk96IKhDzwWK2VeJ2TVL7kzAo3C3ZzjKSnztRSqG1dnCMX-2r9gGfrCFrE_iVwAslt6Vmowb7_VxMjP27eUy_Z_LrCo8LMF9ZWKDipaQ-jB3rlc65Cg.J7cdCxp-yrOl83lCLqHGDSfq8Me7xuPAgdgO_anKlK0]
+      request-id: [a7da984a-ca82-4e7e-9387-89db424af81b]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [390fee06-d505-11e5-86e8-54ee7574ca37]
+    method: GET
+    uri: https://graph.windows.net/myaddomain/users?api-version=1.42-previewInternal&$filter=displayName%20eq%20%27Test%20Buddy%27
+  response:
+    body: {string: '{"odata.metadata":"https://graph.windows.net/myaddomain/$metadata#directoryObjects/Microsoft.WindowsAzure.ActiveDirectory.User","value":[{"odata.type":"Microsoft.WindowsAzure.ActiveDirectory.User","objectType":"User","objectId":"e27f8fa3-f6e6-401d-ad65-4b28e42d92a4","softDeletionTimestamp":null,"acceptedAs":null,"acceptedOn":null,"accountEnabled":false,"alternativeSecurityIds":[],"appMetadata":null,"assignedLicenses":[],"assignedPlans":[],"city":null,"country":null,"creationType":null,"department":null,"dirSyncEnabled":null,"displayName":"Test
+        Buddy","extensionAttribute1":null,"extensionAttribute2":null,"extensionAttribute3":null,"extensionAttribute4":null,"extensionAttribute5":null,"extensionAttribute6":null,"extensionAttribute7":null,"extensionAttribute8":null,"extensionAttribute9":null,"extensionAttribute10":null,"extensionAttribute11":null,"extensionAttribute12":null,"extensionAttribute13":null,"extensionAttribute14":null,"extensionAttribute15":null,"facsimileTelephoneNumber":null,"givenName":null,"immutableId":null,"invitedOn":null,"inviteReplyUrl":[],"inviteResources":[],"inviteTicket":[],"isCompromised":null,"jobTitle":null,"jrnlAddress":null,"lastDirSyncTime":null,"logonIdentifiers":[],"mail":null,"mailNickname":"testbuddy","mobile":null,"netId":"1003000096469419","onPremiseSecurityIdentifier":null,"otherMails":[],"passwordPolicies":null,"passwordProfile":null,"physicalDeliveryOfficeName":null,"postalCode":null,"preferredLanguage":null,"primarySMTPAddress":null,"provisionedPlans":[],"provisioningErrors":[],"proxyAddresses":[],"searchableDeviceKey":[],"selfServePasswordResetData":null,"signInName":"testbuddy@myaddomain","sipProxyAddress":null,"smtpAddresses":[],"state":null,"streetAddress":null,"surname":null,"telephoneNumber":null,"usageLocation":null,"userPrincipalName":"testbuddy@myaddomain","userState":null,"userStateChangedOn":null,"userType":"Member"}]}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      Content-Length: ['1964']
+      Content-Type: [application/json;odata=minimalmetadata;streaming=true;charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Tue, 16 Feb 2016 23:30:11 GMT']
+      Duration: ['935480']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [50f509e6-555c-4ecc-93db-df37778b90a3]
+      ocp-aad-diagnostics-server-name: [yq6d6aKCJ+sm/SqomU3oKf9uqw5YY/Xo6jW8af9zAac=]
+      ocp-aad-session-key: [F9VGKIszRMRkaXSY2Dud1BPJjVp94xD8PILhcQ35o9RQHcuXT_dRcNeXJiwiK8DgJsSzq6jIqGbBncJNRUtNZcsUXUktWj51UQsqSOEQV2u-XdwtKjF3wF8Nf9BRzXIEix06RLA7RpmK_pL09cG7jw.IJ4MIYolEJZ_rrrLEe23a36NwOZd-A3vnLUpJNIZbGU]
+      request-id: [eefe5aa1-e0ad-4f4a-a338-71e638399f95]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      bnVsbA==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['4']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [39355148-d505-11e5-8056-54ee7574ca37]
+    method: DELETE
+    uri: https://graph.windows.net/myaddomain/users/e27f8fa3-f6e6-401d-ad65-4b28e42d92a4?api-version=1.42-previewInternal
+  response:
+    body: {string: ''}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      DataServiceVersion: [1.0;]
+      Date: ['Tue, 16 Feb 2016 23:30:12 GMT']
+      Duration: ['6627027']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [6e651b7a-a735-4afa-850a-a30811285061]
+      ocp-aad-diagnostics-server-name: [XC9wGq8e5l+CvRb/18NVQPL7HrQDpUAyeREC/qiiJSE=]
+      ocp-aad-session-key: [xCfvMoArDedQ3Pd6dLk3JiX-xHC8qW-kPcEslaADFP8306HgsyqQrTUpyqziIhLXtNC9vQPHXRpIDtekQpt8OhnOmYhjvKnSnFzU3-mZYGzCPJRD3xPLGXmE7ZyjOkdcSc8I7C4W2YN53Vlru9nQhg.iQjrfhpkT11qzur2BXV-1lwB0bQPDQ_FEGTk__I1Lqs]
+      request-id: [6bdc1a02-e5a5-4b8e-8c75-4bdb855bf688]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 204, message: No Content}
+- request:
+    body: !!binary |
+      eyJkaXNwbGF5TmFtZSI6ICJUZXN0IEJ1ZGR5IiwgInVzZXJQcmluY2lwYWxOYW1lIjogInRlc3Ri
+      dWRkeUBteWFkZG9tYWluLm9ubWljcm9zb2Z0LmNvbSIsICJtYWlsTmlja25hbWUiOiAidGVzdGJ1
+      ZGR5IiwgImFjY291bnRFbmFibGVkIjogZmFsc2UsICJwYXNzd29yZFByb2ZpbGUiOiB7ImZvcmNl
+      Q2hhbmdlUGFzc3dvcmROZXh0TG9naW4iOiB0cnVlLCAicGFzc3dvcmQiOiAiTXlTdHIwbmdQNHNz
+      d29yZCJ9fQ==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['241']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b8d1de02-d505-11e5-ae96-54ee7574ca37]
+    method: POST
+    uri: https://graph.windows.net/myaddomain.onmicrosoft.com/users?api-version=1.42-previewInternal
+  response:
+    body: {string: '{"odata.metadata":"https://graph.windows.net/myaddomain.onmicrosoft.com/$metadata#directoryObjects/Microsoft.WindowsAzure.ActiveDirectory.User/@Element","odata.type":"Microsoft.WindowsAzure.ActiveDirectory.User","objectType":"User","objectId":"f77853f0-d53a-4161-b9c5-d1c5b8e70f34","softDeletionTimestamp":null,"acceptedAs":null,"acceptedOn":null,"accountEnabled":false,"alternativeSecurityIds":[],"appMetadata":null,"assignedLicenses":[],"assignedPlans":[],"city":null,"country":null,"creationType":null,"department":null,"dirSyncEnabled":null,"displayName":"Test
+        Buddy","extensionAttribute1":null,"extensionAttribute2":null,"extensionAttribute3":null,"extensionAttribute4":null,"extensionAttribute5":null,"extensionAttribute6":null,"extensionAttribute7":null,"extensionAttribute8":null,"extensionAttribute9":null,"extensionAttribute10":null,"extensionAttribute11":null,"extensionAttribute12":null,"extensionAttribute13":null,"extensionAttribute14":null,"extensionAttribute15":null,"facsimileTelephoneNumber":null,"givenName":null,"immutableId":null,"invitedOn":null,"inviteReplyUrl":[],"inviteResources":[],"inviteTicket":[],"isCompromised":null,"jobTitle":null,"jrnlAddress":null,"lastDirSyncTime":null,"logonIdentifiers":[],"mail":null,"mailNickname":"testbuddy","mobile":null,"netId":"1003BFFD96488AE3","onPremiseSecurityIdentifier":null,"otherMails":[],"passwordPolicies":null,"passwordProfile":null,"physicalDeliveryOfficeName":null,"postalCode":null,"preferredLanguage":null,"primarySMTPAddress":null,"provisionedPlans":[],"provisioningErrors":[],"proxyAddresses":[],"searchableDeviceKey":[],"selfServePasswordResetData":null,"signInName":"testbuddy@myaddomain.onmicrosoft.com","sipProxyAddress":null,"smtpAddresses":[],"state":null,"streetAddress":null,"surname":null,"telephoneNumber":null,"usageLocation":null,"userPrincipalName":"testbuddy@myaddomain.onmicrosoft.com","userState":null,"userStateChangedOn":null,"userType":"Member"}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      Content-Length: ['1961']
+      Content-Type: [application/json;odata=minimalmetadata;streaming=true;charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Tue, 16 Feb 2016 23:33:45 GMT']
+      Duration: ['7058210']
+      Expires: ['-1']
+      Location: ['https://graph.windows.net/myaddomain.onmicrosoft.com/directoryObjects/f77853f0-d53a-4161-b9c5-d1c5b8e70f34/Microsoft.WindowsAzure.ActiveDirectory.User']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [bd9b26b8-3cf9-4226-b3fd-6cf8a247966f]
+      ocp-aad-diagnostics-server-name: [MZl/hA8XpttsVIldt7MY8/8xS+QCIPIdkqsWyJMNDKo=]
+      ocp-aad-session-key: [cw3D5YYX3WdHJc0yrMqlzhtEPUubT4GI6snjdhAanWRzemd9-JREVcmtmIac3vFTO2H5i5Hm2Yd8yO9E6yiFpOdgd-Bf9c1I2y2OqFzS4fxaJjdcMmrHQNwmtuqmvSQG0c74HK6VenhdfkR0nl8avg.76cFmgfaQ2kCYEwE0rlaZEi8IgSMErCFCcFhODZTJG0]
+      request-id: [4140d3d6-7c72-4dd2-912a-26e2ff860c6e]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b95c4d6c-d505-11e5-a327-54ee7574ca37]
+    method: GET
+    uri: https://graph.windows.net/myaddomain.onmicrosoft.com/users/f77853f0-d53a-4161-b9c5-d1c5b8e70f34?api-version=1.42-previewInternal
+  response:
+    body: {string: '{"odata.metadata":"https://graph.windows.net/myaddomain.onmicrosoft.com/$metadata#directoryObjects/Microsoft.WindowsAzure.ActiveDirectory.User/@Element","odata.type":"Microsoft.WindowsAzure.ActiveDirectory.User","objectType":"User","objectId":"f77853f0-d53a-4161-b9c5-d1c5b8e70f34","softDeletionTimestamp":null,"acceptedAs":null,"acceptedOn":null,"accountEnabled":false,"alternativeSecurityIds":[],"appMetadata":null,"assignedLicenses":[],"assignedPlans":[],"city":null,"country":null,"creationType":null,"department":null,"dirSyncEnabled":null,"displayName":"Test
+        Buddy","extensionAttribute1":null,"extensionAttribute2":null,"extensionAttribute3":null,"extensionAttribute4":null,"extensionAttribute5":null,"extensionAttribute6":null,"extensionAttribute7":null,"extensionAttribute8":null,"extensionAttribute9":null,"extensionAttribute10":null,"extensionAttribute11":null,"extensionAttribute12":null,"extensionAttribute13":null,"extensionAttribute14":null,"extensionAttribute15":null,"facsimileTelephoneNumber":null,"givenName":null,"immutableId":null,"invitedOn":null,"inviteReplyUrl":[],"inviteResources":[],"inviteTicket":[],"isCompromised":null,"jobTitle":null,"jrnlAddress":null,"lastDirSyncTime":null,"logonIdentifiers":[],"mail":null,"mailNickname":"testbuddy","mobile":null,"netId":"1003BFFD96488AE3","onPremiseSecurityIdentifier":null,"otherMails":[],"passwordPolicies":null,"passwordProfile":null,"physicalDeliveryOfficeName":null,"postalCode":null,"preferredLanguage":null,"primarySMTPAddress":null,"provisionedPlans":[],"provisioningErrors":[],"proxyAddresses":[],"searchableDeviceKey":[],"selfServePasswordResetData":null,"signInName":"testbuddy@myaddomain.onmicrosoft.com","sipProxyAddress":null,"smtpAddresses":[],"state":null,"streetAddress":null,"surname":null,"telephoneNumber":null,"usageLocation":null,"userPrincipalName":"testbuddy@myaddomain.onmicrosoft.com","userState":null,"userStateChangedOn":null,"userType":"Member"}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      Content-Length: ['1961']
+      Content-Type: [application/json;odata=minimalmetadata;streaming=true;charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Tue, 16 Feb 2016 23:33:46 GMT']
+      Duration: ['1718525']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [282f9658-4f0a-4362-a1b6-b973f68d6934]
+      ocp-aad-diagnostics-server-name: [iuPmgCujsBOHP5ZHyhzOWZQ0FRP7jUfzbegvNsa5PFc=]
+      ocp-aad-session-key: [YXJEjOl2QLUyW1EsoE2VXGIq7syMqWAuZoefYQkhQKj8G_YKZ2gFp9PKVaXccG8886mVK0maFX9gzDhzUMcyyf90LK99ih7IDRGxs3In_GFFvxxjkkApWJSXvCby0ZdXcgRK1bxY67_6HtSNG73aMg.L9kqzvqLBOdMtc7VEtZalz9M9JjjULzoFs3Bgde5hq4]
+      request-id: [7ad69665-8ba4-469f-ab65-be0b8ddc307f]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b98f6d00-d505-11e5-a24c-54ee7574ca37]
+    method: GET
+    uri: https://graph.windows.net/myaddomain.onmicrosoft.com/users?$filter=displayName%20eq%20%27Test%20Buddy%27&api-version=1.42-previewInternal
+  response:
+    body: {string: '{"odata.metadata":"https://graph.windows.net/myaddomain.onmicrosoft.com/$metadata#directoryObjects/Microsoft.WindowsAzure.ActiveDirectory.User","value":[{"odata.type":"Microsoft.WindowsAzure.ActiveDirectory.User","objectType":"User","objectId":"f77853f0-d53a-4161-b9c5-d1c5b8e70f34","softDeletionTimestamp":null,"acceptedAs":null,"acceptedOn":null,"accountEnabled":false,"alternativeSecurityIds":[],"appMetadata":null,"assignedLicenses":[],"assignedPlans":[],"city":null,"country":null,"creationType":null,"department":null,"dirSyncEnabled":null,"displayName":"Test
+        Buddy","extensionAttribute1":null,"extensionAttribute2":null,"extensionAttribute3":null,"extensionAttribute4":null,"extensionAttribute5":null,"extensionAttribute6":null,"extensionAttribute7":null,"extensionAttribute8":null,"extensionAttribute9":null,"extensionAttribute10":null,"extensionAttribute11":null,"extensionAttribute12":null,"extensionAttribute13":null,"extensionAttribute14":null,"extensionAttribute15":null,"facsimileTelephoneNumber":null,"givenName":null,"immutableId":null,"invitedOn":null,"inviteReplyUrl":[],"inviteResources":[],"inviteTicket":[],"isCompromised":null,"jobTitle":null,"jrnlAddress":null,"lastDirSyncTime":null,"logonIdentifiers":[],"mail":null,"mailNickname":"testbuddy","mobile":null,"netId":"1003BFFD96488AE3","onPremiseSecurityIdentifier":null,"otherMails":[],"passwordPolicies":null,"passwordProfile":null,"physicalDeliveryOfficeName":null,"postalCode":null,"preferredLanguage":null,"primarySMTPAddress":null,"provisionedPlans":[],"provisioningErrors":[],"proxyAddresses":[],"searchableDeviceKey":[],"selfServePasswordResetData":null,"signInName":"testbuddy@myaddomain.onmicrosoft.com","sipProxyAddress":null,"smtpAddresses":[],"state":null,"streetAddress":null,"surname":null,"telephoneNumber":null,"usageLocation":null,"userPrincipalName":"testbuddy@myaddomain.onmicrosoft.com","userState":null,"userStateChangedOn":null,"userType":"Member"}]}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      Content-Length: ['1964']
+      Content-Type: [application/json;odata=minimalmetadata;streaming=true;charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Tue, 16 Feb 2016 23:33:46 GMT']
+      Duration: ['968338']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [bf3dd76e-b93c-4e0c-ac83-2d68365d0118]
+      ocp-aad-diagnostics-server-name: [afXdxYhgQA+NdHfqTofS0XwsQ5hhtZ8WePeT3PpgQkg=]
+      ocp-aad-session-key: [ipQXpYmE30kL7mB55rRlrhjDT3evNYthJ2Azs-d-BTo9fmtztOWJyVAxOetp0njhzLoShm3xXbXHf_CA6ZVTXrnkG2uVaFPqJszeCCgZZ2gTsaJcSXZoHYrrOfb6TAdKM_6QRSvMObuz9ZKJGHV5Bg.evqkTTZOjfZF5FvwMGerMYueQTCvITKHN-zJdzxDqxE]
+      request-id: [b7ce3045-6e40-440c-85d0-69ef467c9e15]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      bnVsbA==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['4']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 graphrbacmanagementclient/1.42-previewInternal]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b9bb5ffa-d505-11e5-b194-54ee7574ca37]
+    method: DELETE
+    uri: https://graph.windows.net/myaddomain.onmicrosoft.com/users/f77853f0-d53a-4161-b9c5-d1c5b8e70f34?api-version=1.42-previewInternal
+  response:
+    body: {string: ''}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [no-cache]
+      DataServiceVersion: [1.0;]
+      Date: ['Tue, 16 Feb 2016 23:33:47 GMT']
+      Duration: ['7257830']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET, ASP.NET]
+      client-request-id: [76ffb2f0-2281-4c78-a139-1e2cfca5c75a]
+      ocp-aad-diagnostics-server-name: [30icSeY/bVr9Xoytdat1AuqgYDoWTl+qNMdr2ZkR20g=]
+      ocp-aad-session-key: [7BbcfyGoKOiNtTgMg3cLkbvhr8DM4KuYEIXv-mCPQko1NDGCv0xmi06Udk3Vh4oYhou2v4oogEd1y8kpHk6fGPD3yoZtBxnZS5cYEcyQXuL16xFPKH8PJ9O3xEcCVvSgJfRBfJflYZTEdCS45O09hQ.HsOAlA5jVK1wgUSinNH_n4fe3l1tP73EcibmN4yzMXw]
+      request-id: [c5abcea0-2432-4ae6-bcc2-c0797e9049b8]
+      x-ms-dirapi-data-contract-version: [1.42-previewInternal]
+      x-ms-gateway-rewrite: ['false']
+    status: {code: 204, message: No Content}
+version: 1

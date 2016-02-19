@@ -1,0 +1,72 @@
+interactions:
+- request:
+    body: !!binary |
+      eyJuYW1lIjogInRlc3RfbWdtdF9jZG5fdGVzdF9jZG42N2U2MDhlYiIsICJsb2NhdGlvbiI6ICJ3
+      ZXN0dXMifQ==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['64']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 resourcemanagementclient/2015-11-01]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a5a620d0-d4da-11e5-b706-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_cdn_test_cdn67e608eb?api-version=2015-11-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cdn_test_cdn67e608eb","name":"test_mgmt_cdn_test_cdn67e608eb","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['213']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 16 Feb 2016 18:25:26 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [59573cfc-d78c-432f-8f01-b93c774292b3]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [59573cfc-d78c-432f-8f01-b93c774292b3]
+      x-ms-routing-request-id: ['CENTRALUS:20160216T182526Z:59573cfc-d78c-432f-8f01-b93c774292b3']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      eyJuYW1lIjogInB5YXJtY2RuNjdlNjA4ZWIiLCAidHlwZSI6ICJNaWNyb3NvZnQuQ2RuL3Byb2Zp
+      bGVzL2VuZHBvaW50cyJ9
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['72']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 cdnmanagementclient/2015-06-01]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a668acca-d4da-11e5-9175-54ee7574ca37]
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2015-06-01
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xRy+y
+        RX58mRVlNinzjx619TofffQqz5pq+dGj5bosRx99kTdNdkFf4s9f8v8AuDz68TMAAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 16 Feb 2016 18:25:26 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-client-request-id: [a668acca-d4da-11e5-9175-54ee7574ca37]
+      x-ms-correlation-request-id: [be447da0-8745-4467-84dc-6b4d473b5c36]
+      x-ms-ratelimit-remaining-tenant-writes: ['1199']
+      x-ms-request-id: [fce5d265-5264-4206-b91f-337818dfbd70]
+      x-ms-routing-request-id: ['CENTRALUS:20160216T182527Z:be447da0-8745-4467-84dc-6b4d473b5c36']
+    status: {code: 200, message: OK}
+version: 1

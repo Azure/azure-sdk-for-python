@@ -1,0 +1,68 @@
+Notification Hubs Management
+============================
+
+For general information on resource management, see :doc:`Resource Management<resourcemanagement>`.
+
+Create the management client
+----------------------------
+
+The following code creates an instance of the management client.
+
+You will need to provide your ``subscription_id`` which can be retrieved
+from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
+
+See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
+for details on getting a Credentials instance.
+
+.. code:: python
+
+    from azure.mgmt.notificationhubs import NotificationHubsManagementClient, NotificationHubsManagementClientConfiguration
+
+    # TODO: Replace this with your subscription id
+    subscription_id = '33333333-3333-3333-3333-333333333333'
+    # TODO: must be an instance of 
+    # - msrestazure.azure_active_directory.UserPassCredentials
+    # - msrestazure.azure_active_directory.ServicePrincipalCredentials
+    credentials = ...
+
+    redis_client = NotificationHubsManagementClient(
+        NotificationHubsManagementClientConfiguration(
+            credentials,
+            subscription_id
+        )
+    )
+
+Registration
+------------
+
+Some operations in the ARM APIs require a one-time registration of the
+provider with your subscription.
+
+Use the following code to do the registration. You can use the same
+credentials you created in the previous section.
+
+.. code:: python
+
+    from azure.mgmt.resource.resources import ResourceManagementClient
+
+    resource_client = ResourceManagementClient(creds)
+    resource_client.providers.register('Microsoft.NotificationHubs')
+
+Check namespace availability
+----------------------------
+
+The following code check namespace availability of a notification hub.
+
+.. code:: python
+
+    from azure.mgmt.notificationhubs.models import CheckAvailabilityParameters
+
+    account_name = 'mynotificationhub'
+    output = notificationhubs_client.namespaces.check_availability(
+        azure.mgmt.notificationhubs.models.CheckAvailabilityParameters(
+            name = account_name
+        )
+    )
+    # output is a CheckAvailibilityResource instance
+    print(output.is_availiable) # Yes, it's 'availiable', it's a typo in the REST API
+    

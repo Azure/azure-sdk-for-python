@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-network',
-    version='0.20.1',
+    version='0.30.0a1',
     description='Microsoft Azure Network Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -57,8 +57,12 @@ setup(
         'azure',
         'azure.mgmt',
         'azure.mgmt.network',
+        'azure.mgmt.network.models',
+        'azure.mgmt.network.operations',
     ],
     install_requires=[
-        'azure-mgmt-common',
+        'azure-mgmt-nspkg',
+        'azure-common',
+        'msrestazure'
     ],
 )

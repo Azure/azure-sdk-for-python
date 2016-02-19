@@ -6,7 +6,8 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.storage.storagemanagement
+   azure.mgmt.storage.models
+   azure.mgmt.storage.operations
 
 Module contents
 ---------------

@@ -8,7 +8,7 @@ interactions:
       Content-Type: [application/json]
       User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
     method: GET
-    uri: !!python/unicode 'https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2015-05-01-preview'
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2015-05-01-preview
   response:
     body:
       string: !!binary |
@@ -17,19 +17,96 @@ interactions:
         6UeXWbnOP3qUfg9/pSl/iOej9bJo6fOPTqr1sv1oZD+frus6X7Y/qe/tuG/KYsGv7HmfLbMFWlmw
         9JHp8aNpVeeNg0xfldU0K4sf5DMDnXpHG9Pkl8gv/OP7v3HyS/4fVY1XJsMAAAA=
     headers:
-      cache-control: [!!python/unicode 'no-cache']
-      content-encoding: [!!python/unicode 'gzip']
-      content-type: [!!python/unicode 'application/json; charset=utf-8']
-      date: [!!python/unicode 'Mon, 15 Jun 2015 22:40:21 GMT']
-      expires: [!!python/unicode '-1']
-      pragma: [!!python/unicode 'no-cache']
-      server: [!!python/unicode 'Microsoft-HTTPAPI/2.0', !!python/unicode 'Microsoft-HTTPAPI/2.0']
-      strict-transport-security: [!!python/unicode 'max-age=31536000; includeSubDomains']
-      transfer-encoding: [!!python/unicode 'chunked']
-      vary: [!!python/unicode 'Accept-Encoding']
-      x-ms-correlation-request-id: [!!python/unicode 'ffc8eff4-6c8f-4064-94e2-1839063a8527']
-      x-ms-ratelimit-remaining-subscription-reads: [!!python/unicode '14989']
-      x-ms-request-id: [!!python/unicode '8e4e5f85-7323-49d2-b2d7-b65a182b23bf']
-      x-ms-routing-request-id: [!!python/unicode 'WESTUS:20150615T224022Z:ffc8eff4-6c8f-4064-94e2-1839063a8527']
+      cache-control: [no-cache]
+      content-encoding: [gzip]
+      content-type: [application/json; charset=utf-8]
+      date: ['Mon, 15 Jun 2015 22:40:21 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [ffc8eff4-6c8f-4064-94e2-1839063a8527]
+      x-ms-ratelimit-remaining-subscription-reads: ['14989']
+      x-ms-request-id: [8e4e5f85-7323-49d2-b2d7-b65a182b23bf]
+      x-ms-routing-request-id: ['WESTUS:20150615T224022Z:ffc8eff4-6c8f-4064-94e2-1839063a8527']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: [0]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [compute_management_client/2015-06-15]
+      accept-language: [en-US]
+      x-ms-client-request-id: [5b1923ca-b649-11e5-8f46-dc53600575a2]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UeXWbnOP3qUfg9/pSl/iOej9bJo6fOPTqr1sv1oZD+frus6X7Y/qe/tuG/KYsGv7O3seJ8uswXa
+        WcD0kenzo+wyK8psUpRFe/06bxvXDbUqq2lWFj/IZ6arj4695im3N81/ifzyS/R929kHjGLX+2zT
+        GKZVnd+E+Juqzcr0VX5RVEv65YRfMW/8rOBOj/t4E/qXRd2us/KLbDovloSVfYsa9Qfyk9I6tc1N
+        65+FQdz3Prv9CF4Tyjnzhn2bGt84kpTfizMVfnz/N05+yf8DwbZt2DEDAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 08 Jan 2016 20:49:48 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [0b864b63-0edb-4d99-89d6-997df9c80618]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [9b3d8e8c-73b5-4d81-802d-20e4069c07a9]
+      x-ms-routing-request-id: ['EASTUS2:20160108T204948Z:0b864b63-0edb-4d99-89d6-997df9c80618']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_130952805529321336]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 computemanagementclient/2015-06-15]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b0afdf26-d4dd-11e5-ab29-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UeXWbnOP3qUfg9/pSl/iOej9bJo6fOPTqr1sv1oZD+frus6X7Y/qe/tuG/KYsGv7O3seJ8uswXa
+        WcD0kenzo+wyK8psUpRFe/06bxvXDbUqq2lWFj/IZ6arj4695im3N81/ifzyS/R929kHjGLX+2zT
+        GKZVnd+E+Juqzcr0VX5RVEv65YRfMW/8rOBOj/t4E/qXRd2us/KLbDovloSVfYsa9Qfyk9I6tc1N
+        65+FQdz3Prv9CF4Tyjnzhn2bGt84kpTfizMVfnz/N05+yf8DwbZt2DEDAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 16 Feb 2016 18:47:11 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [01aa97b6-1a8f-472d-ac70-9c8557b77998]
+      x-ms-ratelimit-remaining-subscription-reads: ['14970']
+      x-ms-request-id: [4b24056b-bc61-4e5e-b2f3-bab83aab1018]
+      x-ms-routing-request-id: ['WESTUS:20160216T184712Z:01aa97b6-1a8f-472d-ac70-9c8557b77998']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_130991581835333371]
     status: {code: 200, message: OK}
 version: 1
