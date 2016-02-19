@@ -2,6 +2,7 @@ futures
 python-dateutil
 requests
 vcrpy
+coverage
 pyopenssl
 msrest
 msrestazure
