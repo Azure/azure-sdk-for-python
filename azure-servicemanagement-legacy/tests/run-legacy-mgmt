@@ -4,4 +4,11 @@ export PYTHONPATH=$PYTHONPATH:../../azure-common
 export PYTHONPATH=$PYTHONPATH:../../azure-servicemanagement-legacy
 
 echo "Running tests..."
-python -m unittest discover -p "test_legacy_mgmt_*.py"
+which coverage &> /dev/null
+if [ $? -eq 0 ]
+then
+        LAUNCHER='coverage run'
+else
+        LAUNCHER='python'
+fi
+$LAUNCHER -m unittest discover -p "test_legacy_mgmt_*.py"
