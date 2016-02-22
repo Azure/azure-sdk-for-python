@@ -19,7 +19,7 @@ script:
   - cd azure-mgmt/tests
   - bash run-mgmt
   - cd ../..
-  - rm .coverage
+  - rm -f .coverage
   - coverage combine azure-mgmt/tests/.coverage azure-servicebus/tests/.coverage azure-servicemanagement-legacy/tests/.coverage
   - coverage report
 after_success:
