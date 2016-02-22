@@ -12,7 +12,7 @@ You will need to provide your ``subscription_id`` which can be retrieved
 from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
 See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
-for details on getting a Credentials instance.
+for details on getting a ``Credentials`` instance.
 
 .. code:: python
 
@@ -21,9 +21,7 @@ for details on getting a Credentials instance.
 
     # TODO: Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
-    # TODO: must be an instance of 
-    # - msrestazure.azure_active_directory.UserPassCredentials
-    # - msrestazure.azure_active_directory.ServicePrincipalCredentials
+    # TODO: See above how to get a Credentials instance
     credentials = ...
 
     logic_client = LogicManagementClient(
