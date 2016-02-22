@@ -23,9 +23,9 @@ At this point, you must have:
 
 * Your client id. Found in the "client id" box in the "Configure" page of your application in the Azure portal
 * Your secret key. Generated when you have created the application. You cannot show the key after creation.
-If you've lost the current key, you must create a new one in the "Configure" page of your application.
+  If you've lost the current key, you must create a new one in the "Configure" page of your application.
 * You AD tenant id. It's an UUID (e.g. ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL) which point to the AD containing your application.
-You will found it in the URL when you are in the Azure portal in your AD, or in the "view endpoints" in any of the given url.
+  You will found it in the URL when you are in the Azure portal in your AD, or in the "view endpoints" in any of the given url.
 
 Then, you can create your credentials instance:
 
