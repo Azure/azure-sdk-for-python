@@ -19,6 +19,14 @@ Using Service Principal
 There is now a detailled official tutorial to describe this:
 https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/
 
+At this point, you must have:
+
+* Your client id. Found in the "client id" box in the "Configure" page of your application in the Azure portal
+* Your secret key. Generated when you have created the application. You cannot show the key after creation.
+If you've lost the current key, you must create a new one in the "Configure" page of your application.
+* You AD tenant id. It's an UUID (e.g. ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL) which point to the AD containing your application.
+You will found it in the URL when you are in the Azure portal in your AD, or in the "view endpoints" in any of the given url.
+
 Then, you can create your credentials instance:
 
 .. code:: python
@@ -26,9 +34,9 @@ Then, you can create your credentials instance:
     from msrestazure.azure_active_directory import ServicePrincipalCredentials
 
     credentials = ServicePrincipalCredentials(
-        'https://login.microsoftonline.com/ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL/', # Your OAuth 2.0 Token Endpoint for this app
-        'ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL',                                    # Your client id
-        'generatedkey',                                                            # Your authentication key
+        client_id = 'ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL',
+        secret = 'XXXXXXXXXXXXXXXXXXXXXXXX',
+        tenant = 'ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL'
     )
 
 
