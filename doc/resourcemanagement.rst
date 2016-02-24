@@ -112,7 +112,7 @@ This creates an availability set using the generic resource API.
         resource_type="availabilitySets",
         resource_name=resource_name,
         api_version="2015-05-01-preview",
-        GenericResource(
+        parameters=GenericResource(
             location='West US',
             properties={},
         ),
