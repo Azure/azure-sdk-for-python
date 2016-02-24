@@ -1,7 +1,7 @@
-azure.mgmt.resource.operations module
+azure.mgmt.resource.features.operations module
 =============================================
 
-.. automodule:: azure.mgmt.resource.operations
+.. automodule:: azure.mgmt.resource.features.operations
     :members:
     :undoc-members:
     :show-inheritance:
