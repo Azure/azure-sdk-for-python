@@ -36,6 +36,8 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="azure-common\azure\common\credentials.py" />
+    <Compile Include="azure-common\azure\common\exceptions.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\graph_rbac_management_client.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\models\aad_object.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\models\aad_object_paged.py" />

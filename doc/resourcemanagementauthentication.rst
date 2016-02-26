@@ -5,8 +5,8 @@ For general information on resource management, see :doc:`Resource Management<re
 
 To be able to use use the ARM library, you need to obtain one of these instances:
 
-* msrestazure.azure_active_directory.UserPassCredentials
-* msrestazure.azure_active_directory.ServicePrincipalCredentials
+* azure.common.credentials.UserPassCredentials
+* azure.common.credentials.ServicePrincipalCredentials
  
 And use it as credentials in your management configuration client. These two instances correspond to:
 
@@ -31,7 +31,7 @@ Then, you can create your credentials instance:
 
 .. code:: python
 
-    from msrestazure.azure_active_directory import ServicePrincipalCredentials
+    from azure.common.credentials import ServicePrincipalCredentials
 
     credentials = ServicePrincipalCredentials(
         client_id = 'ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL',
@@ -57,7 +57,7 @@ You are now able to log in Python using OAuth.
 
 .. code:: python
 
-    from msrestazure.azure_active_directory import UserPassCredentials
+    from azure.common.credentials import UserPassCredentials
 
     credentials = UserPassCredentials(
         'user@domain.com',    # Your new user

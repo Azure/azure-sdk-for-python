@@ -59,5 +59,6 @@ setup(
     ],
     install_requires=[
         'azure-nspkg',
+        'msrestazure'
     ],
 )

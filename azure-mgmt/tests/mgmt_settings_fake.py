@@ -13,7 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 
-from msrest.authentication import (
+from azure.common.credentials import (
     BasicTokenAuthentication
 )
 

@@ -17,7 +17,7 @@ import os.path
 import time
 import azure.mgmt.resource.resources
 
-from msrestazure.azure_exceptions import (
+from azure.common.exceptions import (
     CloudError
 )
 from testutils.common_recordingtestcase import (

@@ -17,8 +17,8 @@ for details on getting a Credentials instance.
     from azure.batch import BatchRestClient, BatchRestClientConfiguration
 
     # TODO: must be an instance of 
-    # - msrestazure.azure_active_directory.UserPassCredentials
-    # - msrestazure.azure_active_directory.ServicePrincipalCredentials
+    # - azure.common.credentials.UserPassCredentials
+    # - azure.common.credentials.ServicePrincipalCredentials
     credentials = ...
 
     batch_client = BatchRestClient(
