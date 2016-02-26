@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-notificationhubs',
-    version='0.30.0a1',
+    version='0.30.0rc1',
     description='Microsoft Azure Notification Hubs Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -61,8 +61,8 @@ setup(
         'azure.mgmt.notificationhubs.operations',
     ],
     install_requires=[
-        'azure-common',
+        'azure-common>=1.1.0',
         'azure-mgmt-nspkg',
-        'msrestazure'
+        'msrestazure>=0.1.0'
     ],
 )
