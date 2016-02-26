@@ -148,10 +148,6 @@
     <Compile Include="azure-mgmt-cdn\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-cdn\azure\__init__.py" />
     <Compile Include="azure-mgmt-cdn\setup.py" />
-    <Compile Include="azure-mgmt-common\azure\mgmt\common\arm.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-mgmt-common\azure\mgmt\common\filters.py" />
     <Compile Include="azure-common\azure\__init__.py" />
     <Compile Include="azure-common\setup.py" />
     <Compile Include="azure-common\testutils\common_auth.py" />
@@ -159,16 +155,6 @@
     <Compile Include="azure-common\testutils\common_recordingtestcase.py" />
     <Compile Include="azure-common\testutils\create_credentials_file.py" />
     <Compile Include="azure-common\testutils\__init__.py" />
-    <Compile Include="azure-mgmt-common\azure\mgmt\common\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-mgmt-common\azure\mgmt\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-mgmt-common\azure\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-mgmt-common\setup.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\compute_management_client.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\additional_unattend_content.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\api_entity_reference.py" />
@@ -939,9 +925,6 @@
     <Folder Include="azure-mgmt-cdn\azure\mgmt\cdn\" />
     <Folder Include="azure-mgmt-cdn\azure\mgmt\cdn\models\" />
     <Folder Include="azure-mgmt-cdn\azure\mgmt\cdn\operations\" />
-    <Folder Include="azure-mgmt-common\azure\" />
-    <Folder Include="azure-mgmt-common\azure\mgmt\" />
-    <Folder Include="azure-mgmt-common\azure\mgmt\common\" />
     <Folder Include="azure-mgmt-compute\azure\mgmt\compute\models\" />
     <Folder Include="azure-mgmt-compute\azure\mgmt\compute\operations\" />
     <Folder Include="azure-mgmt-logic\" />
@@ -1031,7 +1014,6 @@
     <Folder Include="azure-nspkg\azure\" />
     <Folder Include="azure-common\" />
     <Folder Include="azure\" />
-    <Folder Include="azure-mgmt-common\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.7" />
@@ -1054,9 +1036,6 @@
     <Content Include="azure-mgmt-cdn\MANIFEST.in" />
     <Content Include="azure-mgmt-cdn\README.rst" />
     <Content Include="azure-mgmt-cdn\setup.cfg" />
-    <Content Include="azure-mgmt-common\MANIFEST.in" />
-    <Content Include="azure-mgmt-common\README.rst" />
-    <Content Include="azure-mgmt-common\setup.cfg" />
     <Content Include="azure-mgmt-logic\MANIFEST.in" />
     <Content Include="azure-mgmt-logic\README.rst" />
     <Content Include="azure-mgmt-logic\setup.cfg" />
