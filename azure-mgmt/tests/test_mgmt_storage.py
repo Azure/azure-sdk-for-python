@@ -37,8 +37,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         account_name = self.get_resource_name('pyarmstorage')
 
         result_check = self.storage_client.storage_accounts.check_name_availability(
-            name=account_name,
-            type="Microsoft.Storage/storageAccounts"
+            account_name
         )
         #self.assertEqual(result_check.status_code, HttpStatusCode.OK)
         self.assertTrue(result_check)
