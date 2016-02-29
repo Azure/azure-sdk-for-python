@@ -19,12 +19,14 @@
     <PythonWsgiHandler>$(MSBuildProjectName).app</PythonWsgiHandler>
     <Name>AzureResourceViewer</Name>
     <RootNamespace>StorageAccountViewer</RootNamespace>
-    <InterpreterId>{73711fd3-a4d5-4754-a7ab-49e27bfb5880}</InterpreterId>
-    <InterpreterVersion>3.4</InterpreterVersion>
-    <WebBrowserUrl>/account/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourcegroups/Default-Storage-WestUS/storageaccounts/huguestrialwest1</WebBrowserUrl>
+    <InterpreterId>{0525ebbe-6919-47c8-b7a4-01597fe6da1e}</InterpreterId>
+    <InterpreterVersion>3.5</InterpreterVersion>
+    <WebBrowserUrl>
+    </WebBrowserUrl>
     <IsWindowsApplication>False</IsWindowsApplication>
     <WebBrowserPort>3939</WebBrowserPort>
     <NameOfLastUsedPublishProfile>huvaloarm - Web Deploy</NameOfLastUsedPublishProfile>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,9 +42,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AzureResourceViewer\auth.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AzureResourceViewer\mgmt_extensions.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AzureResourceViewer\models.py">
@@ -104,16 +103,16 @@
     <None Include="web.debug.config" />
   </ItemGroup>
   <ItemGroup>
-    <Interpreter Include="env\">
-      <Id>{73711fd3-a4d5-4754-a7ab-49e27bfb5880}</Id>
-      <BaseInterpreter>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</BaseInterpreter>
-      <Version>3.4</Version>
-      <Description>env (Python 3.4)</Description>
+    <Interpreter Include="env1\">
+      <Id>{0525ebbe-6919-47c8-b7a4-01597fe6da1e}</Id>
+      <BaseInterpreter>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</BaseInterpreter>
+      <Version>3.5</Version>
+      <Description>env1 (Python 64-bit 3.5)</Description>
       <InterpreterPath>Scripts\python.exe</InterpreterPath>
       <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
       <LibraryPath>Lib\</LibraryPath>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
-      <Architecture>X86</Architecture>
+      <Architecture>Amd64</Architecture>
     </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
