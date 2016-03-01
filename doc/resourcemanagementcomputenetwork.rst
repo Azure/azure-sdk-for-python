@@ -50,9 +50,14 @@ credentials you created in the previous section.
 
 .. code:: python
 
-    from azure.mgmt.resource.resources import ResourceManagementClient
+    from azure.mgmt.resource.resources import ResourceManagementClient, ResourceManagementClientConfiguration
 
-    resource_client = ResourceManagementClient(creds)
+    resource_client = ResourceManagementClient(
+        ResourceManagementClientConfiguration(
+            credentials,
+            subscription_id
+        )
+    )
     resource_client.providers.register('Microsoft.Compute')
     resource_client.providers.register('Microsoft.Network')
 
