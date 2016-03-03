@@ -39,6 +39,9 @@ class VirtualMachineExtension(Resource):
      extension handler.
     :param bool auto_upgrade_minor_version: Gets or sets whether the
      extension handler should be automatically upgraded across minor versions.
+    :param str force_update_tag: Gets or sets whether the extension handler
+     should be forced to re-run even if the extension configuration has not
+     changed.
     :param object settings: Gets or sets Json formatted public settings for
      the extension.
     :param object protected_settings: Gets or sets Json formatted protected
@@ -56,18 +59,20 @@ class VirtualMachineExtension(Resource):
         'virtual_machine_extension_type': {'key': 'properties.type', 'type': 'str', 'flatten': True},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str', 'flatten': True},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool', 'flatten': True},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str', 'flatten': True},
         'settings': {'key': 'properties.settings', 'type': 'object', 'flatten': True},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object', 'flatten': True},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView', 'flatten': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, publisher=None, virtual_machine_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None, instance_view=None):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, publisher=None, virtual_machine_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, force_update_tag=None, settings=None, protected_settings=None, provisioning_state=None, instance_view=None):
         super(VirtualMachineExtension, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.publisher = publisher
         self.virtual_machine_extension_type = virtual_machine_extension_type
         self.type_handler_version = type_handler_version
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.force_update_tag = force_update_tag
         self.settings = settings
         self.protected_settings = protected_settings
         self.provisioning_state = provisioning_state

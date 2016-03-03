@@ -48,7 +48,7 @@ class VirtualMachineScaleSetVM(Resource):
     :param DiagnosticsProfile diagnostics_profile: Gets or sets the
      diagnostics profile.
     :param SubResource availability_set: Gets or sets the reference Id of the
-     availailbity set to which this virtual machine belongs.
+     availability set to which this virtual machine belongs.
     :param str provisioning_state: Gets or sets the provisioning state, which
      only appears in the response.
     :param str license_type: Gets or sets the license type, which is for

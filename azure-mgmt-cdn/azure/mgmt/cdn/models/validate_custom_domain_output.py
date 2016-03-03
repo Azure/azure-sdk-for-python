@@ -35,9 +35,9 @@ class ValidateCustomDomainOutput(Model):
     _required = []
 
     _attribute_map = {
-        'custom_domain_validated': {'key': 'CustomDomainValidated', 'type': 'bool'},
-        'reason': {'key': 'Reason', 'type': 'str'},
-        'message': {'key': 'Message', 'type': 'str'},
+        'custom_domain_validated': {'key': 'customDomainValidated', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, custom_domain_validated=None, reason=None, message=None):

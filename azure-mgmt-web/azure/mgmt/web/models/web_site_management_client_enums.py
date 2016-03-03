@@ -53,6 +53,7 @@ class ProvisioningState(Enum):
     failed = "Failed"
     canceled = "Canceled"
     in_progress = "InProgress"
+    deleting = "Deleting"
 
 
 class AzureResourceType(Enum):
@@ -167,6 +168,7 @@ class ComputeModeOptions(Enum):
 
 class WorkerSizeOptions(Enum):
 
+    default = "Default"
     small = "Small"
     medium = "Medium"
     large = "Large"
@@ -189,6 +191,29 @@ class DomainType(Enum):
 
     regular = "Regular"
     soft_deleted = "SoftDeleted"
+
+
+class NotificationLevel(Enum):
+
+    critical = "Critical"
+    warning = "Warning"
+    information = "Information"
+    non_urgent_suggestion = "NonUrgentSuggestion"
+
+
+class Channels(Enum):
+
+    notification = "Notification"
+    api = "Api"
+    email = "Email"
+    all = "All"
+
+
+class CloneAbilityResult(Enum):
+
+    cloneable = "Cloneable"
+    partially_cloneable = "PartiallyCloneable"
+    not_cloneable = "NotCloneable"
 
 
 class LogLevel(Enum):

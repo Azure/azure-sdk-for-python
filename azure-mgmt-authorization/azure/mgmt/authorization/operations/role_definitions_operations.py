@@ -62,8 +62,7 @@ class RoleDefinitionsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
         }
         url = url.format(**path_format_arguments)
 
@@ -120,8 +119,7 @@ class RoleDefinitionsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
         }
         url = url.format(**path_format_arguments)
 
@@ -180,8 +178,7 @@ class RoleDefinitionsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
         }
         url = url.format(**path_format_arguments)
 
@@ -239,8 +236,7 @@ class RoleDefinitionsOperations(object):
         # Construct URL
         url = '/{roleDefinitionId}'
         path_format_arguments = {
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str', skip_quote=True)
         }
         url = url.format(**path_format_arguments)
 
@@ -300,8 +296,7 @@ class RoleDefinitionsOperations(object):
                 # Construct URL
                 url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions'
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = url.format(**path_format_arguments)
 

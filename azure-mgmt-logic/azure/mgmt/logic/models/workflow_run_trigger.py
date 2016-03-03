@@ -36,7 +36,7 @@ class WorkflowRunTrigger(Model):
     :param str code: Gets the code.
     :param str status: Gets the status. Possible values include:
      'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
-     'Suspended', 'Cancelled', 'Failed'
+     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
     :param object error: Gets the error.
     """
 

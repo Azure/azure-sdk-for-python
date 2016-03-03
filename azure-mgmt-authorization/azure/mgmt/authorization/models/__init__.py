@@ -33,8 +33,6 @@ from .role_assignment_properties import RoleAssignmentProperties
 from .role_assignment_create_parameters import RoleAssignmentCreateParameters
 from .role_definition_properties import RoleDefinitionProperties
 from .role_definition import RoleDefinition
-from .resource import Resource
-from .sub_resource import SubResource
 from .classic_administrator_paged import ClassicAdministratorPaged
 from .permission_paged import PermissionPaged
 from .provider_operations_metadata_paged import ProviderOperationsMetadataPaged
@@ -56,8 +54,6 @@ __all__ = [
     'RoleAssignmentCreateParameters',
     'RoleDefinitionProperties',
     'RoleDefinition',
-    'Resource',
-    'SubResource',
     'ClassicAdministratorPaged',
     'PermissionPaged',
     'ProviderOperationsMetadataPaged',

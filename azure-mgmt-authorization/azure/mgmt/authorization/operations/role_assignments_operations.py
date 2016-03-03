@@ -210,8 +210,7 @@ class RoleAssignmentsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str')
         }
         url = url.format(**path_format_arguments)
 
@@ -272,8 +271,7 @@ class RoleAssignmentsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str')
         }
         url = url.format(**path_format_arguments)
 
@@ -334,8 +332,7 @@ class RoleAssignmentsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str')
         }
         url = url.format(**path_format_arguments)
 
@@ -389,8 +386,7 @@ class RoleAssignmentsOperations(object):
         # Construct URL
         url = '/{roleAssignmentId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
         }
         url = url.format(**path_format_arguments)
 
@@ -448,8 +444,7 @@ class RoleAssignmentsOperations(object):
         # Construct URL
         url = '/{roleAssignmentId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
         }
         url = url.format(**path_format_arguments)
 
@@ -507,8 +502,7 @@ class RoleAssignmentsOperations(object):
         # Construct URL
         url = '/{roleAssignmentId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
         }
         url = url.format(**path_format_arguments)
 
@@ -632,8 +626,7 @@ class RoleAssignmentsOperations(object):
                 # Construct URL
                 url = '/{scope}/providers/Microsoft.Authorization/roleAssignments'
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = url.format(**path_format_arguments)
 

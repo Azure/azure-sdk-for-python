@@ -28,6 +28,7 @@ from .global_resource_groups_operations import GlobalResourceGroupsOperations
 from .hosting_environments_operations import HostingEnvironmentsOperations
 from .managed_hosting_environments_operations import ManagedHostingEnvironmentsOperations
 from .provider_operations import ProviderOperations
+from .recommendations_operations import RecommendationsOperations
 from .server_farms_operations import ServerFarmsOperations
 from .sites_operations import SitesOperations
 from .top_level_domains_operations import TopLevelDomainsOperations
@@ -43,6 +44,7 @@ __all__ = [
     'HostingEnvironmentsOperations',
     'ManagedHostingEnvironmentsOperations',
     'ProviderOperations',
+    'RecommendationsOperations',
     'ServerFarmsOperations',
     'SitesOperations',
     'TopLevelDomainsOperations',

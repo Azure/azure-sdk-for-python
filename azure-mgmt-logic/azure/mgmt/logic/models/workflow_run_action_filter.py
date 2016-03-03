@@ -27,7 +27,8 @@ class WorkflowRunActionFilter(Model):
 
     :param str status: Gets or sets the status of workflow run action.
      Possible values include: 'NotSpecified', 'Paused', 'Running', 'Waiting',
-     'Succeeded', 'Skipped', 'Suspended', 'Cancelled', 'Failed'
+     'Succeeded', 'Skipped', 'Suspended', 'Cancelled', 'Failed', 'Faulted',
+     'TimedOut', 'Aborted'
     """
 
     _required = []

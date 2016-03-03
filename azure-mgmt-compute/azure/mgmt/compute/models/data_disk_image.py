@@ -31,11 +31,11 @@ class DataDiskImage(Model):
      for each data disk.The allowed character for the value is digit.
     """
 
-    _required = ['lun']
+    _required = []
 
     _attribute_map = {
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
-    def __init__(self, lun):
+    def __init__(self, lun=None):
         self.lun = lun

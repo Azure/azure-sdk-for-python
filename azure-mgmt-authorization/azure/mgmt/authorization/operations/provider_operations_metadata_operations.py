@@ -64,8 +64,7 @@ class ProviderOperationsMetadataOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Authorization/providerOperations/{resourceProviderNamespace}'
         path_format_arguments = {
-            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str')
         }
         url = url.format(**path_format_arguments)
 
@@ -125,10 +124,6 @@ class ProviderOperationsMetadataOperations(object):
             if not next_link:
                 # Construct URL
                 url = '/providers/Microsoft.Authorization/providerOperations'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = url.format(**path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}

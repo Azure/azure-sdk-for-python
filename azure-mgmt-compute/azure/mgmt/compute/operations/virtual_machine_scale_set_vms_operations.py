@@ -44,6 +44,78 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         self.config = config
 
+    def reimage(
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers={}, raw=False, **operation_config):
+        """
+        The operation to re-image a virtual machine scale set instance.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :type vm_scale_set_name: str
+        :param instance_id: The instance id of the virtual machine.
+        :type instance_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param boolean raw: returns the direct response alongside the
+         deserialized response
+        :rtype: None
+        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimage'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = url.format(**path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        def long_running_send():
+
+            request = self._client.post(url, query_parameters)
+            return self._client.send(request, header_parameters, **operation_config)
+
+        def get_long_running_status(status_link, headers={}):
+
+            request = self._client.get(status_link)
+            request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
     def deallocate(
             self, resource_group_name, vm_scale_set_name, instance_id, custom_headers={}, raw=False, **operation_config):
         """

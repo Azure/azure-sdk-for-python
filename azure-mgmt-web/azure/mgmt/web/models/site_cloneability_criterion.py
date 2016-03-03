@@ -22,17 +22,21 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """SubResource
+class SiteCloneabilityCriterion(Model):
+    """
+    Represents a site cloneability criterion
 
-    :param str id: Resource Id
+    :param str name: Name of criterion
+    :param str description: Description of criterion
     """
 
     _required = []
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        self.id = id
+    def __init__(self, name=None, description=None):
+        self.name = name
+        self.description = description

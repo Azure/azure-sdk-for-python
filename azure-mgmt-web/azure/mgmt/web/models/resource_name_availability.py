@@ -29,9 +29,9 @@ class ResourceNameAvailability(Model):
     :param bool name_available: True indicates name is valid and available.
      False indicates the name is invalid, unavailable, or both.
     :param str reason: Required if nameAvailable is false. 'Invalid'
-     indicates the name provided does not match Azure WebApp service's naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
+     indicates the name provided does not match Azure WebApp serviceâ€™s
+     naming requirements. 'AlreadyExists' indicates that the name is already
+     in use and is therefore unavailable.
     :param str message:
     """
 

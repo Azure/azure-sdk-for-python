@@ -74,6 +74,7 @@ class SiteConfig(Resource):
     :param ApiDefinitionInfo api_definition: Information about the formal API
      definition for the web app.
     :param str auto_swap_slot_name: Auto swap slot name
+    :param bool local_my_sql_enabled: Local mysql enabled
     """
 
     _required = []
@@ -117,9 +118,10 @@ class SiteConfig(Resource):
         'cors': {'key': 'properties.cors', 'type': 'CorsSettings', 'flatten': True},
         'api_definition': {'key': 'properties.apiDefinition', 'type': 'ApiDefinitionInfo', 'flatten': True},
         'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str', 'flatten': True},
+        'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool', 'flatten': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None):
         super(SiteConfig, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -159,3 +161,4 @@ class SiteConfig(Resource):
         self.cors = cors
         self.api_definition = api_definition
         self.auto_swap_slot_name = auto_swap_slot_name
+        self.local_my_sql_enabled = local_my_sql_enabled
