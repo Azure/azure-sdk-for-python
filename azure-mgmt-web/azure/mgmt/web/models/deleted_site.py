@@ -85,6 +85,7 @@ class DeletedSite(Resource):
     :param CloningInfo cloning_info: This is only valid for web app creation.
      If specified, web app is cloned from
      a source web app
+    :param str resource_group: Resource group web app belongs to
     """
 
     _required = []
@@ -115,9 +116,10 @@ class DeletedSite(Resource):
         'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool', 'flatten': True},
         'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str', 'flatten': True},
         'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo', 'flatten': True},
+        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, deleted_timestamp=None, deleted_site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, cloning_info=None):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, deleted_timestamp=None, deleted_site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, cloning_info=None, resource_group=None):
         super(DeletedSite, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.deleted_timestamp = deleted_timestamp
         self.deleted_site_name = deleted_site_name
@@ -144,3 +146,4 @@ class DeletedSite(Resource):
         self.host_names_disabled = host_names_disabled
         self.outbound_ip_addresses = outbound_ip_addresses
         self.cloning_info = cloning_info
+        self.resource_group = resource_group

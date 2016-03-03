@@ -32,7 +32,7 @@ class WorkflowRun(SubResource):
     :param datetime end_time: Gets the end time.
     :param str status: Gets the status. Possible values include:
      'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
-     'Suspended', 'Cancelled', 'Failed'
+     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
     :param str code: Gets the code.
     :param object error: Gets the error.
     :param str correlation_id: Gets the correlation id.

@@ -35,7 +35,7 @@ class StampCapacity(Model):
     :param str compute_mode: Shared/Dedicated workers. Possible values
      include: 'Shared', 'Dedicated'
     :param str worker_size: Size of the machines. Possible values include:
-     'Small', 'Medium', 'Large'
+     'Default', 'Small', 'Medium', 'Large'
     :param int worker_size_id: Size Id of machines:
      0 - Small
      1 - Medium

@@ -37,8 +37,6 @@ from .user_create_parameters_password_profile import UserCreateParametersPasswor
 from .user_create_parameters import UserCreateParameters
 from .user import User
 from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
-from .resource import Resource
-from .sub_resource import SubResource
 from .aad_object_paged import AADObjectPaged
 from .ad_group_paged import ADGroupPaged
 from .str_paged import strPaged
@@ -64,8 +62,6 @@ __all__ = [
     'UserCreateParameters',
     'User',
     'UserGetMemberGroupsParameters',
-    'Resource',
-    'SubResource',
     'AADObjectPaged',
     'ADGroupPaged',
     'strPaged',

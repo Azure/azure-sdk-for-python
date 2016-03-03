@@ -69,7 +69,7 @@ class LoadBalancingRule(SubResource):
      PublicIP resource Updating/Deleting/Failed
     """
 
-    _required = ['backend_address_pool', 'protocol', 'frontend_port', 'enable_floating_ip']
+    _required = ['protocol', 'frontend_port']
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -86,7 +86,7 @@ class LoadBalancingRule(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, backend_address_pool, protocol, frontend_port, enable_floating_ip, id=None, name=None, etag=None, frontend_ip_configuration=None, probe=None, load_distribution=None, backend_port=None, idle_timeout_in_minutes=None, provisioning_state=None):
+    def __init__(self, protocol, frontend_port, id=None, name=None, etag=None, frontend_ip_configuration=None, backend_address_pool=None, probe=None, load_distribution=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None):
         super(LoadBalancingRule, self).__init__(id=id)
         self.name = name
         self.etag = etag

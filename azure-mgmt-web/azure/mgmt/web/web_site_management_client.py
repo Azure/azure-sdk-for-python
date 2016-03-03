@@ -31,6 +31,7 @@ from .operations.global_resource_groups_operations import GlobalResourceGroupsOp
 from .operations.hosting_environments_operations import HostingEnvironmentsOperations
 from .operations.managed_hosting_environments_operations import ManagedHostingEnvironmentsOperations
 from .operations.provider_operations import ProviderOperations
+from .operations.recommendations_operations import RecommendationsOperations
 from .operations.server_farms_operations import ServerFarmsOperations
 from .operations.sites_operations import SitesOperations
 from .operations.top_level_domains_operations import TopLevelDomainsOperations
@@ -109,6 +110,8 @@ class WebSiteManagementClient(object):
     :vartype managed_hosting_environments: .operations.ManagedHostingEnvironmentsOperations
     :ivar provider: Provider operations
     :vartype provider: .operations.ProviderOperations
+    :ivar recommendations: Recommendations operations
+    :vartype recommendations: .operations.RecommendationsOperations
     :ivar server_farms: ServerFarms operations
     :vartype server_farms: .operations.ServerFarmsOperations
     :ivar sites: Sites operations
@@ -145,6 +148,8 @@ class WebSiteManagementClient(object):
         self.managed_hosting_environments = ManagedHostingEnvironmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.provider = ProviderOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recommendations = RecommendationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_farms = ServerFarmsOperations(
             self._client, self.config, self._serialize, self._deserialize)

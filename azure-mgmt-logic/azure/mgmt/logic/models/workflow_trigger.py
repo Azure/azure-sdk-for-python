@@ -36,7 +36,7 @@ class WorkflowTrigger(SubResource):
      'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
     :param str status: Gets the status. Possible values include:
      'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
-     'Suspended', 'Cancelled', 'Failed'
+     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
     :param datetime last_execution_time: Gets the last execution time.
     :param datetime next_execution_time: Gets the next execution time.
     :param WorkflowTriggerRecurrence recurrence: Gets the workflow trigger

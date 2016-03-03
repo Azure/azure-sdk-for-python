@@ -41,7 +41,7 @@ class Domain(Resource):
      'Pending', 'Reserved', 'Reverted', 'Suspended', 'Transferred',
      'Unknown', 'Unlocked', 'Unparked', 'Updated', 'JsonConverterFailed'
     :param str provisioning_state: Domain provisioning state. Possible values
-     include: 'Succeeded', 'Failed', 'Canceled', 'InProgress'
+     include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :param list name_servers: Name servers
     :param bool privacy: If true then domain privacy is enabled for this
      domain

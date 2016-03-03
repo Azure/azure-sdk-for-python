@@ -19,9 +19,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .authorization_client import AuthorizationClient, AuthorizationClientConfiguration
+from .lock_management_client import LockManagementClient, LockManagementClientConfiguration
 
 __all__ = [
-    'AuthorizationClient',
-    'AuthorizationClientConfiguration'
+    'LockManagementClient',
+    'LockManagementClientConfiguration'
 ]

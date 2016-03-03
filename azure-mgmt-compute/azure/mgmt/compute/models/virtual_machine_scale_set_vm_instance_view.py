@@ -32,7 +32,7 @@ class VirtualMachineScaleSetVMInstanceView(Model):
      thumbprint.
     :param VirtualMachineAgentInstanceView vm_agent: Gets or sets the VM
      Agent running on the virtual machine.
-    :param list disks: Gets or sets the the disks information.
+    :param list disks: Gets or sets the disks information.
     :param list extensions: Gets or sets the extensions information.
     :param BootDiagnosticsInstanceView boot_diagnostics: Gets or sets the
      boot diagnostics.
