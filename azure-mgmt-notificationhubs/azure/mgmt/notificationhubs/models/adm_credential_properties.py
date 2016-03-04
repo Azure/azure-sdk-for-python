@@ -30,9 +30,7 @@ class AdmCredentialProperties(Model):
     :param str client_secret: Gets or sets the credential secret access key.
     :param str auth_token_url: Gets or sets the URL of the authorization
      token.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'client_id': {'key': 'clientId', 'type': 'str'},
@@ -40,7 +38,7 @@ class AdmCredentialProperties(Model):
         'auth_token_url': {'key': 'authTokenUrl', 'type': 'str'},
     }
 
-    def __init__(self, client_id=None, client_secret=None, auth_token_url=None):
+    def __init__(self, client_id=None, client_secret=None, auth_token_url=None, **kwargs):
         self.client_id = client_id
         self.client_secret = client_secret
         self.auth_token_url = auth_token_url

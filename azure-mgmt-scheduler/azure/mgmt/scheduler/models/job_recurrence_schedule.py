@@ -35,9 +35,7 @@ class JobRecurrenceSchedule(Model):
      should execute on. Must be between 1 and 31.
     :param list monthly_occurrences: Gets or sets the occurrences of days
      within a month.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'week_days': {'key': 'weekDays', 'type': '[DayOfWeek]'},
@@ -47,7 +45,7 @@ class JobRecurrenceSchedule(Model):
         'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[JobRecurrenceScheduleMonthlyOccurrence]'},
     }
 
-    def __init__(self, week_days=None, hours=None, minutes=None, month_days=None, monthly_occurrences=None):
+    def __init__(self, week_days=None, hours=None, minutes=None, month_days=None, monthly_occurrences=None, **kwargs):
         self.week_days = week_days
         self.hours = hours
         self.minutes = minutes

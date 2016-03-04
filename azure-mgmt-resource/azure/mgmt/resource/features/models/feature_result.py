@@ -31,9 +31,7 @@ class FeatureResult(Model):
      previewed feature.
     :param str id: Gets or sets the Id of the feature.
     :param str type: Gets or sets the type of the feature.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -42,7 +40,7 @@ class FeatureResult(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name=None, properties=None, id=None, type=None):
+    def __init__(self, name=None, properties=None, id=None, type=None, **kwargs):
         self.name = name
         self.properties = properties
         self.id = id

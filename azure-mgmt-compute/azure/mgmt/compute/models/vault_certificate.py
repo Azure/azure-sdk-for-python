@@ -31,15 +31,13 @@ class VaultCertificate(Model):
      a Key Vault which contains a properly formatted certificate.
     :param str certificate_store: Gets or sets the Certificate store in
      LocalMachine to add the certificate to on Windows, leave empty on Linux.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
         'certificate_store': {'key': 'certificateStore', 'type': 'str'},
     }
 
-    def __init__(self, certificate_url=None, certificate_store=None):
+    def __init__(self, certificate_url=None, certificate_store=None, **kwargs):
         self.certificate_url = certificate_url
         self.certificate_store = certificate_store

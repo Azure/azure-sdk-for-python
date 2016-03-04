@@ -33,15 +33,13 @@ class SshPublicKey(Model):
     :param str key_data: Gets or sets Certificate public key used to
      authenticate with VM through SSH.The certificate must be in Pem format
      with or without headers.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
         'key_data': {'key': 'keyData', 'type': 'str'},
     }
 
-    def __init__(self, path=None, key_data=None):
+    def __init__(self, path=None, key_data=None, **kwargs):
         self.path = path
         self.key_data = key_data

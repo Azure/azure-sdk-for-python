@@ -33,9 +33,7 @@ class CheckAvailabilityResource(Model):
     :param dict tags: Gets or sets tags
     :param bool is_availiable: Gets or sets true if the name is available and
      can be used to create new Namespace/NotificationHub. Otherwise false.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -46,7 +44,7 @@ class CheckAvailabilityResource(Model):
         'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, location=None, name=None, type=None, tags=None, is_availiable=None):
+    def __init__(self, id=None, location=None, name=None, type=None, tags=None, is_availiable=None, **kwargs):
         self.id = id
         self.location = location
         self.name = name

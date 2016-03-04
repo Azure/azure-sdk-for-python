@@ -28,13 +28,11 @@ class TopLevelDomainAgreementOption(Model):
 
     :param bool include_privacy: If true then the list of agreements will
      inclue agreements for domain privacy as well.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'include_privacy': {'key': 'includePrivacy', 'type': 'bool'},
     }
 
-    def __init__(self, include_privacy=None):
+    def __init__(self, include_privacy=None, **kwargs):
         self.include_privacy = include_privacy

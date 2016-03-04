@@ -37,9 +37,7 @@ class AADObject(Model):
     :param list service_principal_names: Gets or sets the list of service
      principal names.
     :param str user_type: Gets or sets the user type
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
@@ -54,7 +52,7 @@ class AADObject(Model):
         'user_type': {'key': 'userType', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, display_name=None, user_principal_name=None, mail=None, mail_enabled=None, security_enabled=None, sign_in_name=None, service_principal_names=None, user_type=None):
+    def __init__(self, object_id=None, object_type=None, display_name=None, user_principal_name=None, mail=None, mail_enabled=None, security_enabled=None, sign_in_name=None, service_principal_names=None, user_type=None, **kwargs):
         self.object_id = object_id
         self.object_type = object_type
         self.display_name = display_name

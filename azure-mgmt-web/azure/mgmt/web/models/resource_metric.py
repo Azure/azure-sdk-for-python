@@ -34,9 +34,7 @@ class ResourceMetric(Model):
     :param str resource_id: Metric resource Id
     :param list metric_values: Metric values
     :param list properties: Properties
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'ResourceMetricName'},
@@ -49,7 +47,7 @@ class ResourceMetric(Model):
         'properties': {'key': 'properties', 'type': '[KeyValuePairStringString]'},
     }
 
-    def __init__(self, name=None, unit=None, time_grain=None, start_time=None, end_time=None, resource_id=None, metric_values=None, properties=None):
+    def __init__(self, name=None, unit=None, time_grain=None, start_time=None, end_time=None, resource_id=None, metric_values=None, properties=None, **kwargs):
         self.name = name
         self.unit = unit
         self.time_grain = time_grain

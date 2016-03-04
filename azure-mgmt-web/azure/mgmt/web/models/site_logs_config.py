@@ -38,19 +38,26 @@ class SiteLogsConfig(Resource):
      configuration
     :param EnabledConfig detailed_error_messages: Detailed error messages
      configuration
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'application_logs': {'key': 'properties.applicationLogs', 'type': 'ApplicationLogsConfig', 'flatten': True},
-        'http_logs': {'key': 'properties.httpLogs', 'type': 'HttpLogsConfig', 'flatten': True},
-        'failed_requests_tracing': {'key': 'properties.failedRequestsTracing', 'type': 'EnabledConfig', 'flatten': True},
-        'detailed_error_messages': {'key': 'properties.detailedErrorMessages', 'type': 'EnabledConfig', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None):
-        super(SiteLogsConfig, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'application_logs': {'key': 'properties.applicationLogs', 'type': 'ApplicationLogsConfig'},
+        'http_logs': {'key': 'properties.httpLogs', 'type': 'HttpLogsConfig'},
+        'failed_requests_tracing': {'key': 'properties.failedRequestsTracing', 'type': 'EnabledConfig'},
+        'detailed_error_messages': {'key': 'properties.detailedErrorMessages', 'type': 'EnabledConfig'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None, **kwargs):
+        super(SiteLogsConfig, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.application_logs = application_logs
         self.http_logs = http_logs
         self.failed_requests_tracing = failed_requests_tracing

@@ -75,54 +75,61 @@ class SiteConfig(Resource):
      definition for the web app.
     :param str auto_swap_slot_name: Auto swap slot name
     :param bool local_my_sql_enabled: Local mysql enabled
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'number_of_workers': {'key': 'properties.numberOfWorkers', 'type': 'int', 'flatten': True},
-        'default_documents': {'key': 'properties.defaultDocuments', 'type': '[str]', 'flatten': True},
-        'net_framework_version': {'key': 'properties.netFrameworkVersion', 'type': 'str', 'flatten': True},
-        'php_version': {'key': 'properties.phpVersion', 'type': 'str', 'flatten': True},
-        'python_version': {'key': 'properties.pythonVersion', 'type': 'str', 'flatten': True},
-        'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool', 'flatten': True},
-        'request_tracing_expiration_time': {'key': 'properties.requestTracingExpirationTime', 'type': 'iso-8601', 'flatten': True},
-        'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool', 'flatten': True},
-        'remote_debugging_version': {'key': 'properties.remoteDebuggingVersion', 'type': 'str', 'flatten': True},
-        'http_logging_enabled': {'key': 'properties.httpLoggingEnabled', 'type': 'bool', 'flatten': True},
-        'logs_directory_size_limit': {'key': 'properties.logsDirectorySizeLimit', 'type': 'int', 'flatten': True},
-        'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool', 'flatten': True},
-        'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str', 'flatten': True},
-        'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str', 'flatten': True},
-        'app_settings': {'key': 'properties.appSettings', 'type': '[NameValuePair]', 'flatten': True},
-        'metadata': {'key': 'properties.metadata', 'type': '[NameValuePair]', 'flatten': True},
-        'connection_strings': {'key': 'properties.connectionStrings', 'type': '[ConnStringInfo]', 'flatten': True},
-        'handler_mappings': {'key': 'properties.handlerMappings', 'type': '[HandlerMapping]', 'flatten': True},
-        'document_root': {'key': 'properties.documentRoot', 'type': 'str', 'flatten': True},
-        'scm_type': {'key': 'properties.scmType', 'type': 'str', 'flatten': True},
-        'use32_bit_worker_process': {'key': 'properties.use32BitWorkerProcess', 'type': 'bool', 'flatten': True},
-        'web_sockets_enabled': {'key': 'properties.webSocketsEnabled', 'type': 'bool', 'flatten': True},
-        'always_on': {'key': 'properties.alwaysOn', 'type': 'bool', 'flatten': True},
-        'java_version': {'key': 'properties.javaVersion', 'type': 'str', 'flatten': True},
-        'java_container': {'key': 'properties.javaContainer', 'type': 'str', 'flatten': True},
-        'java_container_version': {'key': 'properties.javaContainerVersion', 'type': 'str', 'flatten': True},
-        'managed_pipeline_mode': {'key': 'properties.managedPipelineMode', 'type': 'ManagedPipelineMode', 'flatten': True},
-        'virtual_applications': {'key': 'properties.virtualApplications', 'type': '[VirtualApplication]', 'flatten': True},
-        'load_balancing': {'key': 'properties.loadBalancing', 'type': 'SiteLoadBalancing', 'flatten': True},
-        'experiments': {'key': 'properties.experiments', 'type': 'Experiments', 'flatten': True},
-        'limits': {'key': 'properties.limits', 'type': 'SiteLimits', 'flatten': True},
-        'auto_heal_enabled': {'key': 'properties.autoHealEnabled', 'type': 'bool', 'flatten': True},
-        'auto_heal_rules': {'key': 'properties.autoHealRules', 'type': 'AutoHealRules', 'flatten': True},
-        'tracing_options': {'key': 'properties.tracingOptions', 'type': 'str', 'flatten': True},
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str', 'flatten': True},
-        'cors': {'key': 'properties.cors', 'type': 'CorsSettings', 'flatten': True},
-        'api_definition': {'key': 'properties.apiDefinition', 'type': 'ApiDefinitionInfo', 'flatten': True},
-        'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str', 'flatten': True},
-        'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None):
-        super(SiteConfig, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'number_of_workers': {'key': 'properties.numberOfWorkers', 'type': 'int'},
+        'default_documents': {'key': 'properties.defaultDocuments', 'type': '[str]'},
+        'net_framework_version': {'key': 'properties.netFrameworkVersion', 'type': 'str'},
+        'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
+        'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
+        'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
+        'request_tracing_expiration_time': {'key': 'properties.requestTracingExpirationTime', 'type': 'iso-8601'},
+        'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
+        'remote_debugging_version': {'key': 'properties.remoteDebuggingVersion', 'type': 'str'},
+        'http_logging_enabled': {'key': 'properties.httpLoggingEnabled', 'type': 'bool'},
+        'logs_directory_size_limit': {'key': 'properties.logsDirectorySizeLimit', 'type': 'int'},
+        'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
+        'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
+        'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
+        'app_settings': {'key': 'properties.appSettings', 'type': '[NameValuePair]'},
+        'metadata': {'key': 'properties.metadata', 'type': '[NameValuePair]'},
+        'connection_strings': {'key': 'properties.connectionStrings', 'type': '[ConnStringInfo]'},
+        'handler_mappings': {'key': 'properties.handlerMappings', 'type': '[HandlerMapping]'},
+        'document_root': {'key': 'properties.documentRoot', 'type': 'str'},
+        'scm_type': {'key': 'properties.scmType', 'type': 'str'},
+        'use32_bit_worker_process': {'key': 'properties.use32BitWorkerProcess', 'type': 'bool'},
+        'web_sockets_enabled': {'key': 'properties.webSocketsEnabled', 'type': 'bool'},
+        'always_on': {'key': 'properties.alwaysOn', 'type': 'bool'},
+        'java_version': {'key': 'properties.javaVersion', 'type': 'str'},
+        'java_container': {'key': 'properties.javaContainer', 'type': 'str'},
+        'java_container_version': {'key': 'properties.javaContainerVersion', 'type': 'str'},
+        'managed_pipeline_mode': {'key': 'properties.managedPipelineMode', 'type': 'ManagedPipelineMode'},
+        'virtual_applications': {'key': 'properties.virtualApplications', 'type': '[VirtualApplication]'},
+        'load_balancing': {'key': 'properties.loadBalancing', 'type': 'SiteLoadBalancing'},
+        'experiments': {'key': 'properties.experiments', 'type': 'Experiments'},
+        'limits': {'key': 'properties.limits', 'type': 'SiteLimits'},
+        'auto_heal_enabled': {'key': 'properties.autoHealEnabled', 'type': 'bool'},
+        'auto_heal_rules': {'key': 'properties.autoHealRules', 'type': 'AutoHealRules'},
+        'tracing_options': {'key': 'properties.tracingOptions', 'type': 'str'},
+        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
+        'cors': {'key': 'properties.cors', 'type': 'CorsSettings'},
+        'api_definition': {'key': 'properties.apiDefinition', 'type': 'ApiDefinitionInfo'},
+        'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str'},
+        'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None, **kwargs):
+        super(SiteConfig, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
         self.net_framework_version = net_framework_version

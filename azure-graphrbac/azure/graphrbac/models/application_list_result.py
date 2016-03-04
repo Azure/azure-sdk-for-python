@@ -27,13 +27,11 @@ class ApplicationListResult(Model):
     Role assignment list operation result.
 
     :param list value: Application list.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Application]'},
     }
 
-    def __init__(self, value=None):
+    def __init__(self, value=None, **kwargs):
         self.value = value

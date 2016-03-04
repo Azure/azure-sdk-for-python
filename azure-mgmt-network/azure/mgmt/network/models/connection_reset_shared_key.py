@@ -27,13 +27,11 @@ class ConnectionResetSharedKey(Model):
 
     :param long key_length: The virtual network connection reset shared key
      length
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'key_length': {'key': 'keyLength', 'type': 'long'},
     }
 
-    def __init__(self, key_length=None):
+    def __init__(self, key_length=None, **kwargs):
         self.key_length = key_length

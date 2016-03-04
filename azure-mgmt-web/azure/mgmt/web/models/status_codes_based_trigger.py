@@ -31,9 +31,7 @@ class StatusCodesBasedTrigger(Model):
     :param int win32_status: Win32 error code
     :param int count: Count
     :param str time_interval: TimeInterval
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'int'},
@@ -43,7 +41,7 @@ class StatusCodesBasedTrigger(Model):
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
     }
 
-    def __init__(self, status=None, sub_status=None, win32_status=None, count=None, time_interval=None):
+    def __init__(self, status=None, sub_status=None, win32_status=None, count=None, time_interval=None, **kwargs):
         self.status = status
         self.sub_status = sub_status
         self.win32_status = win32_status

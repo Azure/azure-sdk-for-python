@@ -30,9 +30,7 @@ class ValidateCustomDomainOutput(Model):
      is validated or not
     :param str reason: The reason why the custom domain is not valid
     :param str message: The message on why the custom domain is not valid
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'custom_domain_validated': {'key': 'customDomainValidated', 'type': 'bool'},
@@ -40,7 +38,7 @@ class ValidateCustomDomainOutput(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, custom_domain_validated=None, reason=None, message=None):
+    def __init__(self, custom_domain_validated=None, reason=None, message=None, **kwargs):
         self.custom_domain_validated = custom_domain_validated
         self.reason = reason
         self.message = message

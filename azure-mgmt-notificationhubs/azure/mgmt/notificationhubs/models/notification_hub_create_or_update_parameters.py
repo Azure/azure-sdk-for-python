@@ -30,9 +30,12 @@ class NotificationHubCreateOrUpdateParameters(Model):
     :param dict tags: Gets or sets NotificationHub tags.
     :param NotificationHubProperties properties: Gets or sets properties of
      the NotificationHub.
-    """
+    """ 
 
-    _required = ['location', 'properties']
+    _validation = {
+        'location': {'required': True},
+        'properties': {'required': True},
+    }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
@@ -40,7 +43,7 @@ class NotificationHubCreateOrUpdateParameters(Model):
         'properties': {'key': 'properties', 'type': 'NotificationHubProperties'},
     }
 
-    def __init__(self, location, properties, tags=None):
+    def __init__(self, location, properties, tags=None, **kwargs):
         self.location = location
         self.tags = tags
         self.properties = properties

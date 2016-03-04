@@ -33,9 +33,7 @@ class ResourceNameAvailability(Model):
      naming requirements. 'AlreadyExists' indicates that the name is already
      in use and is therefore unavailable.
     :param str message:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
@@ -43,7 +41,7 @@ class ResourceNameAvailability(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
+    def __init__(self, name_available=None, reason=None, message=None, **kwargs):
         self.name_available = name_available
         self.reason = reason
         self.message = message

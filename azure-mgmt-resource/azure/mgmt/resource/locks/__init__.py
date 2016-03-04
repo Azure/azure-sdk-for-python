@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .lock_management_client import LockManagementClient, LockManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'LockManagementClient',
     'LockManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

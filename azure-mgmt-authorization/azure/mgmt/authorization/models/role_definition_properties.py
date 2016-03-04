@@ -32,9 +32,7 @@ class RoleDefinitionProperties(Model):
     :param list permissions: Gets or sets role definition permissions.
     :param list assignable_scopes: Gets or sets role definition assignable
      scopes.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'role_name': {'key': 'roleName', 'type': 'str'},
@@ -44,7 +42,7 @@ class RoleDefinitionProperties(Model):
         'assignable_scopes': {'key': 'assignableScopes', 'type': '[str]'},
     }
 
-    def __init__(self, role_name=None, description=None, type=None, permissions=None, assignable_scopes=None):
+    def __init__(self, role_name=None, description=None, type=None, permissions=None, assignable_scopes=None, **kwargs):
         self.role_name = role_name
         self.description = description
         self.type = type

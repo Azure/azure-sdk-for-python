@@ -29,9 +29,7 @@ class RoleAssignmentPropertiesWithScope(Model):
     :param str scope: Gets or sets role assignment scope.
     :param str role_definition_id: Gets or sets role definition id.
     :param str principal_id: Gets or sets principal Id.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'scope': {'key': 'scope', 'type': 'str'},
@@ -39,7 +37,7 @@ class RoleAssignmentPropertiesWithScope(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
     }
 
-    def __init__(self, scope=None, role_definition_id=None, principal_id=None):
+    def __init__(self, scope=None, role_definition_id=None, principal_id=None, **kwargs):
         self.scope = scope
         self.role_definition_id = role_definition_id
         self.principal_id = principal_id

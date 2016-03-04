@@ -30,9 +30,7 @@ class CheckNameAvailabilityOutput(Model):
     :param str reason: The reason why the name is not available
     :param str message: The detailed error message on why the name is not
      available
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name_available': {'key': 'NameAvailable', 'type': 'bool'},
@@ -40,7 +38,7 @@ class CheckNameAvailabilityOutput(Model):
         'message': {'key': 'Message', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
+    def __init__(self, name_available=None, reason=None, message=None, **kwargs):
         self.name_available = name_available
         self.reason = reason
         self.message = message

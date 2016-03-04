@@ -48,19 +48,26 @@ class VnetRoute(Resource):
      those from a Virtual Network. This operation will clear all DEFAULT and
      INHERITED routes and replace them
      with new INHERITED routes.
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'vnet_route_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'start_address': {'key': 'properties.startAddress', 'type': 'str', 'flatten': True},
-        'end_address': {'key': 'properties.endAddress', 'type': 'str', 'flatten': True},
-        'route_type': {'key': 'properties.routeType', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
-        super(VnetRoute, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'vnet_route_name': {'key': 'properties.name', 'type': 'str'},
+        'start_address': {'key': 'properties.startAddress', 'type': 'str'},
+        'end_address': {'key': 'properties.endAddress', 'type': 'str'},
+        'route_type': {'key': 'properties.routeType', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None, **kwargs):
+        super(VnetRoute, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.vnet_route_name = vnet_route_name
         self.start_address = start_address
         self.end_address = end_address

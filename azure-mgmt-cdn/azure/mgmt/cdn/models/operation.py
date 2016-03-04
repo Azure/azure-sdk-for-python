@@ -28,15 +28,13 @@ class Operation(Model):
 
     :param str name: Operation name: {provider}/{resource}/{operation}
     :param OperationDisplay display:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, name=None, display=None):
+    def __init__(self, name=None, display=None, **kwargs):
         self.name = name
         self.display = display

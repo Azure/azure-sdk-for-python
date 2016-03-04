@@ -36,14 +36,18 @@ class ServiceBusTopicMessage(ServiceBusMessage):
     :param str transport_type: Gets or sets the transport type. Possible
      values include: 'NotSpecified', 'NetMessaging', 'AMQP'
     :param str topic_path: Gets or sets the topic path.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
+        'authentication': {'key': 'authentication', 'type': 'ServiceBusAuthentication'},
+        'brokered_message_properties': {'key': 'brokeredMessageProperties', 'type': 'ServiceBusBrokeredMessageProperties'},
+        'custom_message_properties': {'key': 'customMessageProperties', 'type': '{str}'},
+        'message': {'key': 'message', 'type': 'str'},
+        'namespace': {'key': 'namespace', 'type': 'str'},
+        'transport_type': {'key': 'transportType', 'type': 'ServiceBusTransportType'},
         'topic_path': {'key': 'topicPath', 'type': 'str'},
     }
 
-    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, topic_path=None):
-        super(ServiceBusTopicMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type)
+    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, topic_path=None, **kwargs):
+        super(ServiceBusTopicMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type, **kwargs)
         self.topic_path = topic_path

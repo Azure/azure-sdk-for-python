@@ -31,26 +31,29 @@ class RouteTable(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param list routes: Gets or sets Routes in a Route Table
     :param list subnets: Gets collection of references to subnets
     :param str provisioning_state: Gets or sets Provisioning state of the
      resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'routes': {'key': 'properties.routes', 'type': '[Route]'},
+        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'routes': {'key': 'properties.routes', 'type': '[Route]', 'flatten': True},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, routes=None, subnets=None, provisioning_state=None):
-        super(RouteTable, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, routes=None, subnets=None, provisioning_state=None, etag=None, **kwargs):
+        super(RouteTable, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.routes = routes
         self.subnets = subnets
         self.provisioning_state = provisioning_state
+        self.etag = etag

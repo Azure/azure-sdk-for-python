@@ -26,27 +26,25 @@ class ManagementLockObject(Model):
     """
     Management lock information.
 
-    :param str id: Gets or sets the Id of the lock.
-    :param str type: Gets or sets the type of the lock.
-    :param str name: Gets or sets the name of the lock.
     :param str level: Gets or sets the lock level of the management lock.
      Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
     :param str notes: Gets or sets the notes of the management lock.
-    """
-
-    _required = []
+    :param str id: Gets or sets the Id of the lock.
+    :param str type: Gets or sets the type of the lock.
+    :param str name: Gets or sets the name of the lock.
+    """ 
 
     _attribute_map = {
+        'level': {'key': 'properties.level', 'type': 'LockLevel'},
+        'notes': {'key': 'properties.notes', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'level': {'key': 'properties.level', 'type': 'LockLevel', 'flatten': True},
-        'notes': {'key': 'properties.notes', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, type=None, name=None, level=None, notes=None):
+    def __init__(self, level=None, notes=None, id=None, type=None, name=None, **kwargs):
+        self.level = level
+        self.notes = notes
         self.id = id
         self.type = type
         self.name = name
-        self.level = level
-        self.notes = notes

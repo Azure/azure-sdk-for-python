@@ -32,9 +32,7 @@ class KeyCredential(Model):
     :param str key_id: Gets or sets key Id
     :param str usage: Gets or sets usage
     :param str type: Gets or sets type
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'start_date': {'key': 'startDate', 'type': 'iso-8601'},
@@ -45,7 +43,7 @@ class KeyCredential(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, start_date=None, end_date=None, value=None, key_id=None, usage=None, type=None):
+    def __init__(self, start_date=None, end_date=None, value=None, key_id=None, usage=None, type=None, **kwargs):
         self.start_date = start_date
         self.end_date = end_date
         self.value = value

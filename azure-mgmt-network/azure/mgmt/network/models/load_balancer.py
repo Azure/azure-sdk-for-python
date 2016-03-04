@@ -31,8 +31,6 @@ class LoadBalancer(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param list frontend_ip_configurations: Gets or sets frontend IP
      addresses of the load balancer
     :param list backend_address_pools: Gets or sets Pools of backend IP
@@ -46,26 +44,30 @@ class LoadBalancer(Resource):
      balancer resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[FrontendIPConfiguration]'},
+        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[BackendAddressPool]'},
+        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[LoadBalancingRule]'},
+        'probes': {'key': 'properties.probes', 'type': '[Probe]'},
+        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[InboundNatRule]'},
+        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[InboundNatPool]'},
+        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[OutboundNatRule]'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[FrontendIPConfiguration]', 'flatten': True},
-        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[BackendAddressPool]', 'flatten': True},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[LoadBalancingRule]', 'flatten': True},
-        'probes': {'key': 'properties.probes', 'type': '[Probe]', 'flatten': True},
-        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[InboundNatRule]', 'flatten': True},
-        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[InboundNatPool]', 'flatten': True},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[OutboundNatRule]', 'flatten': True},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None):
-        super(LoadBalancer, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+        super(LoadBalancer, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pools = backend_address_pools
         self.load_balancing_rules = load_balancing_rules
@@ -75,3 +77,4 @@ class LoadBalancer(Resource):
         self.outbound_nat_rules = outbound_nat_rules
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.etag = etag

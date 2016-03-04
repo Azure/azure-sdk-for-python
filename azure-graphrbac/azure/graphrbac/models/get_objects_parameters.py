@@ -30,9 +30,11 @@ class GetObjectsParameters(Model):
     :param list types: Requested object types
     :param bool include_directory_object_references: If true, also searches
      for object ids in the partner tenant
-    """
+    """ 
 
-    _required = ['include_directory_object_references']
+    _validation = {
+        'include_directory_object_references': {'required': True},
+    }
 
     _attribute_map = {
         'object_ids': {'key': 'objectIds', 'type': '[str]'},
@@ -40,7 +42,7 @@ class GetObjectsParameters(Model):
         'include_directory_object_references': {'key': 'includeDirectoryObjectReferences', 'type': 'bool'},
     }
 
-    def __init__(self, include_directory_object_references, object_ids=None, types=None):
+    def __init__(self, include_directory_object_references, object_ids=None, types=None, **kwargs):
         self.object_ids = object_ids
         self.types = types
         self.include_directory_object_references = include_directory_object_references

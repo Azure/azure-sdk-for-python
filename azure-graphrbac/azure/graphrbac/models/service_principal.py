@@ -31,9 +31,7 @@ class ServicePrincipal(Model):
     :param str display_name: Gets or sets service principal display name
     :param str app_id: Gets or sets app id
     :param list service_principal_names: Gets or sets the list of names.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
@@ -43,7 +41,7 @@ class ServicePrincipal(Model):
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
     }
 
-    def __init__(self, object_id=None, object_type=None, display_name=None, app_id=None, service_principal_names=None):
+    def __init__(self, object_id=None, object_type=None, display_name=None, app_id=None, service_principal_names=None, **kwargs):
         self.object_id = object_id
         self.object_type = object_type
         self.display_name = display_name

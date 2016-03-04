@@ -34,9 +34,7 @@ class JobRecurrence(Model):
     :param datetime end_time: Gets or sets the time at which the job will
      complete.
     :param JobRecurrenceSchedule schedule:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
@@ -46,7 +44,7 @@ class JobRecurrence(Model):
         'schedule': {'key': 'schedule', 'type': 'JobRecurrenceSchedule'},
     }
 
-    def __init__(self, frequency=None, interval=None, count=None, end_time=None, schedule=None):
+    def __init__(self, frequency=None, interval=None, count=None, end_time=None, schedule=None, **kwargs):
         self.frequency = frequency
         self.interval = interval
         self.count = count

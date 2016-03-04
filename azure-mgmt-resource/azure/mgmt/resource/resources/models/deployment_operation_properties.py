@@ -32,9 +32,7 @@ class DeploymentOperationProperties(Model):
     :param str status_code: Gets or sets operation status code.
     :param object status_message: Gets or sets operation status message.
     :param TargetResource target_resource: Gets or sets the target resource.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
@@ -44,7 +42,7 @@ class DeploymentOperationProperties(Model):
         'target_resource': {'key': 'targetResource', 'type': 'TargetResource'},
     }
 
-    def __init__(self, provisioning_state=None, timestamp=None, status_code=None, status_message=None, target_resource=None):
+    def __init__(self, provisioning_state=None, timestamp=None, status_code=None, status_message=None, target_resource=None, **kwargs):
         self.provisioning_state = provisioning_state
         self.timestamp = timestamp
         self.status_code = status_code

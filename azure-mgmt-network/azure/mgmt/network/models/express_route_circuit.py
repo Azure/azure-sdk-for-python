@@ -32,8 +32,6 @@ class ExpressRouteCircuit(Resource):
     :param str location: Resource location
     :param dict tags: Resource tags
     :param ExpressRouteCircuitSku sku: Gets or sets sku
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param str circuit_provisioning_state: Gets or sets
      CircuitProvisioningState state of the resource
     :param str service_provider_provisioning_state: Gets or sets
@@ -48,27 +46,31 @@ class ExpressRouteCircuit(Resource):
      service_provider_properties: Gets or sets ServiceProviderProperties
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'ExpressRouteCircuitSku'},
+        'circuit_provisioning_state': {'key': 'properties.circuitProvisioningState', 'type': 'str'},
+        'service_provider_provisioning_state': {'key': 'properties.serviceProviderProvisioningState', 'type': 'ServiceProviderProvisioningState'},
+        'authorizations': {'key': 'properties.authorizations', 'type': '[ExpressRouteCircuitAuthorization]'},
+        'peerings': {'key': 'properties.peerings', 'type': '[ExpressRouteCircuitPeering]'},
+        'service_key': {'key': 'properties.serviceKey', 'type': 'str'},
+        'service_provider_notes': {'key': 'properties.serviceProviderNotes', 'type': 'str'},
+        'service_provider_properties': {'key': 'properties.serviceProviderProperties', 'type': 'ExpressRouteCircuitServiceProviderProperties'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'circuit_provisioning_state': {'key': 'properties.circuitProvisioningState', 'type': 'str', 'flatten': True},
-        'service_provider_provisioning_state': {'key': 'properties.serviceProviderProvisioningState', 'type': 'ServiceProviderProvisioningState', 'flatten': True},
-        'authorizations': {'key': 'properties.authorizations', 'type': '[ExpressRouteCircuitAuthorization]', 'flatten': True},
-        'peerings': {'key': 'properties.peerings', 'type': '[ExpressRouteCircuitPeering]', 'flatten': True},
-        'service_key': {'key': 'properties.serviceKey', 'type': 'str', 'flatten': True},
-        'service_provider_notes': {'key': 'properties.serviceProviderNotes', 'type': 'str', 'flatten': True},
-        'service_provider_properties': {'key': 'properties.serviceProviderProperties', 'type': 'ExpressRouteCircuitServiceProviderProperties', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, sku=None, etag=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None):
-        super(ExpressRouteCircuit, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, sku=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, etag=None, **kwargs):
+        super(ExpressRouteCircuit, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.sku = sku
-        self.etag = etag
         self.circuit_provisioning_state = circuit_provisioning_state
         self.service_provider_provisioning_state = service_provider_provisioning_state
         self.authorizations = authorizations
@@ -77,3 +79,4 @@ class ExpressRouteCircuit(Resource):
         self.service_provider_notes = service_provider_notes
         self.service_provider_properties = service_provider_properties
         self.provisioning_state = provisioning_state
+        self.etag = etag

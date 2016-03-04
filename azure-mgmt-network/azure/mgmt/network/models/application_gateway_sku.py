@@ -32,9 +32,7 @@ class ApplicationGatewaySku(Model):
      values include: 'Standard'
     :param int capacity: Gets or sets capacity (instance count) of
      application gateway
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'ApplicationGatewaySkuName'},
@@ -42,7 +40,7 @@ class ApplicationGatewaySku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, tier=None, capacity=None):
+    def __init__(self, name=None, tier=None, capacity=None, **kwargs):
         self.name = name
         self.tier = tier
         self.capacity = capacity

@@ -32,9 +32,15 @@ class UserCreateParameters(Model):
     :param str mail_nickname: Mail nick name
     :param UserCreateParametersPasswordProfile password_profile: Password
      Profile
-    """
+    """ 
 
-    _required = ['user_principal_name', 'account_enabled', 'display_name', 'mail_nickname', 'password_profile']
+    _validation = {
+        'user_principal_name': {'required': True},
+        'account_enabled': {'required': True},
+        'display_name': {'required': True},
+        'mail_nickname': {'required': True},
+        'password_profile': {'required': True},
+    }
 
     _attribute_map = {
         'user_principal_name': {'key': 'userPrincipalName', 'type': 'str'},
@@ -44,7 +50,7 @@ class UserCreateParameters(Model):
         'password_profile': {'key': 'passwordProfile', 'type': 'UserCreateParametersPasswordProfile'},
     }
 
-    def __init__(self, user_principal_name, account_enabled, display_name, mail_nickname, password_profile):
+    def __init__(self, user_principal_name, account_enabled, display_name, mail_nickname, password_profile, **kwargs):
         self.user_principal_name = user_principal_name
         self.account_enabled = account_enabled
         self.display_name = display_name

@@ -27,10 +27,6 @@ class Route(SubResource):
     Route resource
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param str address_prefix: Gets or sets the destination CIDR to which the
      route applies.
     :param str next_hop_type: Gets or sets the type of Azure hop the packet
@@ -41,24 +37,31 @@ class Route(SubResource):
      the next hop type is VirtualAppliance.
     :param str provisioning_state: Gets or sets Provisioning state of the
      resource Updating/Deleting/Failed
-    """
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
-    _required = ['next_hop_type']
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str', 'flatten': True},
-        'next_hop_type': {'key': 'properties.nextHopType', 'type': 'RouteNextHopType', 'flatten': True},
-        'next_hop_ip_address': {'key': 'properties.nextHopIpAddress', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
+    _validation = {
+        'next_hop_type': {'required': True},
     }
 
-    def __init__(self, next_hop_type, id=None, name=None, etag=None, address_prefix=None, next_hop_ip_address=None, provisioning_state=None):
-        super(Route, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
+        'next_hop_type': {'key': 'properties.nextHopType', 'type': 'RouteNextHopType'},
+        'next_hop_ip_address': {'key': 'properties.nextHopIpAddress', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, next_hop_type, id=None, address_prefix=None, next_hop_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(Route, self).__init__(id=id, **kwargs)
         self.address_prefix = address_prefix
         self.next_hop_type = next_hop_type
         self.next_hop_ip_address = next_hop_ip_address
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

@@ -32,18 +32,21 @@ class DeepCreatedOrigin(Model):
      65535
     :param int https_port: The value of the https port, must be between 1 and
      65535
-    """
+    """ 
 
-    _required = ['name', 'host_name']
+    _validation = {
+        'name': {'required': True},
+        'host_name': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str', 'flatten': True},
-        'http_port': {'key': 'properties.httpPort', 'type': 'int', 'flatten': True},
-        'https_port': {'key': 'properties.httpsPort', 'type': 'int', 'flatten': True},
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+        'http_port': {'key': 'properties.httpPort', 'type': 'int'},
+        'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
     }
 
-    def __init__(self, name, host_name, http_port=None, https_port=None):
+    def __init__(self, name, host_name, http_port=None, https_port=None, **kwargs):
         self.name = name
         self.host_name = host_name
         self.http_port = http_port

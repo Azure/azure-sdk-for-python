@@ -27,10 +27,6 @@ class Subnet(SubResource):
     Subnet in a VirtualNework resource
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param str address_prefix: Gets or sets Address prefix for the subnet.
     :param NetworkSecurityGroup network_security_group: Gets or sets the
      reference of the NetworkSecurityGroup resource
@@ -40,26 +36,29 @@ class Subnet(SubResource):
      interface IP configurations using subnet
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
+        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
+        'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
+        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str', 'flatten': True},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup', 'flatten': True},
-        'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable', 'flatten': True},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, address_prefix=None, network_security_group=None, route_table=None, ip_configurations=None, provisioning_state=None):
-        super(Subnet, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, address_prefix=None, network_security_group=None, route_table=None, ip_configurations=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(Subnet, self).__init__(id=id, **kwargs)
         self.address_prefix = address_prefix
         self.network_security_group = network_security_group
         self.route_table = route_table
         self.ip_configurations = ip_configurations
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

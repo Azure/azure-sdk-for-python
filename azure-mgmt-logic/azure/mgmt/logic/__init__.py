@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'LogicManagementClient',
     'LogicManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

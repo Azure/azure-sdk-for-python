@@ -31,7 +31,6 @@ class ServerFarmWithRichSku(Resource):
     :param str location: Resource Location
     :param str type: Resource type
     :param dict tags: Resource tags
-    :param SkuDescription sku:
     :param str server_farm_with_rich_sku_name: Name for the App Service Plan
     :param str worker_tier_name: Target worker tier assigned to the App
      Service Plan
@@ -52,28 +51,35 @@ class ServerFarmWithRichSku(Resource):
     :param int number_of_sites: Number of web apps assigned to this App
      Service Plan
     :param str resource_group: Resource group of the serverfarm
-    """
+    :param SkuDescription sku:
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'SkuDescription'},
-        'server_farm_with_rich_sku_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str', 'flatten': True},
-        'status': {'key': 'properties.status', 'type': 'StatusOptions', 'flatten': True},
-        'subscription': {'key': 'properties.subscription', 'type': 'str', 'flatten': True},
-        'admin_site_name': {'key': 'properties.adminSiteName', 'type': 'str', 'flatten': True},
-        'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile', 'flatten': True},
-        'maximum_number_of_workers': {'key': 'properties.maximumNumberOfWorkers', 'type': 'int', 'flatten': True},
-        'geo_region': {'key': 'properties.geoRegion', 'type': 'str', 'flatten': True},
-        'per_site_scaling': {'key': 'properties.perSiteScaling', 'type': 'bool', 'flatten': True},
-        'number_of_sites': {'key': 'properties.numberOfSites', 'type': 'int', 'flatten': True},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, sku=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, status=None, subscription=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, geo_region=None, per_site_scaling=None, number_of_sites=None, resource_group=None):
-        super(ServerFarmWithRichSku, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
-        self.sku = sku
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'server_farm_with_rich_sku_name': {'key': 'properties.name', 'type': 'str'},
+        'worker_tier_name': {'key': 'properties.workerTierName', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'StatusOptions'},
+        'subscription': {'key': 'properties.subscription', 'type': 'str'},
+        'admin_site_name': {'key': 'properties.adminSiteName', 'type': 'str'},
+        'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
+        'maximum_number_of_workers': {'key': 'properties.maximumNumberOfWorkers', 'type': 'int'},
+        'geo_region': {'key': 'properties.geoRegion', 'type': 'str'},
+        'per_site_scaling': {'key': 'properties.perSiteScaling', 'type': 'bool'},
+        'number_of_sites': {'key': 'properties.numberOfSites', 'type': 'int'},
+        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'SkuDescription'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, status=None, subscription=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, geo_region=None, per_site_scaling=None, number_of_sites=None, resource_group=None, sku=None, **kwargs):
+        super(ServerFarmWithRichSku, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.server_farm_with_rich_sku_name = server_farm_with_rich_sku_name
         self.worker_tier_name = worker_tier_name
         self.status = status
@@ -85,3 +91,4 @@ class ServerFarmWithRichSku(Resource):
         self.per_site_scaling = per_site_scaling
         self.number_of_sites = number_of_sites
         self.resource_group = resource_group
+        self.sku = sku

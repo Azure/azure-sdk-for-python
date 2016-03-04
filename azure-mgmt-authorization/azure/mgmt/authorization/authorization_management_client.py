@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.classic_administrators_operations import ClassicAdministratorsOperations
 from .operations.permissions_operations import PermissionsOperations
 from .operations.provider_operations_metadata_operations import ProviderOperationsMetadataOperations
@@ -69,7 +70,8 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
 
         super(AuthorizationManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('authorizationmanagementclient/2015-07-01')
+        self.add_user_agent('authorizationmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

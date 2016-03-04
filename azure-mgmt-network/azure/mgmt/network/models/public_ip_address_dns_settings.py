@@ -38,9 +38,7 @@ class PublicIPAddressDnsSettings(Model):
      fully qualified domain name that resolves to this public IP address. If
      the reverseFqdn is specified, then a PTR DNS record is created pointing
      from the IP address in the in-addr.arpa domain to the reverse FQDN.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},
@@ -48,7 +46,7 @@ class PublicIPAddressDnsSettings(Model):
         'reverse_fqdn': {'key': 'reverseFqdn', 'type': 'str'},
     }
 
-    def __init__(self, domain_name_label=None, fqdn=None, reverse_fqdn=None):
+    def __init__(self, domain_name_label=None, fqdn=None, reverse_fqdn=None, **kwargs):
         self.domain_name_label = domain_name_label
         self.fqdn = fqdn
         self.reverse_fqdn = reverse_fqdn

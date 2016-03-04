@@ -39,22 +39,29 @@ class Csr(Resource):
     :param str password: PFX password
     :param str public_key_hash: Hash of the certificates public key
     :param str hosting_environment: Hosting environment
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'csr_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str', 'flatten': True},
-        'csr_string': {'key': 'properties.csrString', 'type': 'str', 'flatten': True},
-        'pfx_blob': {'key': 'properties.pfxBlob', 'type': 'str', 'flatten': True},
-        'password': {'key': 'properties.password', 'type': 'str', 'flatten': True},
-        'public_key_hash': {'key': 'properties.publicKeyHash', 'type': 'str', 'flatten': True},
-        'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, csr_name=None, distinguished_name=None, csr_string=None, pfx_blob=None, password=None, public_key_hash=None, hosting_environment=None):
-        super(Csr, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'csr_name': {'key': 'properties.name', 'type': 'str'},
+        'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str'},
+        'csr_string': {'key': 'properties.csrString', 'type': 'str'},
+        'pfx_blob': {'key': 'properties.pfxBlob', 'type': 'str'},
+        'password': {'key': 'properties.password', 'type': 'str'},
+        'public_key_hash': {'key': 'properties.publicKeyHash', 'type': 'str'},
+        'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, csr_name=None, distinguished_name=None, csr_string=None, pfx_blob=None, password=None, public_key_hash=None, hosting_environment=None, **kwargs):
+        super(Csr, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.csr_name = csr_name
         self.distinguished_name = distinguished_name
         self.csr_string = csr_string

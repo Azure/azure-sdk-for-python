@@ -27,9 +27,6 @@ class VirtualMachineExtensionImage(SubResource):
     Describes a Virtual Machine Extension Image.
 
     :param str id: Resource Id
-    :param str name: Gets or sets the name of the resource.
-    :param str location: Gets or sets the location of the resource.
-    :param dict tags: Gets or sets the tags attached to the resource.
     :param str operating_system: Gets or sets the operating system this
      extension supports.
     :param str compute_role: Gets or sets the type of role (IaaS or PaaS)
@@ -43,28 +40,38 @@ class VirtualMachineExtensionImage(SubResource):
      VMSS.
     :param bool supports_multiple_extensions: Gets or sets whether the
      handler can support multiple extensions.
-    """
+    :param str name: Gets or sets the name of the resource.
+    :param str location: Gets or sets the location of the resource.
+    :param dict tags: Gets or sets the tags attached to the resource.
+    """ 
 
-    _required = ['name', 'location', 'operating_system', 'compute_role', 'handler_schema']
+    _validation = {
+        'operating_system': {'required': True},
+        'compute_role': {'required': True},
+        'handler_schema': {'required': True},
+        'name': {'required': True},
+        'location': {'required': True},
+    }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'operating_system': {'key': 'properties.operatingSystem', 'type': 'str'},
+        'compute_role': {'key': 'properties.computeRole', 'type': 'str'},
+        'handler_schema': {'key': 'properties.handlerSchema', 'type': 'str'},
+        'vm_scale_set_enabled': {'key': 'properties.vmScaleSetEnabled', 'type': 'bool'},
+        'supports_multiple_extensions': {'key': 'properties.supportsMultipleExtensions', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'operating_system': {'key': 'properties.operatingSystem', 'type': 'str', 'flatten': True},
-        'compute_role': {'key': 'properties.computeRole', 'type': 'str', 'flatten': True},
-        'handler_schema': {'key': 'properties.handlerSchema', 'type': 'str', 'flatten': True},
-        'vm_scale_set_enabled': {'key': 'properties.vmScaleSetEnabled', 'type': 'bool', 'flatten': True},
-        'supports_multiple_extensions': {'key': 'properties.supportsMultipleExtensions', 'type': 'bool', 'flatten': True},
     }
 
-    def __init__(self, name, location, operating_system, compute_role, handler_schema, id=None, tags=None, vm_scale_set_enabled=None, supports_multiple_extensions=None):
-        super(VirtualMachineExtensionImage, self).__init__(id=id)
-        self.name = name
-        self.location = location
-        self.tags = tags
+    def __init__(self, operating_system, compute_role, handler_schema, name, location, id=None, vm_scale_set_enabled=None, supports_multiple_extensions=None, tags=None, **kwargs):
+        super(VirtualMachineExtensionImage, self).__init__(id=id, **kwargs)
         self.operating_system = operating_system
         self.compute_role = compute_role
         self.handler_schema = handler_schema
         self.vm_scale_set_enabled = vm_scale_set_enabled
         self.supports_multiple_extensions = supports_multiple_extensions
+        self.name = name
+        self.location = location
+        self.tags = tags

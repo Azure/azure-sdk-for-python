@@ -27,13 +27,11 @@ class EnabledConfig(Model):
     Enabled configuration
 
     :param bool enabled: Enabled
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, enabled=None):
+    def __init__(self, enabled=None, **kwargs):
         self.enabled = enabled

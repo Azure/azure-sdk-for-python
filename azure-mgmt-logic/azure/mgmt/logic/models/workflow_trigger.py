@@ -26,8 +26,6 @@ class WorkflowTrigger(SubResource):
     """WorkflowTrigger
 
     :param str id: Gets or sets the resource id.
-    :param str name: Gets the workflow trigger name.
-    :param str type: Gets the workflow trigger type.
     :param str provisioning_state: Gets the provisioning state. Possible
      values include: 'NotSpecified', 'Creating', 'Succeeded', 'Updating'
     :param datetime created_time: Gets the created time.
@@ -42,28 +40,27 @@ class WorkflowTrigger(SubResource):
     :param WorkflowTriggerRecurrence recurrence: Gets the workflow trigger
      recurrence.
     :param ResourceReference workflow: Gets the reference to workflow.
-    """
-
-    _required = []
+    :param str name: Gets the workflow trigger name.
+    :param str type: Gets the workflow trigger type.
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'WorkflowTriggerProvisioningState'},
+        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
+        'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
+        'state': {'key': 'properties.state', 'type': 'WorkflowState'},
+        'status': {'key': 'properties.status', 'type': 'WorkflowStatus'},
+        'last_execution_time': {'key': 'properties.lastExecutionTime', 'type': 'iso-8601'},
+        'next_execution_time': {'key': 'properties.nextExecutionTime', 'type': 'iso-8601'},
+        'recurrence': {'key': 'properties.recurrence', 'type': 'WorkflowTriggerRecurrence'},
+        'workflow': {'key': 'properties.workflow', 'type': 'ResourceReference'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'WorkflowTriggerProvisioningState', 'flatten': True},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601', 'flatten': True},
-        'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601', 'flatten': True},
-        'state': {'key': 'properties.state', 'type': 'WorkflowState', 'flatten': True},
-        'status': {'key': 'properties.status', 'type': 'WorkflowStatus', 'flatten': True},
-        'last_execution_time': {'key': 'properties.lastExecutionTime', 'type': 'iso-8601', 'flatten': True},
-        'next_execution_time': {'key': 'properties.nextExecutionTime', 'type': 'iso-8601', 'flatten': True},
-        'recurrence': {'key': 'properties.recurrence', 'type': 'WorkflowTriggerRecurrence', 'flatten': True},
-        'workflow': {'key': 'properties.workflow', 'type': 'ResourceReference', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, provisioning_state=None, created_time=None, changed_time=None, state=None, status=None, last_execution_time=None, next_execution_time=None, recurrence=None, workflow=None):
-        super(WorkflowTrigger, self).__init__(id=id)
-        self.name = name
-        self.type = type
+    def __init__(self, id=None, provisioning_state=None, created_time=None, changed_time=None, state=None, status=None, last_execution_time=None, next_execution_time=None, recurrence=None, workflow=None, name=None, type=None, **kwargs):
+        super(WorkflowTrigger, self).__init__(id=id, **kwargs)
         self.provisioning_state = provisioning_state
         self.created_time = created_time
         self.changed_time = changed_time
@@ -73,3 +70,5 @@ class WorkflowTrigger(SubResource):
         self.next_execution_time = next_execution_time
         self.recurrence = recurrence
         self.workflow = workflow
+        self.name = name
+        self.type = type

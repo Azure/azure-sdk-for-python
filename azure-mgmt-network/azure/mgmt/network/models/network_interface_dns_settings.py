@@ -33,9 +33,7 @@ class NetworkInterfaceDnsSettings(Model):
     :param str internal_fqdn: Gets or sets full IDNS name in the form,
      DnsName.VnetId.ZoneId.TopleveSuffix. This is set when the NIC is
      associated to a VM
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
@@ -44,7 +42,7 @@ class NetworkInterfaceDnsSettings(Model):
         'internal_fqdn': {'key': 'internalFqdn', 'type': 'str'},
     }
 
-    def __init__(self, dns_servers=None, applied_dns_servers=None, internal_dns_name_label=None, internal_fqdn=None):
+    def __init__(self, dns_servers=None, applied_dns_servers=None, internal_dns_name_label=None, internal_fqdn=None, **kwargs):
         self.dns_servers = dns_servers
         self.applied_dns_servers = applied_dns_servers
         self.internal_dns_name_label = internal_dns_name_label

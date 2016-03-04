@@ -29,9 +29,7 @@ class VirtualApplication(Model):
     :param str physical_path:
     :param bool preload_enabled:
     :param list virtual_directories:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'virtual_path': {'key': 'virtualPath', 'type': 'str'},
@@ -40,7 +38,7 @@ class VirtualApplication(Model):
         'virtual_directories': {'key': 'virtualDirectories', 'type': '[VirtualDirectory]'},
     }
 
-    def __init__(self, virtual_path=None, physical_path=None, preload_enabled=None, virtual_directories=None):
+    def __init__(self, virtual_path=None, physical_path=None, preload_enabled=None, virtual_directories=None, **kwargs):
         self.virtual_path = virtual_path
         self.physical_path = physical_path
         self.preload_enabled = preload_enabled

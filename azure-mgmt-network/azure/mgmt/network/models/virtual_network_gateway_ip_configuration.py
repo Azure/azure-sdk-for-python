@@ -27,10 +27,6 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     IpConfiguration for Virtual network gateway
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param str private_ip_address: Gets or sets the privateIPAddress of the
      IP Configuration
     :param str private_ip_allocation_method: Gets or sets PrivateIP
@@ -42,26 +38,29 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
      PublicIP resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
+        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'IPAllocationMethod'},
+        'subnet': {'key': 'properties.subnet', 'type': 'SubResource'},
+        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str', 'flatten': True},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'IPAllocationMethod', 'flatten': True},
-        'subnet': {'key': 'properties.subnet', 'type': 'SubResource', 'flatten': True},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'SubResource', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None):
-        super(VirtualNetworkGatewayIPConfiguration, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(VirtualNetworkGatewayIPConfiguration, self).__init__(id=id, **kwargs)
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
         self.subnet = subnet
         self.public_ip_address = public_ip_address
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

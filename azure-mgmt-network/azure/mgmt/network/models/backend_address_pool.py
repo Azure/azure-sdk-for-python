@@ -27,10 +27,6 @@ class BackendAddressPool(SubResource):
     Pool of backend IP addresseses
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param list backend_ip_configurations: Gets collection of references to
      IPs defined in NICs
     :param list load_balancing_rules: Gets Load Balancing rules that use this
@@ -39,24 +35,27 @@ class BackendAddressPool(SubResource):
      Backend Address Pool
     :param str provisioning_state: Provisioning state of the PublicIP
      resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
+        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
+        'outbound_nat_rule': {'key': 'properties.outboundNatRule', 'type': 'SubResource'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]', 'flatten': True},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]', 'flatten': True},
-        'outbound_nat_rule': {'key': 'properties.outboundNatRule', 'type': 'SubResource', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, backend_ip_configurations=None, load_balancing_rules=None, outbound_nat_rule=None, provisioning_state=None):
-        super(BackendAddressPool, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, backend_ip_configurations=None, load_balancing_rules=None, outbound_nat_rule=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(BackendAddressPool, self).__init__(id=id, **kwargs)
         self.backend_ip_configurations = backend_ip_configurations
         self.load_balancing_rules = load_balancing_rules
         self.outbound_nat_rule = outbound_nat_rule
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

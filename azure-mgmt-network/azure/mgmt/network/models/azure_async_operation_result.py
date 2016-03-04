@@ -36,15 +36,13 @@ class AzureAsyncOperationResult(Model):
     :param str status: Status of the AzureAsuncOperation. Possible values
      include: 'InProgress', 'Succeeded', 'Failed'
     :param Error error:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'NetworkOperationStatus'},
         'error': {'key': 'error', 'type': 'Error'},
     }
 
-    def __init__(self, status=None, error=None):
+    def __init__(self, status=None, error=None, **kwargs):
         self.status = status
         self.error = error

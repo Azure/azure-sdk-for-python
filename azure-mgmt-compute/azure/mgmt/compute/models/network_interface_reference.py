@@ -29,14 +29,13 @@ class NetworkInterfaceReference(SubResource):
     :param str id: Resource Id
     :param bool primary: Gets or sets whether this is a primary NIC on a
      virtual machine
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
-        'primary': {'key': 'properties.primary', 'type': 'bool', 'flatten': True},
+        'id': {'key': 'id', 'type': 'str'},
+        'primary': {'key': 'properties.primary', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, primary=None):
-        super(NetworkInterfaceReference, self).__init__(id=id)
+    def __init__(self, id=None, primary=None, **kwargs):
+        super(NetworkInterfaceReference, self).__init__(id=id, **kwargs)
         self.primary = primary

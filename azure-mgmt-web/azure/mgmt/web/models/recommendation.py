@@ -51,9 +51,12 @@ class Recommendation(Model):
     :param datetime notified_time: Last timestamp this instance was actually
      notified. Null means that this recommendation hasn't been notified yet.
     :param float score: A metric value measured by the rule.
-    """
+    """ 
 
-    _required = ['level', 'channels']
+    _validation = {
+        'level': {'required': True},
+        'channels': {'required': True},
+    }
 
     _attribute_map = {
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
@@ -73,7 +76,7 @@ class Recommendation(Model):
         'score': {'key': 'score', 'type': 'float'},
     }
 
-    def __init__(self, level, channels, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, action_name=None, enabled=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None):
+    def __init__(self, level, channels, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, action_name=None, enabled=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None, **kwargs):
         self.creation_time = creation_time
         self.recommendation_id = recommendation_id
         self.resource_id = resource_id

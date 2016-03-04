@@ -28,16 +28,14 @@ class ErrorResponse(Model):
 
     :param str code: Error code
     :param str message: Error message indicating why the operation failed
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None):
+    def __init__(self, code=None, message=None, **kwargs):
         self.code = code
         self.message = message
 

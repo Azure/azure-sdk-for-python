@@ -32,9 +32,7 @@ class Address(Model):
     :param str country: Country
     :param str postal_code: Postal code
     :param str state: State
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'address1': {'key': 'address1', 'type': 'str'},
@@ -45,7 +43,7 @@ class Address(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, address1=None, address2=None, city=None, country=None, postal_code=None, state=None):
+    def __init__(self, address1=None, address2=None, city=None, country=None, postal_code=None, state=None, **kwargs):
         self.address1 = address1
         self.address2 = address2
         self.city = city

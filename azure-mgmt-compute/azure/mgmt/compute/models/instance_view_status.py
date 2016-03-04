@@ -34,9 +34,7 @@ class InstanceViewStatus(Model):
     :param str message: Gets or sets the optional detailed Message, including
      for alerts and error messages.
     :param datetime time: Gets or sets the time of the status.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -46,7 +44,7 @@ class InstanceViewStatus(Model):
         'time': {'key': 'time', 'type': 'iso-8601'},
     }
 
-    def __init__(self, code=None, level=None, display_status=None, message=None, time=None):
+    def __init__(self, code=None, level=None, display_status=None, message=None, time=None, **kwargs):
         self.code = code
         self.level = level
         self.display_status = display_status

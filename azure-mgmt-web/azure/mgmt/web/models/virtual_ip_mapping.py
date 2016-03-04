@@ -30,9 +30,7 @@ class VirtualIPMapping(Model):
     :param int internal_http_port: Internal HTTP port
     :param int internal_https_port: Internal HTTPS port
     :param bool in_use: Is VIP mapping in use
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'virtual_ip': {'key': 'virtualIP', 'type': 'str'},
@@ -41,7 +39,7 @@ class VirtualIPMapping(Model):
         'in_use': {'key': 'inUse', 'type': 'bool'},
     }
 
-    def __init__(self, virtual_ip=None, internal_http_port=None, internal_https_port=None, in_use=None):
+    def __init__(self, virtual_ip=None, internal_http_port=None, internal_https_port=None, in_use=None, **kwargs):
         self.virtual_ip = virtual_ip
         self.internal_http_port = internal_http_port
         self.internal_https_port = internal_https_port

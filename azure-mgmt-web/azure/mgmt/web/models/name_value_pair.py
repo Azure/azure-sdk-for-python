@@ -28,15 +28,13 @@ class NameValuePair(Model):
 
     :param str name: Pair name
     :param str value: Pair value
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name=None, value=None):
+    def __init__(self, name=None, value=None, **kwargs):
         self.name = name
         self.value = value

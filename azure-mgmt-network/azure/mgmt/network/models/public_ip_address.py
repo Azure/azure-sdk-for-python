@@ -31,8 +31,6 @@ class PublicIPAddress(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param str public_ip_allocation_method: Gets or sets PublicIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :param IPConfiguration ip_configuration:
@@ -45,24 +43,28 @@ class PublicIPAddress(Resource):
      PublicIP resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'IPAllocationMethod'},
+        'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
+        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
+        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
+        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'IPAllocationMethod', 'flatten': True},
-        'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration', 'flatten': True},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings', 'flatten': True},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str', 'flatten': True},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int', 'flatten': True},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, public_ip_allocation_method=None, ip_configuration=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None):
-        super(PublicIPAddress, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, public_ip_allocation_method=None, ip_configuration=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+        super(PublicIPAddress, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.public_ip_allocation_method = public_ip_allocation_method
         self.ip_configuration = ip_configuration
         self.dns_settings = dns_settings
@@ -70,3 +72,4 @@ class PublicIPAddress(Resource):
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.etag = etag

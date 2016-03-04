@@ -42,9 +42,12 @@ class RecommendationRule(Model):
      'NonUrgentSuggestion'
     :param str channels: List of available channels that this rule applies.
      Possible values include: 'Notification', 'Api', 'Email', 'All'
-    """
+    """ 
 
-    _required = ['level', 'channels']
+    _validation = {
+        'level': {'required': True},
+        'channels': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -58,7 +61,7 @@ class RecommendationRule(Model):
         'channels': {'key': 'channels', 'type': 'Channels'},
     }
 
-    def __init__(self, level, channels, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None):
+    def __init__(self, level, channels, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None, **kwargs):
         self.name = name
         self.display_name = display_name
         self.message = message

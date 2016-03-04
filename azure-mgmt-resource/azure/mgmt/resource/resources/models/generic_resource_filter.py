@@ -29,9 +29,7 @@ class GenericResourceFilter(Model):
     :param str resource_type: Gets or sets the resource type.
     :param str tagname: Gets or sets the tag name.
     :param str tagvalue: Gets or sets the tag value.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
@@ -39,7 +37,7 @@ class GenericResourceFilter(Model):
         'tagvalue': {'key': 'tagvalue', 'type': 'str'},
     }
 
-    def __init__(self, resource_type=None, tagname=None, tagvalue=None):
+    def __init__(self, resource_type=None, tagname=None, tagvalue=None, **kwargs):
         self.resource_type = resource_type
         self.tagname = tagname
         self.tagvalue = tagvalue

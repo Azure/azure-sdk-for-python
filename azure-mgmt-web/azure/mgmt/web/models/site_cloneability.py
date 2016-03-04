@@ -37,9 +37,11 @@ class SiteCloneability(Model):
      web app.
     :param list blocking_characteristics: List of blocking application
      characteristics
-    """
+    """ 
 
-    _required = ['result']
+    _validation = {
+        'result': {'required': True},
+    }
 
     _attribute_map = {
         'result': {'key': 'result', 'type': 'CloneAbilityResult'},
@@ -48,7 +50,7 @@ class SiteCloneability(Model):
         'blocking_characteristics': {'key': 'blockingCharacteristics', 'type': '[SiteCloneabilityCriterion]'},
     }
 
-    def __init__(self, result, blocking_features=None, unsupported_features=None, blocking_characteristics=None):
+    def __init__(self, result, blocking_features=None, unsupported_features=None, blocking_characteristics=None, **kwargs):
         self.result = result
         self.blocking_features = blocking_features
         self.unsupported_features = unsupported_features

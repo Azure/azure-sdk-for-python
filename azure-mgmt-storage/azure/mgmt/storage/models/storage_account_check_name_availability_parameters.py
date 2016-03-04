@@ -27,15 +27,17 @@ class StorageAccountCheckNameAvailabilityParameters(Model):
 
     :param str name:
     :param str type:  Default value: "Microsoft.Storage/storageAccounts" .
-    """
+    """ 
 
-    _required = ['name']
+    _validation = {
+        'name': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name, type=None):
+    def __init__(self, name, type="Microsoft.Storage/storageAccounts", **kwargs):
         self.name = name
         self.type = type

@@ -29,9 +29,7 @@ class StorageQueueMessage(Model):
     :param str queue_name: Gets or sets the queue name.
     :param str sas_token: Gets or sets the SAS key.
     :param str message: Gets or sets the message.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'storage_account': {'key': 'storageAccount', 'type': 'str'},
@@ -40,7 +38,7 @@ class StorageQueueMessage(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, storage_account=None, queue_name=None, sas_token=None, message=None):
+    def __init__(self, storage_account=None, queue_name=None, sas_token=None, message=None, **kwargs):
         self.storage_account = storage_account
         self.queue_name = queue_name
         self.sas_token = sas_token

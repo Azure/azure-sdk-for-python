@@ -30,8 +30,7 @@ class VirtualMachineScaleSetExtension(SubResource):
     :param str name: Gets or sets the name of the extension.
     :param str publisher: Gets or sets the name of the extension handler
      publisher.
-    :param str virtual_machine_scale_set_extension_type: Gets or sets the
-     type of the extension handler.
+    :param str type: Gets or sets the type of the extension handler.
     :param str type_handler_version: Gets or sets the type version of the
      extension handler.
     :param bool auto_upgrade_minor_version: Gets or sets whether the
@@ -42,26 +41,25 @@ class VirtualMachineScaleSetExtension(SubResource):
      settings for the extension.
     :param str provisioning_state: Gets the provisioning state, which only
      appears in the response.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str', 'flatten': True},
-        'virtual_machine_scale_set_extension_type': {'key': 'properties.type', 'type': 'str', 'flatten': True},
-        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str', 'flatten': True},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool', 'flatten': True},
-        'settings': {'key': 'properties.settings', 'type': 'object', 'flatten': True},
-        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
+        'publisher': {'key': 'properties.publisher', 'type': 'str'},
+        'type': {'key': 'properties.type', 'type': 'str'},
+        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
+        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'settings': {'key': 'properties.settings', 'type': 'object'},
+        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, publisher=None, virtual_machine_scale_set_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None):
-        super(VirtualMachineScaleSetExtension, self).__init__(id=id)
+    def __init__(self, id=None, name=None, publisher=None, type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None, **kwargs):
+        super(VirtualMachineScaleSetExtension, self).__init__(id=id, **kwargs)
         self.name = name
         self.publisher = publisher
-        self.virtual_machine_scale_set_extension_type = virtual_machine_scale_set_extension_type
+        self.type = type
         self.type_handler_version = type_handler_version
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings

@@ -34,9 +34,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
     :param int customer_asn: Gets or Sets CustomerAsn of the peering.
     :param str routing_registry_name: Gets or Sets RoutingRegistryName of the
      config.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'advertised_public_prefixes': {'key': 'advertisedPublicPrefixes', 'type': '[str]'},
@@ -45,7 +43,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
         'routing_registry_name': {'key': 'routingRegistryName', 'type': 'str'},
     }
 
-    def __init__(self, advertised_public_prefixes=None, advertised_public_prefixes_state=None, customer_asn=None, routing_registry_name=None):
+    def __init__(self, advertised_public_prefixes=None, advertised_public_prefixes_state=None, customer_asn=None, routing_registry_name=None, **kwargs):
         self.advertised_public_prefixes = advertised_public_prefixes
         self.advertised_public_prefixes_state = advertised_public_prefixes_state
         self.customer_asn = customer_asn

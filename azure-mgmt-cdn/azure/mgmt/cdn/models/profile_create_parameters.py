@@ -29,17 +29,20 @@ class ProfileCreateParameters(Model):
     :param str location: Profile location
     :param dict tags: Profile tags
     :param Sku sku: Profile sku
-    """
+    """ 
 
-    _required = ['location', 'sku']
+    _validation = {
+        'location': {'required': True},
+        'sku': {'required': True},
+    }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku', 'flatten': True},
+        'sku': {'key': 'properties.sku', 'type': 'Sku'},
     }
 
-    def __init__(self, location, sku, tags=None):
+    def __init__(self, location, sku, tags=None, **kwargs):
         self.location = location
         self.tags = tags
         self.sku = sku

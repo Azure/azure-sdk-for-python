@@ -38,19 +38,26 @@ class VnetInfo(Resource):
      public key of the private key used to authenticate a
      Point-To-Site VPN connection.
     :param list routes: The routes that this virtual network connection uses.
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'vnet_resource_id': {'key': 'properties.vnetResourceId', 'type': 'str', 'flatten': True},
-        'cert_thumbprint': {'key': 'properties.certThumbprint', 'type': 'str', 'flatten': True},
-        'cert_blob': {'key': 'properties.certBlob', 'type': 'str', 'flatten': True},
-        'routes': {'key': 'properties.routes', 'type': '[VnetRoute]', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None):
-        super(VnetInfo, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'vnet_resource_id': {'key': 'properties.vnetResourceId', 'type': 'str'},
+        'cert_thumbprint': {'key': 'properties.certThumbprint', 'type': 'str'},
+        'cert_blob': {'key': 'properties.certBlob', 'type': 'str'},
+        'routes': {'key': 'properties.routes', 'type': '[VnetRoute]'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None, **kwargs):
+        super(VnetInfo, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint = cert_thumbprint
         self.cert_blob = cert_blob

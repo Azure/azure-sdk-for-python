@@ -29,13 +29,11 @@ class AddressSpace(Model):
 
     :param list address_prefixes: Gets or sets List of address blocks
      reserved for this virtual network in CIDR notation
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
     }
 
-    def __init__(self, address_prefixes=None):
+    def __init__(self, address_prefixes=None, **kwargs):
         self.address_prefixes = address_prefixes

@@ -27,10 +27,6 @@ class LoadBalancingRule(SubResource):
     Rules of the load balancer
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param SubResource frontend_ip_configuration: Gets or sets a reference to
      frontend IP Addresses
     :param SubResource backend_address_pool: Gets or sets  a reference to a
@@ -67,29 +63,35 @@ class LoadBalancingRule(SubResource):
      after you create the endpoint
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
-    _required = ['protocol', 'frontend_port']
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource', 'flatten': True},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource', 'flatten': True},
-        'probe': {'key': 'properties.probe', 'type': 'SubResource', 'flatten': True},
-        'protocol': {'key': 'properties.protocol', 'type': 'TransportProtocol', 'flatten': True},
-        'load_distribution': {'key': 'properties.loadDistribution', 'type': 'LoadDistribution', 'flatten': True},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int', 'flatten': True},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int', 'flatten': True},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int', 'flatten': True},
-        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
+    _validation = {
+        'protocol': {'required': True},
+        'frontend_port': {'required': True},
     }
 
-    def __init__(self, protocol, frontend_port, id=None, name=None, etag=None, frontend_ip_configuration=None, backend_address_pool=None, probe=None, load_distribution=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None):
-        super(LoadBalancingRule, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
+        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
+        'probe': {'key': 'properties.probe', 'type': 'SubResource'},
+        'protocol': {'key': 'properties.protocol', 'type': 'TransportProtocol'},
+        'load_distribution': {'key': 'properties.loadDistribution', 'type': 'LoadDistribution'},
+        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
+        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
+        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
+        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, protocol, frontend_port, id=None, frontend_ip_configuration=None, backend_address_pool=None, probe=None, load_distribution=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(LoadBalancingRule, self).__init__(id=id, **kwargs)
         self.frontend_ip_configuration = frontend_ip_configuration
         self.backend_address_pool = backend_address_pool
         self.probe = probe
@@ -100,3 +102,5 @@ class LoadBalancingRule(SubResource):
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.enable_floating_ip = enable_floating_ip
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

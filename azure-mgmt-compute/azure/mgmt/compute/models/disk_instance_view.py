@@ -28,15 +28,13 @@ class DiskInstanceView(Model):
 
     :param str name: Gets or sets the disk name.
     :param list statuses: Gets or sets the resource status information.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, name=None, statuses=None):
+    def __init__(self, name=None, statuses=None, **kwargs):
         self.name = name
         self.statuses = statuses

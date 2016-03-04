@@ -31,14 +31,15 @@ class WorkflowOutputParameter(WorkflowParameter):
     :param object value: Gets or sets the value.
     :param object metadata: Gets or sets the metadata.
     :param object error: Gets the error.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'ParameterType'},
+        'value': {'key': 'value', 'type': 'object'},
+        'metadata': {'key': 'metadata', 'type': 'object'},
         'error': {'key': 'error', 'type': 'object'},
     }
 
-    def __init__(self, type=None, value=None, metadata=None, error=None):
-        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata)
+    def __init__(self, type=None, value=None, metadata=None, error=None, **kwargs):
+        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata, **kwargs)
         self.error = error

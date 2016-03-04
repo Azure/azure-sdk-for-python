@@ -29,15 +29,17 @@ class ParametersLink(Model):
     :param str uri: URI referencing the template.
     :param str content_version: If included it must match the ContentVersion
      in the template.
-    """
+    """ 
 
-    _required = ['uri']
+    _validation = {
+        'uri': {'required': True},
+    }
 
     _attribute_map = {
         'uri': {'key': 'uri', 'type': 'str'},
         'content_version': {'key': 'contentVersion', 'type': 'str'},
     }
 
-    def __init__(self, uri, content_version=None):
+    def __init__(self, uri, content_version=None, **kwargs):
         self.uri = uri
         self.content_version = content_version

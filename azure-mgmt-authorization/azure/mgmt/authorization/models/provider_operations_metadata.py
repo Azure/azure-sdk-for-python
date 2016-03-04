@@ -32,9 +32,7 @@ class ProviderOperationsMetadata(Model):
     :param str display_name: Gets or sets the provider display name
     :param list resource_types: Gets or sets the provider resource types
     :param list operations: Gets or sets the provider operations
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -45,7 +43,7 @@ class ProviderOperationsMetadata(Model):
         'operations': {'key': 'operations', 'type': '[ProviderOperation]'},
     }
 
-    def __init__(self, id=None, name=None, type=None, display_name=None, resource_types=None, operations=None):
+    def __init__(self, id=None, name=None, type=None, display_name=None, resource_types=None, operations=None, **kwargs):
         self.id = id
         self.name = name
         self.type = type

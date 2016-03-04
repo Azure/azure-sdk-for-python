@@ -27,13 +27,11 @@ class JobHistoryFilter(Model):
 
     :param str status: Gets or sets the job execution status. Possible values
      include: 'Completed', 'Failed', 'Postponed'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'JobExecutionStatus'},
     }
 
-    def __init__(self, status=None):
+    def __init__(self, status=None, **kwargs):
         self.status = status

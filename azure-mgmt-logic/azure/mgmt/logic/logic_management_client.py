@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.workflows_operations import WorkflowsOperations
 from .operations.workflow_versions_operations import WorkflowVersionsOperations
 from .operations.workflow_access_keys_operations import WorkflowAccessKeysOperations
@@ -69,7 +70,8 @@ class LogicManagementClientConfiguration(AzureConfiguration):
 
         super(LogicManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('logicmanagementclient/2015-02-01-preview')
+        self.add_user_agent('logicmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

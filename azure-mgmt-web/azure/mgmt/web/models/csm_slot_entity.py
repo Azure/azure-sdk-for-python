@@ -30,15 +30,13 @@ class CsmSlotEntity(Model):
      operation
     :param bool preserve_vnet: Get or set the flag indicating it should
      preserve VNet to the slot during swap
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'target_slot': {'key': 'targetSlot', 'type': 'str'},
         'preserve_vnet': {'key': 'preserveVnet', 'type': 'bool'},
     }
 
-    def __init__(self, target_slot=None, preserve_vnet=None):
+    def __init__(self, target_slot=None, preserve_vnet=None, **kwargs):
         self.target_slot = target_slot
         self.preserve_vnet = preserve_vnet

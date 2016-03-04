@@ -29,13 +29,11 @@ class DataDiskImage(Model):
     :param int lun: Gets the LUN number for a data disk.This value is used to
      identify data disk image inside the VMImage therefore it must be unique
      for each data disk.The allowed character for the value is digit.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
-    def __init__(self, lun=None):
+    def __init__(self, lun=None, **kwargs):
         self.lun = lun

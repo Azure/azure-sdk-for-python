@@ -41,25 +41,32 @@ class Deployment(Resource):
     :param datetime end_time: EndTime
     :param bool active: Active
     :param str details: Detail
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'deployment_id': {'key': 'properties.id', 'type': 'str', 'flatten': True},
-        'status': {'key': 'properties.status', 'type': 'int', 'flatten': True},
-        'message': {'key': 'properties.message', 'type': 'str', 'flatten': True},
-        'author': {'key': 'properties.author', 'type': 'str', 'flatten': True},
-        'deployer': {'key': 'properties.deployer', 'type': 'str', 'flatten': True},
-        'author_email': {'key': 'properties.author_email', 'type': 'str', 'flatten': True},
-        'start_time': {'key': 'properties.start_time', 'type': 'iso-8601', 'flatten': True},
-        'end_time': {'key': 'properties.end_time', 'type': 'iso-8601', 'flatten': True},
-        'active': {'key': 'properties.active', 'type': 'bool', 'flatten': True},
-        'details': {'key': 'properties.details', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
-        super(Deployment, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'deployment_id': {'key': 'properties.id', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'int'},
+        'message': {'key': 'properties.message', 'type': 'str'},
+        'author': {'key': 'properties.author', 'type': 'str'},
+        'deployer': {'key': 'properties.deployer', 'type': 'str'},
+        'author_email': {'key': 'properties.author_email', 'type': 'str'},
+        'start_time': {'key': 'properties.start_time', 'type': 'iso-8601'},
+        'end_time': {'key': 'properties.end_time', 'type': 'iso-8601'},
+        'active': {'key': 'properties.active', 'type': 'bool'},
+        'details': {'key': 'properties.details', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None, **kwargs):
+        super(Deployment, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.deployment_id = deployment_id
         self.status = status
         self.message = message

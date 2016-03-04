@@ -28,15 +28,13 @@ class ExpressRouteCircuitArpTable(Model):
 
     :param str ip_address: Gets ipAddress.
     :param str mac_address: Gets macAddress.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
         'mac_address': {'key': 'macAddress', 'type': 'str'},
     }
 
-    def __init__(self, ip_address=None, mac_address=None):
+    def __init__(self, ip_address=None, mac_address=None, **kwargs):
         self.ip_address = ip_address
         self.mac_address = mac_address

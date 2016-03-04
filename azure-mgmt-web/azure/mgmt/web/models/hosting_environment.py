@@ -93,45 +93,52 @@ class HostingEnvironment(Resource):
      hostingEnvironment is suspended. The environment can be suspended e.g.
      when the management endpoint is no longer available
      (most likely because NSG blocked the incoming traffic)
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'hosting_environment_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'hosting_environment_location': {'key': 'properties.location', 'type': 'str', 'flatten': True},
-        'status': {'key': 'properties.status', 'type': 'HostingEnvironmentStatus', 'flatten': True},
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str', 'flatten': True},
-        'vnet_resource_group_name': {'key': 'properties.vnetResourceGroupName', 'type': 'str', 'flatten': True},
-        'vnet_subnet_name': {'key': 'properties.vnetSubnetName', 'type': 'str', 'flatten': True},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'VirtualNetworkProfile', 'flatten': True},
-        'internal_load_balancing_mode': {'key': 'properties.internalLoadBalancingMode', 'type': 'InternalLoadBalancingMode', 'flatten': True},
-        'multi_size': {'key': 'properties.multiSize', 'type': 'str', 'flatten': True},
-        'multi_role_count': {'key': 'properties.multiRoleCount', 'type': 'int', 'flatten': True},
-        'worker_pools': {'key': 'properties.workerPools', 'type': '[WorkerPool]', 'flatten': True},
-        'ipssl_address_count': {'key': 'properties.ipsslAddressCount', 'type': 'int', 'flatten': True},
-        'database_edition': {'key': 'properties.databaseEdition', 'type': 'str', 'flatten': True},
-        'database_service_objective': {'key': 'properties.databaseServiceObjective', 'type': 'str', 'flatten': True},
-        'upgrade_domains': {'key': 'properties.upgradeDomains', 'type': 'int', 'flatten': True},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str', 'flatten': True},
-        'dns_suffix': {'key': 'properties.dnsSuffix', 'type': 'str', 'flatten': True},
-        'last_action': {'key': 'properties.lastAction', 'type': 'str', 'flatten': True},
-        'last_action_result': {'key': 'properties.lastActionResult', 'type': 'str', 'flatten': True},
-        'allowed_multi_sizes': {'key': 'properties.allowedMultiSizes', 'type': 'str', 'flatten': True},
-        'allowed_worker_sizes': {'key': 'properties.allowedWorkerSizes', 'type': 'str', 'flatten': True},
-        'maximum_number_of_machines': {'key': 'properties.maximumNumberOfMachines', 'type': 'int', 'flatten': True},
-        'vip_mappings': {'key': 'properties.vipMappings', 'type': '[VirtualIPMapping]', 'flatten': True},
-        'environment_capacities': {'key': 'properties.environmentCapacities', 'type': '[StampCapacity]', 'flatten': True},
-        'network_access_control_list': {'key': 'properties.networkAccessControlList', 'type': '[NetworkAccessControlEntry]', 'flatten': True},
-        'environment_is_healthy': {'key': 'properties.environmentIsHealthy', 'type': 'bool', 'flatten': True},
-        'environment_status': {'key': 'properties.environmentStatus', 'type': 'str', 'flatten': True},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str', 'flatten': True},
-        'api_management_account_id': {'key': 'properties.apiManagementAccountId', 'type': 'str', 'flatten': True},
-        'suspended': {'key': 'properties.suspended', 'type': 'bool', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, hosting_environment_name=None, hosting_environment_location=None, status=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, database_edition=None, database_service_objective=None, upgrade_domains=None, subscription_id=None, dns_suffix=None, last_action=None, last_action_result=None, allowed_multi_sizes=None, allowed_worker_sizes=None, maximum_number_of_machines=None, vip_mappings=None, environment_capacities=None, network_access_control_list=None, environment_is_healthy=None, environment_status=None, resource_group=None, api_management_account_id=None, suspended=None):
-        super(HostingEnvironment, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'hosting_environment_name': {'key': 'properties.name', 'type': 'str'},
+        'hosting_environment_location': {'key': 'properties.location', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'HostingEnvironmentStatus'},
+        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
+        'vnet_resource_group_name': {'key': 'properties.vnetResourceGroupName', 'type': 'str'},
+        'vnet_subnet_name': {'key': 'properties.vnetSubnetName', 'type': 'str'},
+        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'VirtualNetworkProfile'},
+        'internal_load_balancing_mode': {'key': 'properties.internalLoadBalancingMode', 'type': 'InternalLoadBalancingMode'},
+        'multi_size': {'key': 'properties.multiSize', 'type': 'str'},
+        'multi_role_count': {'key': 'properties.multiRoleCount', 'type': 'int'},
+        'worker_pools': {'key': 'properties.workerPools', 'type': '[WorkerPool]'},
+        'ipssl_address_count': {'key': 'properties.ipsslAddressCount', 'type': 'int'},
+        'database_edition': {'key': 'properties.databaseEdition', 'type': 'str'},
+        'database_service_objective': {'key': 'properties.databaseServiceObjective', 'type': 'str'},
+        'upgrade_domains': {'key': 'properties.upgradeDomains', 'type': 'int'},
+        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
+        'dns_suffix': {'key': 'properties.dnsSuffix', 'type': 'str'},
+        'last_action': {'key': 'properties.lastAction', 'type': 'str'},
+        'last_action_result': {'key': 'properties.lastActionResult', 'type': 'str'},
+        'allowed_multi_sizes': {'key': 'properties.allowedMultiSizes', 'type': 'str'},
+        'allowed_worker_sizes': {'key': 'properties.allowedWorkerSizes', 'type': 'str'},
+        'maximum_number_of_machines': {'key': 'properties.maximumNumberOfMachines', 'type': 'int'},
+        'vip_mappings': {'key': 'properties.vipMappings', 'type': '[VirtualIPMapping]'},
+        'environment_capacities': {'key': 'properties.environmentCapacities', 'type': '[StampCapacity]'},
+        'network_access_control_list': {'key': 'properties.networkAccessControlList', 'type': '[NetworkAccessControlEntry]'},
+        'environment_is_healthy': {'key': 'properties.environmentIsHealthy', 'type': 'bool'},
+        'environment_status': {'key': 'properties.environmentStatus', 'type': 'str'},
+        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+        'api_management_account_id': {'key': 'properties.apiManagementAccountId', 'type': 'str'},
+        'suspended': {'key': 'properties.suspended', 'type': 'bool'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, hosting_environment_name=None, hosting_environment_location=None, status=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, database_edition=None, database_service_objective=None, upgrade_domains=None, subscription_id=None, dns_suffix=None, last_action=None, last_action_result=None, allowed_multi_sizes=None, allowed_worker_sizes=None, maximum_number_of_machines=None, vip_mappings=None, environment_capacities=None, network_access_control_list=None, environment_is_healthy=None, environment_status=None, resource_group=None, api_management_account_id=None, suspended=None, **kwargs):
+        super(HostingEnvironment, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.hosting_environment_name = hosting_environment_name
         self.hosting_environment_location = hosting_environment_location
         self.status = status

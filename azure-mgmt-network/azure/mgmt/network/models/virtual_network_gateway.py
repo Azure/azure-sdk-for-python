@@ -31,8 +31,6 @@ class VirtualNetworkGateway(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param list ip_configurations: IpConfigurations for Virtual network
      gateway.
     :param str gateway_type: The type of this virtual network gateway.
@@ -54,26 +52,30 @@ class VirtualNetworkGateway(Resource):
      VirtualNetworkGateway resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      VirtualNetworkGateway resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualNetworkGatewayIPConfiguration]'},
+        'gateway_type': {'key': 'properties.gatewayType', 'type': 'VirtualNetworkGatewayType'},
+        'vpn_type': {'key': 'properties.vpnType', 'type': 'VpnType'},
+        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
+        'gateway_default_site': {'key': 'properties.gatewayDefaultSite', 'type': 'SubResource'},
+        'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},
+        'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualNetworkGatewayIPConfiguration]', 'flatten': True},
-        'gateway_type': {'key': 'properties.gatewayType', 'type': 'VirtualNetworkGatewayType', 'flatten': True},
-        'vpn_type': {'key': 'properties.vpnType', 'type': 'VpnType', 'flatten': True},
-        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool', 'flatten': True},
-        'gateway_default_site': {'key': 'properties.gatewayDefaultSite', 'type': 'SubResource', 'flatten': True},
-        'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku', 'flatten': True},
-        'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration', 'flatten': True},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, resource_guid=None, provisioning_state=None):
-        super(VirtualNetworkGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+        super(VirtualNetworkGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
         self.vpn_type = vpn_type
@@ -83,3 +85,4 @@ class VirtualNetworkGateway(Resource):
         self.vpn_client_configuration = vpn_client_configuration
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.etag = etag

@@ -30,9 +30,7 @@ class JobHistoryDefinition(Model):
     :param str name: Gets the job history name.
     :param JobHistoryDefinitionProperties properties: Gets or sets the job
      history properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -41,7 +39,7 @@ class JobHistoryDefinition(Model):
         'properties': {'key': 'properties', 'type': 'JobHistoryDefinitionProperties'},
     }
 
-    def __init__(self, id=None, type=None, name=None, properties=None):
+    def __init__(self, id=None, type=None, name=None, properties=None, **kwargs):
         self.id = id
         self.type = type
         self.name = name

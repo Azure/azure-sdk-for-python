@@ -33,9 +33,11 @@ class HostNameSslState(Model):
      based SSL is enabled
     :param str thumbprint: SSL cert thumbprint
     :param bool to_update: Set this flag to update existing host name
-    """
+    """ 
 
-    _required = ['ssl_state']
+    _validation = {
+        'ssl_state': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -45,7 +47,7 @@ class HostNameSslState(Model):
         'to_update': {'key': 'toUpdate', 'type': 'bool'},
     }
 
-    def __init__(self, ssl_state, name=None, virtual_ip=None, thumbprint=None, to_update=None):
+    def __init__(self, ssl_state, name=None, virtual_ip=None, thumbprint=None, to_update=None, **kwargs):
         self.name = name
         self.ssl_state = ssl_state
         self.virtual_ip = virtual_ip

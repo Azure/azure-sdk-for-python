@@ -27,10 +27,6 @@ class FrontendIPConfiguration(SubResource):
     Frontend IP address of the load balancer
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param list inbound_nat_rules: Read only.Inbound rules URIs that use this
      frontend IP
     :param list inbound_nat_pools: Read only.Inbound pools URIs that use this
@@ -49,28 +45,29 @@ class FrontendIPConfiguration(SubResource):
      the PublicIP resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[SubResource]'},
+        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[SubResource]'},
+        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[SubResource]'},
+        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
+        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
+        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'IPAllocationMethod'},
+        'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
+        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'inbound_nat_rules': {'key': 'properties.inboundNatRules', 'type': '[SubResource]', 'flatten': True},
-        'inbound_nat_pools': {'key': 'properties.inboundNatPools', 'type': '[SubResource]', 'flatten': True},
-        'outbound_nat_rules': {'key': 'properties.outboundNatRules', 'type': '[SubResource]', 'flatten': True},
-        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]', 'flatten': True},
-        'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str', 'flatten': True},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'IPAllocationMethod', 'flatten': True},
-        'subnet': {'key': 'properties.subnet', 'type': 'Subnet', 'flatten': True},
-        'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, load_balancing_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None):
-        super(FrontendIPConfiguration, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, load_balancing_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(FrontendIPConfiguration, self).__init__(id=id, **kwargs)
         self.inbound_nat_rules = inbound_nat_rules
         self.inbound_nat_pools = inbound_nat_pools
         self.outbound_nat_rules = outbound_nat_rules
@@ -80,3 +77,5 @@ class FrontendIPConfiguration(SubResource):
         self.subnet = subnet
         self.public_ip_address = public_ip_address
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

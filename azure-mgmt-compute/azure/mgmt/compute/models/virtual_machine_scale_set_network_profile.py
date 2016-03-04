@@ -28,13 +28,11 @@ class VirtualMachineScaleSetNetworkProfile(Model):
 
     :param list network_interface_configurations: Gets or sets the list of
      network configurations.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetNetworkConfiguration]'},
     }
 
-    def __init__(self, network_interface_configurations=None):
+    def __init__(self, network_interface_configurations=None, **kwargs):
         self.network_interface_configurations = network_interface_configurations

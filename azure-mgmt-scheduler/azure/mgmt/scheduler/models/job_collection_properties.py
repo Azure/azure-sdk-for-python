@@ -29,9 +29,7 @@ class JobCollectionProperties(Model):
     :param str state: Gets or sets the state. Possible values include:
      'Enabled', 'Disabled', 'Suspended', 'Deleted'
     :param JobCollectionQuota quota: Gets or sets the job collection quota.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
@@ -39,7 +37,7 @@ class JobCollectionProperties(Model):
         'quota': {'key': 'quota', 'type': 'JobCollectionQuota'},
     }
 
-    def __init__(self, sku=None, state=None, quota=None):
+    def __init__(self, sku=None, state=None, quota=None, **kwargs):
         self.sku = sku
         self.state = state
         self.quota = quota

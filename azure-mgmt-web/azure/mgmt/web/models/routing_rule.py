@@ -28,13 +28,11 @@ class RoutingRule(Model):
 
     :param str name: Name of the routing rule. The recommended name would be
      to point to the slot which will receive the traffic in the experiment.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, **kwargs):
         self.name = name

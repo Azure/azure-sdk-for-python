@@ -28,13 +28,11 @@ class WinRMConfiguration(Model):
 
     :param list listeners: Gets or sets the list of Windows Remote Management
      listeners
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'listeners': {'key': 'listeners', 'type': '[WinRMListener]'},
     }
 
-    def __init__(self, listeners=None):
+    def __init__(self, listeners=None, **kwargs):
         self.listeners = listeners

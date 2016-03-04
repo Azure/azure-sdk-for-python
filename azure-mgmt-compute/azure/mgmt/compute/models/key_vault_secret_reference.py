@@ -30,15 +30,18 @@ class KeyVaultSecretReference(Model):
      Vault.
     :param SubResource source_vault: Gets or sets the Relative URL of the Key
      Vault containing the secret.
-    """
+    """ 
 
-    _required = ['secret_url', 'source_vault']
+    _validation = {
+        'secret_url': {'required': True},
+        'source_vault': {'required': True},
+    }
 
     _attribute_map = {
         'secret_url': {'key': 'secretUrl', 'type': 'str'},
         'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
     }
 
-    def __init__(self, secret_url, source_vault):
+    def __init__(self, secret_url, source_vault, **kwargs):
         self.secret_url = secret_url
         self.source_vault = source_vault

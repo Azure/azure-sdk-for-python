@@ -29,15 +29,13 @@ class JobMaxRecurrence(Model):
      minute, hour, day, week, month). Possible values include: 'Minute',
      'Hour', 'Day', 'Week', 'Month'
     :param int interval: Gets or sets the interval between retries.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
         'interval': {'key': 'interval', 'type': 'int'},
     }
 
-    def __init__(self, frequency=None, interval=None):
+    def __init__(self, frequency=None, interval=None, **kwargs):
         self.frequency = frequency
         self.interval = interval

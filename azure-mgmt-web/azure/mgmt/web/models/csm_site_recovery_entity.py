@@ -33,9 +33,7 @@ class CsmSiteRecoveryEntity(Model):
      instead.
     :param str slot_name: [Optional] Destination web app slot name into which
      web app should be recovered
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'snapshot_time': {'key': 'snapshotTime', 'type': 'iso-8601'},
@@ -43,7 +41,7 @@ class CsmSiteRecoveryEntity(Model):
         'slot_name': {'key': 'slotName', 'type': 'str'},
     }
 
-    def __init__(self, snapshot_time=None, site_name=None, slot_name=None):
+    def __init__(self, snapshot_time=None, site_name=None, slot_name=None, **kwargs):
         self.snapshot_time = snapshot_time
         self.site_name = site_name
         self.slot_name = slot_name

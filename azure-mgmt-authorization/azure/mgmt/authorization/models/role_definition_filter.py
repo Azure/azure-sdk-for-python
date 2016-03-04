@@ -27,13 +27,11 @@ class RoleDefinitionFilter(Model):
     Role Definitions filter
 
     :param str role_name: Returns role definition with the specific name.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'role_name': {'key': 'roleName', 'type': 'str'},
     }
 
-    def __init__(self, role_name=None):
+    def __init__(self, role_name=None, **kwargs):
         self.role_name = role_name

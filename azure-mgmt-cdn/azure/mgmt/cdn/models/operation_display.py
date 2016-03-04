@@ -29,9 +29,7 @@ class OperationDisplay(Model):
     :param str resource: Resource on which the operation is performed:
      profile, endpoint,.. etc
     :param str operation: Operation type: read, write, delete,.. etc
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
@@ -39,7 +37,7 @@ class OperationDisplay(Model):
         'operation': {'key': 'operation', 'type': 'str'},
     }
 
-    def __init__(self, provider=None, resource=None, operation=None):
+    def __init__(self, provider=None, resource=None, operation=None, **kwargs):
         self.provider = provider
         self.resource = resource
         self.operation = operation
