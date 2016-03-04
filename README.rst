@@ -18,10 +18,25 @@ The SDK supports Python 2.7, 3.3, 3.4 and 3.5.
 See important information if you're currently using this SDK < 1.0 in `this issue <https://github.com/Azure/azure-sdk-for-python/issues/440>`__.
 
 
+INSTALLATION
+============
+
+**The latest recommended release is currently a release candidate, tell this to pip to install it!**
+
+- Use the ``--pre`` flag: ``pip install --pre azure``
+
+- Specify the version:  ``pip install azure==2.0.0rc1``
+
+If you want to install ``azure`` from source::
+
+    git clone git://github.com/Azure/azure-sdk-for-python.git
+    cd azure-sdk-for-python
+    python setup.py install
+
 DISCLAIMER
 ==========
 
-This is an alpha release. Future releases may introduce some breaking changes.
+This is a release candidate. It could have minor breaking changes until the stable release.
 
 Some of the new generated libraries have not yet been tested extensively, and some have known issues (such as azure-mgmt-web).
 

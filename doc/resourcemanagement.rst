@@ -144,12 +144,10 @@ This creates resources specified in a linked JSON template.
     result = resource_client.deployments.create_or_update(
         group_name,
         deployment_name,
-        Deployment(
-            properties=DeploymentProperties(
-                mode=DeploymentMode.incremental,
-                template_link=template,
-                parameters_link=parameters,
-            )
+        properties=DeploymentProperties(
+            mode=DeploymentMode.incremental,
+            template_link=template,
+            parameters_link=parameters,
         )
     )
 
@@ -201,12 +199,10 @@ This creates resources specified in a JSON template.
     result = resource_client.deployments.create_or_update(
         group_name,
         deployment_name,
-        Deployment(
-            properties=DeploymentProperties(
-                mode=DeploymentMode.incremental,
-                template=template,
-                parameters=parameters,
-            )
+        properties=DeploymentProperties(
+            mode=DeploymentMode.incremental,
+            template=template,
+            parameters=parameters,
         )
     )
 
