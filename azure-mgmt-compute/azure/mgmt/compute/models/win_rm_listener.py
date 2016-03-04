@@ -31,15 +31,13 @@ class WinRMListener(Model):
      'Http', 'Https'
     :param str certificate_url: Gets or sets the Certificate URL in KMS for
      Https listeners. Should be null for Http listeners.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'protocol': {'key': 'protocol', 'type': 'ProtocolTypes'},
         'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
     }
 
-    def __init__(self, protocol=None, certificate_url=None):
+    def __init__(self, protocol=None, certificate_url=None, **kwargs):
         self.protocol = protocol
         self.certificate_url = certificate_url

@@ -27,13 +27,11 @@ class FeatureProperties(Model):
     Previewed feature information.
 
     :param str state: Gets or sets the state of the previewed feature.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, state=None):
+    def __init__(self, state=None, **kwargs):
         self.state = state

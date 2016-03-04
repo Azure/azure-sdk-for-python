@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.namespaces_operations import NamespacesOperations
 from .operations.notification_hubs_operations import NotificationHubsOperations
 from . import models
@@ -66,7 +67,8 @@ class NotificationHubsManagementClientConfiguration(AzureConfiguration):
 
         super(NotificationHubsManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('notificationhubsmanagementclient/2014-09-01')
+        self.add_user_agent('notificationhubsmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

@@ -37,9 +37,7 @@ class OSProfile(Model):
      Configuration of the OS profile.
     :param list secrets: Gets or sets the List of certificates for addition
      to the VM.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'computer_name': {'key': 'computerName', 'type': 'str'},
@@ -51,7 +49,7 @@ class OSProfile(Model):
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
     }
 
-    def __init__(self, computer_name=None, admin_username=None, admin_password=None, custom_data=None, windows_configuration=None, linux_configuration=None, secrets=None):
+    def __init__(self, computer_name=None, admin_username=None, admin_password=None, custom_data=None, windows_configuration=None, linux_configuration=None, secrets=None, **kwargs):
         self.computer_name = computer_name
         self.admin_username = admin_username
         self.admin_password = admin_password

@@ -35,7 +35,7 @@ class StampCapacity(Model):
     :param str compute_mode: Shared/Dedicated workers. Possible values
      include: 'Shared', 'Dedicated'
     :param str worker_size: Size of the machines. Possible values include:
-     'Small', 'Medium', 'Large'
+     'Default', 'Small', 'Medium', 'Large'
     :param int worker_size_id: Size Id of machines:
      0 - Small
      1 - Medium
@@ -46,9 +46,7 @@ class StampCapacity(Model):
     :param bool is_applicable_for_all_compute_modes: Is capacity applicable
      for all sites?
     :param str site_mode: Shared or Dedicated
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -63,7 +61,7 @@ class StampCapacity(Model):
         'site_mode': {'key': 'siteMode', 'type': 'str'},
     }
 
-    def __init__(self, name=None, available_capacity=None, total_capacity=None, unit=None, compute_mode=None, worker_size=None, worker_size_id=None, exclude_from_capacity_allocation=None, is_applicable_for_all_compute_modes=None, site_mode=None):
+    def __init__(self, name=None, available_capacity=None, total_capacity=None, unit=None, compute_mode=None, worker_size=None, worker_size_id=None, exclude_from_capacity_allocation=None, is_applicable_for_all_compute_modes=None, site_mode=None, **kwargs):
         self.name = name
         self.available_capacity = available_capacity
         self.total_capacity = total_capacity

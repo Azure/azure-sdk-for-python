@@ -29,9 +29,7 @@ class ApplicationFilter(Model):
     :param str display_name_starts_with: Application display name starts with
     :param str app_id: ApplicationId
     :param str identifier_uri: Identifier Uri
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'display_name_starts_with': {'key': 'displayNameStartsWith', 'type': 'str'},
@@ -39,7 +37,7 @@ class ApplicationFilter(Model):
         'identifier_uri': {'key': 'identifierUri', 'type': 'str'},
     }
 
-    def __init__(self, display_name_starts_with=None, app_id=None, identifier_uri=None):
+    def __init__(self, display_name_starts_with=None, app_id=None, identifier_uri=None, **kwargs):
         self.display_name_starts_with = display_name_starts_with
         self.app_id = app_id
         self.identifier_uri = identifier_uri

@@ -46,9 +46,7 @@ class NamespaceProperties(Model):
     :param bool critical: Whether or not the namespace is set as Critical.
     :param str namespace_type: Gets or sets the namespace type. Possible
      values include: 'Messaging', 'NotificationHub'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -64,7 +62,7 @@ class NamespaceProperties(Model):
         'namespace_type': {'key': 'namespaceType', 'type': 'NamespaceType'},
     }
 
-    def __init__(self, name=None, provisioning_state=None, region=None, status=None, created_at=None, service_bus_endpoint=None, subscription_id=None, scale_unit=None, enabled=None, critical=None, namespace_type=None):
+    def __init__(self, name=None, provisioning_state=None, region=None, status=None, created_at=None, service_bus_endpoint=None, subscription_id=None, scale_unit=None, enabled=None, critical=None, namespace_type=None, **kwargs):
         self.name = name
         self.provisioning_state = provisioning_state
         self.region = region

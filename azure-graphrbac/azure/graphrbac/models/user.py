@@ -32,9 +32,7 @@ class User(Model):
     :param str display_name: Gets or sets user display name
     :param str sign_in_name: Gets or sets user signIn name
     :param str mail: Gets or sets user mail
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
@@ -45,7 +43,7 @@ class User(Model):
         'mail': {'key': 'mail', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, user_principal_name=None, display_name=None, sign_in_name=None, mail=None):
+    def __init__(self, object_id=None, object_type=None, user_principal_name=None, display_name=None, sign_in_name=None, mail=None, **kwargs):
         self.object_id = object_id
         self.object_type = object_type
         self.user_principal_name = user_principal_name

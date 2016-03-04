@@ -30,9 +30,7 @@ class DeploymentOperation(Model):
     :param str operation_id: Gets or sets deployment operation id.
     :param DeploymentOperationProperties properties: Gets or sets deployment
      properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -40,7 +38,7 @@ class DeploymentOperation(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentOperationProperties'},
     }
 
-    def __init__(self, id=None, operation_id=None, properties=None):
+    def __init__(self, id=None, operation_id=None, properties=None, **kwargs):
         self.id = id
         self.operation_id = operation_id
         self.properties = properties

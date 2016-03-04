@@ -31,9 +31,7 @@ class ArmPlan(Model):
     :param str product: The product
     :param str promotion_code: The promotion code
     :param str version: Version of product
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -43,7 +41,7 @@ class ArmPlan(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, name=None, publisher=None, product=None, promotion_code=None, version=None):
+    def __init__(self, name=None, publisher=None, product=None, promotion_code=None, version=None, **kwargs):
         self.name = name
         self.publisher = publisher
         self.product = product

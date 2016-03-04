@@ -30,9 +30,7 @@ class VirtualNetworkProfile(Model):
     :param str name: Name of the virtual network (read-only)
     :param str type: Resource type of the virtual network (read-only)
     :param str subnet: Subnet within the virtual network
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -41,7 +39,7 @@ class VirtualNetworkProfile(Model):
         'subnet': {'key': 'subnet', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, subnet=None):
+    def __init__(self, id=None, name=None, type=None, subnet=None, **kwargs):
         self.id = id
         self.name = name
         self.type = type

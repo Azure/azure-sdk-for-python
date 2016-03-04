@@ -32,14 +32,21 @@ class SiteInstance(Resource):
     :param str type: Resource type
     :param dict tags: Resource tags
     :param str site_instance_name: Name of instance
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'site_instance_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, site_instance_name=None):
-        super(SiteInstance, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'site_instance_name': {'key': 'properties.name', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, site_instance_name=None, **kwargs):
+        super(SiteInstance, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.site_instance_name = site_instance_name

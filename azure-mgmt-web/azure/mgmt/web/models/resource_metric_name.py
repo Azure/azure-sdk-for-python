@@ -28,15 +28,13 @@ class ResourceMetricName(Model):
 
     :param str value: metric name value
     :param str localized_value: Localized metric name value
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, value=None, localized_value=None):
+    def __init__(self, value=None, localized_value=None, **kwargs):
         self.value = value
         self.localized_value = localized_value

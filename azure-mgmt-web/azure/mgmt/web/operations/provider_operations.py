@@ -109,7 +109,7 @@ class ProviderOperations(object):
         path_format_arguments = {
             'sourceControlType': self._serialize.url("source_control_type", source_control_type, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -165,7 +165,7 @@ class ProviderOperations(object):
         path_format_arguments = {
             'sourceControlType': self._serialize.url("source_control_type", source_control_type, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

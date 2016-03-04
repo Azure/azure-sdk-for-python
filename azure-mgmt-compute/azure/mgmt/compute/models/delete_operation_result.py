@@ -32,9 +32,13 @@ class DeleteOperationResult(Model):
     :param datetime start_time: Gets the operation start time
     :param datetime end_time: Gets the operation end time
     :param ApiError error: Gets or sets the operation error if any occurred
-    """
+    """ 
 
-    _required = ['operation_id', 'status', 'start_time']
+    _validation = {
+        'operation_id': {'required': True},
+        'status': {'required': True},
+        'start_time': {'required': True},
+    }
 
     _attribute_map = {
         'operation_id': {'key': 'operationId', 'type': 'str'},
@@ -44,7 +48,7 @@ class DeleteOperationResult(Model):
         'error': {'key': 'error', 'type': 'ApiError'},
     }
 
-    def __init__(self, operation_id, status, start_time, end_time=None, error=None):
+    def __init__(self, operation_id, status, start_time, end_time=None, error=None, **kwargs):
         self.operation_id = operation_id
         self.status = status
         self.start_time = start_time

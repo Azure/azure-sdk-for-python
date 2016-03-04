@@ -31,12 +31,10 @@ class NetworkInterface(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param SubResource virtual_machine: Gets or sets the reference of a
      VirtualMachine
     :param NetworkSecurityGroup network_security_group: Gets or sets the
-     reference of the NetworkSecurityGroup resource. Default value: {} .
+     reference of the NetworkSecurityGroup resource
     :param list ip_configurations: Gets or sets list of IPConfigurations of
      the NetworkInterface
     :param NetworkInterfaceDnsSettings dns_settings: Gets or sets DNS
@@ -50,28 +48,32 @@ class NetworkInterface(Resource):
      network interface resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'virtual_machine': {'key': 'properties.virtualMachine', 'type': 'SubResource'},
+        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
+        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
+        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings'},
+        'mac_address': {'key': 'properties.macAddress', 'type': 'str'},
+        'primary': {'key': 'properties.primary', 'type': 'bool'},
+        'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'virtual_machine': {'key': 'properties.virtualMachine', 'type': 'SubResource', 'flatten': True},
-        'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup', 'flatten': True},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[NetworkInterfaceIPConfiguration]', 'flatten': True},
-        'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings', 'flatten': True},
-        'mac_address': {'key': 'properties.macAddress', 'type': 'str', 'flatten': True},
-        'primary': {'key': 'properties.primary', 'type': 'bool', 'flatten': True},
-        'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool', 'flatten': True},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None):
-        super(NetworkInterface, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, virtual_machine=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+        super(NetworkInterface, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.virtual_machine = virtual_machine
-        self.network_security_group = network_security_group
+        self.network_security_group = None
         self.ip_configurations = ip_configurations
         self.dns_settings = dns_settings
         self.mac_address = mac_address
@@ -79,3 +81,4 @@ class NetworkInterface(Resource):
         self.enable_ip_forwarding = enable_ip_forwarding
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.etag = etag

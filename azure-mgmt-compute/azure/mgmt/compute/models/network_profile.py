@@ -27,13 +27,11 @@ class NetworkProfile(Model):
     Describes a network profile.
 
     :param list network_interfaces: Gets or sets the network interfaces.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterfaceReference]'},
     }
 
-    def __init__(self, network_interfaces=None):
+    def __init__(self, network_interfaces=None, **kwargs):
         self.network_interfaces = network_interfaces

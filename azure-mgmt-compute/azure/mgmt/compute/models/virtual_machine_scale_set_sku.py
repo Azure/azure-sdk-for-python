@@ -30,9 +30,7 @@ class VirtualMachineScaleSetSku(Model):
     :param Sku sku: Gets the Sku.
     :param VirtualMachineScaleSetSkuCapacity capacity: Gets available scaling
      information.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
@@ -40,7 +38,7 @@ class VirtualMachineScaleSetSku(Model):
         'capacity': {'key': 'capacity', 'type': 'VirtualMachineScaleSetSkuCapacity'},
     }
 
-    def __init__(self, resource_type=None, sku=None, capacity=None):
+    def __init__(self, resource_type=None, sku=None, capacity=None, **kwargs):
         self.resource_type = resource_type
         self.sku = sku
         self.capacity = capacity

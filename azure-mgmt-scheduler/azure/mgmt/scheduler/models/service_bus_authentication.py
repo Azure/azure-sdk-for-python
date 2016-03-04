@@ -29,9 +29,7 @@ class ServiceBusAuthentication(Model):
     :param str sas_key_name: Gets or sets the SAS key name.
     :param str type: Gets or sets the authentication type. Possible values
      include: 'NotSpecified', 'SharedAccessKey'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'sas_key': {'key': 'sasKey', 'type': 'str'},
@@ -39,7 +37,7 @@ class ServiceBusAuthentication(Model):
         'type': {'key': 'type', 'type': 'ServiceBusAuthenticationType'},
     }
 
-    def __init__(self, sas_key=None, sas_key_name=None, type=None):
+    def __init__(self, sas_key=None, sas_key_name=None, type=None, **kwargs):
         self.sas_key = sas_key
         self.sas_key_name = sas_key_name
         self.type = type

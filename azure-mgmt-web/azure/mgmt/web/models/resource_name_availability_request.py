@@ -29,9 +29,7 @@ class ResourceNameAvailabilityRequest(Model):
     :param str name: Resource name to verify
     :param str type: Resource type used for verification
     :param bool is_fqdn: Is fully qualified domain name
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -39,7 +37,7 @@ class ResourceNameAvailabilityRequest(Model):
         'is_fqdn': {'key': 'isFqdn', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, type=None, is_fqdn=None):
+    def __init__(self, name=None, type=None, is_fqdn=None, **kwargs):
         self.name = name
         self.type = type
         self.is_fqdn = is_fqdn

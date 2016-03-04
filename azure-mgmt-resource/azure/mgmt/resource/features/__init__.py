@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .feature_client import FeatureClient, FeatureClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'FeatureClient',
     'FeatureClientConfiguration'
 ]
+
+__version__ = VERSION
+

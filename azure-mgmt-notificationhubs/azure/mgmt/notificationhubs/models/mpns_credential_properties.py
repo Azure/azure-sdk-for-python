@@ -30,9 +30,7 @@ class MpnsCredentialProperties(Model):
     :param str certificate_key: Gets or sets the certificate key for this
      credential.
     :param str thumbprint: Gets or sets the Mpns certificate Thumbprint
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'mpns_certificate': {'key': 'mpnsCertificate', 'type': 'str'},
@@ -40,7 +38,7 @@ class MpnsCredentialProperties(Model):
         'thumbprint': {'key': 'thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, mpns_certificate=None, certificate_key=None, thumbprint=None):
+    def __init__(self, mpns_certificate=None, certificate_key=None, thumbprint=None, **kwargs):
         self.mpns_certificate = mpns_certificate
         self.certificate_key = certificate_key
         self.thumbprint = thumbprint

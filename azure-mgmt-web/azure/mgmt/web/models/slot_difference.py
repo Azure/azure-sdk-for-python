@@ -44,22 +44,29 @@ class SlotDifference(Resource):
     :param str value_in_target_slot: Value of the setting in the target web
      app slot
     :param str description: Description of the difference
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'slot_difference_type': {'key': 'properties.type', 'type': 'str', 'flatten': True},
-        'setting_type': {'key': 'properties.settingType', 'type': 'str', 'flatten': True},
-        'diff_rule': {'key': 'properties.diffRule', 'type': 'str', 'flatten': True},
-        'setting_name': {'key': 'properties.settingName', 'type': 'str', 'flatten': True},
-        'value_in_current_slot': {'key': 'properties.valueInCurrentSlot', 'type': 'str', 'flatten': True},
-        'value_in_target_slot': {'key': 'properties.valueInTargetSlot', 'type': 'str', 'flatten': True},
-        'description': {'key': 'properties.description', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, slot_difference_type=None, setting_type=None, diff_rule=None, setting_name=None, value_in_current_slot=None, value_in_target_slot=None, description=None):
-        super(SlotDifference, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'slot_difference_type': {'key': 'properties.type', 'type': 'str'},
+        'setting_type': {'key': 'properties.settingType', 'type': 'str'},
+        'diff_rule': {'key': 'properties.diffRule', 'type': 'str'},
+        'setting_name': {'key': 'properties.settingName', 'type': 'str'},
+        'value_in_current_slot': {'key': 'properties.valueInCurrentSlot', 'type': 'str'},
+        'value_in_target_slot': {'key': 'properties.valueInTargetSlot', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, slot_difference_type=None, setting_type=None, diff_rule=None, setting_name=None, value_in_current_slot=None, value_in_target_slot=None, description=None, **kwargs):
+        super(SlotDifference, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.slot_difference_type = slot_difference_type
         self.setting_type = setting_type
         self.diff_rule = diff_rule

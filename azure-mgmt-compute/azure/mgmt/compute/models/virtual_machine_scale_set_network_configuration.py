@@ -33,18 +33,22 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
      virtual machine.
     :param list ip_configurations: Gets or sets the virtual machine scale set
      IP Configuration.
-    """
+    """ 
 
-    _required = ['name', 'ip_configurations']
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'primary': {'key': 'properties.primary', 'type': 'bool', 'flatten': True},
-        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetIPConfiguration]', 'flatten': True},
+    _validation = {
+        'name': {'required': True},
+        'ip_configurations': {'required': True},
     }
 
-    def __init__(self, name, ip_configurations, id=None, primary=None):
-        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'primary': {'key': 'properties.primary', 'type': 'bool'},
+        'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetIPConfiguration]'},
+    }
+
+    def __init__(self, name, ip_configurations, id=None, primary=None, **kwargs):
+        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id, **kwargs)
         self.name = name
         self.primary = primary
         self.ip_configurations = ip_configurations

@@ -28,13 +28,15 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
 
     :param list instance_ids: Gets or sets the virtual machine scale set
      instance ids.
-    """
+    """ 
 
-    _required = ['instance_ids']
+    _validation = {
+        'instance_ids': {'required': True},
+    }
 
     _attribute_map = {
         'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
     }
 
-    def __init__(self, instance_ids):
+    def __init__(self, instance_ids, **kwargs):
         self.instance_ids = instance_ids

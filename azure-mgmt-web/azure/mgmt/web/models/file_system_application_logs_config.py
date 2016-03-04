@@ -28,13 +28,11 @@ class FileSystemApplicationLogsConfig(Model):
 
     :param str level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'level': {'key': 'level', 'type': 'LogLevel'},
     }
 
-    def __init__(self, level=None):
+    def __init__(self, level=None, **kwargs):
         self.level = level

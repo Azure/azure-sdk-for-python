@@ -30,15 +30,13 @@ class LinuxConfiguration(Model):
      Authentication using user name and password is allowed or not
     :param SshConfiguration ssh: Gets or sets the SSH configuration for linux
      VMs
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'disable_password_authentication': {'key': 'disablePasswordAuthentication', 'type': 'bool'},
         'ssh': {'key': 'ssh', 'type': 'SshConfiguration'},
     }
 
-    def __init__(self, disable_password_authentication=None, ssh=None):
+    def __init__(self, disable_password_authentication=None, ssh=None, **kwargs):
         self.disable_password_authentication = disable_password_authentication
         self.ssh = ssh

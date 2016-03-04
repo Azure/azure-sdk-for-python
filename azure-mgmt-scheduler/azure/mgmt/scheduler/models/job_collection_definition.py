@@ -32,9 +32,7 @@ class JobCollectionDefinition(Model):
     :param dict tags: Gets or sets the tags.
     :param JobCollectionProperties properties: Gets or sets the job
      collection properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -45,7 +43,7 @@ class JobCollectionDefinition(Model):
         'properties': {'key': 'properties', 'type': 'JobCollectionProperties'},
     }
 
-    def __init__(self, id=None, type=None, name=None, location=None, tags=None, properties=None):
+    def __init__(self, id=None, type=None, name=None, location=None, tags=None, properties=None, **kwargs):
         self.id = id
         self.type = type
         self.name = name

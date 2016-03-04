@@ -30,9 +30,7 @@ class VirtualMachineAgentInstanceView(Model):
     :param list extension_handlers: Gets or sets the virtual machine
      extension handler instance view.
     :param list statuses: Gets or sets the resource status information.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'vm_agent_version': {'key': 'vmAgentVersion', 'type': 'str'},
@@ -40,7 +38,7 @@ class VirtualMachineAgentInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, vm_agent_version=None, extension_handlers=None, statuses=None):
+    def __init__(self, vm_agent_version=None, extension_handlers=None, statuses=None, **kwargs):
         self.vm_agent_version = vm_agent_version
         self.extension_handlers = extension_handlers
         self.statuses = statuses

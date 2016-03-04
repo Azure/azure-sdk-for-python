@@ -29,15 +29,13 @@ class CsmMoveResourceEnvelope(Model):
 
     :param str target_resource_group:
     :param list resources:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
         'resources': {'key': 'resources', 'type': '[str]'},
     }
 
-    def __init__(self, target_resource_group=None, resources=None):
+    def __init__(self, target_resource_group=None, resources=None, **kwargs):
         self.target_resource_group = target_resource_group
         self.resources = resources

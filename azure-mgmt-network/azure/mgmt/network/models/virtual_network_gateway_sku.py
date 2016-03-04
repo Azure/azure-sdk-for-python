@@ -31,9 +31,7 @@ class VirtualNetworkGatewaySku(Model):
     :param str tier: Gateway sku tier -Basic/HighPerformance/Standard.
      Possible values include: 'Basic', 'HighPerformance', 'Standard'
     :param int capacity: The capacity
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'VirtualNetworkGatewaySkuName'},
@@ -41,7 +39,7 @@ class VirtualNetworkGatewaySku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, tier=None, capacity=None):
+    def __init__(self, name=None, tier=None, capacity=None, **kwargs):
         self.name = name
         self.tier = tier
         self.capacity = capacity

@@ -31,9 +31,7 @@ class RetryPolicy(Model):
      retries.
     :param int retry_count: Gets or sets the number of times a retry should
      be attempted.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'retry_type': {'key': 'retryType', 'type': 'RetryType'},
@@ -41,7 +39,7 @@ class RetryPolicy(Model):
         'retry_count': {'key': 'retryCount', 'type': 'int'},
     }
 
-    def __init__(self, retry_type=None, retry_interval=None, retry_count=None):
+    def __init__(self, retry_type=None, retry_interval=None, retry_count=None, **kwargs):
         self.retry_type = retry_type
         self.retry_interval = retry_interval
         self.retry_count = retry_count

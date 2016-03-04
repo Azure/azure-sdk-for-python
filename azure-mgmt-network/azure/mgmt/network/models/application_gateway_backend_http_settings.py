@@ -27,10 +27,6 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     Backend address pool settings of application gateway
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param int port: Gets or sets the port
     :param str protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
@@ -41,28 +37,31 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
      gateway
     :param str provisioning_state: Gets or sets Provisioning state of the
      backend http settings resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'port': {'key': 'properties.port', 'type': 'int'},
+        'protocol': {'key': 'properties.protocol', 'type': 'ApplicationGatewayProtocol'},
+        'cookie_based_affinity': {'key': 'properties.cookieBasedAffinity', 'type': 'ApplicationGatewayCookieBasedAffinity'},
+        'request_timeout': {'key': 'properties.requestTimeout', 'type': 'int'},
+        'probe': {'key': 'properties.probe', 'type': 'SubResource'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int', 'flatten': True},
-        'protocol': {'key': 'properties.protocol', 'type': 'ApplicationGatewayProtocol', 'flatten': True},
-        'cookie_based_affinity': {'key': 'properties.cookieBasedAffinity', 'type': 'ApplicationGatewayCookieBasedAffinity', 'flatten': True},
-        'request_timeout': {'key': 'properties.requestTimeout', 'type': 'int', 'flatten': True},
-        'probe': {'key': 'properties.probe', 'type': 'SubResource', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, provisioning_state=None):
-        super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id, **kwargs)
         self.port = port
         self.protocol = protocol
         self.cookie_based_affinity = cookie_based_affinity
         self.request_timeout = request_timeout
         self.probe = probe
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

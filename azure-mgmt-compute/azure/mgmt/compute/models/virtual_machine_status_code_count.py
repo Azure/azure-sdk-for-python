@@ -30,15 +30,13 @@ class VirtualMachineStatusCodeCount(Model):
     :param str code: Gets the instance view status code.
     :param int count: Gets the number of instances having a particular status
      code.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'count': {'key': 'count', 'type': 'int'},
     }
 
-    def __init__(self, code=None, count=None):
+    def __init__(self, code=None, count=None, **kwargs):
         self.code = code
         self.count = count

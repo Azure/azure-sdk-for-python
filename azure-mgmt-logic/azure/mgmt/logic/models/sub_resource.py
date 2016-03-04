@@ -26,13 +26,11 @@ class SubResource(Model):
     """SubResource
 
     :param str id: Gets or sets the resource id.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
+    def __init__(self, id=None, **kwargs):
         self.id = id

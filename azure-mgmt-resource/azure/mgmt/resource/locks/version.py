@@ -19,21 +19,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+VERSION = "2015-01-01"
 
-
-class DeploymentExtendedFilter(Model):
-    """
-    Deployment filter.
-
-    :param str provisioning_state: Gets or sets the provisioning state.
-    """
-
-    _required = []
-
-    _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, provisioning_state=None):
-        self.provisioning_state = provisioning_state

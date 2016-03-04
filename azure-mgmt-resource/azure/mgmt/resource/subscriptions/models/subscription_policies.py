@@ -29,15 +29,13 @@ class SubscriptionPolicies(Model):
     :param str location_placement_id: Gets or sets the subscription location
      placement Id.
     :param str quota_id: Gets or sets the subscription quota Id.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'location_placement_id': {'key': 'locationPlacementId', 'type': 'str'},
         'quota_id': {'key': 'quotaId', 'type': 'str'},
     }
 
-    def __init__(self, location_placement_id=None, quota_id=None):
+    def __init__(self, location_placement_id=None, quota_id=None, **kwargs):
         self.location_placement_id = location_placement_id
         self.quota_id = quota_id

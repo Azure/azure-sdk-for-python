@@ -41,24 +41,31 @@ class Usage(Resource):
     :param str compute_mode: ComputeMode used for this usage. Possible values
      include: 'Shared', 'Dedicated'
     :param str site_mode: SiteMode used for this usage
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'display_name': {'key': 'properties.displayName', 'type': 'str', 'flatten': True},
-        'usage_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'resource_name': {'key': 'properties.resourceName', 'type': 'str', 'flatten': True},
-        'unit': {'key': 'properties.unit', 'type': 'str', 'flatten': True},
-        'current_value': {'key': 'properties.currentValue', 'type': 'long', 'flatten': True},
-        'limit': {'key': 'properties.limit', 'type': 'long', 'flatten': True},
-        'next_reset_time': {'key': 'properties.nextResetTime', 'type': 'iso-8601', 'flatten': True},
-        'compute_mode': {'key': 'properties.computeMode', 'type': 'ComputeModeOptions', 'flatten': True},
-        'site_mode': {'key': 'properties.siteMode', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, display_name=None, usage_name=None, resource_name=None, unit=None, current_value=None, limit=None, next_reset_time=None, compute_mode=None, site_mode=None):
-        super(Usage, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'usage_name': {'key': 'properties.name', 'type': 'str'},
+        'resource_name': {'key': 'properties.resourceName', 'type': 'str'},
+        'unit': {'key': 'properties.unit', 'type': 'str'},
+        'current_value': {'key': 'properties.currentValue', 'type': 'long'},
+        'limit': {'key': 'properties.limit', 'type': 'long'},
+        'next_reset_time': {'key': 'properties.nextResetTime', 'type': 'iso-8601'},
+        'compute_mode': {'key': 'properties.computeMode', 'type': 'ComputeModeOptions'},
+        'site_mode': {'key': 'properties.siteMode', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, display_name=None, usage_name=None, resource_name=None, unit=None, current_value=None, limit=None, next_reset_time=None, compute_mode=None, site_mode=None, **kwargs):
+        super(Usage, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.display_name = display_name
         self.usage_name = usage_name
         self.resource_name = resource_name

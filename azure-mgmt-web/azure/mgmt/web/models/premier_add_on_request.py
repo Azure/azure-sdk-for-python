@@ -31,9 +31,7 @@ class PremierAddOnRequest(Model):
     :param ArmPlan plan: Azure resource manager plan
     :param object properties: Resource specific properties
     :param SkuDescription sku: Sku description of the resource
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
@@ -43,7 +41,7 @@ class PremierAddOnRequest(Model):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location=None, tags=None, plan=None, properties=None, sku=None):
+    def __init__(self, location=None, tags=None, plan=None, properties=None, sku=None, **kwargs):
         self.location = location
         self.tags = tags
         self.plan = plan

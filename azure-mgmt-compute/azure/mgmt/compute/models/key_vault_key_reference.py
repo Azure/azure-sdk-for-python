@@ -29,15 +29,18 @@ class KeyVaultKeyReference(Model):
     :param str key_url: Gets or sets the URL referencing a key in a Key Vault.
     :param SubResource source_vault: Gets or sets the Relative URL of the Key
      Vault containing the key
-    """
+    """ 
 
-    _required = ['key_url', 'source_vault']
+    _validation = {
+        'key_url': {'required': True},
+        'source_vault': {'required': True},
+    }
 
     _attribute_map = {
         'key_url': {'key': 'keyUrl', 'type': 'str'},
         'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
     }
 
-    def __init__(self, key_url, source_vault):
+    def __init__(self, key_url, source_vault, **kwargs):
         self.key_url = key_url
         self.source_vault = source_vault

@@ -43,26 +43,29 @@ class Workflow(Resource):
     :param object definition: Gets or sets the definition.
     :param ContentLink parameters_link: Gets or sets the link to parameters.
     :param dict parameters: Gets or sets the parameters.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'WorkflowProvisioningState', 'flatten': True},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601', 'flatten': True},
-        'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601', 'flatten': True},
-        'state': {'key': 'properties.state', 'type': 'WorkflowState', 'flatten': True},
-        'version': {'key': 'properties.version', 'type': 'str', 'flatten': True},
-        'access_endpoint': {'key': 'properties.accessEndpoint', 'type': 'str', 'flatten': True},
-        'sku': {'key': 'properties.sku', 'type': 'Sku', 'flatten': True},
-        'definition_link': {'key': 'properties.definitionLink', 'type': 'ContentLink', 'flatten': True},
-        'definition': {'key': 'properties.definition', 'type': 'object', 'flatten': True},
-        'parameters_link': {'key': 'properties.parametersLink', 'type': 'ContentLink', 'flatten': True},
-        'parameters': {'key': 'properties.parameters', 'type': '{WorkflowParameter}', 'flatten': True},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'WorkflowProvisioningState'},
+        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
+        'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
+        'state': {'key': 'properties.state', 'type': 'WorkflowState'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+        'access_endpoint': {'key': 'properties.accessEndpoint', 'type': 'str'},
+        'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'definition_link': {'key': 'properties.definitionLink', 'type': 'ContentLink'},
+        'definition': {'key': 'properties.definition', 'type': 'object'},
+        'parameters_link': {'key': 'properties.parametersLink', 'type': 'ContentLink'},
+        'parameters': {'key': 'properties.parameters', 'type': '{WorkflowParameter}'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, provisioning_state=None, created_time=None, changed_time=None, state=None, version=None, access_endpoint=None, sku=None, definition_link=None, definition=None, parameters_link=None, parameters=None):
-        super(Workflow, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, provisioning_state=None, created_time=None, changed_time=None, state=None, version=None, access_endpoint=None, sku=None, definition_link=None, definition=None, parameters_link=None, parameters=None, **kwargs):
+        super(Workflow, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.provisioning_state = provisioning_state
         self.created_time = created_time
         self.changed_time = changed_time

@@ -30,9 +30,7 @@ class PasswordCredential(Model):
     :param datetime end_date: Gets or sets end date
     :param str key_id: Gets or sets key Id
     :param str value: Gets or sets value
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'start_date': {'key': 'startDate', 'type': 'iso-8601'},
@@ -41,7 +39,7 @@ class PasswordCredential(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, start_date=None, end_date=None, key_id=None, value=None):
+    def __init__(self, start_date=None, end_date=None, key_id=None, value=None, **kwargs):
         self.start_date = start_date
         self.end_date = end_date
         self.key_id = key_id

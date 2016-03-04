@@ -39,9 +39,7 @@ class HostName(Model):
      Possible values include: 'CName', 'A'
     :param str host_name_type: Type of the hostname. Possible values include:
      'Verified', 'Managed'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -52,7 +50,7 @@ class HostName(Model):
         'host_name_type': {'key': 'hostNameType', 'type': 'HostNameType'},
     }
 
-    def __init__(self, name=None, site_names=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None):
+    def __init__(self, name=None, site_names=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, **kwargs):
         self.name = name
         self.site_names = site_names
         self.azure_resource_name = azure_resource_name

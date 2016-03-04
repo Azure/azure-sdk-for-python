@@ -30,9 +30,7 @@ class Plan(Model):
     :param str publisher: Gets or sets the publisher ID.
     :param str product: Gets or sets the offer ID.
     :param str promotion_code: Gets or sets the promotion code.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -41,7 +39,7 @@ class Plan(Model):
         'promotion_code': {'key': 'promotionCode', 'type': 'str'},
     }
 
-    def __init__(self, name=None, publisher=None, product=None, promotion_code=None):
+    def __init__(self, name=None, publisher=None, product=None, promotion_code=None, **kwargs):
         self.name = name
         self.publisher = publisher
         self.product = product

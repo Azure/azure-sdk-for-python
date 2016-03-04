@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .cdn_management_client import CdnManagementClient, CdnManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'CdnManagementClient',
     'CdnManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

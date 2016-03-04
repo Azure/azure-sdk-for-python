@@ -54,9 +54,7 @@ class CloningInfo(Model):
     :param str traffic_manager_profile_name: Name of traffic manager profile
      to create. This is only needed if traffic manager profile does not
      already exist
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'correlation_id': {'key': 'correlationId', 'type': 'str'},
@@ -71,7 +69,7 @@ class CloningInfo(Model):
         'traffic_manager_profile_name': {'key': 'trafficManagerProfileName', 'type': 'str'},
     }
 
-    def __init__(self, correlation_id=None, overwrite=None, clone_custom_host_names=None, clone_source_control=None, source_web_app_id=None, hosting_environment=None, app_settings_overrides=None, configure_load_balancing=None, traffic_manager_profile_id=None, traffic_manager_profile_name=None):
+    def __init__(self, correlation_id=None, overwrite=None, clone_custom_host_names=None, clone_source_control=None, source_web_app_id=None, hosting_environment=None, app_settings_overrides=None, configure_load_balancing=None, traffic_manager_profile_id=None, traffic_manager_profile_name=None, **kwargs):
         self.correlation_id = correlation_id
         self.overwrite = overwrite
         self.clone_custom_host_names = clone_custom_host_names

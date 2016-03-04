@@ -30,15 +30,13 @@ class VaultSecretGroup(Model):
      Vault containing all of the certificates in VaultCertificates.
     :param list vault_certificates: Gets or sets the list of key vault
      references in SourceVault which contain certificates
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
         'vault_certificates': {'key': 'vaultCertificates', 'type': '[VaultCertificate]'},
     }
 
-    def __init__(self, source_vault=None, vault_certificates=None):
+    def __init__(self, source_vault=None, vault_certificates=None, **kwargs):
         self.source_vault = source_vault
         self.vault_certificates = vault_certificates

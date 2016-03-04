@@ -31,15 +31,13 @@ class SlotConfigNames(Model):
 
     :param list connection_string_names: List of connection string names
     :param list app_setting_names: List of application settings names
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'connection_string_names': {'key': 'connectionStringNames', 'type': '[str]'},
         'app_setting_names': {'key': 'appSettingNames', 'type': '[str]'},
     }
 
-    def __init__(self, connection_string_names=None, app_setting_names=None):
+    def __init__(self, connection_string_names=None, app_setting_names=None, **kwargs):
         self.connection_string_names = connection_string_names
         self.app_setting_names = app_setting_names

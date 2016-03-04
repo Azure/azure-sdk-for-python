@@ -31,8 +31,6 @@ class LocalNetworkGateway(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param AddressSpace local_network_address_space: Local network site
      Address space
     :param str gateway_ip_address: IP address of local network gateway.
@@ -40,22 +38,27 @@ class LocalNetworkGateway(Resource):
      LocalNetworkGateway resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      LocalNetworkGateway resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'local_network_address_space': {'key': 'properties.localNetworkAddressSpace', 'type': 'AddressSpace'},
+        'gateway_ip_address': {'key': 'properties.gatewayIpAddress', 'type': 'str'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'local_network_address_space': {'key': 'properties.localNetworkAddressSpace', 'type': 'AddressSpace', 'flatten': True},
-        'gateway_ip_address': {'key': 'properties.gatewayIpAddress', 'type': 'str', 'flatten': True},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, local_network_address_space=None, gateway_ip_address=None, resource_guid=None, provisioning_state=None):
-        super(LocalNetworkGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, local_network_address_space=None, gateway_ip_address=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+        super(LocalNetworkGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.local_network_address_space = local_network_address_space
         self.gateway_ip_address = gateway_ip_address
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.etag = etag

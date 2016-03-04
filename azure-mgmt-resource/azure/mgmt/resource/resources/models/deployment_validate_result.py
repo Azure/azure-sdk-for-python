@@ -30,15 +30,13 @@ class DeploymentValidateResult(Model):
      error.
     :param DeploymentPropertiesExtended properties: Gets or sets the template
      deployment properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ResourceManagementErrorWithDetails'},
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, error=None, properties=None):
+    def __init__(self, error=None, properties=None, **kwargs):
         self.error = error
         self.properties = properties

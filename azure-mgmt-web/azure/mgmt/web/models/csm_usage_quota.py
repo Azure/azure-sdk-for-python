@@ -31,9 +31,7 @@ class CsmUsageQuota(Model):
     :param long current_value: The current value of the resource counter
     :param long limit: The resource limit
     :param LocalizableString name: Quota name
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'unit': {'key': 'unit', 'type': 'str'},
@@ -43,7 +41,7 @@ class CsmUsageQuota(Model):
         'name': {'key': 'name', 'type': 'LocalizableString'},
     }
 
-    def __init__(self, unit=None, next_reset_time=None, current_value=None, limit=None, name=None):
+    def __init__(self, unit=None, next_reset_time=None, current_value=None, limit=None, name=None, **kwargs):
         self.unit = unit
         self.next_reset_time = next_reset_time
         self.current_value = current_value

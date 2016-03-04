@@ -32,9 +32,11 @@ class CheckAvailabilityParameters(Model):
     :param dict tags: Gets or sets tags.
     :param bool is_availiable: Gets or sets true if the name is available and
      can be used to create new Namespace/NotificationHub. Otherwise false.
-    """
+    """ 
 
-    _required = ['name']
+    _validation = {
+        'name': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -43,7 +45,7 @@ class CheckAvailabilityParameters(Model):
         'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, name, location=None, tags=None, is_availiable=None):
+    def __init__(self, name, location=None, tags=None, is_availiable=None, **kwargs):
         self.name = name
         self.location = location
         self.tags = tags

@@ -31,9 +31,7 @@ class ApiError(Model):
     :param str code: Gets or sets the error code.
     :param str target: Gets or sets the target of the particular error.
     :param str message: Gets or sets the error message.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'details': {'key': 'details', 'type': '[ApiErrorBase]'},
@@ -43,7 +41,7 @@ class ApiError(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, details=None, innererror=None, code=None, target=None, message=None):
+    def __init__(self, details=None, innererror=None, code=None, target=None, message=None, **kwargs):
         self.details = details
         self.innererror = innererror
         self.code = code

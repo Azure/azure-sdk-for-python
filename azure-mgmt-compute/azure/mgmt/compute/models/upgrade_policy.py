@@ -28,13 +28,11 @@ class UpgradePolicy(Model):
 
     :param str mode: Gets or sets the upgrade mode. Possible values include:
      'Automatic', 'Manual'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'UpgradeMode'},
     }
 
-    def __init__(self, mode=None):
+    def __init__(self, mode=None, **kwargs):
         self.mode = mode

@@ -19,24 +19,34 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .deployment_extended_filter import DeploymentExtendedFilter
-from .generic_resource_filter import GenericResourceFilter
-from .resource_group_filter import ResourceGroupFilter
-from .management_lock_object import ManagementLockObject
-from .resource import Resource
-from .sub_resource import SubResource
-from .management_lock_object_paged import ManagementLockObjectPaged
-from .authorization_client_enums import (
-    LockLevel,
-)
+from msrest.serialization import Model
 
-__all__ = [
-    'DeploymentExtendedFilter',
-    'GenericResourceFilter',
-    'ResourceGroupFilter',
-    'ManagementLockObject',
-    'Resource',
-    'SubResource',
-    'ManagementLockObjectPaged',
-    'LockLevel',
-]
+
+class Resource(Model):
+    """Resource
+
+    :param str id: Resource Id
+    :param str name: Resource name
+    :param str type: Resource type
+    :param str location: Resource location
+    :param dict tags: Resource tags
+    """ 
+
+    _validation = {
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, **kwargs):
+        self.id = id
+        self.name = name
+        self.type = type
+        self.location = location
+        self.tags = tags

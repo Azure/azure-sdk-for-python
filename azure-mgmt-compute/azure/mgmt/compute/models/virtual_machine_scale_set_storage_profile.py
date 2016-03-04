@@ -28,15 +28,13 @@ class VirtualMachineScaleSetStorageProfile(Model):
 
     :param ImageReference image_reference: Gets or sets the image reference.
     :param VirtualMachineScaleSetOSDisk os_disk: Gets or sets the OS disk.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
         'os_disk': {'key': 'osDisk', 'type': 'VirtualMachineScaleSetOSDisk'},
     }
 
-    def __init__(self, image_reference=None, os_disk=None):
+    def __init__(self, image_reference=None, os_disk=None, **kwargs):
         self.image_reference = image_reference
         self.os_disk = os_disk

@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.features_operations import FeaturesOperations
 from . import models
 
@@ -65,7 +66,8 @@ class FeatureClientConfiguration(AzureConfiguration):
 
         super(FeatureClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('featureclient/2015-12-01')
+        self.add_user_agent('featureclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

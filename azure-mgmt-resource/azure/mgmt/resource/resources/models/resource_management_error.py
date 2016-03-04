@@ -29,9 +29,12 @@ class ResourceManagementError(Model):
     :param str message: Gets or sets the error message returned from the
      server.
     :param str target: Gets or sets the target of the error.
-    """
+    """ 
 
-    _required = ['code', 'message']
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -39,7 +42,7 @@ class ResourceManagementError(Model):
         'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, code, message, target=None):
+    def __init__(self, code, message, target=None, **kwargs):
         self.code = code
         self.message = message
         self.target = target

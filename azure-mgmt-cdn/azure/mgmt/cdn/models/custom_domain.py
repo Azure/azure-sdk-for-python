@@ -36,18 +36,23 @@ class CustomDomain(Resource):
      values include: 'Creating', 'Active', 'Deleting'
     :param str provisioning_state: Provisioning status of the custom domain.
      Possible values include: 'Creating', 'Succeeded', 'Failed'
-    """
+    """ 
 
-    _required = ['host_name']
-
-    _attribute_map = {
-        'host_name': {'key': 'properties.hostName', 'type': 'str', 'flatten': True},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'CustomDomainResourceState', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState', 'flatten': True},
+    _validation = {
+        'host_name': {'required': True},
     }
 
-    def __init__(self, host_name, id=None, name=None, type=None, resource_state=None, provisioning_state=None):
-        super(CustomDomain, self).__init__(id=id, name=name, type=type)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'CustomDomainResourceState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+    }
+
+    def __init__(self, host_name, id=None, name=None, type=None, resource_state=None, provisioning_state=None, **kwargs):
+        super(CustomDomain, self).__init__(id=id, name=name, type=type, **kwargs)
         self.host_name = host_name
         self.resource_state = resource_state
         self.provisioning_state = provisioning_state

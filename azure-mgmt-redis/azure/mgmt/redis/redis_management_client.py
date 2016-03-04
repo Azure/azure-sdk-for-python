@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.redis_operations import RedisOperations
 from . import models
 
@@ -65,7 +66,8 @@ class RedisManagementClientConfiguration(AzureConfiguration):
 
         super(RedisManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('redismanagementclient/2015-08-01')
+        self.add_user_agent('redismanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

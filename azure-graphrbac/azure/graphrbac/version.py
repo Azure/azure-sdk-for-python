@@ -19,9 +19,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .authorization_client import AuthorizationClient, AuthorizationClientConfiguration
+VERSION = "1.42-previewInternal"
 
-__all__ = [
-    'AuthorizationClient',
-    'AuthorizationClientConfiguration'
-]

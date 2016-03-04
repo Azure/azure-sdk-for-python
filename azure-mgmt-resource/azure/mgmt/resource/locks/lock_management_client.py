@@ -22,12 +22,13 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.management_locks_operations import ManagementLocksOperations
 from . import models
 
 
-class AuthorizationClientConfiguration(AzureConfiguration):
-    """Configuration for AuthorizationClient
+class LockManagementClientConfiguration(AzureConfiguration):
+    """Configuration for LockManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -63,9 +64,10 @@ class AuthorizationClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(AuthorizationClientConfiguration, self).__init__(base_url, filepath)
+        super(LockManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('authorizationclient/2015-01-01')
+        self.add_user_agent('lockmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
@@ -75,11 +77,11 @@ class AuthorizationClientConfiguration(AzureConfiguration):
         self.generate_client_request_id = generate_client_request_id
 
 
-class AuthorizationClient(object):
-    """AuthorizationClient
+class LockManagementClient(object):
+    """LockManagementClient
 
     :param config: Configuration for client.
-    :type config: AuthorizationClientConfiguration
+    :type config: LockManagementClientConfiguration
 
     :ivar management_locks: ManagementLocks operations
     :vartype management_locks: .operations.ManagementLocksOperations

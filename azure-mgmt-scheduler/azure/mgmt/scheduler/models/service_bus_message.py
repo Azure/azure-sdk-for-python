@@ -35,9 +35,7 @@ class ServiceBusMessage(Model):
     :param str namespace: Gets or sets the namespace.
     :param str transport_type: Gets or sets the transport type. Possible
      values include: 'NotSpecified', 'NetMessaging', 'AMQP'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'authentication': {'key': 'authentication', 'type': 'ServiceBusAuthentication'},
@@ -48,7 +46,7 @@ class ServiceBusMessage(Model):
         'transport_type': {'key': 'transportType', 'type': 'ServiceBusTransportType'},
     }
 
-    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None):
+    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, **kwargs):
         self.authentication = authentication
         self.brokered_message_properties = brokered_message_properties
         self.custom_message_properties = custom_message_properties

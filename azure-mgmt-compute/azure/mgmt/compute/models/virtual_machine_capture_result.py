@@ -28,14 +28,13 @@ class VirtualMachineCaptureResult(SubResource):
 
     :param str id: Resource Id
     :param object output: Operation output data (raw JSON)
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
-        'output': {'key': 'properties.output', 'type': 'object', 'flatten': True},
+        'id': {'key': 'id', 'type': 'str'},
+        'output': {'key': 'properties.output', 'type': 'object'},
     }
 
-    def __init__(self, id=None, output=None):
-        super(VirtualMachineCaptureResult, self).__init__(id=id)
+    def __init__(self, id=None, output=None, **kwargs):
+        super(VirtualMachineCaptureResult, self).__init__(id=id, **kwargs)
         self.output = output

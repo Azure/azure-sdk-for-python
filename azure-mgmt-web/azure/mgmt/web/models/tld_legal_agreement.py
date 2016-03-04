@@ -30,9 +30,7 @@ class TldLegalAgreement(Model):
     :param str title: Agreement title
     :param str content: Agreement details
     :param str url: Url where a copy of the agreement details is hosted
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'agreement_key': {'key': 'agreementKey', 'type': 'str'},
@@ -41,7 +39,7 @@ class TldLegalAgreement(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, agreement_key=None, title=None, content=None, url=None):
+    def __init__(self, agreement_key=None, title=None, content=None, url=None, **kwargs):
         self.agreement_key = agreement_key
         self.title = title
         self.content = content

@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.profiles_operations import ProfilesOperations
 from .operations.endpoints_operations import EndpointsOperations
 from .operations.origins_operations import OriginsOperations
@@ -69,7 +70,8 @@ class CdnManagementClientConfiguration(AzureConfiguration):
 
         super(CdnManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('cdnmanagementclient/2015-06-01')
+        self.add_user_agent('cdnmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

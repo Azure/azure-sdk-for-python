@@ -43,9 +43,7 @@ class NotificationHubProperties(Model):
      NotificationHub
     :param BaiduCredential baidu_credential: The BaiduCredential of the
      created NotificationHub
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -59,7 +57,7 @@ class NotificationHubProperties(Model):
         'baidu_credential': {'key': 'baiduCredential', 'type': 'BaiduCredential'},
     }
 
-    def __init__(self, name=None, registration_ttl=None, authorization_rules=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None):
+    def __init__(self, name=None, registration_ttl=None, authorization_rules=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None, **kwargs):
         self.name = name
         self.registration_ttl = registration_ttl
         self.authorization_rules = authorization_rules

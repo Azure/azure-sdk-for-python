@@ -30,13 +30,11 @@ class CorsSettings(Model):
      be allowed to make cross-origin
      calls (for example: http://example.com:12345). Use "*" to
      allow all.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'allowed_origins': {'key': 'allowedOrigins', 'type': '[str]'},
     }
 
-    def __init__(self, allowed_origins=None):
+    def __init__(self, allowed_origins=None, **kwargs):
         self.allowed_origins = allowed_origins

@@ -30,9 +30,7 @@ class VirtualMachineScaleSetInstanceView(Model):
      Gets the instance view status summary for the virtual machine scale set.
     :param list extensions: Gets the extensions information.
     :param list statuses: Gets or sets the resource status information.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'virtual_machine': {'key': 'virtualMachine', 'type': 'VirtualMachineScaleSetInstanceViewStatusesSummary'},
@@ -40,7 +38,7 @@ class VirtualMachineScaleSetInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, virtual_machine=None, extensions=None, statuses=None):
+    def __init__(self, virtual_machine=None, extensions=None, statuses=None, **kwargs):
         self.virtual_machine = virtual_machine
         self.extensions = extensions
         self.statuses = statuses

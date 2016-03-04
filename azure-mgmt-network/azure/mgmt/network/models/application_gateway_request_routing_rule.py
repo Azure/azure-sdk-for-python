@@ -27,10 +27,6 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     Request routing rule of application gateway
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param str rule_type: Gets or sets the rule type. Possible values
      include: 'Basic', 'PathBasedRouting'
     :param SubResource backend_address_pool: Gets or sets backend address
@@ -43,28 +39,31 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
      application gateway
     :param str provisioning_state: Gets or sets Provisioning state of the
      request routing rule resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'rule_type': {'key': 'properties.ruleType', 'type': 'ApplicationGatewayRequestRoutingRuleType'},
+        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
+        'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
+        'http_listener': {'key': 'properties.httpListener', 'type': 'SubResource'},
+        'url_path_map': {'key': 'properties.urlPathMap', 'type': 'SubResource'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'rule_type': {'key': 'properties.ruleType', 'type': 'ApplicationGatewayRequestRoutingRuleType', 'flatten': True},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource', 'flatten': True},
-        'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource', 'flatten': True},
-        'http_listener': {'key': 'properties.httpListener', 'type': 'SubResource', 'flatten': True},
-        'url_path_map': {'key': 'properties.urlPathMap', 'type': 'SubResource', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, rule_type=None, backend_address_pool=None, backend_http_settings=None, http_listener=None, url_path_map=None, provisioning_state=None):
-        super(ApplicationGatewayRequestRoutingRule, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, rule_type=None, backend_address_pool=None, backend_http_settings=None, http_listener=None, url_path_map=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(ApplicationGatewayRequestRoutingRule, self).__init__(id=id, **kwargs)
         self.rule_type = rule_type
         self.backend_address_pool = backend_address_pool
         self.backend_http_settings = backend_http_settings
         self.http_listener = http_listener
         self.url_path_map = url_path_map
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

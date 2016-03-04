@@ -33,9 +33,7 @@ class AddressResponse(Model):
     :param list outbound_ip_addresses: IP addresses appearing on outbound
      connections
     :param list vip_mappings: Additional vips
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'service_ip_address': {'key': 'serviceIpAddress', 'type': 'str'},
@@ -44,7 +42,7 @@ class AddressResponse(Model):
         'vip_mappings': {'key': 'vipMappings', 'type': '[VirtualIPMapping]'},
     }
 
-    def __init__(self, service_ip_address=None, internal_ip_address=None, outbound_ip_addresses=None, vip_mappings=None):
+    def __init__(self, service_ip_address=None, internal_ip_address=None, outbound_ip_addresses=None, vip_mappings=None, **kwargs):
         self.service_ip_address = service_ip_address
         self.internal_ip_address = internal_ip_address
         self.outbound_ip_addresses = outbound_ip_addresses

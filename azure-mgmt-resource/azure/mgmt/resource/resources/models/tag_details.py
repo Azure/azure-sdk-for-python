@@ -30,9 +30,7 @@ class TagDetails(Model):
     :param str tag_name: Gets or sets the tag name.
     :param TagCount count: Gets or sets the tag count.
     :param list values: Gets or sets the list of tag values.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -41,7 +39,7 @@ class TagDetails(Model):
         'values': {'key': 'values', 'type': '[TagValue]'},
     }
 
-    def __init__(self, id=None, tag_name=None, count=None, values=None):
+    def __init__(self, id=None, tag_name=None, count=None, values=None, **kwargs):
         self.id = id
         self.tag_name = tag_name
         self.count = count

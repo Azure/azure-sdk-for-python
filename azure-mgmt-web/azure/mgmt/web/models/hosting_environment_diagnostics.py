@@ -28,15 +28,13 @@ class HostingEnvironmentDiagnostics(Model):
 
     :param str name: Name/identifier of the diagnostics
     :param str diagnosics_output: Diagnostics output
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'diagnosics_output': {'key': 'diagnosicsOutput', 'type': 'str'},
     }
 
-    def __init__(self, name=None, diagnosics_output=None):
+    def __init__(self, name=None, diagnosics_output=None, **kwargs):
         self.name = name
         self.diagnosics_output = diagnosics_output

@@ -32,9 +32,7 @@ class DomainPurchaseConsent(Model):
      resource
     :param str agreed_by: Client IP address
     :param datetime agreed_at: Timestamp when the agreements were accepted
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'agreement_keys': {'key': 'agreementKeys', 'type': '[str]'},
@@ -42,7 +40,7 @@ class DomainPurchaseConsent(Model):
         'agreed_at': {'key': 'agreedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, agreement_keys=None, agreed_by=None, agreed_at=None):
+    def __init__(self, agreement_keys=None, agreed_by=None, agreed_at=None, **kwargs):
         self.agreement_keys = agreement_keys
         self.agreed_by = agreed_by
         self.agreed_at = agreed_at

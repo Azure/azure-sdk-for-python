@@ -31,9 +31,7 @@ class SkuDescription(Model):
     :param str size: Size specifier of the resource sku
     :param str family: Family code of the resource sku
     :param int capacity: Current number of instances assigned to the resource
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -43,7 +41,7 @@ class SkuDescription(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, tier=None, size=None, family=None, capacity=None):
+    def __init__(self, name=None, tier=None, size=None, family=None, capacity=None, **kwargs):
         self.name = name
         self.tier = tier
         self.size = size

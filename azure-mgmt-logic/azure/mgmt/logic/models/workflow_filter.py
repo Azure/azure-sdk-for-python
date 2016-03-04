@@ -27,13 +27,11 @@ class WorkflowFilter(Model):
 
     :param str state: Gets or sets the state of workflows. Possible values
      include: 'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'WorkflowState'},
     }
 
-    def __init__(self, state=None):
+    def __init__(self, state=None, **kwargs):
         self.state = state

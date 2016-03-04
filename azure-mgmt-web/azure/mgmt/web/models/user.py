@@ -34,18 +34,25 @@ class User(Resource):
     :param str user_name: Username (internal)
     :param str publishing_user_name: Username used for publishing
     :param str publishing_password: Password used for publishing
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'user_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str', 'flatten': True},
-        'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None):
-        super(User, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'user_name': {'key': 'properties.name', 'type': 'str'},
+        'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
+        'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None, **kwargs):
+        super(User, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.user_name = user_name
         self.publishing_user_name = publishing_user_name
         self.publishing_password = publishing_password

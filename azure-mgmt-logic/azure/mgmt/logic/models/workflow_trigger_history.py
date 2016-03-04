@@ -26,13 +26,11 @@ class WorkflowTriggerHistory(SubResource):
     """WorkflowTriggerHistory
 
     :param str id: Gets or sets the resource id.
-    :param str name: Gets the workflow trigger history name.
-    :param str type: Gets the workflow trigger history type.
     :param datetime start_time: Gets the start time.
     :param datetime end_time: Gets the end time.
     :param str status: Gets the status. Possible values include:
      'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
-     'Suspended', 'Cancelled', 'Failed'
+     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
     :param str code: Gets the code.
     :param object error: Gets the error.
     :param str tracking_id: Gets the tracking id.
@@ -40,29 +38,28 @@ class WorkflowTriggerHistory(SubResource):
     :param ContentLink outputs_link: Gets the link to output parameters.
     :param bool fired: Gets a value indicating whether trigger was fired.
     :param ResourceReference run: Gets the reference to workflow run.
-    """
-
-    _required = []
+    :param str name: Gets the workflow trigger history name.
+    :param str type: Gets the workflow trigger history type.
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
+        'status': {'key': 'properties.status', 'type': 'WorkflowStatus'},
+        'code': {'key': 'properties.code', 'type': 'str'},
+        'error': {'key': 'properties.error', 'type': 'object'},
+        'tracking_id': {'key': 'properties.trackingId', 'type': 'str'},
+        'inputs_link': {'key': 'properties.inputsLink', 'type': 'ContentLink'},
+        'outputs_link': {'key': 'properties.outputsLink', 'type': 'ContentLink'},
+        'fired': {'key': 'properties.fired', 'type': 'bool'},
+        'run': {'key': 'properties.run', 'type': 'ResourceReference'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601', 'flatten': True},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601', 'flatten': True},
-        'status': {'key': 'properties.status', 'type': 'WorkflowStatus', 'flatten': True},
-        'code': {'key': 'properties.code', 'type': 'str', 'flatten': True},
-        'error': {'key': 'properties.error', 'type': 'object', 'flatten': True},
-        'tracking_id': {'key': 'properties.trackingId', 'type': 'str', 'flatten': True},
-        'inputs_link': {'key': 'properties.inputsLink', 'type': 'ContentLink', 'flatten': True},
-        'outputs_link': {'key': 'properties.outputsLink', 'type': 'ContentLink', 'flatten': True},
-        'fired': {'key': 'properties.fired', 'type': 'bool', 'flatten': True},
-        'run': {'key': 'properties.run', 'type': 'ResourceReference', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, start_time=None, end_time=None, status=None, code=None, error=None, tracking_id=None, inputs_link=None, outputs_link=None, fired=None, run=None):
-        super(WorkflowTriggerHistory, self).__init__(id=id)
-        self.name = name
-        self.type = type
+    def __init__(self, id=None, start_time=None, end_time=None, status=None, code=None, error=None, tracking_id=None, inputs_link=None, outputs_link=None, fired=None, run=None, name=None, type=None, **kwargs):
+        super(WorkflowTriggerHistory, self).__init__(id=id, **kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.status = status
@@ -73,3 +70,5 @@ class WorkflowTriggerHistory(SubResource):
         self.outputs_link = outputs_link
         self.fired = fired
         self.run = run
+        self.name = name
+        self.type = type

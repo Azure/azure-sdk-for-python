@@ -31,9 +31,7 @@ class JobProperties(Model):
     :param str state: Gets or set the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
     :param JobStatus status: Gets the job status.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
@@ -43,7 +41,7 @@ class JobProperties(Model):
         'status': {'key': 'status', 'type': 'JobStatus'},
     }
 
-    def __init__(self, start_time=None, action=None, recurrence=None, state=None, status=None):
+    def __init__(self, start_time=None, action=None, recurrence=None, state=None, status=None, **kwargs):
         self.start_time = start_time
         self.action = action
         self.recurrence = recurrence

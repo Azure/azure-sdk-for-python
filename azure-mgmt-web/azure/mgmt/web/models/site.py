@@ -84,39 +84,48 @@ class Site(Resource):
     :param CloningInfo cloning_info: This is only valid for web app creation.
      If specified, web app is cloned from
      a source web app
-    """
+    :param str resource_group: Resource group web app belongs to
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'site_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'state': {'key': 'properties.state', 'type': 'str', 'flatten': True},
-        'host_names': {'key': 'properties.hostNames', 'type': '[str]', 'flatten': True},
-        'repository_site_name': {'key': 'properties.repositorySiteName', 'type': 'str', 'flatten': True},
-        'usage_state': {'key': 'properties.usageState', 'type': 'UsageState', 'flatten': True},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool', 'flatten': True},
-        'enabled_host_names': {'key': 'properties.enabledHostNames', 'type': '[str]', 'flatten': True},
-        'availability_state': {'key': 'properties.availabilityState', 'type': 'SiteAvailabilityState', 'flatten': True},
-        'host_name_ssl_states': {'key': 'properties.hostNameSslStates', 'type': '[HostNameSslState]', 'flatten': True},
-        'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str', 'flatten': True},
-        'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601', 'flatten': True},
-        'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig', 'flatten': True},
-        'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]', 'flatten': True},
-        'premium_app_deployed': {'key': 'properties.premiumAppDeployed', 'type': 'bool', 'flatten': True},
-        'scm_site_also_stopped': {'key': 'properties.scmSiteAlsoStopped', 'type': 'bool', 'flatten': True},
-        'target_swap_slot': {'key': 'properties.targetSwapSlot', 'type': 'str', 'flatten': True},
-        'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile', 'flatten': True},
-        'micro_service': {'key': 'properties.microService', 'type': 'str', 'flatten': True},
-        'gateway_site_name': {'key': 'properties.gatewaySiteName', 'type': 'str', 'flatten': True},
-        'client_affinity_enabled': {'key': 'properties.clientAffinityEnabled', 'type': 'bool', 'flatten': True},
-        'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool', 'flatten': True},
-        'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool', 'flatten': True},
-        'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str', 'flatten': True},
-        'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, cloning_info=None):
-        super(Site, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'site_name': {'key': 'properties.name', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
+        'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
+        'repository_site_name': {'key': 'properties.repositorySiteName', 'type': 'str'},
+        'usage_state': {'key': 'properties.usageState', 'type': 'UsageState'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'enabled_host_names': {'key': 'properties.enabledHostNames', 'type': '[str]'},
+        'availability_state': {'key': 'properties.availabilityState', 'type': 'SiteAvailabilityState'},
+        'host_name_ssl_states': {'key': 'properties.hostNameSslStates', 'type': '[HostNameSslState]'},
+        'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
+        'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
+        'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
+        'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
+        'premium_app_deployed': {'key': 'properties.premiumAppDeployed', 'type': 'bool'},
+        'scm_site_also_stopped': {'key': 'properties.scmSiteAlsoStopped', 'type': 'bool'},
+        'target_swap_slot': {'key': 'properties.targetSwapSlot', 'type': 'str'},
+        'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
+        'micro_service': {'key': 'properties.microService', 'type': 'str'},
+        'gateway_site_name': {'key': 'properties.gatewaySiteName', 'type': 'str'},
+        'client_affinity_enabled': {'key': 'properties.clientAffinityEnabled', 'type': 'bool'},
+        'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool'},
+        'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
+        'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str'},
+        'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo'},
+        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, cloning_info=None, resource_group=None, **kwargs):
+        super(Site, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.site_name = site_name
         self.state = state
         self.host_names = host_names
@@ -141,3 +150,4 @@ class Site(Resource):
         self.host_names_disabled = host_names_disabled
         self.outbound_ip_addresses = outbound_ip_addresses
         self.cloning_info = cloning_info
+        self.resource_group = resource_group

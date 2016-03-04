@@ -70,7 +70,7 @@ class WorkflowAccessKeysOperations(object):
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -139,7 +139,7 @@ class WorkflowAccessKeysOperations(object):
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
             'accessKeyName': self._serialize.url("access_key_name", access_key_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -202,7 +202,7 @@ class WorkflowAccessKeysOperations(object):
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
             'accessKeyName': self._serialize.url("access_key_name", access_key_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -269,7 +269,7 @@ class WorkflowAccessKeysOperations(object):
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
             'accessKeyName': self._serialize.url("access_key_name", access_key_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -323,7 +323,7 @@ class WorkflowAccessKeysOperations(object):
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
             'accessKeyName': self._serialize.url("access_key_name", access_key_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -389,7 +389,7 @@ class WorkflowAccessKeysOperations(object):
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
             'accessKeyName': self._serialize.url("access_key_name", access_key_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

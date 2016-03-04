@@ -30,15 +30,13 @@ class BootDiagnostics(Model):
      on the Virtual Machine.
     :param str storage_uri: Gets or sets the boot diagnostics storage Uri. It
      should be a valid Uri
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'storage_uri': {'key': 'storageUri', 'type': 'str'},
     }
 
-    def __init__(self, enabled=None, storage_uri=None):
+    def __init__(self, enabled=None, storage_uri=None, **kwargs):
         self.enabled = enabled
         self.storage_uri = storage_uri

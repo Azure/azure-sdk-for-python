@@ -29,9 +29,7 @@ class JobCollectionQuota(Model):
     :param int max_job_occurrence: Gets or sets the maximum job occurrence.
     :param JobMaxRecurrence max_recurrence: Gets or set the maximum
      recurrence.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'max_job_count': {'key': 'maxJobCount', 'type': 'int'},
@@ -39,7 +37,7 @@ class JobCollectionQuota(Model):
         'max_recurrence': {'key': 'maxRecurrence', 'type': 'JobMaxRecurrence'},
     }
 
-    def __init__(self, max_job_count=None, max_job_occurrence=None, max_recurrence=None):
+    def __init__(self, max_job_count=None, max_job_occurrence=None, max_recurrence=None, **kwargs):
         self.max_job_count = max_job_count
         self.max_job_occurrence = max_job_occurrence
         self.max_recurrence = max_recurrence

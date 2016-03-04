@@ -48,30 +48,37 @@ class Certificate(Resource):
     :param HostingEnvironmentProfile hosting_environment_profile:
      Specification for the hosting environment (App Service Environment) to
      use for the certificate
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str', 'flatten': True},
-        'subject_name': {'key': 'properties.subjectName', 'type': 'str', 'flatten': True},
-        'host_names': {'key': 'properties.hostNames', 'type': '[str]', 'flatten': True},
-        'pfx_blob': {'key': 'properties.pfxBlob', 'type': 'str', 'flatten': True},
-        'site_name': {'key': 'properties.siteName', 'type': 'str', 'flatten': True},
-        'self_link': {'key': 'properties.selfLink', 'type': 'str', 'flatten': True},
-        'issuer': {'key': 'properties.issuer', 'type': 'str', 'flatten': True},
-        'issue_date': {'key': 'properties.issueDate', 'type': 'iso-8601', 'flatten': True},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601', 'flatten': True},
-        'password': {'key': 'properties.password', 'type': 'str', 'flatten': True},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str', 'flatten': True},
-        'valid': {'key': 'properties.valid', 'type': 'bool', 'flatten': True},
-        'cer_blob': {'key': 'properties.cerBlob', 'type': 'str', 'flatten': True},
-        'public_key_hash': {'key': 'properties.publicKeyHash', 'type': 'str', 'flatten': True},
-        'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, friendly_name=None, subject_name=None, host_names=None, pfx_blob=None, site_name=None, self_link=None, issuer=None, issue_date=None, expiration_date=None, password=None, thumbprint=None, valid=None, cer_blob=None, public_key_hash=None, hosting_environment_profile=None):
-        super(Certificate, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'subject_name': {'key': 'properties.subjectName', 'type': 'str'},
+        'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
+        'pfx_blob': {'key': 'properties.pfxBlob', 'type': 'str'},
+        'site_name': {'key': 'properties.siteName', 'type': 'str'},
+        'self_link': {'key': 'properties.selfLink', 'type': 'str'},
+        'issuer': {'key': 'properties.issuer', 'type': 'str'},
+        'issue_date': {'key': 'properties.issueDate', 'type': 'iso-8601'},
+        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
+        'password': {'key': 'properties.password', 'type': 'str'},
+        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
+        'valid': {'key': 'properties.valid', 'type': 'bool'},
+        'cer_blob': {'key': 'properties.cerBlob', 'type': 'str'},
+        'public_key_hash': {'key': 'properties.publicKeyHash', 'type': 'str'},
+        'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, friendly_name=None, subject_name=None, host_names=None, pfx_blob=None, site_name=None, self_link=None, issuer=None, issue_date=None, expiration_date=None, password=None, thumbprint=None, valid=None, cer_blob=None, public_key_hash=None, hosting_environment_profile=None, **kwargs):
+        super(Certificate, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.friendly_name = friendly_name
         self.subject_name = subject_name
         self.host_names = host_names

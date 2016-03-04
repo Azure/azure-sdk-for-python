@@ -27,30 +27,34 @@ class VirtualMachineImage(SubResource):
     Describes a Virtual Machine Image.
 
     :param str id: Resource Id
-    :param str name: Gets or sets the name of the resource.
-    :param str location: Gets or sets the location of the resource.
-    :param dict tags: Gets or sets the tags attached to the resource.
     :param PurchasePlan plan:
     :param OSDiskImage os_disk_image:
     :param list data_disk_images:
-    """
+    :param str name: Gets or sets the name of the resource.
+    :param str location: Gets or sets the location of the resource.
+    :param dict tags: Gets or sets the tags attached to the resource.
+    """ 
 
-    _required = ['name', 'location']
+    _validation = {
+        'name': {'required': True},
+        'location': {'required': True},
+    }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'plan': {'key': 'properties.plan', 'type': 'PurchasePlan'},
+        'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage'},
+        'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'plan': {'key': 'properties.plan', 'type': 'PurchasePlan', 'flatten': True},
-        'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage', 'flatten': True},
-        'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]', 'flatten': True},
     }
 
-    def __init__(self, name, location, id=None, tags=None, plan=None, os_disk_image=None, data_disk_images=None):
-        super(VirtualMachineImage, self).__init__(id=id)
-        self.name = name
-        self.location = location
-        self.tags = tags
+    def __init__(self, name, location, id=None, plan=None, os_disk_image=None, data_disk_images=None, tags=None, **kwargs):
+        super(VirtualMachineImage, self).__init__(id=id, **kwargs)
         self.plan = plan
         self.os_disk_image = os_disk_image
         self.data_disk_images = data_disk_images
+        self.name = name
+        self.location = location
+        self.tags = tags

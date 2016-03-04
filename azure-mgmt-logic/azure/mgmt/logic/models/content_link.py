@@ -30,9 +30,7 @@ class ContentLink(Model):
     :param long content_size: Gets or sets the content size.
     :param ContentHash content_hash: Gets or sets the content hash.
     :param object metadata: Gets or sets the metadata.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'uri': {'key': 'uri', 'type': 'str'},
@@ -42,7 +40,7 @@ class ContentLink(Model):
         'metadata': {'key': 'metadata', 'type': 'object'},
     }
 
-    def __init__(self, uri=None, content_version=None, content_size=None, content_hash=None, metadata=None):
+    def __init__(self, uri=None, content_version=None, content_size=None, content_hash=None, metadata=None, **kwargs):
         self.uri = uri
         self.content_version = content_version
         self.content_size = content_size

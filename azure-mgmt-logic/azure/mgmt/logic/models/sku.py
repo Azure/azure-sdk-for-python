@@ -28,15 +28,13 @@ class Sku(Model):
     :param str name: Gets or sets the name. Possible values include:
      'NotSpecified', 'Free', 'Shared', 'Basic', 'Standard', 'Premium'
     :param ResourceReference plan: Gets or sets the reference to plan.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'SkuName'},
         'plan': {'key': 'plan', 'type': 'ResourceReference'},
     }
 
-    def __init__(self, name=None, plan=None):
+    def __init__(self, name=None, plan=None, **kwargs):
         self.name = name
         self.plan = plan

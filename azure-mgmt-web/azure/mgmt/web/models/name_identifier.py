@@ -27,13 +27,11 @@ class NameIdentifier(Model):
     Identifies an object
 
     :param str name: Name of the object
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, **kwargs):
         self.name = name

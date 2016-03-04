@@ -28,15 +28,13 @@ class GcmCredentialProperties(Model):
 
     :param str gcm_endpoint: Gets or sets the GCM endpoint.
     :param str google_api_key: Gets or sets the Google API key.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'gcm_endpoint': {'key': 'gcmEndpoint', 'type': 'str'},
         'google_api_key': {'key': 'googleApiKey', 'type': 'str'},
     }
 
-    def __init__(self, gcm_endpoint=None, google_api_key=None):
+    def __init__(self, gcm_endpoint=None, google_api_key=None, **kwargs):
         self.gcm_endpoint = gcm_endpoint
         self.google_api_key = google_api_key

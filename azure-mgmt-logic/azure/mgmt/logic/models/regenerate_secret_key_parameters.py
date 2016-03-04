@@ -27,13 +27,11 @@ class RegenerateSecretKeyParameters(Model):
 
     :param str key_type: Gets or sets the key type. Possible values include:
      'NotSpecified', 'Primary', 'Secondary'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'key_type': {'key': 'keyType', 'type': 'KeyType'},
     }
 
-    def __init__(self, key_type=None):
+    def __init__(self, key_type=None, **kwargs):
         self.key_type = key_type

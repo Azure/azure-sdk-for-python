@@ -74,7 +74,7 @@ class VirtualMachineImagesOperations(object):
             'version': self._serialize.url("version", version, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -124,7 +124,7 @@ class VirtualMachineImagesOperations(object):
         :param skus:
         :type skus: str
         :param filter: The filter to apply on the operation.
-        :type filter: VirtualMachineImageResource
+        :type filter: str
         :param top:
         :type top: int
         :param orderby:
@@ -144,12 +144,12 @@ class VirtualMachineImagesOperations(object):
             'skus': self._serialize.url("skus", skus, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'VirtualMachineImageResource')
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         if top is not None:
             query_parameters['$top'] = self._serialize.query("top", top, 'int')
         if orderby is not None:
@@ -208,7 +208,7 @@ class VirtualMachineImagesOperations(object):
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -263,7 +263,7 @@ class VirtualMachineImagesOperations(object):
             'location': self._serialize.url("location", location, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -324,7 +324,7 @@ class VirtualMachineImagesOperations(object):
             'offer': self._serialize.url("offer", offer, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

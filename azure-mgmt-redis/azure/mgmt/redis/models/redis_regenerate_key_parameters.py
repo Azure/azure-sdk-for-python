@@ -28,13 +28,15 @@ class RedisRegenerateKeyParameters(Model):
 
     :param str key_type: Which redis access key to reset. Possible values
      include: 'Primary', 'Secondary'
-    """
+    """ 
 
-    _required = ['key_type']
+    _validation = {
+        'key_type': {'required': True},
+    }
 
     _attribute_map = {
         'key_type': {'key': 'keyType', 'type': 'RedisKeyType'},
     }
 
-    def __init__(self, key_type):
+    def __init__(self, key_type, **kwargs):
         self.key_type = key_type

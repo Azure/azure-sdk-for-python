@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .redis_management_client import RedisManagementClient, RedisManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'RedisManagementClient',
     'RedisManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

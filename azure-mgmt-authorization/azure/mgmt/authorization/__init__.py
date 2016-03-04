@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .authorization_management_client import AuthorizationManagementClient, AuthorizationManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'AuthorizationManagementClient',
     'AuthorizationManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

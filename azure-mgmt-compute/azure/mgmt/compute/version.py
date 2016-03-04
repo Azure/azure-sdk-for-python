@@ -19,27 +19,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+VERSION = "2015-06-15"
 
-
-class GenericResourceFilter(Model):
-    """
-    Resource filter.
-
-    :param str resource_type: Gets or sets the resource type.
-    :param str tagname: Gets or sets the tag name.
-    :param str tagvalue: Gets or sets the tag value.
-    """
-
-    _required = []
-
-    _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'tagname': {'key': 'tagname', 'type': 'str'},
-        'tagvalue': {'key': 'tagvalue', 'type': 'str'},
-    }
-
-    def __init__(self, resource_type=None, tagname=None, tagvalue=None):
-        self.resource_type = resource_type
-        self.tagname = tagname
-        self.tagvalue = tagvalue

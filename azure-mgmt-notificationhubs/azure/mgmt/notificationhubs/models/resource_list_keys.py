@@ -30,15 +30,13 @@ class ResourceListKeys(Model):
      primaryConnectionString of the created Namespace AuthorizationRule.
     :param str secondary_connection_string: Gets or sets the
      secondaryConnectionString of the created Namespace AuthorizationRule
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
         'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
     }
 
-    def __init__(self, primary_connection_string=None, secondary_connection_string=None):
+    def __init__(self, primary_connection_string=None, secondary_connection_string=None, **kwargs):
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string

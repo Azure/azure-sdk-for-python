@@ -32,14 +32,21 @@ class ConnectionStringDictionary(Resource):
     :param str type: Resource type
     :param dict tags: Resource tags
     :param dict properties: Connection strings
-    """
+    """ 
 
-    _required = []
+    _validation = {
+        'location': {'required': True},
+    }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': '{ConnStringValueTypePair}'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, properties=None):
-        super(ConnectionStringDictionary, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, properties=None, **kwargs):
+        super(ConnectionStringDictionary, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.properties = properties

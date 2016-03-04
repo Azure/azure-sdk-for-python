@@ -34,9 +34,7 @@ class VirtualMachineScaleSetVMProfile(Model):
      the virtual machine scale set network profile.
     :param VirtualMachineScaleSetExtensionProfile extension_profile: Gets the
      virtual machine scale set extension profile.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'os_profile': {'key': 'osProfile', 'type': 'VirtualMachineScaleSetOSProfile'},
@@ -45,7 +43,7 @@ class VirtualMachineScaleSetVMProfile(Model):
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
     }
 
-    def __init__(self, os_profile=None, storage_profile=None, network_profile=None, extension_profile=None):
+    def __init__(self, os_profile=None, storage_profile=None, network_profile=None, extension_profile=None, **kwargs):
         self.os_profile = os_profile
         self.storage_profile = storage_profile
         self.network_profile = network_profile

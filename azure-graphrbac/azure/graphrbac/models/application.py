@@ -35,9 +35,7 @@ class Application(Model):
     :param str display_name: Gets or sets the displayName
     :param list identifier_uris: Gets or sets the application identifier Uris
     :param list reply_urls: Gets or sets the application reply Urls
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
@@ -50,7 +48,7 @@ class Application(Model):
         'reply_urls': {'key': 'replyUrls', 'type': '[str]'},
     }
 
-    def __init__(self, object_id=None, object_type=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None):
+    def __init__(self, object_id=None, object_type=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, **kwargs):
         self.object_id = object_id
         self.object_type = object_type
         self.app_id = app_id

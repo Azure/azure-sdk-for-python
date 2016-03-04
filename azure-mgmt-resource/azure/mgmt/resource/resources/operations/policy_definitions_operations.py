@@ -68,7 +68,7 @@ class PolicyDefinitionsOperations(object):
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -127,7 +127,7 @@ class PolicyDefinitionsOperations(object):
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -182,7 +182,7 @@ class PolicyDefinitionsOperations(object):
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

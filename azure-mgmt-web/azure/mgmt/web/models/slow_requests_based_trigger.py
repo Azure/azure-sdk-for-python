@@ -29,9 +29,7 @@ class SlowRequestsBasedTrigger(Model):
     :param str time_taken: TimeTaken
     :param int count: Count
     :param str time_interval: TimeInterval
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'time_taken': {'key': 'timeTaken', 'type': 'str'},
@@ -39,7 +37,7 @@ class SlowRequestsBasedTrigger(Model):
         'time_interval': {'key': 'timeInterval', 'type': 'str'},
     }
 
-    def __init__(self, time_taken=None, count=None, time_interval=None):
+    def __init__(self, time_taken=None, count=None, time_interval=None, **kwargs):
         self.time_taken = time_taken
         self.count = count
         self.time_interval = time_interval

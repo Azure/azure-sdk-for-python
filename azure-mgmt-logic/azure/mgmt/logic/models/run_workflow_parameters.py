@@ -27,15 +27,13 @@ class RunWorkflowParameters(Model):
 
     :param str name: Gets or sets the name of workflow run trigger.
     :param object outputs: Gets or sets the outputs of workflow run trigger.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'outputs': {'key': 'outputs', 'type': 'object'},
     }
 
-    def __init__(self, name=None, outputs=None):
+    def __init__(self, name=None, outputs=None, **kwargs):
         self.name = name
         self.outputs = outputs

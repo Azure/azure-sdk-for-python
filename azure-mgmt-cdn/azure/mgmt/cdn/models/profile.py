@@ -34,23 +34,23 @@ class Profile(TrackedResource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param Sku sku: Profile sku
-    :param str resource_state: Resource status of the profile. Possible
-     values include: 'Creating', 'Active', 'Deleting', 'Disabled'
-    :param str provisioning_state: Provisioning status of the profile.
-     Possible values include: 'Creating', 'Succeeded', 'Failed'
-    """
+    :param ProfileProperties properties:
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'sku': {'key': 'properties.sku', 'type': 'Sku', 'flatten': True},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'ProfileResourceState', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
+        'tags': {'required': True},
     }
 
-    def __init__(self, location, tags, id=None, name=None, type=None, sku=None, resource_state=None, provisioning_state=None):
-        super(Profile, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.sku = sku
-        self.resource_state = resource_state
-        self.provisioning_state = provisioning_state
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'ProfileProperties'},
+    }
+
+    def __init__(self, location, tags, id=None, name=None, type=None, properties=None, **kwargs):
+        super(Profile, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+        self.properties = properties

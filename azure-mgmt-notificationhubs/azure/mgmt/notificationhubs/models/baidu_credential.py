@@ -28,13 +28,11 @@ class BaiduCredential(Model):
 
     :param BaiduCredentialProperties properties: Gets or sets properties of
      NotificationHub BaiduCredential.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'BaiduCredentialProperties'},
     }
 
-    def __init__(self, properties=None):
+    def __init__(self, properties=None, **kwargs):
         self.properties = properties

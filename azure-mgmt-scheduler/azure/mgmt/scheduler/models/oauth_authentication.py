@@ -32,19 +32,18 @@ class OAuthAuthentication(HttpAuthentication):
     :param str tenant: Gets or sets the tenant.
     :param str audience: Gets or sets the audience.
     :param str client_id: Gets or sets the client identifier.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
         'secret': {'key': 'secret', 'type': 'str'},
         'tenant': {'key': 'tenant', 'type': 'str'},
         'audience': {'key': 'audience', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, type=None, secret=None, tenant=None, audience=None, client_id=None):
-        super(OAuthAuthentication, self).__init__(type=type)
+    def __init__(self, type=None, secret=None, tenant=None, audience=None, client_id=None, **kwargs):
+        super(OAuthAuthentication, self).__init__(type=type, **kwargs)
         self.secret = secret
         self.tenant = tenant
         self.audience = audience

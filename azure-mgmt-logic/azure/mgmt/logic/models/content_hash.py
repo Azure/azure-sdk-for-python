@@ -27,15 +27,13 @@ class ContentHash(Model):
 
     :param str algorithm: Gets or sets the algorithm.
     :param str value: Gets or sets the value.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'algorithm': {'key': 'algorithm', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, algorithm=None, value=None):
+    def __init__(self, algorithm=None, value=None, **kwargs):
         self.algorithm = algorithm
         self.value = value

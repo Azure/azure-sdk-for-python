@@ -28,15 +28,13 @@ class Permission(Model):
 
     :param list actions: Role definition allowed actions.
     :param list not_actions: Role definition denied actions.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'actions': {'key': 'actions', 'type': '[str]'},
         'not_actions': {'key': 'notActions', 'type': '[str]'},
     }
 
-    def __init__(self, actions=None, not_actions=None):
+    def __init__(self, actions=None, not_actions=None, **kwargs):
         self.actions = actions
         self.not_actions = not_actions

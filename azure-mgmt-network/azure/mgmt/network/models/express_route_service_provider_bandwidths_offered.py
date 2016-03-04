@@ -28,15 +28,13 @@ class ExpressRouteServiceProviderBandwidthsOffered(Model):
 
     :param str offer_name: Gets the OfferName
     :param int value_in_mbps: Gets the ValueInMbps.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'offer_name': {'key': 'offerName', 'type': 'str'},
         'value_in_mbps': {'key': 'valueInMbps', 'type': 'int'},
     }
 
-    def __init__(self, offer_name=None, value_in_mbps=None):
+    def __init__(self, offer_name=None, value_in_mbps=None, **kwargs):
         self.offer_name = offer_name
         self.value_in_mbps = value_in_mbps

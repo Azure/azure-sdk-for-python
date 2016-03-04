@@ -29,9 +29,7 @@ class WnsCredentialProperties(Model):
     :param str package_sid: Gets or sets the package ID for this credential.
     :param str secret_key: Gets or sets the secret key.
     :param str windows_live_endpoint: Gets or sets the Windows Live endpoint.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'package_sid': {'key': 'packageSid', 'type': 'str'},
@@ -39,7 +37,7 @@ class WnsCredentialProperties(Model):
         'windows_live_endpoint': {'key': 'windowsLiveEndpoint', 'type': 'str'},
     }
 
-    def __init__(self, package_sid=None, secret_key=None, windows_live_endpoint=None):
+    def __init__(self, package_sid=None, secret_key=None, windows_live_endpoint=None, **kwargs):
         self.package_sid = package_sid
         self.secret_key = secret_key
         self.windows_live_endpoint = windows_live_endpoint

@@ -30,9 +30,11 @@ class ConnStringInfo(Model):
     :param str connection_string: Connection string value
     :param str type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom'
-    """
+    """ 
 
-    _required = ['type']
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -40,7 +42,7 @@ class ConnStringInfo(Model):
         'type': {'key': 'type', 'type': 'DatabaseServerType'},
     }
 
-    def __init__(self, type, name=None, connection_string=None):
+    def __init__(self, type, name=None, connection_string=None, **kwargs):
         self.name = name
         self.connection_string = connection_string
         self.type = type

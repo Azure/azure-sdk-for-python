@@ -33,16 +33,23 @@ class SlotConfigNamesResource(Resource):
     :param dict tags: Resource tags
     :param list connection_string_names: List of connection string names
     :param list app_setting_names: List of application settings names
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'connection_string_names': {'key': 'properties.connectionStringNames', 'type': '[str]', 'flatten': True},
-        'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, connection_string_names=None, app_setting_names=None):
-        super(SlotConfigNamesResource, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'connection_string_names': {'key': 'properties.connectionStringNames', 'type': '[str]'},
+        'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, connection_string_names=None, app_setting_names=None, **kwargs):
+        super(SlotConfigNamesResource, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.connection_string_names = connection_string_names
         self.app_setting_names = app_setting_names
