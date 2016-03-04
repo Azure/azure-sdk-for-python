@@ -3,10 +3,12 @@ Azure SDK for Python
 
 Installation:
 -------------
- 
-You can use ``pip`` to install the latest released version of ``azure``::
 
-    pip install azure
+**The latest recommended release is currently a release candidate, tell this to pip to install it!**
+
+- Use the ``--pre`` flag: ``pip install --pre azure``
+
+- Specify the version:  ``pip install azure==2.0.0rc1``
 
 If you want to install ``azure`` from source::
 
@@ -17,7 +19,7 @@ If you want to install ``azure`` from source::
 DISCLAIMER
 ----------
 
-This is an alpha release. Future releases may introduce some breaking changes.
+This is a release candidate. It could have minor breaking changes until the stable release.
 
 Some of the new generated libraries have not yet been tested extensively, and some have known issues (such as azure-mgmt-web).
 
