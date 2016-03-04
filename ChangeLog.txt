@@ -1,3 +1,24 @@
+2016-03-04 Version 2.0.0rc1 / 0.30.0rc1
+
+New:
+* Lastest Swagger update for CDN (endpoint create/update fix).
+* Lastest Swagger update for ARM VMScaleSet (reimage, redeploy).
+* Lastest Swagger update for ARM VirtualMachine (minor fixes, redeploy).
+* Lastest Swagger update for ARM Storage (minor fixes).
+* Lastest Swagger update for ARM Apps Logic (minor fixes).
+* Lastest Swagger update for ARM Web Apps (recommendation API).
+* Rename resource/authorization to resource/locks
+* Any default tags in the swagger spec are used as defaults for named args.
+* 'Azure-SDK-for-Python' is added to the user-agent of each generated libraries.
+* Base class Paged now inherits from collections.Iterable.
+* odata filters are now taken as string directly
+
+azure-common 1.1.0
+* add exceptions/credentials aliases in azure.common
+
+Dependencies:
+* msrest/msrestazure must be >= 0.1.0 (see their ChangeLog for details)
+
 2016-02-18 Version 2.0.0a1
 
 DISCLAIMER:
