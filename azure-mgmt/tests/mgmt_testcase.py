@@ -30,7 +30,7 @@ import tests.mgmt_settings_fake as fake_settings
 should_log = os.getenv('SDK_TESTS_LOG', '0')
 if should_log.lower() == 'true' or should_log == '1':
     import logging
-    logger = logging.getLogger('azure.mgmt.common.filters')
+    logger = logging.getLogger('msrest')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
 
