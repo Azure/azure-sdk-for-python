@@ -28,9 +28,7 @@ class Resource(Model):
     :param str id: Resource Id
     :param str name: Resource Name
     :param str type: Resource type
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -38,7 +36,7 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None):
+    def __init__(self, id=None, name=None, type=None, **kwargs):
         self.id = id
         self.name = name
         self.type = type

@@ -29,13 +29,11 @@ class ApiEntityReference(Model):
     :param str id: Gets or sets the relative URL in the previous Service
      Management API's namespace. For Example:
      /subscriptions/{SubcriptionId}/resourceGroups/{ResourceGroupName}/...
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
+    def __init__(self, id=None, **kwargs):
         self.id = id

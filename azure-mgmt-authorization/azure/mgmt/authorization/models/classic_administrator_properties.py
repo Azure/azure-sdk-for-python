@@ -28,15 +28,13 @@ class ClassicAdministratorProperties(Model):
 
     :param str email_address: Gets or sets the email address
     :param str role: Gets or sets the role
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'email_address': {'key': 'emailAddress', 'type': 'str'},
         'role': {'key': 'role', 'type': 'str'},
     }
 
-    def __init__(self, email_address=None, role=None):
+    def __init__(self, email_address=None, role=None, **kwargs):
         self.email_address = email_address
         self.role = role

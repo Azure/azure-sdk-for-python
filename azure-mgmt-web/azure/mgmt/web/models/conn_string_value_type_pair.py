@@ -29,15 +29,17 @@ class ConnStringValueTypePair(Model):
     :param str value: Value of pair
     :param str type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom'
-    """
+    """ 
 
-    _required = ['type']
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
         'type': {'key': 'type', 'type': 'DatabaseServerType'},
     }
 
-    def __init__(self, type, value=None):
+    def __init__(self, type, value=None, **kwargs):
         self.value = value
         self.type = type

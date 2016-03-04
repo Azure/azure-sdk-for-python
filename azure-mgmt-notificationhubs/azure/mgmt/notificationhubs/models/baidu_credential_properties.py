@@ -29,9 +29,7 @@ class BaiduCredentialProperties(Model):
     :param str baidu_api_key: Get or Set Baidu Api Key.
     :param str baidu_end_point: Get or Set Baidu Endpoint.
     :param str baidu_secret_key: Get or Set Baidu Secret Key
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'baidu_api_key': {'key': 'baiduApiKey', 'type': 'str'},
@@ -39,7 +37,7 @@ class BaiduCredentialProperties(Model):
         'baidu_secret_key': {'key': 'baiduSecretKey', 'type': 'str'},
     }
 
-    def __init__(self, baidu_api_key=None, baidu_end_point=None, baidu_secret_key=None):
+    def __init__(self, baidu_api_key=None, baidu_end_point=None, baidu_secret_key=None, **kwargs):
         self.baidu_api_key = baidu_api_key
         self.baidu_end_point = baidu_end_point
         self.baidu_secret_key = baidu_secret_key

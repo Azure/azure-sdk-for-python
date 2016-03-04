@@ -34,9 +34,11 @@ class AutoHealActions(Model):
     :param str min_process_execution_time: MinProcessExecutionTime - minimum
      time the process must execute
      before taking the action
-    """
+    """ 
 
-    _required = ['action_type']
+    _validation = {
+        'action_type': {'required': True},
+    }
 
     _attribute_map = {
         'action_type': {'key': 'actionType', 'type': 'AutoHealActionType'},
@@ -44,7 +46,7 @@ class AutoHealActions(Model):
         'min_process_execution_time': {'key': 'minProcessExecutionTime', 'type': 'str'},
     }
 
-    def __init__(self, action_type, custom_action=None, min_process_execution_time=None):
+    def __init__(self, action_type, custom_action=None, min_process_execution_time=None, **kwargs):
         self.action_type = action_type
         self.custom_action = custom_action
         self.min_process_execution_time = min_process_execution_time

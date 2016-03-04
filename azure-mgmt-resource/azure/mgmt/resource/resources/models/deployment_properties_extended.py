@@ -46,9 +46,7 @@ class DeploymentPropertiesExtended(Model):
      the parameters. Use only one of Parameters or ParametersLink.
     :param str mode: Gets or sets the deployment mode. Possible values
      include: 'Incremental', 'Complete'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
@@ -64,7 +62,7 @@ class DeploymentPropertiesExtended(Model):
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
     }
 
-    def __init__(self, provisioning_state=None, correlation_id=None, timestamp=None, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None):
+    def __init__(self, provisioning_state=None, correlation_id=None, timestamp=None, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, **kwargs):
         self.provisioning_state = provisioning_state
         self.correlation_id = correlation_id
         self.timestamp = timestamp

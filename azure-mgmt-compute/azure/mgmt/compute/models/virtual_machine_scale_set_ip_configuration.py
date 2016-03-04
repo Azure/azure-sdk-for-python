@@ -31,18 +31,26 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :param ApiEntityReference subnet: Gets or sets the subnet.
     :param list load_balancer_backend_address_pools: Gets or sets the load
      balancer backend address pools.
-    """
+    :param list load_balancer_inbound_nat_pools: Gets or sets the load
+     balancer inbound nat pools.
+    """ 
 
-    _required = ['name', 'subnet']
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'ApiEntityReference', 'flatten': True},
-        'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]', 'flatten': True},
+    _validation = {
+        'name': {'required': True},
+        'subnet': {'required': True},
     }
 
-    def __init__(self, name, subnet, id=None, load_balancer_backend_address_pools=None):
-        super(VirtualMachineScaleSetIPConfiguration, self).__init__(id=id)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'subnet': {'key': 'properties.subnet', 'type': 'ApiEntityReference'},
+        'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]'},
+        'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
+    }
+
+    def __init__(self, name, subnet, id=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_pools=None, **kwargs):
+        super(VirtualMachineScaleSetIPConfiguration, self).__init__(id=id, **kwargs)
         self.name = name
         self.subnet = subnet
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
+        self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools

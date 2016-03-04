@@ -28,13 +28,11 @@ class VirtualHardDisk(Model):
 
     :param str uri: Gets or sets the virtual hard disk's uri. It should be a
      valid Uri to a virtual hard disk.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'uri': {'key': 'uri', 'type': 'str'},
     }
 
-    def __init__(self, uri=None):
+    def __init__(self, uri=None, **kwargs):
         self.uri = uri

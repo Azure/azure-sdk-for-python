@@ -30,9 +30,7 @@ class Resource(Model):
     :param str type: Gets the resource type.
     :param str location: Gets or sets the resource location.
     :param dict tags: Gets or sets the resource tags.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -42,7 +40,7 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None):
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, **kwargs):
         self.id = id
         self.name = name
         self.type = type

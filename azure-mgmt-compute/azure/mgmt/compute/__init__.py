@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .compute_management_client import ComputeManagementClient, ComputeManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'ComputeManagementClient',
     'ComputeManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

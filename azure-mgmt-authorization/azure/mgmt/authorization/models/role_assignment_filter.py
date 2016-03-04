@@ -28,13 +28,11 @@ class RoleAssignmentFilter(Model):
 
     :param str principal_id: Returns role assignment of the specific
      principal.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
     }
 
-    def __init__(self, principal_id=None):
+    def __init__(self, principal_id=None, **kwargs):
         self.principal_id = principal_id

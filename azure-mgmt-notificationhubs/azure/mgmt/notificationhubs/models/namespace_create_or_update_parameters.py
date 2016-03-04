@@ -30,9 +30,12 @@ class NamespaceCreateOrUpdateParameters(Model):
     :param dict tags: Gets or sets Namespace tags.
     :param NamespaceProperties properties: Gets or sets properties of the
      Namespace.
-    """
+    """ 
 
-    _required = ['location', 'properties']
+    _validation = {
+        'location': {'required': True},
+        'properties': {'required': True},
+    }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
@@ -40,7 +43,7 @@ class NamespaceCreateOrUpdateParameters(Model):
         'properties': {'key': 'properties', 'type': 'NamespaceProperties'},
     }
 
-    def __init__(self, location, properties, tags=None):
+    def __init__(self, location, properties, tags=None, **kwargs):
         self.location = location
         self.tags = tags
         self.properties = properties

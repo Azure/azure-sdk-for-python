@@ -27,13 +27,15 @@ class StorageAccountRegenerateKeyParameters(Model):
 
     :param str key_name: Specifies name of the key which should be
      regenerated: key1 or key2. Possible values include: 'key1', 'key2'
-    """
+    """ 
 
-    _required = ['key_name']
+    _validation = {
+        'key_name': {'required': True},
+    }
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'KeyName'},
     }
 
-    def __init__(self, key_name):
+    def __init__(self, key_name, **kwargs):
         self.key_name = key_name

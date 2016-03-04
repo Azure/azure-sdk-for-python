@@ -29,9 +29,7 @@ class StorageProfile(Model):
     :param ImageReference image_reference: Gets or sets the image reference.
     :param OSDisk os_disk: Gets or sets the OS disk.
     :param list data_disks: Gets or sets the data disks.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
@@ -39,7 +37,7 @@ class StorageProfile(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
     }
 
-    def __init__(self, image_reference=None, os_disk=None, data_disks=None):
+    def __init__(self, image_reference=None, os_disk=None, data_disks=None, **kwargs):
         self.image_reference = image_reference
         self.os_disk = os_disk
         self.data_disks = data_disks

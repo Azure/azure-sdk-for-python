@@ -28,15 +28,13 @@ class ExpressRouteCircuitStats(Model):
 
     :param int bytes_in: Gets BytesIn of the peering.
     :param int bytes_out: Gets BytesOut of the peering.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'bytes_in': {'key': 'bytesIn', 'type': 'int'},
         'bytes_out': {'key': 'bytesOut', 'type': 'int'},
     }
 
-    def __init__(self, bytes_in=None, bytes_out=None):
+    def __init__(self, bytes_in=None, bytes_out=None, **kwargs):
         self.bytes_in = bytes_in
         self.bytes_out = bytes_out

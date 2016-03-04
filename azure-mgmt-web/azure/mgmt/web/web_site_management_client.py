@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.certificates_operations import CertificatesOperations
 from .operations.classic_mobile_services_operations import ClassicMobileServicesOperations
 from .operations.domains_operations import DomainsOperations
@@ -31,6 +32,7 @@ from .operations.global_resource_groups_operations import GlobalResourceGroupsOp
 from .operations.hosting_environments_operations import HostingEnvironmentsOperations
 from .operations.managed_hosting_environments_operations import ManagedHostingEnvironmentsOperations
 from .operations.provider_operations import ProviderOperations
+from .operations.recommendations_operations import RecommendationsOperations
 from .operations.server_farms_operations import ServerFarmsOperations
 from .operations.sites_operations import SitesOperations
 from .operations.top_level_domains_operations import TopLevelDomainsOperations
@@ -75,7 +77,8 @@ class WebSiteManagementClientConfiguration(AzureConfiguration):
 
         super(WebSiteManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('websitemanagementclient/2015-08-01')
+        self.add_user_agent('websitemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
@@ -109,6 +112,8 @@ class WebSiteManagementClient(object):
     :vartype managed_hosting_environments: .operations.ManagedHostingEnvironmentsOperations
     :ivar provider: Provider operations
     :vartype provider: .operations.ProviderOperations
+    :ivar recommendations: Recommendations operations
+    :vartype recommendations: .operations.RecommendationsOperations
     :ivar server_farms: ServerFarms operations
     :vartype server_farms: .operations.ServerFarmsOperations
     :ivar sites: Sites operations
@@ -145,6 +150,8 @@ class WebSiteManagementClient(object):
         self.managed_hosting_environments = ManagedHostingEnvironmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.provider = ProviderOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recommendations = RecommendationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_farms = ServerFarmsOperations(
             self._client, self.config, self._serialize, self._deserialize)

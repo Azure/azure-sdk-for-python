@@ -27,10 +27,6 @@ class ApplicationGatewayUrlPathMap(SubResource):
     UrlPathMap of application gateway
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param SubResource default_backend_address_pool: Gets or sets default
      backend address pool resource of URL path map
     :param SubResource default_backend_http_settings: Gets or sets default
@@ -38,24 +34,27 @@ class ApplicationGatewayUrlPathMap(SubResource):
     :param list path_rules: Gets or sets path rule of URL path map resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      backend http settings resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'default_backend_address_pool': {'key': 'properties.defaultBackendAddressPool', 'type': 'SubResource'},
+        'default_backend_http_settings': {'key': 'properties.defaultBackendHttpSettings', 'type': 'SubResource'},
+        'path_rules': {'key': 'properties.pathRules', 'type': '[ApplicationGatewayPathRule]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'default_backend_address_pool': {'key': 'properties.defaultBackendAddressPool', 'type': 'SubResource', 'flatten': True},
-        'default_backend_http_settings': {'key': 'properties.defaultBackendHttpSettings', 'type': 'SubResource', 'flatten': True},
-        'path_rules': {'key': 'properties.pathRules', 'type': '[ApplicationGatewayPathRule]', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, default_backend_address_pool=None, default_backend_http_settings=None, path_rules=None, provisioning_state=None):
-        super(ApplicationGatewayUrlPathMap, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, default_backend_address_pool=None, default_backend_http_settings=None, path_rules=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(ApplicationGatewayUrlPathMap, self).__init__(id=id, **kwargs)
         self.default_backend_address_pool = default_backend_address_pool
         self.default_backend_http_settings = default_backend_http_settings
         self.path_rules = path_rules
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

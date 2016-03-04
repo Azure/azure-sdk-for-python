@@ -30,15 +30,13 @@ class AzureTableStorageApplicationLogsConfig(Model):
      'Information', 'Warning', 'Error'
     :param str sas_url: SAS url to an azure table with add/query/delete
      permissions
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'level': {'key': 'level', 'type': 'LogLevel'},
         'sas_url': {'key': 'sasUrl', 'type': 'str'},
     }
 
-    def __init__(self, level=None, sas_url=None):
+    def __init__(self, level=None, sas_url=None, **kwargs):
         self.level = level
         self.sas_url = sas_url

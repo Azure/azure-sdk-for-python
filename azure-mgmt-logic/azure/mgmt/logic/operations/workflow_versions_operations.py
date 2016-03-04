@@ -68,7 +68,7 @@ class WorkflowVersionsOperations(object):
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
             'versionId': self._serialize.url("version_id", version_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

@@ -36,6 +36,8 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="azure-common\azure\common\credentials.py" />
+    <Compile Include="azure-common\azure\common\exceptions.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\graph_rbac_management_client.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\models\aad_object.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\models\aad_object_paged.py" />
@@ -148,10 +150,6 @@
     <Compile Include="azure-mgmt-cdn\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-cdn\azure\__init__.py" />
     <Compile Include="azure-mgmt-cdn\setup.py" />
-    <Compile Include="azure-mgmt-common\azure\mgmt\common\arm.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-mgmt-common\azure\mgmt\common\filters.py" />
     <Compile Include="azure-common\azure\__init__.py" />
     <Compile Include="azure-common\setup.py" />
     <Compile Include="azure-common\testutils\common_auth.py" />
@@ -159,16 +157,6 @@
     <Compile Include="azure-common\testutils\common_recordingtestcase.py" />
     <Compile Include="azure-common\testutils\create_credentials_file.py" />
     <Compile Include="azure-common\testutils\__init__.py" />
-    <Compile Include="azure-mgmt-common\azure\mgmt\common\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-mgmt-common\azure\mgmt\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-mgmt-common\azure\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="azure-mgmt-common\setup.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\compute_management_client.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\additional_unattend_content.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\api_entity_reference.py" />
@@ -478,19 +466,6 @@
     <Compile Include="azure-mgmt-redis\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-redis\azure\__init__.py" />
     <Compile Include="azure-mgmt-redis\setup.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\authorization_client.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\authorization_client_enums.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\deployment_extended_filter.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\generic_resource_filter.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\management_lock_object.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\management_lock_object_paged.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\resource.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\resource_group_filter.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\sub_resource.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\__init__.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\operations\management_locks_operations.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\operations\__init__.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\authorization\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\feature_client.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\models\deployment_extended_filter.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\models\feature_properties.py" />
@@ -504,6 +479,19 @@
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\operations\features_operations.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\operations\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\__init__.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\lock_management_client.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\deployment_extended_filter.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\generic_resource_filter.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\lock_management_client_enums.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\management_lock_object.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\management_lock_object_paged.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\resource.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\resource_group_filter.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\sub_resource.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\__init__.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\operations\management_locks_operations.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\operations\__init__.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\models\basic_dependency.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\models\dependency.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\models\deployment.py" />
@@ -939,9 +927,6 @@
     <Folder Include="azure-mgmt-cdn\azure\mgmt\cdn\" />
     <Folder Include="azure-mgmt-cdn\azure\mgmt\cdn\models\" />
     <Folder Include="azure-mgmt-cdn\azure\mgmt\cdn\operations\" />
-    <Folder Include="azure-mgmt-common\azure\" />
-    <Folder Include="azure-mgmt-common\azure\mgmt\" />
-    <Folder Include="azure-mgmt-common\azure\mgmt\common\" />
     <Folder Include="azure-mgmt-compute\azure\mgmt\compute\models\" />
     <Folder Include="azure-mgmt-compute\azure\mgmt\compute\operations\" />
     <Folder Include="azure-mgmt-logic\" />
@@ -976,12 +961,12 @@
     <Folder Include="azure-mgmt-compute\azure\" />
     <Folder Include="azure-mgmt-compute\azure\mgmt\" />
     <Folder Include="azure-mgmt-compute\azure\mgmt\compute\" />
-    <Folder Include="azure-mgmt-resource\azure\mgmt\resource\authorization\" />
-    <Folder Include="azure-mgmt-resource\azure\mgmt\resource\authorization\models\" />
-    <Folder Include="azure-mgmt-resource\azure\mgmt\resource\authorization\operations\" />
     <Folder Include="azure-mgmt-resource\azure\mgmt\resource\features\" />
     <Folder Include="azure-mgmt-resource\azure\mgmt\resource\features\models\" />
     <Folder Include="azure-mgmt-resource\azure\mgmt\resource\features\operations\" />
+    <Folder Include="azure-mgmt-resource\azure\mgmt\resource\locks\" />
+    <Folder Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\" />
+    <Folder Include="azure-mgmt-resource\azure\mgmt\resource\locks\operations\" />
     <Folder Include="azure-mgmt-resource\azure\mgmt\resource\resources\" />
     <Folder Include="azure-mgmt-resource\azure\mgmt\resource\resources\models\" />
     <Folder Include="azure-mgmt-resource\azure\mgmt\resource\resources\operations\" />
@@ -1031,7 +1016,6 @@
     <Folder Include="azure-nspkg\azure\" />
     <Folder Include="azure-common\" />
     <Folder Include="azure\" />
-    <Folder Include="azure-mgmt-common\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.7" />
@@ -1054,9 +1038,6 @@
     <Content Include="azure-mgmt-cdn\MANIFEST.in" />
     <Content Include="azure-mgmt-cdn\README.rst" />
     <Content Include="azure-mgmt-cdn\setup.cfg" />
-    <Content Include="azure-mgmt-common\MANIFEST.in" />
-    <Content Include="azure-mgmt-common\README.rst" />
-    <Content Include="azure-mgmt-common\setup.cfg" />
     <Content Include="azure-mgmt-logic\MANIFEST.in" />
     <Content Include="azure-mgmt-logic\README.rst" />
     <Content Include="azure-mgmt-logic\setup.cfg" />

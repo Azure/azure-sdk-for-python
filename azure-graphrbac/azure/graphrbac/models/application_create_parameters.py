@@ -36,9 +36,14 @@ class ApplicationCreateParameters(Model):
      objects
     :param list password_credentials: Gets or sets the list of
      PasswordCredential objects
-    """
+    """ 
 
-    _required = ['available_to_other_tenants', 'display_name', 'homepage', 'identifier_uris']
+    _validation = {
+        'available_to_other_tenants': {'required': True},
+        'display_name': {'required': True},
+        'homepage': {'required': True},
+        'identifier_uris': {'required': True},
+    }
 
     _attribute_map = {
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
@@ -50,7 +55,7 @@ class ApplicationCreateParameters(Model):
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, available_to_other_tenants, display_name, homepage, identifier_uris, reply_urls=None, key_credentials=None, password_credentials=None):
+    def __init__(self, available_to_other_tenants, display_name, homepage, identifier_uris, reply_urls=None, key_credentials=None, password_credentials=None, **kwargs):
         self.available_to_other_tenants = available_to_other_tenants
         self.display_name = display_name
         self.homepage = homepage

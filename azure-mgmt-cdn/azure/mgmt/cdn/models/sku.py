@@ -28,13 +28,11 @@ class Sku(Model):
 
     :param str name: Name of the resource sku. Possible values include:
      'Standard', 'Premium'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'SkuName'},
     }
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, **kwargs):
         self.name = name

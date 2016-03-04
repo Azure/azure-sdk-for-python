@@ -31,8 +31,6 @@ class VirtualNetwork(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param AddressSpace address_space: Gets or sets AddressSpace that
      contains an array of IP address ranges that can be used by subnets
     :param DhcpOptions dhcp_options: Gets or sets DHCPOptions that contains
@@ -42,24 +40,29 @@ class VirtualNetwork(Resource):
      VirtualNetwork resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace'},
+        'dhcp_options': {'key': 'properties.dhcpOptions', 'type': 'DhcpOptions'},
+        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace', 'flatten': True},
-        'dhcp_options': {'key': 'properties.dhcpOptions', 'type': 'DhcpOptions', 'flatten': True},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]', 'flatten': True},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, address_space=None, dhcp_options=None, subnets=None, resource_guid=None, provisioning_state=None):
-        super(VirtualNetwork, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+        super(VirtualNetwork, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.address_space = address_space
         self.dhcp_options = dhcp_options
         self.subnets = subnets
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.etag = etag

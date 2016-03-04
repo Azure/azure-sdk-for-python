@@ -38,22 +38,29 @@ class RelayServiceConnectionEntity(Resource):
     :param str hostname:
     :param int port:
     :param str biztalk_uri:
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'entity_name': {'key': 'properties.entityName', 'type': 'str', 'flatten': True},
-        'entity_connection_string': {'key': 'properties.entityConnectionString', 'type': 'str', 'flatten': True},
-        'resource_type': {'key': 'properties.resourceType', 'type': 'str', 'flatten': True},
-        'resource_connection_string': {'key': 'properties.resourceConnectionString', 'type': 'str', 'flatten': True},
-        'hostname': {'key': 'properties.hostname', 'type': 'str', 'flatten': True},
-        'port': {'key': 'properties.port', 'type': 'int', 'flatten': True},
-        'biztalk_uri': {'key': 'properties.biztalkUri', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None):
-        super(RelayServiceConnectionEntity, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'entity_name': {'key': 'properties.entityName', 'type': 'str'},
+        'entity_connection_string': {'key': 'properties.entityConnectionString', 'type': 'str'},
+        'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
+        'resource_connection_string': {'key': 'properties.resourceConnectionString', 'type': 'str'},
+        'hostname': {'key': 'properties.hostname', 'type': 'str'},
+        'port': {'key': 'properties.port', 'type': 'int'},
+        'biztalk_uri': {'key': 'properties.biztalkUri', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None, **kwargs):
+        super(RelayServiceConnectionEntity, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.entity_name = entity_name
         self.entity_connection_string = entity_connection_string
         self.resource_type = resource_type

@@ -32,9 +32,7 @@ class ResourceMetricValue(Model):
     :param float maximum: Value maximum
     :param float total: Value total
     :param float count: Value count
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'time_stamp': {'key': 'timeStamp', 'type': 'str'},
@@ -45,7 +43,7 @@ class ResourceMetricValue(Model):
         'count': {'key': 'count', 'type': 'float'},
     }
 
-    def __init__(self, time_stamp=None, average=None, minimum=None, maximum=None, total=None, count=None):
+    def __init__(self, time_stamp=None, average=None, minimum=None, maximum=None, total=None, count=None, **kwargs):
         self.time_stamp = time_stamp
         self.average = average
         self.minimum = minimum

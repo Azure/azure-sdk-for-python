@@ -22,21 +22,29 @@
 from msrest.serialization import Model
 
 
-class ResourceGroupFilter(Model):
+class ManagementLockObject(Model):
     """
-    Resource group filter.
+    Management lock information.
 
-    :param str tag_name: Gets or sets the tag name.
-    :param str tag_value: Gets or sets the tag value.
-    """
-
-    _required = []
+    :param str level: Gets or sets the lock level of the management lock.
+     Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
+    :param str notes: Gets or sets the notes of the management lock.
+    :param str id: Gets or sets the Id of the lock.
+    :param str type: Gets or sets the type of the lock.
+    :param str name: Gets or sets the name of the lock.
+    """ 
 
     _attribute_map = {
-        'tag_name': {'key': 'tagName', 'type': 'str'},
-        'tag_value': {'key': 'tagValue', 'type': 'str'},
+        'level': {'key': 'properties.level', 'type': 'LockLevel'},
+        'notes': {'key': 'properties.notes', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, tag_name=None, tag_value=None):
-        self.tag_name = tag_name
-        self.tag_value = tag_value
+    def __init__(self, level=None, notes=None, id=None, type=None, name=None, **kwargs):
+        self.level = level
+        self.notes = notes
+        self.id = id
+        self.type = type
+        self.name = name

@@ -32,9 +32,7 @@ class Provider(Model):
      provider.
     :param list resource_types: Gets or sets the collection of provider
      resource types.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -43,7 +41,7 @@ class Provider(Model):
         'resource_types': {'key': 'resourceTypes', 'type': '[ProviderResourceType]'},
     }
 
-    def __init__(self, id=None, namespace=None, registration_state=None, resource_types=None):
+    def __init__(self, id=None, namespace=None, registration_state=None, resource_types=None, **kwargs):
         self.id = id
         self.namespace = namespace
         self.registration_state = registration_state

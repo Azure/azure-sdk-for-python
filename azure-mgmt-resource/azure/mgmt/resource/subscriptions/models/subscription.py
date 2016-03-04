@@ -33,9 +33,7 @@ class Subscription(Model):
     :param str state: Gets or sets the subscription state
     :param SubscriptionPolicies subscription_policies: Gets or sets the
      subscription policies.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -45,7 +43,7 @@ class Subscription(Model):
         'subscription_policies': {'key': 'subscriptionPolicies', 'type': 'SubscriptionPolicies'},
     }
 
-    def __init__(self, id=None, subscription_id=None, display_name=None, state=None, subscription_policies=None):
+    def __init__(self, id=None, subscription_id=None, display_name=None, state=None, subscription_policies=None, **kwargs):
         self.id = id
         self.subscription_id = subscription_id
         self.display_name = display_name

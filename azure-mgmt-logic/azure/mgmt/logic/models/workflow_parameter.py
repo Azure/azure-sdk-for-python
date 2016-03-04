@@ -30,9 +30,7 @@ class WorkflowParameter(Model):
      'Array', 'Object', 'SecureObject'
     :param object value: Gets or sets the value.
     :param object metadata: Gets or sets the metadata.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'ParameterType'},
@@ -40,7 +38,7 @@ class WorkflowParameter(Model):
         'metadata': {'key': 'metadata', 'type': 'object'},
     }
 
-    def __init__(self, type=None, value=None, metadata=None):
+    def __init__(self, type=None, value=None, metadata=None, **kwargs):
         self.type = type
         self.value = value
         self.metadata = metadata

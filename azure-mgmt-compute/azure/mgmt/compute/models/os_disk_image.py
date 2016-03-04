@@ -28,13 +28,15 @@ class OSDiskImage(Model):
 
     :param str operating_system: Gets or sets the operating system of the
      osDiskImage. Possible values include: 'Windows', 'Linux'
-    """
+    """ 
 
-    _required = ['operating_system']
+    _validation = {
+        'operating_system': {'required': True},
+    }
 
     _attribute_map = {
         'operating_system': {'key': 'operatingSystem', 'type': 'OperatingSystemTypes'},
     }
 
-    def __init__(self, operating_system):
+    def __init__(self, operating_system, **kwargs):
         self.operating_system = operating_system

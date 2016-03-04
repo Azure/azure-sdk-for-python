@@ -30,15 +30,13 @@ class HttpLogsConfig(Model):
      configuration
     :param AzureBlobStorageHttpLogsConfig azure_blob_storage: Http logs to
      azure blob storage configuration
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'file_system': {'key': 'fileSystem', 'type': 'FileSystemHttpLogsConfig'},
         'azure_blob_storage': {'key': 'azureBlobStorage', 'type': 'AzureBlobStorageHttpLogsConfig'},
     }
 
-    def __init__(self, file_system=None, azure_blob_storage=None):
+    def __init__(self, file_system=None, azure_blob_storage=None, **kwargs):
         self.file_system = file_system
         self.azure_blob_storage = azure_blob_storage

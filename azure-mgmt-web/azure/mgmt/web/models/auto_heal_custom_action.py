@@ -29,15 +29,13 @@ class AutoHealCustomAction(Model):
 
     :param str exe: Executable to be run
     :param str parameters: Parameters for the executable
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'exe': {'key': 'exe', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'str'},
     }
 
-    def __init__(self, exe=None, parameters=None):
+    def __init__(self, exe=None, parameters=None, **kwargs):
         self.exe = exe
         self.parameters = parameters

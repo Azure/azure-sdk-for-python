@@ -36,9 +36,7 @@ class SharedAccessAuthorizationRuleProperties(Model):
      was created.
     :param datetime modified_time: The most recent time the rule was updated.
     :param int revision: The revision number for the rule.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'primary_key': {'key': 'primaryKey', 'type': 'str'},
@@ -52,7 +50,7 @@ class SharedAccessAuthorizationRuleProperties(Model):
         'revision': {'key': 'revision', 'type': 'int'},
     }
 
-    def __init__(self, primary_key=None, secondary_key=None, key_name=None, claim_type=None, claim_value=None, rights=None, created_time=None, modified_time=None, revision=None):
+    def __init__(self, primary_key=None, secondary_key=None, key_name=None, claim_type=None, claim_value=None, rights=None, created_time=None, modified_time=None, revision=None, **kwargs):
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.key_name = key_name

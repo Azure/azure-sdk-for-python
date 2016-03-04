@@ -27,13 +27,15 @@ class CustomDomainParameters(Model):
     CustomDomain properties required for custom domain creation or update
 
     :param str host_name: The host name of the custom domain
-    """
+    """ 
 
-    _required = ['host_name']
-
-    _attribute_map = {
-        'host_name': {'key': 'properties.hostName', 'type': 'str', 'flatten': True},
+    _validation = {
+        'host_name': {'required': True},
     }
 
-    def __init__(self, host_name):
+    _attribute_map = {
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+    }
+
+    def __init__(self, host_name, **kwargs):
         self.host_name = host_name

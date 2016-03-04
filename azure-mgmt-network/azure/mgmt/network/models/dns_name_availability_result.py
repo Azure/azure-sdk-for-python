@@ -27,13 +27,11 @@ class DnsNameAvailabilityResult(Model):
     Response for CheckDnsNameAvailability Api servive call
 
     :param bool available: Domain availability (True/False)
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'available': {'key': 'available', 'type': 'bool'},
     }
 
-    def __init__(self, available=None):
+    def __init__(self, available=None, **kwargs):
         self.available = available

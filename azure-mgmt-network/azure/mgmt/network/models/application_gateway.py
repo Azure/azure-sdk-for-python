@@ -31,8 +31,6 @@ class ApplicationGateway(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param ApplicationGatewaySku sku: Gets or sets sku of application gateway
      resource
     :param str operational_state: Gets operational state of application
@@ -61,31 +59,35 @@ class ApplicationGateway(Resource):
      ApplicationGateway resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      ApplicationGateway resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'properties.sku', 'type': 'ApplicationGatewaySku'},
+        'operational_state': {'key': 'properties.operationalState', 'type': 'ApplicationGatewayOperationalState'},
+        'gateway_ip_configurations': {'key': 'properties.gatewayIPConfigurations', 'type': '[ApplicationGatewayIPConfiguration]'},
+        'ssl_certificates': {'key': 'properties.sslCertificates', 'type': '[ApplicationGatewaySslCertificate]'},
+        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[ApplicationGatewayFrontendIPConfiguration]'},
+        'frontend_ports': {'key': 'properties.frontendPorts', 'type': '[ApplicationGatewayFrontendPort]'},
+        'probes': {'key': 'properties.probes', 'type': '[ApplicationGatewayProbe]'},
+        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
+        'backend_http_settings_collection': {'key': 'properties.backendHttpSettingsCollection', 'type': '[ApplicationGatewayBackendHttpSettings]'},
+        'http_listeners': {'key': 'properties.httpListeners', 'type': '[ApplicationGatewayHttpListener]'},
+        'url_path_maps': {'key': 'properties.urlPathMaps', 'type': '[ApplicationGatewayUrlPathMap]'},
+        'request_routing_rules': {'key': 'properties.requestRoutingRules', 'type': '[ApplicationGatewayRequestRoutingRule]'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'ApplicationGatewaySku', 'flatten': True},
-        'operational_state': {'key': 'properties.operationalState', 'type': 'ApplicationGatewayOperationalState', 'flatten': True},
-        'gateway_ip_configurations': {'key': 'properties.gatewayIPConfigurations', 'type': '[ApplicationGatewayIPConfiguration]', 'flatten': True},
-        'ssl_certificates': {'key': 'properties.sslCertificates', 'type': '[ApplicationGatewaySslCertificate]', 'flatten': True},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[ApplicationGatewayFrontendIPConfiguration]', 'flatten': True},
-        'frontend_ports': {'key': 'properties.frontendPorts', 'type': '[ApplicationGatewayFrontendPort]', 'flatten': True},
-        'probes': {'key': 'properties.probes', 'type': '[ApplicationGatewayProbe]', 'flatten': True},
-        'backend_address_pools': {'key': 'properties.backendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]', 'flatten': True},
-        'backend_http_settings_collection': {'key': 'properties.backendHttpSettingsCollection', 'type': '[ApplicationGatewayBackendHttpSettings]', 'flatten': True},
-        'http_listeners': {'key': 'properties.httpListeners', 'type': '[ApplicationGatewayHttpListener]', 'flatten': True},
-        'url_path_maps': {'key': 'properties.urlPathMaps', 'type': '[ApplicationGatewayUrlPathMap]', 'flatten': True},
-        'request_routing_rules': {'key': 'properties.requestRoutingRules', 'type': '[ApplicationGatewayRequestRoutingRule]', 'flatten': True},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, sku=None, operational_state=None, gateway_ip_configurations=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, resource_guid=None, provisioning_state=None):
-        super(ApplicationGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, sku=None, operational_state=None, gateway_ip_configurations=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+        super(ApplicationGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.operational_state = operational_state
         self.gateway_ip_configurations = gateway_ip_configurations
@@ -100,3 +102,4 @@ class ApplicationGateway(Resource):
         self.request_routing_rules = request_routing_rules
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.etag = etag

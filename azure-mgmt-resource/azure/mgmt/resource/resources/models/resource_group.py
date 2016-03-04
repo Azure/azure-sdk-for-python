@@ -34,9 +34,11 @@ class ResourceGroup(Model):
      one of the supported Azure Locations, such as West US, East US, West
      Europe, East Asia, etc.
     :param dict tags: Gets or sets the tags attached to the resource group.
-    """
+    """ 
 
-    _required = ['location']
+    _validation = {
+        'location': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -46,7 +48,7 @@ class ResourceGroup(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, id=None, name=None, properties=None, tags=None):
+    def __init__(self, location, id=None, name=None, properties=None, tags=None, **kwargs):
         self.id = id
         self.name = name
         self.properties = properties

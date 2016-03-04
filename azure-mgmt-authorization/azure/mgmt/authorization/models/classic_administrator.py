@@ -31,9 +31,7 @@ class ClassicAdministrator(Model):
     :param str type: Gets or sets the classic administrator type.
     :param ClassicAdministratorProperties properties: Gets or sets the
      classic administrator properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -42,7 +40,7 @@ class ClassicAdministrator(Model):
         'properties': {'key': 'properties', 'type': 'ClassicAdministratorProperties'},
     }
 
-    def __init__(self, id=None, name=None, type=None, properties=None):
+    def __init__(self, id=None, name=None, type=None, properties=None, **kwargs):
         self.id = id
         self.name = name
         self.type = type

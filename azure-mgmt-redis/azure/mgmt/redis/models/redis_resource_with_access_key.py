@@ -55,29 +55,37 @@ class RedisResourceWithAccessKey(Resource):
      existing Azure Virtual Network.
     :param str static_ip: Required when deploying a redis cache inside an
      existing Azure Virtual Network.
-    """
+    """ 
 
-    _required = ['sku']
-
-    _attribute_map = {
-        'access_keys': {'key': 'properties.accessKeys', 'type': 'RedisAccessKeys', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
-        'host_name': {'key': 'properties.hostName', 'type': 'str', 'flatten': True},
-        'port': {'key': 'properties.port', 'type': 'int', 'flatten': True},
-        'ssl_port': {'key': 'properties.sslPort', 'type': 'int', 'flatten': True},
-        'redis_version': {'key': 'properties.redisVersion', 'type': 'str', 'flatten': True},
-        'sku': {'key': 'properties.sku', 'type': 'Sku', 'flatten': True},
-        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}', 'flatten': True},
-        'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool', 'flatten': True},
-        'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}', 'flatten': True},
-        'shard_count': {'key': 'properties.shardCount', 'type': 'int', 'flatten': True},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'str', 'flatten': True},
-        'subnet': {'key': 'properties.subnet', 'type': 'str', 'flatten': True},
-        'static_ip': {'key': 'properties.staticIP', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
+        'sku': {'required': True},
     }
 
-    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, access_keys=None, provisioning_state=None, host_name=None, port=None, ssl_port=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None):
-        super(RedisResourceWithAccessKey, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'access_keys': {'key': 'properties.accessKeys', 'type': 'RedisAccessKeys'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+        'port': {'key': 'properties.port', 'type': 'int'},
+        'ssl_port': {'key': 'properties.sslPort', 'type': 'int'},
+        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
+        'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}'},
+        'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
+        'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
+        'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
+        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'str'},
+        'subnet': {'key': 'properties.subnet', 'type': 'str'},
+        'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
+    }
+
+    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, access_keys=None, provisioning_state=None, host_name=None, port=None, ssl_port=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None, **kwargs):
+        super(RedisResourceWithAccessKey, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.access_keys = access_keys
         self.provisioning_state = provisioning_state
         self.host_name = host_name

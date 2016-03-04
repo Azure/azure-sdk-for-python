@@ -50,24 +50,32 @@ class RedisCreateOrUpdateParameters(Resource):
      existing Azure Virtual Network.
     :param str static_ip: Required when deploying a redis cache inside an
      existing Azure Virtual Network.
-    """
+    """ 
 
-    _required = ['sku']
-
-    _attribute_map = {
-        'redis_version': {'key': 'properties.redisVersion', 'type': 'str', 'flatten': True},
-        'sku': {'key': 'properties.sku', 'type': 'Sku', 'flatten': True},
-        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}', 'flatten': True},
-        'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool', 'flatten': True},
-        'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}', 'flatten': True},
-        'shard_count': {'key': 'properties.shardCount', 'type': 'int', 'flatten': True},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'str', 'flatten': True},
-        'subnet': {'key': 'properties.subnet', 'type': 'str', 'flatten': True},
-        'static_ip': {'key': 'properties.staticIP', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
+        'sku': {'required': True},
     }
 
-    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None):
-        super(RedisCreateOrUpdateParameters, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
+        'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}'},
+        'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
+        'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
+        'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
+        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'str'},
+        'subnet': {'key': 'properties.subnet', 'type': 'str'},
+        'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
+    }
+
+    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None, **kwargs):
+        super(RedisCreateOrUpdateParameters, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.redis_version = redis_version
         self.sku = sku
         self.redis_configuration = redis_configuration

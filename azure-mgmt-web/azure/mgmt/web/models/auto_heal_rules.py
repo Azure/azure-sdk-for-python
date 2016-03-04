@@ -30,15 +30,13 @@ class AutoHealRules(Model):
      when to execute the auto-heal actions
     :param AutoHealActions actions: Actions - Actions to be executed when a
      rule is triggered
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'triggers': {'key': 'triggers', 'type': 'AutoHealTriggers'},
         'actions': {'key': 'actions', 'type': 'AutoHealActions'},
     }
 
-    def __init__(self, triggers=None, actions=None):
+    def __init__(self, triggers=None, actions=None, **kwargs):
         self.triggers = triggers
         self.actions = actions

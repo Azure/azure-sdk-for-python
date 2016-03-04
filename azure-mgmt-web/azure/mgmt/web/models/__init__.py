@@ -103,6 +103,8 @@ from .sku_info import SkuInfo
 from .sku_capacity import SkuCapacity
 from .source_control_collection import SourceControlCollection
 from .source_control import SourceControl
+from .recommendation import Recommendation
+from .recommendation_rule import RecommendationRule
 from .vnet_info import VnetInfo
 from .vnet_route import VnetRoute
 from .vnet_gateway import VnetGateway
@@ -113,6 +115,8 @@ from .slot_difference_collection import SlotDifferenceCollection
 from .slot_difference import SlotDifference
 from .slot_config_names_resource import SlotConfigNamesResource
 from .slot_config_names import SlotConfigNames
+from .site_cloneability import SiteCloneability
+from .site_cloneability_criterion import SiteCloneabilityCriterion
 from .csm_site_recovery_entity import CsmSiteRecoveryEntity
 from .deleted_site_collection import DeletedSiteCollection
 from .deleted_site import DeletedSite
@@ -174,6 +178,9 @@ from .web_site_management_client_enums import (
     AccessControlEntryAction,
     ManagedHostingEnvironmentStatus,
     DomainType,
+    NotificationLevel,
+    Channels,
+    CloneAbilityResult,
     LogLevel,
     FrequencyUnit,
     BackupRestoreOperationType,
@@ -265,6 +272,8 @@ __all__ = [
     'SkuCapacity',
     'SourceControlCollection',
     'SourceControl',
+    'Recommendation',
+    'RecommendationRule',
     'VnetInfo',
     'VnetRoute',
     'VnetGateway',
@@ -275,6 +284,8 @@ __all__ = [
     'SlotDifference',
     'SlotConfigNamesResource',
     'SlotConfigNames',
+    'SiteCloneability',
+    'SiteCloneabilityCriterion',
     'CsmSiteRecoveryEntity',
     'DeletedSiteCollection',
     'DeletedSite',
@@ -335,6 +346,9 @@ __all__ = [
     'AccessControlEntryAction',
     'ManagedHostingEnvironmentStatus',
     'DomainType',
+    'NotificationLevel',
+    'Channels',
+    'CloneAbilityResult',
     'LogLevel',
     'FrequencyUnit',
     'BackupRestoreOperationType',

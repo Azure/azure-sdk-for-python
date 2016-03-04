@@ -28,15 +28,13 @@ class TenantIdDescription(Model):
 
     :param str id: Gets or sets Id
     :param str tenant_id: Gets or sets tenantId
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, id=None, tenant_id=None):
+    def __init__(self, id=None, tenant_id=None, **kwargs):
         self.id = id
         self.tenant_id = tenant_id

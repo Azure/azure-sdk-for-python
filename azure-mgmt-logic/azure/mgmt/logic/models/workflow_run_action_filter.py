@@ -27,14 +27,13 @@ class WorkflowRunActionFilter(Model):
 
     :param str status: Gets or sets the status of workflow run action.
      Possible values include: 'NotSpecified', 'Paused', 'Running', 'Waiting',
-     'Succeeded', 'Skipped', 'Suspended', 'Cancelled', 'Failed'
-    """
-
-    _required = []
+     'Succeeded', 'Skipped', 'Suspended', 'Cancelled', 'Failed', 'Faulted',
+     'TimedOut', 'Aborted'
+    """ 
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'WorkflowStatus'},
     }
 
-    def __init__(self, status=None):
+    def __init__(self, status=None, **kwargs):
         self.status = status

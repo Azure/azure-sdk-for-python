@@ -27,13 +27,11 @@ class ComputeLongRunningOperationProperties(Model):
     Compute-specific operation properties, including output
 
     :param object output: Operation output data (raw JSON)
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'output': {'key': 'output', 'type': 'object'},
     }
 
-    def __init__(self, output=None):
+    def __init__(self, output=None, **kwargs):
         self.output = output

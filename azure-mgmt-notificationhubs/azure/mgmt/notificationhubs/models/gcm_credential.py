@@ -28,13 +28,11 @@ class GcmCredential(Model):
 
     :param GcmCredentialProperties properties: Gets or sets properties of
      NotificationHub GcmCredential.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'GcmCredentialProperties'},
     }
 
-    def __init__(self, properties=None):
+    def __init__(self, properties=None, **kwargs):
         self.properties = properties

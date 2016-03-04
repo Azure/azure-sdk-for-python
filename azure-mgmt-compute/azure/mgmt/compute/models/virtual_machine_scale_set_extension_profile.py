@@ -28,13 +28,11 @@ class VirtualMachineScaleSetExtensionProfile(Model):
 
     :param list extensions: Gets the virtual machine scale set child
      extension resources.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetExtension]'},
     }
 
-    def __init__(self, extensions=None):
+    def __init__(self, extensions=None, **kwargs):
         self.extensions = extensions

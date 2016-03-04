@@ -32,9 +32,11 @@ class ExpressRouteCircuitRoutesTable(Model):
      'None'
     :param str next_hop_ip: Gets NextHopIP.
     :param str as_path: Gets AsPath.
-    """
+    """ 
 
-    _required = ['next_hop_type']
+    _validation = {
+        'next_hop_type': {'required': True},
+    }
 
     _attribute_map = {
         'address_prefix': {'key': 'addressPrefix', 'type': 'str'},
@@ -43,7 +45,7 @@ class ExpressRouteCircuitRoutesTable(Model):
         'as_path': {'key': 'asPath', 'type': 'str'},
     }
 
-    def __init__(self, next_hop_type, address_prefix=None, next_hop_ip=None, as_path=None):
+    def __init__(self, next_hop_type, address_prefix=None, next_hop_ip=None, as_path=None, **kwargs):
         self.address_prefix = address_prefix
         self.next_hop_type = next_hop_type
         self.next_hop_ip = next_hop_ip

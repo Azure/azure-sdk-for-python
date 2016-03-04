@@ -31,9 +31,7 @@ class RoleDefinition(Model):
     :param str type: Gets or sets role definition type.
     :param RoleDefinitionProperties properties: Gets or sets role definition
      properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -42,7 +40,7 @@ class RoleDefinition(Model):
         'properties': {'key': 'properties', 'type': 'RoleDefinitionProperties'},
     }
 
-    def __init__(self, id=None, name=None, type=None, properties=None):
+    def __init__(self, id=None, name=None, type=None, properties=None, **kwargs):
         self.id = id
         self.name = name
         self.type = type

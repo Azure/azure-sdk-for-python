@@ -27,31 +27,30 @@ class ExpressRouteCircuitAuthorization(SubResource):
     Authorization in a ExpressRouteCircuit resource
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param str authorization_key: Gets or sets the authorization key
     :param str authorization_use_status: Gets or sets AuthorizationUseStatus.
      Possible values include: 'Available', 'InUse'
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
+        'authorization_use_status': {'key': 'properties.authorizationUseStatus', 'type': 'AuthorizationUseStatus'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str', 'flatten': True},
-        'authorization_use_status': {'key': 'properties.authorizationUseStatus', 'type': 'AuthorizationUseStatus', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, authorization_key=None, authorization_use_status=None, provisioning_state=None):
-        super(ExpressRouteCircuitAuthorization, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, authorization_key=None, authorization_use_status=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(ExpressRouteCircuitAuthorization, self).__init__(id=id, **kwargs)
         self.authorization_key = authorization_key
         self.authorization_use_status = authorization_use_status
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

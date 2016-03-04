@@ -28,13 +28,11 @@ class WnsCredential(Model):
 
     :param WnsCredentialProperties properties: Gets or sets properties of
      NotificationHub WnsCredential.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'WnsCredentialProperties'},
     }
 
-    def __init__(self, properties=None):
+    def __init__(self, properties=None, **kwargs):
         self.properties = properties

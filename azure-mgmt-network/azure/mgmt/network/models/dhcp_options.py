@@ -29,13 +29,11 @@ class DhcpOptions(Model):
     options.
 
     :param list dns_servers: Gets or sets list of DNS servers IP addresses
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
     }
 
-    def __init__(self, dns_servers=None):
+    def __init__(self, dns_servers=None, **kwargs):
         self.dns_servers = dns_servers

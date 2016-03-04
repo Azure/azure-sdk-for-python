@@ -80,6 +80,9 @@ class WorkflowStatus(Enum):
     suspended = "Suspended"
     cancelled = "Cancelled"
     failed = "Failed"
+    faulted = "Faulted"
+    timed_out = "TimedOut"
+    aborted = "Aborted"
 
 
 class RecurrenceFrequency(Enum):

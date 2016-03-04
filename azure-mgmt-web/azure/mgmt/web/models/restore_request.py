@@ -49,24 +49,31 @@ class RestoreRequest(Resource):
      SiteConfig.ConnectionStrings should be set in new site
     :param str hosting_environment: App Service Environment name, if needed
      (only when restoring a site to an App Service Environment)
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str', 'flatten': True},
-        'blob_name': {'key': 'properties.blobName', 'type': 'str', 'flatten': True},
-        'overwrite': {'key': 'properties.overwrite', 'type': 'bool', 'flatten': True},
-        'site_name': {'key': 'properties.siteName', 'type': 'str', 'flatten': True},
-        'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]', 'flatten': True},
-        'ignore_conflicting_host_names': {'key': 'properties.ignoreConflictingHostNames', 'type': 'bool', 'flatten': True},
-        'operation_type': {'key': 'properties.operationType', 'type': 'BackupRestoreOperationType', 'flatten': True},
-        'adjust_connection_strings': {'key': 'properties.adjustConnectionStrings', 'type': 'bool', 'flatten': True},
-        'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=None, operation_type=None, adjust_connection_strings=None, hosting_environment=None):
-        super(RestoreRequest, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
+        'blob_name': {'key': 'properties.blobName', 'type': 'str'},
+        'overwrite': {'key': 'properties.overwrite', 'type': 'bool'},
+        'site_name': {'key': 'properties.siteName', 'type': 'str'},
+        'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]'},
+        'ignore_conflicting_host_names': {'key': 'properties.ignoreConflictingHostNames', 'type': 'bool'},
+        'operation_type': {'key': 'properties.operationType', 'type': 'BackupRestoreOperationType'},
+        'adjust_connection_strings': {'key': 'properties.adjustConnectionStrings', 'type': 'bool'},
+        'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=None, operation_type=None, adjust_connection_strings=None, hosting_environment=None, **kwargs):
+        super(RestoreRequest, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name
         self.overwrite = overwrite

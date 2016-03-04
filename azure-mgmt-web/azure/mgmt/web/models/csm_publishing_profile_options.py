@@ -30,13 +30,11 @@ class CsmPublishingProfileOptions(Model):
      FileZilla3
      WebDeploy -- default
      Ftp
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'format': {'key': 'format', 'type': 'str'},
     }
 
-    def __init__(self, format=None):
+    def __init__(self, format=None, **kwargs):
         self.format = format

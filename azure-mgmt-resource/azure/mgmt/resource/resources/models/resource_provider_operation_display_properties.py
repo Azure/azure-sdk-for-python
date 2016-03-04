@@ -31,9 +31,7 @@ class ResourceProviderOperationDisplayProperties(Model):
     :param str resource: Gets or sets operation resource.
     :param str operation: Gets or sets operation.
     :param str description: Gets or sets operation description.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'publisher': {'key': 'publisher', 'type': 'str'},
@@ -43,7 +41,7 @@ class ResourceProviderOperationDisplayProperties(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, publisher=None, provider=None, resource=None, operation=None, description=None):
+    def __init__(self, publisher=None, provider=None, resource=None, operation=None, description=None, **kwargs):
         self.publisher = publisher
         self.provider = provider
         self.resource = resource

@@ -68,7 +68,7 @@ class JobsOperations(object):
             'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -131,7 +131,7 @@ class JobsOperations(object):
             'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -200,7 +200,7 @@ class JobsOperations(object):
             'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -265,7 +265,7 @@ class JobsOperations(object):
             'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -319,7 +319,7 @@ class JobsOperations(object):
             'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -363,7 +363,7 @@ class JobsOperations(object):
          to begin requesting entries.
         :type skip: int
         :param filter: The filter to apply on the job state.
-        :type filter: JobStateFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -380,7 +380,7 @@ class JobsOperations(object):
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -390,7 +390,7 @@ class JobsOperations(object):
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'JobStateFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -446,7 +446,7 @@ class JobsOperations(object):
          to begin requesting entries.
         :type skip: int
         :param filter: The filter to apply on the job state.
-        :type filter: JobHistoryFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -464,7 +464,7 @@ class JobsOperations(object):
                     'jobCollectionName': self._serialize.url("job_collection_name", job_collection_name, 'str'),
                     'jobName': self._serialize.url("job_name", job_name, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -474,7 +474,7 @@ class JobsOperations(object):
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'JobHistoryFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link

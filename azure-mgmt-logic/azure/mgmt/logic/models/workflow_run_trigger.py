@@ -36,11 +36,9 @@ class WorkflowRunTrigger(Model):
     :param str code: Gets the code.
     :param str status: Gets the status. Possible values include:
      'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
-     'Suspended', 'Cancelled', 'Failed'
+     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
     :param object error: Gets the error.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -56,7 +54,7 @@ class WorkflowRunTrigger(Model):
         'error': {'key': 'error', 'type': 'object'},
     }
 
-    def __init__(self, name=None, inputs=None, inputs_link=None, outputs=None, outputs_link=None, start_time=None, end_time=None, tracking_id=None, code=None, status=None, error=None):
+    def __init__(self, name=None, inputs=None, inputs_link=None, outputs=None, outputs_link=None, start_time=None, end_time=None, tracking_id=None, code=None, status=None, error=None, **kwargs):
         self.name = name
         self.inputs = inputs
         self.inputs_link = inputs_link

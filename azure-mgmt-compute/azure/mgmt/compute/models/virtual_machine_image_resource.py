@@ -30,18 +30,22 @@ class VirtualMachineImageResource(SubResource):
     :param str name: Gets or sets the name of the resource.
     :param str location: Gets or sets the location of the resource.
     :param dict tags: Gets or sets the tags attached to the resource.
-    """
+    """ 
 
-    _required = ['name', 'location']
+    _validation = {
+        'name': {'required': True},
+        'location': {'required': True},
+    }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, name, location, id=None, tags=None):
-        super(VirtualMachineImageResource, self).__init__(id=id)
+    def __init__(self, name, location, id=None, tags=None, **kwargs):
+        super(VirtualMachineImageResource, self).__init__(id=id, **kwargs)
         self.name = name
         self.location = location
         self.tags = tags

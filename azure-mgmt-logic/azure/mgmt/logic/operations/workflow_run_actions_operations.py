@@ -57,7 +57,7 @@ class WorkflowRunActionsOperations(object):
         :param top: The number of items to be included in the result.
         :type top: int
         :param filter: The filter to apply on the operation.
-        :type filter: WorkflowRunActionFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -75,7 +75,7 @@ class WorkflowRunActionsOperations(object):
                     'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
                     'runName': self._serialize.url("run_name", run_name, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -83,7 +83,7 @@ class WorkflowRunActionsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'WorkflowRunActionFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -149,7 +149,7 @@ class WorkflowRunActionsOperations(object):
             'runName': self._serialize.url("run_name", run_name, 'str'),
             'actionName': self._serialize.url("action_name", action_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

@@ -28,13 +28,11 @@ class HttpAuthentication(Model):
     :param str type: Gets or sets the http authentication type. Possible
      values include: 'NotSpecified', 'ClientCertificate',
      'ActiveDirectoryOAuth', 'Basic'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
     }
 
-    def __init__(self, type=None):
+    def __init__(self, type=None, **kwargs):
         self.type = type

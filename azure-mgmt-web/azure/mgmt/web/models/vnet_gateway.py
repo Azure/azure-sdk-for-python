@@ -35,16 +35,23 @@ class VnetGateway(Resource):
     :param str vnet_name: The VNET name.
     :param str vpn_package_uri: The URI where the Vpn package can be
      downloaded
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str', 'flatten': True},
-        'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_name=None, vpn_package_uri=None):
-        super(VnetGateway, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
+        'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_name=None, vpn_package_uri=None, **kwargs):
+        super(VnetGateway, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.vnet_name = vnet_name
         self.vpn_package_uri = vpn_package_uri

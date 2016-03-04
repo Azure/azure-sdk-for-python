@@ -71,7 +71,7 @@ class SecurityRulesOperations(object):
             'securityRuleName': self._serialize.url("security_rule_name", security_rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -145,7 +145,7 @@ class SecurityRulesOperations(object):
             'securityRuleName': self._serialize.url("security_rule_name", security_rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -211,7 +211,7 @@ class SecurityRulesOperations(object):
             'securityRuleName': self._serialize.url("security_rule_name", security_rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -298,7 +298,7 @@ class SecurityRulesOperations(object):
                     'networkSecurityGroupName': self._serialize.url("network_security_group_name", network_security_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}

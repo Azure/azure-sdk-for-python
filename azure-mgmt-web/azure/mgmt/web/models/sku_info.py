@@ -29,9 +29,7 @@ class SkuInfo(Model):
     :param str resource_type: Resource type that this sku applies to
     :param SkuDescription sku: Name and tier of the sku
     :param SkuCapacity capacity: Min, max, and default scale values of the sku
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
@@ -39,7 +37,7 @@ class SkuInfo(Model):
         'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
     }
 
-    def __init__(self, resource_type=None, sku=None, capacity=None):
+    def __init__(self, resource_type=None, sku=None, capacity=None, **kwargs):
         self.resource_type = resource_type
         self.sku = sku
         self.capacity = capacity

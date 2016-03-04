@@ -9,6 +9,7 @@ install:
   - pip install -r requirements.txt
   - pip install azure-storage
   - pip install coveralls
+  - pip uninstall -y azure-common
 script: 
   - cd azure-servicebus/tests
   - bash run-servicebus

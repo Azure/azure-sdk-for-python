@@ -40,13 +40,11 @@ class HardwareProfile(Model):
      'Standard_DS13', 'Standard_DS14', 'Standard_G1', 'Standard_G2',
      'Standard_G3', 'Standard_G4', 'Standard_G5', 'Standard_GS1',
      'Standard_GS2', 'Standard_GS3', 'Standard_GS4', 'Standard_GS5'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'VirtualMachineSizeTypes'},
     }
 
-    def __init__(self, vm_size=None):
+    def __init__(self, vm_size=None, **kwargs):
         self.vm_size = vm_size

@@ -30,9 +30,7 @@ class ApnsCredentialProperties(Model):
     :param str certificate_key: Gets or sets the certificate key.
     :param str endpoint: Gets or sets the endpoint of this credential.
     :param str thumbprint: Gets or sets the Apns certificate Thumbprint
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'apns_certificate': {'key': 'apnsCertificate', 'type': 'str'},
@@ -41,7 +39,7 @@ class ApnsCredentialProperties(Model):
         'thumbprint': {'key': 'thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, apns_certificate=None, certificate_key=None, endpoint=None, thumbprint=None):
+    def __init__(self, apns_certificate=None, certificate_key=None, endpoint=None, thumbprint=None, **kwargs):
         self.apns_certificate = apns_certificate
         self.certificate_key = certificate_key
         self.endpoint = endpoint

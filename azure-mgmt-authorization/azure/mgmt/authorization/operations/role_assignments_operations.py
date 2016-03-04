@@ -59,7 +59,7 @@ class RoleAssignmentsOperations(object):
         :param resource_name: Resource identity.
         :type resource_name: str
         :param filter: The filter to apply on the operation.
-        :type filter: RoleAssignmentFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -79,12 +79,12 @@ class RoleAssignmentsOperations(object):
                     'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'RoleAssignmentFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
@@ -131,7 +131,7 @@ class RoleAssignmentsOperations(object):
         :param resource_group_name: Resource group name.
         :type resource_group_name: str
         :param filter: The filter to apply on the operation.
-        :type filter: RoleAssignmentFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -147,12 +147,12 @@ class RoleAssignmentsOperations(object):
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'RoleAssignmentFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
@@ -210,10 +210,9 @@ class RoleAssignmentsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -272,10 +271,9 @@ class RoleAssignmentsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -334,10 +332,9 @@ class RoleAssignmentsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -389,10 +386,9 @@ class RoleAssignmentsOperations(object):
         # Construct URL
         url = '/{roleAssignmentId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -448,10 +444,9 @@ class RoleAssignmentsOperations(object):
         # Construct URL
         url = '/{roleAssignmentId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -507,10 +502,9 @@ class RoleAssignmentsOperations(object):
         # Construct URL
         url = '/{roleAssignmentId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -552,7 +546,7 @@ class RoleAssignmentsOperations(object):
         Gets role assignments of the subscription.
 
         :param filter: The filter to apply on the operation.
-        :type filter: RoleAssignmentFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -567,12 +561,12 @@ class RoleAssignmentsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'RoleAssignmentFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
@@ -619,7 +613,7 @@ class RoleAssignmentsOperations(object):
         :param scope: Scope.
         :type scope: str
         :param filter: The filter to apply on the operation.
-        :type filter: RoleAssignmentFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -632,15 +626,14 @@ class RoleAssignmentsOperations(object):
                 # Construct URL
                 url = '/{scope}/providers/Microsoft.Authorization/roleAssignments'
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'RoleAssignmentFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:

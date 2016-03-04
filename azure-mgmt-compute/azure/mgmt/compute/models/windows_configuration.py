@@ -36,9 +36,7 @@ class WindowsConfiguration(Model):
      Unattend.xml file.
     :param WinRMConfiguration win_rm: Gets or sets the Windows Remote
      Management configuration of the VM
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'provision_vm_agent': {'key': 'provisionVMAgent', 'type': 'bool'},
@@ -48,7 +46,7 @@ class WindowsConfiguration(Model):
         'win_rm': {'key': 'winRM', 'type': 'WinRMConfiguration'},
     }
 
-    def __init__(self, provision_vm_agent=None, enable_automatic_updates=None, time_zone=None, additional_unattend_content=None, win_rm=None):
+    def __init__(self, provision_vm_agent=None, enable_automatic_updates=None, time_zone=None, additional_unattend_content=None, win_rm=None, **kwargs):
         self.provision_vm_agent = provision_vm_agent
         self.enable_automatic_updates = enable_automatic_updates
         self.time_zone = time_zone

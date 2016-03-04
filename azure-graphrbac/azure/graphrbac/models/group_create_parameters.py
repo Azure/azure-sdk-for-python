@@ -30,9 +30,14 @@ class GroupCreateParameters(Model):
     :param bool mail_enabled: Mail
     :param str mail_nickname: Mail nick name
     :param bool security_enabled: Is security enabled
-    """
+    """ 
 
-    _required = ['display_name', 'mail_enabled', 'mail_nickname', 'security_enabled']
+    _validation = {
+        'display_name': {'required': True},
+        'mail_enabled': {'required': True},
+        'mail_nickname': {'required': True},
+        'security_enabled': {'required': True},
+    }
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
@@ -41,7 +46,7 @@ class GroupCreateParameters(Model):
         'security_enabled': {'key': 'securityEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, display_name, mail_enabled, mail_nickname, security_enabled):
+    def __init__(self, display_name, mail_enabled, mail_nickname, security_enabled, **kwargs):
         self.display_name = display_name
         self.mail_enabled = mail_enabled
         self.mail_nickname = mail_nickname

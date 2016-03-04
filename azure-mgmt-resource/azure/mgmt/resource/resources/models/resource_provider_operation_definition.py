@@ -29,15 +29,13 @@ class ResourceProviderOperationDefinition(Model):
     :param str name: Gets or sets the provider operation name.
     :param ResourceProviderOperationDisplayProperties display: Gets or sets
      the display property of the provider operation.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplayProperties'},
     }
 
-    def __init__(self, name=None, display=None):
+    def __init__(self, name=None, display=None, **kwargs):
         self.name = name
         self.display = display

@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.deployments_operations import DeploymentsOperations
 from .operations.providers_operations import ProvidersOperations
 from .operations.resource_groups_operations import ResourceGroupsOperations
@@ -73,7 +74,8 @@ class ResourceManagementClientConfiguration(AzureConfiguration):
 
         super(ResourceManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('resourcemanagementclient/2015-11-01')
+        self.add_user_agent('resourcemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

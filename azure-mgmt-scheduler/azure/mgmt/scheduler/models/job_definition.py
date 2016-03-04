@@ -29,9 +29,7 @@ class JobDefinition(Model):
     :param str type: Gets the job resource type.
     :param str name: Gets the job resource name.
     :param JobProperties properties: Gets or sets the job properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -40,7 +38,7 @@ class JobDefinition(Model):
         'properties': {'key': 'properties', 'type': 'JobProperties'},
     }
 
-    def __init__(self, id=None, type=None, name=None, properties=None):
+    def __init__(self, id=None, type=None, name=None, properties=None, **kwargs):
         self.id = id
         self.type = type
         self.name = name

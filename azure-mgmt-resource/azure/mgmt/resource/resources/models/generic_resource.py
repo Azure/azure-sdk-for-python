@@ -33,16 +33,23 @@ class GenericResource(Resource):
     :param dict tags: Resource tags
     :param Plan plan: Gets or sets the plan of the resource.
     :param object properties: Gets or sets the resource properties.
-    """
+    """ 
 
-    _required = []
+    _validation = {
+        'location': {'required': True},
+    }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, properties=None):
-        super(GenericResource, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, properties=None, **kwargs):
+        super(GenericResource, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.plan = plan
         self.properties = properties

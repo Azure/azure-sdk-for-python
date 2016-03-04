@@ -34,18 +34,25 @@ class GeoRegion(Resource):
     :param str geo_region_name: Region name
     :param str description: Region description
     :param str display_name: Display name for region
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'geo_region_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'description': {'key': 'properties.description', 'type': 'str', 'flatten': True},
-        'display_name': {'key': 'properties.displayName', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, geo_region_name=None, description=None, display_name=None):
-        super(GeoRegion, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'geo_region_name': {'key': 'properties.name', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, geo_region_name=None, description=None, display_name=None, **kwargs):
+        super(GeoRegion, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.geo_region_name = geo_region_name
         self.description = description
         self.display_name = display_name

@@ -28,15 +28,13 @@ class SiteCollection(Model):
 
     :param list value: Collection of resources
     :param str next_link: Link to next page of resources
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Site]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value=None, next_link=None):
+    def __init__(self, value=None, next_link=None, **kwargs):
         self.value = value
         self.next_link = next_link

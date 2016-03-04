@@ -29,13 +29,15 @@ class UserGetMemberGroupsParameters(Model):
     :param bool security_enabled_only: If true only membership in security
      enabled groups should be checked. Otherwise membership in all groups
      should be checked
-    """
+    """ 
 
-    _required = ['security_enabled_only']
+    _validation = {
+        'security_enabled_only': {'required': True},
+    }
 
     _attribute_map = {
         'security_enabled_only': {'key': 'securityEnabledOnly', 'type': 'bool'},
     }
 
-    def __init__(self, security_enabled_only):
+    def __init__(self, security_enabled_only, **kwargs):
         self.security_enabled_only = security_enabled_only

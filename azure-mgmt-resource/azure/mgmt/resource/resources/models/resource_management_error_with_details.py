@@ -30,14 +30,20 @@ class ResourceManagementErrorWithDetails(ResourceManagementError):
      server.
     :param str target: Gets or sets the target of the error.
     :param list details: Gets or sets validation error.
-    """
+    """ 
 
-    _required = []
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
 
     _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
         'details': {'key': 'details', 'type': '[ResourceManagementError]'},
     }
 
-    def __init__(self, code, message, target=None, details=None):
-        super(ResourceManagementErrorWithDetails, self).__init__(code=code, message=message, target=target)
+    def __init__(self, code, message, target=None, details=None, **kwargs):
+        super(ResourceManagementErrorWithDetails, self).__init__(code=code, message=message, target=target, **kwargs)
         self.details = details

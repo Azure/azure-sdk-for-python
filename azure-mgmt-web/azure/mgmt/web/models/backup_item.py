@@ -31,6 +31,7 @@ class BackupItem(Resource):
     :param str location: Resource Location
     :param str type: Resource type
     :param dict tags: Resource tags
+    :param int backup_item_id: Id of the backup.
     :param str storage_account_url: SAS URL for the storage account container
      which contains this backup
     :param str blob_name: Name of the blob which contains data for this backup
@@ -52,28 +53,37 @@ class BackupItem(Resource):
      along with the timestamp while communicating with Azure support.
     :param long website_size_in_bytes: Size of the original web app which has
      been backed up
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str', 'flatten': True},
-        'blob_name': {'key': 'properties.blobName', 'type': 'str', 'flatten': True},
-        'backup_item_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'status': {'key': 'properties.status', 'type': 'BackupItemStatus', 'flatten': True},
-        'size_in_bytes': {'key': 'properties.sizeInBytes', 'type': 'long', 'flatten': True},
-        'created': {'key': 'properties.created', 'type': 'iso-8601', 'flatten': True},
-        'log': {'key': 'properties.log', 'type': 'str', 'flatten': True},
-        'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]', 'flatten': True},
-        'scheduled': {'key': 'properties.scheduled', 'type': 'bool', 'flatten': True},
-        'last_restore_time_stamp': {'key': 'properties.lastRestoreTimeStamp', 'type': 'iso-8601', 'flatten': True},
-        'finished_time_stamp': {'key': 'properties.finishedTimeStamp', 'type': 'iso-8601', 'flatten': True},
-        'correlation_id': {'key': 'properties.correlationId', 'type': 'str', 'flatten': True},
-        'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, storage_account_url=None, blob_name=None, backup_item_name=None, status=None, size_in_bytes=None, created=None, log=None, databases=None, scheduled=None, last_restore_time_stamp=None, finished_time_stamp=None, correlation_id=None, website_size_in_bytes=None):
-        super(BackupItem, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'backup_item_id': {'key': 'properties.id', 'type': 'int'},
+        'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
+        'blob_name': {'key': 'properties.blobName', 'type': 'str'},
+        'backup_item_name': {'key': 'properties.name', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'BackupItemStatus'},
+        'size_in_bytes': {'key': 'properties.sizeInBytes', 'type': 'long'},
+        'created': {'key': 'properties.created', 'type': 'iso-8601'},
+        'log': {'key': 'properties.log', 'type': 'str'},
+        'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]'},
+        'scheduled': {'key': 'properties.scheduled', 'type': 'bool'},
+        'last_restore_time_stamp': {'key': 'properties.lastRestoreTimeStamp', 'type': 'iso-8601'},
+        'finished_time_stamp': {'key': 'properties.finishedTimeStamp', 'type': 'iso-8601'},
+        'correlation_id': {'key': 'properties.correlationId', 'type': 'str'},
+        'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, backup_item_id=None, storage_account_url=None, blob_name=None, backup_item_name=None, status=None, size_in_bytes=None, created=None, log=None, databases=None, scheduled=None, last_restore_time_stamp=None, finished_time_stamp=None, correlation_id=None, website_size_in_bytes=None, **kwargs):
+        super(BackupItem, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+        self.backup_item_id = backup_item_id
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name
         self.backup_item_name = backup_item_name

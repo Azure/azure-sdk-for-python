@@ -30,16 +30,15 @@ class BasicAuthentication(HttpAuthentication):
      'ActiveDirectoryOAuth', 'Basic'
     :param str username: Gets or sets the username.
     :param str password: Gets or sets the password.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
         'username': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, type=None, username=None, password=None):
-        super(BasicAuthentication, self).__init__(type=type)
+    def __init__(self, type=None, username=None, password=None, **kwargs):
+        super(BasicAuthentication, self).__init__(type=type, **kwargs)
         self.username = username
         self.password = password

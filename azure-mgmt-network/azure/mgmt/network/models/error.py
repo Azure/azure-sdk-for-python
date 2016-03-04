@@ -30,9 +30,7 @@ class Error(Model):
     :param str target:
     :param list details:
     :param str inner_error:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -42,7 +40,7 @@ class Error(Model):
         'inner_error': {'key': 'innerError', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None, target=None, details=None, inner_error=None):
+    def __init__(self, code=None, message=None, target=None, details=None, inner_error=None, **kwargs):
         self.code = code
         self.message = message
         self.target = target

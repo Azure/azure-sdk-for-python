@@ -62,10 +62,9 @@ class RoleDefinitionsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -120,10 +119,9 @@ class RoleDefinitionsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -180,10 +178,9 @@ class RoleDefinitionsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -239,10 +236,9 @@ class RoleDefinitionsOperations(object):
         # Construct URL
         url = '/{roleDefinitionId}'
         path_format_arguments = {
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str', skip_quote=True)
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -287,7 +283,7 @@ class RoleDefinitionsOperations(object):
         :param scope: Scope
         :type scope: str
         :param filter: The filter to apply on the operation.
-        :type filter: RoleDefinitionFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -300,15 +296,14 @@ class RoleDefinitionsOperations(object):
                 # Construct URL
                 url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions'
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'RoleDefinitionFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:

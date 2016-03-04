@@ -35,9 +35,7 @@ class JobStatus(Model):
      executed in ISO-8601 format.  Could be empty if job has not run yet.
     :param datetime next_execution_time: Gets the time of the next occurrence
      in ISO-8601 format. Could be empty if the job is completed.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'execution_count': {'key': 'executionCount', 'type': 'int'},
@@ -47,7 +45,7 @@ class JobStatus(Model):
         'next_execution_time': {'key': 'nextExecutionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, execution_count=None, failure_count=None, faulted_count=None, last_execution_time=None, next_execution_time=None):
+    def __init__(self, execution_count=None, failure_count=None, faulted_count=None, last_execution_time=None, next_execution_time=None, **kwargs):
         self.execution_count = execution_count
         self.failure_count = failure_count
         self.faulted_count = faulted_count

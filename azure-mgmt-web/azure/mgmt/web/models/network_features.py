@@ -36,18 +36,25 @@ class NetworkFeatures(Resource):
     :param str virtual_network_name: The Vnet Name
     :param VnetInfo virtual_network_connection: The Vnet Summary view
     :param list hybrid_connections: The Hybrid Connections Summary view
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'virtual_network_name': {'key': 'properties.virtualNetworkName', 'type': 'str', 'flatten': True},
-        'virtual_network_connection': {'key': 'properties.virtualNetworkConnection', 'type': 'VnetInfo', 'flatten': True},
-        'hybrid_connections': {'key': 'properties.hybridConnections', 'type': '[RelayServiceConnectionEntity]', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, virtual_network_name=None, virtual_network_connection=None, hybrid_connections=None):
-        super(NetworkFeatures, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'virtual_network_name': {'key': 'properties.virtualNetworkName', 'type': 'str'},
+        'virtual_network_connection': {'key': 'properties.virtualNetworkConnection', 'type': 'VnetInfo'},
+        'hybrid_connections': {'key': 'properties.hybridConnections', 'type': '[RelayServiceConnectionEntity]'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, virtual_network_name=None, virtual_network_connection=None, hybrid_connections=None, **kwargs):
+        super(NetworkFeatures, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.virtual_network_name = virtual_network_name
         self.virtual_network_connection = virtual_network_connection
         self.hybrid_connections = hybrid_connections

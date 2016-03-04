@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'ResourceManagementClient',
     'ResourceManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

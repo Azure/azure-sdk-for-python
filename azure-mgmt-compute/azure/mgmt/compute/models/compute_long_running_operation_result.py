@@ -33,9 +33,7 @@ class ComputeLongRunningOperationResult(Model):
     :param datetime end_time: Gets the operation end time
     :param ComputeLongRunningOperationProperties properties:
     :param ApiError error: Gets the operation error, if any occurred.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'operation_id': {'key': 'operationId', 'type': 'str'},
@@ -46,7 +44,7 @@ class ComputeLongRunningOperationResult(Model):
         'error': {'key': 'error', 'type': 'ApiError'},
     }
 
-    def __init__(self, operation_id=None, status=None, start_time=None, end_time=None, properties=None, error=None):
+    def __init__(self, operation_id=None, status=None, start_time=None, end_time=None, properties=None, error=None, **kwargs):
         self.operation_id = operation_id
         self.status = status
         self.start_time = start_time

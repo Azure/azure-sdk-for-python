@@ -30,9 +30,7 @@ class WorkflowTriggerRecurrence(Model):
     :param int interval: Gets or sets the interval.
     :param datetime start_time: Gets or sets the start time.
     :param str time_zone: Gets or sets the time zone.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
@@ -41,7 +39,7 @@ class WorkflowTriggerRecurrence(Model):
         'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
-    def __init__(self, frequency=None, interval=None, start_time=None, time_zone=None):
+    def __init__(self, frequency=None, interval=None, start_time=None, time_zone=None, **kwargs):
         self.frequency = frequency
         self.interval = interval
         self.start_time = start_time

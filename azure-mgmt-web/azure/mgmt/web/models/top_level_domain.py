@@ -34,16 +34,23 @@ class TopLevelDomain(Resource):
     :param str top_level_domain_name: Name of the top level domain
     :param bool privacy: If true then the top level domain supports domain
      privacy
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'top_level_domain_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'privacy': {'key': 'properties.privacy', 'type': 'bool', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, top_level_domain_name=None, privacy=None):
-        super(TopLevelDomain, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'top_level_domain_name': {'key': 'properties.name', 'type': 'str'},
+        'privacy': {'key': 'properties.privacy', 'type': 'bool'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, top_level_domain_name=None, privacy=None, **kwargs):
+        super(TopLevelDomain, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.top_level_domain_name = top_level_domain_name
         self.privacy = privacy

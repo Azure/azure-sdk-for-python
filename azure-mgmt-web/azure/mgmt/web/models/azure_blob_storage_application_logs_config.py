@@ -33,9 +33,7 @@ class AzureBlobStorageApplicationLogsConfig(Model):
     :param int retention_in_days: Retention in days.
      Remove blobs older than X days.
      0 or lower means no retention.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'level': {'key': 'level', 'type': 'LogLevel'},
@@ -43,7 +41,7 @@ class AzureBlobStorageApplicationLogsConfig(Model):
         'retention_in_days': {'key': 'retentionInDays', 'type': 'int'},
     }
 
-    def __init__(self, level=None, sas_url=None, retention_in_days=None):
+    def __init__(self, level=None, sas_url=None, retention_in_days=None, **kwargs):
         self.level = level
         self.sas_url = sas_url
         self.retention_in_days = retention_in_days

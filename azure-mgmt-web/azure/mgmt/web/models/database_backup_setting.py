@@ -38,9 +38,7 @@ class DatabaseBackupSetting(Model):
     :param str connection_string: Contains a connection string to a database
      which is being backed up/restored. If the restore should happen to a new
      database, the database name inside is the new one.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'database_type': {'key': 'databaseType', 'type': 'str'},
@@ -49,7 +47,7 @@ class DatabaseBackupSetting(Model):
         'connection_string': {'key': 'connectionString', 'type': 'str'},
     }
 
-    def __init__(self, database_type=None, name=None, connection_string_name=None, connection_string=None):
+    def __init__(self, database_type=None, name=None, connection_string_name=None, connection_string=None, **kwargs):
         self.database_type = database_type
         self.name = name
         self.connection_string_name = connection_string_name

@@ -71,7 +71,7 @@ class VirtualMachineExtensionImagesOperations(object):
             'version': self._serialize.url("version", version, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -129,7 +129,7 @@ class VirtualMachineExtensionImagesOperations(object):
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -166,7 +166,7 @@ class VirtualMachineExtensionImagesOperations(object):
         return deserialized
 
     def list_versions(
-            self, location, publisher_name, type, filter=None, top=None, order_by=None, custom_headers={}, raw=False, **operation_config):
+            self, location, publisher_name, type, filter=None, top=None, orderby=None, custom_headers={}, raw=False, **operation_config):
         """
         Gets a list of virtual machine extension image versions.
 
@@ -177,11 +177,11 @@ class VirtualMachineExtensionImagesOperations(object):
         :param type:
         :type type: str
         :param filter: The filter to apply on the operation.
-        :type filter: VirtualMachineImageResource
+        :type filter: str
         :param top:
         :type top: int
-        :param order_by:
-        :type order_by: str
+        :param orderby:
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -196,16 +196,16 @@ class VirtualMachineExtensionImagesOperations(object):
             'type': self._serialize.url("type", type, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'VirtualMachineImageResource')
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         if top is not None:
             query_parameters['$top'] = self._serialize.query("top", top, 'int')
-        if order_by is not None:
-            query_parameters['$orderBy'] = self._serialize.query("order_by", order_by, 'str')
+        if orderby is not None:
+            query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
