@@ -33,9 +33,7 @@ class VirtualMachineExtensionInstanceView(Model):
      extension handler.
     :param list substatuses: Gets or sets the resource status information.
     :param list statuses: Gets or sets the resource status information.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -45,7 +43,7 @@ class VirtualMachineExtensionInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, name=None, type=None, type_handler_version=None, substatuses=None, statuses=None):
+    def __init__(self, name=None, type=None, type_handler_version=None, substatuses=None, statuses=None, **kwargs):
         self.name = name
         self.type = type
         self.type_handler_version = type_handler_version

@@ -37,9 +37,7 @@ class VirtualMachineScaleSetVMInstanceView(Model):
     :param BootDiagnosticsInstanceView boot_diagnostics: Gets or sets the
      boot diagnostics.
     :param list statuses: Gets or sets the resource status information.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
@@ -52,7 +50,7 @@ class VirtualMachineScaleSetVMInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None):
+    def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None, **kwargs):
         self.platform_update_domain = platform_update_domain
         self.platform_fault_domain = platform_fault_domain
         self.rdp_thumb_print = rdp_thumb_print

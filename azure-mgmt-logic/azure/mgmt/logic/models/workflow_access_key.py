@@ -26,24 +26,23 @@ class WorkflowAccessKey(SubResource):
     """WorkflowAccessKey
 
     :param str id: Gets or sets the resource id.
-    :param str name: Gets the workflow access key name.
-    :param str type: Gets the workflow access key type.
     :param datetime not_before: Gets or sets the not-before time.
     :param datetime not_after: Gets or sets the not-after time.
-    """
-
-    _required = []
+    :param str name: Gets the workflow access key name.
+    :param str type: Gets the workflow access key type.
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'not_before': {'key': 'properties.notBefore', 'type': 'iso-8601'},
+        'not_after': {'key': 'properties.notAfter', 'type': 'iso-8601'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'not_before': {'key': 'properties.notBefore', 'type': 'iso-8601', 'flatten': True},
-        'not_after': {'key': 'properties.notAfter', 'type': 'iso-8601', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, not_before=None, not_after=None):
-        super(WorkflowAccessKey, self).__init__(id=id)
-        self.name = name
-        self.type = type
+    def __init__(self, id=None, not_before=None, not_after=None, name=None, type=None, **kwargs):
+        super(WorkflowAccessKey, self).__init__(id=id, **kwargs)
         self.not_before = not_before
         self.not_after = not_after
+        self.name = name
+        self.type = type

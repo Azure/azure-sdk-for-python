@@ -30,9 +30,7 @@ class DomainControlCenterSsoRequest(Model):
     :param str post_parameter_key: Post parameter key
     :param str post_parameter_value: Post parameter value. Client should use
      'application/x-www-form-urlencoded' encoding for this value.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'url': {'key': 'url', 'type': 'str'},
@@ -40,7 +38,7 @@ class DomainControlCenterSsoRequest(Model):
         'post_parameter_value': {'key': 'postParameterValue', 'type': 'str'},
     }
 
-    def __init__(self, url=None, post_parameter_key=None, post_parameter_value=None):
+    def __init__(self, url=None, post_parameter_key=None, post_parameter_value=None, **kwargs):
         self.url = url
         self.post_parameter_key = post_parameter_key
         self.post_parameter_value = post_parameter_value

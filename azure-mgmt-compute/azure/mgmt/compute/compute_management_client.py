@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.availability_sets_operations import AvailabilitySetsOperations
 from .operations.virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
 from .operations.virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
@@ -73,7 +74,8 @@ class ComputeManagementClientConfiguration(AzureConfiguration):
 
         super(ComputeManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('computemanagementclient/2015-06-15')
+        self.add_user_agent('computemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

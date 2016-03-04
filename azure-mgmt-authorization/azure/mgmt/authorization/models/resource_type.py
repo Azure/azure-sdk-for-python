@@ -29,9 +29,7 @@ class ResourceType(Model):
     :param str name: Gets or sets the resource type name
     :param str display_name: Gets or sets the resource type display name
     :param list operations: Gets or sets the resource type operations
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -39,7 +37,7 @@ class ResourceType(Model):
         'operations': {'key': 'operations', 'type': '[ProviderOperation]'},
     }
 
-    def __init__(self, name=None, display_name=None, operations=None):
+    def __init__(self, name=None, display_name=None, operations=None, **kwargs):
         self.name = name
         self.display_name = display_name
         self.operations = operations

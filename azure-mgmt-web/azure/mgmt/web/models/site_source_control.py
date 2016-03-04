@@ -38,20 +38,27 @@ class SiteSourceControl(Resource):
     :param bool deployment_rollback_enabled: Whether to manual or continuous
      integration
     :param bool is_mercurial: Mercurial or Git repository type
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'repo_url': {'key': 'properties.repoUrl', 'type': 'str', 'flatten': True},
-        'branch': {'key': 'properties.branch', 'type': 'str', 'flatten': True},
-        'is_manual_integration': {'key': 'properties.isManualIntegration', 'type': 'bool', 'flatten': True},
-        'deployment_rollback_enabled': {'key': 'properties.deploymentRollbackEnabled', 'type': 'bool', 'flatten': True},
-        'is_mercurial': {'key': 'properties.isMercurial', 'type': 'bool', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None):
-        super(SiteSourceControl, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'repo_url': {'key': 'properties.repoUrl', 'type': 'str'},
+        'branch': {'key': 'properties.branch', 'type': 'str'},
+        'is_manual_integration': {'key': 'properties.isManualIntegration', 'type': 'bool'},
+        'deployment_rollback_enabled': {'key': 'properties.deploymentRollbackEnabled', 'type': 'bool'},
+        'is_mercurial': {'key': 'properties.isMercurial', 'type': 'bool'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None, **kwargs):
+        super(SiteSourceControl, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.repo_url = repo_url
         self.branch = branch
         self.is_manual_integration = is_manual_integration

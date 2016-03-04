@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .notification_hubs_management_client import NotificationHubsManagementClient, NotificationHubsManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'NotificationHubsManagementClient',
     'NotificationHubsManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

@@ -41,20 +41,25 @@ class Origin(Resource):
      include: 'Creating', 'Active', 'Deleting'
     :param str provisioning_state: Provisioning status of the origin.
      Possible values include: 'Creating', 'Succeeded', 'Failed'
-    """
+    """ 
 
-    _required = ['host_name']
-
-    _attribute_map = {
-        'host_name': {'key': 'properties.hostName', 'type': 'str', 'flatten': True},
-        'http_port': {'key': 'properties.httpPort', 'type': 'int', 'flatten': True},
-        'https_port': {'key': 'properties.httpsPort', 'type': 'int', 'flatten': True},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'OriginResourceState', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState', 'flatten': True},
+    _validation = {
+        'host_name': {'required': True},
     }
 
-    def __init__(self, host_name, id=None, name=None, type=None, http_port=None, https_port=None, resource_state=None, provisioning_state=None):
-        super(Origin, self).__init__(id=id, name=name, type=type)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+        'http_port': {'key': 'properties.httpPort', 'type': 'int'},
+        'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'OriginResourceState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+    }
+
+    def __init__(self, host_name, id=None, name=None, type=None, http_port=None, https_port=None, resource_state=None, provisioning_state=None, **kwargs):
+        super(Origin, self).__init__(id=id, name=name, type=type, **kwargs)
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port

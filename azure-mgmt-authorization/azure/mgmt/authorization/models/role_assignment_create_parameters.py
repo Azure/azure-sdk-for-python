@@ -28,13 +28,11 @@ class RoleAssignmentCreateParameters(Model):
 
     :param RoleAssignmentProperties properties: Gets or sets role assignment
      properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'RoleAssignmentProperties'},
     }
 
-    def __init__(self, properties=None):
+    def __init__(self, properties=None, **kwargs):
         self.properties = properties

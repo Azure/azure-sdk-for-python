@@ -28,15 +28,17 @@ class UserCreateParametersPasswordProfile(Model):
     :param str password: Password
     :param bool force_change_password_next_login: Force change password on
      next login
-    """
+    """ 
 
-    _required = ['password']
+    _validation = {
+        'password': {'required': True},
+    }
 
     _attribute_map = {
         'password': {'key': 'password', 'type': 'str'},
         'force_change_password_next_login': {'key': 'forceChangePasswordNextLogin', 'type': 'bool'},
     }
 
-    def __init__(self, password, force_change_password_next_login=None):
+    def __init__(self, password, force_change_password_next_login=None, **kwargs):
         self.password = password
         self.force_change_password_next_login = force_change_password_next_login

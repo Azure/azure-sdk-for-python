@@ -55,7 +55,7 @@ class WorkflowTriggersOperations(object):
         :param top: The number of items to be included in the result.
         :type top: int
         :param filter: The filter to apply on the operation.
-        :type filter: WorkflowTriggerFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -72,7 +72,7 @@ class WorkflowTriggersOperations(object):
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -80,7 +80,7 @@ class WorkflowTriggersOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'WorkflowTriggerFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -143,7 +143,7 @@ class WorkflowTriggersOperations(object):
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
             'triggerName': self._serialize.url("trigger_name", trigger_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -204,7 +204,7 @@ class WorkflowTriggersOperations(object):
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
             'triggerName': self._serialize.url("trigger_name", trigger_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

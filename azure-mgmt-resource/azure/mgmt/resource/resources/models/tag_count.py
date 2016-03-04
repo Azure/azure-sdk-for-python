@@ -28,15 +28,13 @@ class TagCount(Model):
 
     :param str type: Type of count.
     :param str value: Value of count.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, type=None, value=None):
+    def __init__(self, type=None, value=None, **kwargs):
         self.type = type
         self.value = value

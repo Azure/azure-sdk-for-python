@@ -34,9 +34,7 @@ class NotificationHubResource(Model):
     :param dict tags: Gets or sets tags of the NotificatioHub.
     :param NotificationHubProperties properties: Gets or sets properties of
      the NotificatioHub.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -47,7 +45,7 @@ class NotificationHubResource(Model):
         'properties': {'key': 'properties', 'type': 'NotificationHubProperties'},
     }
 
-    def __init__(self, id=None, location=None, name=None, type=None, tags=None, properties=None):
+    def __init__(self, id=None, location=None, name=None, type=None, tags=None, properties=None, **kwargs):
         self.id = id
         self.location = location
         self.name = name

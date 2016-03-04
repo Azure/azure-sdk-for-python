@@ -64,7 +64,7 @@ class RoleDefinitionsOperations(object):
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -121,7 +121,7 @@ class RoleDefinitionsOperations(object):
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -180,7 +180,7 @@ class RoleDefinitionsOperations(object):
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -238,7 +238,7 @@ class RoleDefinitionsOperations(object):
         path_format_arguments = {
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str', skip_quote=True)
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -283,7 +283,7 @@ class RoleDefinitionsOperations(object):
         :param scope: Scope
         :type scope: str
         :param filter: The filter to apply on the operation.
-        :type filter: RoleDefinitionFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -298,12 +298,12 @@ class RoleDefinitionsOperations(object):
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'RoleDefinitionFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:

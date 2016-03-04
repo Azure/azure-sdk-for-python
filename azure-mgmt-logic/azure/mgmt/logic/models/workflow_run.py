@@ -26,8 +26,6 @@ class WorkflowRun(SubResource):
     """WorkflowRun
 
     :param str id: Gets or sets the resource id.
-    :param str name: Gets the workflow run name.
-    :param str type: Gets the workflow run type.
     :param datetime start_time: Gets the start time.
     :param datetime end_time: Gets the end time.
     :param str status: Gets the status. Possible values include:
@@ -39,28 +37,27 @@ class WorkflowRun(SubResource):
     :param ResourceReference workflow: Gets the reference to workflow version.
     :param WorkflowRunTrigger trigger: Gets the fired trigger.
     :param dict outputs: Gets the outputs.
-    """
-
-    _required = []
+    :param str name: Gets the workflow run name.
+    :param str type: Gets the workflow run type.
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
+        'status': {'key': 'properties.status', 'type': 'WorkflowStatus'},
+        'code': {'key': 'properties.code', 'type': 'str'},
+        'error': {'key': 'properties.error', 'type': 'object'},
+        'correlation_id': {'key': 'properties.correlationId', 'type': 'str'},
+        'workflow': {'key': 'properties.workflow', 'type': 'ResourceReference'},
+        'trigger': {'key': 'properties.trigger', 'type': 'WorkflowRunTrigger'},
+        'outputs': {'key': 'properties.outputs', 'type': '{WorkflowOutputParameter}'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601', 'flatten': True},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601', 'flatten': True},
-        'status': {'key': 'properties.status', 'type': 'WorkflowStatus', 'flatten': True},
-        'code': {'key': 'properties.code', 'type': 'str', 'flatten': True},
-        'error': {'key': 'properties.error', 'type': 'object', 'flatten': True},
-        'correlation_id': {'key': 'properties.correlationId', 'type': 'str', 'flatten': True},
-        'workflow': {'key': 'properties.workflow', 'type': 'ResourceReference', 'flatten': True},
-        'trigger': {'key': 'properties.trigger', 'type': 'WorkflowRunTrigger', 'flatten': True},
-        'outputs': {'key': 'properties.outputs', 'type': '{WorkflowOutputParameter}', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, start_time=None, end_time=None, status=None, code=None, error=None, correlation_id=None, workflow=None, trigger=None, outputs=None):
-        super(WorkflowRun, self).__init__(id=id)
-        self.name = name
-        self.type = type
+    def __init__(self, id=None, start_time=None, end_time=None, status=None, code=None, error=None, correlation_id=None, workflow=None, trigger=None, outputs=None, name=None, type=None, **kwargs):
+        super(WorkflowRun, self).__init__(id=id, **kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.status = status
@@ -70,3 +67,5 @@ class WorkflowRun(SubResource):
         self.workflow = workflow
         self.trigger = trigger
         self.outputs = outputs
+        self.name = name
+        self.type = type

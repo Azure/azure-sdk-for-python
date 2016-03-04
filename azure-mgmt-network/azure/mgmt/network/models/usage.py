@@ -31,9 +31,14 @@ class Usage(Model):
     :param long current_value: Gets or sets the current value of the usage.
     :param long limit: Gets or sets the limit of usage.
     :param UsageName name: Gets or sets the name of the type of usage.
-    """
+    """ 
 
-    _required = ['unit', 'current_value', 'limit', 'name']
+    _validation = {
+        'unit': {'required': True},
+        'current_value': {'required': True},
+        'limit': {'required': True},
+        'name': {'required': True},
+    }
 
     _attribute_map = {
         'unit': {'key': 'unit', 'type': 'UsageUnit'},
@@ -42,7 +47,7 @@ class Usage(Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    def __init__(self, unit, current_value, limit, name):
+    def __init__(self, unit, current_value, limit, name, **kwargs):
         self.unit = unit
         self.current_value = current_value
         self.limit = limit

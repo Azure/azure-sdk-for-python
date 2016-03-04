@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .subscription_client import SubscriptionClient, SubscriptionClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'SubscriptionClient',
     'SubscriptionClientConfiguration'
 ]
+
+__version__ = VERSION
+

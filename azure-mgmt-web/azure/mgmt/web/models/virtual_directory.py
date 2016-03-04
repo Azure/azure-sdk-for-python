@@ -27,15 +27,13 @@ class VirtualDirectory(Model):
 
     :param str virtual_path:
     :param str physical_path:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'virtual_path': {'key': 'virtualPath', 'type': 'str'},
         'physical_path': {'key': 'physicalPath', 'type': 'str'},
     }
 
-    def __init__(self, virtual_path=None, physical_path=None):
+    def __init__(self, virtual_path=None, physical_path=None, **kwargs):
         self.virtual_path = virtual_path
         self.physical_path = physical_path

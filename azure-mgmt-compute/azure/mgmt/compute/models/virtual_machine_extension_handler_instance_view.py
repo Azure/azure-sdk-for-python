@@ -32,9 +32,7 @@ class VirtualMachineExtensionHandlerInstanceView(Model):
      extension handler.
     :param InstanceViewStatus status: Gets or sets the extension handler
      status.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
@@ -42,7 +40,7 @@ class VirtualMachineExtensionHandlerInstanceView(Model):
         'status': {'key': 'status', 'type': 'InstanceViewStatus'},
     }
 
-    def __init__(self, type=None, type_handler_version=None, status=None):
+    def __init__(self, type=None, type_handler_version=None, status=None, **kwargs):
         self.type = type
         self.type_handler_version = type_handler_version
         self.status = status

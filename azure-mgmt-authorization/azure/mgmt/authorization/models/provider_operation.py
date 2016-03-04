@@ -31,9 +31,7 @@ class ProviderOperation(Model):
     :param str description: Gets or sets the operation description
     :param str origin: Gets or sets the operation origin
     :param object properties: Gets or sets the operation properties
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -43,7 +41,7 @@ class ProviderOperation(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, name=None, display_name=None, description=None, origin=None, properties=None):
+    def __init__(self, name=None, display_name=None, description=None, origin=None, properties=None, **kwargs):
         self.name = name
         self.display_name = display_name
         self.description = description

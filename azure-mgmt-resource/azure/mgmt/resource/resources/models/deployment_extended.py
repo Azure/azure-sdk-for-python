@@ -30,9 +30,11 @@ class DeploymentExtended(Model):
     :param str name: Gets or sets the name of the deployment.
     :param DeploymentPropertiesExtended properties: Gets or sets deployment
      properties.
-    """
+    """ 
 
-    _required = ['name']
+    _validation = {
+        'name': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -40,7 +42,7 @@ class DeploymentExtended(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, name, id=None, properties=None):
+    def __init__(self, name, id=None, properties=None, **kwargs):
         self.id = id
         self.name = name
         self.properties = properties

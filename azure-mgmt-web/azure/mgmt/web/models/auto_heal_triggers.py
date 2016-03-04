@@ -34,9 +34,7 @@ class AutoHealTriggers(Model):
      codes
     :param SlowRequestsBasedTrigger slow_requests: SlowRequests - Defines a
      rule based on request execution time
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'requests': {'key': 'requests', 'type': 'RequestsBasedTrigger'},
@@ -45,7 +43,7 @@ class AutoHealTriggers(Model):
         'slow_requests': {'key': 'slowRequests', 'type': 'SlowRequestsBasedTrigger'},
     }
 
-    def __init__(self, requests=None, private_bytes_in_kb=None, status_codes=None, slow_requests=None):
+    def __init__(self, requests=None, private_bytes_in_kb=None, status_codes=None, slow_requests=None, **kwargs):
         self.requests = requests
         self.private_bytes_in_kb = private_bytes_in_kb
         self.status_codes = status_codes

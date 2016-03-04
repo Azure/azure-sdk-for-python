@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'SchedulerManagementClient',
     'SchedulerManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

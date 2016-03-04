@@ -37,19 +37,26 @@ class VirtualMachineScaleSet(Resource):
      sets the virtual machine profile.
     :param str provisioning_state: Gets or sets the provisioning state, which
      only appears in the response.
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy', 'flatten': True},
-        'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, provisioning_state=None):
-        super(VirtualMachineScaleSet, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
+        'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, provisioning_state=None, **kwargs):
+        super(VirtualMachineScaleSet, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.upgrade_policy = upgrade_policy
         self.virtual_machine_profile = virtual_machine_profile

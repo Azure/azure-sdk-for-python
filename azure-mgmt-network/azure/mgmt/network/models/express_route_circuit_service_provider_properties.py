@@ -29,9 +29,7 @@ class ExpressRouteCircuitServiceProviderProperties(Model):
     :param str service_provider_name: Gets or sets serviceProviderName.
     :param str peering_location: Gets or sets peering location.
     :param int bandwidth_in_mbps: Gets or sets BandwidthInMbps.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'service_provider_name': {'key': 'serviceProviderName', 'type': 'str'},
@@ -39,7 +37,7 @@ class ExpressRouteCircuitServiceProviderProperties(Model):
         'bandwidth_in_mbps': {'key': 'bandwidthInMbps', 'type': 'int'},
     }
 
-    def __init__(self, service_provider_name=None, peering_location=None, bandwidth_in_mbps=None):
+    def __init__(self, service_provider_name=None, peering_location=None, bandwidth_in_mbps=None, **kwargs):
         self.service_provider_name = service_provider_name
         self.peering_location = peering_location
         self.bandwidth_in_mbps = bandwidth_in_mbps

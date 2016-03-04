@@ -44,7 +44,7 @@ class ProviderOperationsMetadataOperations(object):
         self.config = config
 
     def get(
-            self, resource_provider_namespace, api_version, expand=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_provider_namespace, api_version, expand="resourceTypes", custom_headers={}, raw=False, **operation_config):
         """
         Gets provider operations metadata
 
@@ -66,7 +66,7 @@ class ProviderOperationsMetadataOperations(object):
         path_format_arguments = {
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -105,7 +105,7 @@ class ProviderOperationsMetadataOperations(object):
         return deserialized
 
     def list(
-            self, api_version, expand=None, custom_headers={}, raw=False, **operation_config):
+            self, api_version, expand="resourceTypes", custom_headers={}, raw=False, **operation_config):
         """
         Gets provider operations metadata list
 

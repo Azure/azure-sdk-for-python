@@ -28,13 +28,11 @@ class DiagnosticsProfile(Model):
 
     :param BootDiagnostics boot_diagnostics: Gets or sets the boot
      diagnostics.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnostics'},
     }
 
-    def __init__(self, boot_diagnostics=None):
+    def __init__(self, boot_diagnostics=None, **kwargs):
         self.boot_diagnostics = boot_diagnostics

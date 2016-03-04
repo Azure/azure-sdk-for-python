@@ -57,30 +57,37 @@ class Domain(Resource):
     :param list managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources
     :param DomainPurchaseConsent consent: Legal agreement consent
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'contact_admin': {'key': 'properties.contactAdmin', 'type': 'Contact', 'flatten': True},
-        'contact_billing': {'key': 'properties.contactBilling', 'type': 'Contact', 'flatten': True},
-        'contact_registrant': {'key': 'properties.contactRegistrant', 'type': 'Contact', 'flatten': True},
-        'contact_tech': {'key': 'properties.contactTech', 'type': 'Contact', 'flatten': True},
-        'registration_status': {'key': 'properties.registrationStatus', 'type': 'DomainStatus', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState', 'flatten': True},
-        'name_servers': {'key': 'properties.nameServers', 'type': '[str]', 'flatten': True},
-        'privacy': {'key': 'properties.privacy', 'type': 'bool', 'flatten': True},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601', 'flatten': True},
-        'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601', 'flatten': True},
-        'last_renewed_time': {'key': 'properties.lastRenewedTime', 'type': 'iso-8601', 'flatten': True},
-        'auto_renew': {'key': 'properties.autoRenew', 'type': 'bool', 'flatten': True},
-        'ready_for_dns_record_management': {'key': 'properties.readyForDnsRecordManagement', 'type': 'bool', 'flatten': True},
-        'managed_host_names': {'key': 'properties.managedHostNames', 'type': '[HostName]', 'flatten': True},
-        'consent': {'key': 'properties.consent', 'type': 'DomainPurchaseConsent', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None):
-        super(Domain, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'contact_admin': {'key': 'properties.contactAdmin', 'type': 'Contact'},
+        'contact_billing': {'key': 'properties.contactBilling', 'type': 'Contact'},
+        'contact_registrant': {'key': 'properties.contactRegistrant', 'type': 'Contact'},
+        'contact_tech': {'key': 'properties.contactTech', 'type': 'Contact'},
+        'registration_status': {'key': 'properties.registrationStatus', 'type': 'DomainStatus'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'name_servers': {'key': 'properties.nameServers', 'type': '[str]'},
+        'privacy': {'key': 'properties.privacy', 'type': 'bool'},
+        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
+        'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
+        'last_renewed_time': {'key': 'properties.lastRenewedTime', 'type': 'iso-8601'},
+        'auto_renew': {'key': 'properties.autoRenew', 'type': 'bool'},
+        'ready_for_dns_record_management': {'key': 'properties.readyForDnsRecordManagement', 'type': 'bool'},
+        'managed_host_names': {'key': 'properties.managedHostNames', 'type': '[HostName]'},
+        'consent': {'key': 'properties.consent', 'type': 'DomainPurchaseConsent'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None, **kwargs):
+        super(Domain, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing
         self.contact_registrant = contact_registrant

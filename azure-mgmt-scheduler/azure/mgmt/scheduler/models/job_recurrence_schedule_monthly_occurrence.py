@@ -31,15 +31,13 @@ class JobRecurrenceScheduleMonthlyOccurrence(Model):
      'Sunday'
     :param int occurrence: Gets or sets the occurrence. Must be between -5
      and 5.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'day': {'key': 'day', 'type': 'JobScheduleDay'},
         'occurrence': {'key': 'Occurrence', 'type': 'int'},
     }
 
-    def __init__(self, day=None, occurrence=None):
+    def __init__(self, day=None, occurrence=None, **kwargs):
         self.day = day
         self.occurrence = occurrence

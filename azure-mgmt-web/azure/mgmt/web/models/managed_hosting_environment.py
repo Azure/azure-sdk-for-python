@@ -56,27 +56,34 @@ class ManagedHostingEnvironment(Resource):
      (most likely because NSG blocked the incoming traffic)
     :param str api_management_account: Resource id of the api management
      account associated with this managed hosting environment (read only)
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'managed_hosting_environment_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'managed_hosting_environment_location': {'key': 'properties.location', 'type': 'str', 'flatten': True},
-        'status': {'key': 'properties.status', 'type': 'ManagedHostingEnvironmentStatus', 'flatten': True},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'VirtualNetworkProfile', 'flatten': True},
-        'ipssl_address_count': {'key': 'properties.ipsslAddressCount', 'type': 'int', 'flatten': True},
-        'dns_suffix': {'key': 'properties.dnsSuffix', 'type': 'str', 'flatten': True},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str', 'flatten': True},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str', 'flatten': True},
-        'environment_is_healthy': {'key': 'properties.environmentIsHealthy', 'type': 'bool', 'flatten': True},
-        'environment_status': {'key': 'properties.environmentStatus', 'type': 'str', 'flatten': True},
-        'suspended': {'key': 'properties.suspended', 'type': 'bool', 'flatten': True},
-        'api_management_account': {'key': 'properties.apiManagementAccount', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, managed_hosting_environment_name=None, managed_hosting_environment_location=None, status=None, virtual_network=None, ipssl_address_count=None, dns_suffix=None, subscription_id=None, resource_group=None, environment_is_healthy=None, environment_status=None, suspended=None, api_management_account=None):
-        super(ManagedHostingEnvironment, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'managed_hosting_environment_name': {'key': 'properties.name', 'type': 'str'},
+        'managed_hosting_environment_location': {'key': 'properties.location', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'ManagedHostingEnvironmentStatus'},
+        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'VirtualNetworkProfile'},
+        'ipssl_address_count': {'key': 'properties.ipsslAddressCount', 'type': 'int'},
+        'dns_suffix': {'key': 'properties.dnsSuffix', 'type': 'str'},
+        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
+        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+        'environment_is_healthy': {'key': 'properties.environmentIsHealthy', 'type': 'bool'},
+        'environment_status': {'key': 'properties.environmentStatus', 'type': 'str'},
+        'suspended': {'key': 'properties.suspended', 'type': 'bool'},
+        'api_management_account': {'key': 'properties.apiManagementAccount', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, managed_hosting_environment_name=None, managed_hosting_environment_location=None, status=None, virtual_network=None, ipssl_address_count=None, dns_suffix=None, subscription_id=None, resource_group=None, environment_is_healthy=None, environment_status=None, suspended=None, api_management_account=None, **kwargs):
+        super(ManagedHostingEnvironment, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.managed_hosting_environment_name = managed_hosting_environment_name
         self.managed_hosting_environment_location = managed_hosting_environment_location
         self.status = status

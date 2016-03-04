@@ -36,19 +36,26 @@ class AvailabilitySet(Resource):
     :param list virtual_machines: Gets or sets a list containing reference to
      all Virtual Machines  created under this Availability Set.
     :param list statuses: Gets or sets the resource status information.
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int', 'flatten': True},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int', 'flatten': True},
-        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]', 'flatten': True},
-        'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None, statuses=None):
-        super(AvailabilitySet, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
+        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
+        'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
+        'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None, statuses=None, **kwargs):
+        super(AvailabilitySet, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.platform_update_domain_count = platform_update_domain_count
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines

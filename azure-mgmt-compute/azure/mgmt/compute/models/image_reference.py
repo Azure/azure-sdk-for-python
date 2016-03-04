@@ -32,9 +32,7 @@ class ImageReference(Model):
     :param str version: Gets or sets the image version. The allowed formats
      are Major.Minor.Build or 'latest'. Major, Minor and Build being decimal
      numbers. Specify 'latest' to use the latest version of image.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'publisher': {'key': 'publisher', 'type': 'str'},
@@ -43,7 +41,7 @@ class ImageReference(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, publisher=None, offer=None, sku=None, version=None):
+    def __init__(self, publisher=None, offer=None, sku=None, version=None, **kwargs):
         self.publisher = publisher
         self.offer = offer
         self.sku = sku

@@ -40,21 +40,28 @@ class BackupRequest(Resource):
     :param list databases: Databases included in the backup
     :param str backup_request_type: Type of the backup. Possible values
      include: 'Default', 'Clone', 'Relocation'
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'backup_request_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool', 'flatten': True},
-        'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str', 'flatten': True},
-        'backup_schedule': {'key': 'properties.backupSchedule', 'type': 'BackupSchedule', 'flatten': True},
-        'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]', 'flatten': True},
-        'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
-        super(BackupRequest, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'backup_request_name': {'key': 'properties.name', 'type': 'str'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
+        'backup_schedule': {'key': 'properties.backupSchedule', 'type': 'BackupSchedule'},
+        'databases': {'key': 'properties.databases', 'type': '[DatabaseBackupSetting]'},
+        'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None, **kwargs):
+        super(BackupRequest, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.backup_request_name = backup_request_name
         self.enabled = enabled
         self.storage_account_url = storage_account_url

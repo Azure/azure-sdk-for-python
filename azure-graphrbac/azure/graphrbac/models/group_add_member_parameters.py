@@ -27,13 +27,15 @@ class GroupAddMemberParameters(Model):
     Request parameters for adding members to a groups
 
     :param str url: Group display name
-    """
+    """ 
 
-    _required = ['url']
+    _validation = {
+        'url': {'required': True},
+    }
 
     _attribute_map = {
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, url):
+    def __init__(self, url, **kwargs):
         self.url = url

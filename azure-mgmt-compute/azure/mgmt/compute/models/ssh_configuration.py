@@ -28,13 +28,11 @@ class SshConfiguration(Model):
 
     :param list public_keys: Gets or sets the list of SSH public keys used to
      authenticate with linux based VMs
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'public_keys': {'key': 'publicKeys', 'type': '[SshPublicKey]'},
     }
 
-    def __init__(self, public_keys=None):
+    def __init__(self, public_keys=None, **kwargs):
         self.public_keys = public_keys

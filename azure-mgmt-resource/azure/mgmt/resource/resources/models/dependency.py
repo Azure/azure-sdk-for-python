@@ -30,9 +30,7 @@ class Dependency(Model):
     :param str id: Gets or sets the ID of the dependency.
     :param str resource_type: Gets or sets the dependency resource type.
     :param str resource_name: Gets or sets the dependency resource name.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'depends_on': {'key': 'dependsOn', 'type': '[BasicDependency]'},
@@ -41,7 +39,7 @@ class Dependency(Model):
         'resource_name': {'key': 'resourceName', 'type': 'str'},
     }
 
-    def __init__(self, depends_on=None, id=None, resource_type=None, resource_name=None):
+    def __init__(self, depends_on=None, id=None, resource_type=None, resource_name=None, **kwargs):
         self.depends_on = depends_on
         self.id = id
         self.resource_type = resource_type

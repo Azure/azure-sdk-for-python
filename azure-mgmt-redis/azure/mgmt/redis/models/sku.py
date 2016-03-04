@@ -33,9 +33,13 @@ class Sku(Model):
      values include: 'C', 'P'
     :param int capacity: What size of redis cache to deploy. Valid values:
      for C family (0, 1, 2, 3, 4, 5, 6), for P family (1, 2, 3, 4)
-    """
+    """ 
 
-    _required = ['name', 'family', 'capacity']
+    _validation = {
+        'name': {'required': True},
+        'family': {'required': True},
+        'capacity': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'SkuName'},
@@ -43,7 +47,7 @@ class Sku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name, family, capacity):
+    def __init__(self, name, family, capacity, **kwargs):
         self.name = name
         self.family = family
         self.capacity = capacity

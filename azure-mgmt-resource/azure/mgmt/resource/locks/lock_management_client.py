@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.management_locks_operations import ManagementLocksOperations
 from . import models
 
@@ -65,7 +66,8 @@ class LockManagementClientConfiguration(AzureConfiguration):
 
         super(LockManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('lockmanagementclient/2015-01-01')
+        self.add_user_agent('lockmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

@@ -71,7 +71,7 @@ class VirtualMachineExtensionImagesOperations(object):
             'version': self._serialize.url("version", version, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -129,7 +129,7 @@ class VirtualMachineExtensionImagesOperations(object):
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -177,7 +177,7 @@ class VirtualMachineExtensionImagesOperations(object):
         :param type:
         :type type: str
         :param filter: The filter to apply on the operation.
-        :type filter: VirtualMachineImageResource
+        :type filter: str
         :param top:
         :type top: int
         :param orderby:
@@ -196,12 +196,12 @@ class VirtualMachineExtensionImagesOperations(object):
             'type': self._serialize.url("type", type, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'VirtualMachineImageResource')
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         if top is not None:
             query_parameters['$top'] = self._serialize.query("top", top, 'int')
         if orderby is not None:

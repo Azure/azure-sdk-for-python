@@ -36,9 +36,7 @@ class JobHistoryDefinitionProperties(Model):
     :param str message: Gets the message for the job history.
     :param int retry_count: Gets the retry count for job.
     :param int repeat_count: Gets the repeat count for the job.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
@@ -51,7 +49,7 @@ class JobHistoryDefinitionProperties(Model):
         'repeat_count': {'key': 'repeatCount', 'type': 'int'},
     }
 
-    def __init__(self, start_time=None, end_time=None, expected_execution_time=None, action_name=None, status=None, message=None, retry_count=None, repeat_count=None):
+    def __init__(self, start_time=None, end_time=None, expected_execution_time=None, action_name=None, status=None, message=None, retry_count=None, repeat_count=None, **kwargs):
         self.start_time = start_time
         self.end_time = end_time
         self.expected_execution_time = expected_execution_time

@@ -28,15 +28,13 @@ class ResourcesMoveInfo(Model):
 
     :param list resources: Gets or sets the ids of the resources.
     :param str target_resource_group: The target resource group.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'resources': {'key': 'resources', 'type': '[str]'},
         'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
     }
 
-    def __init__(self, resources=None, target_resource_group=None):
+    def __init__(self, resources=None, target_resource_group=None, **kwargs):
         self.resources = resources
         self.target_resource_group = target_resource_group

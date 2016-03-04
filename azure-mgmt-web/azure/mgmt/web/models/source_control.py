@@ -36,20 +36,27 @@ class SourceControl(Resource):
     :param str token_secret: OAuth Access Token Secret
     :param str refresh_token: OAuth Refresh Token
     :param datetime expiration_time: OAuth Token Expiration
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'source_control_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'token': {'key': 'properties.token', 'type': 'str', 'flatten': True},
-        'token_secret': {'key': 'properties.tokenSecret', 'type': 'str', 'flatten': True},
-        'refresh_token': {'key': 'properties.refreshToken', 'type': 'str', 'flatten': True},
-        'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, source_control_name=None, token=None, token_secret=None, refresh_token=None, expiration_time=None):
-        super(SourceControl, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'source_control_name': {'key': 'properties.name', 'type': 'str'},
+        'token': {'key': 'properties.token', 'type': 'str'},
+        'token_secret': {'key': 'properties.tokenSecret', 'type': 'str'},
+        'refresh_token': {'key': 'properties.refreshToken', 'type': 'str'},
+        'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, source_control_name=None, token=None, token_secret=None, refresh_token=None, expiration_time=None, **kwargs):
+        super(SourceControl, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.source_control_name = source_control_name
         self.token = token
         self.token_secret = token_secret

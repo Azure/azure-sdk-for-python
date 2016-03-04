@@ -27,13 +27,11 @@ class SsoUri(Model):
     Sso uri required to login to third party web portal
 
     :param str sso_uri_value: The uri used to login to third party web portal
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'sso_uri_value': {'key': 'ssoUriValue', 'type': 'str'},
     }
 
-    def __init__(self, sso_uri_value=None):
+    def __init__(self, sso_uri_value=None, **kwargs):
         self.sso_uri_value = sso_uri_value

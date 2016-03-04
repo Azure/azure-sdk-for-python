@@ -69,7 +69,7 @@ class SubnetsOperations(object):
             'subnetName': self._serialize.url("subnet_name", subnet_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -144,7 +144,7 @@ class SubnetsOperations(object):
             'subnetName': self._serialize.url("subnet_name", subnet_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -211,7 +211,7 @@ class SubnetsOperations(object):
             'subnetName': self._serialize.url("subnet_name", subnet_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -297,7 +297,7 @@ class SubnetsOperations(object):
                     'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}

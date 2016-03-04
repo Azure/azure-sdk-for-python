@@ -70,7 +70,7 @@ class VirtualMachineScaleSetsOperations(object):
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -158,7 +158,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -234,7 +234,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -303,7 +303,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -367,7 +367,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -440,7 +440,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -499,7 +499,7 @@ class VirtualMachineScaleSetsOperations(object):
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -563,7 +563,7 @@ class VirtualMachineScaleSetsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -630,7 +630,7 @@ class VirtualMachineScaleSetsOperations(object):
                     'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -700,7 +700,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -782,7 +782,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -863,7 +863,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -945,7 +945,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -1019,7 +1019,7 @@ class VirtualMachineScaleSetsOperations(object):
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

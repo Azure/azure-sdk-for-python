@@ -31,9 +31,7 @@ class ExpressRouteCircuitSku(Model):
      'Standard', 'Premium'
     :param str family: Gets or sets family of the sku. Possible values
      include: 'UnlimitedData', 'MeteredData'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -41,7 +39,7 @@ class ExpressRouteCircuitSku(Model):
         'family': {'key': 'family', 'type': 'ExpressRouteCircuitSkuFamily'},
     }
 
-    def __init__(self, name=None, tier=None, family=None):
+    def __init__(self, name=None, tier=None, family=None, **kwargs):
         self.name = name
         self.tier = tier
         self.family = family

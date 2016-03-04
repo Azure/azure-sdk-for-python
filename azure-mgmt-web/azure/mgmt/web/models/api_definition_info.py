@@ -27,13 +27,11 @@ class ApiDefinitionInfo(Model):
     Information about the formal API definition for the web app.
 
     :param str url: The URL of the API definition.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, url=None):
+    def __init__(self, url=None, **kwargs):
         self.url = url

@@ -31,9 +31,7 @@ class HttpRequest(Model):
     :param str method: Gets or sets the method of the request.
     :param str body: Gets or sets the request body.
     :param dict headers: Gets or sets the headers.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'authentication': {'key': 'authentication', 'type': 'HttpAuthentication'},
@@ -43,7 +41,7 @@ class HttpRequest(Model):
         'headers': {'key': 'headers', 'type': '{str}'},
     }
 
-    def __init__(self, authentication=None, uri=None, method=None, body=None, headers=None):
+    def __init__(self, authentication=None, uri=None, method=None, body=None, headers=None, **kwargs):
         self.authentication = authentication
         self.uri = uri
         self.method = method

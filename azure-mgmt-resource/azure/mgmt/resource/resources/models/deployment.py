@@ -28,13 +28,11 @@ class Deployment(Model):
 
     :param DeploymentProperties properties: Gets or sets the deployment
      properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
     }
 
-    def __init__(self, properties=None):
+    def __init__(self, properties=None, **kwargs):
         self.properties = properties

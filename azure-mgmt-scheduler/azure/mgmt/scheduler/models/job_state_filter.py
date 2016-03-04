@@ -27,13 +27,11 @@ class JobStateFilter(Model):
 
     :param str state: Gets or sets the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'JobState'},
     }
 
-    def __init__(self, state=None):
+    def __init__(self, state=None, **kwargs):
         self.state = state

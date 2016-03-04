@@ -28,15 +28,18 @@ class ServicePrincipalCreateParameters(Model):
 
     :param str app_id: Gets or sets application Id
     :param bool account_enabled: Specifies if the account is enabled
-    """
+    """ 
 
-    _required = ['app_id', 'account_enabled']
+    _validation = {
+        'app_id': {'required': True},
+        'account_enabled': {'required': True},
+    }
 
     _attribute_map = {
         'app_id': {'key': 'appId', 'type': 'str'},
         'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, app_id, account_enabled):
+    def __init__(self, app_id, account_enabled, **kwargs):
         self.app_id = app_id
         self.account_enabled = account_enabled

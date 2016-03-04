@@ -36,9 +36,7 @@ class DeploymentProperties(Model):
      the parameters. Use only one of Parameters or ParametersLink.
     :param str mode: Gets or sets the deployment mode. Possible values
      include: 'Incremental', 'Complete'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'template': {'key': 'template', 'type': 'object'},
@@ -48,7 +46,7 @@ class DeploymentProperties(Model):
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
     }
 
-    def __init__(self, template=None, template_link=None, parameters=None, parameters_link=None, mode=None):
+    def __init__(self, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, **kwargs):
         self.template = template
         self.template_link = template_link
         self.parameters = parameters

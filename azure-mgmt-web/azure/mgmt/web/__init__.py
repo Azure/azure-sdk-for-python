@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'WebSiteManagementClient',
     'WebSiteManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

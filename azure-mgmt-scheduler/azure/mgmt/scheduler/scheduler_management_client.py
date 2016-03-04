@@ -22,6 +22,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+from .version import VERSION
 from .operations.job_collections_operations import JobCollectionsOperations
 from .operations.jobs_operations import JobsOperations
 from . import models
@@ -64,7 +65,8 @@ class SchedulerManagementClientConfiguration(AzureConfiguration):
 
         super(SchedulerManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('schedulermanagementclient/2016-01-01')
+        self.add_user_agent('schedulermanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id

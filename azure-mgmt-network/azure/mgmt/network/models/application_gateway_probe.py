@@ -27,10 +27,6 @@ class ApplicationGatewayProbe(SubResource):
     Probe of application gateway
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param str protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
     :param str host: Gets or sets the host to send probe to
@@ -40,26 +36,27 @@ class ApplicationGatewayProbe(SubResource):
     :param int unhealthy_threshold: Gets or sets probing unhealthy threshold
     :param str provisioning_state: Gets or sets Provisioning state of the
      backend http settings resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'protocol': {'key': 'properties.protocol', 'type': 'ApplicationGatewayProtocol'},
+        'host': {'key': 'properties.host', 'type': 'str'},
+        'path': {'key': 'properties.path', 'type': 'str'},
+        'interval': {'key': 'properties.interval', 'type': 'int'},
+        'timeout': {'key': 'properties.timeout', 'type': 'int'},
+        'unhealthy_threshold': {'key': 'properties.unhealthyThreshold', 'type': 'int'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'ApplicationGatewayProtocol', 'flatten': True},
-        'host': {'key': 'properties.host', 'type': 'str', 'flatten': True},
-        'path': {'key': 'properties.path', 'type': 'str', 'flatten': True},
-        'interval': {'key': 'properties.interval', 'type': 'int', 'flatten': True},
-        'timeout': {'key': 'properties.timeout', 'type': 'int', 'flatten': True},
-        'unhealthy_threshold': {'key': 'properties.unhealthyThreshold', 'type': 'int', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, protocol=None, host=None, path=None, interval=None, timeout=None, unhealthy_threshold=None, provisioning_state=None):
-        super(ApplicationGatewayProbe, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, protocol=None, host=None, path=None, interval=None, timeout=None, unhealthy_threshold=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(ApplicationGatewayProbe, self).__init__(id=id, **kwargs)
         self.protocol = protocol
         self.host = host
         self.path = path
@@ -67,3 +64,5 @@ class ApplicationGatewayProbe(SubResource):
         self.timeout = timeout
         self.unhealthy_threshold = unhealthy_threshold
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

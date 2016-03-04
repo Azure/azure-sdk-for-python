@@ -41,9 +41,11 @@ class BackupSchedule(Model):
     :param datetime start_time: When the schedule should start working
     :param datetime last_execution_time: The last time when this schedule was
      triggered
-    """
+    """ 
 
-    _required = ['frequency_unit']
+    _validation = {
+        'frequency_unit': {'required': True},
+    }
 
     _attribute_map = {
         'frequency_interval': {'key': 'frequencyInterval', 'type': 'int'},
@@ -54,7 +56,7 @@ class BackupSchedule(Model):
         'last_execution_time': {'key': 'lastExecutionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, frequency_unit, frequency_interval=None, keep_at_least_one_backup=None, retention_period_in_days=None, start_time=None, last_execution_time=None):
+    def __init__(self, frequency_unit, frequency_interval=None, keep_at_least_one_backup=None, retention_period_in_days=None, start_time=None, last_execution_time=None, **kwargs):
         self.frequency_interval = frequency_interval
         self.frequency_unit = frequency_unit
         self.keep_at_least_one_backup = keep_at_least_one_backup

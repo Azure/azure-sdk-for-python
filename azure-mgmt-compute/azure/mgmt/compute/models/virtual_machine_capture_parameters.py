@@ -32,9 +32,13 @@ class VirtualMachineCaptureParameters(Model):
      container name.
     :param bool overwrite_vhds: Gets or sets whether it overwrites
      destination VirtualHardDisk if true, in case of conflict.
-    """
+    """ 
 
-    _required = ['vhd_prefix', 'destination_container_name', 'overwrite_vhds']
+    _validation = {
+        'vhd_prefix': {'required': True},
+        'destination_container_name': {'required': True},
+        'overwrite_vhds': {'required': True},
+    }
 
     _attribute_map = {
         'vhd_prefix': {'key': 'vhdPrefix', 'type': 'str'},
@@ -42,7 +46,7 @@ class VirtualMachineCaptureParameters(Model):
         'overwrite_vhds': {'key': 'overwriteVhds', 'type': 'bool'},
     }
 
-    def __init__(self, vhd_prefix, destination_container_name, overwrite_vhds):
+    def __init__(self, vhd_prefix, destination_container_name, overwrite_vhds, **kwargs):
         self.vhd_prefix = vhd_prefix
         self.destination_container_name = destination_container_name
         self.overwrite_vhds = overwrite_vhds

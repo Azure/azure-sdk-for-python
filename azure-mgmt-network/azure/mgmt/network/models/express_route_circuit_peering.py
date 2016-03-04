@@ -27,10 +27,6 @@ class ExpressRouteCircuitPeering(SubResource):
     Peering in a ExpressRouteCircuit resource
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param str peering_type: Gets or sets PeeringType. Possible values
      include: 'AzurePublicPeering', 'AzurePrivatePeering', 'MicrosoftPeering'
     :param str state: Gets or sets state of Peering. Possible values include:
@@ -50,32 +46,33 @@ class ExpressRouteCircuitPeering(SubResource):
     :param ExpressRouteCircuitStats stats: Gets or peering stats
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'peering_type': {'key': 'properties.peeringType', 'type': 'ExpressRouteCircuitPeeringType'},
+        'state': {'key': 'properties.state', 'type': 'ExpressRouteCircuitPeeringState'},
+        'azure_asn': {'key': 'properties.azureASN', 'type': 'int'},
+        'peer_asn': {'key': 'properties.peerASN', 'type': 'int'},
+        'primary_peer_address_prefix': {'key': 'properties.primaryPeerAddressPrefix', 'type': 'str'},
+        'secondary_peer_address_prefix': {'key': 'properties.secondaryPeerAddressPrefix', 'type': 'str'},
+        'primary_azure_port': {'key': 'properties.primaryAzurePort', 'type': 'str'},
+        'secondary_azure_port': {'key': 'properties.secondaryAzurePort', 'type': 'str'},
+        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
+        'vlan_id': {'key': 'properties.vlanId', 'type': 'int'},
+        'microsoft_peering_config': {'key': 'properties.microsoftPeeringConfig', 'type': 'ExpressRouteCircuitPeeringConfig'},
+        'stats': {'key': 'properties.stats', 'type': 'ExpressRouteCircuitStats'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'peering_type': {'key': 'properties.peeringType', 'type': 'ExpressRouteCircuitPeeringType', 'flatten': True},
-        'state': {'key': 'properties.state', 'type': 'ExpressRouteCircuitPeeringState', 'flatten': True},
-        'azure_asn': {'key': 'properties.azureASN', 'type': 'int', 'flatten': True},
-        'peer_asn': {'key': 'properties.peerASN', 'type': 'int', 'flatten': True},
-        'primary_peer_address_prefix': {'key': 'properties.primaryPeerAddressPrefix', 'type': 'str', 'flatten': True},
-        'secondary_peer_address_prefix': {'key': 'properties.secondaryPeerAddressPrefix', 'type': 'str', 'flatten': True},
-        'primary_azure_port': {'key': 'properties.primaryAzurePort', 'type': 'str', 'flatten': True},
-        'secondary_azure_port': {'key': 'properties.secondaryAzurePort', 'type': 'str', 'flatten': True},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str', 'flatten': True},
-        'vlan_id': {'key': 'properties.vlanId', 'type': 'int', 'flatten': True},
-        'microsoft_peering_config': {'key': 'properties.microsoftPeeringConfig', 'type': 'ExpressRouteCircuitPeeringConfig', 'flatten': True},
-        'stats': {'key': 'properties.stats', 'type': 'ExpressRouteCircuitStats', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, stats=None, provisioning_state=None):
-        super(ExpressRouteCircuitPeering, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, stats=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(ExpressRouteCircuitPeering, self).__init__(id=id, **kwargs)
         self.peering_type = peering_type
         self.state = state
         self.azure_asn = azure_asn
@@ -89,3 +86,5 @@ class ExpressRouteCircuitPeering(SubResource):
         self.microsoft_peering_config = microsoft_peering_config
         self.stats = stats
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

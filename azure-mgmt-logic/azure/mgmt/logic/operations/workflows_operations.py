@@ -52,7 +52,7 @@ class WorkflowsOperations(object):
         :param top: The number of items to be included in the result.
         :type top: int
         :param filter: The filter to apply on the operation.
-        :type filter: WorkflowFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -67,7 +67,7 @@ class WorkflowsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -75,7 +75,7 @@ class WorkflowsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'WorkflowFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -123,7 +123,7 @@ class WorkflowsOperations(object):
         :param top: The number of items to be included in the result.
         :type top: int
         :param filter: The filter to apply on the operation.
-        :type filter: WorkflowFilter
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param boolean raw: returns the direct response alongside the
          deserialized response
@@ -139,7 +139,7 @@ class WorkflowsOperations(object):
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
                 }
-                url = url.format(**path_format_arguments)
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -147,7 +147,7 @@ class WorkflowsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'WorkflowFilter')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -207,7 +207,7 @@ class WorkflowsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -267,7 +267,7 @@ class WorkflowsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -333,7 +333,7 @@ class WorkflowsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -395,7 +395,7 @@ class WorkflowsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -452,7 +452,7 @@ class WorkflowsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -532,7 +532,7 @@ class WorkflowsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -583,7 +583,7 @@ class WorkflowsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -636,7 +636,7 @@ class WorkflowsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'workflowName': self._serialize.url("workflow_name", workflow_name, 'str')
         }
-        url = url.format(**path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}

@@ -28,15 +28,13 @@ class SiteCloneabilityCriterion(Model):
 
     :param str name: Name of criterion
     :param str description: Description of criterion
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, name=None, description=None):
+    def __init__(self, name=None, description=None, **kwargs):
         self.name = name
         self.description = description

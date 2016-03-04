@@ -35,18 +35,21 @@ class ExpressRouteServiceProvider(Resource):
     :param list bandwidths_offered: Gets or bandwidths offered
     :param str provisioning_state: Gets or sets Provisioning state of the
      resource
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
-        'peering_locations': {'key': 'properties.peeringLocations', 'type': '[str]', 'flatten': True},
-        'bandwidths_offered': {'key': 'properties.bandwidthsOffered', 'type': '[ExpressRouteServiceProviderBandwidthsOffered]', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'peering_locations': {'key': 'properties.peeringLocations', 'type': '[str]'},
+        'bandwidths_offered': {'key': 'properties.bandwidthsOffered', 'type': '[ExpressRouteServiceProviderBandwidthsOffered]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None):
-        super(ExpressRouteServiceProvider, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None, **kwargs):
+        super(ExpressRouteServiceProvider, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.peering_locations = peering_locations
         self.bandwidths_offered = bandwidths_offered
         self.provisioning_state = provisioning_state

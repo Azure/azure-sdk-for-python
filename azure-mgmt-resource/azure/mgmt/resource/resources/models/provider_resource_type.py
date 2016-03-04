@@ -31,9 +31,7 @@ class ProviderResourceType(Model):
      this resource type can be created in.
     :param list api_versions: Gets or sets the api version.
     :param dict properties: Gets or sets the properties.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
@@ -42,7 +40,7 @@ class ProviderResourceType(Model):
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, resource_type=None, locations=None, api_versions=None, properties=None):
+    def __init__(self, resource_type=None, locations=None, api_versions=None, properties=None, **kwargs):
         self.resource_type = resource_type
         self.locations = locations
         self.api_versions = api_versions

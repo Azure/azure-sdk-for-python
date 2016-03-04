@@ -28,9 +28,7 @@ class SiteProperties(Model):
     :param list metadata:
     :param list properties:
     :param list app_settings:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'metadata': {'key': 'metadata', 'type': '[NameValuePair]'},
@@ -38,7 +36,7 @@ class SiteProperties(Model):
         'app_settings': {'key': 'appSettings', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, metadata=None, properties=None, app_settings=None):
+    def __init__(self, metadata=None, properties=None, app_settings=None, **kwargs):
         self.metadata = metadata
         self.properties = properties
         self.app_settings = app_settings

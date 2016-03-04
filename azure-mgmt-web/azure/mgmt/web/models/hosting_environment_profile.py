@@ -33,9 +33,7 @@ class HostingEnvironmentProfile(Model):
      (read only)
     :param str type: Resource type of the hostingEnvironment (App Service
      Environment) (read only)
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -43,7 +41,7 @@ class HostingEnvironmentProfile(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None):
+    def __init__(self, id=None, name=None, type=None, **kwargs):
         self.id = id
         self.name = name
         self.type = type

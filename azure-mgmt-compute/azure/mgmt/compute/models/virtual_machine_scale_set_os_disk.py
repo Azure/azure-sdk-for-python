@@ -39,9 +39,12 @@ class VirtualMachineScaleSetOSDisk(Model):
      destination VirtualHardDisk should not exist.
     :param list vhd_containers: Gets or sets the list of virtual hard disk
      container uris.
-    """
+    """ 
 
-    _required = ['name', 'create_option']
+    _validation = {
+        'name': {'required': True},
+        'create_option': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -52,7 +55,7 @@ class VirtualMachineScaleSetOSDisk(Model):
         'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},
     }
 
-    def __init__(self, name, create_option, caching=None, os_type=None, image=None, vhd_containers=None):
+    def __init__(self, name, create_option, caching=None, os_type=None, image=None, vhd_containers=None, **kwargs):
         self.name = name
         self.caching = caching
         self.create_option = create_option

@@ -36,9 +36,7 @@ class SharedAccessAuthorizationRuleResource(Model):
     :param dict tags: Gets or sets tags of the Namespace AuthorizationRules.
     :param SharedAccessAuthorizationRuleProperties properties: Gets or sets
      properties of the Namespace.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -49,7 +47,7 @@ class SharedAccessAuthorizationRuleResource(Model):
         'properties': {'key': 'properties', 'type': 'SharedAccessAuthorizationRuleProperties'},
     }
 
-    def __init__(self, id=None, location=None, name=None, type=None, tags=None, properties=None):
+    def __init__(self, id=None, location=None, name=None, type=None, tags=None, properties=None, **kwargs):
         self.id = id
         self.location = location
         self.name = name

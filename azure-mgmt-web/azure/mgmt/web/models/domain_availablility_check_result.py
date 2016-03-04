@@ -31,9 +31,7 @@ class DomainAvailablilityCheckResult(Model):
      CreateDomain Api
     :param str domain_type: Domain type. Possible values include: 'Regular',
      'SoftDeleted'
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -41,7 +39,7 @@ class DomainAvailablilityCheckResult(Model):
         'domain_type': {'key': 'domainType', 'type': 'DomainType'},
     }
 
-    def __init__(self, name=None, available=None, domain_type=None):
+    def __init__(self, name=None, available=None, domain_type=None, **kwargs):
         self.name = name
         self.available = available
         self.domain_type = domain_type

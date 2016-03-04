@@ -33,9 +33,6 @@ class VirtualMachineScaleSetVM(Resource):
     :param dict tags: Resource tags
     :param str instance_id: Gets the virtual machine instance id.
     :param Sku sku: Gets the virtual machine sku.
-    :param Plan plan: Gets or sets the purchase plan when deploying virtual
-     machine from VM Marketplace images.
-    :param list resources: Gets the virtual machine child extension resources.
     :param bool latest_model_applied: Specifies whether the latest model has
      been applied to the virtual machine.
     :param VirtualMachineInstanceView instance_view: Gets the virtual machine
@@ -53,33 +50,41 @@ class VirtualMachineScaleSetVM(Resource):
      only appears in the response.
     :param str license_type: Gets or sets the license type, which is for
      bring your own license scenario.
-    """
+    :param Plan plan: Gets or sets the purchase plan when deploying virtual
+     machine from VM Marketplace images.
+    :param list resources: Gets the virtual machine child extension resources.
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'instance_id': {'key': 'instanceId', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
-        'latest_model_applied': {'key': 'properties.latestModelApplied', 'type': 'bool', 'flatten': True},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView', 'flatten': True},
-        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile', 'flatten': True},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile', 'flatten': True},
-        'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile', 'flatten': True},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile', 'flatten': True},
-        'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile', 'flatten': True},
-        'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, instance_id=None, sku=None, plan=None, resources=None, latest_model_applied=None, instance_view=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, license_type=None):
-        super(VirtualMachineScaleSetVM, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'instance_id': {'key': 'instanceId', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'latest_model_applied': {'key': 'properties.latestModelApplied', 'type': 'bool'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
+        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
+        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
+        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
+        'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
+        'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
+        'plan': {'key': 'plan', 'type': 'Plan'},
+        'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, instance_id=None, sku=None, latest_model_applied=None, instance_view=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, license_type=None, plan=None, resources=None, **kwargs):
+        super(VirtualMachineScaleSetVM, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.instance_id = instance_id
         self.sku = sku
-        self.plan = plan
-        self.resources = resources
         self.latest_model_applied = latest_model_applied
         self.instance_view = instance_view
         self.hardware_profile = hardware_profile
@@ -90,3 +95,5 @@ class VirtualMachineScaleSetVM(Resource):
         self.availability_set = availability_set
         self.provisioning_state = provisioning_state
         self.license_type = license_type
+        self.plan = plan
+        self.resources = resources

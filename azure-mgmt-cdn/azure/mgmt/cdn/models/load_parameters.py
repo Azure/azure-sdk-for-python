@@ -28,13 +28,15 @@ class LoadParameters(Model):
 
     :param list content_paths: The path to the content to be loaded, should
      describe a file path.
-    """
+    """ 
 
-    _required = ['content_paths']
+    _validation = {
+        'content_paths': {'required': True},
+    }
 
     _attribute_map = {
         'content_paths': {'key': 'contentPaths', 'type': '[str]'},
     }
 
-    def __init__(self, content_paths):
+    def __init__(self, content_paths, **kwargs):
         self.content_paths = content_paths

@@ -27,13 +27,15 @@ class ValidateCustomDomainInput(Model):
     Input of the custom domain to be validated
 
     :param str host_name: The host name of the custom domain
-    """
+    """ 
 
-    _required = ['host_name']
+    _validation = {
+        'host_name': {'required': True},
+    }
 
     _attribute_map = {
         'host_name': {'key': 'hostName', 'type': 'str'},
     }
 
-    def __init__(self, host_name):
+    def __init__(self, host_name, **kwargs):
         self.host_name = host_name

@@ -29,9 +29,7 @@ class Sku(Model):
     :param str name: Gets or sets the sku name.
     :param str tier: Gets or sets the sku tier.
     :param long capacity: Gets or sets the sku capacity.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -39,7 +37,7 @@ class Sku(Model):
         'capacity': {'key': 'capacity', 'type': 'long'},
     }
 
-    def __init__(self, name=None, tier=None, capacity=None):
+    def __init__(self, name=None, tier=None, capacity=None, **kwargs):
         self.name = name
         self.tier = tier
         self.capacity = capacity

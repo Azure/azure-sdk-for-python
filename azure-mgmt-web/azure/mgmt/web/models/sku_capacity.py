@@ -34,9 +34,7 @@ class SkuCapacity(Model):
      SKU
     :param str scale_type: Available scale configurations for an App Service
      Plan
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'minimum': {'key': 'minimum', 'type': 'int'},
@@ -45,7 +43,7 @@ class SkuCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'str'},
     }
 
-    def __init__(self, minimum=None, maximum=None, default=None, scale_type=None):
+    def __init__(self, minimum=None, maximum=None, default=None, scale_type=None, **kwargs):
         self.minimum = minimum
         self.maximum = maximum
         self.default = default

@@ -27,15 +27,13 @@ class KeyValuePairStringString(Model):
 
     :param str key:
     :param str value:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'key': {'key': 'key', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, key=None, value=None):
+    def __init__(self, key=None, value=None, **kwargs):
         self.key = key
         self.value = value

@@ -29,15 +29,13 @@ class DomainRecommendationSearchParameters(Model):
     :param str keywords: Keywords to be used for generating domain
      recommendations
     :param int max_domain_recommendations: Maximum number of recommendations
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'keywords': {'key': 'keywords', 'type': 'str'},
         'max_domain_recommendations': {'key': 'maxDomainRecommendations', 'type': 'int'},
     }
 
-    def __init__(self, keywords=None, max_domain_recommendations=None):
+    def __init__(self, keywords=None, max_domain_recommendations=None, **kwargs):
         self.keywords = keywords
         self.max_domain_recommendations = max_domain_recommendations

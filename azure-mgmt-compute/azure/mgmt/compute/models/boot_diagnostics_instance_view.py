@@ -30,15 +30,13 @@ class BootDiagnosticsInstanceView(Model):
      screenshot blob Uri.
     :param str serial_console_log_blob_uri: Gets or sets the Linux serial
      console log blob Uri.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'console_screenshot_blob_uri': {'key': 'consoleScreenshotBlobUri', 'type': 'str'},
         'serial_console_log_blob_uri': {'key': 'serialConsoleLogBlobUri', 'type': 'str'},
     }
 
-    def __init__(self, console_screenshot_blob_uri=None, serial_console_log_blob_uri=None):
+    def __init__(self, console_screenshot_blob_uri=None, serial_console_log_blob_uri=None, **kwargs):
         self.console_screenshot_blob_uri = console_screenshot_blob_uri
         self.serial_console_log_blob_uri = serial_console_log_blob_uri

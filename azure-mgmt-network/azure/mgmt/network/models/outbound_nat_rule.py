@@ -27,10 +27,6 @@ class OutboundNatRule(SubResource):
     Outbound NAT pool of the loadbalancer
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param int allocated_outbound_ports: Gets or sets the number of outbound
      ports to be used for SNAT
     :param list frontend_ip_configurations: Gets or sets Frontend IP
@@ -40,24 +36,31 @@ class OutboundNatRule(SubResource):
      the backend IPs
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
-    _required = ['backend_address_pool']
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'allocated_outbound_ports': {'key': 'properties.allocatedOutboundPorts', 'type': 'int', 'flatten': True},
-        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[SubResource]', 'flatten': True},
-        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
+    _validation = {
+        'backend_address_pool': {'required': True},
     }
 
-    def __init__(self, backend_address_pool, id=None, name=None, etag=None, allocated_outbound_ports=None, frontend_ip_configurations=None, provisioning_state=None):
-        super(OutboundNatRule, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'allocated_outbound_ports': {'key': 'properties.allocatedOutboundPorts', 'type': 'int'},
+        'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[SubResource]'},
+        'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, backend_address_pool, id=None, allocated_outbound_ports=None, frontend_ip_configurations=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(OutboundNatRule, self).__init__(id=id, **kwargs)
         self.allocated_outbound_ports = allocated_outbound_ports
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pool = backend_address_pool
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

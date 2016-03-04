@@ -28,15 +28,13 @@ class RoleAssignmentProperties(Model):
 
     :param str role_definition_id: Gets or sets role definition id.
     :param str principal_id: Gets or sets principal Id.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'role_definition_id': {'key': 'roleDefinitionId', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
     }
 
-    def __init__(self, role_definition_id=None, principal_id=None):
+    def __init__(self, role_definition_id=None, principal_id=None, **kwargs):
         self.role_definition_id = role_definition_id
         self.principal_id = principal_id

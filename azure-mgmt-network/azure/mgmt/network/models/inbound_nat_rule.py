@@ -27,17 +27,12 @@ class InboundNatRule(SubResource):
     Inbound NAT rule of the loadbalancer
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param SubResource frontend_ip_configuration: Gets or sets a reference to
      frontend IP Addresses
     :param NetworkInterfaceIPConfiguration backend_ip_configuration: Gets or
      sets a reference to a private ip address defined on a NetworkInterface
      of a VM. Traffic sent to frontendPort of each of the
-     frontendIPConfigurations is forwarded to the backed IP. Default value:
-     {} .
+     frontendIPConfigurations is forwarded to the backed IP
     :param str protocol: Gets or sets the transport potocol for the external
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'
@@ -64,32 +59,35 @@ class InboundNatRule(SubResource):
      after you create the endpoint
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
+        'backend_ip_configuration': {'key': 'properties.backendIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
+        'protocol': {'key': 'properties.protocol', 'type': 'TransportProtocol'},
+        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
+        'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
+        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
+        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource', 'flatten': True},
-        'backend_ip_configuration': {'key': 'properties.backendIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration', 'flatten': True},
-        'protocol': {'key': 'properties.protocol', 'type': 'TransportProtocol', 'flatten': True},
-        'frontend_port': {'key': 'properties.frontendPort', 'type': 'int', 'flatten': True},
-        'backend_port': {'key': 'properties.backendPort', 'type': 'int', 'flatten': True},
-        'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int', 'flatten': True},
-        'enable_floating_ip': {'key': 'properties.enableFloatingIP', 'type': 'bool', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, frontend_ip_configuration=None, backend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None):
-        super(InboundNatRule, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, frontend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(InboundNatRule, self).__init__(id=id, **kwargs)
         self.frontend_ip_configuration = frontend_ip_configuration
-        self.backend_ip_configuration = backend_ip_configuration
+        self.backend_ip_configuration = None
         self.protocol = protocol
         self.frontend_port = frontend_port
         self.backend_port = backend_port
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.enable_floating_ip = enable_floating_ip
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

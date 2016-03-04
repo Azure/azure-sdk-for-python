@@ -20,8 +20,12 @@
 # --------------------------------------------------------------------------
 
 from .graph_rbac_management_client import GraphRbacManagementClient, GraphRbacManagementClientConfiguration
+from .version import VERSION
 
 __all__ = [
     'GraphRbacManagementClient',
     'GraphRbacManagementClientConfiguration'
 ]
+
+__version__ = VERSION
+

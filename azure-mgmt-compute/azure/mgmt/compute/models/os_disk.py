@@ -43,9 +43,13 @@ class OSDisk(Model):
     :param int disk_size_gb: Gets or sets the initial disk size in GB for
      blank data disks, and the new desired size for existing OS and Data
      disks.
-    """
+    """ 
 
-    _required = ['name', 'vhd', 'create_option']
+    _validation = {
+        'name': {'required': True},
+        'vhd': {'required': True},
+        'create_option': {'required': True},
+    }
 
     _attribute_map = {
         'os_type': {'key': 'osType', 'type': 'OperatingSystemTypes'},
@@ -58,7 +62,7 @@ class OSDisk(Model):
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
     }
 
-    def __init__(self, name, vhd, create_option, os_type=None, encryption_settings=None, image=None, caching=None, disk_size_gb=None):
+    def __init__(self, name, vhd, create_option, os_type=None, encryption_settings=None, image=None, caching=None, disk_size_gb=None, **kwargs):
         self.os_type = os_type
         self.encryption_settings = encryption_settings
         self.name = name

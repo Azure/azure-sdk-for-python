@@ -29,15 +29,13 @@ class PolicyDefinition(Model):
     :param PolicyDefinitionProperties properties: Gets or sets the policy
      definition properties.
     :param str name: Gets or sets the policy definition name.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'PolicyDefinitionProperties'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, properties=None, name=None):
+    def __init__(self, properties=None, name=None, **kwargs):
         self.properties = properties
         self.name = name

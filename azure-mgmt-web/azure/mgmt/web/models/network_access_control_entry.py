@@ -29,9 +29,7 @@ class NetworkAccessControlEntry(Model):
     :param str description:
     :param int order:
     :param str remote_subnet:
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'AccessControlEntryAction'},
@@ -40,7 +38,7 @@ class NetworkAccessControlEntry(Model):
         'remote_subnet': {'key': 'remoteSubnet', 'type': 'str'},
     }
 
-    def __init__(self, action=None, description=None, order=None, remote_subnet=None):
+    def __init__(self, action=None, description=None, order=None, remote_subnet=None, **kwargs):
         self.action = action
         self.description = description
         self.order = order

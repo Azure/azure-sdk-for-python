@@ -27,28 +27,27 @@ class VpnClientRevokedCertificate(SubResource):
     VPN client revoked certificate of virtual network gateway
 
     :param str id: Resource Id
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
     :param str thumbprint: Gets or sets the revoked Vpn client certificate
      thumbprint
     :param str provisioning_state: Gets or sets Provisioning state of the VPN
      client revoked certificate resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str name: Gets name of the resource that is unique within a
+     resource group. This name can be used to access the resource
+    :param str etag: A unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, etag=None, thumbprint=None, provisioning_state=None):
-        super(VpnClientRevokedCertificate, self).__init__(id=id)
-        self.name = name
-        self.etag = etag
+    def __init__(self, id=None, thumbprint=None, provisioning_state=None, name=None, etag=None, **kwargs):
+        super(VpnClientRevokedCertificate, self).__init__(id=id, **kwargs)
         self.thumbprint = thumbprint
         self.provisioning_state = provisioning_state
+        self.name = name
+        self.etag = etag

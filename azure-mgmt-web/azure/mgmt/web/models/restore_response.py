@@ -33,14 +33,21 @@ class RestoreResponse(Resource):
     :param dict tags: Resource tags
     :param str operation_id: When server starts the restore process, it will
      return an OperationId identifying that particular restore operation
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'operation_id': {'key': 'properties.operationId', 'type': 'str', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, operation_id=None):
-        super(RestoreResponse, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'operation_id': {'key': 'properties.operationId', 'type': 'str'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, operation_id=None, **kwargs):
+        super(RestoreResponse, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.operation_id = operation_id

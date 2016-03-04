@@ -40,9 +40,14 @@ class DataDisk(Model):
     :param int disk_size_gb: Gets or sets the initial disk size in GB for
      blank data disks, and the new desired size for existing OS and Data
      disks.
-    """
+    """ 
 
-    _required = ['lun', 'name', 'vhd', 'create_option']
+    _validation = {
+        'lun': {'required': True},
+        'name': {'required': True},
+        'vhd': {'required': True},
+        'create_option': {'required': True},
+    }
 
     _attribute_map = {
         'lun': {'key': 'lun', 'type': 'int'},
@@ -54,7 +59,7 @@ class DataDisk(Model):
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
     }
 
-    def __init__(self, lun, name, vhd, create_option, image=None, caching=None, disk_size_gb=None):
+    def __init__(self, lun, name, vhd, create_option, image=None, caching=None, disk_size_gb=None, **kwargs):
         self.lun = lun
         self.name = name
         self.vhd = vhd

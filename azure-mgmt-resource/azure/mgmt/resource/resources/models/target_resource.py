@@ -29,9 +29,7 @@ class TargetResource(Model):
     :param str id: Gets or sets the ID of the resource.
     :param str resource_name: Gets or sets the name of the resource.
     :param str resource_type: Gets or sets the type of the resource.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -39,7 +37,7 @@ class TargetResource(Model):
         'resource_type': {'key': 'resourceType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, resource_name=None, resource_type=None):
+    def __init__(self, id=None, resource_name=None, resource_type=None, **kwargs):
         self.id = id
         self.resource_name = resource_name
         self.resource_type = resource_type

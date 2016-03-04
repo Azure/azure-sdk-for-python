@@ -31,8 +31,6 @@ class VirtualNetworkGatewayConnection(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param str authorization_key: The authorizationKey.
     :param VirtualNetworkGateway virtual_network_gateway1:
     :param VirtualNetworkGateway virtual_network_gateway2:
@@ -54,30 +52,34 @@ class VirtualNetworkGatewayConnection(Resource):
      VirtualNetworkGatewayConnection resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      VirtualNetworkGatewayConnection resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
+        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkGateway'},
+        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkGateway'},
+        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'LocalNetworkGateway'},
+        'connection_type': {'key': 'properties.connectionType', 'type': 'VirtualNetworkGatewayConnectionType'},
+        'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
+        'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
+        'connection_status': {'key': 'properties.connectionStatus', 'type': 'VirtualNetworkGatewayConnectionStatus'},
+        'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
+        'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
+        'peer': {'key': 'properties.peer', 'type': 'SubResource'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str', 'flatten': True},
-        'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkGateway', 'flatten': True},
-        'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkGateway', 'flatten': True},
-        'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'LocalNetworkGateway', 'flatten': True},
-        'connection_type': {'key': 'properties.connectionType', 'type': 'VirtualNetworkGatewayConnectionType', 'flatten': True},
-        'routing_weight': {'key': 'properties.routingWeight', 'type': 'int', 'flatten': True},
-        'shared_key': {'key': 'properties.sharedKey', 'type': 'str', 'flatten': True},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'VirtualNetworkGatewayConnectionStatus', 'flatten': True},
-        'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long', 'flatten': True},
-        'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long', 'flatten': True},
-        'peer': {'key': 'properties.peer', 'type': 'SubResource', 'flatten': True},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, authorization_key=None, virtual_network_gateway1=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_type=None, routing_weight=None, shared_key=None, connection_status=None, egress_bytes_transferred=None, ingress_bytes_transferred=None, peer=None, resource_guid=None, provisioning_state=None):
-        super(VirtualNetworkGatewayConnection, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, authorization_key=None, virtual_network_gateway1=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_type=None, routing_weight=None, shared_key=None, connection_status=None, egress_bytes_transferred=None, ingress_bytes_transferred=None, peer=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+        super(VirtualNetworkGatewayConnection, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
         self.virtual_network_gateway2 = virtual_network_gateway2
@@ -91,3 +93,4 @@ class VirtualNetworkGatewayConnection(Resource):
         self.peer = peer
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.etag = etag

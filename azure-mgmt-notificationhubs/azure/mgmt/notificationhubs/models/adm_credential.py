@@ -28,13 +28,11 @@ class AdmCredential(Model):
 
     :param AdmCredentialProperties properties: Gets or sets properties of
      NotificationHub AdmCredential.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'AdmCredentialProperties'},
     }
 
-    def __init__(self, properties=None):
+    def __init__(self, properties=None, **kwargs):
         self.properties = properties

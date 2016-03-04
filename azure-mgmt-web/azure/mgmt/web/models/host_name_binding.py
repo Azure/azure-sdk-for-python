@@ -41,22 +41,29 @@ class HostNameBinding(Resource):
      Possible values include: 'CName', 'A'
     :param str host_name_type: Host name type. Possible values include:
      'Verified', 'Managed'
-    """
+    """ 
 
-    _required = []
-
-    _attribute_map = {
-        'host_name_binding_name': {'key': 'properties.name', 'type': 'str', 'flatten': True},
-        'site_name': {'key': 'properties.siteName', 'type': 'str', 'flatten': True},
-        'domain_id': {'key': 'properties.domainId', 'type': 'str', 'flatten': True},
-        'azure_resource_name': {'key': 'properties.azureResourceName', 'type': 'str', 'flatten': True},
-        'azure_resource_type': {'key': 'properties.azureResourceType', 'type': 'AzureResourceType', 'flatten': True},
-        'custom_host_name_dns_record_type': {'key': 'properties.customHostNameDnsRecordType', 'type': 'CustomHostNameDnsRecordType', 'flatten': True},
-        'host_name_type': {'key': 'properties.hostNameType', 'type': 'HostNameType', 'flatten': True},
+    _validation = {
+        'location': {'required': True},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None):
-        super(HostNameBinding, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'host_name_binding_name': {'key': 'properties.name', 'type': 'str'},
+        'site_name': {'key': 'properties.siteName', 'type': 'str'},
+        'domain_id': {'key': 'properties.domainId', 'type': 'str'},
+        'azure_resource_name': {'key': 'properties.azureResourceName', 'type': 'str'},
+        'azure_resource_type': {'key': 'properties.azureResourceType', 'type': 'AzureResourceType'},
+        'custom_host_name_dns_record_type': {'key': 'properties.customHostNameDnsRecordType', 'type': 'CustomHostNameDnsRecordType'},
+        'host_name_type': {'key': 'properties.hostNameType', 'type': 'HostNameType'},
+    }
+
+    def __init__(self, location, id=None, name=None, type=None, tags=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, **kwargs):
+        super(HostNameBinding, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.host_name_binding_name = host_name_binding_name
         self.site_name = site_name
         self.domain_id = domain_id

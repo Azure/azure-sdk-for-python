@@ -31,8 +31,6 @@ class NetworkSecurityGroup(Resource):
     :param str type: Resource type
     :param str location: Resource location
     :param dict tags: Resource tags
-    :param str etag: Gets a unique read-only string that changes whenever the
-     resource is updated
     :param list security_rules: Gets or sets Security rules of network
      security group
     :param list default_security_rules: Gets or sets Default security rules
@@ -44,26 +42,31 @@ class NetworkSecurityGroup(Resource):
      network security group resource
     :param str provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    """
-
-    _required = []
+    :param str etag: Gets a unique read-only string that changes whenever the
+     resource is updated
+    """ 
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'security_rules': {'key': 'properties.securityRules', 'type': '[SecurityRule]'},
+        'default_security_rules': {'key': 'properties.defaultSecurityRules', 'type': '[SecurityRule]'},
+        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
+        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
+        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'security_rules': {'key': 'properties.securityRules', 'type': '[SecurityRule]', 'flatten': True},
-        'default_security_rules': {'key': 'properties.defaultSecurityRules', 'type': '[SecurityRule]', 'flatten': True},
-        'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]', 'flatten': True},
-        'subnets': {'key': 'properties.subnets', 'type': '[Subnet]', 'flatten': True},
-        'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str', 'flatten': True},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str', 'flatten': True},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, etag=None, security_rules=None, default_security_rules=None, network_interfaces=None, subnets=None, resource_guid=None, provisioning_state=None):
-        super(NetworkSecurityGroup, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, security_rules=None, default_security_rules=None, network_interfaces=None, subnets=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+        super(NetworkSecurityGroup, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.security_rules = security_rules
         self.default_security_rules = default_security_rules
         self.network_interfaces = network_interfaces
         self.subnets = subnets
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.etag = etag

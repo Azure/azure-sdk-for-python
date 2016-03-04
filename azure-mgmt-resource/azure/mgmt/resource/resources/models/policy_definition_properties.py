@@ -29,9 +29,7 @@ class PolicyDefinitionProperties(Model):
     :param str description: Gets or sets the policy definition description.
     :param str display_name: Gets or sets the policy definition display name.
     :param object policy_rule: The policy rule json.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'description': {'key': 'description', 'type': 'str'},
@@ -39,7 +37,7 @@ class PolicyDefinitionProperties(Model):
         'policy_rule': {'key': 'policyRule', 'type': 'object'},
     }
 
-    def __init__(self, description=None, display_name=None, policy_rule=None):
+    def __init__(self, description=None, display_name=None, policy_rule=None, **kwargs):
         self.description = description
         self.display_name = display_name
         self.policy_rule = policy_rule

@@ -41,9 +41,7 @@ class AdditionalUnattendContent(Model):
      the unattend.xml file in the specified pass and component.The XML must
      be less than 4 KB and must include the root element for the setting or
      feature that is being inserted.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'pass_name': {'key': 'passName', 'type': 'PassNames'},
@@ -52,7 +50,7 @@ class AdditionalUnattendContent(Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    def __init__(self, pass_name=None, component_name=None, setting_name=None, content=None):
+    def __init__(self, pass_name=None, component_name=None, setting_name=None, content=None, **kwargs):
         self.pass_name = pass_name
         self.component_name = component_name
         self.setting_name = setting_name

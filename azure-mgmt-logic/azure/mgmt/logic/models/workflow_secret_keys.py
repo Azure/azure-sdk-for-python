@@ -27,15 +27,13 @@ class WorkflowSecretKeys(Model):
 
     :param str primary_secret_key: Gets the primary secret key.
     :param str secondary_secret_key: Gets the secondary secret key.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'primary_secret_key': {'key': 'primarySecretKey', 'type': 'str'},
         'secondary_secret_key': {'key': 'secondarySecretKey', 'type': 'str'},
     }
 
-    def __init__(self, primary_secret_key=None, secondary_secret_key=None):
+    def __init__(self, primary_secret_key=None, secondary_secret_key=None, **kwargs):
         self.primary_secret_key = primary_secret_key
         self.secondary_secret_key = secondary_secret_key

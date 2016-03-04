@@ -37,9 +37,7 @@ class JobAction(Model):
      service bus topic message.
     :param RetryPolicy retry_policy: Gets or sets the retry policy.
     :param JobErrorAction error_action: Gets or sets the error action.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'JobActionType'},
@@ -51,7 +49,7 @@ class JobAction(Model):
         'error_action': {'key': 'errorAction', 'type': 'JobErrorAction'},
     }
 
-    def __init__(self, type=None, request=None, queue_message=None, service_bus_queue_message=None, service_bus_topic_message=None, retry_policy=None, error_action=None):
+    def __init__(self, type=None, request=None, queue_message=None, service_bus_queue_message=None, service_bus_topic_message=None, retry_policy=None, error_action=None, **kwargs):
         self.type = type
         self.request = request
         self.queue_message = queue_message

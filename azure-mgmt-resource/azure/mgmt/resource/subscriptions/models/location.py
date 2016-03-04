@@ -33,9 +33,7 @@ class Location(Model):
     :param str display_name: Gets or sets the display name of the location
     :param str latitude: Gets or sets the latitude of the location
     :param str longitude: Gets or sets the longitude of the location
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -46,7 +44,7 @@ class Location(Model):
         'longitude': {'key': 'longitude', 'type': 'str'},
     }
 
-    def __init__(self, id=None, subscription_id=None, name=None, display_name=None, latitude=None, longitude=None):
+    def __init__(self, id=None, subscription_id=None, name=None, display_name=None, latitude=None, longitude=None, **kwargs):
         self.id = id
         self.subscription_id = subscription_id
         self.name = name

@@ -28,13 +28,11 @@ class Experiments(Model):
 
     :param list ramp_up_rules: List of
      {Microsoft.Web.Hosting.Administration.RampUpRule} objects.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'ramp_up_rules': {'key': 'rampUpRules', 'type': '[RampUpRule]'},
     }
 
-    def __init__(self, ramp_up_rules=None):
+    def __init__(self, ramp_up_rules=None, **kwargs):
         self.ramp_up_rules = ramp_up_rules

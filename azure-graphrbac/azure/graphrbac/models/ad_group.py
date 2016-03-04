@@ -31,9 +31,7 @@ class ADGroup(Model):
     :param str display_name: Gets or sets group display name
     :param bool security_enabled: Gets or sets security enabled field
     :param str mail: Gets or sets mail field
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
@@ -43,7 +41,7 @@ class ADGroup(Model):
         'mail': {'key': 'mail', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, display_name=None, security_enabled=None, mail=None):
+    def __init__(self, object_id=None, object_type=None, display_name=None, security_enabled=None, mail=None, **kwargs):
         self.object_id = object_id
         self.object_type = object_type
         self.display_name = display_name

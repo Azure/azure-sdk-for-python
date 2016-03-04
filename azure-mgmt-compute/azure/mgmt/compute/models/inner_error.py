@@ -29,15 +29,13 @@ class InnerError(Model):
     :param str exceptiontype: Gets or sets the exception type.
     :param str errordetail: Gets or sets the internal error message or
      exception dump.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},
         'errordetail': {'key': 'errordetail', 'type': 'str'},
     }
 
-    def __init__(self, exceptiontype=None, errordetail=None):
+    def __init__(self, exceptiontype=None, errordetail=None, **kwargs):
         self.exceptiontype = exceptiontype
         self.errordetail = errordetail

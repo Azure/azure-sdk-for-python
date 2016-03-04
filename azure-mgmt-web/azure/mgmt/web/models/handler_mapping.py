@@ -34,9 +34,7 @@ class HandlerMapping(Model):
     :param str script_processor: The absolute path to the FastCGI application.
     :param str arguments: Command-line arguments to be passed to the script
      processor.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
         'extension': {'key': 'extension', 'type': 'str'},
@@ -44,7 +42,7 @@ class HandlerMapping(Model):
         'arguments': {'key': 'arguments', 'type': 'str'},
     }
 
-    def __init__(self, extension=None, script_processor=None, arguments=None):
+    def __init__(self, extension=None, script_processor=None, arguments=None, **kwargs):
         self.extension = extension
         self.script_processor = script_processor
         self.arguments = arguments

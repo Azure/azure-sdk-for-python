@@ -36,14 +36,18 @@ class ServiceBusQueueMessage(ServiceBusMessage):
     :param str transport_type: Gets or sets the transport type. Possible
      values include: 'NotSpecified', 'NetMessaging', 'AMQP'
     :param str queue_name: Gets or sets the queue name.
-    """
-
-    _required = []
+    """ 
 
     _attribute_map = {
+        'authentication': {'key': 'authentication', 'type': 'ServiceBusAuthentication'},
+        'brokered_message_properties': {'key': 'brokeredMessageProperties', 'type': 'ServiceBusBrokeredMessageProperties'},
+        'custom_message_properties': {'key': 'customMessageProperties', 'type': '{str}'},
+        'message': {'key': 'message', 'type': 'str'},
+        'namespace': {'key': 'namespace', 'type': 'str'},
+        'transport_type': {'key': 'transportType', 'type': 'ServiceBusTransportType'},
         'queue_name': {'key': 'queueName', 'type': 'str'},
     }
 
-    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, queue_name=None):
-        super(ServiceBusQueueMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type)
+    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, queue_name=None, **kwargs):
+        super(ServiceBusQueueMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type, **kwargs)
         self.queue_name = queue_name
