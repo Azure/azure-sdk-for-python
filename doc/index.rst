@@ -84,7 +84,7 @@ Features:
    
         - resources :  create resource groups, register providers and more
         - features : manage features of provider and more
-        - authorization : manage resource group lock and more
+        - locks : manage resource group lock and more
         - subscriptions : manage subscriptions and more
 
    -  Scheduler: create job collections, create job and more
