@@ -45,8 +45,6 @@ Our goal is to release a stable version by the end of March 2016.  Please send u
 Features
 ========
 
--  `Storage Runtime - Table, Blob, File, Queue </azure-storage-python>`__
-
 -  `Service Bus Runtime </azure-servicebus>`__
 
 -  `Service Management </azure-servicemanagement-legacy>`__
