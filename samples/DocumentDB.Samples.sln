@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DatabaseManagement", "DatabaseManagement\DatabaseManagement.pyproj", "{9E81A024-996C-4C59-A9EF-E4E78AFBB3BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D86C5C17-FA0D-41E0-9425-5B2110E53BD9}"
+	ProjectSection(SolutionItems) = preProject
+		Shared\config.py = Shared\config.py
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E81A024-996C-4C59-A9EF-E4E78AFBB3BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E81A024-996C-4C59-A9EF-E4E78AFBB3BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
