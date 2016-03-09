@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D86C5C
 		Shared\config.py = Shared\config.py
 	EndProjectSection
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CollectionManagement", "CollectionManagement\CollectionManagement.pyproj", "{D65BAD79-205D-4B95-BC98-294974EAB39C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9E81A024-996C-4C59-A9EF-E4E78AFBB3BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9E81A024-996C-4C59-A9EF-E4E78AFBB3BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D65BAD79-205D-4B95-BC98-294974EAB39C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D65BAD79-205D-4B95-BC98-294974EAB39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
