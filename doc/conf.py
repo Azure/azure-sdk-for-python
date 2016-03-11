@@ -30,7 +30,13 @@ sys.path.insert(0, os.path.abspath('../azure'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctest',
-              'sphinx.ext.viewcode']
+              'sphinx.ext.viewcode', 'sphinx.ext.intersphinx']
+
+intersphinx_mapping = {
+	'python': ('https://docs.python.org/3.5', None),
+	'msrestazure': ('http://msrestazure.readthedocs.org/en/latest/', None),
+	'msrest': ('http://msrest.readthedocs.org/en/latest/', None)
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
