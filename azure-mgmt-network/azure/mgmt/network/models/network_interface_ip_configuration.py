@@ -57,13 +57,13 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
+    def __init__(self, id=None, load_balancer_backend_address_pools=None, subnet=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
         super(NetworkInterfaceIPConfiguration, self).__init__(id=id, **kwargs)
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
         self.load_balancer_inbound_nat_rules = load_balancer_inbound_nat_rules
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
-        self.subnet = None
+        self.subnet = subnet
         self.public_ip_address = public_ip_address
         self.provisioning_state = provisioning_state
         self.name = name
