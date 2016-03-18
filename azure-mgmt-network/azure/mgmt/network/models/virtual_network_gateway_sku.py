@@ -26,11 +26,14 @@ class VirtualNetworkGatewaySku(Model):
     """
     VirtualNetworkGatewaySku details
 
-    :param str name: Gateway sku name -Basic/HighPerformance/Standard.
-     Possible values include: 'Basic', 'HighPerformance', 'Standard'
-    :param str tier: Gateway sku tier -Basic/HighPerformance/Standard.
-     Possible values include: 'Basic', 'HighPerformance', 'Standard'
-    :param int capacity: The capacity
+    :param name: Gateway sku name -Basic/HighPerformance/Standard. Possible
+     values include: 'Basic', 'HighPerformance', 'Standard'
+    :type name: str
+    :param tier: Gateway sku tier -Basic/HighPerformance/Standard. Possible
+     values include: 'Basic', 'HighPerformance', 'Standard'
+    :type tier: str
+    :param capacity: The capacity
+    :type capacity: int
     """ 
 
     _attribute_map = {

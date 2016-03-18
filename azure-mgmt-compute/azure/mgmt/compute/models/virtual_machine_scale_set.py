@@ -26,17 +26,27 @@ class VirtualMachineScaleSet(Resource):
     """
     Describes a Virtual Machine Scale Set.
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param Sku sku: Gets or sets the virtual machine scale set sku.
-    :param UpgradePolicy upgrade_policy: Gets or sets the upgrade policy.
-    :param VirtualMachineScaleSetVMProfile virtual_machine_profile: Gets or
-     sets the virtual machine profile.
-    :param str provisioning_state: Gets or sets the provisioning state, which
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: Gets or sets the virtual machine scale set sku.
+    :type sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
+    :param upgrade_policy: Gets or sets the upgrade policy.
+    :type upgrade_policy: :class:`UpgradePolicy
+     <azure.mgmt.compute.models.UpgradePolicy>`
+    :param virtual_machine_profile: Gets or sets the virtual machine profile.
+    :type virtual_machine_profile: :class:`VirtualMachineScaleSetVMProfile
+     <azure.mgmt.compute.models.VirtualMachineScaleSetVMProfile>`
+    :param provisioning_state: Gets or sets the provisioning state, which
      only appears in the response.
+    :type provisioning_state: str
     """ 
 
     _validation = {

@@ -26,32 +26,49 @@ class ServerFarmWithRichSku(Resource):
     """
     App Service Plan Model
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str server_farm_with_rich_sku_name: Name for the App Service Plan
-    :param str worker_tier_name: Target worker tier assigned to the App
-     Service Plan
-    :param str status: App Service Plan Status. Possible values include:
-     'Ready', 'Pending'
-    :param str subscription: App Service Plan Subscription
-    :param str admin_site_name: App Service Plan administration site
-    :param HostingEnvironmentProfile hosting_environment_profile:
-     Specification for the hosting environment (App Service Environment) to
-     use for the App Service Plan
-    :param int maximum_number_of_workers: Maximum number of instances that
-     can be assigned to this App Service Plan
-    :param str geo_region: Geographical location for the App Service Plan
-    :param bool per_site_scaling: If True apps assigned to this App Service
-     Plan can be scaled independently
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param server_farm_with_rich_sku_name: Name for the App Service Plan
+    :type server_farm_with_rich_sku_name: str
+    :param worker_tier_name: Target worker tier assigned to the App Service
+     Plan
+    :type worker_tier_name: str
+    :param status: App Service Plan Status. Possible values include: 'Ready',
+     'Pending'
+    :type status: str
+    :param subscription: App Service Plan Subscription
+    :type subscription: str
+    :param admin_site_name: App Service Plan administration site
+    :type admin_site_name: str
+    :param hosting_environment_profile: Specification for the hosting
+     environment (App Service Environment) to use for the App Service Plan
+    :type hosting_environment_profile: :class:`HostingEnvironmentProfile
+     <azure.mgmt.web.models.HostingEnvironmentProfile>`
+    :param maximum_number_of_workers: Maximum number of instances that can be
+     assigned to this App Service Plan
+    :type maximum_number_of_workers: int
+    :param geo_region: Geographical location for the App Service Plan
+    :type geo_region: str
+    :param per_site_scaling: If True apps assigned to this App Service Plan
+     can be scaled independently
      If False apps assigned to this App Service Plan will scale to
      all instances of the plan
-    :param int number_of_sites: Number of web apps assigned to this App
-     Service Plan
-    :param str resource_group: Resource group of the serverfarm
-    :param SkuDescription sku:
+    :type per_site_scaling: bool
+    :param number_of_sites: Number of web apps assigned to this App Service
+     Plan
+    :type number_of_sites: int
+    :param resource_group: Resource group of the serverfarm
+    :type resource_group: str
+    :param sku:
+    :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
     """ 
 
     _validation = {

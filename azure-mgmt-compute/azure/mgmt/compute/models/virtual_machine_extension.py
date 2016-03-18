@@ -26,30 +26,45 @@ class VirtualMachineExtension(Resource):
     """
     Describes a Virtual Machine Extension.
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param str publisher: Gets or sets the name of the extension handler
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param publisher: Gets or sets the name of the extension handler
      publisher.
-    :param str virtual_machine_extension_type: Gets or sets the type of the
+    :type publisher: str
+    :param virtual_machine_extension_type: Gets or sets the type of the
      extension handler.
-    :param str type_handler_version: Gets or sets the type version of the
+    :type virtual_machine_extension_type: str
+    :param type_handler_version: Gets or sets the type version of the
      extension handler.
-    :param bool auto_upgrade_minor_version: Gets or sets whether the
-     extension handler should be automatically upgraded across minor versions.
-    :param str force_update_tag: Gets or sets whether the extension handler
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Gets or sets whether the extension
+     handler should be automatically upgraded across minor versions.
+    :type auto_upgrade_minor_version: bool
+    :param force_update_tag: Gets or sets whether the extension handler
      should be forced to re-run even if the extension configuration has not
      changed.
-    :param object settings: Gets or sets Json formatted public settings for
-     the extension.
-    :param object protected_settings: Gets or sets Json formatted protected
-     settings for the extension.
-    :param str provisioning_state: Gets or sets the provisioning state, which
+    :type force_update_tag: str
+    :param settings: Gets or sets Json formatted public settings for the
+     extension.
+    :type settings: object
+    :param protected_settings: Gets or sets Json formatted protected settings
+     for the extension.
+    :type protected_settings: object
+    :param provisioning_state: Gets or sets the provisioning state, which
      only appears in the response.
-    :param VirtualMachineExtensionInstanceView instance_view: Gets or sets
-     the virtual machine extension instance view.
+    :type provisioning_state: str
+    :param instance_view: Gets or sets the virtual machine extension instance
+     view.
+    :type instance_view: :class:`VirtualMachineExtensionInstanceView
+     <azure.mgmt.compute.models.VirtualMachineExtensionInstanceView>`
     """ 
 
     _validation = {

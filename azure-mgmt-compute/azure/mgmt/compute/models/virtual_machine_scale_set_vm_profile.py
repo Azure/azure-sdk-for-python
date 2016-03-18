@@ -26,14 +26,21 @@ class VirtualMachineScaleSetVMProfile(Model):
     """
     Describes a virtual machine scale set virtual machine profile.
 
-    :param VirtualMachineScaleSetOSProfile os_profile: Gets or sets the
-     virtual machine scale set OS profile.
-    :param VirtualMachineScaleSetStorageProfile storage_profile: Gets or sets
-     the virtual machine scale set storage profile.
-    :param VirtualMachineScaleSetNetworkProfile network_profile: Gets or sets
-     the virtual machine scale set network profile.
-    :param VirtualMachineScaleSetExtensionProfile extension_profile: Gets the
-     virtual machine scale set extension profile.
+    :param os_profile: Gets or sets the virtual machine scale set OS profile.
+    :type os_profile: :class:`VirtualMachineScaleSetOSProfile
+     <azure.mgmt.compute.models.VirtualMachineScaleSetOSProfile>`
+    :param storage_profile: Gets or sets the virtual machine scale set
+     storage profile.
+    :type storage_profile: :class:`VirtualMachineScaleSetStorageProfile
+     <azure.mgmt.compute.models.VirtualMachineScaleSetStorageProfile>`
+    :param network_profile: Gets or sets the virtual machine scale set
+     network profile.
+    :type network_profile: :class:`VirtualMachineScaleSetNetworkProfile
+     <azure.mgmt.compute.models.VirtualMachineScaleSetNetworkProfile>`
+    :param extension_profile: Gets the virtual machine scale set extension
+     profile.
+    :type extension_profile: :class:`VirtualMachineScaleSetExtensionProfile
+     <azure.mgmt.compute.models.VirtualMachineScaleSetExtensionProfile>`
     """ 
 
     _attribute_map = {

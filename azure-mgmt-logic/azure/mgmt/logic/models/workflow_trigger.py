@@ -25,23 +25,36 @@ from .sub_resource import SubResource
 class WorkflowTrigger(SubResource):
     """WorkflowTrigger
 
-    :param str id: Gets or sets the resource id.
-    :param str provisioning_state: Gets the provisioning state. Possible
-     values include: 'NotSpecified', 'Creating', 'Succeeded', 'Updating'
-    :param datetime created_time: Gets the created time.
-    :param datetime changed_time: Gets the changed time.
-    :param str state: Gets the state. Possible values include:
-     'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :param str status: Gets the status. Possible values include:
-     'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
-     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
-    :param datetime last_execution_time: Gets the last execution time.
-    :param datetime next_execution_time: Gets the next execution time.
-    :param WorkflowTriggerRecurrence recurrence: Gets the workflow trigger
-     recurrence.
-    :param ResourceReference workflow: Gets the reference to workflow.
-    :param str name: Gets the workflow trigger name.
-    :param str type: Gets the workflow trigger type.
+    :param id: Gets or sets the resource id.
+    :type id: str
+    :param provisioning_state: Gets the provisioning state. Possible values
+     include: 'NotSpecified', 'Creating', 'Succeeded', 'Updating'
+    :type provisioning_state: str
+    :param created_time: Gets the created time.
+    :type created_time: datetime
+    :param changed_time: Gets the changed time.
+    :type changed_time: datetime
+    :param state: Gets the state. Possible values include: 'NotSpecified',
+     'Enabled', 'Disabled', 'Deleted', 'Suspended'
+    :type state: str
+    :param status: Gets the status. Possible values include: 'NotSpecified',
+     'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
+     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
+    :type status: str
+    :param last_execution_time: Gets the last execution time.
+    :type last_execution_time: datetime
+    :param next_execution_time: Gets the next execution time.
+    :type next_execution_time: datetime
+    :param recurrence: Gets the workflow trigger recurrence.
+    :type recurrence: :class:`WorkflowTriggerRecurrence
+     <azure.mgmt.logic.models.WorkflowTriggerRecurrence>`
+    :param workflow: Gets the reference to workflow.
+    :type workflow: :class:`ResourceReference
+     <azure.mgmt.logic.models.ResourceReference>`
+    :param name: Gets the workflow trigger name.
+    :type name: str
+    :param type: Gets the workflow trigger type.
+    :type type: str
     """ 
 
     _attribute_map = {

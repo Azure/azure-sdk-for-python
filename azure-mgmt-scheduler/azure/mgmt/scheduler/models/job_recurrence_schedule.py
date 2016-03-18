@@ -25,16 +25,23 @@ from msrest.serialization import Model
 class JobRecurrenceSchedule(Model):
     """JobRecurrenceSchedule
 
-    :param list week_days: Gets or sets the days of the week that the job
-     should execute on.
-    :param list hours: Gets or sets the hours of the day that the job should
+    :param week_days: Gets or sets the days of the week that the job should
+     execute on.
+    :type week_days: list of str
+    :param hours: Gets or sets the hours of the day that the job should
      execute at.
-    :param list minutes: Gets or sets the minutes of the hour that the job
-     should execute at.
-    :param list month_days: Gets or sets the days of the month that the job
-     should execute on. Must be between 1 and 31.
-    :param list monthly_occurrences: Gets or sets the occurrences of days
-     within a month.
+    :type hours: list of int
+    :param minutes: Gets or sets the minutes of the hour that the job should
+     execute at.
+    :type minutes: list of int
+    :param month_days: Gets or sets the days of the month that the job should
+     execute on. Must be between 1 and 31.
+    :type month_days: list of int
+    :param monthly_occurrences: Gets or sets the occurrences of days within a
+     month.
+    :type monthly_occurrences: list of
+     :class:`JobRecurrenceScheduleMonthlyOccurrence
+     <azure.mgmt.scheduler.models.JobRecurrenceScheduleMonthlyOccurrence>`
     """ 
 
     _attribute_map = {

@@ -26,8 +26,9 @@ class RoleAssignmentCreateParameters(Model):
     """
     Role assignment create parameters.
 
-    :param RoleAssignmentProperties properties: Gets or sets role assignment
-     properties.
+    :param properties: Gets or sets role assignment properties.
+    :type properties: :class:`RoleAssignmentProperties
+     <azure.mgmt.authorization.models.RoleAssignmentProperties>`
     """ 
 
     _attribute_map = {

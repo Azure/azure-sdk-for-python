@@ -26,9 +26,12 @@ class PolicyDefinitionProperties(Model):
     """
     Policy definition properties.
 
-    :param str description: Gets or sets the policy definition description.
-    :param str display_name: Gets or sets the policy definition display name.
-    :param object policy_rule: The policy rule json.
+    :param description: Gets or sets the policy definition description.
+    :type description: str
+    :param display_name: Gets or sets the policy definition display name.
+    :type display_name: str
+    :param policy_rule: The policy rule json.
+    :type policy_rule: object
     """ 
 
     _attribute_map = {

@@ -26,8 +26,11 @@ class ResourceMetricCollection(Model):
     """
     Collection of metric responses
 
-    :param list value: Collection of resources
-    :param str next_link: Link to next page of resources
+    :param value: Collection of resources
+    :type value: list of :class:`ResourceMetric
+     <azure.mgmt.web.models.ResourceMetric>`
+    :param next_link: Link to next page of resources
+    :type next_link: str
     """ 
 
     _attribute_map = {

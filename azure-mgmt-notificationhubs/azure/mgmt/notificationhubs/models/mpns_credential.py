@@ -26,8 +26,10 @@ class MpnsCredential(Model):
     """
     Description of a NotificationHub MpnsCredential.
 
-    :param MpnsCredentialProperties properties: Gets or sets properties of
-     NotificationHub MpnsCredential.
+    :param properties: Gets or sets properties of NotificationHub
+     MpnsCredential.
+    :type properties: :class:`MpnsCredentialProperties
+     <azure.mgmt.notificationhubs.models.MpnsCredentialProperties>`
     """ 
 
     _attribute_map = {

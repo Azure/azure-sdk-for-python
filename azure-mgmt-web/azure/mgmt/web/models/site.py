@@ -26,65 +26,96 @@ class Site(Resource):
     """
     Represents a web app
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str site_name: Name of web app
-    :param str state: State of the web app
-    :param list host_names: Hostnames associated with web app
-    :param str repository_site_name: Name of repository site
-    :param str usage_state: State indicating whether web app has exceeded its
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param site_name: Name of web app
+    :type site_name: str
+    :param state: State of the web app
+    :type state: str
+    :param host_names: Hostnames associated with web app
+    :type host_names: list of str
+    :param repository_site_name: Name of repository site
+    :type repository_site_name: str
+    :param usage_state: State indicating whether web app has exceeded its
      quota usage. Possible values include: 'Normal', 'Exceeded'
-    :param bool enabled: True if the site is enabled; otherwise, false.
-     Setting this  value to false disables the site (takes the site off line).
-    :param list enabled_host_names: Hostnames for the web app that are
-     enabled. Hostnames need to be assigned and enabled. If some hostnames
-     are assigned but not enabled
+    :type usage_state: str
+    :param enabled: True if the site is enabled; otherwise, false. Setting
+     this  value to false disables the site (takes the site off line).
+    :type enabled: bool
+    :param enabled_host_names: Hostnames for the web app that are enabled.
+     Hostnames need to be assigned and enabled. If some hostnames are
+     assigned but not enabled
      the app is not served on those hostnames
-    :param str availability_state: Management information availability state
-     for the web app. Possible values are Normal or Limited.
+    :type enabled_host_names: list of str
+    :param availability_state: Management information availability state for
+     the web app. Possible values are Normal or Limited.
      Normal means that the site is running correctly and that
      management information for the site is available.
      Limited means that only partial management information for
      the site is available and that detailed site information is unavailable.
      Possible values include: 'Normal', 'Limited', 'DisasterRecoveryMode'
-    :param list host_name_ssl_states: Hostname SSL states are  used to manage
-     the SSL bindings for site's hostnames.
-    :param str server_farm_id:
-    :param datetime last_modified_time_utc: Last time web app was modified in
-     UTC
-    :param SiteConfig site_config: Configuration of web app
-    :param list traffic_manager_host_names: Read-only list of Azure Traffic
+    :type availability_state: str
+    :param host_name_ssl_states: Hostname SSL states are  used to manage the
+     SSL bindings for site's hostnames.
+    :type host_name_ssl_states: list of :class:`HostNameSslState
+     <azure.mgmt.web.models.HostNameSslState>`
+    :param server_farm_id:
+    :type server_farm_id: str
+    :param last_modified_time_utc: Last time web app was modified in UTC
+    :type last_modified_time_utc: datetime
+    :param site_config: Configuration of web app
+    :type site_config: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
+    :param traffic_manager_host_names: Read-only list of Azure Traffic
      manager hostnames associated with web app
-    :param bool premium_app_deployed: If set indicates whether web app is
-     deployed as a premium app
-    :param bool scm_site_also_stopped: If set indicates whether to stop SCM
-     (KUDU) site when the web app is stopped. Default is false.
-    :param str target_swap_slot: Read-only property that specifies which slot
+    :type traffic_manager_host_names: list of str
+    :param premium_app_deployed: If set indicates whether web app is deployed
+     as a premium app
+    :type premium_app_deployed: bool
+    :param scm_site_also_stopped: If set indicates whether to stop SCM (KUDU)
+     site when the web app is stopped. Default is false.
+    :type scm_site_also_stopped: bool
+    :param target_swap_slot: Read-only property that specifies which slot
      this app will swap into
-    :param HostingEnvironmentProfile hosting_environment_profile:
-     Specification for the hosting environment (App Service Environment) to
-     use for the web app
-    :param str micro_service:
-    :param str gateway_site_name: Name of gateway app associated with web app
-    :param bool client_affinity_enabled: Specifies if the client affinity is
+    :type target_swap_slot: str
+    :param hosting_environment_profile: Specification for the hosting
+     environment (App Service Environment) to use for the web app
+    :type hosting_environment_profile: :class:`HostingEnvironmentProfile
+     <azure.mgmt.web.models.HostingEnvironmentProfile>`
+    :param micro_service:
+    :type micro_service: str
+    :param gateway_site_name: Name of gateway app associated with web app
+    :type gateway_site_name: str
+    :param client_affinity_enabled: Specifies if the client affinity is
      enabled when load balancing http request for multiple instances of the
      web app
-    :param bool client_cert_enabled: Specifies if the client certificate is
+    :type client_affinity_enabled: bool
+    :param client_cert_enabled: Specifies if the client certificate is
      enabled for the web app
-    :param bool host_names_disabled: Specifies if the public hostnames are
+    :type client_cert_enabled: bool
+    :param host_names_disabled: Specifies if the public hostnames are
      disabled the web app.
      If set to true the app is only accessible via API Management
      process
-    :param str outbound_ip_addresses: List of comma separated IP addresses
-     that this web app uses for outbound connections. Those can be used when
+    :type host_names_disabled: bool
+    :param outbound_ip_addresses: List of comma separated IP addresses that
+     this web app uses for outbound connections. Those can be used when
      configuring firewall rules for databases accessed by this web app.
-    :param CloningInfo cloning_info: This is only valid for web app creation.
-     If specified, web app is cloned from
+    :type outbound_ip_addresses: str
+    :param cloning_info: This is only valid for web app creation. If
+     specified, web app is cloned from
      a source web app
-    :param str resource_group: Resource group web app belongs to
+    :type cloning_info: :class:`CloningInfo
+     <azure.mgmt.web.models.CloningInfo>`
+    :param resource_group: Resource group web app belongs to
+    :type resource_group: str
     """ 
 
     _validation = {

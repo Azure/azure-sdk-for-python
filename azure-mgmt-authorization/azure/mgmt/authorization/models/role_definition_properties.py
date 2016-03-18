@@ -26,12 +26,17 @@ class RoleDefinitionProperties(Model):
     """
     Role definition properties.
 
-    :param str role_name: Gets or sets role name.
-    :param str description: Gets or sets role definition description.
-    :param str type: Gets or sets role type.
-    :param list permissions: Gets or sets role definition permissions.
-    :param list assignable_scopes: Gets or sets role definition assignable
-     scopes.
+    :param role_name: Gets or sets role name.
+    :type role_name: str
+    :param description: Gets or sets role definition description.
+    :type description: str
+    :param type: Gets or sets role type.
+    :type type: str
+    :param permissions: Gets or sets role definition permissions.
+    :type permissions: list of :class:`Permission
+     <azure.mgmt.authorization.models.Permission>`
+    :param assignable_scopes: Gets or sets role definition assignable scopes.
+    :type assignable_scopes: list of str
     """ 
 
     _attribute_map = {

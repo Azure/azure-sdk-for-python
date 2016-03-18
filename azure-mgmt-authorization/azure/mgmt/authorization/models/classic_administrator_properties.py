@@ -26,8 +26,10 @@ class ClassicAdministratorProperties(Model):
     """
     Classic Administrator properties.
 
-    :param str email_address: Gets or sets the email address
-    :param str role: Gets or sets the role
+    :param email_address: Gets or sets the email address
+    :type email_address: str
+    :param role: Gets or sets the role
+    :type role: str
     """ 
 
     _attribute_map = {

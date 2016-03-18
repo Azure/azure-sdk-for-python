@@ -26,8 +26,8 @@ class HardwareProfile(Model):
     """
     Describes a hardware profile.
 
-    :param str vm_size: The virtual machine size name. Possible values
-     include: 'Basic_A0', 'Basic_A1', 'Basic_A2', 'Basic_A3', 'Basic_A4',
+    :param vm_size: The virtual machine size name. Possible values include:
+     'Basic_A0', 'Basic_A1', 'Basic_A2', 'Basic_A3', 'Basic_A4',
      'Standard_A0', 'Standard_A1', 'Standard_A2', 'Standard_A3',
      'Standard_A4', 'Standard_A5', 'Standard_A6', 'Standard_A7',
      'Standard_A8', 'Standard_A9', 'Standard_A10', 'Standard_A11',
@@ -40,6 +40,7 @@ class HardwareProfile(Model):
      'Standard_DS13', 'Standard_DS14', 'Standard_G1', 'Standard_G2',
      'Standard_G3', 'Standard_G4', 'Standard_G5', 'Standard_GS1',
      'Standard_GS2', 'Standard_GS3', 'Standard_GS4', 'Standard_GS5'
+    :type vm_size: str
     """ 
 
     _attribute_map = {

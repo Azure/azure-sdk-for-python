@@ -26,30 +26,44 @@ class RedisCreateOrUpdateParameters(Resource):
     """
     Parameters supplied to the CreateOrUpdate Redis operation.
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param str redis_version: RedisVersion parameter has been deprecated. As
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param redis_version: RedisVersion parameter has been deprecated. As
      such, it is no longer necessary to provide this parameter and any value
      specified is ignored.
-    :param Sku sku: What sku of redis cache to deploy.
-    :param dict redis_configuration: All Redis Settings. Few possible keys:
+    :type redis_version: str
+    :param sku: What sku of redis cache to deploy.
+    :type sku: :class:`Sku <azure.mgmt.redis.models.Sku>`
+    :param redis_configuration: All Redis Settings. Few possible keys:
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
-    :param bool enable_non_ssl_port: If the value is true, then the non-ssl
-     redis server port (6379) will be enabled.
-    :param dict tenant_settings: tenantSettings
-    :param int shard_count: The number of shards to be created on a Premium
+    :type redis_configuration: dict
+    :param enable_non_ssl_port: If the value is true, then the non-ssl redis
+     server port (6379) will be enabled.
+    :type enable_non_ssl_port: bool
+    :param tenant_settings: tenantSettings
+    :type tenant_settings: dict
+    :param shard_count: The number of shards to be created on a Premium
      Cluster Cache.
-    :param str virtual_network: The exact ARM resource ID of the virtual
-     network to deploy the redis cache in. Example format:
+    :type shard_count: int
+    :param virtual_network: The exact ARM resource ID of the virtual network
+     to deploy the redis cache in. Example format:
      /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.ClassicNetwork/VirtualNetworks/vnet1
-    :param str subnet: Required when deploying a redis cache inside an
+    :type virtual_network: str
+    :param subnet: Required when deploying a redis cache inside an existing
+     Azure Virtual Network.
+    :type subnet: str
+    :param static_ip: Required when deploying a redis cache inside an
      existing Azure Virtual Network.
-    :param str static_ip: Required when deploying a redis cache inside an
-     existing Azure Virtual Network.
+    :type static_ip: str
     """ 
 
     _validation = {

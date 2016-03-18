@@ -41,7 +41,8 @@ class ResourceManagementClientConfiguration(AzureConfiguration):
     attributes.
 
     :param credentials: Gets Azure subscription credentials.
-    :type credentials: credentials
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.

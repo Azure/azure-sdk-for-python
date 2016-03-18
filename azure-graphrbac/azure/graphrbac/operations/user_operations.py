@@ -51,10 +51,13 @@ class UserOperations(object):
         :param user: user object id or user principal name
         :type user: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/users/{user}'
@@ -98,12 +101,16 @@ class UserOperations(object):
         Create a new user.
 
         :param parameters: Parameters to create a user.
-        :type parameters: UserCreateParameters
+        :type parameters: :class:`UserCreateParameters
+         <azure.graphrbac.models.UserCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: User
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`User <azure.graphrbac.models.User>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/users'
@@ -159,10 +166,11 @@ class UserOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: UserPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`UserPaged <azure.graphrbac.models.UserPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -226,10 +234,13 @@ class UserOperations(object):
          user information.
         :type upn_or_object_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: User
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`User <azure.graphrbac.models.User>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
@@ -287,10 +298,11 @@ class UserOperations(object):
          should be checked
         :type security_enabled_only: bool
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: strPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`strPaged <azure.graphrbac.models.strPaged>`
         """
         parameters = models.UserGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
 
@@ -357,10 +369,11 @@ class UserOperations(object):
         :param next_link: Next link for list operation.
         :type next_link: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: UserPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`UserPaged <azure.graphrbac.models.UserPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

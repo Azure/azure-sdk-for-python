@@ -26,9 +26,12 @@ class ResourceNameAvailabilityRequest(Model):
     """
     Resource name availability request content
 
-    :param str name: Resource name to verify
-    :param str type: Resource type used for verification
-    :param bool is_fqdn: Is fully qualified domain name
+    :param name: Resource name to verify
+    :type name: str
+    :param type: Resource type used for verification
+    :type type: str
+    :param is_fqdn: Is fully qualified domain name
+    :type is_fqdn: bool
     """ 
 
     _attribute_map = {

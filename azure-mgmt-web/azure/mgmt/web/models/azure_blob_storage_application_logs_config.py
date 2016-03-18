@@ -26,13 +26,16 @@ class AzureBlobStorageApplicationLogsConfig(Model):
     """
     Application logs azure blob storage configuration
 
-    :param str level: Log level. Possible values include: 'Off', 'Verbose',
+    :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    :param str sas_url: SAS url to a azure blob container with
+    :type level: str
+    :param sas_url: SAS url to a azure blob container with
      read/write/list/delete permissions
-    :param int retention_in_days: Retention in days.
+    :type sas_url: str
+    :param retention_in_days: Retention in days.
      Remove blobs older than X days.
      0 or lower means no retention.
+    :type retention_in_days: int
     """ 
 
     _attribute_map = {

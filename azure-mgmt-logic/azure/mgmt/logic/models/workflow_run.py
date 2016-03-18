@@ -25,20 +25,34 @@ from .sub_resource import SubResource
 class WorkflowRun(SubResource):
     """WorkflowRun
 
-    :param str id: Gets or sets the resource id.
-    :param datetime start_time: Gets the start time.
-    :param datetime end_time: Gets the end time.
-    :param str status: Gets the status. Possible values include:
-     'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
-     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
-    :param str code: Gets the code.
-    :param object error: Gets the error.
-    :param str correlation_id: Gets the correlation id.
-    :param ResourceReference workflow: Gets the reference to workflow version.
-    :param WorkflowRunTrigger trigger: Gets the fired trigger.
-    :param dict outputs: Gets the outputs.
-    :param str name: Gets the workflow run name.
-    :param str type: Gets the workflow run type.
+    :param id: Gets or sets the resource id.
+    :type id: str
+    :param start_time: Gets the start time.
+    :type start_time: datetime
+    :param end_time: Gets the end time.
+    :type end_time: datetime
+    :param status: Gets the status. Possible values include: 'NotSpecified',
+     'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
+     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
+    :type status: str
+    :param code: Gets the code.
+    :type code: str
+    :param error: Gets the error.
+    :type error: object
+    :param correlation_id: Gets the correlation id.
+    :type correlation_id: str
+    :param workflow: Gets the reference to workflow version.
+    :type workflow: :class:`ResourceReference
+     <azure.mgmt.logic.models.ResourceReference>`
+    :param trigger: Gets the fired trigger.
+    :type trigger: :class:`WorkflowRunTrigger
+     <azure.mgmt.logic.models.WorkflowRunTrigger>`
+    :param outputs: Gets the outputs.
+    :type outputs: dict
+    :param name: Gets the workflow run name.
+    :type name: str
+    :param type: Gets the workflow run type.
+    :type type: str
     """ 
 
     _attribute_map = {

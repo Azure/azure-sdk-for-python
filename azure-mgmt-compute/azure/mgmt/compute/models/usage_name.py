@@ -26,9 +26,11 @@ class UsageName(Model):
     """
     The Usage Names.
 
-    :param str value: Gets or sets a string describing the resource name.
-    :param str localized_value: Gets or sets a localized string describing
-     the resource name.
+    :param value: Gets or sets a string describing the resource name.
+    :type value: str
+    :param localized_value: Gets or sets a localized string describing the
+     resource name.
+    :type localized_value: str
     """ 
 
     _attribute_map = {

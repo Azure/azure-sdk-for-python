@@ -26,8 +26,10 @@ class ExpressRouteCircuitArpTable(Model):
     """
     The arp table associated with the ExpressRouteCircuit
 
-    :param str ip_address: Gets ipAddress.
-    :param str mac_address: Gets macAddress.
+    :param ip_address: Gets ipAddress.
+    :type ip_address: str
+    :param mac_address: Gets macAddress.
+    :type mac_address: str
     """ 
 
     _attribute_map = {

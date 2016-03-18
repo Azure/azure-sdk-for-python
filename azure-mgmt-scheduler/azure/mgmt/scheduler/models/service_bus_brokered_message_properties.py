@@ -25,20 +25,33 @@ from msrest.serialization import Model
 class ServiceBusBrokeredMessageProperties(Model):
     """ServiceBusBrokeredMessageProperties
 
-    :param str content_type: Gets or sets the content type.
-    :param str correlation_id: Gets or sets the correlation id.
-    :param bool force_persistence: Gets or sets the force persistence.
-    :param str label: Gets or sets the label.
-    :param str message_id: Gets or sets the message id.
-    :param str partition_key: Gets or sets the partition key.
-    :param str reply_to: Gets or sets the reply to.
-    :param str reply_to_session_id: Gets or sets the reply to session id.
-    :param datetime scheduled_enqueue_time_utc: Gets or sets the scheduled
-     enqueue time UTC.
-    :param str session_id: Gets or sets the session id.
-    :param datetime time_to_live: Gets or sets the time to live.
-    :param str to: Gets or sets the to.
-    :param str via_partition_key: Gets or sets the via partition key.
+    :param content_type: Gets or sets the content type.
+    :type content_type: str
+    :param correlation_id: Gets or sets the correlation id.
+    :type correlation_id: str
+    :param force_persistence: Gets or sets the force persistence.
+    :type force_persistence: bool
+    :param label: Gets or sets the label.
+    :type label: str
+    :param message_id: Gets or sets the message id.
+    :type message_id: str
+    :param partition_key: Gets or sets the partition key.
+    :type partition_key: str
+    :param reply_to: Gets or sets the reply to.
+    :type reply_to: str
+    :param reply_to_session_id: Gets or sets the reply to session id.
+    :type reply_to_session_id: str
+    :param scheduled_enqueue_time_utc: Gets or sets the scheduled enqueue
+     time UTC.
+    :type scheduled_enqueue_time_utc: datetime
+    :param session_id: Gets or sets the session id.
+    :type session_id: str
+    :param time_to_live: Gets or sets the time to live.
+    :type time_to_live: datetime
+    :param to: Gets or sets the to.
+    :type to: str
+    :param via_partition_key: Gets or sets the via partition key.
+    :type via_partition_key: str
     """ 
 
     _attribute_map = {

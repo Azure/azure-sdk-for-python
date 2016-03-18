@@ -50,10 +50,12 @@ class FeaturesOperations(object):
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: FeatureResultPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`FeatureResultPaged
+         <azure.mgmt.resource.feature.models.FeatureResultPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -114,10 +116,12 @@ class FeaturesOperations(object):
          provider.
         :type resource_provider_namespace: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: FeatureResultPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`FeatureResultPaged
+         <azure.mgmt.resource.feature.models.FeatureResultPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -181,10 +185,14 @@ class FeaturesOperations(object):
         :param feature_name: Previewed feature name in the resource provider.
         :type feature_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: FeatureResult
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`FeatureResult
+         <azure.mgmt.resource.feature.models.FeatureResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}'
@@ -240,10 +248,14 @@ class FeaturesOperations(object):
         :param feature_name: Previewed feature name in the resource provider.
         :type feature_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: FeatureResult
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`FeatureResult
+         <azure.mgmt.resource.feature.models.FeatureResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}/register'

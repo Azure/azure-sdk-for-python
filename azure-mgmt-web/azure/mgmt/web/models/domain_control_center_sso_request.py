@@ -26,10 +26,13 @@ class DomainControlCenterSsoRequest(Model):
     """
     Single sign on request information for domain management
 
-    :param str url: Url where the single sign on request is to be made
-    :param str post_parameter_key: Post parameter key
-    :param str post_parameter_value: Post parameter value. Client should use
+    :param url: Url where the single sign on request is to be made
+    :type url: str
+    :param post_parameter_key: Post parameter key
+    :type post_parameter_key: str
+    :param post_parameter_value: Post parameter value. Client should use
      'application/x-www-form-urlencoded' encoding for this value.
+    :type post_parameter_value: str
     """ 
 
     _attribute_map = {

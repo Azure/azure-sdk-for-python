@@ -26,12 +26,16 @@ class ImageReference(Model):
     """
     The image reference.
 
-    :param str publisher: Gets or sets the image publisher.
-    :param str offer: Gets or sets the image offer.
-    :param str sku: Gets or sets the image sku.
-    :param str version: Gets or sets the image version. The allowed formats
-     are Major.Minor.Build or 'latest'. Major, Minor and Build being decimal
+    :param publisher: Gets or sets the image publisher.
+    :type publisher: str
+    :param offer: Gets or sets the image offer.
+    :type offer: str
+    :param sku: Gets or sets the image sku.
+    :type sku: str
+    :param version: Gets or sets the image version. The allowed formats are
+     Major.Minor.Build or 'latest'. Major, Minor and Build being decimal
      numbers. Specify 'latest' to use the latest version of image.
+    :type version: str
     """ 
 
     _attribute_map = {

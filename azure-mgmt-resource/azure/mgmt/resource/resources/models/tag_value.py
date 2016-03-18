@@ -26,9 +26,13 @@ class TagValue(Model):
     """
     Tag information.
 
-    :param str id: Gets or sets the tag ID.
-    :param str tag_value: Gets or sets the tag value.
-    :param TagCount count: Gets or sets the tag value count.
+    :param id: Gets or sets the tag ID.
+    :type id: str
+    :param tag_value: Gets or sets the tag value.
+    :type tag_value: str
+    :param count: Gets or sets the tag value count.
+    :type count: :class:`TagCount
+     <azure.mgmt.resource.resources.models.TagCount>`
     """ 
 
     _attribute_map = {

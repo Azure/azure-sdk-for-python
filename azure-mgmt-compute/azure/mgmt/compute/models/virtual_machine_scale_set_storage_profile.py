@@ -26,8 +26,12 @@ class VirtualMachineScaleSetStorageProfile(Model):
     """
     Describes a virtual machine scale set storage profile.
 
-    :param ImageReference image_reference: Gets or sets the image reference.
-    :param VirtualMachineScaleSetOSDisk os_disk: Gets or sets the OS disk.
+    :param image_reference: Gets or sets the image reference.
+    :type image_reference: :class:`ImageReference
+     <azure.mgmt.compute.models.ImageReference>`
+    :param os_disk: Gets or sets the OS disk.
+    :type os_disk: :class:`VirtualMachineScaleSetOSDisk
+     <azure.mgmt.compute.models.VirtualMachineScaleSetOSDisk>`
     """ 
 
     _attribute_map = {

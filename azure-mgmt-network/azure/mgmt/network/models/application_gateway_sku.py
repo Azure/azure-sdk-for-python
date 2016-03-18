@@ -26,12 +26,15 @@ class ApplicationGatewaySku(Model):
     """
     SKU of application gateway
 
-    :param str name: Gets or sets name of application gateway SKU. Possible
+    :param name: Gets or sets name of application gateway SKU. Possible
      values include: 'Standard_Small', 'Standard_Medium', 'Standard_Large'
-    :param str tier: Gets or sets tier of application gateway. Possible
-     values include: 'Standard'
-    :param int capacity: Gets or sets capacity (instance count) of
-     application gateway
+    :type name: str
+    :param tier: Gets or sets tier of application gateway. Possible values
+     include: 'Standard'
+    :type tier: str
+    :param capacity: Gets or sets capacity (instance count) of application
+     gateway
+    :type capacity: int
     """ 
 
     _attribute_map = {

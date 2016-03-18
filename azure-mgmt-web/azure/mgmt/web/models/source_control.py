@@ -26,16 +26,26 @@ class SourceControl(Resource):
     """
     Describes the Source Control OAuth Token
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str source_control_name: Name or Source Control Type
-    :param str token: OAuth Access Token
-    :param str token_secret: OAuth Access Token Secret
-    :param str refresh_token: OAuth Refresh Token
-    :param datetime expiration_time: OAuth Token Expiration
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param source_control_name: Name or Source Control Type
+    :type source_control_name: str
+    :param token: OAuth Access Token
+    :type token: str
+    :param token_secret: OAuth Access Token Secret
+    :type token_secret: str
+    :param refresh_token: OAuth Refresh Token
+    :type refresh_token: str
+    :param expiration_time: OAuth Token Expiration
+    :type expiration_time: datetime
     """ 
 
     _validation = {

@@ -26,13 +26,20 @@ class ComputeLongRunningOperationResult(Model):
     """
     The Compute service response for long-running operations.
 
-    :param str operation_id: Gets the operation identifier.
-    :param str status: Gets the operation status. Possible values include:
+    :param operation_id: Gets the operation identifier.
+    :type operation_id: str
+    :param status: Gets the operation status. Possible values include:
      'InProgress', 'Failed', 'Succeeded', 'Preempted'
-    :param datetime start_time: Gets the operation start time
-    :param datetime end_time: Gets the operation end time
-    :param ComputeLongRunningOperationProperties properties:
-    :param ApiError error: Gets the operation error, if any occurred.
+    :type status: str
+    :param start_time: Gets the operation start time
+    :type start_time: datetime
+    :param end_time: Gets the operation end time
+    :type end_time: datetime
+    :param properties:
+    :type properties: :class:`ComputeLongRunningOperationProperties
+     <azure.mgmt.compute.models.ComputeLongRunningOperationProperties>`
+    :param error: Gets the operation error, if any occurred.
+    :type error: :class:`ApiError <azure.mgmt.compute.models.ApiError>`
     """ 
 
     _attribute_map = {

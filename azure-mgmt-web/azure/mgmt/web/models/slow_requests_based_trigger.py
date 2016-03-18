@@ -26,9 +26,12 @@ class SlowRequestsBasedTrigger(Model):
     """
     SlowRequestsBasedTrigger
 
-    :param str time_taken: TimeTaken
-    :param int count: Count
-    :param str time_interval: TimeInterval
+    :param time_taken: TimeTaken
+    :type time_taken: str
+    :param count: Count
+    :type count: int
+    :param time_interval: TimeInterval
+    :type time_interval: str
     """ 
 
     _attribute_map = {

@@ -46,7 +46,8 @@ class WebSiteManagementClientConfiguration(AzureConfiguration):
     attributes.
 
     :param credentials: Gets Azure subscription credentials.
-    :type credentials: credentials
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param subscription_id: Subscription Id
     :type subscription_id: str
     :param api_version: API Version

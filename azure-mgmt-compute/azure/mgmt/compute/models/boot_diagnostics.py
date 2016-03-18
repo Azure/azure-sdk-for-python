@@ -26,10 +26,12 @@ class BootDiagnostics(Model):
     """
     Describes Boot Diagnostics.
 
-    :param bool enabled: Gets or sets whether VM Agent should be provisioned
-     on the Virtual Machine.
-    :param str storage_uri: Gets or sets the boot diagnostics storage Uri. It
+    :param enabled: Gets or sets whether VM Agent should be provisioned on
+     the Virtual Machine.
+    :type enabled: bool
+    :param storage_uri: Gets or sets the boot diagnostics storage Uri. It
      should be a valid Uri
+    :type storage_uri: str
     """ 
 
     _attribute_map = {

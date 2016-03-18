@@ -26,18 +26,27 @@ class SiteSourceControl(Resource):
     """
     Describes the source control configuration for web app
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str repo_url: Repository or source control url
-    :param str branch: Name of branch to use for deployment
-    :param bool is_manual_integration: Whether to manual or continuous
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param repo_url: Repository or source control url
+    :type repo_url: str
+    :param branch: Name of branch to use for deployment
+    :type branch: str
+    :param is_manual_integration: Whether to manual or continuous integration
+    :type is_manual_integration: bool
+    :param deployment_rollback_enabled: Whether to manual or continuous
      integration
-    :param bool deployment_rollback_enabled: Whether to manual or continuous
-     integration
-    :param bool is_mercurial: Mercurial or Git repository type
+    :type deployment_rollback_enabled: bool
+    :param is_mercurial: Mercurial or Git repository type
+    :type is_mercurial: bool
     """ 
 
     _validation = {

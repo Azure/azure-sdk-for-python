@@ -51,14 +51,19 @@ class PolicyDefinitionsOperations(object):
         :param policy_definition_name: The policy definition name.
         :type policy_definition_name: str
         :param properties: Gets or sets the policy definition properties.
-        :type properties: PolicyDefinitionProperties
+        :type properties: :class:`PolicyDefinitionProperties
+         <azure.mgmt.resource.resources.models.PolicyDefinitionProperties>`
         :param name: Gets or sets the policy definition name.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyDefinition
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyDefinition
+         <azure.mgmt.resource.resources.models.PolicyDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.PolicyDefinition(properties=properties, name=name)
 
@@ -116,10 +121,14 @@ class PolicyDefinitionsOperations(object):
         :param policy_definition_name: The policy definition name.
         :type policy_definition_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyDefinition
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyDefinition
+         <azure.mgmt.resource.resources.models.PolicyDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
@@ -171,10 +180,13 @@ class PolicyDefinitionsOperations(object):
         :param policy_definition_name: The policy definition name.
         :type policy_definition_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'

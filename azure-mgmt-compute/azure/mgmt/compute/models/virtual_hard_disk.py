@@ -26,8 +26,9 @@ class VirtualHardDisk(Model):
     """
     Describes the uri of a disk.
 
-    :param str uri: Gets or sets the virtual hard disk's uri. It should be a
+    :param uri: Gets or sets the virtual hard disk's uri. It should be a
      valid Uri to a virtual hard disk.
+    :type uri: str
     """ 
 
     _attribute_map = {

@@ -26,13 +26,18 @@ class HostNameSslState(Model):
     """
     Object that represents a SSL-enabled host name.
 
-    :param str name: Host name
-    :param str ssl_state: SSL type. Possible values include: 'Disabled',
+    :param name: Host name
+    :type name: str
+    :param ssl_state: SSL type. Possible values include: 'Disabled',
      'SniEnabled', 'IpBasedEnabled'
-    :param str virtual_ip: Virtual IP address assigned to the host name if IP
+    :type ssl_state: str
+    :param virtual_ip: Virtual IP address assigned to the host name if IP
      based SSL is enabled
-    :param str thumbprint: SSL cert thumbprint
-    :param bool to_update: Set this flag to update existing host name
+    :type virtual_ip: str
+    :param thumbprint: SSL cert thumbprint
+    :type thumbprint: str
+    :param to_update: Set this flag to update existing host name
+    :type to_update: bool
     """ 
 
     _validation = {

@@ -26,9 +26,12 @@ class ApplicationFilter(Model):
     """
     Filter parameters for listing applications
 
-    :param str display_name_starts_with: Application display name starts with
-    :param str app_id: ApplicationId
-    :param str identifier_uri: Identifier Uri
+    :param display_name_starts_with: Application display name starts with
+    :type display_name_starts_with: str
+    :param app_id: ApplicationId
+    :type app_id: str
+    :param identifier_uri: Identifier Uri
+    :type identifier_uri: str
     """ 
 
     _attribute_map = {

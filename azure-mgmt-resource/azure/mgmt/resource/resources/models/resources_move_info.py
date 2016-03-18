@@ -26,8 +26,10 @@ class ResourcesMoveInfo(Model):
     """
     Parameters of move resources.
 
-    :param list resources: Gets or sets the ids of the resources.
-    :param str target_resource_group: The target resource group.
+    :param resources: Gets or sets the ids of the resources.
+    :type resources: list of str
+    :param target_resource_group: The target resource group.
+    :type target_resource_group: str
     """ 
 
     _attribute_map = {

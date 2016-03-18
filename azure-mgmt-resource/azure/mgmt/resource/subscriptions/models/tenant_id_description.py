@@ -26,8 +26,10 @@ class TenantIdDescription(Model):
     """
     Tenant Id information
 
-    :param str id: Gets or sets Id
-    :param str tenant_id: Gets or sets tenantId
+    :param id: Gets or sets Id
+    :type id: str
+    :param tenant_id: Gets or sets tenantId
+    :type tenant_id: str
     """ 
 
     _attribute_map = {

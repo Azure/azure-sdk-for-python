@@ -26,13 +26,20 @@ class VirtualMachineExtensionInstanceView(Model):
     """
     The instance view of a virtual machine extension.
 
-    :param str name: Gets or sets the virtual machine extension name.
-    :param str type: Gets or sets the full type of the extension handler
-     which includes both publisher and type.
-    :param str type_handler_version: Gets or sets the type version of the
+    :param name: Gets or sets the virtual machine extension name.
+    :type name: str
+    :param type: Gets or sets the full type of the extension handler which
+     includes both publisher and type.
+    :type type: str
+    :param type_handler_version: Gets or sets the type version of the
      extension handler.
-    :param list substatuses: Gets or sets the resource status information.
-    :param list statuses: Gets or sets the resource status information.
+    :type type_handler_version: str
+    :param substatuses: Gets or sets the resource status information.
+    :type substatuses: list of :class:`InstanceViewStatus
+     <azure.mgmt.compute.models.InstanceViewStatus>`
+    :param statuses: Gets or sets the resource status information.
+    :type statuses: list of :class:`InstanceViewStatus
+     <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 
 
     _attribute_map = {

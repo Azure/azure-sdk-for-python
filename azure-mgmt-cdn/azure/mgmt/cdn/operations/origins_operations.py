@@ -56,10 +56,11 @@ class OriginsOperations(object):
          Azure subscription
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: OriginPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`OriginPaged <azure.mgmt.cdn.models.OriginPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -128,10 +129,13 @@ class OriginsOperations(object):
          Azure subscription
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Origin
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Origin <azure.mgmt.cdn.models.Origin>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'
@@ -185,7 +189,8 @@ class OriginsOperations(object):
          needs to be unique under endpoint
         :type origin_name: str
         :param origin_properties: Origin properties
-        :type origin_properties: OriginParameters
+        :type origin_properties: :class:`OriginParameters
+         <azure.mgmt.cdn.models.OriginParameters>`
         :param endpoint_name: Name of the endpoint within the CDN profile
         :type endpoint_name: str
         :param profile_name: Name of the CDN profile within the resource group
@@ -194,10 +199,16 @@ class OriginsOperations(object):
          Azure subscription
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Origin
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return :class:`Origin
+         <azure.mgmt.cdn.models.Origin>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'
@@ -275,7 +286,8 @@ class OriginsOperations(object):
          needs to be unique under endpoint
         :type origin_name: str
         :param origin_properties: Origin properties
-        :type origin_properties: OriginParameters
+        :type origin_properties: :class:`OriginParameters
+         <azure.mgmt.cdn.models.OriginParameters>`
         :param endpoint_name: Name of the endpoint within the CDN profile
         :type endpoint_name: str
         :param profile_name: Name of the CDN profile within the resource group
@@ -284,10 +296,16 @@ class OriginsOperations(object):
          Azure subscription
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Origin
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return :class:`Origin
+         <azure.mgmt.cdn.models.Origin>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'
@@ -372,10 +390,16 @@ class OriginsOperations(object):
          Azure subscription
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Origin
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return :class:`Origin
+         <azure.mgmt.cdn.models.Origin>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/origins/{originName}'

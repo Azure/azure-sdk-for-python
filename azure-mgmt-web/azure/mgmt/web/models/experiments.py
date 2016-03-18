@@ -26,8 +26,10 @@ class Experiments(Model):
     """
     Class containing Routing in production experiments
 
-    :param list ramp_up_rules: List of
+    :param ramp_up_rules: List of
      {Microsoft.Web.Hosting.Administration.RampUpRule} objects.
+    :type ramp_up_rules: list of :class:`RampUpRule
+     <azure.mgmt.web.models.RampUpRule>`
     """ 
 
     _attribute_map = {

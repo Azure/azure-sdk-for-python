@@ -26,8 +26,10 @@ class ServicePrincipalCreateParameters(Model):
     """
     Request parameters for create a new service principal
 
-    :param str app_id: Gets or sets application Id
-    :param bool account_enabled: Specifies if the account is enabled
+    :param app_id: Gets or sets application Id
+    :type app_id: str
+    :param account_enabled: Specifies if the account is enabled
+    :type account_enabled: bool
     """ 
 
     _validation = {
