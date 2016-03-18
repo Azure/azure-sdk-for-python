@@ -26,19 +26,30 @@ class WorkerPool(Resource):
     """
     Worker pool of a hostingEnvironment (App Service Environment)
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param int worker_size_id: Worker size id for referencing this worker pool
-    :param str compute_mode: Shared or dedicated web app hosting. Possible
-     values include: 'Shared', 'Dedicated'
-    :param str worker_size: VM size of the worker pool instances
-    :param int worker_count: Number of instances in the worker pool
-    :param list instance_names: Names of all instances in the worker pool
-     (read only)
-    :param SkuDescription sku:
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param worker_size_id: Worker size id for referencing this worker pool
+    :type worker_size_id: int
+    :param compute_mode: Shared or dedicated web app hosting. Possible values
+     include: 'Shared', 'Dedicated'
+    :type compute_mode: str
+    :param worker_size: VM size of the worker pool instances
+    :type worker_size: str
+    :param worker_count: Number of instances in the worker pool
+    :type worker_count: int
+    :param instance_names: Names of all instances in the worker pool (read
+     only)
+    :type instance_names: list of str
+    :param sku:
+    :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
     """ 
 
     _validation = {

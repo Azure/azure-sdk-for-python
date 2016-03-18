@@ -26,11 +26,15 @@ class Usage(Model):
     """
     Describes Compute Resource Usage.
 
-    :param str unit: Gets or sets an enum describing the unit of measurement.
+    :param unit: Gets or sets an enum describing the unit of measurement.
      Default value: "Count" .
-    :param int current_value: Gets or sets the current value of the usage.
-    :param long limit: Gets or sets the limit of usage.
-    :param UsageName name: Gets or sets the name of the type of usage.
+    :type unit: str
+    :param current_value: Gets or sets the current value of the usage.
+    :type current_value: int
+    :param limit: Gets or sets the limit of usage.
+    :type limit: long
+    :param name: Gets or sets the name of the type of usage.
+    :type name: :class:`UsageName <azure.mgmt.compute.models.UsageName>`
     """ 
 
     _validation = {

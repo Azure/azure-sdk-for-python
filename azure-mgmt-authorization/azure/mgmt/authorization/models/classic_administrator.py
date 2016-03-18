@@ -26,11 +26,15 @@ class ClassicAdministrator(Model):
     """
     Classic Administrators
 
-    :param str id: Gets or sets the classic administrator id.
-    :param str name: Gets or sets the classic administrator name.
-    :param str type: Gets or sets the classic administrator type.
-    :param ClassicAdministratorProperties properties: Gets or sets the
-     classic administrator properties.
+    :param id: Gets or sets the classic administrator id.
+    :type id: str
+    :param name: Gets or sets the classic administrator name.
+    :type name: str
+    :param type: Gets or sets the classic administrator type.
+    :type type: str
+    :param properties: Gets or sets the classic administrator properties.
+    :type properties: :class:`ClassicAdministratorProperties
+     <azure.mgmt.authorization.models.ClassicAdministratorProperties>`
     """ 
 
     _attribute_map = {

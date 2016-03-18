@@ -55,10 +55,12 @@ class WorkflowAccessKeysOperations(object):
         :param top: The number of items to be included in the result.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowAccessKeyPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowAccessKeyPaged
+         <azure.mgmt.logic.models.WorkflowAccessKeyPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -126,10 +128,14 @@ class WorkflowAccessKeysOperations(object):
         :param access_key_name: The workflow access key name.
         :type access_key_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowAccessKey
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowAccessKey
+         <azure.mgmt.logic.models.WorkflowAccessKey>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/accessKeys/{accessKeyName}'
@@ -187,12 +193,17 @@ class WorkflowAccessKeysOperations(object):
         :param access_key_name: The workflow access key name.
         :type access_key_name: str
         :param workflow_accesskey: The workflow access key.
-        :type workflow_accesskey: WorkflowAccessKey
+        :type workflow_accesskey: :class:`WorkflowAccessKey
+         <azure.mgmt.logic.models.WorkflowAccessKey>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowAccessKey
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowAccessKey
+         <azure.mgmt.logic.models.WorkflowAccessKey>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/accessKeys/{accessKeyName}'
@@ -256,10 +267,13 @@ class WorkflowAccessKeysOperations(object):
         :param access_key_name: The workflow access key name.
         :type access_key_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/accessKeys/{accessKeyName}'
@@ -310,10 +324,14 @@ class WorkflowAccessKeysOperations(object):
         :param access_key_name: The workflow access key name.
         :type access_key_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowSecretKeys
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowSecretKeys
+         <azure.mgmt.logic.models.WorkflowSecretKeys>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/accessKeys/{accessKeyName}/list'
@@ -374,10 +392,14 @@ class WorkflowAccessKeysOperations(object):
          'NotSpecified', 'Primary', 'Secondary'
         :type key_type: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowSecretKeys
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowSecretKeys
+         <azure.mgmt.logic.models.WorkflowSecretKeys>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.RegenerateSecretKeyParameters(key_type=key_type)
 

@@ -56,10 +56,14 @@ class DeploymentOperationsOperations(object):
         :param operation_id: Operation Id.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: DeploymentOperation
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DeploymentOperation
+         <azure.mgmt.resource.resources.models.DeploymentOperation>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}'
@@ -118,10 +122,12 @@ class DeploymentOperationsOperations(object):
         :param top: Query parameters.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: DeploymentOperationPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DeploymentOperationPaged
+         <azure.mgmt.resource.resources.models.DeploymentOperationPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

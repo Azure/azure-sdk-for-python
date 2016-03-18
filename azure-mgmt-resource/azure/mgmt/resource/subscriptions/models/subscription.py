@@ -26,13 +26,18 @@ class Subscription(Model):
     """
     Subscription information.
 
-    :param str id: Gets or sets the ID of the resource
+    :param id: Gets or sets the ID of the resource
      (/subscriptions/SubscriptionId).
-    :param str subscription_id: Gets or sets the subscription Id.
-    :param str display_name: Gets or sets the subscription display name
-    :param str state: Gets or sets the subscription state
-    :param SubscriptionPolicies subscription_policies: Gets or sets the
-     subscription policies.
+    :type id: str
+    :param subscription_id: Gets or sets the subscription Id.
+    :type subscription_id: str
+    :param display_name: Gets or sets the subscription display name
+    :type display_name: str
+    :param state: Gets or sets the subscription state
+    :type state: str
+    :param subscription_policies: Gets or sets the subscription policies.
+    :type subscription_policies: :class:`SubscriptionPolicies
+     <azure.mgmt.resource.subscriptions.models.SubscriptionPolicies>`
     """ 
 
     _attribute_map = {

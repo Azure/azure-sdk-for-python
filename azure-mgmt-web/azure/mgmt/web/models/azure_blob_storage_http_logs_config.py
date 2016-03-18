@@ -26,12 +26,15 @@ class AzureBlobStorageHttpLogsConfig(Model):
     """
     Http logs to azure blob storage configuration
 
-    :param str sas_url: SAS url to a azure blob container with
+    :param sas_url: SAS url to a azure blob container with
      read/write/list/delete permissions
-    :param int retention_in_days: Retention in days.
+    :type sas_url: str
+    :param retention_in_days: Retention in days.
      Remove blobs older than X days.
      0 or lower means no retention.
-    :param bool enabled: Enabled
+    :type retention_in_days: int
+    :param enabled: Enabled
+    :type enabled: bool
     """ 
 
     _attribute_map = {

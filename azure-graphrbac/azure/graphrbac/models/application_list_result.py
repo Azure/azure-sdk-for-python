@@ -26,7 +26,9 @@ class ApplicationListResult(Model):
     """
     Role assignment list operation result.
 
-    :param list value: Application list.
+    :param value: Application list.
+    :type value: list of :class:`Application
+     <azure.graphrbac.models.Application>`
     """ 
 
     _attribute_map = {

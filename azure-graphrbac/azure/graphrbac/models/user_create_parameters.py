@@ -26,12 +26,17 @@ class UserCreateParameters(Model):
     """
     Request parameters for create a new user
 
-    :param str user_principal_name: User Principal Name
-    :param bool account_enabled: Enable the account
-    :param str display_name: User display name
-    :param str mail_nickname: Mail nick name
-    :param UserCreateParametersPasswordProfile password_profile: Password
-     Profile
+    :param user_principal_name: User Principal Name
+    :type user_principal_name: str
+    :param account_enabled: Enable the account
+    :type account_enabled: bool
+    :param display_name: User display name
+    :type display_name: str
+    :param mail_nickname: Mail nick name
+    :type mail_nickname: str
+    :param password_profile: Password Profile
+    :type password_profile: :class:`UserCreateParametersPasswordProfile
+     <azure.graphrbac.models.UserCreateParametersPasswordProfile>`
     """ 
 
     _validation = {

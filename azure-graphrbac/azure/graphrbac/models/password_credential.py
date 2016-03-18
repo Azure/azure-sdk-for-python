@@ -26,10 +26,14 @@ class PasswordCredential(Model):
     """
     Active Directory service principal Password Credential information
 
-    :param datetime start_date: Gets or sets start date
-    :param datetime end_date: Gets or sets end date
-    :param str key_id: Gets or sets key Id
-    :param str value: Gets or sets value
+    :param start_date: Gets or sets start date
+    :type start_date: datetime
+    :param end_date: Gets or sets end date
+    :type end_date: datetime
+    :param key_id: Gets or sets key Id
+    :type key_id: str
+    :param value: Gets or sets value
+    :type value: str
     """ 
 
     _attribute_map = {

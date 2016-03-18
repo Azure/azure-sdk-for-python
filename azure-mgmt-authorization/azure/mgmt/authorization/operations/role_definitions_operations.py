@@ -53,10 +53,14 @@ class RoleDefinitionsOperations(object):
         :param role_definition_id: Role definition id.
         :type role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleDefinition
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleDefinition
+         <azure.mgmt.authorization.models.RoleDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
@@ -110,10 +114,14 @@ class RoleDefinitionsOperations(object):
         :param role_definition_id: Role definition Id
         :type role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleDefinition
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleDefinition
+         <azure.mgmt.authorization.models.RoleDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
@@ -167,12 +175,17 @@ class RoleDefinitionsOperations(object):
         :param role_definition_id: Role definition id.
         :type role_definition_id: str
         :param role_definition: Role definition.
-        :type role_definition: RoleDefinition
+        :type role_definition: :class:`RoleDefinition
+         <azure.mgmt.authorization.models.RoleDefinition>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleDefinition
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleDefinition
+         <azure.mgmt.authorization.models.RoleDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
@@ -228,10 +241,14 @@ class RoleDefinitionsOperations(object):
         :param role_definition_id: Fully qualified role definition Id
         :type role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleDefinition
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleDefinition
+         <azure.mgmt.authorization.models.RoleDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{roleDefinitionId}'
@@ -285,10 +302,12 @@ class RoleDefinitionsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleDefinitionPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleDefinitionPaged
+         <azure.mgmt.authorization.models.RoleDefinitionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

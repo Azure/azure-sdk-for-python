@@ -26,11 +26,14 @@ class ExpressRouteCircuitSku(Model):
     """
     Contains sku in an ExpressRouteCircuit
 
-    :param str name: Gets or sets name of the sku.
-    :param str tier: Gets or sets tier of the sku. Possible values include:
+    :param name: Gets or sets name of the sku.
+    :type name: str
+    :param tier: Gets or sets tier of the sku. Possible values include:
      'Standard', 'Premium'
-    :param str family: Gets or sets family of the sku. Possible values
-     include: 'UnlimitedData', 'MeteredData'
+    :type tier: str
+    :param family: Gets or sets family of the sku. Possible values include:
+     'UnlimitedData', 'MeteredData'
+    :type family: str
     """ 
 
     _attribute_map = {

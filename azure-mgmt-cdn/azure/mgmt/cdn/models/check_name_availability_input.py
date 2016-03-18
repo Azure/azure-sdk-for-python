@@ -26,8 +26,11 @@ class CheckNameAvailabilityInput(Model):
     """
     Input of check name availability API
 
-    :param str name: The resource name to validate
-    :param str type: The type of the resource whose name is to be validated
+    :param name: The resource name to validate
+    :type name: str
+    :param type: The type of the resource whose name is to be validated.
+     Possible values include: 'Microsoft.Cdn/Profiles/Endpoints'
+    :type type: str
     """ 
 
     _validation = {
@@ -37,7 +40,7 @@ class CheckNameAvailabilityInput(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ResourceType'},
     }
 
     def __init__(self, name, type, **kwargs):

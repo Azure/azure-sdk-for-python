@@ -25,11 +25,14 @@ from msrest.serialization import Model
 class ProfileProperties(Model):
     """ProfileProperties
 
-    :param Sku sku: Profile sku
-    :param str resource_state: Resource status of the profile. Possible
-     values include: 'Creating', 'Active', 'Deleting', 'Disabled'
-    :param str provisioning_state: Provisioning status of the profile.
-     Possible values include: 'Creating', 'Succeeded', 'Failed'
+    :param sku: Profile sku
+    :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
+    :param resource_state: Resource status of the profile. Possible values
+     include: 'Creating', 'Active', 'Deleting', 'Disabled'
+    :type resource_state: str
+    :param provisioning_state: Provisioning status of the profile. Possible
+     values include: 'Creating', 'Succeeded', 'Failed'
+    :type provisioning_state: str
     """ 
 
     _attribute_map = {

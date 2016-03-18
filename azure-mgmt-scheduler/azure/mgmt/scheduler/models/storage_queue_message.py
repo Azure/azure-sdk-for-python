@@ -25,10 +25,14 @@ from msrest.serialization import Model
 class StorageQueueMessage(Model):
     """StorageQueueMessage
 
-    :param str storage_account: Gets or sets the storage account name.
-    :param str queue_name: Gets or sets the queue name.
-    :param str sas_token: Gets or sets the SAS key.
-    :param str message: Gets or sets the message.
+    :param storage_account: Gets or sets the storage account name.
+    :type storage_account: str
+    :param queue_name: Gets or sets the queue name.
+    :type queue_name: str
+    :param sas_token: Gets or sets the SAS key.
+    :type sas_token: str
+    :param message: Gets or sets the message.
+    :type message: str
     """ 
 
     _attribute_map = {

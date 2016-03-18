@@ -26,11 +26,16 @@ class ResourceProviderOperationDisplayProperties(Model):
     """
     Resource provider operation's display properties.
 
-    :param str publisher: Gets or sets operation description.
-    :param str provider: Gets or sets operation provider.
-    :param str resource: Gets or sets operation resource.
-    :param str operation: Gets or sets operation.
-    :param str description: Gets or sets operation description.
+    :param publisher: Gets or sets operation description.
+    :type publisher: str
+    :param provider: Gets or sets operation provider.
+    :type provider: str
+    :param resource: Gets or sets operation resource.
+    :type resource: str
+    :param operation: Gets or sets operation.
+    :type operation: str
+    :param description: Gets or sets operation description.
+    :type description: str
     """ 
 
     _attribute_map = {

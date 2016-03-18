@@ -26,8 +26,10 @@ class RoleAssignmentProperties(Model):
     """
     Role assignment properties.
 
-    :param str role_definition_id: Gets or sets role definition id.
-    :param str principal_id: Gets or sets principal Id.
+    :param role_definition_id: Gets or sets role definition id.
+    :type role_definition_id: str
+    :param principal_id: Gets or sets principal Id.
+    :type principal_id: str
     """ 
 
     _attribute_map = {

@@ -26,11 +26,15 @@ class VirtualMachineScaleSetSkuCapacity(Model):
     """
     Describes scaling information of a sku.
 
-    :param long minimum: Gets the minimum capacity.
-    :param long maximum: Gets the maximum capacity that can be set.
-    :param long default_capacity: Gets the default capacity.
-    :param str scale_type: Gets the scale type applicable to the sku.
-     Possible values include: 'Automatic', 'None'
+    :param minimum: Gets the minimum capacity.
+    :type minimum: long
+    :param maximum: Gets the maximum capacity that can be set.
+    :type maximum: long
+    :param default_capacity: Gets the default capacity.
+    :type default_capacity: long
+    :param scale_type: Gets the scale type applicable to the sku. Possible
+     values include: 'Automatic', 'None'
+    :type scale_type: str
     """ 
 
     _attribute_map = {

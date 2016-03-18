@@ -25,18 +25,29 @@ from msrest.serialization import Model
 class JobAction(Model):
     """JobAction
 
-    :param str type: Gets or sets the job action type. Possible values
-     include: 'Http', 'Https', 'StorageQueue', 'ServiceBusQueue',
-     'ServiceBusTopic'
-    :param HttpRequest request: Gets or sets the http requests.
-    :param StorageQueueMessage queue_message: Gets or sets the storage queue
+    :param type: Gets or sets the job action type. Possible values include:
+     'Http', 'Https', 'StorageQueue', 'ServiceBusQueue', 'ServiceBusTopic'
+    :type type: str
+    :param request: Gets or sets the http requests.
+    :type request: :class:`HttpRequest
+     <azure.mgmt.scheduler.models.HttpRequest>`
+    :param queue_message: Gets or sets the storage queue message.
+    :type queue_message: :class:`StorageQueueMessage
+     <azure.mgmt.scheduler.models.StorageQueueMessage>`
+    :param service_bus_queue_message: Gets or sets the service bus queue
      message.
-    :param ServiceBusQueueMessage service_bus_queue_message: Gets or sets the
-     service bus queue message.
-    :param ServiceBusTopicMessage service_bus_topic_message: Gets or sets the
-     service bus topic message.
-    :param RetryPolicy retry_policy: Gets or sets the retry policy.
-    :param JobErrorAction error_action: Gets or sets the error action.
+    :type service_bus_queue_message: :class:`ServiceBusQueueMessage
+     <azure.mgmt.scheduler.models.ServiceBusQueueMessage>`
+    :param service_bus_topic_message: Gets or sets the service bus topic
+     message.
+    :type service_bus_topic_message: :class:`ServiceBusTopicMessage
+     <azure.mgmt.scheduler.models.ServiceBusTopicMessage>`
+    :param retry_policy: Gets or sets the retry policy.
+    :type retry_policy: :class:`RetryPolicy
+     <azure.mgmt.scheduler.models.RetryPolicy>`
+    :param error_action: Gets or sets the error action.
+    :type error_action: :class:`JobErrorAction
+     <azure.mgmt.scheduler.models.JobErrorAction>`
     """ 
 
     _attribute_map = {

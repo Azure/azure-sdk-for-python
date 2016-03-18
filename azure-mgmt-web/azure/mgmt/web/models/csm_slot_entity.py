@@ -26,10 +26,12 @@ class CsmSlotEntity(Model):
     """
     Class containing deployment slot parameters
 
-    :param str target_slot: Set the destination deployment slot during swap
+    :param target_slot: Set the destination deployment slot during swap
      operation
-    :param bool preserve_vnet: Get or set the flag indicating it should
-     preserve VNet to the slot during swap
+    :type target_slot: str
+    :param preserve_vnet: Get or set the flag indicating it should preserve
+     VNet to the slot during swap
+    :type preserve_vnet: bool
     """ 
 
     _attribute_map = {

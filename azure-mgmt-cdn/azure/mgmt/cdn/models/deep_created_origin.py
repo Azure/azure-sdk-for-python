@@ -26,12 +26,15 @@ class DeepCreatedOrigin(Model):
     """
     Deep created origins within a CDN endpoint
 
-    :param str name: Origin name
-    :param str host_name: The host name of the origin
-    :param int http_port: The value of the http port, must be between 1 and
+    :param name: Origin name
+    :type name: str
+    :param host_name: The host name of the origin
+    :type host_name: str
+    :param http_port: The value of the http port, must be between 1 and 65535
+    :type http_port: int
+    :param https_port: The value of the https port, must be between 1 and
      65535
-    :param int https_port: The value of the https port, must be between 1 and
-     65535
+    :type https_port: int
     """ 
 
     _validation = {

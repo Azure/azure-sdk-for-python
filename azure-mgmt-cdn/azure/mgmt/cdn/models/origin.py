@@ -29,18 +29,25 @@ class Origin(Resource):
     cached, they attempt to fetch it from one or more of the configured
     Origins.
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str type: Resource type
-    :param str host_name: The host name of the origin
-    :param int http_port: The value of the http port, must be between 1 and
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param host_name: The host name of the origin
+    :type host_name: str
+    :param http_port: The value of the http port, must be between 1 and 65535
+    :type http_port: int
+    :param https_port: The value of the https port, must be between 1 and
      65535
-    :param int https_port: The value of the https port, must be between 1 and
-     65535
-    :param str resource_state: Resource status of the origin. Possible values
+    :type https_port: int
+    :param resource_state: Resource status of the origin. Possible values
      include: 'Creating', 'Active', 'Deleting'
-    :param str provisioning_state: Provisioning status of the origin.
-     Possible values include: 'Creating', 'Succeeded', 'Failed'
+    :type resource_state: str
+    :param provisioning_state: Provisioning status of the origin. Possible
+     values include: 'Creating', 'Succeeded', 'Failed'
+    :type provisioning_state: str
     """ 
 
     _validation = {

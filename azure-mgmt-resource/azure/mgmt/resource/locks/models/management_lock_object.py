@@ -26,12 +26,17 @@ class ManagementLockObject(Model):
     """
     Management lock information.
 
-    :param str level: Gets or sets the lock level of the management lock.
+    :param level: Gets or sets the lock level of the management lock.
      Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
-    :param str notes: Gets or sets the notes of the management lock.
-    :param str id: Gets or sets the Id of the lock.
-    :param str type: Gets or sets the type of the lock.
-    :param str name: Gets or sets the name of the lock.
+    :type level: str
+    :param notes: Gets or sets the notes of the management lock.
+    :type notes: str
+    :param id: Gets or sets the Id of the lock.
+    :type id: str
+    :param type: Gets or sets the type of the lock.
+    :type type: str
+    :param name: Gets or sets the name of the lock.
+    :type name: str
     """ 
 
     _attribute_map = {

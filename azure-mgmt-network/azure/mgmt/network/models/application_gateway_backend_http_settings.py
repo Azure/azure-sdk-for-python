@@ -26,21 +26,29 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     """
     Backend address pool settings of application gateway
 
-    :param str id: Resource Id
-    :param int port: Gets or sets the port
-    :param str protocol: Gets or sets the protocol. Possible values include:
+    :param id: Resource Id
+    :type id: str
+    :param port: Gets or sets the port
+    :type port: int
+    :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
-    :param str cookie_based_affinity: Gets or sets the cookie affinity.
-     Possible values include: 'Enabled', 'Disabled'
-    :param int request_timeout: Gets or sets request timeout
-    :param SubResource probe: Gets or sets probe resource of application
-     gateway
-    :param str provisioning_state: Gets or sets Provisioning state of the
-     backend http settings resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type protocol: str
+    :param cookie_based_affinity: Gets or sets the cookie affinity. Possible
+     values include: 'Enabled', 'Disabled'
+    :type cookie_based_affinity: str
+    :param request_timeout: Gets or sets request timeout
+    :type request_timeout: int
+    :param probe: Gets or sets probe resource of application gateway
+    :type probe: :class:`SubResource <azure.mgmt.network.models.SubResource>`
+    :param provisioning_state: Gets or sets Provisioning state of the backend
+     http settings resource Updating/Deleting/Failed
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

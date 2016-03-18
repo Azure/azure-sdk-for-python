@@ -25,11 +25,17 @@ from msrest.serialization import Model
 class Error(Model):
     """Error
 
-    :param str code:
-    :param str message:
-    :param str target:
-    :param list details:
-    :param str inner_error:
+    :param code:
+    :type code: str
+    :param message:
+    :type message: str
+    :param target:
+    :type target: str
+    :param details:
+    :type details: list of :class:`ErrorDetails
+     <azure.mgmt.network.models.ErrorDetails>`
+    :param inner_error:
+    :type inner_error: str
     """ 
 
     _attribute_map = {

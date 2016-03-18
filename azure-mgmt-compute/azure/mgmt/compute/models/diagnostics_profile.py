@@ -26,8 +26,9 @@ class DiagnosticsProfile(Model):
     """
     Describes a diagnostics profile.
 
-    :param BootDiagnostics boot_diagnostics: Gets or sets the boot
-     diagnostics.
+    :param boot_diagnostics: Gets or sets the boot diagnostics.
+    :type boot_diagnostics: :class:`BootDiagnostics
+     <azure.mgmt.compute.models.BootDiagnostics>`
     """ 
 
     _attribute_map = {

@@ -26,14 +26,20 @@ class TopLevelDomain(Resource):
     """
     A top level domain object
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str top_level_domain_name: Name of the top level domain
-    :param bool privacy: If true then the top level domain supports domain
-     privacy
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param top_level_domain_name: Name of the top level domain
+    :type top_level_domain_name: str
+    :param privacy: If true then the top level domain supports domain privacy
+    :type privacy: bool
     """ 
 
     _validation = {

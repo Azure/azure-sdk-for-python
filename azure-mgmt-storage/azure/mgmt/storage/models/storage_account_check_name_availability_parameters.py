@@ -25,8 +25,10 @@ from msrest.serialization import Model
 class StorageAccountCheckNameAvailabilityParameters(Model):
     """StorageAccountCheckNameAvailabilityParameters
 
-    :param str name:
-    :param str type:  Default value: "Microsoft.Storage/storageAccounts" .
+    :param name:
+    :type name: str
+    :param type:  Default value: "Microsoft.Storage/storageAccounts" .
+    :type type: str
     """ 
 
     _validation = {

@@ -25,8 +25,9 @@ from msrest.serialization import Model
 class StorageAccountRegenerateKeyParameters(Model):
     """StorageAccountRegenerateKeyParameters
 
-    :param str key_name: Specifies name of the key which should be
-     regenerated: key1 or key2. Possible values include: 'key1', 'key2'
+    :param key_name: Specifies name of the key which should be regenerated:
+     key1 or key2. Possible values include: 'key1', 'key2'
+    :type key_name: str
     """ 
 
     _validation = {

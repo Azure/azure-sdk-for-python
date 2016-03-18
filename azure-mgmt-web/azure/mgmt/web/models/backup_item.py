@@ -26,33 +26,52 @@ class BackupItem(Resource):
     """
     Backup description
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param int backup_item_id: Id of the backup.
-    :param str storage_account_url: SAS URL for the storage account container
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param backup_item_id: Id of the backup.
+    :type backup_item_id: int
+    :param storage_account_url: SAS URL for the storage account container
      which contains this backup
-    :param str blob_name: Name of the blob which contains data for this backup
-    :param str backup_item_name: Name of this backup
-    :param str status: Backup status. Possible values include: 'InProgress',
+    :type storage_account_url: str
+    :param blob_name: Name of the blob which contains data for this backup
+    :type blob_name: str
+    :param backup_item_name: Name of this backup
+    :type backup_item_name: str
+    :param status: Backup status. Possible values include: 'InProgress',
      'Failed', 'Succeeded', 'TimedOut', 'Created', 'Skipped',
      'PartiallySucceeded', 'DeleteInProgress', 'DeleteFailed', 'Deleted'
-    :param long size_in_bytes: Size of the backup in bytes
-    :param datetime created: Timestamp of the backup creation
-    :param str log: Details regarding this backup. Might contain an error
-     message.
-    :param list databases: List of databases included in the backup
-    :param bool scheduled: True if this backup has been created due to a
-     schedule being triggered.
-    :param datetime last_restore_time_stamp: Timestamp of a last restore
-     operation which used this backup.
-    :param datetime finished_time_stamp: Timestamp when this backup finished.
-    :param str correlation_id: Unique correlation identifier. Please use this
+    :type status: str
+    :param size_in_bytes: Size of the backup in bytes
+    :type size_in_bytes: long
+    :param created: Timestamp of the backup creation
+    :type created: datetime
+    :param log: Details regarding this backup. Might contain an error message.
+    :type log: str
+    :param databases: List of databases included in the backup
+    :type databases: list of :class:`DatabaseBackupSetting
+     <azure.mgmt.web.models.DatabaseBackupSetting>`
+    :param scheduled: True if this backup has been created due to a schedule
+     being triggered.
+    :type scheduled: bool
+    :param last_restore_time_stamp: Timestamp of a last restore operation
+     which used this backup.
+    :type last_restore_time_stamp: datetime
+    :param finished_time_stamp: Timestamp when this backup finished.
+    :type finished_time_stamp: datetime
+    :param correlation_id: Unique correlation identifier. Please use this
      along with the timestamp while communicating with Azure support.
-    :param long website_size_in_bytes: Size of the original web app which has
-     been backed up
+    :type correlation_id: str
+    :param website_size_in_bytes: Size of the original web app which has been
+     backed up
+    :type website_size_in_bytes: long
     """ 
 
     _validation = {

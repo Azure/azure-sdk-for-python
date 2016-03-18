@@ -25,17 +25,22 @@ from .http_authentication import HttpAuthentication
 class ClientCertAuthentication(HttpAuthentication):
     """ClientCertAuthentication
 
-    :param str type: Gets or sets the http authentication type. Possible
-     values include: 'NotSpecified', 'ClientCertificate',
-     'ActiveDirectoryOAuth', 'Basic'
-    :param str password: Gets or sets the password.
-    :param str pfx: Gets or sets the pfx.
-    :param str certificate_thumbprint: Gets or sets the certificate
-     thumbprint.
-    :param datetime certificate_expiration_date: Gets or sets the certificate
+    :param type: Gets or sets the http authentication type. Possible values
+     include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
+     'Basic'
+    :type type: str
+    :param password: Gets or sets the password.
+    :type password: str
+    :param pfx: Gets or sets the pfx.
+    :type pfx: str
+    :param certificate_thumbprint: Gets or sets the certificate thumbprint.
+    :type certificate_thumbprint: str
+    :param certificate_expiration_date: Gets or sets the certificate
      expiration date.
-    :param str certificate_subject_name: Gets or sets the certificate subject
+    :type certificate_expiration_date: datetime
+    :param certificate_subject_name: Gets or sets the certificate subject
      name.
+    :type certificate_subject_name: str
     """ 
 
     _attribute_map = {

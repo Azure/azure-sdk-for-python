@@ -26,11 +26,15 @@ class RoleDefinition(Model):
     """
     Role definition.
 
-    :param str id: Gets or sets role definition id.
-    :param str name: Gets or sets role definition name.
-    :param str type: Gets or sets role definition type.
-    :param RoleDefinitionProperties properties: Gets or sets role definition
-     properties.
+    :param id: Gets or sets role definition id.
+    :type id: str
+    :param name: Gets or sets role definition name.
+    :type name: str
+    :param type: Gets or sets role definition type.
+    :type type: str
+    :param properties: Gets or sets role definition properties.
+    :type properties: :class:`RoleDefinitionProperties
+     <azure.mgmt.authorization.models.RoleDefinitionProperties>`
     """ 
 
     _attribute_map = {

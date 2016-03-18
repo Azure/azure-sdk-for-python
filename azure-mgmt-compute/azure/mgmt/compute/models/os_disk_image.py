@@ -26,8 +26,9 @@ class OSDiskImage(Model):
     """
     Contains the os disk image information.
 
-    :param str operating_system: Gets or sets the operating system of the
+    :param operating_system: Gets or sets the operating system of the
      osDiskImage. Possible values include: 'Windows', 'Linux'
+    :type operating_system: str
     """ 
 
     _validation = {

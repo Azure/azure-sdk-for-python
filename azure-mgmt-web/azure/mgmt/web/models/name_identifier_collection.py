@@ -26,8 +26,11 @@ class NameIdentifierCollection(Model):
     """
     Collection of domain name identifiers
 
-    :param list value: Collection of resources
-    :param str next_link: Link to next page of resources
+    :param value: Collection of resources
+    :type value: list of :class:`NameIdentifier
+     <azure.mgmt.web.models.NameIdentifier>`
+    :param next_link: Link to next page of resources
+    :type next_link: str
     """ 
 
     _attribute_map = {

@@ -26,20 +26,30 @@ class Subnet(SubResource):
     """
     Subnet in a VirtualNework resource
 
-    :param str id: Resource Id
-    :param str address_prefix: Gets or sets Address prefix for the subnet.
-    :param NetworkSecurityGroup network_security_group: Gets or sets the
-     reference of the NetworkSecurityGroup resource
-    :param RouteTable route_table: Gets or sets the reference of the
-     RouteTable resource
-    :param list ip_configurations: Gets array of references to the network
+    :param id: Resource Id
+    :type id: str
+    :param address_prefix: Gets or sets Address prefix for the subnet.
+    :type address_prefix: str
+    :param network_security_group: Gets or sets the reference of the
+     NetworkSecurityGroup resource
+    :type network_security_group: :class:`NetworkSecurityGroup
+     <azure.mgmt.network.models.NetworkSecurityGroup>`
+    :param route_table: Gets or sets the reference of the RouteTable resource
+    :type route_table: :class:`RouteTable
+     <azure.mgmt.network.models.RouteTable>`
+    :param ip_configurations: Gets array of references to the network
      interface IP configurations using subnet
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type ip_configurations: list of :class:`IPConfiguration
+     <azure.mgmt.network.models.IPConfiguration>`
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

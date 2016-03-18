@@ -26,8 +26,10 @@ class StorageAccountKeys(Model):
     """
     The access keys for the storage account.
 
-    :param str key1: Gets the value of key 1.
-    :param str key2: Gets the value of key 2.
+    :param key1: Gets the value of key 1.
+    :type key1: str
+    :param key2: Gets the value of key 2.
+    :type key2: str
     """ 
 
     _attribute_map = {

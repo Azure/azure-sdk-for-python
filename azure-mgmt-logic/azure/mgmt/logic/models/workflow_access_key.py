@@ -25,11 +25,16 @@ from .sub_resource import SubResource
 class WorkflowAccessKey(SubResource):
     """WorkflowAccessKey
 
-    :param str id: Gets or sets the resource id.
-    :param datetime not_before: Gets or sets the not-before time.
-    :param datetime not_after: Gets or sets the not-after time.
-    :param str name: Gets the workflow access key name.
-    :param str type: Gets the workflow access key type.
+    :param id: Gets or sets the resource id.
+    :type id: str
+    :param not_before: Gets or sets the not-before time.
+    :type not_before: datetime
+    :param not_after: Gets or sets the not-after time.
+    :type not_after: datetime
+    :param name: Gets the workflow access key name.
+    :type name: str
+    :param type: Gets the workflow access key type.
+    :type type: str
     """ 
 
     _attribute_map = {

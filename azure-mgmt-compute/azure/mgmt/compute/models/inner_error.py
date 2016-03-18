@@ -26,9 +26,11 @@ class InnerError(Model):
     """
     Inner error details.
 
-    :param str exceptiontype: Gets or sets the exception type.
-    :param str errordetail: Gets or sets the internal error message or
-     exception dump.
+    :param exceptiontype: Gets or sets the exception type.
+    :type exceptiontype: str
+    :param errordetail: Gets or sets the internal error message or exception
+     dump.
+    :type errordetail: str
     """ 
 
     _attribute_map = {

@@ -26,13 +26,19 @@ class CheckAvailabilityResource(Model):
     """
     Description of a CheckAvailibility resource.
 
-    :param str id: Gets or sets the id
-    :param str location: Gets or sets datacenter location
-    :param str name: Gets or sets name
-    :param str type: Gets or sets resource type
-    :param dict tags: Gets or sets tags
-    :param bool is_availiable: Gets or sets true if the name is available and
-     can be used to create new Namespace/NotificationHub. Otherwise false.
+    :param id: Gets or sets the id
+    :type id: str
+    :param location: Gets or sets datacenter location
+    :type location: str
+    :param name: Gets or sets name
+    :type name: str
+    :param type: Gets or sets resource type
+    :type type: str
+    :param tags: Gets or sets tags
+    :type tags: dict
+    :param is_availiable: Gets or sets true if the name is available and can
+     be used to create new Namespace/NotificationHub. Otherwise false.
+    :type is_availiable: bool
     """ 
 
     _attribute_map = {

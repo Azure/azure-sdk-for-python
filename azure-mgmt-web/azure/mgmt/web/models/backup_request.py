@@ -26,20 +26,33 @@ class BackupRequest(Resource):
     """
     Description of a backup which will be performed
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str backup_request_name: Name of the backup
-    :param bool enabled: True if the backup schedule is enabled (must be
-     included in that case), false if the backup schedule should be disabled
-    :param str storage_account_url: SAS URL to the container
-    :param BackupSchedule backup_schedule: Schedule for the backup if it is
-     executed periodically
-    :param list databases: Databases included in the backup
-    :param str backup_request_type: Type of the backup. Possible values
-     include: 'Default', 'Clone', 'Relocation'
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param backup_request_name: Name of the backup
+    :type backup_request_name: str
+    :param enabled: True if the backup schedule is enabled (must be included
+     in that case), false if the backup schedule should be disabled
+    :type enabled: bool
+    :param storage_account_url: SAS URL to the container
+    :type storage_account_url: str
+    :param backup_schedule: Schedule for the backup if it is executed
+     periodically
+    :type backup_schedule: :class:`BackupSchedule
+     <azure.mgmt.web.models.BackupSchedule>`
+    :param databases: Databases included in the backup
+    :type databases: list of :class:`DatabaseBackupSetting
+     <azure.mgmt.web.models.DatabaseBackupSetting>`
+    :param backup_request_type: Type of the backup. Possible values include:
+     'Default', 'Clone', 'Relocation'
+    :type backup_request_type: str
     """ 
 
     _validation = {

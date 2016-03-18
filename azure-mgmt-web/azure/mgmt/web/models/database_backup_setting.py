@@ -29,15 +29,19 @@ class DatabaseBackupSetting(Model):
     data rows
     so please handle nulls
 
-    :param str database_type: SqlAzure / MySql
-    :param str name:
-    :param str connection_string_name: Contains a connection string name that
-     is linked to the SiteConfig.ConnectionStrings.
+    :param database_type: SqlAzure / MySql
+    :type database_type: str
+    :param name:
+    :type name: str
+    :param connection_string_name: Contains a connection string name that is
+     linked to the SiteConfig.ConnectionStrings.
      This is used during restore with overwrite connection strings
      options.
-    :param str connection_string: Contains a connection string to a database
+    :type connection_string_name: str
+    :param connection_string: Contains a connection string to a database
      which is being backed up/restored. If the restore should happen to a new
      database, the database name inside is the new one.
+    :type connection_string: str
     """ 
 
     _attribute_map = {

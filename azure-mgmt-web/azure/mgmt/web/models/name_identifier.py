@@ -26,7 +26,8 @@ class NameIdentifier(Model):
     """
     Identifies an object
 
-    :param str name: Name of the object
+    :param name: Name of the object
+    :type name: str
     """ 
 
     _attribute_map = {

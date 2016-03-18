@@ -26,9 +26,12 @@ class ApiErrorBase(Model):
     """
     Api error base.
 
-    :param str code: Gets or sets the error code.
-    :param str target: Gets or sets the target of the particular error.
-    :param str message: Gets or sets the error message.
+    :param code: Gets or sets the error code.
+    :type code: str
+    :param target: Gets or sets the target of the particular error.
+    :type target: str
+    :param message: Gets or sets the error message.
+    :type message: str
     """ 
 
     _attribute_map = {

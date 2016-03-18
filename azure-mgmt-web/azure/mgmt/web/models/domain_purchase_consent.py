@@ -27,11 +27,14 @@ class DomainPurchaseConsent(Model):
     Domain purchase consent object representing acceptance of applicable legal
     agreements
 
-    :param list agreement_keys: List of applicable legal agreement keys. This
-     list can be retrieved using ListLegalAgreements Api under TopLevelDomain
+    :param agreement_keys: List of applicable legal agreement keys. This list
+     can be retrieved using ListLegalAgreements Api under TopLevelDomain
      resource
-    :param str agreed_by: Client IP address
-    :param datetime agreed_at: Timestamp when the agreements were accepted
+    :type agreement_keys: list of str
+    :param agreed_by: Client IP address
+    :type agreed_by: str
+    :param agreed_at: Timestamp when the agreements were accepted
+    :type agreed_at: datetime
     """ 
 
     _attribute_map = {

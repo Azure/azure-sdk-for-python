@@ -26,10 +26,13 @@ class MpnsCredentialProperties(Model):
     """
     Description of a NotificationHub MpnsCredential.
 
-    :param str mpns_certificate: Gets or sets the MPNS certificate.
-    :param str certificate_key: Gets or sets the certificate key for this
+    :param mpns_certificate: Gets or sets the MPNS certificate.
+    :type mpns_certificate: str
+    :param certificate_key: Gets or sets the certificate key for this
      credential.
-    :param str thumbprint: Gets or sets the Mpns certificate Thumbprint
+    :type certificate_key: str
+    :param thumbprint: Gets or sets the Mpns certificate Thumbprint
+    :type thumbprint: str
     """ 
 
     _attribute_map = {

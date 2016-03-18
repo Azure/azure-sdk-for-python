@@ -25,8 +25,10 @@ from msrest.serialization import Model
 class WorkflowSecretKeys(Model):
     """WorkflowSecretKeys
 
-    :param str primary_secret_key: Gets the primary secret key.
-    :param str secondary_secret_key: Gets the secondary secret key.
+    :param primary_secret_key: Gets the primary secret key.
+    :type primary_secret_key: str
+    :param secondary_secret_key: Gets the secondary secret key.
+    :type secondary_secret_key: str
     """ 
 
     _attribute_map = {

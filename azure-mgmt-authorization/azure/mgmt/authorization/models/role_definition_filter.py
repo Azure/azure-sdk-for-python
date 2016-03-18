@@ -26,7 +26,8 @@ class RoleDefinitionFilter(Model):
     """
     Role Definitions filter
 
-    :param str role_name: Returns role definition with the specific name.
+    :param role_name: Returns role definition with the specific name.
+    :type role_name: str
     """ 
 
     _attribute_map = {

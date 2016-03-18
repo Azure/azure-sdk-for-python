@@ -26,8 +26,9 @@ class UpgradePolicy(Model):
     """
     Describes an upgrade policy - automatic or manual.
 
-    :param str mode: Gets or sets the upgrade mode. Possible values include:
+    :param mode: Gets or sets the upgrade mode. Possible values include:
      'Automatic', 'Manual'
+    :type mode: str
     """ 
 
     _attribute_map = {

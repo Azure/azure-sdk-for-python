@@ -26,8 +26,10 @@ class NameValuePair(Model):
     """
     Name value pair
 
-    :param str name: Pair name
-    :param str value: Pair value
+    :param name: Pair name
+    :type name: str
+    :param value: Pair value
+    :type value: str
     """ 
 
     _attribute_map = {

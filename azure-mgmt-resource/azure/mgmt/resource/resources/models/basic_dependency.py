@@ -26,9 +26,12 @@ class BasicDependency(Model):
     """
     Deployment dependency information.
 
-    :param str id: Gets or sets the ID of the dependency.
-    :param str resource_type: Gets or sets the dependency resource type.
-    :param str resource_name: Gets or sets the dependency resource name.
+    :param id: Gets or sets the ID of the dependency.
+    :type id: str
+    :param resource_type: Gets or sets the dependency resource type.
+    :type resource_type: str
+    :param resource_name: Gets or sets the dependency resource name.
+    :type resource_name: str
     """ 
 
     _attribute_map = {

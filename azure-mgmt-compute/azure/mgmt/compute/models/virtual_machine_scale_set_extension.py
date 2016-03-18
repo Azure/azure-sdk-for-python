@@ -26,21 +26,30 @@ class VirtualMachineScaleSetExtension(SubResource):
     """
     Describes a Virtual Machine Scale Set Extension.
 
-    :param str id: Resource Id
-    :param str name: Gets or sets the name of the extension.
-    :param str publisher: Gets or sets the name of the extension handler
+    :param id: Resource Id
+    :type id: str
+    :param name: Gets or sets the name of the extension.
+    :type name: str
+    :param publisher: Gets or sets the name of the extension handler
      publisher.
-    :param str type: Gets or sets the type of the extension handler.
-    :param str type_handler_version: Gets or sets the type version of the
+    :type publisher: str
+    :param type: Gets or sets the type of the extension handler.
+    :type type: str
+    :param type_handler_version: Gets or sets the type version of the
      extension handler.
-    :param bool auto_upgrade_minor_version: Gets or sets whether the
-     extension handler should be automatically upgraded across minor versions.
-    :param object settings: Gets or sets Json formatted public settings for
-     the extension.
-    :param object protected_settings: Gets or sets Json formatted protected
-     settings for the extension.
-    :param str provisioning_state: Gets the provisioning state, which only
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Gets or sets whether the extension
+     handler should be automatically upgraded across minor versions.
+    :type auto_upgrade_minor_version: bool
+    :param settings: Gets or sets Json formatted public settings for the
+     extension.
+    :type settings: object
+    :param protected_settings: Gets or sets Json formatted protected settings
+     for the extension.
+    :type protected_settings: object
+    :param provisioning_state: Gets the provisioning state, which only
      appears in the response.
+    :type provisioning_state: str
     """ 
 
     _attribute_map = {

@@ -26,9 +26,11 @@ class SubscriptionPolicies(Model):
     """
     Subscription policies.
 
-    :param str location_placement_id: Gets or sets the subscription location
+    :param location_placement_id: Gets or sets the subscription location
      placement Id.
-    :param str quota_id: Gets or sets the subscription quota Id.
+    :type location_placement_id: str
+    :param quota_id: Gets or sets the subscription quota Id.
+    :type quota_id: str
     """ 
 
     _attribute_map = {

@@ -26,10 +26,12 @@ class AdmCredentialProperties(Model):
     """
     Description of a NotificationHub AdmCredential.
 
-    :param str client_id: Gets or sets the client identifier.
-    :param str client_secret: Gets or sets the credential secret access key.
-    :param str auth_token_url: Gets or sets the URL of the authorization
-     token.
+    :param client_id: Gets or sets the client identifier.
+    :type client_id: str
+    :param client_secret: Gets or sets the credential secret access key.
+    :type client_secret: str
+    :param auth_token_url: Gets or sets the URL of the authorization token.
+    :type auth_token_url: str
     """ 
 
     _attribute_map = {

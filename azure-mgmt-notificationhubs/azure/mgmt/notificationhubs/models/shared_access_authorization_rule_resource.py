@@ -26,16 +26,22 @@ class SharedAccessAuthorizationRuleResource(Model):
     """
     Description of a Namespace AuthorizationRules.
 
-    :param str id: Gets or sets the id of the created Namespace
+    :param id: Gets or sets the id of the created Namespace
      AuthorizationRules.
-    :param str location: Gets or sets datacenter location of the Namespace
+    :type id: str
+    :param location: Gets or sets datacenter location of the Namespace
      AuthorizationRules.
-    :param str name: Gets or sets name of the Namespace AuthorizationRules.
-    :param str type: Gets or sets resource type of the Namespace
+    :type location: str
+    :param name: Gets or sets name of the Namespace AuthorizationRules.
+    :type name: str
+    :param type: Gets or sets resource type of the Namespace
      AuthorizationRules.
-    :param dict tags: Gets or sets tags of the Namespace AuthorizationRules.
-    :param SharedAccessAuthorizationRuleProperties properties: Gets or sets
-     properties of the Namespace.
+    :type type: str
+    :param tags: Gets or sets tags of the Namespace AuthorizationRules.
+    :type tags: dict
+    :param properties: Gets or sets properties of the Namespace.
+    :type properties: :class:`SharedAccessAuthorizationRuleProperties
+     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
     """ 
 
     _attribute_map = {

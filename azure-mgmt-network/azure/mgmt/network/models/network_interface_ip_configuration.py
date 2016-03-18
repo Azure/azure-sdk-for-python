@@ -26,22 +26,35 @@ class NetworkInterfaceIPConfiguration(SubResource):
     """
     IPConfiguration in a NetworkInterface
 
-    :param str id: Resource Id
-    :param list load_balancer_backend_address_pools: Gets or sets the
-     reference of LoadBalancerBackendAddressPool resource
-    :param list load_balancer_inbound_nat_rules: Gets or sets list of
-     references of LoadBalancerInboundNatRules
-    :param str private_ip_address:
-    :param str private_ip_allocation_method: Gets or sets PrivateIP
-     allocation method (Static/Dynamic). Possible values include: 'Static',
-     'Dynamic'
-    :param Subnet subnet:
-    :param PublicIPAddress public_ip_address:
-    :param str provisioning_state:
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :param id: Resource Id
+    :type id: str
+    :param load_balancer_backend_address_pools: Gets or sets the reference of
+     LoadBalancerBackendAddressPool resource
+    :type load_balancer_backend_address_pools: list of
+     :class:`BackendAddressPool
+     <azure.mgmt.network.models.BackendAddressPool>`
+    :param load_balancer_inbound_nat_rules: Gets or sets list of references
+     of LoadBalancerInboundNatRules
+    :type load_balancer_inbound_nat_rules: list of :class:`InboundNatRule
+     <azure.mgmt.network.models.InboundNatRule>`
+    :param private_ip_address:
+    :type private_ip_address: str
+    :param private_ip_allocation_method: Gets or sets PrivateIP allocation
+     method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
+    :type private_ip_allocation_method: str
+    :param subnet:
+    :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :param public_ip_address:
+    :type public_ip_address: :class:`PublicIPAddress
+     <azure.mgmt.network.models.PublicIPAddress>`
+    :param provisioning_state:
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {
@@ -57,13 +70,13 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
+    def __init__(self, id=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
         super(NetworkInterfaceIPConfiguration, self).__init__(id=id, **kwargs)
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
         self.load_balancer_inbound_nat_rules = load_balancer_inbound_nat_rules
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
-        self.subnet = None
+        self.subnet = subnet
         self.public_ip_address = public_ip_address
         self.provisioning_state = provisioning_state
         self.name = name

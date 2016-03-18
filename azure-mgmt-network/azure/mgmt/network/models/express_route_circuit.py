@@ -26,28 +26,47 @@ class ExpressRouteCircuit(Resource):
     """
     ExpressRouteCircuit resource
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param ExpressRouteCircuitSku sku: Gets or sets sku
-    :param str circuit_provisioning_state: Gets or sets
-     CircuitProvisioningState state of the resource
-    :param str service_provider_provisioning_state: Gets or sets
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: Gets or sets sku
+    :type sku: :class:`ExpressRouteCircuitSku
+     <azure.mgmt.network.models.ExpressRouteCircuitSku>`
+    :param circuit_provisioning_state: Gets or sets CircuitProvisioningState
+     state of the resource
+    :type circuit_provisioning_state: str
+    :param service_provider_provisioning_state: Gets or sets
      ServiceProviderProvisioningState state of the resource . Possible values
      include: 'NotProvisioned', 'Provisioning', 'Provisioned',
      'Deprovisioning'
-    :param list authorizations: Gets or sets list of authorizations
-    :param list peerings: Gets or sets list of peerings
-    :param str service_key: Gets or sets ServiceKey
-    :param str service_provider_notes: Gets or sets ServiceProviderNotes
-    :param ExpressRouteCircuitServiceProviderProperties
-     service_provider_properties: Gets or sets ServiceProviderProperties
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type service_provider_provisioning_state: str
+    :param authorizations: Gets or sets list of authorizations
+    :type authorizations: list of :class:`ExpressRouteCircuitAuthorization
+     <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
+    :param peerings: Gets or sets list of peerings
+    :type peerings: list of :class:`ExpressRouteCircuitPeering
+     <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
+    :param service_key: Gets or sets ServiceKey
+    :type service_key: str
+    :param service_provider_notes: Gets or sets ServiceProviderNotes
+    :type service_provider_notes: str
+    :param service_provider_properties: Gets or sets ServiceProviderProperties
+    :type service_provider_properties:
+     :class:`ExpressRouteCircuitServiceProviderProperties
+     <azure.mgmt.network.models.ExpressRouteCircuitServiceProviderProperties>`
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {
