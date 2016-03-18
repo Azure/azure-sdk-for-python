@@ -26,21 +26,36 @@ class Deployment(Resource):
     """
     Represents user crendentials used for publishing activity
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str deployment_id: Id
-    :param int status: Status
-    :param str message: Message
-    :param str author: Author
-    :param str deployer: Deployer
-    :param str author_email: AuthorEmail
-    :param datetime start_time: StartTime
-    :param datetime end_time: EndTime
-    :param bool active: Active
-    :param str details: Detail
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param deployment_id: Id
+    :type deployment_id: str
+    :param status: Status
+    :type status: int
+    :param message: Message
+    :type message: str
+    :param author: Author
+    :type author: str
+    :param deployer: Deployer
+    :type deployer: str
+    :param author_email: AuthorEmail
+    :type author_email: str
+    :param start_time: StartTime
+    :type start_time: datetime
+    :param end_time: EndTime
+    :type end_time: datetime
+    :param active: Active
+    :type active: bool
+    :param details: Detail
+    :type details: str
     """ 
 
     _validation = {

@@ -53,12 +53,17 @@ class NotificationHubsOperations(object):
         :param namespace_name: The namespace name.
         :type namespace_name: str
         :param parameters: The notificationHub name.
-        :type parameters: CheckAvailabilityParameters
+        :type parameters: :class:`CheckAvailabilityParameters
+         <azure.mgmt.notificationhubs.models.CheckAvailabilityParameters>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: CheckAvailabilityResource
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`CheckAvailabilityResource
+         <azure.mgmt.notificationhubs.models.CheckAvailabilityResource>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/checkNotificationHubAvailability'
@@ -120,12 +125,17 @@ class NotificationHubsOperations(object):
         :type notification_hub_name: str
         :param parameters: Parameters supplied to the create a Namespace
          Resource.
-        :type parameters: NotificationHubCreateOrUpdateParameters
+        :type parameters: :class:`NotificationHubCreateOrUpdateParameters
+         <azure.mgmt.notificationhubs.models.NotificationHubCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: NotificationHubResource
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`NotificationHubResource
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'
@@ -189,10 +199,13 @@ class NotificationHubsOperations(object):
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'
@@ -243,10 +256,14 @@ class NotificationHubsOperations(object):
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: NotificationHubResource
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`NotificationHubResource
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'
@@ -309,12 +326,17 @@ class NotificationHubsOperations(object):
         :type authorization_rule_name: str
         :param parameters: The shared access authorization rule.
         :type parameters:
-         SharedAccessAuthorizationRuleCreateOrUpdateParameters
+         :class:`SharedAccessAuthorizationRuleCreateOrUpdateParameters
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: SharedAccessAuthorizationRuleResource
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SharedAccessAuthorizationRuleResource
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'
@@ -380,10 +402,13 @@ class NotificationHubsOperations(object):
          name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'
@@ -440,10 +465,14 @@ class NotificationHubsOperations(object):
          authorization rule for.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: SharedAccessAuthorizationRuleResource
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SharedAccessAuthorizationRuleResource
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'
@@ -500,10 +529,12 @@ class NotificationHubsOperations(object):
         :param namespace_name: The namespace name.
         :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: NotificationHubResourcePaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`NotificationHubResourcePaged
+         <azure.mgmt.notificationhubs.models.NotificationHubResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -571,10 +602,12 @@ class NotificationHubsOperations(object):
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: SharedAccessAuthorizationRuleResourcePaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -645,10 +678,14 @@ class NotificationHubsOperations(object):
          NotificationHub for the specified authorizationRule.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ResourceListKeys
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ResourceListKeys
+         <azure.mgmt.notificationhubs.models.ResourceListKeys>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}/listKeys'
@@ -707,10 +744,14 @@ class NotificationHubsOperations(object):
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: NotificationHubResource
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`NotificationHubResource
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/pnsCredentials'

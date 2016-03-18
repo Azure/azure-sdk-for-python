@@ -26,8 +26,10 @@ class HostingEnvironmentDiagnostics(Model):
     """
     Diagnostics for a hosting environment (App Service Environment)
 
-    :param str name: Name/identifier of the diagnostics
-    :param str diagnosics_output: Diagnostics output
+    :param name: Name/identifier of the diagnostics
+    :type name: str
+    :param diagnosics_output: Diagnostics output
+    :type diagnosics_output: str
     """ 
 
     _attribute_map = {

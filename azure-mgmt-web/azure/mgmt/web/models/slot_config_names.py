@@ -29,8 +29,10 @@ class SlotConfigNames(Model):
     and not moved during swap operation
     This is valid for all deployment slots under the site
 
-    :param list connection_string_names: List of connection string names
-    :param list app_setting_names: List of application settings names
+    :param connection_string_names: List of connection string names
+    :type connection_string_names: list of str
+    :param app_setting_names: List of application settings names
+    :type app_setting_names: list of str
     """ 
 
     _attribute_map = {

@@ -38,7 +38,8 @@ class CdnManagementClientConfiguration(AzureConfiguration):
     attributes.
 
     :param credentials: Gets Azure subscription credentials.
-    :type credentials: credentials
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID
     :type subscription_id: str
     :param api_version: Version of the API to be used with the client

@@ -26,17 +26,22 @@ class VirtualMachineSize(Model):
     """
     Describes the properties of a VM size.
 
-    :param str name: Gets or sets the VM size name.
-    :param int number_of_cores: Gets or sets the Number of cores supported by
-     a VM size.
-    :param int os_disk_size_in_mb: Gets or sets the OS disk size allowed by a
+    :param name: Gets or sets the VM size name.
+    :type name: str
+    :param number_of_cores: Gets or sets the Number of cores supported by a
      VM size.
-    :param int resource_disk_size_in_mb: Gets or sets the Resource disk size
-     allowed by a VM size.
-    :param int memory_in_mb: Gets or sets the Memory size supported by a VM
+    :type number_of_cores: int
+    :param os_disk_size_in_mb: Gets or sets the OS disk size allowed by a VM
      size.
-    :param int max_data_disk_count: Gets or sets the Maximum number of data
-     disks allowed by a VM size.
+    :type os_disk_size_in_mb: int
+    :param resource_disk_size_in_mb: Gets or sets the Resource disk size
+     allowed by a VM size.
+    :type resource_disk_size_in_mb: int
+    :param memory_in_mb: Gets or sets the Memory size supported by a VM size.
+    :type memory_in_mb: int
+    :param max_data_disk_count: Gets or sets the Maximum number of data disks
+     allowed by a VM size.
+    :type max_data_disk_count: int
     """ 
 
     _attribute_map = {

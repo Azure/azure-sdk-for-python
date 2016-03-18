@@ -26,8 +26,10 @@ class ExpressRouteCircuitStats(Model):
     """
     Contains Stats associated with the peering
 
-    :param int bytes_in: Gets BytesIn of the peering.
-    :param int bytes_out: Gets BytesOut of the peering.
+    :param bytes_in: Gets BytesIn of the peering.
+    :type bytes_in: int
+    :param bytes_out: Gets BytesOut of the peering.
+    :type bytes_out: int
     """ 
 
     _attribute_map = {

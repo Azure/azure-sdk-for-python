@@ -26,7 +26,8 @@ class ResourceGroupProperties(Model):
     """
     The resource group properties.
 
-    :param str provisioning_state: Gets resource group provisioning state.
+    :param provisioning_state: Gets resource group provisioning state.
+    :type provisioning_state: str
     """ 
 
     _attribute_map = {

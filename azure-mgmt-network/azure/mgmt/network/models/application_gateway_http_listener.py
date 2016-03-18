@@ -26,24 +26,37 @@ class ApplicationGatewayHttpListener(SubResource):
     """
     Http listener of application gateway
 
-    :param str id: Resource Id
-    :param SubResource frontend_ip_configuration: Gets or sets frontend IP
-     configuration resource of application gateway
-    :param SubResource frontend_port: Gets or sets frontend port resource of
-     application gateway
-    :param str protocol: Gets or sets the protocol. Possible values include:
+    :param id: Resource Id
+    :type id: str
+    :param frontend_ip_configuration: Gets or sets frontend IP configuration
+     resource of application gateway
+    :type frontend_ip_configuration: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param frontend_port: Gets or sets frontend port resource of application
+     gateway
+    :type frontend_port: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
-    :param str host_name: Gets or sets the host name of http listener
-    :param SubResource ssl_certificate: Gets or sets ssl certificate resource
-     of application gateway
-    :param bool require_server_name_indication: Gets or sets the
+    :type protocol: str
+    :param host_name: Gets or sets the host name of http listener
+    :type host_name: str
+    :param ssl_certificate: Gets or sets ssl certificate resource of
+     application gateway
+    :type ssl_certificate: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param require_server_name_indication: Gets or sets the
      requireServerNameIndication of http listener
-    :param str provisioning_state: Gets or sets Provisioning state of the
-     http listener resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type require_server_name_indication: bool
+    :param provisioning_state: Gets or sets Provisioning state of the http
+     listener resource Updating/Deleting/Failed
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

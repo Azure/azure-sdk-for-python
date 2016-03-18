@@ -26,9 +26,11 @@ class MetricAvailabilily(Model):
     """
     Class repesenting metrics availability and retention
 
-    :param str time_grain: Time grain
-    :param str retention: Retention period for the current
+    :param time_grain: Time grain
+    :type time_grain: str
+    :param retention: Retention period for the current
      {Microsoft.Web.Hosting.Administration.MetricAvailabilily.TimeGrain}
+    :type retention: str
     """ 
 
     _attribute_map = {

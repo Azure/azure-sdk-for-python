@@ -27,10 +27,12 @@ class VaultCertificate(Model):
     Describes a single certificate reference in a Key Vault, and where the
     certificate should reside on the VM.
 
-    :param str certificate_url: Gets or sets the URL referencing a secret in
-     a Key Vault which contains a properly formatted certificate.
-    :param str certificate_store: Gets or sets the Certificate store in
+    :param certificate_url: Gets or sets the URL referencing a secret in a
+     Key Vault which contains a properly formatted certificate.
+    :type certificate_url: str
+    :param certificate_store: Gets or sets the Certificate store in
      LocalMachine to add the certificate to on Windows, leave empty on Linux.
+    :type certificate_store: str
     """ 
 
     _attribute_map = {

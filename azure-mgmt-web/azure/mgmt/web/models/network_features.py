@@ -28,14 +28,24 @@ class NetworkFeatures(Resource):
     VNET integration and Hybrid Connections)
     for a web app.
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str virtual_network_name: The Vnet Name
-    :param VnetInfo virtual_network_connection: The Vnet Summary view
-    :param list hybrid_connections: The Hybrid Connections Summary view
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param virtual_network_name: The Vnet Name
+    :type virtual_network_name: str
+    :param virtual_network_connection: The Vnet Summary view
+    :type virtual_network_connection: :class:`VnetInfo
+     <azure.mgmt.web.models.VnetInfo>`
+    :param hybrid_connections: The Hybrid Connections Summary view
+    :type hybrid_connections: list of :class:`RelayServiceConnectionEntity
+     <azure.mgmt.web.models.RelayServiceConnectionEntity>`
     """ 
 
     _validation = {

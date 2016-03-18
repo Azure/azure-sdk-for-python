@@ -26,22 +26,35 @@ class VirtualNetwork(Resource):
     """
     Virtual Network resource
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param AddressSpace address_space: Gets or sets AddressSpace that
-     contains an array of IP address ranges that can be used by subnets
-    :param DhcpOptions dhcp_options: Gets or sets DHCPOptions that contains
-     an array of DNS servers available to VMs deployed in the virtual network
-    :param list subnets: Gets or sets List of subnets in a VirtualNetwork
-    :param str resource_guid: Gets or sets resource guid property of the
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param address_space: Gets or sets AddressSpace that contains an array of
+     IP address ranges that can be used by subnets
+    :type address_space: :class:`AddressSpace
+     <azure.mgmt.network.models.AddressSpace>`
+    :param dhcp_options: Gets or sets DHCPOptions that contains an array of
+     DNS servers available to VMs deployed in the virtual network
+    :type dhcp_options: :class:`DhcpOptions
+     <azure.mgmt.network.models.DhcpOptions>`
+    :param subnets: Gets or sets List of subnets in a VirtualNetwork
+    :type subnets: list of :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :param resource_guid: Gets or sets resource guid property of the
      VirtualNetwork resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type resource_guid: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

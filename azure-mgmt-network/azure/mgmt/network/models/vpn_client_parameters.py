@@ -26,8 +26,9 @@ class VpnClientParameters(Model):
     """
     VpnClientParameters
 
-    :param str processor_architecture: VPN client Processor Architecture
+    :param processor_architecture: VPN client Processor Architecture
      -Amd64/X86. Possible values include: 'Amd64', 'X86'
+    :type processor_architecture: str
     """ 
 
     _attribute_map = {

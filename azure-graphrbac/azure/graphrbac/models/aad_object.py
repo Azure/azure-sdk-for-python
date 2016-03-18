@@ -26,17 +26,27 @@ class AADObject(Model):
     """
     Active Directory object information
 
-    :param str object_id: Gets or sets object Id
-    :param str object_type: Gets or sets object type
-    :param str display_name: Gets or sets object display name
-    :param str user_principal_name: Gets or sets principal name
-    :param str mail: Gets or sets mail
-    :param bool mail_enabled: Gets or sets MailEnabled field
-    :param bool security_enabled: Gets or sets SecurityEnabled field
-    :param str sign_in_name: Gets or sets signIn name
-    :param list service_principal_names: Gets or sets the list of service
+    :param object_id: Gets or sets object Id
+    :type object_id: str
+    :param object_type: Gets or sets object type
+    :type object_type: str
+    :param display_name: Gets or sets object display name
+    :type display_name: str
+    :param user_principal_name: Gets or sets principal name
+    :type user_principal_name: str
+    :param mail: Gets or sets mail
+    :type mail: str
+    :param mail_enabled: Gets or sets MailEnabled field
+    :type mail_enabled: bool
+    :param security_enabled: Gets or sets SecurityEnabled field
+    :type security_enabled: bool
+    :param sign_in_name: Gets or sets signIn name
+    :type sign_in_name: str
+    :param service_principal_names: Gets or sets the list of service
      principal names.
-    :param str user_type: Gets or sets the user type
+    :type service_principal_names: list of str
+    :param user_type: Gets or sets the user type
+    :type user_type: str
     """ 
 
     _attribute_map = {

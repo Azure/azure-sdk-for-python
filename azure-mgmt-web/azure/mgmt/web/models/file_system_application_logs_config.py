@@ -26,8 +26,9 @@ class FileSystemApplicationLogsConfig(Model):
     """
     Application logs to file system configuration
 
-    :param str level: Log level. Possible values include: 'Off', 'Verbose',
+    :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
+    :type level: str
     """ 
 
     _attribute_map = {

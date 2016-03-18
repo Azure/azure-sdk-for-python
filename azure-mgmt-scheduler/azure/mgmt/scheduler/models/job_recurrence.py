@@ -25,15 +25,20 @@ from msrest.serialization import Model
 class JobRecurrence(Model):
     """JobRecurrence
 
-    :param str frequency: Gets or sets the frequency of recurrence (second,
+    :param frequency: Gets or sets the frequency of recurrence (second,
      minute, hour, day, week, month). Possible values include: 'Minute',
      'Hour', 'Day', 'Week', 'Month'
-    :param int interval: Gets or sets the interval between retries.
-    :param int count: Gets or sets the maximum number of times that the job
+    :type frequency: str
+    :param interval: Gets or sets the interval between retries.
+    :type interval: int
+    :param count: Gets or sets the maximum number of times that the job
      should run.
-    :param datetime end_time: Gets or sets the time at which the job will
-     complete.
-    :param JobRecurrenceSchedule schedule:
+    :type count: int
+    :param end_time: Gets or sets the time at which the job will complete.
+    :type end_time: datetime
+    :param schedule:
+    :type schedule: :class:`JobRecurrenceSchedule
+     <azure.mgmt.scheduler.models.JobRecurrenceSchedule>`
     """ 
 
     _attribute_map = {

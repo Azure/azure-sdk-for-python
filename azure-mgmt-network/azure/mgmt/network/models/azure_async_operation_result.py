@@ -33,9 +33,11 @@ class AzureAsyncOperationResult(Model):
     failed, the response body includes the HTTP status code for the failed
     request and error information regarding the failure.
 
-    :param str status: Status of the AzureAsuncOperation. Possible values
+    :param status: Status of the AzureAsuncOperation. Possible values
      include: 'InProgress', 'Succeeded', 'Failed'
-    :param Error error:
+    :type status: str
+    :param error:
+    :type error: :class:`Error <azure.mgmt.network.models.Error>`
     """ 
 
     _attribute_map = {

@@ -26,14 +26,22 @@ class User(Resource):
     """
     Represents user crendentials used for publishing activity
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str user_name: Username (internal)
-    :param str publishing_user_name: Username used for publishing
-    :param str publishing_password: Password used for publishing
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param user_name: Username (internal)
+    :type user_name: str
+    :param publishing_user_name: Username used for publishing
+    :type publishing_user_name: str
+    :param publishing_password: Password used for publishing
+    :type publishing_password: str
     """ 
 
     _validation = {

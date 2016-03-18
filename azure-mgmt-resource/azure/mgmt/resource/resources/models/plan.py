@@ -26,10 +26,14 @@ class Plan(Model):
     """
     Plan for the resource.
 
-    :param str name: Gets or sets the plan ID.
-    :param str publisher: Gets or sets the publisher ID.
-    :param str product: Gets or sets the offer ID.
-    :param str promotion_code: Gets or sets the promotion code.
+    :param name: Gets or sets the plan ID.
+    :type name: str
+    :param publisher: Gets or sets the publisher ID.
+    :type publisher: str
+    :param product: Gets or sets the offer ID.
+    :type product: str
+    :param promotion_code: Gets or sets the promotion code.
+    :type promotion_code: str
     """ 
 
     _attribute_map = {

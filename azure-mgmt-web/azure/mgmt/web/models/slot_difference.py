@@ -27,23 +27,35 @@ class SlotDifference(Resource):
     An object describing the difference in setting values between two web app
     slots
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str slot_difference_type: Indicates the type of the difference:
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param slot_difference_type: Indicates the type of the difference:
      Information, Warning or Error.
-    :param str setting_type: The type of the settings: General, AppSetting or
+    :type slot_difference_type: str
+    :param setting_type: The type of the settings: General, AppSetting or
      ConnectionString
-    :param str diff_rule: Rule that describes how to process the difference
-     in settings during web app slot swap.
-    :param str setting_name: Name of the setting
-    :param str value_in_current_slot: Value of the setting in the current web
-     app slot
-    :param str value_in_target_slot: Value of the setting in the target web
-     app slot
-    :param str description: Description of the difference
+    :type setting_type: str
+    :param diff_rule: Rule that describes how to process the difference in
+     settings during web app slot swap.
+    :type diff_rule: str
+    :param setting_name: Name of the setting
+    :type setting_name: str
+    :param value_in_current_slot: Value of the setting in the current web app
+     slot
+    :type value_in_current_slot: str
+    :param value_in_target_slot: Value of the setting in the target web app
+     slot
+    :type value_in_target_slot: str
+    :param description: Description of the difference
+    :type description: str
     """ 
 
     _validation = {

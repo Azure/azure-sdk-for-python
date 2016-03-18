@@ -26,10 +26,12 @@ class AzureTableStorageApplicationLogsConfig(Model):
     """
     Application logs to azure table storage configuration
 
-    :param str level: Log level. Possible values include: 'Off', 'Verbose',
+    :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
-    :param str sas_url: SAS url to an azure table with add/query/delete
+    :type level: str
+    :param sas_url: SAS url to an azure table with add/query/delete
      permissions
+    :type sas_url: str
     """ 
 
     _attribute_map = {

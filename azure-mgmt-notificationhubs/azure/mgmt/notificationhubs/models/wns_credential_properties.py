@@ -26,9 +26,12 @@ class WnsCredentialProperties(Model):
     """
     Description of a NotificationHub WnsCredential.
 
-    :param str package_sid: Gets or sets the package ID for this credential.
-    :param str secret_key: Gets or sets the secret key.
-    :param str windows_live_endpoint: Gets or sets the Windows Live endpoint.
+    :param package_sid: Gets or sets the package ID for this credential.
+    :type package_sid: str
+    :param secret_key: Gets or sets the secret key.
+    :type secret_key: str
+    :param windows_live_endpoint: Gets or sets the Windows Live endpoint.
+    :type windows_live_endpoint: str
     """ 
 
     _attribute_map = {

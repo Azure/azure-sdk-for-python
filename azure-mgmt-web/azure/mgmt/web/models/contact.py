@@ -28,15 +28,24 @@ class Contact(Model):
     not selected then the contact information will be  be made publicly
     available through the Whois directories as per ICANN requirements.
 
-    :param Address address_mailing: Mailing address
-    :param str email: Email address
-    :param str fax: Fax number
-    :param str job_title: Job title
-    :param str name_first: First name
-    :param str name_last: Last name
-    :param str name_middle: Middle name
-    :param str organization: Organization
-    :param str phone: Phone number
+    :param address_mailing: Mailing address
+    :type address_mailing: :class:`Address <azure.mgmt.web.models.Address>`
+    :param email: Email address
+    :type email: str
+    :param fax: Fax number
+    :type fax: str
+    :param job_title: Job title
+    :type job_title: str
+    :param name_first: First name
+    :type name_first: str
+    :param name_last: Last name
+    :type name_last: str
+    :param name_middle: Middle name
+    :type name_middle: str
+    :param organization: Organization
+    :type organization: str
+    :param phone: Phone number
+    :type phone: str
     """ 
 
     _attribute_map = {

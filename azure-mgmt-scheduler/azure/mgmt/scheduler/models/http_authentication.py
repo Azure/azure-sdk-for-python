@@ -25,9 +25,10 @@ from msrest.serialization import Model
 class HttpAuthentication(Model):
     """HttpAuthentication
 
-    :param str type: Gets or sets the http authentication type. Possible
-     values include: 'NotSpecified', 'ClientCertificate',
-     'ActiveDirectoryOAuth', 'Basic'
+    :param type: Gets or sets the http authentication type. Possible values
+     include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
+     'Basic'
+    :type type: str
     """ 
 
     _attribute_map = {

@@ -26,15 +26,25 @@ class ExpressRouteServiceProvider(Resource):
     """
     ExpressRouteResourceProvider object
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param list peering_locations: Gets or list of peering locations
-    :param list bandwidths_offered: Gets or bandwidths offered
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param peering_locations: Gets or list of peering locations
+    :type peering_locations: list of str
+    :param bandwidths_offered: Gets or bandwidths offered
+    :type bandwidths_offered: list of
+     :class:`ExpressRouteServiceProviderBandwidthsOffered
+     <azure.mgmt.network.models.ExpressRouteServiceProviderBandwidthsOffered>`
+    :param provisioning_state: Gets or sets Provisioning state of the
      resource
+    :type provisioning_state: str
     """ 
 
     _attribute_map = {

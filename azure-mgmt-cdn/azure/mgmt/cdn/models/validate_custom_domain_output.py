@@ -26,10 +26,13 @@ class ValidateCustomDomainOutput(Model):
     """
     Output of custom domain validation
 
-    :param bool custom_domain_validated: Indicates whether the custom domain
-     is validated or not
-    :param str reason: The reason why the custom domain is not valid
-    :param str message: The message on why the custom domain is not valid
+    :param custom_domain_validated: Indicates whether the custom domain is
+     validated or not
+    :type custom_domain_validated: bool
+    :param reason: The reason why the custom domain is not valid
+    :type reason: str
+    :param message: The message on why the custom domain is not valid
+    :type message: str
     """ 
 
     _attribute_map = {

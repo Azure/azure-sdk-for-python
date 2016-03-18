@@ -25,13 +25,18 @@ from .http_authentication import HttpAuthentication
 class OAuthAuthentication(HttpAuthentication):
     """OAuthAuthentication
 
-    :param str type: Gets or sets the http authentication type. Possible
-     values include: 'NotSpecified', 'ClientCertificate',
-     'ActiveDirectoryOAuth', 'Basic'
-    :param str secret: Gets or sets the secret.
-    :param str tenant: Gets or sets the tenant.
-    :param str audience: Gets or sets the audience.
-    :param str client_id: Gets or sets the client identifier.
+    :param type: Gets or sets the http authentication type. Possible values
+     include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
+     'Basic'
+    :type type: str
+    :param secret: Gets or sets the secret.
+    :type secret: str
+    :param tenant: Gets or sets the tenant.
+    :type tenant: str
+    :param audience: Gets or sets the audience.
+    :type audience: str
+    :param client_id: Gets or sets the client identifier.
+    :type client_id: str
     """ 
 
     _attribute_map = {

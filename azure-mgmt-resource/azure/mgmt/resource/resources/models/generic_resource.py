@@ -19,20 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_model import ResourceModel
 
 
-class GenericResource(Resource):
+class GenericResource(ResourceModel):
     """
     Resource information.
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param Plan plan: Gets or sets the plan of the resource.
-    :param object properties: Gets or sets the resource properties.
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param plan: Gets or sets the plan of the resource.
+    :type plan: :class:`Plan <azure.mgmt.resource.resources.models.Plan>`
+    :param properties: Gets or sets the resource properties.
+    :type properties: object
     """ 
 
     _validation = {

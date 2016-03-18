@@ -26,10 +26,11 @@ class CsmPublishingProfileOptions(Model):
     """
     Publishing options for requested profile
 
-    :param str format: Name of the format. Valid values are:
+    :param format: Name of the format. Valid values are:
      FileZilla3
      WebDeploy -- default
      Ftp
+    :type format: str
     """ 
 
     _attribute_map = {

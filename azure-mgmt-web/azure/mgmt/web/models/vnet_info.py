@@ -27,17 +27,26 @@ class VnetInfo(Resource):
     VNETInfo contract. This contract is public and is a stripped down version
     of VNETInfoInternal
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str vnet_resource_id: The vnet resource id
-    :param str cert_thumbprint: The client certificate thumbprint
-    :param str cert_blob: A certificate file (.cer) blob containing the
-     public key of the private key used to authenticate a
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param vnet_resource_id: The vnet resource id
+    :type vnet_resource_id: str
+    :param cert_thumbprint: The client certificate thumbprint
+    :type cert_thumbprint: str
+    :param cert_blob: A certificate file (.cer) blob containing the public
+     key of the private key used to authenticate a
      Point-To-Site VPN connection.
-    :param list routes: The routes that this virtual network connection uses.
+    :type cert_blob: str
+    :param routes: The routes that this virtual network connection uses.
+    :type routes: list of :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
     """ 
 
     _validation = {

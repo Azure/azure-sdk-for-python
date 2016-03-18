@@ -26,18 +26,30 @@ class RelayServiceConnectionEntity(Resource):
     """
     Class that represents a Biztalk Hybrid Connection
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str entity_name:
-    :param str entity_connection_string:
-    :param str resource_type:
-    :param str resource_connection_string:
-    :param str hostname:
-    :param int port:
-    :param str biztalk_uri:
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param entity_name:
+    :type entity_name: str
+    :param entity_connection_string:
+    :type entity_connection_string: str
+    :param resource_type:
+    :type resource_type: str
+    :param resource_connection_string:
+    :type resource_connection_string: str
+    :param hostname:
+    :type hostname: str
+    :param port:
+    :type port: int
+    :param biztalk_uri:
+    :type biztalk_uri: str
     """ 
 
     _validation = {

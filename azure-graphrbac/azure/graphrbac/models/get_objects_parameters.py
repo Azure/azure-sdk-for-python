@@ -26,10 +26,13 @@ class GetObjectsParameters(Model):
     """
     Request parameters for GetObjectsByObjectIds API call
 
-    :param list object_ids: Requested object Ids
-    :param list types: Requested object types
-    :param bool include_directory_object_references: If true, also searches
-     for object ids in the partner tenant
+    :param object_ids: Requested object Ids
+    :type object_ids: list of str
+    :param types: Requested object types
+    :type types: list of str
+    :param include_directory_object_references: If true, also searches for
+     object ids in the partner tenant
+    :type include_directory_object_references: bool
     """ 
 
     _validation = {

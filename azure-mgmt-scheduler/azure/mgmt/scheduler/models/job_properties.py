@@ -25,12 +25,18 @@ from msrest.serialization import Model
 class JobProperties(Model):
     """JobProperties
 
-    :param datetime start_time: Gets or sets the job start time.
-    :param JobAction action: Gets or sets the job action.
-    :param JobRecurrence recurrence: Gets or sets the job recurrence.
-    :param str state: Gets or set the job state. Possible values include:
+    :param start_time: Gets or sets the job start time.
+    :type start_time: datetime
+    :param action: Gets or sets the job action.
+    :type action: :class:`JobAction <azure.mgmt.scheduler.models.JobAction>`
+    :param recurrence: Gets or sets the job recurrence.
+    :type recurrence: :class:`JobRecurrence
+     <azure.mgmt.scheduler.models.JobRecurrence>`
+    :param state: Gets or set the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
-    :param JobStatus status: Gets the job status.
+    :type state: str
+    :param status: Gets the job status.
+    :type status: :class:`JobStatus <azure.mgmt.scheduler.models.JobStatus>`
     """ 
 
     _attribute_map = {

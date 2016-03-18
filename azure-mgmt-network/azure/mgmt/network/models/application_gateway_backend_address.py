@@ -26,8 +26,10 @@ class ApplicationGatewayBackendAddress(Model):
     """
     Backend Address of application gateway
 
-    :param str fqdn: Gets or sets the dns name
-    :param str ip_address: Gets or sets the ip address
+    :param fqdn: Gets or sets the dns name
+    :type fqdn: str
+    :param ip_address: Gets or sets the ip address
+    :type ip_address: str
     """ 
 
     _attribute_map = {

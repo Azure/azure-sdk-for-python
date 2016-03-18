@@ -25,12 +25,17 @@ from msrest.serialization import Model
 class PremierAddOnRequest(Model):
     """PremierAddOnRequest
 
-    :param str location: Geo region resource belongs to e.g. SouthCentralUS,
+    :param location: Geo region resource belongs to e.g. SouthCentralUS,
      SouthEastAsia
-    :param dict tags: Tags associated with resource
-    :param ArmPlan plan: Azure resource manager plan
-    :param object properties: Resource specific properties
-    :param SkuDescription sku: Sku description of the resource
+    :type location: str
+    :param tags: Tags associated with resource
+    :type tags: dict
+    :param plan: Azure resource manager plan
+    :type plan: :class:`ArmPlan <azure.mgmt.web.models.ArmPlan>`
+    :param properties: Resource specific properties
+    :type properties: object
+    :param sku: Sku description of the resource
+    :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
     """ 
 
     _attribute_map = {

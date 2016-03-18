@@ -52,13 +52,18 @@ class NameAvailabilityOperations(object):
 
         :param name: The resource name to validate
         :type name: str
-        :param type: The type of the resource whose name is to be validated
+        :param type: The type of the resource whose name is to be validated.
+         Possible values include: 'Microsoft.Cdn/Profiles/Endpoints'
         :type type: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: CheckNameAvailabilityOutput
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`CheckNameAvailabilityOutput
+         <azure.mgmt.cdn.models.CheckNameAvailabilityOutput>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         check_name_availability_input = models.CheckNameAvailabilityInput(name=name, type=type)
 

@@ -26,13 +26,20 @@ class SlotConfigNamesResource(Resource):
     """
     Slot Config names azure resource
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param list connection_string_names: List of connection string names
-    :param list app_setting_names: List of application settings names
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param connection_string_names: List of connection string names
+    :type connection_string_names: list of str
+    :param app_setting_names: List of application settings names
+    :type app_setting_names: list of str
     """ 
 
     _validation = {

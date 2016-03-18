@@ -26,7 +26,8 @@ class CustomDomainParameters(Model):
     """
     CustomDomain properties required for custom domain creation or update
 
-    :param str host_name: The host name of the custom domain
+    :param host_name: The host name of the custom domain
+    :type host_name: str
     """ 
 
     _validation = {

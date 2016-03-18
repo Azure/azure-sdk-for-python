@@ -26,34 +26,52 @@ class VirtualNetworkGateway(Resource):
     """
     A common class for general resource information
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param list ip_configurations: IpConfigurations for Virtual network
-     gateway.
-    :param str gateway_type: The type of this virtual network gateway.
-     Possible values include: 'Vpn', 'ExpressRoute'
-    :param str vpn_type: The type of this virtual network gateway. Possible
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param ip_configurations: IpConfigurations for Virtual network gateway.
+    :type ip_configurations: list of
+     :class:`VirtualNetworkGatewayIPConfiguration
+     <azure.mgmt.network.models.VirtualNetworkGatewayIPConfiguration>`
+    :param gateway_type: The type of this virtual network gateway. Possible
+     values include: 'Vpn', 'ExpressRoute'
+    :type gateway_type: str
+    :param vpn_type: The type of this virtual network gateway. Possible
      values include: 'PolicyBased', 'RouteBased'
-    :param bool enable_bgp: EnableBgp Flag
-    :param SubResource gateway_default_site: Gets or sets the reference of
-     the LocalNetworkGateway resource which represents Local network site
-     having default routes. Assign Null value in case of removing existing
-     default site setting.
-    :param VirtualNetworkGatewaySku sku: Gets or sets the reference of the
-     VirtualNetworkGatewaySku resource which represents the sku selected for
-     Virtual network gateway.
-    :param VpnClientConfiguration vpn_client_configuration: Gets or sets the
-     reference of the VpnClientConfiguration resource which represents the
-     P2S VpnClient configurations.
-    :param str resource_guid: Gets or sets resource guid property of the
+    :type vpn_type: str
+    :param enable_bgp: EnableBgp Flag
+    :type enable_bgp: bool
+    :param gateway_default_site: Gets or sets the reference of the
+     LocalNetworkGateway resource which represents Local network site having
+     default routes. Assign Null value in case of removing existing default
+     site setting.
+    :type gateway_default_site: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param sku: Gets or sets the reference of the VirtualNetworkGatewaySku
+     resource which represents the sku selected for Virtual network gateway.
+    :type sku: :class:`VirtualNetworkGatewaySku
+     <azure.mgmt.network.models.VirtualNetworkGatewaySku>`
+    :param vpn_client_configuration: Gets or sets the reference of the
+     VpnClientConfiguration resource which represents the P2S VpnClient
+     configurations.
+    :type vpn_client_configuration: :class:`VpnClientConfiguration
+     <azure.mgmt.network.models.VpnClientConfiguration>`
+    :param resource_guid: Gets or sets resource guid property of the
      VirtualNetworkGateway resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type resource_guid: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      VirtualNetworkGateway resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

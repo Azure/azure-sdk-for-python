@@ -26,7 +26,8 @@ class ApiDefinitionInfo(Model):
     """
     Information about the formal API definition for the web app.
 
-    :param str url: The URL of the API definition.
+    :param url: The URL of the API definition.
+    :type url: str
     """ 
 
     _attribute_map = {

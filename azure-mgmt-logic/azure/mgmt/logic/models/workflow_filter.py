@@ -25,8 +25,9 @@ from msrest.serialization import Model
 class WorkflowFilter(Model):
     """WorkflowFilter
 
-    :param str state: Gets or sets the state of workflows. Possible values
+    :param state: Gets or sets the state of workflows. Possible values
      include: 'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
+    :type state: str
     """ 
 
     _attribute_map = {

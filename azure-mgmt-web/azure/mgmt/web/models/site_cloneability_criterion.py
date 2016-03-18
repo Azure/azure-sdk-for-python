@@ -26,8 +26,10 @@ class SiteCloneabilityCriterion(Model):
     """
     Represents a site cloneability criterion
 
-    :param str name: Name of criterion
-    :param str description: Description of criterion
+    :param name: Name of criterion
+    :type name: str
+    :param description: Description of criterion
+    :type description: str
     """ 
 
     _attribute_map = {

@@ -25,11 +25,16 @@ from msrest.serialization import Model
 class Resource(Model):
     """Resource
 
-    :param str id: Gets or sets the resource id.
-    :param str name: Gets the resource name.
-    :param str type: Gets the resource type.
-    :param str location: Gets or sets the resource location.
-    :param dict tags: Gets or sets the resource tags.
+    :param id: Gets or sets the resource id.
+    :type id: str
+    :param name: Gets the resource name.
+    :type name: str
+    :param type: Gets the resource type.
+    :type type: str
+    :param location: Gets or sets the resource location.
+    :type location: str
+    :param tags: Gets or sets the resource tags.
+    :type tags: dict
     """ 
 
     _attribute_map = {

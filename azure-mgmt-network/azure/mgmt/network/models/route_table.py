@@ -26,17 +26,26 @@ class RouteTable(Resource):
     """
     RouteTable resource
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param list routes: Gets or sets Routes in a Route Table
-    :param list subnets: Gets collection of references to subnets
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param routes: Gets or sets Routes in a Route Table
+    :type routes: list of :class:`Route <azure.mgmt.network.models.Route>`
+    :param subnets: Gets collection of references to subnets
+    :type subnets: list of :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :param provisioning_state: Gets or sets Provisioning state of the
      resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

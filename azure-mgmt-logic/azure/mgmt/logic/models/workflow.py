@@ -25,24 +25,42 @@ from .resource import Resource
 class Workflow(Resource):
     """Workflow
 
-    :param str id: Gets or sets the resource id.
-    :param str name: Gets the resource name.
-    :param str type: Gets the resource type.
-    :param str location: Gets or sets the resource location.
-    :param dict tags: Gets or sets the resource tags.
-    :param str provisioning_state: Gets the provisioning state. Possible
-     values include: 'NotSpecified', 'Moving', 'Succeeded'
-    :param datetime created_time: Gets the created time.
-    :param datetime changed_time: Gets the changed time.
-    :param str state: Gets or sets the state. Possible values include:
+    :param id: Gets or sets the resource id.
+    :type id: str
+    :param name: Gets the resource name.
+    :type name: str
+    :param type: Gets the resource type.
+    :type type: str
+    :param location: Gets or sets the resource location.
+    :type location: str
+    :param tags: Gets or sets the resource tags.
+    :type tags: dict
+    :param provisioning_state: Gets the provisioning state. Possible values
+     include: 'NotSpecified', 'Moving', 'Succeeded'
+    :type provisioning_state: str
+    :param created_time: Gets the created time.
+    :type created_time: datetime
+    :param changed_time: Gets the changed time.
+    :type changed_time: datetime
+    :param state: Gets or sets the state. Possible values include:
      'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :param str version: Gets the version.
-    :param str access_endpoint: Gets the access endpoint.
-    :param Sku sku: Gets or sets the sku.
-    :param ContentLink definition_link: Gets or sets the link to definition.
-    :param object definition: Gets or sets the definition.
-    :param ContentLink parameters_link: Gets or sets the link to parameters.
-    :param dict parameters: Gets or sets the parameters.
+    :type state: str
+    :param version: Gets the version.
+    :type version: str
+    :param access_endpoint: Gets the access endpoint.
+    :type access_endpoint: str
+    :param sku: Gets or sets the sku.
+    :type sku: :class:`Sku <azure.mgmt.logic.models.Sku>`
+    :param definition_link: Gets or sets the link to definition.
+    :type definition_link: :class:`ContentLink
+     <azure.mgmt.logic.models.ContentLink>`
+    :param definition: Gets or sets the definition.
+    :type definition: object
+    :param parameters_link: Gets or sets the link to parameters.
+    :type parameters_link: :class:`ContentLink
+     <azure.mgmt.logic.models.ContentLink>`
+    :param parameters: Gets or sets the parameters.
+    :type parameters: dict
     """ 
 
     _attribute_map = {

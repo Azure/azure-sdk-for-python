@@ -26,11 +26,16 @@ class ADGroup(Model):
     """
     Active Directory group information
 
-    :param str object_id: Gets or sets object Id
-    :param str object_type: Gets or sets object type
-    :param str display_name: Gets or sets group display name
-    :param bool security_enabled: Gets or sets security enabled field
-    :param str mail: Gets or sets mail field
+    :param object_id: Gets or sets object Id
+    :type object_id: str
+    :param object_type: Gets or sets object type
+    :type object_type: str
+    :param display_name: Gets or sets group display name
+    :type display_name: str
+    :param security_enabled: Gets or sets security enabled field
+    :type security_enabled: bool
+    :param mail: Gets or sets mail field
+    :type mail: str
     """ 
 
     _attribute_map = {
