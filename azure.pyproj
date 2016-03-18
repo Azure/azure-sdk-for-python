@@ -18,13 +18,13 @@
     </CommandLineArguments>
     <InterpreterPath />
     <InterpreterArguments />
-    <InterpreterId>{faab3f4c-59dc-477d-a0a0-616622eddfa2}</InterpreterId>
-    <InterpreterVersion>2.7</InterpreterVersion>
+    <InterpreterId>{2fb10581-a3e7-46c7-b09b-53a7dc29fd3f}</InterpreterId>
+    <InterpreterVersion>3.5</InterpreterVersion>
     <SccProjectName>SAK</SccProjectName>
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-common\;..\autorest\ClientRuntimes\Python\msrestazure\;..\autorest\ClientRuntimes\Python\msrest\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\</SearchPath>
+    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;..\autorest\ClientRuntimes\Python\msrestazure\;..\autorest\ClientRuntimes\Python\msrest\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -38,6 +38,8 @@
   <ItemGroup>
     <Compile Include="azure-common\azure\common\credentials.py" />
     <Compile Include="azure-common\azure\common\exceptions.py" />
+    <Compile Include="azure-common\azure\__init__.py" />
+    <Compile Include="azure-common\testutils\common_recordingtestcase.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\graph_rbac_management_client.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\models\aad_object.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\models\aad_object_paged.py" />
@@ -150,11 +152,9 @@
     <Compile Include="azure-mgmt-cdn\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-cdn\azure\__init__.py" />
     <Compile Include="azure-mgmt-cdn\setup.py" />
-    <Compile Include="azure-common\azure\__init__.py" />
     <Compile Include="azure-common\setup.py" />
     <Compile Include="azure-common\testutils\common_auth.py" />
     <Compile Include="azure-common\testutils\common_extendedtestcase.py" />
-    <Compile Include="azure-common\testutils\common_recordingtestcase.py" />
     <Compile Include="azure-common\testutils\create_credentials_file.py" />
     <Compile Include="azure-common\testutils\__init__.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\compute_management_client.py" />
@@ -1354,19 +1354,8 @@
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Interpreter Include="env2.7\">
-      <Id>{faab3f4c-59dc-477d-a0a0-616622eddfa2}</Id>
-      <BaseInterpreter>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</BaseInterpreter>
-      <Version>2.7</Version>
-      <Description>env2.7 (Python 2.7)</Description>
-      <InterpreterPath>Scripts\python.exe</InterpreterPath>
-      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
-      <LibraryPath>Lib\</LibraryPath>
-      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
-      <Architecture>X86</Architecture>
-    </Interpreter>
     <Interpreter Include="env\">
-      <Id>{5e8609c3-ea52-4880-8062-4517688cde54}</Id>
+      <Id>{2fb10581-a3e7-46c7-b09b-53a7dc29fd3f}</Id>
       <BaseInterpreter>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</BaseInterpreter>
       <Version>3.5</Version>
       <Description>env (Python 64-bit 3.5)</Description>
