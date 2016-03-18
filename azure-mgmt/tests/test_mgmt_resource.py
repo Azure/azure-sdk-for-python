@@ -57,9 +57,12 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertFalse(result_check)
 
         result_list = self.resource_client.resource_groups.list()
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
         result_list = list(result_list)
         self.assertGreater(len(result_list), 0)
+
+        result_list_top = self.resource_client.resource_groups.list(top=2)
+        result_list_top = result_list_top.next()
+        self.assertEquals(len(result_list_top), 2)
 
         params_patch = azure.mgmt.resource.resources.models.ResourceGroup(
             location=self.region,
@@ -154,7 +157,13 @@ class MgmtResourceTest(AzureMgmtTestCase):
       "location": "[parameters('location')]",
       "properties": {}
     }
-  ]
+  ],
+  "outputs": {
+     "myparameter": {
+       "type": "object",
+       "value": "[reference('Microsoft.Compute/availabilitySets/availabilitySet1')]"
+     }
+  }
 }
         # Note: when specifying values for parameters, omit the outer elements
         parameters = {"location": { "value": "West US"}}
