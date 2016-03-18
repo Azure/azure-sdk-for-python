@@ -26,16 +26,24 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     """
     Backend Address Pool of application gateway
 
-    :param str id: Resource Id
-    :param list backend_ip_configurations: Gets or sets
-     backendIPConfiguration of application gateway
-    :param list backend_addresses: Gets or sets the backend addresses
-    :param str provisioning_state: Gets or sets Provisioning state of the
-     backend address pool resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :param id: Resource Id
+    :type id: str
+    :param backend_ip_configurations: Gets or sets backendIPConfiguration of
+     application gateway
+    :type backend_ip_configurations: list of :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param backend_addresses: Gets or sets the backend addresses
+    :type backend_addresses: list of :class:`ApplicationGatewayBackendAddress
+     <azure.mgmt.network.models.ApplicationGatewayBackendAddress>`
+    :param provisioning_state: Gets or sets Provisioning state of the backend
+     address pool resource Updating/Deleting/Failed
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

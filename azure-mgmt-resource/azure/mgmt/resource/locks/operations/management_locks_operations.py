@@ -53,12 +53,17 @@ class ManagementLocksOperations(object):
         :param lock_name: The lock name.
         :type lock_name: str
         :param parameters: The management lock parameters.
-        :type parameters: ManagementLockObject
+        :type parameters: :class:`ManagementLockObject
+         <azure.mgmt.resource.locks.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ManagementLockObject
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ManagementLockObject
+         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -128,12 +133,17 @@ class ManagementLocksOperations(object):
         :param lock_name: The name of lock.
         :type lock_name: str
         :param parameters: Create or update management lock parameters.
-        :type parameters: ManagementLockObject
+        :type parameters: :class:`ManagementLockObject
+         <azure.mgmt.resource.locks.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ManagementLockObject
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ManagementLockObject
+         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -206,10 +216,13 @@ class ManagementLocksOperations(object):
         :param lock_name: The name of lock.
         :type lock_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -259,12 +272,17 @@ class ManagementLocksOperations(object):
         :param lock_name: The name of lock.
         :type lock_name: str
         :param parameters: The management lock parameters.
-        :type parameters: ManagementLockObject
+        :type parameters: :class:`ManagementLockObject
+         <azure.mgmt.resource.locks.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ManagementLockObject
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ManagementLockObject
+         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -322,10 +340,13 @@ class ManagementLocksOperations(object):
         :param lock_name: The name of lock.
         :type lock_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -370,10 +391,14 @@ class ManagementLocksOperations(object):
         :param lock_name: Name of the management lock.
         :type lock_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ManagementLockObject
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ManagementLockObject
+         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -429,10 +454,13 @@ class ManagementLocksOperations(object):
         :param lock_name: The name of lock.
         :type lock_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -480,10 +508,12 @@ class ManagementLocksOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ManagementLockObjectPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ManagementLockObjectPaged
+         <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -558,10 +588,12 @@ class ManagementLocksOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ManagementLockObjectPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ManagementLockObjectPaged
+         <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -629,10 +661,12 @@ class ManagementLocksOperations(object):
          operation.
         :type next_link: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ManagementLockObjectPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ManagementLockObjectPaged
+         <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -692,10 +726,12 @@ class ManagementLocksOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ManagementLockObjectPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ManagementLockObjectPaged
+         <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

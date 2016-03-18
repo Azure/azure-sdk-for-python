@@ -26,10 +26,13 @@ class NotificationHubCreateOrUpdateParameters(Model):
     """
     Parameters supplied to the CreateOrUpdate NotificationHub operation.
 
-    :param str location: Gets or sets NotificationHub data center location.
-    :param dict tags: Gets or sets NotificationHub tags.
-    :param NotificationHubProperties properties: Gets or sets properties of
-     the NotificationHub.
+    :param location: Gets or sets NotificationHub data center location.
+    :type location: str
+    :param tags: Gets or sets NotificationHub tags.
+    :type tags: dict
+    :param properties: Gets or sets properties of the NotificationHub.
+    :type properties: :class:`NotificationHubProperties
+     <azure.mgmt.notificationhubs.models.NotificationHubProperties>`
     """ 
 
     _validation = {

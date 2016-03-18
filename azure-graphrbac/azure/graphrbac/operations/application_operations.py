@@ -49,12 +49,16 @@ class ApplicationOperations(object):
         Create a new application.
 
         :param parameters: Parameters to create an application.
-        :type parameters: ApplicationCreateParameters
+        :type parameters: :class:`ApplicationCreateParameters
+         <azure.graphrbac.models.ApplicationCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Application
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Application <azure.graphrbac.models.Application>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/applications'
@@ -110,10 +114,14 @@ class ApplicationOperations(object):
         :param filter: The filters to apply on the operarion
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ApplicationListResult
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ApplicationListResult
+         <azure.graphrbac.models.ApplicationListResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/applications'
@@ -167,10 +175,13 @@ class ApplicationOperations(object):
         :param application_object_id: Application object id
         :type application_object_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}'
@@ -216,10 +227,13 @@ class ApplicationOperations(object):
         :param application_object_id: Application object id
         :type application_object_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Application
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Application <azure.graphrbac.models.Application>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}'
@@ -272,12 +286,16 @@ class ApplicationOperations(object):
         :param application_object_id: Application object id
         :type application_object_id: str
         :param parameters: Parameters to create an application.
-        :type parameters: ApplicationCreateParameters
+        :type parameters: :class:`ApplicationCreateParameters
+         <azure.graphrbac.models.ApplicationCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}'

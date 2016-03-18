@@ -26,18 +26,28 @@ class SiteLogsConfig(Resource):
     """
     Configuration of Azure web site
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param ApplicationLogsConfig application_logs: Application logs
-     configuration
-    :param HttpLogsConfig http_logs: Http logs configuration
-    :param EnabledConfig failed_requests_tracing: Failed requests tracing
-     configuration
-    :param EnabledConfig detailed_error_messages: Detailed error messages
-     configuration
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param application_logs: Application logs configuration
+    :type application_logs: :class:`ApplicationLogsConfig
+     <azure.mgmt.web.models.ApplicationLogsConfig>`
+    :param http_logs: Http logs configuration
+    :type http_logs: :class:`HttpLogsConfig
+     <azure.mgmt.web.models.HttpLogsConfig>`
+    :param failed_requests_tracing: Failed requests tracing configuration
+    :type failed_requests_tracing: :class:`EnabledConfig
+     <azure.mgmt.web.models.EnabledConfig>`
+    :param detailed_error_messages: Detailed error messages configuration
+    :type detailed_error_messages: :class:`EnabledConfig
+     <azure.mgmt.web.models.EnabledConfig>`
     """ 
 
     _validation = {

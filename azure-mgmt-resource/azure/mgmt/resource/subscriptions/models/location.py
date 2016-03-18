@@ -26,13 +26,19 @@ class Location(Model):
     """
     Location information.
 
-    :param str id: Gets or sets the ID of the resource
+    :param id: Gets or sets the ID of the resource
      (/subscriptions/SubscriptionId).
-    :param str subscription_id: Gets or sets the subscription Id.
-    :param str name: Gets or sets the location name
-    :param str display_name: Gets or sets the display name of the location
-    :param str latitude: Gets or sets the latitude of the location
-    :param str longitude: Gets or sets the longitude of the location
+    :type id: str
+    :param subscription_id: Gets or sets the subscription Id.
+    :type subscription_id: str
+    :param name: Gets or sets the location name
+    :type name: str
+    :param display_name: Gets or sets the display name of the location
+    :type display_name: str
+    :param latitude: Gets or sets the latitude of the location
+    :type latitude: str
+    :param longitude: Gets or sets the longitude of the location
+    :type longitude: str
     """ 
 
     _attribute_map = {

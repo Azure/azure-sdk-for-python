@@ -26,9 +26,10 @@ class DomainRecommendationSearchParameters(Model):
     """
     Domain recommendation search parameters
 
-    :param str keywords: Keywords to be used for generating domain
-     recommendations
-    :param int max_domain_recommendations: Maximum number of recommendations
+    :param keywords: Keywords to be used for generating domain recommendations
+    :type keywords: str
+    :param max_domain_recommendations: Maximum number of recommendations
+    :type max_domain_recommendations: int
     """ 
 
     _attribute_map = {

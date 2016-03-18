@@ -26,10 +26,12 @@ class BootDiagnosticsInstanceView(Model):
     """
     The instance view of a virtual machine boot diagnostics.
 
-    :param str console_screenshot_blob_uri: Gets or sets the console
-     screenshot blob Uri.
-    :param str serial_console_log_blob_uri: Gets or sets the Linux serial
-     console log blob Uri.
+    :param console_screenshot_blob_uri: Gets or sets the console screenshot
+     blob Uri.
+    :type console_screenshot_blob_uri: str
+    :param serial_console_log_blob_uri: Gets or sets the Linux serial console
+     log blob Uri.
+    :type serial_console_log_blob_uri: str
     """ 
 
     _attribute_map = {

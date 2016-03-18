@@ -26,19 +26,26 @@ class VirtualMachineScaleSetOSDisk(Model):
     """
     Describes a virtual machine scale set operating system disk.
 
-    :param str name: Gets or sets the disk name.
-    :param str caching: Gets or sets the caching type. Possible values
-     include: 'None', 'ReadOnly', 'ReadWrite'
-    :param str create_option: Gets or sets the create option. Possible values
+    :param name: Gets or sets the disk name.
+    :type name: str
+    :param caching: Gets or sets the caching type. Possible values include:
+     'None', 'ReadOnly', 'ReadWrite'
+    :type caching: str
+    :param create_option: Gets or sets the create option. Possible values
      include: 'fromImage', 'empty', 'attach'
-    :param str os_type: Gets or sets the Operating System type. Possible
-     values include: 'Windows', 'Linux'
-    :param VirtualHardDisk image: Gets or sets the Source User Image
-     VirtualHardDisk. This VirtualHardDisk will be copied before using it to
-     attach to the Virtual Machine.If SourceImage is provided, the
-     destination VirtualHardDisk should not exist.
-    :param list vhd_containers: Gets or sets the list of virtual hard disk
+    :type create_option: str
+    :param os_type: Gets or sets the Operating System type. Possible values
+     include: 'Windows', 'Linux'
+    :type os_type: str
+    :param image: Gets or sets the Source User Image VirtualHardDisk. This
+     VirtualHardDisk will be copied before using it to attach to the Virtual
+     Machine.If SourceImage is provided, the destination VirtualHardDisk
+     should not exist.
+    :type image: :class:`VirtualHardDisk
+     <azure.mgmt.compute.models.VirtualHardDisk>`
+    :param vhd_containers: Gets or sets the list of virtual hard disk
      container uris.
+    :type vhd_containers: list of str
     """ 
 
     _validation = {

@@ -26,8 +26,10 @@ class WinRMConfiguration(Model):
     """
     Describes Windows Remote Management configuration of the VM
 
-    :param list listeners: Gets or sets the list of Windows Remote Management
+    :param listeners: Gets or sets the list of Windows Remote Management
      listeners
+    :type listeners: list of :class:`WinRMListener
+     <azure.mgmt.compute.models.WinRMListener>`
     """ 
 
     _attribute_map = {

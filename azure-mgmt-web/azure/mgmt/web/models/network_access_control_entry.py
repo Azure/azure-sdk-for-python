@@ -25,10 +25,14 @@ from msrest.serialization import Model
 class NetworkAccessControlEntry(Model):
     """NetworkAccessControlEntry
 
-    :param str action: Possible values include: 'Permit', 'Deny'
-    :param str description:
-    :param int order:
-    :param str remote_subnet:
+    :param action: Possible values include: 'Permit', 'Deny'
+    :type action: str
+    :param description:
+    :type description: str
+    :param order:
+    :type order: int
+    :param remote_subnet:
+    :type remote_subnet: str
     """ 
 
     _attribute_map = {

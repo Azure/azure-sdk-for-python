@@ -26,9 +26,12 @@ class GenericResourceFilter(Model):
     """
     Resource filter.
 
-    :param str resource_type: Gets or sets the resource type.
-    :param str tagname: Gets or sets the tag name.
-    :param str tagvalue: Gets or sets the tag value.
+    :param resource_type: Gets or sets the resource type.
+    :type resource_type: str
+    :param tagname: Gets or sets the tag name.
+    :type tagname: str
+    :param tagvalue: Gets or sets the tag value.
+    :type tagvalue: str
     """ 
 
     _attribute_map = {

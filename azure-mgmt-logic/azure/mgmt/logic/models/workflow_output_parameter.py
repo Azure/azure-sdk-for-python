@@ -25,12 +25,16 @@ from .workflow_parameter import WorkflowParameter
 class WorkflowOutputParameter(WorkflowParameter):
     """WorkflowOutputParameter
 
-    :param str type: Gets or sets the type. Possible values include:
+    :param type: Gets or sets the type. Possible values include:
      'NotSpecified', 'String', 'SecureString', 'Int', 'Float', 'Bool',
      'Array', 'Object', 'SecureObject'
-    :param object value: Gets or sets the value.
-    :param object metadata: Gets or sets the metadata.
-    :param object error: Gets the error.
+    :type type: str
+    :param value: Gets or sets the value.
+    :type value: object
+    :param metadata: Gets or sets the metadata.
+    :type metadata: object
+    :param error: Gets the error.
+    :type error: object
     """ 
 
     _attribute_map = {

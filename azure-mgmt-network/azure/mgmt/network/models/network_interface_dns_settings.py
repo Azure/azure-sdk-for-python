@@ -26,13 +26,17 @@ class NetworkInterfaceDnsSettings(Model):
     """
     Dns Settings of a network interface
 
-    :param list dns_servers: Gets or sets list of DNS servers IP addresses
-    :param list applied_dns_servers: Gets or sets list of Applied DNS servers
-     IP addresses
-    :param str internal_dns_name_label: Gets or sets the Internal DNS name
-    :param str internal_fqdn: Gets or sets full IDNS name in the form,
+    :param dns_servers: Gets or sets list of DNS servers IP addresses
+    :type dns_servers: list of str
+    :param applied_dns_servers: Gets or sets list of Applied DNS servers IP
+     addresses
+    :type applied_dns_servers: list of str
+    :param internal_dns_name_label: Gets or sets the Internal DNS name
+    :type internal_dns_name_label: str
+    :param internal_fqdn: Gets or sets full IDNS name in the form,
      DnsName.VnetId.ZoneId.TopleveSuffix. This is set when the NIC is
      associated to a VM
+    :type internal_fqdn: str
     """ 
 
     _attribute_map = {

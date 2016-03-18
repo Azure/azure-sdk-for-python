@@ -25,8 +25,10 @@ from msrest.serialization import Model
 class VirtualDirectory(Model):
     """VirtualDirectory
 
-    :param str virtual_path:
-    :param str physical_path:
+    :param virtual_path:
+    :type virtual_path: str
+    :param physical_path:
+    :type physical_path: str
     """ 
 
     _attribute_map = {

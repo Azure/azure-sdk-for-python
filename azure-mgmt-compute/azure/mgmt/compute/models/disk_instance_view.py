@@ -26,8 +26,11 @@ class DiskInstanceView(Model):
     """
     The instance view of the disk.
 
-    :param str name: Gets or sets the disk name.
-    :param list statuses: Gets or sets the resource status information.
+    :param name: Gets or sets the disk name.
+    :type name: str
+    :param statuses: Gets or sets the resource status information.
+    :type statuses: list of :class:`InstanceViewStatus
+     <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 
 
     _attribute_map = {

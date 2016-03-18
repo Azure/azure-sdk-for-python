@@ -25,8 +25,10 @@ from msrest.serialization import Model
 class KeyValuePairStringString(Model):
     """KeyValuePairStringString
 
-    :param str key:
-    :param str value:
+    :param key:
+    :type key: str
+    :param value:
+    :type value: str
     """ 
 
     _attribute_map = {

@@ -160,11 +160,6 @@ class ProbeProtocol(Enum):
     tcp = "Tcp"
 
 
-class UsageUnit(Enum):
-
-    count = "Count"
-
-
 class VirtualNetworkGatewayType(Enum):
 
     vpn = "Vpn"

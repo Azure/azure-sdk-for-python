@@ -26,34 +26,44 @@ class InboundNatPool(SubResource):
     """
     Inbound NAT pool of the loadbalancer
 
-    :param str id: Resource Id
-    :param SubResource frontend_ip_configuration: Gets or sets a reference to
-     frontend IP Addresses
-    :param str protocol: Gets or sets the transport potocol for the external
+    :param id: Resource Id
+    :type id: str
+    :param frontend_ip_configuration: Gets or sets a reference to frontend IP
+     Addresses
+    :type frontend_ip_configuration: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param protocol: Gets or sets the transport potocol for the external
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'
-    :param int frontend_port_range_start: Gets or sets the starting port
-     range for the NAT pool. You can spcify any port number you choose, but
-     the port numbers specified for each role in the service must be unique.
-     Possible values range between 1 and 65535, inclusive
-    :param int frontend_port_range_end: Gets or sets the ending port range
+    :type protocol: str
+    :param frontend_port_range_start: Gets or sets the starting port range
      for the NAT pool. You can spcify any port number you choose, but the
      port numbers specified for each role in the service must be unique.
      Possible values range between 1 and 65535, inclusive
-    :param int backend_port: Gets or sets a port used for internal
-     connections on the endpoint. The localPort attribute maps the eternal
-     port of the endpoint to an internal port on a role. This is useful in
-     scenarios where a role must communicate to an internal compotnent on a
-     port that is different from the one that is exposed externally. If not
-     specified, the value of localPort is the same as the port attribute. Set
-     the value of localPort to '*' to automatically assign an unallocated
-     port that is discoverable using the runtime API
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type frontend_port_range_start: int
+    :param frontend_port_range_end: Gets or sets the ending port range for
+     the NAT pool. You can spcify any port number you choose, but the port
+     numbers specified for each role in the service must be unique. Possible
+     values range between 1 and 65535, inclusive
+    :type frontend_port_range_end: int
+    :param backend_port: Gets or sets a port used for internal connections on
+     the endpoint. The localPort attribute maps the eternal port of the
+     endpoint to an internal port on a role. This is useful in scenarios
+     where a role must communicate to an internal compotnent on a port that
+     is different from the one that is exposed externally. If not specified,
+     the value of localPort is the same as the port attribute. Set the value
+     of localPort to '*' to automatically assign an unallocated port that is
+     discoverable using the runtime API
+    :type backend_port: int
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _validation = {

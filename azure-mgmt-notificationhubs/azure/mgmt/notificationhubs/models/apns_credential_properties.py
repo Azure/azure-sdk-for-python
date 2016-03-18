@@ -26,10 +26,14 @@ class ApnsCredentialProperties(Model):
     """
     Description of a NotificationHub ApnsCredential.
 
-    :param str apns_certificate: Gets or sets the APNS certificate.
-    :param str certificate_key: Gets or sets the certificate key.
-    :param str endpoint: Gets or sets the endpoint of this credential.
-    :param str thumbprint: Gets or sets the Apns certificate Thumbprint
+    :param apns_certificate: Gets or sets the APNS certificate.
+    :type apns_certificate: str
+    :param certificate_key: Gets or sets the certificate key.
+    :type certificate_key: str
+    :param endpoint: Gets or sets the endpoint of this credential.
+    :type endpoint: str
+    :param thumbprint: Gets or sets the Apns certificate Thumbprint
+    :type thumbprint: str
     """ 
 
     _attribute_map = {

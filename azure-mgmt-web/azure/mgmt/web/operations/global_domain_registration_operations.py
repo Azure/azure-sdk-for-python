@@ -49,10 +49,14 @@ class GlobalDomainRegistrationOperations(object):
         Lists all domains in a subscription
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: DomainCollection
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DomainCollection
+         <azure.mgmt.web.models.DomainCollection>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/domains'
@@ -101,10 +105,14 @@ class GlobalDomainRegistrationOperations(object):
         Generates a single sign on request for domain management portal
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: DomainControlCenterSsoRequest
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DomainControlCenterSsoRequest
+         <azure.mgmt.web.models.DomainControlCenterSsoRequest>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/generateSsoRequest'
@@ -153,12 +161,16 @@ class GlobalDomainRegistrationOperations(object):
         Validates domain registration information
 
         :param domain_registration_input: Domain registration information
-        :type domain_registration_input: DomainRegistrationInput
+        :type domain_registration_input: :class:`DomainRegistrationInput
+         <azure.mgmt.web.models.DomainRegistrationInput>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: object
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/validateDomainRegistrationInformation'
@@ -213,10 +225,14 @@ class GlobalDomainRegistrationOperations(object):
         :param name: Name of the object
         :type name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: DomainAvailablilityCheckResult
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DomainAvailablilityCheckResult
+         <azure.mgmt.web.models.DomainAvailablilityCheckResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         identifier = models.NameIdentifier(name=name)
 
@@ -276,10 +292,14 @@ class GlobalDomainRegistrationOperations(object):
         :param max_domain_recommendations: Maximum number of recommendations
         :type max_domain_recommendations: int
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: NameIdentifierCollection
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`NameIdentifierCollection
+         <azure.mgmt.web.models.NameIdentifierCollection>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.DomainRecommendationSearchParameters(keywords=keywords, max_domain_recommendations=max_domain_recommendations)
 

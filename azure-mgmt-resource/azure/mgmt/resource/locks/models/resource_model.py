@@ -22,14 +22,19 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """Resource
+class ResourceModel(Model):
+    """ResourceModel
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
     """ 
 
     _validation = {

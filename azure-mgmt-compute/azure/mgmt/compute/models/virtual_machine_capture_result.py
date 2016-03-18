@@ -26,8 +26,10 @@ class VirtualMachineCaptureResult(SubResource):
     """
     Resource Id.
 
-    :param str id: Resource Id
-    :param object output: Operation output data (raw JSON)
+    :param id: Resource Id
+    :type id: str
+    :param output: Operation output data (raw JSON)
+    :type output: object
     """ 
 
     _attribute_map = {

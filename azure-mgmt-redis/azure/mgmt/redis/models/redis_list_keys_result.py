@@ -26,10 +26,12 @@ class RedisListKeysResult(Model):
     """
     The response of redis list keys operation.
 
-    :param str primary_key: The current primary key that clients can use to
+    :param primary_key: The current primary key that clients can use to
      authenticate with redis cache.
-    :param str secondary_key: The current secondary key that clients can use
-     to authenticate with redis cache.
+    :type primary_key: str
+    :param secondary_key: The current secondary key that clients can use to
+     authenticate with redis cache.
+    :type secondary_key: str
     """ 
 
     _attribute_map = {

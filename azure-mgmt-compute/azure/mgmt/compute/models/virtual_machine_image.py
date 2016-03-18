@@ -26,13 +26,22 @@ class VirtualMachineImage(SubResource):
     """
     Describes a Virtual Machine Image.
 
-    :param str id: Resource Id
-    :param PurchasePlan plan:
-    :param OSDiskImage os_disk_image:
-    :param list data_disk_images:
-    :param str name: Gets or sets the name of the resource.
-    :param str location: Gets or sets the location of the resource.
-    :param dict tags: Gets or sets the tags attached to the resource.
+    :param id: Resource Id
+    :type id: str
+    :param plan:
+    :type plan: :class:`PurchasePlan <azure.mgmt.compute.models.PurchasePlan>`
+    :param os_disk_image:
+    :type os_disk_image: :class:`OSDiskImage
+     <azure.mgmt.compute.models.OSDiskImage>`
+    :param data_disk_images:
+    :type data_disk_images: list of :class:`DataDiskImage
+     <azure.mgmt.compute.models.DataDiskImage>`
+    :param name: Gets or sets the name of the resource.
+    :type name: str
+    :param location: Gets or sets the location of the resource.
+    :type location: str
+    :param tags: Gets or sets the tags attached to the resource.
+    :type tags: dict
     """ 
 
     _validation = {

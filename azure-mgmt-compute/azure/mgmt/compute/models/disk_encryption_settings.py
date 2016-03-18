@@ -26,10 +26,14 @@ class DiskEncryptionSettings(Model):
     """
     Describes a Encryption Settings for a Disk
 
-    :param KeyVaultSecretReference disk_encryption_key: Gets or sets the disk
-     encryption key which is a KeyVault Secret.
-    :param KeyVaultKeyReference key_encryption_key: Gets or sets the key
-     encryption key which is KeyVault Key.
+    :param disk_encryption_key: Gets or sets the disk encryption key which is
+     a KeyVault Secret.
+    :type disk_encryption_key: :class:`KeyVaultSecretReference
+     <azure.mgmt.compute.models.KeyVaultSecretReference>`
+    :param key_encryption_key: Gets or sets the key encryption key which is
+     KeyVault Key.
+    :type key_encryption_key: :class:`KeyVaultKeyReference
+     <azure.mgmt.compute.models.KeyVaultKeyReference>`
     """ 
 
     _validation = {

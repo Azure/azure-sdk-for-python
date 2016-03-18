@@ -26,16 +26,24 @@ class SharedAccessAuthorizationRuleProperties(Model):
     """
     SharedAccessAuthorizationRule properties.
 
-    :param str primary_key: The primary key that was used.
-    :param str secondary_key: The secondary key that was used.
-    :param str key_name: The name of the key that was used.
-    :param str claim_type: The type of the claim.
-    :param str claim_value: The value of the claim.
-    :param list rights: The rights associated with the rule.
-    :param datetime created_time: The time at which the authorization rule
-     was created.
-    :param datetime modified_time: The most recent time the rule was updated.
-    :param int revision: The revision number for the rule.
+    :param primary_key: The primary key that was used.
+    :type primary_key: str
+    :param secondary_key: The secondary key that was used.
+    :type secondary_key: str
+    :param key_name: The name of the key that was used.
+    :type key_name: str
+    :param claim_type: The type of the claim.
+    :type claim_type: str
+    :param claim_value: The value of the claim.
+    :type claim_value: str
+    :param rights: The rights associated with the rule.
+    :type rights: list of str
+    :param created_time: The time at which the authorization rule was created.
+    :type created_time: datetime
+    :param modified_time: The most recent time the rule was updated.
+    :type modified_time: datetime
+    :param revision: The revision number for the rule.
+    :type revision: int
     """ 
 
     _attribute_map = {

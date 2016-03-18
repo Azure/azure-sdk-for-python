@@ -26,7 +26,8 @@ class FeatureProperties(Model):
     """
     Previewed feature information.
 
-    :param str state: Gets or sets the state of the previewed feature.
+    :param state: Gets or sets the state of the previewed feature.
+    :type state: str
     """ 
 
     _attribute_map = {

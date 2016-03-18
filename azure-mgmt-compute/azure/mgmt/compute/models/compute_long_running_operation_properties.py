@@ -26,7 +26,8 @@ class ComputeLongRunningOperationProperties(Model):
     """
     Compute-specific operation properties, including output
 
-    :param object output: Operation output data (raw JSON)
+    :param output: Operation output data (raw JSON)
+    :type output: object
     """ 
 
     _attribute_map = {

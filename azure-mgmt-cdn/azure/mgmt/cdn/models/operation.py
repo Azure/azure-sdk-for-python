@@ -26,8 +26,11 @@ class Operation(Model):
     """
     CDN REST API operation
 
-    :param str name: Operation name: {provider}/{resource}/{operation}
-    :param OperationDisplay display:
+    :param name: Operation name: {provider}/{resource}/{operation}
+    :type name: str
+    :param display:
+    :type display: :class:`OperationDisplay
+     <azure.mgmt.cdn.models.OperationDisplay>`
     """ 
 
     _attribute_map = {

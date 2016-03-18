@@ -26,10 +26,14 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
     """
     Parameters supplied to the CreateOrUpdate Namespace AuthorizationRules.
 
-    :param str location: Gets or sets Namespace data center location.
-    :param str name: Gets or sets Name of the Namespace AuthorizationRule.
-    :param SharedAccessAuthorizationRuleProperties properties: Gets or sets
-     properties of the Namespace AuthorizationRules.
+    :param location: Gets or sets Namespace data center location.
+    :type location: str
+    :param name: Gets or sets Name of the Namespace AuthorizationRule.
+    :type name: str
+    :param properties: Gets or sets properties of the Namespace
+     AuthorizationRules.
+    :type properties: :class:`SharedAccessAuthorizationRuleProperties
+     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
     """ 
 
     _validation = {

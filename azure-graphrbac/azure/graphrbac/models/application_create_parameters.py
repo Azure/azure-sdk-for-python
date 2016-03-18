@@ -26,16 +26,24 @@ class ApplicationCreateParameters(Model):
     """
     Request parameters for create a new application
 
-    :param bool available_to_other_tenants: Indicates if the application will
-     be available to other tenants
-    :param str display_name: Application display name
-    :param str homepage: Application homepage
-    :param list identifier_uris: Application Uris
-    :param list reply_urls: Application reply Urls
-    :param list key_credentials: Gets or sets the list of KeyCredential
+    :param available_to_other_tenants: Indicates if the application will be
+     available to other tenants
+    :type available_to_other_tenants: bool
+    :param display_name: Application display name
+    :type display_name: str
+    :param homepage: Application homepage
+    :type homepage: str
+    :param identifier_uris: Application Uris
+    :type identifier_uris: list of str
+    :param reply_urls: Application reply Urls
+    :type reply_urls: list of str
+    :param key_credentials: Gets or sets the list of KeyCredential objects
+    :type key_credentials: list of :class:`KeyCredential
+     <azure.graphrbac.models.KeyCredential>`
+    :param password_credentials: Gets or sets the list of PasswordCredential
      objects
-    :param list password_credentials: Gets or sets the list of
-     PasswordCredential objects
+    :type password_credentials: list of :class:`PasswordCredential
+     <azure.graphrbac.models.PasswordCredential>`
     """ 
 
     _validation = {

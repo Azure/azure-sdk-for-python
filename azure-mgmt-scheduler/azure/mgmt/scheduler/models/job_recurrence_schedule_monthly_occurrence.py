@@ -25,12 +25,13 @@ from msrest.serialization import Model
 class JobRecurrenceScheduleMonthlyOccurrence(Model):
     """JobRecurrenceScheduleMonthlyOccurrence
 
-    :param str day: Gets or sets the day. Must be one of monday, tuesday,
+    :param day: Gets or sets the day. Must be one of monday, tuesday,
      wednesday, thursday, friday, saturday, sunday. Possible values include:
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
      'Sunday'
-    :param int occurrence: Gets or sets the occurrence. Must be between -5
-     and 5.
+    :type day: str
+    :param occurrence: Gets or sets the occurrence. Must be between -5 and 5.
+    :type occurrence: int
     """ 
 
     _attribute_map = {

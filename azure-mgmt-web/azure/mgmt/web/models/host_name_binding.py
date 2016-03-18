@@ -26,21 +26,33 @@ class HostNameBinding(Resource):
     """
     A host name binding object
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str host_name_binding_name: Hostname
-    :param str site_name: Web app name
-    :param str domain_id: Fully qualified ARM domain resource URI
-    :param str azure_resource_name: Azure resource name
-    :param str azure_resource_type: Azure resource type. Possible values
-     include: 'Website', 'TrafficManager'
-    :param str custom_host_name_dns_record_type: Custom DNS record type.
-     Possible values include: 'CName', 'A'
-    :param str host_name_type: Host name type. Possible values include:
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param host_name_binding_name: Hostname
+    :type host_name_binding_name: str
+    :param site_name: Web app name
+    :type site_name: str
+    :param domain_id: Fully qualified ARM domain resource URI
+    :type domain_id: str
+    :param azure_resource_name: Azure resource name
+    :type azure_resource_name: str
+    :param azure_resource_type: Azure resource type. Possible values include:
+     'Website', 'TrafficManager'
+    :type azure_resource_type: str
+    :param custom_host_name_dns_record_type: Custom DNS record type. Possible
+     values include: 'CName', 'A'
+    :type custom_host_name_dns_record_type: str
+    :param host_name_type: Host name type. Possible values include:
      'Verified', 'Managed'
+    :type host_name_type: str
     """ 
 
     _validation = {

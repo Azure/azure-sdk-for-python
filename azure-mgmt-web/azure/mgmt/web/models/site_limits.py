@@ -26,9 +26,12 @@ class SiteLimits(Model):
     """
     Represents metric limits set on a web app.
 
-    :param float max_percentage_cpu: Maximum allowed CPU usage percentage
-    :param long max_memory_in_mb: Maximum allowed memory usage in MB
-    :param long max_disk_size_in_mb: Maximum allowed disk size usage in MB
+    :param max_percentage_cpu: Maximum allowed CPU usage percentage
+    :type max_percentage_cpu: float
+    :param max_memory_in_mb: Maximum allowed memory usage in MB
+    :type max_memory_in_mb: long
+    :param max_disk_size_in_mb: Maximum allowed disk size usage in MB
+    :type max_disk_size_in_mb: long
     """ 
 
     _attribute_map = {

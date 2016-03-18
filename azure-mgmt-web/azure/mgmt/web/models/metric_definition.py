@@ -26,17 +26,28 @@ class MetricDefinition(Resource):
     """
     Class repesenting metadata for the metrics
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str metric_definition_name: Name of the metric
-    :param str unit: Unit of the metric
-    :param str primary_aggregation_type: Primary aggregation type
-    :param list metric_availabilities: List of time grains supported for the
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param metric_definition_name: Name of the metric
+    :type metric_definition_name: str
+    :param unit: Unit of the metric
+    :type unit: str
+    :param primary_aggregation_type: Primary aggregation type
+    :type primary_aggregation_type: str
+    :param metric_availabilities: List of time grains supported for the
      metric together with retention period
-    :param str display_name: Friendly name shown in the UI
+    :type metric_availabilities: list of :class:`MetricAvailabilily
+     <azure.mgmt.web.models.MetricAvailabilily>`
+    :param display_name: Friendly name shown in the UI
+    :type display_name: str
     """ 
 
     _validation = {

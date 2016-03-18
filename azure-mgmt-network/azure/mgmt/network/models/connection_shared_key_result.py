@@ -26,7 +26,8 @@ class ConnectionSharedKeyResult(Model):
     """
     Response for CheckConnectionSharedKey Api servive call
 
-    :param str value: The virtual network connection shared key value
+    :param value: The virtual network connection shared key value
+    :type value: str
     """ 
 
     _attribute_map = {

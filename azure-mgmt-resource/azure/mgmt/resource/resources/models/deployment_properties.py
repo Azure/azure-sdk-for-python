@@ -26,16 +26,23 @@ class DeploymentProperties(Model):
     """
     Deployment properties.
 
-    :param object template: Gets or sets the template content. Use only one
-     of Template or TemplateLink.
-    :param TemplateLink template_link: Gets or sets the URI referencing the
-     template. Use only one of Template or TemplateLink.
-    :param object parameters: Deployment parameters. Use only one of
-     Parameters or ParametersLink.
-    :param ParametersLink parameters_link: Gets or sets the URI referencing
-     the parameters. Use only one of Parameters or ParametersLink.
-    :param str mode: Gets or sets the deployment mode. Possible values
-     include: 'Incremental', 'Complete'
+    :param template: Gets or sets the template content. Use only one of
+     Template or TemplateLink.
+    :type template: object
+    :param template_link: Gets or sets the URI referencing the template. Use
+     only one of Template or TemplateLink.
+    :type template_link: :class:`TemplateLink
+     <azure.mgmt.resource.resources.models.TemplateLink>`
+    :param parameters: Deployment parameters. Use only one of Parameters or
+     ParametersLink.
+    :type parameters: object
+    :param parameters_link: Gets or sets the URI referencing the parameters.
+     Use only one of Parameters or ParametersLink.
+    :type parameters_link: :class:`ParametersLink
+     <azure.mgmt.resource.resources.models.ParametersLink>`
+    :param mode: Gets or sets the deployment mode. Possible values include:
+     'Incremental', 'Complete'
+    :type mode: str
     """ 
 
     _attribute_map = {

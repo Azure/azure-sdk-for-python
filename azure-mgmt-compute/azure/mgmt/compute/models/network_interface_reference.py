@@ -26,9 +26,11 @@ class NetworkInterfaceReference(SubResource):
     """
     Describes a network interface reference.
 
-    :param str id: Resource Id
-    :param bool primary: Gets or sets whether this is a primary NIC on a
-     virtual machine
+    :param id: Resource Id
+    :type id: str
+    :param primary: Gets or sets whether this is a primary NIC on a virtual
+     machine
+    :type primary: bool
     """ 
 
     _attribute_map = {

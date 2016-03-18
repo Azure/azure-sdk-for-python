@@ -25,10 +25,15 @@ from msrest.serialization import Model
 class VirtualApplication(Model):
     """VirtualApplication
 
-    :param str virtual_path:
-    :param str physical_path:
-    :param bool preload_enabled:
-    :param list virtual_directories:
+    :param virtual_path:
+    :type virtual_path: str
+    :param physical_path:
+    :type physical_path: str
+    :param preload_enabled:
+    :type preload_enabled: bool
+    :param virtual_directories:
+    :type virtual_directories: list of :class:`VirtualDirectory
+     <azure.mgmt.web.models.VirtualDirectory>`
     """ 
 
     _attribute_map = {

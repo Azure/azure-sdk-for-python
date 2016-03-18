@@ -27,8 +27,10 @@ class AutoHealCustomAction(Model):
     AutoHealCustomAction - Describes the custom action to be executed
     when an auto heal rule is triggered.
 
-    :param str exe: Executable to be run
-    :param str parameters: Parameters for the executable
+    :param exe: Executable to be run
+    :type exe: str
+    :param parameters: Parameters for the executable
+    :type parameters: str
     """ 
 
     _attribute_map = {

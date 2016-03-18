@@ -25,10 +25,13 @@ from msrest.serialization import Model
 class ServiceBusAuthentication(Model):
     """ServiceBusAuthentication
 
-    :param str sas_key: Gets or sets the SAS key.
-    :param str sas_key_name: Gets or sets the SAS key name.
-    :param str type: Gets or sets the authentication type. Possible values
+    :param sas_key: Gets or sets the SAS key.
+    :type sas_key: str
+    :param sas_key_name: Gets or sets the SAS key name.
+    :type sas_key_name: str
+    :param type: Gets or sets the authentication type. Possible values
      include: 'NotSpecified', 'SharedAccessKey'
+    :type type: str
     """ 
 
     _attribute_map = {

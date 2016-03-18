@@ -26,12 +26,15 @@ class VirtualMachineCaptureParameters(Model):
     """
     Capture Virtual Machine parameters.
 
-    :param str vhd_prefix: Gets or sets the captured VirtualHardDisk's name
+    :param vhd_prefix: Gets or sets the captured VirtualHardDisk's name
      prefix.
-    :param str destination_container_name: Gets or sets the destination
-     container name.
-    :param bool overwrite_vhds: Gets or sets whether it overwrites
-     destination VirtualHardDisk if true, in case of conflict.
+    :type vhd_prefix: str
+    :param destination_container_name: Gets or sets the destination container
+     name.
+    :type destination_container_name: str
+    :param overwrite_vhds: Gets or sets whether it overwrites destination
+     VirtualHardDisk if true, in case of conflict.
+    :type overwrite_vhds: bool
     """ 
 
     _validation = {

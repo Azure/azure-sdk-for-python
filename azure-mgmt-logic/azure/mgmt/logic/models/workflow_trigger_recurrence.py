@@ -25,11 +25,15 @@ from msrest.serialization import Model
 class WorkflowTriggerRecurrence(Model):
     """WorkflowTriggerRecurrence
 
-    :param str frequency: Gets or sets the frequency. Possible values
-     include: 'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
-    :param int interval: Gets or sets the interval.
-    :param datetime start_time: Gets or sets the start time.
-    :param str time_zone: Gets or sets the time zone.
+    :param frequency: Gets or sets the frequency. Possible values include:
+     'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
+    :type frequency: str
+    :param interval: Gets or sets the interval.
+    :type interval: int
+    :param start_time: Gets or sets the start time.
+    :type start_time: datetime
+    :param time_zone: Gets or sets the time zone.
+    :type time_zone: str
     """ 
 
     _attribute_map = {

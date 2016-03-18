@@ -26,8 +26,10 @@ class RequestsBasedTrigger(Model):
     """
     RequestsBasedTrigger
 
-    :param int count: Count
-    :param str time_interval: TimeInterval
+    :param count: Count
+    :type count: int
+    :param time_interval: TimeInterval
+    :type time_interval: str
     """ 
 
     _attribute_map = {

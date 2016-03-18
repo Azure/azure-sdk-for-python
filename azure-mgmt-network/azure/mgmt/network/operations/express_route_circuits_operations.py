@@ -55,10 +55,15 @@ class ExpressRouteCircuitsOperations(object):
         :param circuit_name: The name of the express route Circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/'
@@ -125,10 +130,14 @@ class ExpressRouteCircuitsOperations(object):
         :param circuit_name: The name of the circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuit
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ExpressRouteCircuit
+         <azure.mgmt.network.models.ExpressRouteCircuit>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/'
@@ -185,12 +194,19 @@ class ExpressRouteCircuitsOperations(object):
         :type circuit_name: str
         :param parameters: Parameters supplied to the create/delete
          ExpressRouteCircuit operation
-        :type parameters: ExpressRouteCircuit
+        :type parameters: :class:`ExpressRouteCircuit
+         <azure.mgmt.network.models.ExpressRouteCircuit>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuit
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return :class:`ExpressRouteCircuit
+         <azure.mgmt.network.models.ExpressRouteCircuit>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/'
@@ -271,10 +287,12 @@ class ExpressRouteCircuitsOperations(object):
         :param circuit_name: The name of the circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuitArpTablePaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ExpressRouteCircuitArpTablePaged
+         <azure.mgmt.network.models.ExpressRouteCircuitArpTablePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -340,10 +358,12 @@ class ExpressRouteCircuitsOperations(object):
         :param circuit_name: The name of the circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuitRoutesTablePaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ExpressRouteCircuitRoutesTablePaged
+         <azure.mgmt.network.models.ExpressRouteCircuitRoutesTablePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -408,10 +428,12 @@ class ExpressRouteCircuitsOperations(object):
         :param circuit_name: The name of the loadBalancer.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuitStatsPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ExpressRouteCircuitStatsPaged
+         <azure.mgmt.network.models.ExpressRouteCircuitStatsPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -474,10 +496,12 @@ class ExpressRouteCircuitsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuitPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ExpressRouteCircuitPaged
+         <azure.mgmt.network.models.ExpressRouteCircuitPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -537,10 +561,12 @@ class ExpressRouteCircuitsOperations(object):
         ExpressRouteCircuits in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuitPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ExpressRouteCircuitPaged
+         <azure.mgmt.network.models.ExpressRouteCircuitPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

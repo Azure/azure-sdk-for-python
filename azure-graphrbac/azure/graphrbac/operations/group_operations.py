@@ -53,10 +53,13 @@ class GroupOperations(object):
         :param member_object_id: Member Object id
         :type member_object_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}/$links/members/{memberObjectId}'
@@ -105,10 +108,13 @@ class GroupOperations(object):
         :param url: Group display name
         :type url: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.GroupAddMemberParameters(url=url)
 
@@ -160,10 +166,13 @@ class GroupOperations(object):
         :param group_object_id: Object id
         :type group_object_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}'
@@ -207,12 +216,16 @@ class GroupOperations(object):
         Create a group in the directory.
 
         :param parameters: Parameters to create a group
-        :type parameters: GroupCreateParameters
+        :type parameters: :class:`GroupCreateParameters
+         <azure.graphrbac.models.GroupCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ADGroup
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/groups'
@@ -268,10 +281,11 @@ class GroupOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ADGroupPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ADGroupPaged <azure.graphrbac.models.ADGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -334,10 +348,12 @@ class GroupOperations(object):
         :param object_id: Group object Id who's members should be retrieved.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: AADObjectPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`AADObjectPaged
+         <azure.graphrbac.models.AADObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -399,10 +415,13 @@ class GroupOperations(object):
         :param object_id: User objectId to get group information.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ADGroup
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/groups/{objectId}'
@@ -460,10 +479,11 @@ class GroupOperations(object):
          should be checked
         :type security_enabled_only: bool
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: strPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`strPaged <azure.graphrbac.models.strPaged>`
         """
         parameters = models.GroupGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
 
@@ -530,10 +550,11 @@ class GroupOperations(object):
         :param next_link: Next link for list operation.
         :type next_link: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ADGroupPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ADGroupPaged <azure.graphrbac.models.ADGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -595,10 +616,12 @@ class GroupOperations(object):
         :param next_link: Next link for list operation.
         :type next_link: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: AADObjectPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`AADObjectPaged
+         <azure.graphrbac.models.AADObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

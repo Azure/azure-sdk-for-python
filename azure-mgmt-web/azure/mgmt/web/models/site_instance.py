@@ -26,12 +26,18 @@ class SiteInstance(Resource):
     """
     Instance of a web app
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str site_instance_name: Name of instance
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param site_instance_name: Name of instance
+    :type site_instance_name: str
     """ 
 
     _validation = {

@@ -27,7 +27,9 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
     Instance view statuses summary for virtual machines of a virtual machine
     scale set.
 
-    :param list statuses_summary: Gets the extensions information.
+    :param statuses_summary: Gets the extensions information.
+    :type statuses_summary: list of :class:`VirtualMachineStatusCodeCount
+     <azure.mgmt.compute.models.VirtualMachineStatusCodeCount>`
     """ 
 
     _attribute_map = {

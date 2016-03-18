@@ -26,24 +26,39 @@ class NetworkSecurityGroup(Resource):
     """
     NetworkSecurityGroup resource
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param list security_rules: Gets or sets Security rules of network
-     security group
-    :param list default_security_rules: Gets or sets Default security rules
-     of network security group
-    :param list network_interfaces: Gets collection of references to Network
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param security_rules: Gets or sets Security rules of network security
+     group
+    :type security_rules: list of :class:`SecurityRule
+     <azure.mgmt.network.models.SecurityRule>`
+    :param default_security_rules: Gets or sets Default security rules of
+     network security group
+    :type default_security_rules: list of :class:`SecurityRule
+     <azure.mgmt.network.models.SecurityRule>`
+    :param network_interfaces: Gets collection of references to Network
      Interfaces
-    :param list subnets: Gets collection of references to subnets
-    :param str resource_guid: Gets or sets resource guid property of the
-     network security group resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type network_interfaces: list of :class:`NetworkInterface
+     <azure.mgmt.network.models.NetworkInterface>`
+    :param subnets: Gets collection of references to subnets
+    :type subnets: list of :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :param resource_guid: Gets or sets resource guid property of the network
+     security group resource
+    :type resource_guid: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

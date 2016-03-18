@@ -26,37 +26,57 @@ class Domain(Resource):
     """
     Represents a domain
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param Contact contact_admin: Admin contact information
-    :param Contact contact_billing: Billing contact information
-    :param Contact contact_registrant: Registrant contact information
-    :param Contact contact_tech: Technical contact information
-    :param str registration_status: Domain registration status. Possible
-     values include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated',
-     'Disabled', 'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked',
-     'Pending', 'Reserved', 'Reverted', 'Suspended', 'Transferred',
-     'Unknown', 'Unlocked', 'Unparked', 'Updated', 'JsonConverterFailed'
-    :param str provisioning_state: Domain provisioning state. Possible values
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param contact_admin: Admin contact information
+    :type contact_admin: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :param contact_billing: Billing contact information
+    :type contact_billing: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :param contact_registrant: Registrant contact information
+    :type contact_registrant: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :param contact_tech: Technical contact information
+    :type contact_tech: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :param registration_status: Domain registration status. Possible values
+     include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
+     'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
+     'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown',
+     'Unlocked', 'Unparked', 'Updated', 'JsonConverterFailed'
+    :type registration_status: str
+    :param provisioning_state: Domain provisioning state. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
-    :param list name_servers: Name servers
-    :param bool privacy: If true then domain privacy is enabled for this
-     domain
-    :param datetime created_time: Domain creation timestamp
-    :param datetime expiration_time: Domain expiration timestamp
-    :param datetime last_renewed_time: Timestamp when the domain was renewed
-     last time
-    :param bool auto_renew: If true then domain will renewed automatically
-    :param bool ready_for_dns_record_management: If true then Azure can
-     assign this domain to Web Apps. This value will be true if domain
-     registration status is active and it is hosted on name servers Azure has
-     programmatic access to
-    :param list managed_host_names: All hostnames derived from the domain and
+    :type provisioning_state: str
+    :param name_servers: Name servers
+    :type name_servers: list of str
+    :param privacy: If true then domain privacy is enabled for this domain
+    :type privacy: bool
+    :param created_time: Domain creation timestamp
+    :type created_time: datetime
+    :param expiration_time: Domain expiration timestamp
+    :type expiration_time: datetime
+    :param last_renewed_time: Timestamp when the domain was renewed last time
+    :type last_renewed_time: datetime
+    :param auto_renew: If true then domain will renewed automatically
+    :type auto_renew: bool
+    :param ready_for_dns_record_management: If true then Azure can assign
+     this domain to Web Apps. This value will be true if domain registration
+     status is active and it is hosted on name servers Azure has programmatic
+     access to
+    :type ready_for_dns_record_management: bool
+    :param managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources
-    :param DomainPurchaseConsent consent: Legal agreement consent
+    :type managed_host_names: list of :class:`HostName
+     <azure.mgmt.web.models.HostName>`
+    :param consent: Legal agreement consent
+    :type consent: :class:`DomainPurchaseConsent
+     <azure.mgmt.web.models.DomainPurchaseConsent>`
     """ 
 
     _validation = {

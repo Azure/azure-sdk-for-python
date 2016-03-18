@@ -26,19 +26,25 @@ class HostName(Model):
     """
     Details of a hostname derived from a domain
 
-    :param str name: Name of the hostname
-    :param list site_names: List of sites the hostname is assigned to. This
-     list will have more than one site only if the hostname is pointing to a
+    :param name: Name of the hostname
+    :type name: str
+    :param site_names: List of sites the hostname is assigned to. This list
+     will have more than one site only if the hostname is pointing to a
      Traffic Manager
-    :param str azure_resource_name: Name of the Azure resource the hostname
-     is assigned to. If it is assigned to a traffic manager then it will be
-     the traffic manager name otherwise it will be the website name
-    :param str azure_resource_type: Type of the Azure resource the hostname
-     is assigned to. Possible values include: 'Website', 'TrafficManager'
-    :param str custom_host_name_dns_record_type: Type of the Dns record.
-     Possible values include: 'CName', 'A'
-    :param str host_name_type: Type of the hostname. Possible values include:
+    :type site_names: list of str
+    :param azure_resource_name: Name of the Azure resource the hostname is
+     assigned to. If it is assigned to a traffic manager then it will be the
+     traffic manager name otherwise it will be the website name
+    :type azure_resource_name: str
+    :param azure_resource_type: Type of the Azure resource the hostname is
+     assigned to. Possible values include: 'Website', 'TrafficManager'
+    :type azure_resource_type: str
+    :param custom_host_name_dns_record_type: Type of the Dns record. Possible
+     values include: 'CName', 'A'
+    :type custom_host_name_dns_record_type: str
+    :param host_name_type: Type of the hostname. Possible values include:
      'Verified', 'Managed'
+    :type host_name_type: str
     """ 
 
     _attribute_map = {

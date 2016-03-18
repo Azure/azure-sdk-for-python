@@ -25,10 +25,12 @@ from msrest.serialization import Model
 class ResourceManagementError(Model):
     """ResourceManagementError
 
-    :param str code: Gets or sets the error code returned from the server.
-    :param str message: Gets or sets the error message returned from the
-     server.
-    :param str target: Gets or sets the target of the error.
+    :param code: Gets or sets the error code returned from the server.
+    :type code: str
+    :param message: Gets or sets the error message returned from the server.
+    :type message: str
+    :param target: Gets or sets the target of the error.
+    :type target: str
     """ 
 
     _validation = {

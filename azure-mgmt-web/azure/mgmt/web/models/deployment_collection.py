@@ -26,8 +26,11 @@ class DeploymentCollection(Model):
     """
     Collection of app deployments
 
-    :param list value: Collection of resources
-    :param str next_link: Link to next page of resources
+    :param value: Collection of resources
+    :type value: list of :class:`Deployment
+     <azure.mgmt.web.models.Deployment>`
+    :param next_link: Link to next page of resources
+    :type next_link: str
     """ 
 
     _attribute_map = {
