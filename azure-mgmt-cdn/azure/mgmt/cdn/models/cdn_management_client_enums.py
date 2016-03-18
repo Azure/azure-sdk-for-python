@@ -73,3 +73,8 @@ class CustomDomainResourceState(Enum):
     creating = "Creating"
     active = "Active"
     deleting = "Deleting"
+
+
+class ResourceType(Enum):
+
+    microsoft_cdn_profiles_endpoints = "Microsoft.Cdn/Profiles/Endpoints"

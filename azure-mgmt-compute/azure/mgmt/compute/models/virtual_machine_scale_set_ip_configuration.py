@@ -26,13 +26,21 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     """
     Describes a virtual machine scale set network profile's IP configuration.
 
-    :param str id: Resource Id
-    :param str name: Gets or sets the IP configuration name.
-    :param ApiEntityReference subnet: Gets or sets the subnet.
-    :param list load_balancer_backend_address_pools: Gets or sets the load
+    :param id: Resource Id
+    :type id: str
+    :param name: Gets or sets the IP configuration name.
+    :type name: str
+    :param subnet: Gets or sets the subnet.
+    :type subnet: :class:`ApiEntityReference
+     <azure.mgmt.compute.models.ApiEntityReference>`
+    :param load_balancer_backend_address_pools: Gets or sets the load
      balancer backend address pools.
-    :param list load_balancer_inbound_nat_pools: Gets or sets the load
-     balancer inbound nat pools.
+    :type load_balancer_backend_address_pools: list of :class:`SubResource
+     <azure.mgmt.compute.models.SubResource>`
+    :param load_balancer_inbound_nat_pools: Gets or sets the load balancer
+     inbound nat pools.
+    :type load_balancer_inbound_nat_pools: list of :class:`SubResource
+     <azure.mgmt.compute.models.SubResource>`
     """ 
 
     _validation = {

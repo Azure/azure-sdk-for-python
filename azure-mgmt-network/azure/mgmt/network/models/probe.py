@@ -26,34 +26,44 @@ class Probe(SubResource):
     """
     Load balancer Probe
 
-    :param str id: Resource Id
-    :param list load_balancing_rules: Gets Load balancer rules that use this
-     probe
-    :param str protocol: Gets or sets the protocol of the end point. Possible
+    :param id: Resource Id
+    :type id: str
+    :param load_balancing_rules: Gets Load balancer rules that use this probe
+    :type load_balancing_rules: list of :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param protocol: Gets or sets the protocol of the end point. Possible
      values are http pr Tcp. If Tcp is specified, a received ACK is required
      for the probe to be successful. If http is specified,a 200 OK response
      from the specifies URI is required for the probe to be successful.
      Possible values include: 'Http', 'Tcp'
-    :param int port: Gets or sets Port for communicating the probe. Possible
+    :type protocol: str
+    :param port: Gets or sets Port for communicating the probe. Possible
      values range from 1 to 65535, inclusive.
-    :param int interval_in_seconds: Gets or sets the interval, in seconds,
-     for how frequently to probe the endpoint for health status. Typically,
-     the interval is slightly less than half the allocated timeout period (in
+    :type port: int
+    :param interval_in_seconds: Gets or sets the interval, in seconds, for
+     how frequently to probe the endpoint for health status. Typically, the
+     interval is slightly less than half the allocated timeout period (in
      seconds) which allows two full probes before taking the instance out of
      rotation. The default value is 15, the minimum value is 5
-    :param int number_of_probes: Gets or sets the number of probes where if
-     no response, will result in stopping further traffic from being
-     delivered to the endpoint. This values allows endponints to be taken out
-     of rotation faster or slower than the typical times used in Azure.
-    :param str request_path: Gets or sets the URI used for requesting health
+    :type interval_in_seconds: int
+    :param number_of_probes: Gets or sets the number of probes where if no
+     response, will result in stopping further traffic from being delivered
+     to the endpoint. This values allows endponints to be taken out of
+     rotation faster or slower than the typical times used in Azure.
+    :type number_of_probes: int
+    :param request_path: Gets or sets the URI used for requesting health
      status from the VM. Path is required if a protocol is set to http.
      Otherwise, it is not allowed. There is no default value
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type request_path: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _validation = {

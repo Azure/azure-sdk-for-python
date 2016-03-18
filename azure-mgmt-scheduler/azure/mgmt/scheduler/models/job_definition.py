@@ -25,10 +25,15 @@ from msrest.serialization import Model
 class JobDefinition(Model):
     """JobDefinition
 
-    :param str id: Gets the job resource identifier.
-    :param str type: Gets the job resource type.
-    :param str name: Gets the job resource name.
-    :param JobProperties properties: Gets or sets the job properties.
+    :param id: Gets the job resource identifier.
+    :type id: str
+    :param type: Gets the job resource type.
+    :type type: str
+    :param name: Gets the job resource name.
+    :type name: str
+    :param properties: Gets or sets the job properties.
+    :type properties: :class:`JobProperties
+     <azure.mgmt.scheduler.models.JobProperties>`
     """ 
 
     _attribute_map = {

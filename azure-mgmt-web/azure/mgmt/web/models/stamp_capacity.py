@@ -26,26 +26,35 @@ class StampCapacity(Model):
     """
     Class containing stamp capacity information
 
-    :param str name: Name of the stamp
-    :param long available_capacity: Available capacity (# of machines, bytes
-     of storage etc...)
-    :param long total_capacity: Total capacity (# of machines, bytes of
+    :param name: Name of the stamp
+    :type name: str
+    :param available_capacity: Available capacity (# of machines, bytes of
      storage etc...)
-    :param str unit: Name of the unit
-    :param str compute_mode: Shared/Dedicated workers. Possible values
-     include: 'Shared', 'Dedicated'
-    :param str worker_size: Size of the machines. Possible values include:
+    :type available_capacity: long
+    :param total_capacity: Total capacity (# of machines, bytes of storage
+     etc...)
+    :type total_capacity: long
+    :param unit: Name of the unit
+    :type unit: str
+    :param compute_mode: Shared/Dedicated workers. Possible values include:
+     'Shared', 'Dedicated'
+    :type compute_mode: str
+    :param worker_size: Size of the machines. Possible values include:
      'Default', 'Small', 'Medium', 'Large'
-    :param int worker_size_id: Size Id of machines:
+    :type worker_size: str
+    :param worker_size_id: Size Id of machines:
      0 - Small
      1 - Medium
      2 - Large
-    :param bool exclude_from_capacity_allocation: If true it includes basic
-     sites
+    :type worker_size_id: int
+    :param exclude_from_capacity_allocation: If true it includes basic sites
      Basic sites are not used for capacity allocation.
-    :param bool is_applicable_for_all_compute_modes: Is capacity applicable
-     for all sites?
-    :param str site_mode: Shared or Dedicated
+    :type exclude_from_capacity_allocation: bool
+    :param is_applicable_for_all_compute_modes: Is capacity applicable for
+     all sites?
+    :type is_applicable_for_all_compute_modes: bool
+    :param site_mode: Shared or Dedicated
+    :type site_mode: str
     """ 
 
     _attribute_map = {

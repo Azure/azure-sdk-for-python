@@ -26,9 +26,12 @@ class BaiduCredentialProperties(Model):
     """
     Description of a NotificationHub BaiduCredential.
 
-    :param str baidu_api_key: Get or Set Baidu Api Key.
-    :param str baidu_end_point: Get or Set Baidu Endpoint.
-    :param str baidu_secret_key: Get or Set Baidu Secret Key
+    :param baidu_api_key: Get or Set Baidu Api Key.
+    :type baidu_api_key: str
+    :param baidu_end_point: Get or Set Baidu Endpoint.
+    :type baidu_end_point: str
+    :param baidu_secret_key: Get or Set Baidu Secret Key
+    :type baidu_secret_key: str
     """ 
 
     _attribute_map = {

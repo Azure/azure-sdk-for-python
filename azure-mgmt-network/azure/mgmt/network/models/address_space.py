@@ -27,8 +27,9 @@ class AddressSpace(Model):
     AddressSpace contains an array of IP address ranges that can be used by
     subnets
 
-    :param list address_prefixes: Gets or sets List of address blocks
-     reserved for this virtual network in CIDR notation
+    :param address_prefixes: Gets or sets List of address blocks reserved for
+     this virtual network in CIDR notation
+    :type address_prefixes: list of str
     """ 
 
     _attribute_map = {

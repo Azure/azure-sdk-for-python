@@ -26,11 +26,15 @@ class RoleAssignment(Model):
     """
     Role Assignments
 
-    :param str id: Gets or sets role assignment id.
-    :param str name: Gets or sets role assignment name.
-    :param str type: Gets or sets role assignment type.
-    :param RoleAssignmentPropertiesWithScope properties: Gets or sets role
-     assignment properties.
+    :param id: Gets or sets role assignment id.
+    :type id: str
+    :param name: Gets or sets role assignment name.
+    :type name: str
+    :param type: Gets or sets role assignment type.
+    :type type: str
+    :param properties: Gets or sets role assignment properties.
+    :type properties: :class:`RoleAssignmentPropertiesWithScope
+     <azure.mgmt.authorization.models.RoleAssignmentPropertiesWithScope>`
     """ 
 
     _attribute_map = {

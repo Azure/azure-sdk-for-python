@@ -27,14 +27,20 @@ class VnetGateway(Resource):
     The VnetGateway contract. This is used to give the vnet gateway access to
     the VPN package.
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str vnet_name: The VNET name.
-    :param str vpn_package_uri: The URI where the Vpn package can be
-     downloaded
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param vnet_name: The VNET name.
+    :type vnet_name: str
+    :param vpn_package_uri: The URI where the Vpn package can be downloaded
+    :type vpn_package_uri: str
     """ 
 
     _validation = {

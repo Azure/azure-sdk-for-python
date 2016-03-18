@@ -26,10 +26,14 @@ class VirtualIPMapping(Model):
     """
     Class that represents a VIP mapping
 
-    :param str virtual_ip: Virtual IP address
-    :param int internal_http_port: Internal HTTP port
-    :param int internal_https_port: Internal HTTPS port
-    :param bool in_use: Is VIP mapping in use
+    :param virtual_ip: Virtual IP address
+    :type virtual_ip: str
+    :param internal_http_port: Internal HTTP port
+    :type internal_http_port: int
+    :param internal_https_port: Internal HTTPS port
+    :type internal_https_port: int
+    :param in_use: Is VIP mapping in use
+    :type in_use: bool
     """ 
 
     _attribute_map = {

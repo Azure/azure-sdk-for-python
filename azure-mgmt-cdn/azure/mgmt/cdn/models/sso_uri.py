@@ -26,7 +26,8 @@ class SsoUri(Model):
     """
     Sso uri required to login to third party web portal
 
-    :param str sso_uri_value: The uri used to login to third party web portal
+    :param sso_uri_value: The uri used to login to third party web portal
+    :type sso_uri_value: str
     """ 
 
     _attribute_map = {

@@ -53,7 +53,8 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
     attributes.
 
     :param credentials: Gets Azure subscription credentials.
-    :type credentials: credentials
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
@@ -200,10 +201,14 @@ class NetworkManagementClient(object):
          ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
         :type domain_name_label: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: DnsNameAvailabilityResult
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DnsNameAvailabilityResult
+         <azure.mgmt.network.models.DnsNameAvailabilityResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'

@@ -26,8 +26,10 @@ class ResourceGroupFilter(Model):
     """
     Resource group filter.
 
-    :param str tag_name: Gets or sets the tag name.
-    :param str tag_value: Gets or sets the tag value.
+    :param tag_name: Gets or sets the tag name.
+    :type tag_name: str
+    :param tag_value: Gets or sets the tag value.
+    :type tag_value: str
     """ 
 
     _attribute_map = {

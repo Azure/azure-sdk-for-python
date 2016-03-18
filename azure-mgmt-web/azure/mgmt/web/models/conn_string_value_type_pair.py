@@ -26,9 +26,11 @@ class ConnStringValueTypePair(Model):
     """
     Database connection string value to type pair
 
-    :param str value: Value of pair
-    :param str type: Type of database. Possible values include: 'MySql',
+    :param value: Value of pair
+    :type value: str
+    :param type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom'
+    :type type: str
     """ 
 
     _validation = {

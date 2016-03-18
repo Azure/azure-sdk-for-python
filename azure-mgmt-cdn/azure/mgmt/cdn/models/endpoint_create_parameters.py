@@ -26,31 +26,42 @@ class EndpointCreateParameters(Model):
     """
     Endpoint properties required for new endpoint creation
 
-    :param str location: Endpoint location
-    :param dict tags: Endpoint tags
-    :param str origin_host_header: The host header CDN provider will send
-     along with content requests to origins. The default value would be the
-     host name of the origin.
-    :param str origin_path: The path used for origin requests
-    :param list content_types_to_compress: List of content types on which
+    :param location: Endpoint location
+    :type location: str
+    :param tags: Endpoint tags
+    :type tags: dict
+    :param origin_host_header: The host header CDN provider will send along
+     with content requests to origins. The default value would be the host
+     name of the origin.
+    :type origin_host_header: str
+    :param origin_path: The path used for origin requests
+    :type origin_path: str
+    :param content_types_to_compress: List of content types on which
      compression will be applied. The value for the elements should be
      Internet media type.
-    :param bool is_compression_enabled: Indicates whether the compression is
+    :type content_types_to_compress: list of str
+    :param is_compression_enabled: Indicates whether the compression is
      enabled. Default value is false. If compression is enabled, the content
      transferred from cdn endpoint to end user will be compressed. The
      requested content must be larger than 1 byte and smaller than 1 MB.
-    :param bool is_http_allowed: Indicates whether http traffic is allowed on
+    :type is_compression_enabled: bool
+    :param is_http_allowed: Indicates whether http traffic is allowed on the
+     endpoint. Default value is true. At least one protocol (http or https)
+     must be allowed.
+    :type is_http_allowed: bool
+    :param is_https_allowed: Indicates whether https traffic is allowed on
      the endpoint. Default value is true. At least one protocol (http or
      https) must be allowed.
-    :param bool is_https_allowed: Indicates whether https traffic is allowed
-     on the endpoint. Default value is true. At least one protocol (http or
-     https) must be allowed.
-    :param str query_string_caching_behavior: Defines the query string
-     caching behavior. Possible values include: 'IgnoreQueryString',
-     'BypassCaching', 'UseQueryString', 'NotSet'
-    :param list origins:  The set of origins of the CDN endpoint. When
-     multiple origins exist, the first origin will be used as primary and
-     rest will be used as failover options.
+    :type is_https_allowed: bool
+    :param query_string_caching_behavior: Defines the query string caching
+     behavior. Possible values include: 'IgnoreQueryString', 'BypassCaching',
+     'UseQueryString', 'NotSet'
+    :type query_string_caching_behavior: str
+    :param origins:  The set of origins of the CDN endpoint. When multiple
+     origins exist, the first origin will be used as primary and rest will be
+     used as failover options.
+    :type origins: list of :class:`DeepCreatedOrigin
+     <azure.mgmt.cdn.models.DeepCreatedOrigin>`
     """ 
 
     _validation = {

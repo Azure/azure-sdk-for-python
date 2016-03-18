@@ -25,10 +25,12 @@ from msrest.serialization import Model
 class JobMaxRecurrence(Model):
     """JobMaxRecurrence
 
-    :param str frequency: Gets or sets the frequency of recurrence (second,
+    :param frequency: Gets or sets the frequency of recurrence (second,
      minute, hour, day, week, month). Possible values include: 'Minute',
      'Hour', 'Day', 'Week', 'Month'
-    :param int interval: Gets or sets the interval between retries.
+    :type frequency: str
+    :param interval: Gets or sets the interval between retries.
+    :type interval: int
     """ 
 
     _attribute_map = {

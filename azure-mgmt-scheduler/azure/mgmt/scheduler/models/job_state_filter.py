@@ -25,8 +25,9 @@ from msrest.serialization import Model
 class JobStateFilter(Model):
     """JobStateFilter
 
-    :param str state: Gets or sets the job state. Possible values include:
+    :param state: Gets or sets the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
+    :type state: str
     """ 
 
     _attribute_map = {

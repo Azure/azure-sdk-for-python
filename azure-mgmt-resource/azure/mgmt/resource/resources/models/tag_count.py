@@ -26,8 +26,10 @@ class TagCount(Model):
     """
     Tag count.
 
-    :param str type: Type of count.
-    :param str value: Value of count.
+    :param type: Type of count.
+    :type type: str
+    :param value: Value of count.
+    :type value: str
     """ 
 
     _attribute_map = {

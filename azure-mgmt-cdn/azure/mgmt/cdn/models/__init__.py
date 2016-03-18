@@ -58,6 +58,7 @@ from .cdn_management_client_enums import (
     EndpointResourceState,
     OriginResourceState,
     CustomDomainResourceState,
+    ResourceType,
 )
 
 __all__ = [
@@ -99,4 +100,5 @@ __all__ = [
     'EndpointResourceState',
     'OriginResourceState',
     'CustomDomainResourceState',
+    'ResourceType',
 ]

@@ -26,10 +26,13 @@ class DeploymentExtended(Model):
     """
     Deployment information.
 
-    :param str id: Gets or sets the ID of the deployment.
-    :param str name: Gets or sets the name of the deployment.
-    :param DeploymentPropertiesExtended properties: Gets or sets deployment
-     properties.
+    :param id: Gets or sets the ID of the deployment.
+    :type id: str
+    :param name: Gets or sets the name of the deployment.
+    :type name: str
+    :param properties: Gets or sets deployment properties.
+    :type properties: :class:`DeploymentPropertiesExtended
+     <azure.mgmt.resource.resources.models.DeploymentPropertiesExtended>`
     """ 
 
     _validation = {

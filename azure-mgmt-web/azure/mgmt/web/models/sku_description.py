@@ -26,11 +26,16 @@ class SkuDescription(Model):
     """
     Describes a sku for a scalable resource
 
-    :param str name: Name of the resource sku
-    :param str tier: Service Tier of the resource sku
-    :param str size: Size specifier of the resource sku
-    :param str family: Family code of the resource sku
-    :param int capacity: Current number of instances assigned to the resource
+    :param name: Name of the resource sku
+    :type name: str
+    :param tier: Service Tier of the resource sku
+    :type tier: str
+    :param size: Size specifier of the resource sku
+    :type size: str
+    :param family: Family code of the resource sku
+    :type family: str
+    :param capacity: Current number of instances assigned to the resource
+    :type capacity: int
     """ 
 
     _attribute_map = {

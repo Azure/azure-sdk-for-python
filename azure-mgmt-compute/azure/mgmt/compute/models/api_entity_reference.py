@@ -26,9 +26,10 @@ class ApiEntityReference(Model):
     """
     The API entity reference.
 
-    :param str id: Gets or sets the relative URL in the previous Service
+    :param id: Gets or sets the relative URL in the previous Service
      Management API's namespace. For Example:
      /subscriptions/{SubcriptionId}/resourceGroups/{ResourceGroupName}/...
+    :type id: str
     """ 
 
     _attribute_map = {

@@ -27,13 +27,16 @@ class AutoHealActions(Model):
     AutoHealActions - Describes the actions which can be
     taken by the auto-heal module when a rule is triggered.
 
-    :param str action_type: ActionType - predefined action to be taken.
-     Possible values include: 'Recycle', 'LogEvent', 'CustomAction'
-    :param AutoHealCustomAction custom_action: CustomAction - custom action
-     to be taken
-    :param str min_process_execution_time: MinProcessExecutionTime - minimum
-     time the process must execute
+    :param action_type: ActionType - predefined action to be taken. Possible
+     values include: 'Recycle', 'LogEvent', 'CustomAction'
+    :type action_type: str
+    :param custom_action: CustomAction - custom action to be taken
+    :type custom_action: :class:`AutoHealCustomAction
+     <azure.mgmt.web.models.AutoHealCustomAction>`
+    :param min_process_execution_time: MinProcessExecutionTime - minimum time
+     the process must execute
      before taking the action
+    :type min_process_execution_time: str
     """ 
 
     _validation = {

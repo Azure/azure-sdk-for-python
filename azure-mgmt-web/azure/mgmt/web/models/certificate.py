@@ -26,28 +26,48 @@ class Certificate(Resource):
     """
     App certificate
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str friendly_name: Friendly name of the certificate
-    :param str subject_name: Subject name of the certificate
-    :param list host_names: Host names the certificate applies to
-    :param str pfx_blob: Pfx blob
-    :param str site_name: App name
-    :param str self_link: Self link
-    :param str issuer: Certificate issuer
-    :param datetime issue_date: Certificate issue Date
-    :param datetime expiration_date: Certificate expriration date
-    :param str password: Certificate password
-    :param str thumbprint: Certificate thumbprint
-    :param bool valid: Is the certificate valid?
-    :param str cer_blob: Raw bytes of .cer file
-    :param str public_key_hash: Public key hash
-    :param HostingEnvironmentProfile hosting_environment_profile:
-     Specification for the hosting environment (App Service Environment) to
-     use for the certificate
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param friendly_name: Friendly name of the certificate
+    :type friendly_name: str
+    :param subject_name: Subject name of the certificate
+    :type subject_name: str
+    :param host_names: Host names the certificate applies to
+    :type host_names: list of str
+    :param pfx_blob: Pfx blob
+    :type pfx_blob: str
+    :param site_name: App name
+    :type site_name: str
+    :param self_link: Self link
+    :type self_link: str
+    :param issuer: Certificate issuer
+    :type issuer: str
+    :param issue_date: Certificate issue Date
+    :type issue_date: datetime
+    :param expiration_date: Certificate expriration date
+    :type expiration_date: datetime
+    :param password: Certificate password
+    :type password: str
+    :param thumbprint: Certificate thumbprint
+    :type thumbprint: str
+    :param valid: Is the certificate valid?
+    :type valid: bool
+    :param cer_blob: Raw bytes of .cer file
+    :type cer_blob: str
+    :param public_key_hash: Public key hash
+    :type public_key_hash: str
+    :param hosting_environment_profile: Specification for the hosting
+     environment (App Service Environment) to use for the certificate
+    :type hosting_environment_profile: :class:`HostingEnvironmentProfile
+     <azure.mgmt.web.models.HostingEnvironmentProfile>`
     """ 
 
     _validation = {

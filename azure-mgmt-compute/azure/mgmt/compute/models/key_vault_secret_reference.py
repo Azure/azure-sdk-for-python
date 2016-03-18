@@ -26,10 +26,13 @@ class KeyVaultSecretReference(Model):
     """
     Describes a reference to Key Vault Secret
 
-    :param str secret_url: Gets or sets the URL referencing a secret in a Key
+    :param secret_url: Gets or sets the URL referencing a secret in a Key
      Vault.
-    :param SubResource source_vault: Gets or sets the Relative URL of the Key
-     Vault containing the secret.
+    :type secret_url: str
+    :param source_vault: Gets or sets the Relative URL of the Key Vault
+     containing the secret.
+    :type source_vault: :class:`SubResource
+     <azure.mgmt.compute.models.SubResource>`
     """ 
 
     _validation = {

@@ -25,21 +25,37 @@ from .sub_resource import SubResource
 class WorkflowTriggerHistory(SubResource):
     """WorkflowTriggerHistory
 
-    :param str id: Gets or sets the resource id.
-    :param datetime start_time: Gets the start time.
-    :param datetime end_time: Gets the end time.
-    :param str status: Gets the status. Possible values include:
-     'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
-     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
-    :param str code: Gets the code.
-    :param object error: Gets the error.
-    :param str tracking_id: Gets the tracking id.
-    :param ContentLink inputs_link: Gets the link to input parameters.
-    :param ContentLink outputs_link: Gets the link to output parameters.
-    :param bool fired: Gets a value indicating whether trigger was fired.
-    :param ResourceReference run: Gets the reference to workflow run.
-    :param str name: Gets the workflow trigger history name.
-    :param str type: Gets the workflow trigger history type.
+    :param id: Gets or sets the resource id.
+    :type id: str
+    :param start_time: Gets the start time.
+    :type start_time: datetime
+    :param end_time: Gets the end time.
+    :type end_time: datetime
+    :param status: Gets the status. Possible values include: 'NotSpecified',
+     'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
+     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
+    :type status: str
+    :param code: Gets the code.
+    :type code: str
+    :param error: Gets the error.
+    :type error: object
+    :param tracking_id: Gets the tracking id.
+    :type tracking_id: str
+    :param inputs_link: Gets the link to input parameters.
+    :type inputs_link: :class:`ContentLink
+     <azure.mgmt.logic.models.ContentLink>`
+    :param outputs_link: Gets the link to output parameters.
+    :type outputs_link: :class:`ContentLink
+     <azure.mgmt.logic.models.ContentLink>`
+    :param fired: Gets a value indicating whether trigger was fired.
+    :type fired: bool
+    :param run: Gets the reference to workflow run.
+    :type run: :class:`ResourceReference
+     <azure.mgmt.logic.models.ResourceReference>`
+    :param name: Gets the workflow trigger history name.
+    :type name: str
+    :param type: Gets the workflow trigger history type.
+    :type type: str
     """ 
 
     _attribute_map = {

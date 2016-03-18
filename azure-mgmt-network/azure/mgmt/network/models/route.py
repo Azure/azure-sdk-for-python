@@ -26,21 +26,28 @@ class Route(SubResource):
     """
     Route resource
 
-    :param str id: Resource Id
-    :param str address_prefix: Gets or sets the destination CIDR to which the
+    :param id: Resource Id
+    :type id: str
+    :param address_prefix: Gets or sets the destination CIDR to which the
      route applies.
-    :param str next_hop_type: Gets or sets the type of Azure hop the packet
+    :type address_prefix: str
+    :param next_hop_type: Gets or sets the type of Azure hop the packet
      should be sent to. Possible values include: 'VirtualNetworkGateway',
      'VnetLocal', 'Internet', 'VirtualAppliance', 'None'
-    :param str next_hop_ip_address: Gets or sets the IP address packets
-     should be forwarded to. Next hop values are only allowed in routes where
-     the next hop type is VirtualAppliance.
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type next_hop_type: str
+    :param next_hop_ip_address: Gets or sets the IP address packets should be
+     forwarded to. Next hop values are only allowed in routes where the next
+     hop type is VirtualAppliance.
+    :type next_hop_ip_address: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _validation = {

@@ -26,7 +26,8 @@ class DeploymentExtendedFilter(Model):
     """
     Deployment filter.
 
-    :param str provisioning_state: Gets or sets the provisioning state.
+    :param provisioning_state: Gets or sets the provisioning state.
+    :type provisioning_state: str
     """ 
 
     _attribute_map = {

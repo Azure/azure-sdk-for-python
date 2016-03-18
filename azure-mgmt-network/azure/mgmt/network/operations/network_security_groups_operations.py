@@ -56,10 +56,15 @@ class NetworkSecurityGroupsOperations(object):
          group.
         :type network_security_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}'
@@ -129,10 +134,14 @@ class NetworkSecurityGroupsOperations(object):
         :param expand: expand references resources.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: NetworkSecurityGroup
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`NetworkSecurityGroup
+         <azure.mgmt.network.models.NetworkSecurityGroup>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}'
@@ -192,12 +201,19 @@ class NetworkSecurityGroupsOperations(object):
         :type network_security_group_name: str
         :param parameters: Parameters supplied to the create/update Network
          Security Group operation
-        :type parameters: NetworkSecurityGroup
+        :type parameters: :class:`NetworkSecurityGroup
+         <azure.mgmt.network.models.NetworkSecurityGroup>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: NetworkSecurityGroup
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return
+         :class:`NetworkSecurityGroup <azure.mgmt.network.models.NetworkSecurityGroup>`
+         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}'
@@ -273,10 +289,12 @@ class NetworkSecurityGroupsOperations(object):
         a subscription
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: NetworkSecurityGroupPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`NetworkSecurityGroupPaged
+         <azure.mgmt.network.models.NetworkSecurityGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -337,10 +355,12 @@ class NetworkSecurityGroupsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: NetworkSecurityGroupPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`NetworkSecurityGroupPaged
+         <azure.mgmt.network.models.NetworkSecurityGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

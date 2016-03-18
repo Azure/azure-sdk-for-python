@@ -26,9 +26,11 @@ class PolicyDefinition(Model):
     """
     Policy definition.
 
-    :param PolicyDefinitionProperties properties: Gets or sets the policy
-     definition properties.
-    :param str name: Gets or sets the policy definition name.
+    :param properties: Gets or sets the policy definition properties.
+    :type properties: :class:`PolicyDefinitionProperties
+     <azure.mgmt.resource.resources.models.PolicyDefinitionProperties>`
+    :param name: Gets or sets the policy definition name.
+    :type name: str
     """ 
 
     _attribute_map = {

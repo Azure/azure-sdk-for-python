@@ -26,9 +26,11 @@ class TemplateLink(Model):
     """
     Entity representing the reference to the template.
 
-    :param str uri: URI referencing the template.
-    :param str content_version: If included it must match the ContentVersion
-     in the template.
+    :param uri: URI referencing the template.
+    :type uri: str
+    :param content_version: If included it must match the ContentVersion in
+     the template.
+    :type content_version: str
     """ 
 
     _validation = {

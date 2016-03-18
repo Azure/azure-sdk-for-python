@@ -25,9 +25,15 @@ from msrest.serialization import Model
 class SiteProperties(Model):
     """SiteProperties
 
-    :param list metadata:
-    :param list properties:
-    :param list app_settings:
+    :param metadata:
+    :type metadata: list of :class:`NameValuePair
+     <azure.mgmt.web.models.NameValuePair>`
+    :param properties:
+    :type properties: list of :class:`NameValuePair
+     <azure.mgmt.web.models.NameValuePair>`
+    :param app_settings:
+    :type app_settings: list of :class:`NameValuePair
+     <azure.mgmt.web.models.NameValuePair>`
     """ 
 
     _attribute_map = {

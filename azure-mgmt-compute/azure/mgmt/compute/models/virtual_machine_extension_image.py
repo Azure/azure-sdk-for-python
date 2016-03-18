@@ -26,23 +26,32 @@ class VirtualMachineExtensionImage(SubResource):
     """
     Describes a Virtual Machine Extension Image.
 
-    :param str id: Resource Id
-    :param str operating_system: Gets or sets the operating system this
+    :param id: Resource Id
+    :type id: str
+    :param operating_system: Gets or sets the operating system this extension
+     supports.
+    :type operating_system: str
+    :param compute_role: Gets or sets the type of role (IaaS or PaaS) this
      extension supports.
-    :param str compute_role: Gets or sets the type of role (IaaS or PaaS)
-     this extension supports.
-    :param str handler_schema: Gets or sets the schema defined by publisher,
+    :type compute_role: str
+    :param handler_schema: Gets or sets the schema defined by publisher,
      where extension consumers should provide settings in a matching schema.
-    :param bool vm_scale_set_enabled: Gets or sets whether the extension can
-     be used on xRP VMScaleSets.By default existing extensions are usable on
+    :type handler_schema: str
+    :param vm_scale_set_enabled: Gets or sets whether the extension can be
+     used on xRP VMScaleSets.By default existing extensions are usable on
      scalesets, but there might be cases where a publisher wants to
      explicitly indicate the extension is only enabled for CRP VMs but not
      VMSS.
-    :param bool supports_multiple_extensions: Gets or sets whether the
-     handler can support multiple extensions.
-    :param str name: Gets or sets the name of the resource.
-    :param str location: Gets or sets the location of the resource.
-    :param dict tags: Gets or sets the tags attached to the resource.
+    :type vm_scale_set_enabled: bool
+    :param supports_multiple_extensions: Gets or sets whether the handler can
+     support multiple extensions.
+    :type supports_multiple_extensions: bool
+    :param name: Gets or sets the name of the resource.
+    :type name: str
+    :param location: Gets or sets the location of the resource.
+    :type location: str
+    :param tags: Gets or sets the tags attached to the resource.
+    :type tags: dict
     """ 
 
     _validation = {

@@ -27,9 +27,11 @@ class VirtualMachineStatusCodeCount(Model):
     The status code and count of the virtual machine scale set instance view
     status summary.
 
-    :param str code: Gets the instance view status code.
-    :param int count: Gets the number of instances having a particular status
+    :param code: Gets the instance view status code.
+    :type code: str
+    :param count: Gets the number of instances having a particular status
      code.
+    :type count: int
     """ 
 
     _attribute_map = {

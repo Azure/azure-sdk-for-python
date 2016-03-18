@@ -25,13 +25,19 @@ from msrest.serialization import Model
 class JobCollectionDefinition(Model):
     """JobCollectionDefinition
 
-    :param str id: Gets the job collection resource identifier.
-    :param str type: Gets the job collection resource type.
-    :param str name: Gets or sets the job collection resource name.
-    :param str location: Gets or sets the storage account location.
-    :param dict tags: Gets or sets the tags.
-    :param JobCollectionProperties properties: Gets or sets the job
-     collection properties.
+    :param id: Gets the job collection resource identifier.
+    :type id: str
+    :param type: Gets the job collection resource type.
+    :type type: str
+    :param name: Gets or sets the job collection resource name.
+    :type name: str
+    :param location: Gets or sets the storage account location.
+    :type location: str
+    :param tags: Gets or sets the tags.
+    :type tags: dict
+    :param properties: Gets or sets the job collection properties.
+    :type properties: :class:`JobCollectionProperties
+     <azure.mgmt.scheduler.models.JobCollectionProperties>`
     """ 
 
     _attribute_map = {

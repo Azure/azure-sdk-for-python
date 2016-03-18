@@ -26,8 +26,9 @@ class Sku(Model):
     """
     Defines a pricing tier for a profile
 
-    :param str name: Name of the resource sku. Possible values include:
+    :param name: Name of the resource sku. Possible values include:
      'Standard', 'Premium'
+    :type name: str
     """ 
 
     _attribute_map = {

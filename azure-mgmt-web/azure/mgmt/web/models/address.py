@@ -26,12 +26,18 @@ class Address(Model):
     """
     Address information for domain registration
 
-    :param str address1: Address 1
-    :param str address2: Address 2
-    :param str city: City
-    :param str country: Country
-    :param str postal_code: Postal code
-    :param str state: State
+    :param address1: Address 1
+    :type address1: str
+    :param address2: Address 2
+    :type address2: str
+    :param city: City
+    :type city: str
+    :param country: Country
+    :type country: str
+    :param postal_code: Postal code
+    :type postal_code: str
+    :param state: State
+    :type state: str
     """ 
 
     _attribute_map = {

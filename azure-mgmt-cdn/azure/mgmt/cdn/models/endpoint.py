@@ -29,12 +29,19 @@ class Endpoint(TrackedResource):
     exposed using the URL format <endpointname>.azureedge.net by default, but
     custom domains can also be created.
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param EndpointProperties properties:
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param properties:
+    :type properties: :class:`EndpointProperties
+     <azure.mgmt.cdn.models.EndpointProperties>`
     """ 
 
     _validation = {

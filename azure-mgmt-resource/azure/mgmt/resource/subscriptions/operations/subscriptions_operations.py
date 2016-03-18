@@ -51,10 +51,12 @@ class SubscriptionsOperations(object):
         :param subscription_id: Id of the subscription
         :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: LocationPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`LocationPaged
+         <azure.mgmt.resource.subscriptions.models.LocationPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -114,10 +116,14 @@ class SubscriptionsOperations(object):
         :param subscription_id: Id of the subscription.
         :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Subscription
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Subscription
+         <azure.mgmt.resource.subscriptions.models.Subscription>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}'
@@ -166,10 +172,12 @@ class SubscriptionsOperations(object):
         Gets a list of the subscriptionIds.
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: SubscriptionPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SubscriptionPaged
+         <azure.mgmt.resource.subscriptions.models.SubscriptionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

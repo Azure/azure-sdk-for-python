@@ -26,9 +26,12 @@ class ResourceProviderOperationDefinition(Model):
     """
     Resource provider operation information.
 
-    :param str name: Gets or sets the provider operation name.
-    :param ResourceProviderOperationDisplayProperties display: Gets or sets
-     the display property of the provider operation.
+    :param name: Gets or sets the provider operation name.
+    :type name: str
+    :param display: Gets or sets the display property of the provider
+     operation.
+    :type display: :class:`ResourceProviderOperationDisplayProperties
+     <azure.mgmt.resource.resources.models.ResourceProviderOperationDisplayProperties>`
     """ 
 
     _attribute_map = {

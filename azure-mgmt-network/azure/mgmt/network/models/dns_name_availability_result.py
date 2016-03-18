@@ -26,7 +26,8 @@ class DnsNameAvailabilityResult(Model):
     """
     Response for CheckDnsNameAvailability Api servive call
 
-    :param bool available: Domain availability (True/False)
+    :param available: Domain availability (True/False)
+    :type available: bool
     """ 
 
     _attribute_map = {

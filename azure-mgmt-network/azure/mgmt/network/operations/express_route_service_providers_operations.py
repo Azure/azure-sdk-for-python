@@ -50,10 +50,12 @@ class ExpressRouteServiceProvidersOperations(object):
         available ExpressRouteServiceProviders.
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteServiceProviderPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ExpressRouteServiceProviderPaged
+         <azure.mgmt.network.models.ExpressRouteServiceProviderPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

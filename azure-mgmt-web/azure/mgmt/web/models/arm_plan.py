@@ -26,11 +26,16 @@ class ArmPlan(Model):
     """
     The plan object in an ARM, represents a marketplace plan
 
-    :param str name: The name
-    :param str publisher: The publisher
-    :param str product: The product
-    :param str promotion_code: The promotion code
-    :param str version: Version of product
+    :param name: The name
+    :type name: str
+    :param publisher: The publisher
+    :type publisher: str
+    :param product: The product
+    :type product: str
+    :param promotion_code: The promotion code
+    :type promotion_code: str
+    :param version: Version of product
+    :type version: str
     """ 
 
     _attribute_map = {

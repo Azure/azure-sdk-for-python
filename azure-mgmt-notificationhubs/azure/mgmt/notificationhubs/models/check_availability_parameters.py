@@ -27,11 +27,15 @@ class CheckAvailabilityParameters(Model):
     Parameters supplied to the Check Name Availability for Namespace and
     NotificationHubs.
 
-    :param str name: Gets or sets name
-    :param str location: Gets or sets location.
-    :param dict tags: Gets or sets tags.
-    :param bool is_availiable: Gets or sets true if the name is available and
-     can be used to create new Namespace/NotificationHub. Otherwise false.
+    :param name: Gets or sets name
+    :type name: str
+    :param location: Gets or sets location.
+    :type location: str
+    :param tags: Gets or sets tags.
+    :type tags: dict
+    :param is_availiable: Gets or sets true if the name is available and can
+     be used to create new Namespace/NotificationHub. Otherwise false.
+    :type is_availiable: bool
     """ 
 
     _validation = {

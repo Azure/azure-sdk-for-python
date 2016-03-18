@@ -26,9 +26,11 @@ class PolicyAssignment(Model):
     """
     Policy assignment.
 
-    :param PolicyAssignmentProperties properties: Gets or sets the policy
-     assignment properties.
-    :param str name: Gets or sets the policy assignment name.
+    :param properties: Gets or sets the policy assignment properties.
+    :type properties: :class:`PolicyAssignmentProperties
+     <azure.mgmt.resource.resources.models.PolicyAssignmentProperties>`
+    :param name: Gets or sets the policy assignment name.
+    :type name: str
     """ 
 
     _attribute_map = {

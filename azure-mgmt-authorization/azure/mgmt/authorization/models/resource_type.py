@@ -26,9 +26,13 @@ class ResourceType(Model):
     """
     Resource Type
 
-    :param str name: Gets or sets the resource type name
-    :param str display_name: Gets or sets the resource type display name
-    :param list operations: Gets or sets the resource type operations
+    :param name: Gets or sets the resource type name
+    :type name: str
+    :param display_name: Gets or sets the resource type display name
+    :type display_name: str
+    :param operations: Gets or sets the resource type operations
+    :type operations: list of :class:`ProviderOperation
+     <azure.mgmt.authorization.models.ProviderOperation>`
     """ 
 
     _attribute_map = {

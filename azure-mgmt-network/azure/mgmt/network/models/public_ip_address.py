@@ -26,25 +26,40 @@ class PublicIPAddress(Resource):
     """
     PublicIPAddress resource
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param str public_ip_allocation_method: Gets or sets PublicIP allocation
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param public_ip_allocation_method: Gets or sets PublicIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
-    :param IPConfiguration ip_configuration:
-    :param PublicIPAddressDnsSettings dns_settings: Gets or sets FQDN of the
-     DNS record associated with the public IP address
-    :param str ip_address:
-    :param int idle_timeout_in_minutes: Gets or sets the Idletimeout of the
+    :type public_ip_allocation_method: str
+    :param ip_configuration:
+    :type ip_configuration: :class:`IPConfiguration
+     <azure.mgmt.network.models.IPConfiguration>`
+    :param dns_settings: Gets or sets FQDN of the DNS record associated with
+     the public IP address
+    :type dns_settings: :class:`PublicIPAddressDnsSettings
+     <azure.mgmt.network.models.PublicIPAddressDnsSettings>`
+    :param ip_address:
+    :type ip_address: str
+    :param idle_timeout_in_minutes: Gets or sets the Idletimeout of the
      public IP address
-    :param str resource_guid: Gets or sets resource guid property of the
-     PublicIP resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type idle_timeout_in_minutes: int
+    :param resource_guid: Gets or sets resource guid property of the PublicIP
+     resource
+    :type resource_guid: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

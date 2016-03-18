@@ -52,10 +52,12 @@ class PermissionsOperations(object):
          permissions for.The name is case insensitive.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PermissionPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PermissionPaged
+         <azure.mgmt.authorization.models.PermissionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -125,10 +127,12 @@ class PermissionsOperations(object):
         :param resource_name: Resource
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PermissionPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PermissionPaged
+         <azure.mgmt.authorization.models.PermissionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

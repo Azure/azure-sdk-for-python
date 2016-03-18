@@ -25,8 +25,9 @@ from msrest.serialization import Model
 class Sku(Model):
     """Sku
 
-    :param str name: Gets or set the SKU. Possible values include:
-     'Standard', 'Free', 'Premium'
+    :param name: Gets or set the SKU. Possible values include: 'Standard',
+     'Free', 'Premium'
+    :type name: str
     """ 
 
     _attribute_map = {

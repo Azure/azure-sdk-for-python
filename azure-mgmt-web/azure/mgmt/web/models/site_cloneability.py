@@ -26,17 +26,23 @@ class SiteCloneability(Model):
     """
     Represents whether or not a web app is cloneable
 
-    :param str result: Name of web app. Possible values include: 'Cloneable',
+    :param result: Name of web app. Possible values include: 'Cloneable',
      'PartiallyCloneable', 'NotCloneable'
-    :param list blocking_features: List of features enabled on web app that
+    :type result: str
+    :param blocking_features: List of features enabled on web app that
      prevent cloning
-    :param list unsupported_features: List of features enabled on web app
-     that are non-blocking but cannot be cloned. The web app can still be
-     cloned
+    :type blocking_features: list of :class:`SiteCloneabilityCriterion
+     <azure.mgmt.web.models.SiteCloneabilityCriterion>`
+    :param unsupported_features: List of features enabled on web app that are
+     non-blocking but cannot be cloned. The web app can still be cloned
      but the features in this list will not be set up on cloned
      web app.
-    :param list blocking_characteristics: List of blocking application
+    :type unsupported_features: list of :class:`SiteCloneabilityCriterion
+     <azure.mgmt.web.models.SiteCloneabilityCriterion>`
+    :param blocking_characteristics: List of blocking application
      characteristics
+    :type blocking_characteristics: list of :class:`SiteCloneabilityCriterion
+     <azure.mgmt.web.models.SiteCloneabilityCriterion>`
     """ 
 
     _validation = {

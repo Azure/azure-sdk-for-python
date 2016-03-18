@@ -26,15 +26,23 @@ class Application(Model):
     """
     Active Directory user information
 
-    :param str object_id: Gets or sets object Id
-    :param str object_type: Gets or sets object type
-    :param str app_id: Gets or sets application Id
-    :param list app_permissions: Gets or sets application permissions
-    :param bool available_to_other_tenants: Indicates if the application will
-     be available to other tenants
-    :param str display_name: Gets or sets the displayName
-    :param list identifier_uris: Gets or sets the application identifier Uris
-    :param list reply_urls: Gets or sets the application reply Urls
+    :param object_id: Gets or sets object Id
+    :type object_id: str
+    :param object_type: Gets or sets object type
+    :type object_type: str
+    :param app_id: Gets or sets application Id
+    :type app_id: str
+    :param app_permissions: Gets or sets application permissions
+    :type app_permissions: list of str
+    :param available_to_other_tenants: Indicates if the application will be
+     available to other tenants
+    :type available_to_other_tenants: bool
+    :param display_name: Gets or sets the displayName
+    :type display_name: str
+    :param identifier_uris: Gets or sets the application identifier Uris
+    :type identifier_uris: list of str
+    :param reply_urls: Gets or sets the application reply Urls
+    :type reply_urls: list of str
     """ 
 
     _attribute_map = {

@@ -57,10 +57,15 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param authorization_name: The name of the authorization.
         :type authorization_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return None or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}'
@@ -130,10 +135,14 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param authorization_name: The name of the authorization.
         :type authorization_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuitAuthorization
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ExpressRouteCircuitAuthorization
+         <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}'
@@ -193,12 +202,21 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :type authorization_name: str
         :param authorization_parameters: Parameters supplied to the
          create/update ExpressRouteCircuitAuthorization operation
-        :type authorization_parameters: ExpressRouteCircuitAuthorization
+        :type authorization_parameters:
+         :class:`ExpressRouteCircuitAuthorization
+         <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuitAuthorization
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return
+         :class:`ExpressRouteCircuitAuthorization
+         <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>` or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}'
@@ -279,10 +297,12 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param circuit_name: The name of the curcuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ExpressRouteCircuitAuthorizationPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ExpressRouteCircuitAuthorizationPaged
+         <azure.mgmt.network.models.ExpressRouteCircuitAuthorizationPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

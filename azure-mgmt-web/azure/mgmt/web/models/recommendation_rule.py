@@ -26,22 +26,31 @@ class RecommendationRule(Model):
     """
     Represents a recommendation rule that the recommendation engine can perform
 
-    :param str name: Unique name of the rule
-    :param str display_name: UI friendly name of the rule
-    :param str message: Localized name of the rule (Good for UI)
-    :param str recommendation_id: Recommendation ID of an associated
+    :param name: Unique name of the rule
+    :type name: str
+    :param display_name: UI friendly name of the rule
+    :type display_name: str
+    :param message: Localized name of the rule (Good for UI)
+    :type message: str
+    :param recommendation_id: Recommendation ID of an associated
      recommendation object tied to the rule, if exists.
      If such an object doesn't exist, it is set to null.
-    :param str description: Localized detailed description of the rule
-    :param str action_name: Name of action that is recommended by this rule
-     in string
-    :param int enabled: On/off flag indicating the rule is currently enabled
-     or disabled.
-    :param str level: Level of impact indicating how critical this rule is.
+    :type recommendation_id: str
+    :param description: Localized detailed description of the rule
+    :type description: str
+    :param action_name: Name of action that is recommended by this rule in
+     string
+    :type action_name: str
+    :param enabled: On/off flag indicating the rule is currently enabled or
+     disabled.
+    :type enabled: int
+    :param level: Level of impact indicating how critical this rule is.
      Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
-    :param str channels: List of available channels that this rule applies.
+    :type level: str
+    :param channels: List of available channels that this rule applies.
      Possible values include: 'Notification', 'Api', 'Email', 'All'
+    :type channels: str
     """ 
 
     _validation = {

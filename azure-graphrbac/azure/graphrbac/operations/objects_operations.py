@@ -49,10 +49,13 @@ class ObjectsOperations(object):
         Gets the details for current logged in user
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: AADObject
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`AADObject <azure.graphrbac.models.AADObject>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/me'
@@ -102,12 +105,15 @@ class ObjectsOperations(object):
         Gets AD group membership by provided AD object Ids
 
         :param parameters: Objects filtering parameters.
-        :type parameters: GetObjectsParameters
+        :type parameters: :class:`GetObjectsParameters
+         <azure.graphrbac.models.GetObjectsParameters>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: AADObjectPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`AADObjectPaged
+         <azure.graphrbac.models.AADObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -171,10 +177,12 @@ class ObjectsOperations(object):
         :param next_link: Next link for list operation.
         :type next_link: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: AADObjectPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`AADObjectPaged
+         <azure.graphrbac.models.AADObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

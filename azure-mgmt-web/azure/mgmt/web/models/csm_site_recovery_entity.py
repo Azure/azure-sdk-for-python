@@ -26,13 +26,16 @@ class CsmSiteRecoveryEntity(Model):
     """
     Class containting details about site recovery operation.
 
-    :param datetime snapshot_time: Point in time in which the site recover
-     should be attempted.
-    :param str site_name: [Optional] Destination web app name into which web
-     app should be recovered. This is case when new web app should be created
+    :param snapshot_time: Point in time in which the site recover should be
+     attempted.
+    :type snapshot_time: datetime
+    :param site_name: [Optional] Destination web app name into which web app
+     should be recovered. This is case when new web app should be created
      instead.
-    :param str slot_name: [Optional] Destination web app slot name into which
-     web app should be recovered
+    :type site_name: str
+    :param slot_name: [Optional] Destination web app slot name into which web
+     app should be recovered
+    :type slot_name: str
     """ 
 
     _attribute_map = {

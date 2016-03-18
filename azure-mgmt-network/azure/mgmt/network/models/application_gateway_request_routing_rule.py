@@ -26,23 +26,36 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     """
     Request routing rule of application gateway
 
-    :param str id: Resource Id
-    :param str rule_type: Gets or sets the rule type. Possible values
-     include: 'Basic', 'PathBasedRouting'
-    :param SubResource backend_address_pool: Gets or sets backend address
-     pool resource of application gateway
-    :param SubResource backend_http_settings: Gets or sets frontend port
-     resource of application gateway
-    :param SubResource http_listener: Gets or sets http listener resource of
+    :param id: Resource Id
+    :type id: str
+    :param rule_type: Gets or sets the rule type. Possible values include:
+     'Basic', 'PathBasedRouting'
+    :type rule_type: str
+    :param backend_address_pool: Gets or sets backend address pool resource
+     of application gateway
+    :type backend_address_pool: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param backend_http_settings: Gets or sets frontend port resource of
      application gateway
-    :param SubResource url_path_map: Gets or sets url path map resource of
-     application gateway
-    :param str provisioning_state: Gets or sets Provisioning state of the
-     request routing rule resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type backend_http_settings: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param http_listener: Gets or sets http listener resource of application
+     gateway
+    :type http_listener: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param url_path_map: Gets or sets url path map resource of application
+     gateway
+    :type url_path_map: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param provisioning_state: Gets or sets Provisioning state of the request
+     routing rule resource Updating/Deleting/Failed
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

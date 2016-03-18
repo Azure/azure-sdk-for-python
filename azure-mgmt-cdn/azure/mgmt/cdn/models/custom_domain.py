@@ -28,14 +28,20 @@ class CustomDomain(Resource):
     and an Endpoint. It is a common practice to use custom domain names to
     represent the URLs for branding purposes.
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str type: Resource type
-    :param str host_name: The host name of the custom domain
-    :param str resource_state: Resource status of the custom domain. Possible
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param host_name: The host name of the custom domain
+    :type host_name: str
+    :param resource_state: Resource status of the custom domain. Possible
      values include: 'Creating', 'Active', 'Deleting'
-    :param str provisioning_state: Provisioning status of the custom domain.
+    :type resource_state: str
+    :param provisioning_state: Provisioning status of the custom domain.
      Possible values include: 'Creating', 'Succeeded', 'Failed'
+    :type provisioning_state: str
     """ 
 
     _validation = {

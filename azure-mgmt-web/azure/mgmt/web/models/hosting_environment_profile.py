@@ -27,12 +27,14 @@ class HostingEnvironmentProfile(Model):
     Specification for a hostingEnvironment (App Service Environment) to use
     for this resource
 
-    :param str id: Resource id of the hostingEnvironment (App Service
-     Environment)
-    :param str name: Name of the hostingEnvironment (App Service Environment)
+    :param id: Resource id of the hostingEnvironment (App Service Environment)
+    :type id: str
+    :param name: Name of the hostingEnvironment (App Service Environment)
      (read only)
-    :param str type: Resource type of the hostingEnvironment (App Service
+    :type name: str
+    :param type: Resource type of the hostingEnvironment (App Service
      Environment) (read only)
+    :type type: str
     """ 
 
     _attribute_map = {

@@ -26,12 +26,17 @@ class Provider(Model):
     """
     Resource provider information.
 
-    :param str id: Gets or sets the provider id.
-    :param str namespace: Gets or sets the namespace of the provider.
-    :param str registration_state: Gets or sets the registration state of the
+    :param id: Gets or sets the provider id.
+    :type id: str
+    :param namespace: Gets or sets the namespace of the provider.
+    :type namespace: str
+    :param registration_state: Gets or sets the registration state of the
      provider.
-    :param list resource_types: Gets or sets the collection of provider
-     resource types.
+    :type registration_state: str
+    :param resource_types: Gets or sets the collection of provider resource
+     types.
+    :type resource_types: list of :class:`ProviderResourceType
+     <azure.mgmt.resource.resources.models.ProviderResourceType>`
     """ 
 
     _attribute_map = {

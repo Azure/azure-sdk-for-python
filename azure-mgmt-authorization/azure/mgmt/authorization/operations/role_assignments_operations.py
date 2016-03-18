@@ -61,10 +61,12 @@ class RoleAssignmentsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignmentPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignmentPaged
+         <azure.mgmt.authorization.models.RoleAssignmentPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -133,10 +135,12 @@ class RoleAssignmentsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignmentPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignmentPaged
+         <azure.mgmt.authorization.models.RoleAssignmentPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -201,10 +205,14 @@ class RoleAssignmentsOperations(object):
         :param role_assignment_name: Role assignment name.
         :type role_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
@@ -258,12 +266,17 @@ class RoleAssignmentsOperations(object):
         :param role_assignment_name: Role assignment name.
         :type role_assignment_name: str
         :param properties: Gets or sets role assignment properties.
-        :type properties: RoleAssignmentProperties
+        :type properties: :class:`RoleAssignmentProperties
+         <azure.mgmt.authorization.models.RoleAssignmentProperties>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.RoleAssignmentCreateParameters(properties=properties)
 
@@ -323,10 +336,14 @@ class RoleAssignmentsOperations(object):
         :param role_assignment_name: Role assignment name.
         :type role_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
@@ -378,10 +395,14 @@ class RoleAssignmentsOperations(object):
         :param role_assignment_id: Role assignment Id
         :type role_assignment_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{roleAssignmentId}'
@@ -432,12 +453,17 @@ class RoleAssignmentsOperations(object):
         :param role_assignment_id: Role assignment Id
         :type role_assignment_id: str
         :param properties: Gets or sets role assignment properties.
-        :type properties: RoleAssignmentProperties
+        :type properties: :class:`RoleAssignmentProperties
+         <azure.mgmt.authorization.models.RoleAssignmentProperties>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.RoleAssignmentCreateParameters(properties=properties)
 
@@ -494,10 +520,14 @@ class RoleAssignmentsOperations(object):
         :param role_assignment_id: Role assignment Id
         :type role_assignment_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignment
+         <azure.mgmt.authorization.models.RoleAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{roleAssignmentId}'
@@ -548,10 +578,12 @@ class RoleAssignmentsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignmentPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignmentPaged
+         <azure.mgmt.authorization.models.RoleAssignmentPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -615,10 +647,12 @@ class RoleAssignmentsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: RoleAssignmentPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RoleAssignmentPaged
+         <azure.mgmt.authorization.models.RoleAssignmentPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

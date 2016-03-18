@@ -26,10 +26,13 @@ class ConnStringInfo(Model):
     """
     Represents database connection string information
 
-    :param str name: Name of connection string
-    :param str connection_string: Connection string value
-    :param str type: Type of database. Possible values include: 'MySql',
+    :param name: Name of connection string
+    :type name: str
+    :param connection_string: Connection string value
+    :type connection_string: str
+    :param type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom'
+    :type type: str
     """ 
 
     _validation = {

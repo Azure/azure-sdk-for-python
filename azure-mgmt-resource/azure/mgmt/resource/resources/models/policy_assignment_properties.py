@@ -26,9 +26,12 @@ class PolicyAssignmentProperties(Model):
     """
     Policy Assignment properties.
 
-    :param str scope: Gets or sets the policy assignment scope.
-    :param str display_name: Gets or sets the policy assignment display name.
-    :param str policy_definition_id: Gets or sets the policy definition Id.
+    :param scope: Gets or sets the policy assignment scope.
+    :type scope: str
+    :param display_name: Gets or sets the policy assignment display name.
+    :type display_name: str
+    :param policy_definition_id: Gets or sets the policy definition Id.
+    :type policy_definition_id: str
     """ 
 
     _attribute_map = {

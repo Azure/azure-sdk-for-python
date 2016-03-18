@@ -26,26 +26,37 @@ class NamespaceProperties(Model):
     """
     Namespace properties.
 
-    :param str name: The name of the namespace.
-    :param str provisioning_state: Gets or sets provisioning state of the
+    :param name: The name of the namespace.
+    :type name: str
+    :param provisioning_state: Gets or sets provisioning state of the
      Namespace.
-    :param str region: Specifies the targeted region in which the namespace
+    :type provisioning_state: str
+    :param region: Specifies the targeted region in which the namespace
      should be created. It can be any of the following values: Australia
      EastAustralia SoutheastCentral USEast USEast US 2West USNorth Central
      USSouth Central USEast AsiaSoutheast AsiaBrazil SouthJapan EastJapan
      WestNorth EuropeWest Europe
-    :param str status: Status of the namespace. It can be any of these
-     values:1 = Created/Active2 = Creating3 = Suspended4 = Deleting
-    :param datetime created_at: The time the namespace was created.
-    :param str service_bus_endpoint: Endpoint you can use to perform
+    :type region: str
+    :param status: Status of the namespace. It can be any of these values:1 =
+     Created/Active2 = Creating3 = Suspended4 = Deleting
+    :type status: str
+    :param created_at: The time the namespace was created.
+    :type created_at: datetime
+    :param service_bus_endpoint: Endpoint you can use to perform
      NotificationHub operations.
-    :param str subscription_id: The Id of the Azure subscription associated
-     with the namespace.
-    :param str scale_unit: ScaleUnit where the namespace gets created
-    :param bool enabled: Whether or not the namespace is currently enabled.
-    :param bool critical: Whether or not the namespace is set as Critical.
-    :param str namespace_type: Gets or sets the namespace type. Possible
-     values include: 'Messaging', 'NotificationHub'
+    :type service_bus_endpoint: str
+    :param subscription_id: The Id of the Azure subscription associated with
+     the namespace.
+    :type subscription_id: str
+    :param scale_unit: ScaleUnit where the namespace gets created
+    :type scale_unit: str
+    :param enabled: Whether or not the namespace is currently enabled.
+    :type enabled: bool
+    :param critical: Whether or not the namespace is set as Critical.
+    :type critical: bool
+    :param namespace_type: Gets or sets the namespace type. Possible values
+     include: 'Messaging', 'NotificationHub'
+    :type namespace_type: str
     """ 
 
     _attribute_map = {

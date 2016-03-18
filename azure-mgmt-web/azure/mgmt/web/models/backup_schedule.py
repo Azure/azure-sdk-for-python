@@ -27,20 +27,25 @@ class BackupSchedule(Model):
     Description of a backup schedule. Describes how often should be the backup
     performed and what should be the retention policy.
 
-    :param int frequency_interval: How often should be the backup executed
-     (e.g. for weekly backup, this should be set to 7 and FrequencyUnit
-     should be set to Day)
-    :param str frequency_unit: How often should be the backup executed (e.g.
-     for weekly backup, this should be set to Day and FrequencyInterval
-     should be set to 7). Possible values include: 'Day', 'Hour'
-    :param bool keep_at_least_one_backup: True if the retention policy should
+    :param frequency_interval: How often should be the backup executed (e.g.
+     for weekly backup, this should be set to 7 and FrequencyUnit should be
+     set to Day)
+    :type frequency_interval: int
+    :param frequency_unit: How often should be the backup executed (e.g. for
+     weekly backup, this should be set to Day and FrequencyInterval should be
+     set to 7). Possible values include: 'Day', 'Hour'
+    :type frequency_unit: str
+    :param keep_at_least_one_backup: True if the retention policy should
      always keep at least one backup in the storage account, regardless how
      old it is; false otherwise.
-    :param int retention_period_in_days: After how many days backups should
-     be deleted
-    :param datetime start_time: When the schedule should start working
-    :param datetime last_execution_time: The last time when this schedule was
-     triggered
+    :type keep_at_least_one_backup: bool
+    :param retention_period_in_days: After how many days backups should be
+     deleted
+    :type retention_period_in_days: int
+    :param start_time: When the schedule should start working
+    :type start_time: datetime
+    :param last_execution_time: The last time when this schedule was triggered
+    :type last_execution_time: datetime
     """ 
 
     _validation = {

@@ -26,12 +26,17 @@ class DeploymentOperationProperties(Model):
     """
     Deployment operation properties.
 
-    :param str provisioning_state: Gets or sets the state of the provisioning.
-    :param datetime timestamp: Gets or sets the date and time of the
-     operation.
-    :param str status_code: Gets or sets operation status code.
-    :param object status_message: Gets or sets operation status message.
-    :param TargetResource target_resource: Gets or sets the target resource.
+    :param provisioning_state: Gets or sets the state of the provisioning.
+    :type provisioning_state: str
+    :param timestamp: Gets or sets the date and time of the operation.
+    :type timestamp: datetime
+    :param status_code: Gets or sets operation status code.
+    :type status_code: str
+    :param status_message: Gets or sets operation status message.
+    :type status_message: object
+    :param target_resource: Gets or sets the target resource.
+    :type target_resource: :class:`TargetResource
+     <azure.mgmt.resource.resources.models.TargetResource>`
     """ 
 
     _attribute_map = {

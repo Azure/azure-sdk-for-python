@@ -26,12 +26,16 @@ class ExpressRouteCircuitRoutesTable(Model):
     """
     The routes table associated with the ExpressRouteCircuit
 
-    :param str address_prefix: Gets AddressPrefix.
-    :param str next_hop_type: Gets NextHopType. Possible values include:
+    :param address_prefix: Gets AddressPrefix.
+    :type address_prefix: str
+    :param next_hop_type: Gets NextHopType. Possible values include:
      'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
      'None'
-    :param str next_hop_ip: Gets NextHopIP.
-    :param str as_path: Gets AsPath.
+    :type next_hop_type: str
+    :param next_hop_ip: Gets NextHopIP.
+    :type next_hop_ip: str
+    :param as_path: Gets AsPath.
+    :type as_path: str
     """ 
 
     _validation = {

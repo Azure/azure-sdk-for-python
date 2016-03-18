@@ -55,12 +55,17 @@ class AvailabilitySetsOperations(object):
         :type name: str
         :param parameters: Parameters supplied to the Create Availability Set
          operation.
-        :type parameters: AvailabilitySet
+        :type parameters: :class:`AvailabilitySet
+         <azure.mgmt.compute.models.AvailabilitySet>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: AvailabilitySet
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`AvailabilitySet
+         <azure.mgmt.compute.models.AvailabilitySet>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{name}'
@@ -119,10 +124,13 @@ class AvailabilitySetsOperations(object):
         :param availability_set_name: The name of the availability set.
         :type availability_set_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}'
@@ -170,10 +178,14 @@ class AvailabilitySetsOperations(object):
         :param availability_set_name: The name of the availability set.
         :type availability_set_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: AvailabilitySet
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`AvailabilitySet
+         <azure.mgmt.compute.models.AvailabilitySet>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}'
@@ -226,10 +238,12 @@ class AvailabilitySetsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: AvailabilitySetPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`AvailabilitySetPaged
+         <azure.mgmt.compute.models.AvailabilitySetPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -293,10 +307,12 @@ class AvailabilitySetsOperations(object):
         :param availability_set_name: The name of the availability set.
         :type availability_set_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: VirtualMachineSizePaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`VirtualMachineSizePaged
+         <azure.mgmt.compute.models.VirtualMachineSizePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
