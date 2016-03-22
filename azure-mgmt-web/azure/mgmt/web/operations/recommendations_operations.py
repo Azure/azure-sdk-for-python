@@ -179,7 +179,7 @@ class RecommendationsOperations(object):
         return deserialized
 
     def get_recommended_rules_for_site(
-            self, resource_group_name, site_name, featured=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, site_name, featured=None, site_sku=None, num_slots=None, custom_headers={}, raw=False, **operation_config):
         """
         Gets a list of recommendations associated with the specified web site.
 
@@ -191,6 +191,10 @@ class RecommendationsOperations(object):
          recommendation among the others. Otherwise this API returns all
          recommendations available
         :type featured: bool
+        :param site_sku: The name of site SKU.
+        :type site_sku: str
+        :param num_slots: The number of site slots associated to the site
+        :type num_slots: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -214,6 +218,10 @@ class RecommendationsOperations(object):
         query_parameters = {}
         if featured is not None:
             query_parameters['featured'] = self._serialize.query("featured", featured, 'bool')
+        if site_sku is not None:
+            query_parameters['siteSku'] = self._serialize.query("site_sku", site_sku, 'str')
+        if num_slots is not None:
+            query_parameters['numSlots'] = self._serialize.query("num_slots", num_slots, 'int')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers

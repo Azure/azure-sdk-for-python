@@ -46,7 +46,7 @@ class ProfilesOperations(object):
     def list_by_subscription_id(
             self, custom_headers={}, raw=False, **operation_config):
         """
-        Lists the CDN Profiles within an Azure subscitption
+        Lists the CDN profiles within an Azure subscitption.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -106,10 +106,10 @@ class ProfilesOperations(object):
     def list_by_resource_group(
             self, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Lists the CDN Profiles within a resource group
+        Lists the CDN profiles within a resource group.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -170,12 +170,13 @@ class ProfilesOperations(object):
     def get(
             self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Gets a CDN profile with the specified parameters
+        Gets a CDN profile with the specified parameters.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -230,15 +231,16 @@ class ProfilesOperations(object):
     def create(
             self, profile_name, profile_properties, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Creates a new CDN Profile with the specified parameters
+        Creates a new CDN profile with the specified parameters.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
-        :param profile_properties: Profile properties needed for creation
+        :param profile_properties: Profile properties needed for creation.
         :type profile_properties: :class:`ProfileCreateParameters
          <azure.mgmt.cdn.models.ProfileCreateParameters>`
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -320,12 +322,13 @@ class ProfilesOperations(object):
     def update(
             self, profile_name, resource_group_name, tags, custom_headers={}, raw=False, **operation_config):
         """
-        Updates an existing CDN Profile with the specified parameters
+        Updates an existing CDN profile with the specified parameters.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param tags: Profile tags
         :type tags: dict
@@ -409,14 +412,15 @@ class ProfilesOperations(object):
     def delete_if_exists(
             self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Deletes an existing CDN Profile with the specified parameters.
-        Deleting a profile will result in the deletion of all sub resources
-        including endpoints, origins and CustomDomains
+        Deletes an existing CDN profile with the specified parameters.
+        Deleting a profile will result in the deletion of all subresources
+        including endpoints, origins and custom domains.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -489,10 +493,11 @@ class ProfilesOperations(object):
         Advanced HTTP Reports, and Real-time Stats and Alerts. The SSO URI
         changes approximately every 10 minutes.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

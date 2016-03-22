@@ -59,6 +59,7 @@ from .auto_heal_actions import AutoHealActions
 from .auto_heal_custom_action import AutoHealCustomAction
 from .cors_settings import CorsSettings
 from .api_definition_info import ApiDefinitionInfo
+from .ip_security_restriction import IpSecurityRestriction
 from .cloning_info import CloningInfo
 from .site_properties import SiteProperties
 from .routing_rule import RoutingRule
@@ -180,6 +181,7 @@ from .web_site_management_client_enums import (
     DomainType,
     NotificationLevel,
     Channels,
+    Category,
     CloneAbilityResult,
     LogLevel,
     FrequencyUnit,
@@ -228,6 +230,7 @@ __all__ = [
     'AutoHealCustomAction',
     'CorsSettings',
     'ApiDefinitionInfo',
+    'IpSecurityRestriction',
     'CloningInfo',
     'SiteProperties',
     'RoutingRule',
@@ -348,6 +351,7 @@ __all__ = [
     'DomainType',
     'NotificationLevel',
     'Channels',
+    'Category',
     'CloneAbilityResult',
     'LogLevel',
     'FrequencyUnit',

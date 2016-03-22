@@ -26,8 +26,7 @@ class ApiEntityReference(Model):
     """
     The API entity reference.
 
-    :param id: Gets or sets the relative URL in the previous Service
-     Management API's namespace. For Example:
+    :param id: Gets or sets ARM resource id in the form of
      /subscriptions/{SubcriptionId}/resourceGroups/{ResourceGroupName}/...
     :type id: str
     """ 

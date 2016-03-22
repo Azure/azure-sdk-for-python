@@ -1487,7 +1487,7 @@ class HostingEnvironmentsOperations(object):
 
         return deserialized
 
-    def get_hosting_environment_server_farms(
+    def get_hosting_environment_web_hosting_plans(
             self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
         Get all serverfarms (App Service Plans) on the hostingEnvironment (App
@@ -1508,7 +1508,7 @@ class HostingEnvironmentsOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/serverfarms'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/webhostingplans'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
@@ -1550,7 +1550,7 @@ class HostingEnvironmentsOperations(object):
 
         return deserialized
 
-    def get_hosting_environment_web_hosting_plans(
+    def get_hosting_environment_server_farms(
             self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
         Get all serverfarms (App Service Plans) on the hostingEnvironment (App
@@ -1571,7 +1571,7 @@ class HostingEnvironmentsOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/webhostingplans'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/serverfarms'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),

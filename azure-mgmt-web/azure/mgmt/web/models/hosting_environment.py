@@ -134,6 +134,10 @@ class HostingEnvironment(Resource):
      endpoint is no longer available
      (most likely because NSG blocked the incoming traffic)
     :type suspended: bool
+    :param cluster_settings: Custom settings for changing the behavior of the
+     hosting environment
+    :type cluster_settings: list of :class:`NameValuePair
+     <azure.mgmt.web.models.NameValuePair>`
     """ 
 
     _validation = {
@@ -176,9 +180,10 @@ class HostingEnvironment(Resource):
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'api_management_account_id': {'key': 'properties.apiManagementAccountId', 'type': 'str'},
         'suspended': {'key': 'properties.suspended', 'type': 'bool'},
+        'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, hosting_environment_name=None, hosting_environment_location=None, status=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, database_edition=None, database_service_objective=None, upgrade_domains=None, subscription_id=None, dns_suffix=None, last_action=None, last_action_result=None, allowed_multi_sizes=None, allowed_worker_sizes=None, maximum_number_of_machines=None, vip_mappings=None, environment_capacities=None, network_access_control_list=None, environment_is_healthy=None, environment_status=None, resource_group=None, api_management_account_id=None, suspended=None, **kwargs):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, hosting_environment_name=None, hosting_environment_location=None, status=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, database_edition=None, database_service_objective=None, upgrade_domains=None, subscription_id=None, dns_suffix=None, last_action=None, last_action_result=None, allowed_multi_sizes=None, allowed_worker_sizes=None, maximum_number_of_machines=None, vip_mappings=None, environment_capacities=None, network_access_control_list=None, environment_is_healthy=None, environment_status=None, resource_group=None, api_management_account_id=None, suspended=None, cluster_settings=None, **kwargs):
         super(HostingEnvironment, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.hosting_environment_name = hosting_environment_name
         self.hosting_environment_location = hosting_environment_location
@@ -210,3 +215,4 @@ class HostingEnvironment(Resource):
         self.resource_group = resource_group
         self.api_management_account_id = api_management_account_id
         self.suspended = suspended
+        self.cluster_settings = cluster_settings

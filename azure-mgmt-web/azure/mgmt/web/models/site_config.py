@@ -126,6 +126,9 @@ class SiteConfig(Resource):
     :type auto_swap_slot_name: str
     :param local_my_sql_enabled: Local mysql enabled
     :type local_my_sql_enabled: bool
+    :param ip_security_restrictions: Ip Security restrictions
+    :type ip_security_restrictions: list of :class:`IpSecurityRestriction
+     <azure.mgmt.web.models.IpSecurityRestriction>`
     """ 
 
     _validation = {
@@ -177,9 +180,10 @@ class SiteConfig(Resource):
         'api_definition': {'key': 'properties.apiDefinition', 'type': 'ApiDefinitionInfo'},
         'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
+        'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None, **kwargs):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None, ip_security_restrictions=None, **kwargs):
         super(SiteConfig, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -220,3 +224,4 @@ class SiteConfig(Resource):
         self.api_definition = api_definition
         self.auto_swap_slot_name = auto_swap_slot_name
         self.local_my_sql_enabled = local_my_sql_enabled
+        self.ip_security_restrictions = ip_security_restrictions

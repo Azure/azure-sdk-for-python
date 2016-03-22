@@ -46,14 +46,15 @@ class OriginsOperations(object):
     def list_by_endpoint(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Lists the existing CDN Origins within an Endpoint
+        Lists the existing CDN origins within an endpoint.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -116,17 +117,18 @@ class OriginsOperations(object):
     def get(
             self, origin_name, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Gets an existing CDN Origin within an Endpoint
+        Gets an existing CDN origin within an endpoint.
 
         :param origin_name: Name of the origin, an arbitrary value but it
          needs to be unique under endpoint
         :type origin_name: str
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -183,7 +185,7 @@ class OriginsOperations(object):
     def create(
             self, origin_name, origin_properties, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Creates a new CDN Origin within an Endpoint
+        Creates a new CDN origin within an endpoint.
 
         :param origin_name: Name of the origin, an arbitrary value but it
          needs to be unique under endpoint
@@ -191,12 +193,13 @@ class OriginsOperations(object):
         :param origin_properties: Origin properties
         :type origin_properties: :class:`OriginParameters
          <azure.mgmt.cdn.models.OriginParameters>`
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -280,20 +283,21 @@ class OriginsOperations(object):
     def update(
             self, origin_name, origin_properties, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Updates an existing CDN Origin within an Endpoint
+        Updates an existing CDN origin within an endpoint.
 
-        :param origin_name: Name of the origin, an arbitrary value but it
-         needs to be unique under endpoint
+        :param origin_name: Name of the origin. Must be unique within
+         endpoint.
         :type origin_name: str
         :param origin_properties: Origin properties
         :type origin_properties: :class:`OriginParameters
          <azure.mgmt.cdn.models.OriginParameters>`
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -377,17 +381,18 @@ class OriginsOperations(object):
     def delete_if_exists(
             self, origin_name, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Deletes an existing CDN Origin within an Endpoint
+        Deletes an existing CDN origin within an endpoint.
 
-        :param origin_name: Name of the origin, an arbitrary value but it
-         needs to be unique under endpoint
+        :param origin_name: Name of the origin. Must be unique within
+         endpoint.
         :type origin_name: str
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

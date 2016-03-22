@@ -28,7 +28,7 @@ class ErrorResponse(Model):
 
     :param code: Error code
     :type code: str
-    :param message: Error message indicating why the operation failed
+    :param message: Error message indicating why the operation failed.
     :type message: str
     """ 
 
