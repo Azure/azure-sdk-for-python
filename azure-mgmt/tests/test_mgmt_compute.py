@@ -21,6 +21,7 @@ from collections import namedtuple
 import azure.mgmt.compute
 import azure.mgmt.network
 import azure.mgmt.storage
+from azure.mgmt.compute.models import InstanceViewTypes
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -224,7 +225,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result_iv = self.compute_client.virtual_machines.get(
             self.group_name,
             names.vm,
-            expand="instanceview"
+            expand=InstanceViewTypes.instance_view
         )
         self.assertTrue(result_iv.instance_view)
 
