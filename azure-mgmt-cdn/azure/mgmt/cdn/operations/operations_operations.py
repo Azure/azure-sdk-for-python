@@ -45,7 +45,7 @@ class OperationsOperations(object):
     def list(
             self, custom_headers={}, raw=False, **operation_config):
         """
-        Lists all of the available CDN REST API operations
+        Lists all of the available CDN REST API operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -26,9 +26,9 @@ class TrackedResource(Resource):
     """
     ARM tracked resource
 
-    :param id: Resource Id
+    :param id: Resource ID
     :type id: str
-    :param name: Resource Name
+    :param name: Resource name
     :type name: str
     :param type: Resource type
     :type type: str

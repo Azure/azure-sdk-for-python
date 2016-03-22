@@ -44,33 +44,30 @@ class SitesOperations(object):
 
         self.config = config
 
-    def get_site_vnet_connection(
-            self, resource_group_name, name, vnet_name, custom_headers={}, raw=False, **operation_config):
+    def get_site_vnet_connections(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
-        Retrieves a specific Virtual Network Connection associated with this
-        web app.
+        Retrieves a list of all Virtual Network Connections associated with
+        this web app.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
         :param name: The name of the web app
         :type name: str
-        :param vnet_name: The name of the Virtual Network
-        :type vnet_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
+        :rtype: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -101,7 +98,7 @@ class SitesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VnetInfo', response)
+            deserialized = self._deserialize('[VnetInfo]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -109,105 +106,33 @@ class SitesOperations(object):
 
         return deserialized
 
-    def create_or_update_site_vnet_connection(
-            self, resource_group_name, name, vnet_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+    def get_site_vnet_connections_slot(
+            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
         """
-        Adds a Virtual Network Connection or updates it's properties.
+        Retrieves a list of all Virtual Network Connections associated with
+        this web app.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
         :param name: The name of the web app
         :type name: str
-        :param vnet_name: The name of the Virtual Network
-        :type vnet_name: str
-        :param connection_envelope: The properties of this Virtual Network
-         Connection
-        :type connection_envelope: :class:`VnetInfo
-         <azure.mgmt.web.models.VnetInfo>`
+        :param slot: The name of the slot for this web app.
+        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
+        :rtype: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/virtualNetworkConnections'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(connection_envelope, 'VnetInfo')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('VnetInfo', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def delete_site_vnet_connection(
-            self, resource_group_name, name, vnet_name, custom_headers={}, raw=False, **operation_config):
-        """
-        Removes the specified Virtual Network Connection association from this
-        web app.
-
-        :param resource_group_name: The resource group name
-        :type resource_group_name: str
-        :param name: The name of the web app
-        :type name: str
-        :param vnet_name: The name of the Virtual Network
-        :type vnet_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -227,7 +152,7 @@ class SitesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
+        request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
@@ -238,79 +163,7 @@ class SitesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def update_site_vnet_connection(
-            self, resource_group_name, name, vnet_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
-        """
-        Adds a Virtual Network Connection or updates it's properties.
-
-        :param resource_group_name: The resource group name
-        :type resource_group_name: str
-        :param name: The name of the web app
-        :type name: str
-        :param vnet_name: The name of the Virtual Network
-        :type vnet_name: str
-        :param connection_envelope: The properties of this Virtual Network
-         Connection
-        :type connection_envelope: :class:`VnetInfo
-         <azure.mgmt.web.models.VnetInfo>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(connection_envelope, 'VnetInfo')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('VnetInfo', response)
+            deserialized = self._deserialize('[VnetInfo]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -604,34 +457,33 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_network_features(
-            self, resource_group_name, name, view, custom_headers={}, raw=False, **operation_config):
+    def get_site_vnet_connection(
+            self, resource_group_name, name, vnet_name, custom_headers={}, raw=False, **operation_config):
         """
-        Retrieves a view of all network features in use on this web app.
+        Retrieves a specific Virtual Network Connection associated with this
+        web app.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
         :param name: The name of the web app
         :type name: str
-        :param view: The type of view. This can either be "summary" or
-         "detailed".
-        :type view: str
+        :param vnet_name: The name of the Virtual Network
+        :type vnet_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NetworkFeatures
-         <azure.mgmt.web.models.NetworkFeatures>`
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/networkFeatures/{view}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'view': self._serialize.url("view", view, 'str'),
+            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -654,7 +506,7 @@ class SitesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -662,7 +514,216 @@ class SitesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('NetworkFeatures', response)
+            deserialized = self._deserialize('VnetInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update_site_vnet_connection(
+            self, resource_group_name, name, vnet_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+        """
+        Adds a Virtual Network Connection or updates it's properties.
+
+        :param resource_group_name: The resource group name
+        :type resource_group_name: str
+        :param name: The name of the web app
+        :type name: str
+        :param vnet_name: The name of the Virtual Network
+        :type vnet_name: str
+        :param connection_envelope: The properties of this Virtual Network
+         Connection
+        :type connection_envelope: :class:`VnetInfo
+         <azure.mgmt.web.models.VnetInfo>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(connection_envelope, 'VnetInfo')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VnetInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete_site_vnet_connection(
+            self, resource_group_name, name, vnet_name, custom_headers={}, raw=False, **operation_config):
+        """
+        Removes the specified Virtual Network Connection association from this
+        web app.
+
+        :param resource_group_name: The resource group name
+        :type resource_group_name: str
+        :param name: The name of the web app
+        :type name: str
+        :param vnet_name: The name of the Virtual Network
+        :type vnet_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: object
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('object', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_site_vnet_connection(
+            self, resource_group_name, name, vnet_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+        """
+        Adds a Virtual Network Connection or updates it's properties.
+
+        :param resource_group_name: The resource group name
+        :type resource_group_name: str
+        :param name: The name of the web app
+        :type name: str
+        :param vnet_name: The name of the Virtual Network
+        :type vnet_name: str
+        :param connection_envelope: The properties of this Virtual Network
+         Connection
+        :type connection_envelope: :class:`VnetInfo
+         <azure.mgmt.web.models.VnetInfo>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(connection_envelope, 'VnetInfo')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VnetInfo', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -701,6 +762,72 @@ class SitesOperations(object):
             'name': self._serialize.url("name", name, 'str'),
             'view': self._serialize.url("view", view, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200, 404]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('NetworkFeatures', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_site_network_features(
+            self, resource_group_name, name, view, custom_headers={}, raw=False, **operation_config):
+        """
+        Retrieves a view of all network features in use on this web app.
+
+        :param resource_group_name: The resource group name
+        :type resource_group_name: str
+        :param name: The name of the web app
+        :type name: str
+        :param view: The type of view. This can either be "summary" or
+         "detailed".
+        :type view: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`NetworkFeatures
+         <azure.mgmt.web.models.NetworkFeatures>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/networkFeatures/{view}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'view': self._serialize.url("view", view, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -891,9 +1018,11 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return object or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
@@ -924,27 +1053,45 @@ class SitesOperations(object):
         body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        def long_running_send():
 
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            request = self._client.post(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
 
-        deserialized = None
+        def get_long_running_status(status_link, headers={}):
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-        if response.status_code == 202:
-            deserialized = self._deserialize('object', response)
+            request = self._client.get(status_link)
+            request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        def get_long_running_output(response):
 
-        return deserialized
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('object', response)
+            if response.status_code == 202:
+                deserialized = self._deserialize('object', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
 
     def swap_slots_slot(
             self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
@@ -968,9 +1115,11 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+        :return: A poller object which can return object or
+         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+         raw=true
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
@@ -1002,27 +1151,45 @@ class SitesOperations(object):
         body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        def long_running_send():
 
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            request = self._client.post(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
 
-        deserialized = None
+        def get_long_running_status(status_link, headers={}):
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-        if response.status_code == 202:
-            deserialized = self._deserialize('object', response)
+            request = self._client.get(status_link)
+            request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        def get_long_running_output(response):
 
-        return deserialized
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('object', response)
+            if response.status_code == 202:
+                deserialized = self._deserialize('object', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
 
     def get_slots_differences_from_production(
             self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
@@ -1175,6 +1342,80 @@ class SitesOperations(object):
 
         return deserialized
 
+    def apply_slot_config_to_production(
+            self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
+        """
+        Applies the configuration settings from the target slot onto the
+        current slot
+
+        :param resource_group_name: Name of resource group
+        :type resource_group_name: str
+        :param name: Name of web app
+        :type name: str
+        :param target_slot: Set the destination deployment slot during swap
+         operation
+        :type target_slot: str
+        :param preserve_vnet: Get or set the flag indicating it should
+         preserve VNet to the slot during swap
+        :type preserve_vnet: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: object
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/applySlotConfig'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('object', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def apply_slot_config_slot(
             self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
         """
@@ -1253,22 +1494,16 @@ class SitesOperations(object):
 
         return deserialized
 
-    def apply_slot_config_to_production(
-            self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
+    def reset_production_slot_config(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
-        Applies the configuration settings from the target slot onto the
-        current slot
+        Resets the configuration settings of the current slot if they were
+        previously modified by calling ApplySlotConfig API
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
-        :param target_slot: Set the destination deployment slot during swap
-         operation
-        :type target_slot: str
-        :param preserve_vnet: Get or set the flag indicating it should
-         preserve VNet to the slot during swap
-        :type preserve_vnet: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1278,10 +1513,8 @@ class SitesOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
-
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/applySlotConfig'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/resetSlotConfig'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
@@ -1303,13 +1536,9 @@ class SitesOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
-
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1355,68 +1584,6 @@ class SitesOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def reset_production_slot_config(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
-        """
-        Resets the configuration settings of the current slot if they were
-        previously modified by calling ApplySlotConfig API
-
-        :param resource_group_name: Name of resource group
-        :type resource_group_name: str
-        :param name: Name of web app
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/resetSlotConfig'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2523,8 +2690,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_snapshots_on_sku(
-            self, subscription_name, webspace_name, name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+    def get_site_snapshots_on_sku_slot(
+            self, subscription_name, webspace_name, name, resource_group_name, slot, custom_headers={}, raw=False, **operation_config):
         """
         Returns Snapshots to the user based on their SKU.
 
@@ -2536,6 +2703,8 @@ class SitesOperations(object):
         :type name: str
         :param resource_group_name:
         :type resource_group_name: str
+        :param slot:
+        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2546,10 +2715,11 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/restorableSnapshots'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/restorableSnapshots'
         path_format_arguments = {
             'name': self._serialize.url("name", name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2590,8 +2760,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_snapshots_on_sku_slot(
-            self, subscription_name, webspace_name, name, resource_group_name, slot, custom_headers={}, raw=False, **operation_config):
+    def get_site_snapshots_on_sku(
+            self, subscription_name, webspace_name, name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
         Returns Snapshots to the user based on their SKU.
 
@@ -2603,8 +2773,6 @@ class SitesOperations(object):
         :type name: str
         :param resource_group_name:
         :type resource_group_name: str
-        :param slot:
-        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2615,11 +2783,10 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/restorableSnapshots'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/restorableSnapshots'
         path_format_arguments = {
             'name': self._serialize.url("name", name, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2865,8 +3032,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_deployments(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+    def get_deployments_slot(
+            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
         """
         List deployments
 
@@ -2874,6 +3041,9 @@ class SitesOperations(object):
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2885,10 +3055,11 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/deployments'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -2927,8 +3098,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_deployments_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+    def get_deployments(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
         List deployments
 
@@ -2936,9 +3107,6 @@ class SitesOperations(object):
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2950,11 +3118,10 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/deployments'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3127,8 +3294,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_deployment_slot(
-            self, resource_group_name, name, id, slot, custom_headers={}, raw=False, **operation_config):
+    def get_instance_deployment_slot(
+            self, resource_group_name, name, id, slot, instance_id, custom_headers={}, raw=False, **operation_config):
         """
         Get the deployment
 
@@ -3141,6 +3308,8 @@ class SitesOperations(object):
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
+        :param instance_id: Id of web app instance
+        :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -3151,12 +3320,13 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments/{id}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/deployments/{id}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
             'id': self._serialize.url("id", id, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3195,8 +3365,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def create_deployment_slot(
-            self, resource_group_name, name, id, slot, deployment, custom_headers={}, raw=False, **operation_config):
+    def create_instance_deployment_slot(
+            self, resource_group_name, name, id, slot, instance_id, deployment, custom_headers={}, raw=False, **operation_config):
         """
         Create a deployment
 
@@ -3209,6 +3379,8 @@ class SitesOperations(object):
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
+        :param instance_id: Id of web app instance
+        :type instance_id: str
         :param deployment: Details of deployment
         :type deployment: :class:`Deployment
          <azure.mgmt.web.models.Deployment>`
@@ -3222,12 +3394,13 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments/{id}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/deployments/{id}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
             'id': self._serialize.url("id", id, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3270,8 +3443,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def delete_deployment_slot(
-            self, resource_group_name, name, id, slot, custom_headers={}, raw=False, **operation_config):
+    def delete_instance_deployment_slot(
+            self, resource_group_name, name, id, slot, instance_id, custom_headers={}, raw=False, **operation_config):
         """
         Delete the deployment
 
@@ -3284,6 +3457,8 @@ class SitesOperations(object):
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
+        :param instance_id: Id of web app instance
+        :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -3294,12 +3469,13 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments/{id}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/deployments/{id}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
             'id': self._serialize.url("id", id, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3499,6 +3675,217 @@ class SitesOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
             'id': self._serialize.url("id", id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('object', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_deployment_slot(
+            self, resource_group_name, name, id, slot, custom_headers={}, raw=False, **operation_config):
+        """
+        Get the deployment
+
+        :param resource_group_name: Name of resource group
+        :type resource_group_name: str
+        :param name: Name of web app
+        :type name: str
+        :param id: Id of the deployment
+        :type id: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments/{id}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'id': self._serialize.url("id", id, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Deployment', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_deployment_slot(
+            self, resource_group_name, name, id, slot, deployment, custom_headers={}, raw=False, **operation_config):
+        """
+        Create a deployment
+
+        :param resource_group_name: Name of resource group
+        :type resource_group_name: str
+        :param name: Name of web app
+        :type name: str
+        :param id: Id of the deployment
+        :type id: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
+        :param deployment: Details of deployment
+        :type deployment: :class:`Deployment
+         <azure.mgmt.web.models.Deployment>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments/{id}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'id': self._serialize.url("id", id, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(deployment, 'Deployment')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Deployment', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete_deployment_slot(
+            self, resource_group_name, name, id, slot, custom_headers={}, raw=False, **operation_config):
+        """
+        Delete the deployment
+
+        :param resource_group_name: Name of resource group
+        :type resource_group_name: str
+        :param name: Name of web app
+        :type name: str
+        :param id: Id of the deployment
+        :type id: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: object
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments/{id}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'id': self._serialize.url("id", id, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -3745,226 +4132,6 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_instance_deployment_slot(
-            self, resource_group_name, name, id, slot, instance_id, custom_headers={}, raw=False, **operation_config):
-        """
-        Get the deployment
-
-        :param resource_group_name: Name of resource group
-        :type resource_group_name: str
-        :param name: Name of web app
-        :type name: str
-        :param id: Id of the deployment
-        :type id: str
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
-        :param instance_id: Id of web app instance
-        :type instance_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/deployments/{id}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'id': self._serialize.url("id", id, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Deployment', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def create_instance_deployment_slot(
-            self, resource_group_name, name, id, slot, instance_id, deployment, custom_headers={}, raw=False, **operation_config):
-        """
-        Create a deployment
-
-        :param resource_group_name: Name of resource group
-        :type resource_group_name: str
-        :param name: Name of web app
-        :type name: str
-        :param id: Id of the deployment
-        :type id: str
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
-        :param instance_id: Id of web app instance
-        :type instance_id: str
-        :param deployment: Details of deployment
-        :type deployment: :class:`Deployment
-         <azure.mgmt.web.models.Deployment>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/deployments/{id}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'id': self._serialize.url("id", id, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(deployment, 'Deployment')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Deployment', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def delete_instance_deployment_slot(
-            self, resource_group_name, name, id, slot, instance_id, custom_headers={}, raw=False, **operation_config):
-        """
-        Delete the deployment
-
-        :param resource_group_name: Name of resource group
-        :type resource_group_name: str
-        :param name: Name of web app
-        :type name: str
-        :param id: Id of the deployment
-        :type id: str
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
-        :param instance_id: Id of web app instance
-        :type instance_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/deployments/{id}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'id': self._serialize.url("id", id, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def get_site_instance_identifiers(
             self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
@@ -4093,8 +4260,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_host_name_bindings_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+    def get_site_host_name_bindings(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
         Get web app hostname bindings
 
@@ -4102,9 +4269,6 @@ class SitesOperations(object):
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -4116,11 +4280,10 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/hostNameBindings'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hostNameBindings'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -4159,8 +4322,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_host_name_bindings(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+    def get_site_host_name_bindings_slot(
+            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
         """
         Get web app hostname bindings
 
@@ -4168,6 +4331,9 @@ class SitesOperations(object):
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -4179,10 +4345,11 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hostNameBindings'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/hostNameBindings'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -5045,269 +5212,6 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_source_control(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
-        """
-        Get the source control configuration of web app
-
-        :param resource_group_name: Name of resource group
-        :type resource_group_name: str
-        :param name: Name of web app
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SiteSourceControl', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def create_or_update_site_source_control(
-            self, resource_group_name, name, site_source_control, custom_headers={}, raw=False, **operation_config):
-        """
-        Update the source control configuration of web app
-
-        :param resource_group_name: Name of resource group
-        :type resource_group_name: str
-        :param name: Name of web app
-        :type name: str
-        :param site_source_control: Request body that contains the source
-         control parameters
-        :type site_source_control: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(site_source_control, 'SiteSourceControl')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SiteSourceControl', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def delete_site_source_control(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
-        """
-        Delete source control configuration of web app
-
-        :param resource_group_name: Name of resource group
-        :type resource_group_name: str
-        :param name: Name of web app
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def update_site_source_control(
-            self, resource_group_name, name, site_source_control, custom_headers={}, raw=False, **operation_config):
-        """
-        Update the source control configuration of web app
-
-        :param resource_group_name: Name of resource group
-        :type resource_group_name: str
-        :param name: Name of web app
-        :type name: str
-        :param site_source_control: Request body that contains the source
-         control parameters
-        :type site_source_control: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteSourceControl
-         <azure.mgmt.web.models.SiteSourceControl>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(site_source_control, 'SiteSourceControl')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SiteSourceControl', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def get_site_source_control_slot(
             self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
         """
@@ -5545,6 +5449,269 @@ class SitesOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
             'slot': self._serialize.url("slot", slot, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(site_source_control, 'SiteSourceControl')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SiteSourceControl', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_site_source_control(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+        """
+        Get the source control configuration of web app
+
+        :param resource_group_name: Name of resource group
+        :type resource_group_name: str
+        :param name: Name of web app
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SiteSourceControl
+         <azure.mgmt.web.models.SiteSourceControl>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SiteSourceControl', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update_site_source_control(
+            self, resource_group_name, name, site_source_control, custom_headers={}, raw=False, **operation_config):
+        """
+        Update the source control configuration of web app
+
+        :param resource_group_name: Name of resource group
+        :type resource_group_name: str
+        :param name: Name of web app
+        :type name: str
+        :param site_source_control: Request body that contains the source
+         control parameters
+        :type site_source_control: :class:`SiteSourceControl
+         <azure.mgmt.web.models.SiteSourceControl>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SiteSourceControl
+         <azure.mgmt.web.models.SiteSourceControl>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(site_source_control, 'SiteSourceControl')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SiteSourceControl', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete_site_source_control(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+        """
+        Delete source control configuration of web app
+
+        :param resource_group_name: Name of resource group
+        :type resource_group_name: str
+        :param name: Name of web app
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: object
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('object', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_site_source_control(
+            self, resource_group_name, name, site_source_control, custom_headers={}, raw=False, **operation_config):
+        """
+        Update the source control configuration of web app
+
+        :param resource_group_name: Name of resource group
+        :type resource_group_name: str
+        :param name: Name of web app
+        :type name: str
+        :param site_source_control: Request body that contains the source
+         control parameters
+        :type site_source_control: :class:`SiteSourceControl
+         <azure.mgmt.web.models.SiteSourceControl>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SiteSourceControl
+         <azure.mgmt.web.models.SiteSourceControl>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sourcecontrols/web'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -8175,8 +8342,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def list_site_backups_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+    def list_site_backups(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
         Lists all available backups for web app
 
@@ -8184,9 +8351,6 @@ class SitesOperations(object):
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -8198,11 +8362,10 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/backups'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/backups'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -8241,8 +8404,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def list_site_backups(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+    def list_site_backups_slot(
+            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
         """
         Lists all available backups for web app
 
@@ -8250,6 +8413,9 @@ class SitesOperations(object):
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -8261,10 +8427,11 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/backups'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/backups'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -8567,8 +8734,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_backup_status_secrets(
-            self, resource_group_name, name, backup_id, request, custom_headers={}, raw=False, **operation_config):
+    def get_site_backup_status_secrets_slot(
+            self, resource_group_name, name, backup_id, request, slot, custom_headers={}, raw=False, **operation_config):
         """
         Gets status of a web app backup that may be in progress, including
         secrets associated with the backup, such as the Azure Storage SAS
@@ -8584,6 +8751,9 @@ class SitesOperations(object):
         :param request: Information on backup request
         :type request: :class:`BackupRequest
          <azure.mgmt.web.models.BackupRequest>`
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -8594,11 +8764,12 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/backups/{backupId}/list'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/backups/{backupId}/list'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
             'backupId': self._serialize.url("backup_id", backup_id, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -8641,8 +8812,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_backup_status_secrets_slot(
-            self, resource_group_name, name, backup_id, request, slot, custom_headers={}, raw=False, **operation_config):
+    def get_site_backup_status_secrets(
+            self, resource_group_name, name, backup_id, request, custom_headers={}, raw=False, **operation_config):
         """
         Gets status of a web app backup that may be in progress, including
         secrets associated with the backup, such as the Azure Storage SAS
@@ -8658,9 +8829,6 @@ class SitesOperations(object):
         :param request: Information on backup request
         :type request: :class:`BackupRequest
          <azure.mgmt.web.models.BackupRequest>`
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -8671,12 +8839,11 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/backups/{backupId}/list'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/backups/{backupId}/list'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
             'backupId': self._serialize.url("backup_id", backup_id, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -8867,6 +9034,76 @@ class SitesOperations(object):
 
         return deserialized
 
+    def get_site_usages(
+            self, resource_group_name, name, filter=None, custom_headers={}, raw=False, **operation_config):
+        """
+        Gets the quota usage numbers for web app
+
+        :param resource_group_name: Name of resource group
+        :type resource_group_name: str
+        :param name: Name of web app
+        :type name: str
+        :param filter: Return only usages specified in the filter. Filter is
+         specified by using OData syntax. Example: $filter=(name.value eq
+         'Metric1' or name.value eq 'Metric2') and startTime eq
+         '2014-01-01T00:00:00Z' and endTime eq '2014-12-31T23:59:59Z' and
+         timeGrain eq duration'[Hour|Minute|Day]'.
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`CsmUsageQuotaCollection
+         <azure.mgmt.web.models.CsmUsageQuotaCollection>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/usages'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CsmUsageQuotaCollection', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def get_site_usages_slot(
             self, resource_group_name, name, slot, filter=None, custom_headers={}, raw=False, **operation_config):
         """
@@ -8941,17 +9178,19 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_usages(
-            self, resource_group_name, name, filter=None, custom_headers={}, raw=False, **operation_config):
+    def get_site_metrics(
+            self, resource_group_name, name, details=None, filter=None, custom_headers={}, raw=False, **operation_config):
         """
-        Gets the quota usage numbers for web app
+        Gets metrics for web app
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
-        :param filter: Return only usages specified in the filter. Filter is
-         specified by using OData syntax. Example: $filter=(name.value eq
+        :param details: If true, metric details are included in response
+        :type details: bool
+        :param filter: Return only usages/metrics specified in the filter.
+         Filter conforms to odata syntax. Example: $filter=(name.value eq
          'Metric1' or name.value eq 'Metric2') and startTime eq
          '2014-01-01T00:00:00Z' and endTime eq '2014-12-31T23:59:59Z' and
          timeGrain eq duration'[Hour|Minute|Day]'.
@@ -8961,13 +9200,13 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CsmUsageQuotaCollection
-         <azure.mgmt.web.models.CsmUsageQuotaCollection>`
+        :rtype: :class:`ResourceMetricCollection
+         <azure.mgmt.web.models.ResourceMetricCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/usages'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metrics'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
@@ -8977,6 +9216,8 @@ class SitesOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if details is not None:
+            query_parameters['details'] = self._serialize.query("details", details, 'bool')
         if filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
@@ -9003,7 +9244,7 @@ class SitesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CsmUsageQuotaCollection', response)
+            deserialized = self._deserialize('ResourceMetricCollection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -9089,82 +9330,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_metrics(
-            self, resource_group_name, name, details=None, filter=None, custom_headers={}, raw=False, **operation_config):
-        """
-        Gets metrics for web app
-
-        :param resource_group_name: Name of resource group
-        :type resource_group_name: str
-        :param name: Name of web app
-        :type name: str
-        :param details: If true, metric details are included in response
-        :type details: bool
-        :param filter: Return only usages/metrics specified in the filter.
-         Filter conforms to odata syntax. Example: $filter=(name.value eq
-         'Metric1' or name.value eq 'Metric2') and startTime eq
-         '2014-01-01T00:00:00Z' and endTime eq '2014-12-31T23:59:59Z' and
-         timeGrain eq duration'[Hour|Minute|Day]'.
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceMetricCollection
-         <azure.mgmt.web.models.ResourceMetricCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metrics'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if details is not None:
-            query_parameters['details'] = self._serialize.query("details", details, 'bool')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ResourceMetricCollection', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def get_site_metric_definitions(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+    def get_site_metric_definitions_slot(
+            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
         """
         Gets metric definitions for web app
 
@@ -9172,6 +9339,9 @@ class SitesOperations(object):
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
+        :param slot: Name of web app slot. If not specified then will default
+         to production slot.
+        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -9183,10 +9353,11 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metricdefinitions'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/metricdefinitions'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -9225,8 +9396,8 @@ class SitesOperations(object):
 
         return deserialized
 
-    def get_site_metric_definitions_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+    def get_site_metric_definitions(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
         Gets metric definitions for web app
 
@@ -9234,9 +9405,6 @@ class SitesOperations(object):
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
-        :param slot: Name of web app slot. If not specified then will default
-         to production slot.
-        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -9248,11 +9416,10 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/metricdefinitions'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metricdefinitions'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -9849,16 +10016,14 @@ class SitesOperations(object):
 
         return deserialized
 
-    def sync_site_repository_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+    def sync_site_repository(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
         """
 
         :param resource_group_name:
         :type resource_group_name: str
         :param name:
         :type name: str
-        :param slot:
-        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -9869,11 +10034,10 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/sync'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sync'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -9912,14 +10076,16 @@ class SitesOperations(object):
 
         return deserialized
 
-    def sync_site_repository(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+    def sync_site_repository_slot(
+            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
         """
 
         :param resource_group_name:
         :type resource_group_name: str
         :param name:
         :type name: str
+        :param slot:
+        :type slot: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -9930,10 +10096,11 @@ class SitesOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/sync'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/sync'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
+            'slot': self._serialize.url("slot", slot, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -10670,6 +10837,68 @@ class SitesOperations(object):
 
         return deserialized
 
+    def list_site_relay_service_connections(
+            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+        """
+        Retrieves all Biztalk Hybrid Connections associated with this web app.
+
+        :param resource_group_name: The resource group name
+        :type resource_group_name: str
+        :param name: The name of the web app
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`RelayServiceConnectionEntity
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hybridconnection'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RelayServiceConnectionEntity', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list_site_relay_service_connections_slot(
             self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
         """
@@ -10735,30 +10964,37 @@ class SitesOperations(object):
 
         return deserialized
 
-    def list_site_relay_service_connections(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+    def get_site_vnet_gateway(
+            self, resource_group_name, name, vnet_name, gateway_name, custom_headers={}, raw=False, **operation_config):
         """
-        Retrieves all Biztalk Hybrid Connections associated with this web app.
+        Retrieves a Virtual Network connection gateway associated with this
+        web app and virtual network.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
         :param name: The name of the web app
         :type name: str
+        :param vnet_name: The name of the Virtual Network
+        :type vnet_name: str
+        :param gateway_name: The name of the gateway. The only gateway that
+         exists presently is "primary"
+        :type gateway_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RelayServiceConnectionEntity
-         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
+        :rtype: object
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hybridconnection'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
+            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -10781,6 +11017,82 @@ class SitesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
+        if response.status_code not in [200, 404]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('object', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update_site_vnet_connection_gateway(
+            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+        """
+        Updates the Virtual Network Gateway.
+
+        :param resource_group_name: The resource group name
+        :type resource_group_name: str
+        :param name: The name of the web app
+        :type name: str
+        :param vnet_name: The name of the Virtual Network
+        :type vnet_name: str
+        :param gateway_name: The name of the gateway. The only gateway that
+         exists presently is "primary"
+        :type gateway_name: str
+        :param connection_envelope: The properties to update this gateway
+         with.
+        :type connection_envelope: :class:`VnetGateway
+         <azure.mgmt.web.models.VnetGateway>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(connection_envelope, 'VnetGateway')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
         if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
@@ -10789,7 +11101,83 @@ class SitesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('RelayServiceConnectionEntity', response)
+            deserialized = self._deserialize('VnetGateway', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_site_vnet_connection_gateway(
+            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+        """
+        Updates the Virtual Network Gateway.
+
+        :param resource_group_name: The resource group name
+        :type resource_group_name: str
+        :param name: The name of the web app
+        :type name: str
+        :param vnet_name: The name of the Virtual Network
+        :type vnet_name: str
+        :param gateway_name: The name of the gateway. The only gateway that
+         exists presently is "primary"
+        :type gateway_name: str
+        :param connection_envelope: The properties to update this gateway
+         with.
+        :type connection_envelope: :class:`VnetGateway
+         <azure.mgmt.web.models.VnetGateway>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
+            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(connection_envelope, 'VnetGateway')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VnetGateway', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -11020,354 +11408,6 @@ class SitesOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('VnetGateway', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def get_site_vnet_gateway(
-            self, resource_group_name, name, vnet_name, gateway_name, custom_headers={}, raw=False, **operation_config):
-        """
-        Retrieves a Virtual Network connection gateway associated with this
-        web app and virtual network.
-
-        :param resource_group_name: The resource group name
-        :type resource_group_name: str
-        :param name: The name of the web app
-        :type name: str
-        :param vnet_name: The name of the Virtual Network
-        :type vnet_name: str
-        :param gateway_name: The name of the gateway. The only gateway that
-         exists presently is "primary"
-        :type gateway_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def create_or_update_site_vnet_connection_gateway(
-            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
-        """
-        Updates the Virtual Network Gateway.
-
-        :param resource_group_name: The resource group name
-        :type resource_group_name: str
-        :param name: The name of the web app
-        :type name: str
-        :param vnet_name: The name of the Virtual Network
-        :type vnet_name: str
-        :param gateway_name: The name of the gateway. The only gateway that
-         exists presently is "primary"
-        :type gateway_name: str
-        :param connection_envelope: The properties to update this gateway
-         with.
-        :type connection_envelope: :class:`VnetGateway
-         <azure.mgmt.web.models.VnetGateway>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(connection_envelope, 'VnetGateway')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('VnetGateway', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def update_site_vnet_connection_gateway(
-            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
-        """
-        Updates the Virtual Network Gateway.
-
-        :param resource_group_name: The resource group name
-        :type resource_group_name: str
-        :param name: The name of the web app
-        :type name: str
-        :param vnet_name: The name of the Virtual Network
-        :type vnet_name: str
-        :param gateway_name: The name of the gateway. The only gateway that
-         exists presently is "primary"
-        :type gateway_name: str
-        :param connection_envelope: The properties to update this gateway
-         with.
-        :type connection_envelope: :class:`VnetGateway
-         <azure.mgmt.web.models.VnetGateway>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
-            'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(connection_envelope, 'VnetGateway')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('VnetGateway', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def get_site_vnet_connections(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
-        """
-        Retrieves a list of all Virtual Network Connections associated with
-        this web app.
-
-        :param resource_group_name: The resource group name
-        :type resource_group_name: str
-        :param name: The name of the web app
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/virtualNetworkConnections'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('[VnetInfo]', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def get_site_vnet_connections_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
-        """
-        Retrieves a list of all Virtual Network Connections associated with
-        this web app.
-
-        :param resource_group_name: The resource group name
-        :type resource_group_name: str
-        :param name: The name of the web app
-        :type name: str
-        :param slot: The name of the slot for this web app.
-        :type slot: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/virtualNetworkConnections'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('[VnetInfo]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

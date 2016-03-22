@@ -29,9 +29,9 @@ class Profile(TrackedResource):
     addition to creating shared configuration settings and selecting pricing
     tiers and providers.
 
-    :param id: Resource Id
+    :param id: Resource ID
     :type id: str
-    :param name: Resource Name
+    :param name: Resource name
     :type name: str
     :param type: Resource type
     :type type: str
@@ -39,9 +39,14 @@ class Profile(TrackedResource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param properties:
-    :type properties: :class:`ProfileProperties
-     <azure.mgmt.cdn.models.ProfileProperties>`
+    :param sku: The SKU (pricing tier) of the CDN profile.
+    :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
+    :param resource_state: Resource status of the profile. Possible values
+     include: 'Creating', 'Active', 'Deleting', 'Disabled'
+    :type resource_state: str
+    :param provisioning_state: Provisioning status of the profile. Possible
+     values include: 'Creating', 'Succeeded', 'Failed'
+    :type provisioning_state: str
     """ 
 
     _validation = {
@@ -55,9 +60,13 @@ class Profile(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ProfileProperties'},
+        'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'ProfileResourceState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
 
-    def __init__(self, location, tags, id=None, name=None, type=None, properties=None, **kwargs):
+    def __init__(self, location, tags, id=None, name=None, type=None, sku=None, resource_state=None, provisioning_state=None, **kwargs):
         super(Profile, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
-        self.properties = properties
+        self.sku = sku
+        self.resource_state = resource_state
+        self.provisioning_state = provisioning_state

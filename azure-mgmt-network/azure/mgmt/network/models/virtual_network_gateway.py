@@ -63,6 +63,9 @@ class VirtualNetworkGateway(Resource):
      configurations.
     :type vpn_client_configuration: :class:`VpnClientConfiguration
      <azure.mgmt.network.models.VpnClientConfiguration>`
+    :param bgp_settings: Virtual network gateway's BGP speaker settings
+    :type bgp_settings: :class:`BgpSettings
+     <azure.mgmt.network.models.BgpSettings>`
     :param resource_guid: Gets or sets resource guid property of the
      VirtualNetworkGateway resource
     :type resource_guid: str
@@ -87,12 +90,13 @@ class VirtualNetworkGateway(Resource):
         'gateway_default_site': {'key': 'properties.gatewayDefaultSite', 'type': 'SubResource'},
         'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},
         'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration'},
+        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
         super(VirtualNetworkGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
@@ -101,6 +105,7 @@ class VirtualNetworkGateway(Resource):
         self.gateway_default_site = gateway_default_site
         self.sku = sku
         self.vpn_client_configuration = vpn_client_configuration
+        self.bgp_settings = bgp_settings
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag

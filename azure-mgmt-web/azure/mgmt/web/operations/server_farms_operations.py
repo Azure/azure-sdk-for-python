@@ -1170,7 +1170,7 @@ class ServerFarmsOperations(object):
         :type resource_group_name: str
         :param name: Name of server farm
         :type name: str
-        :param worker_name: Name of worker machine, typically IP address
+        :param worker_name: Name of worker machine, typically starts with RD
         :type worker_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1182,7 +1182,7 @@ class ServerFarmsOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/workers/{workerName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/workers/{workerName}/reboot'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),

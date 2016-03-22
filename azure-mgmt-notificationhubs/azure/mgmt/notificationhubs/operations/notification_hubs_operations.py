@@ -112,10 +112,10 @@ class NotificationHubsOperations(object):
 
         return deserialized
 
-    def create(
-            self, resource_group_name, namespace_name, notification_hub_name, parameters, custom_headers={}, raw=False, **operation_config):
+    def create_or_update(
+            self, resource_group_name, namespace_name, notification_hub_name, parameters, if_match=None, custom_headers={}, raw=False, **operation_config):
         """
-        Creates a new NotificationHub in a namespace.
+        Creates/Update a NotificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -123,10 +123,13 @@ class NotificationHubsOperations(object):
         :type namespace_name: str
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
-        :param parameters: Parameters supplied to the create a Namespace
-         Resource.
+        :param parameters: Parameters supplied to the create/update a
+         NotificatioHub Resource.
         :type parameters: :class:`NotificationHubCreateOrUpdateParameters
          <azure.mgmt.notificationhubs.models.NotificationHubCreateOrUpdateParameters>`
+        :param if_match: A notificationHub can be updated if this header is
+         set to *.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -158,6 +161,8 @@ class NotificationHubsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 

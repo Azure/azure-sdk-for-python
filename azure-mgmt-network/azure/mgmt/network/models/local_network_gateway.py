@@ -41,6 +41,9 @@ class LocalNetworkGateway(Resource):
      <azure.mgmt.network.models.AddressSpace>`
     :param gateway_ip_address: IP address of local network gateway.
     :type gateway_ip_address: str
+    :param bgp_settings: Local network gateway's BGP speaker settings
+    :type bgp_settings: :class:`BgpSettings
+     <azure.mgmt.network.models.BgpSettings>`
     :param resource_guid: Gets or sets resource guid property of the
      LocalNetworkGateway resource
     :type resource_guid: str
@@ -60,15 +63,17 @@ class LocalNetworkGateway(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'local_network_address_space': {'key': 'properties.localNetworkAddressSpace', 'type': 'AddressSpace'},
         'gateway_ip_address': {'key': 'properties.gatewayIpAddress', 'type': 'str'},
+        'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, local_network_address_space=None, gateway_ip_address=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, local_network_address_space=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
         super(LocalNetworkGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.local_network_address_space = local_network_address_space
         self.gateway_ip_address = gateway_ip_address
+        self.bgp_settings = bgp_settings
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag
