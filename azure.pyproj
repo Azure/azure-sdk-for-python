@@ -73,6 +73,7 @@
     <Compile Include="azure-graphrbac\azure\graphrbac\operations\service_principal_operations.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\operations\user_operations.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\operations\__init__.py" />
+    <Compile Include="azure-graphrbac\azure\graphrbac\version.py" />
     <Compile Include="azure-graphrbac\azure\graphrbac\__init__.py" />
     <Compile Include="azure-graphrbac\azure\__init__.py" />
     <Compile Include="azure-graphrbac\setup.py" />
@@ -105,6 +106,7 @@
     <Compile Include="azure-mgmt-authorization\azure\mgmt\authorization\operations\role_assignments_operations.py" />
     <Compile Include="azure-mgmt-authorization\azure\mgmt\authorization\operations\role_definitions_operations.py" />
     <Compile Include="azure-mgmt-authorization\azure\mgmt\authorization\operations\__init__.py" />
+    <Compile Include="azure-mgmt-authorization\azure\mgmt\authorization\version.py" />
     <Compile Include="azure-mgmt-authorization\azure\mgmt\authorization\__init__.py" />
     <Compile Include="azure-mgmt-authorization\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-authorization\azure\__init__.py" />
@@ -148,6 +150,7 @@
     <Compile Include="azure-mgmt-cdn\azure\mgmt\cdn\operations\origins_operations.py" />
     <Compile Include="azure-mgmt-cdn\azure\mgmt\cdn\operations\profiles_operations.py" />
     <Compile Include="azure-mgmt-cdn\azure\mgmt\cdn\operations\__init__.py" />
+    <Compile Include="azure-mgmt-cdn\azure\mgmt\cdn\version.py" />
     <Compile Include="azure-mgmt-cdn\azure\mgmt\cdn\__init__.py" />
     <Compile Include="azure-mgmt-cdn\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-cdn\azure\__init__.py" />
@@ -253,6 +256,7 @@
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\operations\virtual_machine_scale_set_vms_operations.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\operations\virtual_machine_sizes_operations.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\operations\__init__.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\version.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\logic_management_client.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\models\content_hash.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\models\content_link.py" />
@@ -294,6 +298,7 @@
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\operations\workflow_trigger_histories_operations.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\operations\workflow_versions_operations.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\operations\__init__.py" />
+    <Compile Include="azure-mgmt-logic\azure\mgmt\logic\version.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\__init__.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-logic\azure\__init__.py" />
@@ -408,6 +413,7 @@
     <Compile Include="azure-mgmt-network\azure\mgmt\network\operations\virtual_network_gateways_operations.py" />
     <Compile Include="azure-mgmt-network\azure\mgmt\network\operations\virtual_network_gateway_connections_operations.py" />
     <Compile Include="azure-mgmt-network\azure\mgmt\network\operations\__init__.py" />
+    <Compile Include="azure-mgmt-network\azure\mgmt\network\version.py" />
     <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\models\adm_credential.py" />
     <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\models\adm_credential_properties.py" />
     <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\models\apns_credential.py" />
@@ -443,6 +449,7 @@
     <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\operations\namespaces_operations.py" />
     <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\operations\notification_hubs_operations.py" />
     <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\operations\__init__.py" />
+    <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\version.py" />
     <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\__init__.py" />
     <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-notificationhubs\azure\__init__.py" />
@@ -462,6 +469,7 @@
     <Compile Include="azure-mgmt-redis\azure\mgmt\redis\operations\redis_operations.py" />
     <Compile Include="azure-mgmt-redis\azure\mgmt\redis\operations\__init__.py" />
     <Compile Include="azure-mgmt-redis\azure\mgmt\redis\redis_management_client.py" />
+    <Compile Include="azure-mgmt-redis\azure\mgmt\redis\version.py" />
     <Compile Include="azure-mgmt-redis\azure\mgmt\redis\__init__.py" />
     <Compile Include="azure-mgmt-redis\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-redis\azure\__init__.py" />
@@ -478,8 +486,9 @@
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\models\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\operations\features_operations.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\operations\__init__.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\version.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\features\__init__.py" />
-    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\lock_management_client.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\management_lock_client.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\deployment_extended_filter.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\generic_resource_filter.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\lock_management_client_enums.py" />
@@ -491,6 +500,7 @@
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\models\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\operations\management_locks_operations.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\operations\__init__.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\version.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\locks\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\models\basic_dependency.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\models\dependency.py" />
@@ -549,6 +559,7 @@
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\operations\tags_operations.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\operations\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\resource_management_client.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\version.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\resources\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\models\location.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\models\location_paged.py" />
@@ -562,6 +573,7 @@
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\operations\tenants_operations.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\operations\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\subscription_client.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\version.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\__init__.py" />
@@ -613,6 +625,7 @@
     <Compile Include="azure-mgmt-scheduler\azure\mgmt\scheduler\operations\job_collections_operations.py" />
     <Compile Include="azure-mgmt-scheduler\azure\mgmt\scheduler\operations\__init__.py" />
     <Compile Include="azure-mgmt-scheduler\azure\mgmt\scheduler\scheduler_management_client.py" />
+    <Compile Include="azure-mgmt-scheduler\azure\mgmt\scheduler\version.py" />
     <Compile Include="azure-mgmt-scheduler\azure\mgmt\scheduler\__init__.py" />
     <Compile Include="azure-mgmt-scheduler\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-scheduler\azure\__init__.py" />
@@ -637,6 +650,7 @@
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\operations\usage_operations.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\operations\__init__.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\storage_management_client.py" />
+    <Compile Include="azure-mgmt-storage\azure\mgmt\storage\version.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\models\address.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\models\address_response.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\models\api_definition_info.py" />
@@ -785,6 +799,7 @@
     <Compile Include="azure-mgmt-web\azure\mgmt\web\operations\top_level_domains_operations.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\operations\usage_operations.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\operations\__init__.py" />
+    <Compile Include="azure-mgmt-web\azure\mgmt\web\version.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\web_site_management_client.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\__init__.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\__init__.py" />
