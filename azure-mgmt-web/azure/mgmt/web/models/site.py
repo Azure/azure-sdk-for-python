@@ -109,6 +109,11 @@ class Site(Resource):
      this web app uses for outbound connections. Those can be used when
      configuring firewall rules for databases accessed by this web app.
     :type outbound_ip_addresses: str
+    :param container_size: Size of a function container
+    :type container_size: int
+    :param max_number_of_workers: Maximum number of workers
+     This only applies to function container
+    :type max_number_of_workers: int
     :param cloning_info: This is only valid for web app creation. If
      specified, web app is cloned from
      a source web app
@@ -116,6 +121,10 @@ class Site(Resource):
      <azure.mgmt.web.models.CloningInfo>`
     :param resource_group: Resource group web app belongs to
     :type resource_group: str
+    :param is_default_container: Site is a default container
+    :type is_default_container: bool
+    :param default_host_name: Default hostname of the web app
+    :type default_host_name: str
     """ 
 
     _validation = {
@@ -151,11 +160,15 @@ class Site(Resource):
         'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool'},
         'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
         'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str'},
+        'container_size': {'key': 'properties.containerSize', 'type': 'int'},
+        'max_number_of_workers': {'key': 'properties.maxNumberOfWorkers', 'type': 'int'},
         'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+        'is_default_container': {'key': 'properties.isDefaultContainer', 'type': 'bool'},
+        'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, cloning_info=None, resource_group=None, **kwargs):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, container_size=None, max_number_of_workers=None, cloning_info=None, resource_group=None, is_default_container=None, default_host_name=None, **kwargs):
         super(Site, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.site_name = site_name
         self.state = state
@@ -180,5 +193,9 @@ class Site(Resource):
         self.client_cert_enabled = client_cert_enabled
         self.host_names_disabled = host_names_disabled
         self.outbound_ip_addresses = outbound_ip_addresses
+        self.container_size = container_size
+        self.max_number_of_workers = max_number_of_workers
         self.cloning_info = cloning_info
         self.resource_group = resource_group
+        self.is_default_container = is_default_container
+        self.default_host_name = default_host_name

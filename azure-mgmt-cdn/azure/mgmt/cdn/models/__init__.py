@@ -20,13 +20,11 @@
 # --------------------------------------------------------------------------
 
 from .profile import Profile
-from .profile_properties import ProfileProperties
 from .sku import Sku
 from .profile_create_parameters import ProfileCreateParameters
 from .profile_update_parameters import ProfileUpdateParameters
 from .sso_uri import SsoUri
 from .endpoint import Endpoint
-from .endpoint_properties import EndpointProperties
 from .deep_created_origin import DeepCreatedOrigin
 from .endpoint_create_parameters import EndpointCreateParameters
 from .endpoint_update_parameters import EndpointUpdateParameters
@@ -63,13 +61,11 @@ from .cdn_management_client_enums import (
 
 __all__ = [
     'Profile',
-    'ProfileProperties',
     'Sku',
     'ProfileCreateParameters',
     'ProfileUpdateParameters',
     'SsoUri',
     'Endpoint',
-    'EndpointProperties',
     'DeepCreatedOrigin',
     'EndpointCreateParameters',
     'EndpointUpdateParameters',

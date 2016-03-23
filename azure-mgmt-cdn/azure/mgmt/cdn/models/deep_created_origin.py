@@ -24,15 +24,16 @@ from msrest.serialization import Model
 
 class DeepCreatedOrigin(Model):
     """
-    Deep created origins within a CDN endpoint
+    Deep created origins within a CDN endpoint.
 
     :param name: Origin name
     :type name: str
-    :param host_name: The host name of the origin
+    :param host_name: The address of the origin. Domain names, IPv4
+     addresses, and IPv6 addresses are supported.
     :type host_name: str
-    :param http_port: The value of the http port, must be between 1 and 65535
+    :param http_port: The value of the HTTP port. Must be between 1 and 65535
     :type http_port: int
-    :param https_port: The value of the https port, must be between 1 and
+    :param https_port: The value of the HTTPS port. Must be between 1 and
      65535
     :type https_port: int
     """ 

@@ -26,8 +26,8 @@ class BootDiagnostics(Model):
     """
     Describes Boot Diagnostics.
 
-    :param enabled: Gets or sets whether VM Agent should be provisioned on
-     the Virtual Machine.
+    :param enabled: Gets or sets whether boot diagnostics should be enabled
+     on the Virtual Machine.
     :type enabled: bool
     :param storage_uri: Gets or sets the boot diagnostics storage Uri. It
      should be a valid Uri

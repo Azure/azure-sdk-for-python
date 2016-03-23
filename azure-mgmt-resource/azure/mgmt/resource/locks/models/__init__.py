@@ -26,7 +26,7 @@ from .management_lock_object import ManagementLockObject
 from .resource_model import ResourceModel
 from .sub_resource import SubResource
 from .management_lock_object_paged import ManagementLockObjectPaged
-from .lock_management_client_enums import (
+from .management_lock_client_enums import (
     LockLevel,
 )
 

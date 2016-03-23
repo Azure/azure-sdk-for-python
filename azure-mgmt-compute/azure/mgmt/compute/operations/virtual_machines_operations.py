@@ -47,7 +47,7 @@ class VirtualMachinesOperations(object):
     def capture(
             self, resource_group_name, vm_name, parameters, custom_headers={}, raw=False, **operation_config):
         """
-        Captures the VM by copying VirtualHardDisks of the VM and outputs a
+        Captures the VM by copying virtual hard disks of the VM and outputs a
         template that can be used to create similar VMs.
 
         :param resource_group_name: The name of the resource group.
@@ -286,7 +286,7 @@ class VirtualMachinesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202, 204]:
+            if response.status_code not in [202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -312,6 +312,7 @@ class VirtualMachinesOperations(object):
         :param vm_name: The name of the virtual machine.
         :type vm_name: str
         :param expand: The expand expression to apply on the operation.
+         Possible values include: 'instanceView'
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -335,7 +336,7 @@ class VirtualMachinesOperations(object):
         # Construct parameters
         query_parameters = {}
         if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'InstanceViewTypes')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
@@ -632,7 +633,8 @@ class VirtualMachinesOperations(object):
     def list_available_sizes(
             self, resource_group_name, vm_name, custom_headers={}, raw=False, **operation_config):
         """
-        Lists virtual-machine-sizes available to be used for a virtual machine.
+        Lists all available virtual machine sizes it can be resized to for a
+        virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

@@ -24,23 +24,24 @@ from .resource import Resource
 
 class Origin(Resource):
     """
-    CDN Origin is the source of the content being delivered via CDN. When the
-    edge nodes represented by an Endpoint do not have the requested content
+    CDN origin is the source of the content being delivered via CDN. When the
+    edge nodes represented by an endpoint do not have the requested content
     cached, they attempt to fetch it from one or more of the configured
-    Origins.
+    origins.
 
-    :param id: Resource Id
+    :param id: Resource ID
     :type id: str
-    :param name: Resource Name
+    :param name: Resource name
     :type name: str
     :param type: Resource type
     :type type: str
-    :param host_name: The host name of the origin
+    :param host_name: The address of the origin. Domain names, IPv4
+     addresses, and IPv6 addresses are supported.
     :type host_name: str
-    :param http_port: The value of the http port, must be between 1 and 65535
+    :param http_port: The value of the HTTP port. Must be between 1 and 65535.
     :type http_port: int
-    :param https_port: The value of the https port, must be between 1 and
-     65535
+    :param https_port: The value of the https port. Must be between 1 and
+     65535.
     :type https_port: int
     :param resource_state: Resource status of the origin. Possible values
      include: 'Creating', 'Active', 'Deleting'

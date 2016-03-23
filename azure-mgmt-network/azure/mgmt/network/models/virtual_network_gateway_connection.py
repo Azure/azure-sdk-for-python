@@ -67,6 +67,8 @@ class VirtualNetworkGatewayConnection(Resource):
     :type ingress_bytes_transferred: long
     :param peer: The reference to peerings resource.
     :type peer: :class:`SubResource <azure.mgmt.network.models.SubResource>`
+    :param enable_bgp: EnableBgp Flag
+    :type enable_bgp: bool
     :param resource_guid: Gets or sets resource guid property of the
      VirtualNetworkGatewayConnection resource
     :type resource_guid: str
@@ -95,12 +97,13 @@ class VirtualNetworkGatewayConnection(Resource):
         'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
         'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
         'peer': {'key': 'properties.peer', 'type': 'SubResource'},
+        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, authorization_key=None, virtual_network_gateway1=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_type=None, routing_weight=None, shared_key=None, connection_status=None, egress_bytes_transferred=None, ingress_bytes_transferred=None, peer=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, authorization_key=None, virtual_network_gateway1=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_type=None, routing_weight=None, shared_key=None, connection_status=None, egress_bytes_transferred=None, ingress_bytes_transferred=None, peer=None, enable_bgp=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
         super(VirtualNetworkGatewayConnection, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
@@ -113,6 +116,7 @@ class VirtualNetworkGatewayConnection(Resource):
         self.egress_bytes_transferred = egress_bytes_transferred
         self.ingress_bytes_transferred = ingress_bytes_transferred
         self.peer = peer
+        self.enable_bgp = enable_bgp
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag

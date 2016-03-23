@@ -76,7 +76,7 @@ interactions:
       Date: ['Wed, 20 Jan 2016 00:15:51 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
-      Retry-After: ['10']
+      Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [9281ba64-a5a6-4b41-bc7f-595844c08197]
@@ -228,7 +228,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/390971cf-bbd3-493f-a9d8-e297a1ba4df6?api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['10']
+      Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [e1539152-44c1-4dcf-87e7-b2b9f77d7f28]
@@ -380,7 +380,7 @@ interactions:
       Date: ['Tue, 16 Feb 2016 18:53:48 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
-      Retry-After: ['10']
+      Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [8e080c40-3fab-4569-9785-5d23feca1d03]
@@ -532,7 +532,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/6cd5a21b-f3a5-4430-aab0-035b097ec5b6?api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['10']
+      Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [0fd2e2af-3cf7-4584-a732-602267f3915a]
@@ -607,5 +607,317 @@ interactions:
       x-ms-ratelimit-remaining-subscription-reads: ['14972']
       x-ms-request-id: [1198807d-abf6-42a5-939f-410e95547e89]
       x-ms-routing-request-id: ['WESTUS:20160216T185412Z:22b4cfcd-ddcd-47e0-8b34-f0a1739709fd']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      eyJuYW1lIjogInRlc3RfbWdtdF9uZXR3b3JrX3Rlc3RfdmlydHVhbF9uZXR3b3JrczQ3MjUxMDZl
+      IiwgImxvY2F0aW9uIjogIndlc3R1cyJ9
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['81']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 resourcemanagementclient/2015-11-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [ee740e02-f088-11e5-aec3-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_network_test_virtual_networks4725106e?api-version=2015-11-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e","name":"test_mgmt_network_test_virtual_networks4725106e","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['247']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 22 Mar 2016 23:51:00 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [69b51c10-75bc-4eb8-a82d-449f0a7f99db]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [69b51c10-75bc-4eb8-a82d-449f0a7f99db]
+      x-ms-routing-request-id: ['WESTUS:20160322T235101Z:69b51c10-75bc-4eb8-a82d-449f0a7f99db']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      eyJwcm9wZXJ0aWVzIjogeyJkaGNwT3B0aW9ucyI6IHsiZG5zU2VydmVycyI6IFsiMTAuMS4xLjEi
+      LCAiMTAuMS4yLjQiXX0sICJhZGRyZXNzU3BhY2UiOiB7ImFkZHJlc3NQcmVmaXhlcyI6IFsiMTAu
+      MC4wLjAvMTYiXX0sICJzdWJuZXRzIjogW3sicHJvcGVydGllcyI6IHsiYWRkcmVzc1ByZWZpeCI6
+      ICIxMC4wLjEuMC8yNCJ9LCAibmFtZSI6ICJweXZuZXRzdWJuZXRvbmU0NzI1MTA2ZSJ9LCB7InBy
+      b3BlcnRpZXMiOiB7ImFkZHJlc3NQcmVmaXgiOiAiMTAuMC4yLjAvMjQifSwgIm5hbWUiOiAicHl2
+      bmV0c3VibmV0dHdvNDcyNTEwNmUifV19LCAibG9jYXRpb24iOiAid2VzdHVzIn0=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['332']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 networkmanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [eec5393e-f088-11e5-855a-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks/pyvnet4725106e?api-version=2015-06-15
+  response:
+    body: {string: "{\r\n  \"name\": \"pyvnet4725106e\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e\"\
+        ,\r\n  \"etag\": \"W/\\\"3d6d77c5-8c73-4872-a5f5-b244075b7200\\\"\",\r\n \
+        \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"westus\"\
+        ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
+        \   \"resourceGuid\": \"2bb7adb9-8554-43bc-80c7-07052f4ecbda\",\r\n    \"\
+        addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
+        \r\n      ]\r\n    },\r\n    \"dhcpOptions\": {\r\n      \"dnsServers\": [\r\
+        \n        \"10.1.1.1\",\r\n        \"10.1.2.4\"\r\n      ]\r\n    },\r\n \
+        \   \"subnets\": [\r\n      {\r\n        \"name\": \"pyvnetsubnetone4725106e\"\
+        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnetone4725106e\"\
+        ,\r\n        \"etag\": \"W/\\\"3d6d77c5-8c73-4872-a5f5-b244075b7200\\\"\"\
+        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
+        ,\r\n          \"addressPrefix\": \"10.0.1.0/24\"\r\n        }\r\n      },\r\
+        \n      {\r\n        \"name\": \"pyvnetsubnettwo4725106e\",\r\n        \"\
+        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualNetworks/pyvnet4725106e/subnets/pyvnetsubnettwo4725106e\"\
+        ,\r\n        \"etag\": \"W/\\\"3d6d77c5-8c73-4872-a5f5-b244075b7200\\\"\"\
+        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
+        ,\r\n          \"addressPrefix\": \"10.0.2.0/24\"\r\n        }\r\n      }\r\
+        \n    ]\r\n  }\r\n}"}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ef8332bb-0cf0-418e-9ac0-95045b77c070?api-version=2015-06-15']
+      Cache-Control: [no-cache]
+      Content-Length: ['1634']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 22 Mar 2016 23:51:02 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Retry-After: ['0']
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [60fbd059-fb35-4e9d-adac-fcda66662bb8]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [ef8332bb-0cf0-418e-9ac0-95045b77c070]
+      x-ms-routing-request-id: ['WESTUS:20160322T235102Z:60fbd059-fb35-4e9d-adac-fcda66662bb8']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 networkmanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [eec5393e-f088-11e5-855a-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ef8332bb-0cf0-418e-9ac0-95045b77c070?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UdNm7Xr5qNH6Uev19Npns/y2Ue/cfJL/h9PlJBHHQAAAA==
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 22 Mar 2016 23:51:12 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [6d451d05-419e-4aeb-8ae3-227ba6833a34]
+      x-ms-ratelimit-remaining-subscription-reads: ['14994']
+      x-ms-request-id: [6bcd4a95-a45c-4178-aaee-d952d636442f]
+      x-ms-routing-request-id: ['WESTUS:20160322T235112Z:6d451d05-419e-4aeb-8ae3-227ba6833a34']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 networkmanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [eec5393e-f088-11e5-855a-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks/pyvnet4725106e?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UfLbJF/9Cj9aHV9uczb/Qd793d3Ps0/GvGXxQxf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb
+        +59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6nuaf19V61dxt86b9/RcXi/b3p06uqvrt78+fXBZ1
+        u85K82Fjur+7qqvLYpbXzd0vimldNdV5O34hje7qS/pnczeKed5mF8D9u3d/348e7M/2JtNptr2T
+        P/x0e393b7KdTfcPtnf3d/fzezt7nz6YPfh9P9IX2+sV0+PGfrV9WU0z0AXvXNGY1uYLGsIqr9si
+        b+grprV8eFk01LxYXrxus5a7er2eTvN8ls/kTWpmqbeWGdibTB5ks8nD7YP79/eJ7pPp9sHO9MH2
+        zoOd+3vn+/l0Msvsy9lsRu83r1fZFOC1a/fFyzo/L94xWt8z39G3uztj/u/u7qcfmY+/L7/8EgN6
+        Np+uvhQ2oLcd5NmyeZ3XlzRf9HEH6C7+M8jhkQ/3xvuD3RC/0YwGsGxf9HXIstK4WuYhB8jz/0UO
+        vkvI0p/mY/lraHxfl8/lAT/2mFQefHULVpUnZC00pDnGLO/c3XPTTDNsfjVTffPEtldVdOD/f5nY
+        dmB8/6+e2L3hiZVfWKLp91/y/wDCT257ZQYAAA==
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 22 Mar 2016 23:51:12 GMT']
+      ETag: [W/"74d2bcca-0e96-412b-ac48-1414e30267d7"]
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [6ff0c01d-73f1-4f06-82c4-b80f1d780abb]
+      x-ms-ratelimit-remaining-subscription-reads: ['14995']
+      x-ms-request-id: [9a8427e3-4832-4934-a610-8c207594cc09]
+      x-ms-routing-request-id: ['WESTUS:20160322T235113Z:6ff0c01d-73f1-4f06-82c4-b80f1d780abb']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 networkmanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [f5c011fa-f088-11e5-9f50-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks/pyvnet4725106e?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UfLbJF/9Cj9aHV9uczb/Qd793d3Ps0/GvGXxQxf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb
+        +59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6nuaf19V61dxt86b9/RcXi/b3p06uqvrt78+fXBZ1
+        u85K82Fjur+7qqvLYpbXzd0vimldNdV5O34hje7qS/pnczeKed5mF8D9u3d/348e7M/2JtNptr2T
+        P/x0e393b7KdTfcPtnf3d/fzezt7nz6YPfh9P9IX2+sV0+PGfrV9WU0z0AXvXNGY1uYLGsIqr9si
+        b+grprV8eFk01LxYXrxus5a7er2eTvN8ls/kTWpmqbeWGdibTB5ks8nD7YP79/eJ7pPp9sHO9MH2
+        zoOd+3vn+/l0Msvsy9lsRu83r1fZFOC1a/fFyzo/L94xWt8z39G3uztj/u/u7qcfmY+/L7/8EgN6
+        Np+uvhQ2oLcd5NmyeZ3XlzRf9HEH6C7+M8jhkQ/3xvuD3RC/0YwGsGxf9HXIstK4WuYhB8jz/0UO
+        vkvI0p/mY/lraHxfl8/lAT/2mFQefHULVpUnZC00pDnGLO/c3XPTTDNsfjVTffPEtldVdOD/f5nY
+        dmB8/6+e2L3hiZVfWKLp91/y/wDCT257ZQYAAA==
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 22 Mar 2016 23:51:13 GMT']
+      ETag: [W/"74d2bcca-0e96-412b-ac48-1414e30267d7"]
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [2098d826-b89f-4b28-bd74-504fc08a7a44]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [e6620710-0f43-4ee2-a57d-c4086c9c05a3]
+      x-ms-routing-request-id: ['WESTUS:20160322T235113Z:2098d826-b89f-4b28-bd74-504fc08a7a44']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      bnVsbA==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['4']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 networkmanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [f619b850-f088-11e5-a509-54ee7574ca37]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks/pyvnet4725106e?api-version=2015-06-15
+  response:
+    body: {string: ''}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e44f2caa-08d6-42d4-966f-c02c5167df1b?api-version=2015-06-15']
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Tue, 22 Mar 2016 23:51:14 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/e44f2caa-08d6-42d4-966f-c02c5167df1b?api-version=2015-06-15']
+      Pragma: [no-cache]
+      Retry-After: ['0']
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [19020ff9-c3a9-4dab-8b5c-556bb4f4619f]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [e44f2caa-08d6-42d4-966f-c02c5167df1b]
+      x-ms-routing-request-id: ['WESTUS:20160322T235114Z:19020ff9-c3a9-4dab-8b5c-556bb4f4619f']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 networkmanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [f619b850-f088-11e5-a509-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/e44f2caa-08d6-42d4-966f-c02c5167df1b?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UdNm7Xr5qNH6Uev19Npns/y2Ue/cfJL/h9PlJBHHQAAAA==
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 22 Mar 2016 23:51:24 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [58acf0a3-1618-4dad-8f2a-98fbae7e848b]
+      x-ms-ratelimit-remaining-subscription-reads: ['14993']
+      x-ms-request-id: [bbadfc84-4f84-4a1d-a451-168eb6cb50cc]
+      x-ms-routing-request-id: ['WESTUS:20160322T235125Z:58acf0a3-1618-4dad-8f2a-98fbae7e848b']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 networkmanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fcc10c92-f088-11e5-b746-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_networks4725106e/providers/Microsoft.Network/virtualnetworks?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
+        uc4/evS97/+S/wdC6kBEDAAAAA==
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Length: ['133']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 22 Mar 2016 23:51:25 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [7c4b2c4c-1871-486a-aec3-ef614f23f2fa]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [7c4b2c4c-1871-486a-aec3-ef614f23f2fa]
+      x-ms-routing-request-id: ['WESTUS:20160322T235125Z:7c4b2c4c-1871-486a-aec3-ef614f23f2fa']
     status: {code: 200, message: OK}
 version: 1

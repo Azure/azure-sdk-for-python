@@ -86,7 +86,7 @@ interactions:
       expires: ['-1']
       location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview']
       pragma: [no-cache]
-      retry-after: ['25']
+      retry-after: ['0']
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [a9b33dcf-162e-41c1-9359-da0c39405ae3]
@@ -114,7 +114,7 @@ interactions:
       expires: ['-1']
       location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview']
       pragma: [no-cache]
-      retry-after: ['25']
+      retry-after: ['0']
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [f108bae2-72ee-4b1e-987b-89fbfbb3905e]
@@ -422,7 +422,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/74d50280-ef05-4e44-a21d-76448f882d36?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [eed80fb5-effc-436a-9da3-0f0c970cb5d3]
@@ -744,7 +744,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/34fc673f-3d9b-4a0d-832d-cb8747779129?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [73eb691e-e7c4-4d50-b3ed-6acfa5a8698d]
@@ -1066,7 +1066,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [258ab00c-6b48-440c-ad2b-e1b2d4914a4d]
@@ -1095,7 +1095,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [b8e0340b-bf29-49e1-9ef8-c675182536ba]
@@ -1124,7 +1124,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [15b3131d-bf04-4bc2-96b5-1b8bad0d3818]
@@ -1153,7 +1153,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [5f63e90e-e965-424b-9f06-d7858a71caf9]
@@ -1182,7 +1182,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [c1e03a00-8f9b-4c41-9fd9-f9c31686e72e]
@@ -1211,7 +1211,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [abe1924a-e56f-47e6-9913-bca1da247b84]
@@ -1240,7 +1240,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [57911e80-f00e-4a86-8efd-5a6a2525a880]
@@ -1269,7 +1269,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [fbdbbada-b789-44cb-90bf-d1d6282ef32b]
@@ -1298,7 +1298,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [3fba6851-59b4-4c9b-ae41-ef7976b48e3a]
@@ -1327,7 +1327,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [9491eb45-90a4-4a60-aed4-5492ac6b21e4]
@@ -1356,7 +1356,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [23a975d6-f1a0-4d81-b7f2-73aa119ca9c4]
@@ -1385,7 +1385,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [f53992ef-a7b7-4a78-a296-4c2fa7cd115b]
@@ -1414,7 +1414,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [bc8c82d6-42c1-4a9c-a4a4-60a3f1460e32]
@@ -1443,7 +1443,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [8f422cca-a62c-40f7-9a77-ad566d504e0b]
@@ -1472,7 +1472,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [4296dcc8-7e25-42be-bcf7-5025e604e4d7]
@@ -1501,7 +1501,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [fe9125c0-f22e-45a9-8159-4f5aa42a50aa]
@@ -1530,7 +1530,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [8c77d0d0-521c-4d6a-bd73-c074a38f972f]
@@ -1559,7 +1559,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [49b08658-76e7-46c0-8a85-4a4b7548d7b0]
@@ -1588,7 +1588,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [8bfb2614-ff54-4b64-a8d6-93eefad0b57d]
@@ -1617,7 +1617,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [0f6f45a6-cc39-497e-bda4-137ba12ab1b7]
@@ -1646,7 +1646,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [6f4540a0-1149-48a1-885a-8270d425e29e]
@@ -1675,7 +1675,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [ebb0ffdd-6198-4745-8870-f46b75e1d3db]
@@ -1704,7 +1704,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [f6987bf3-2452-4fdc-a236-756239d0342d]
@@ -1733,7 +1733,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [ec579124-bdba-4a65-95b3-63d2b4a9b55f]
@@ -1762,7 +1762,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [919ce5ea-0e95-45fe-ad97-5b3696c4c5b5]
@@ -1791,7 +1791,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [c4d5fae5-5fb7-4233-bf2b-98039fa88ee6]
@@ -1820,7 +1820,7 @@ interactions:
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
       Pragma: [no-cache]
-      Retry-After: ['25']
+      Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [19b2fbcc-3017-482a-a424-80b00a6bb8b5]
@@ -2049,5 +2049,335 @@ interactions:
       x-ms-ratelimit-remaining-subscription-writes: ['1194']
       x-ms-request-id: [f8f5085b-264e-46ad-9ed6-60eddf393b32]
       x-ms-routing-request-id: ['WESTUS:20160216T192006Z:f8f5085b-264e-46ad-9ed6-60eddf393b32']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAibmFtZSI6ICJ0ZXN0X21nbXRfc3RvcmFnZV90ZXN0X3N0
+      b3JhZ2VfYWNjb3VudHM0M2I4MTAyYSJ9
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['81']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 resourcemanagementclient/2015-11-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [9c61de86-f087-11e5-88a2-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts43b8102a?api-version=2015-11-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a","name":"test_mgmt_storage_test_storage_accounts43b8102a","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['247']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 22 Mar 2016 23:41:33 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [308ebfeb-70ff-4155-9e16-6a1f5f5a18f9]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [308ebfeb-70ff-4155-9e16-6a1f5f5a18f9]
+      x-ms-routing-request-id: ['EASTUS:20160322T234133Z:308ebfeb-70ff-4155-9e16-6a1f5f5a18f9']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      eyJ0eXBlIjogIk1pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cyIsICJuYW1lIjogInB5
+      YXJtc3RvcmFnZTQzYjgxMDJhIn0=
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['77']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [9d8bd9e8-f087-11e5-8e0a-54ee7574ca37]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
+        kR9fZkWZTcr8o0dtvc5/SfL/AAeYVbAXAAAA
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json]
+      Date: ['Tue, 22 Mar 2016 23:41:35 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [37e566be-6892-4853-a80d-8212688d1b28]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [37e566be-6892-4853-a80d-8212688d1b28]
+      x-ms-routing-request-id: ['EASTUS:20160322T234136Z:37e566be-6892-4853-a80d-8212688d1b28']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAicHJvcGVydGllcyI6IHsiYWNjb3VudFR5cGUiOiAiU3Rh
+      bmRhcmRfTFJTIn19
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['69']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [9e1241e4-f087-11e5-a51b-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Tue, 22 Mar 2016 23:41:38 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/842d5dcd-dbb8-4180-95ce-e220cae89a9b?monitor=true&api-version=2015-06-15']
+      Pragma: [no-cache]
+      Retry-After: ['0']
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [e9beb93f-f8f0-4fe2-a0fe-a889175009bf]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [e9beb93f-f8f0-4fe2-a0fe-a889175009bf]
+      x-ms-routing-request-id: ['EASTUS:20160322T234139Z:e9beb93f-f8f0-4fe2-a0fe-a889175009bf']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [9e1241e4-f087-11e5-a51b-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/842d5dcd-dbb8-4180-95ce-e220cae89a9b?monitor=true&api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2U1
+        zdqiWn706KOrvGnXzUejj1Z1tcrrtsibjx794o+y6bRaL9s316ucGr1us+Usq2e///NXrz/6Jb/k
+        /wFUNfWHQQAAAA==
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json]
+      Date: ['Tue, 22 Mar 2016 23:42:04 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [e8ddf3b4-4ad0-4521-8d9d-d88ac20b7104]
+      x-ms-ratelimit-remaining-subscription-reads: ['14995']
+      x-ms-request-id: [e8ddf3b4-4ad0-4521-8d9d-d88ac20b7104]
+      x-ms-routing-request-id: ['WESTUS:20160322T234204Z:e8ddf3b4-4ad0-4521-8d9d-d88ac20b7104']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [aed9f99c-f087-11e5-94df-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
+        nuaf19V61dxt86b9/RcXi/b3b9qqzi7y358/MX9k02m1XrbN/r3Jwe7OXnZ3VVeXxSyvm7tfFNO6
+        aqrzdvxaGt/Vl471nbur66xe6IcGwEejj8pqmgFhGsAV9bVu6LNltsjp74E3qNNVXrdF3nz06Bd/
+        pDi9uV7hlddttpxl9ez3f/7qNTWd1jkDf1MwwL2d3U+3d+5t7+292bv3aH/30b2D8f2D/Qc7O/s/
+        Ra1XdbHI6uvT5WxVFYQywE/KakJvztt21Ty6Gx3EGG3G06rOx1fFclZdNeNl3t4lgOdFiW43vow2
+        0Zd/0Tpf3/g2N4q+3maTmzvnRpHXf4klxvPI9NAEXBYNfVgsL4jgLbp5vZ5O83yWz+j7hj5bN1+e
+        vxQQ9G12mRUl+gLkNrsAafGbTNqNvPPRL0n+H3iq3dLkAgAA
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json]
+      Date: ['Tue, 22 Mar 2016 23:42:05 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [1b56f9fd-a2e7-4562-816d-1aaa47813a27]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [1b56f9fd-a2e7-4562-816d-1aaa47813a27]
+      x-ms-routing-request-id: ['WESTUS:20160322T234205Z:1b56f9fd-a2e7-4562-816d-1aaa47813a27']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      bnVsbA==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['4']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [af414fc6-f087-11e5-b2c7-54ee7574ca37]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/listKeys?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
+        692PHn1UP5/+xMuz+fq7d39wcvfeF3ufPH393frp9N3iB/v358e/z5ff/s4var+dvfvq/ovptxfv
+        Vk8+Pzv44ttPqh98eXV+cTFff3r1xerVdfuTP/ndr07fvjz74ve6++Zs8vz4s88+GqGHPerhO5Pi
+        q/bF8qevz9avJj/5i5583pzun5+2X5Xz5iJ/evoT0/bgxdPLF6vLyf5+VT18OL3cK54WP3U1u/sT
+        335+vtipHt59cVX83qcv2190/4uTanb/ky9eX15QD78k+X8AklA0jsYAAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json]
+      Date: ['Tue, 22 Mar 2016 23:42:06 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [c768d012-dc98-4085-9075-8a6956a136d4]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [c768d012-dc98-4085-9075-8a6956a136d4]
+      x-ms-routing-request-id: ['WESTUS:20160322T234206Z:c768d012-dc98-4085-9075-8a6956a136d4']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      eyJrZXlOYW1lIjogImtleTEifQ==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['19']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [af9d8ad8-f087-11e5-9917-54ee7574ca37]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/regenerateKey?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
+        692PHn307OHvc3x39tXBwU+cfvnwJ7/IZvOHVz/90w8nxew7+eXZi9kvmvyi3+v87uzT6u3z75bt
+        /u+zP5n94CfWbx8+WF79XtnvdX39yU/P1p9XP/mqXf/U+eL3OZ6/zpa/9/InPvvsoxF62KMevjMp
+        vmpfLH/6+mz9avKTv+jJ583p/vlp+1U5by7yp6c/MW0PXjy9fLG6nOzvV9XDh9PLveJp8VNXs7s/
+        8e3n54ud6uHdF1fF7336sv1F9784qWb3P/ni9eUF9fBLkv8HIJy8WcYAAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json]
+      Date: ['Tue, 22 Mar 2016 23:42:06 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [44f8cca2-2357-429a-b3fc-dcab0671628d]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [44f8cca2-2357-429a-b3fc-dcab0671628d]
+      x-ms-routing-request-id: ['WESTUS:20160322T234206Z:44f8cca2-2357-429a-b3fc-dcab0671628d']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b0113f1c-f087-11e5-8443-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts?api-version=2015-06-15
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
+        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXP3/OHsYPfBw3x7/975zvb+p9PJ9sOH09n2+YO9yXk2
+        2ck+vTe5W+dNta6n+ed1tV41d9u8aX//xcWi/f2btqqzi/z350/MH9l0Wq2XbbN/b3Kwu7OX3V3V
+        1WUxy+vm7hfFtK6a6rwdv5bGd/WlY33n7uo6qxf6oQHw0eijsppmQJgGcEV9rRv6bJktaFwfDbxB
+        na7yui3y5qNHv/gjxenN9QqvvG6z5SyrZ7//81evqem0zhn4m4IB7u3sfrq9c297b+/N3r1H+7uP
+        7h2M7x/sP9jZ2f8par2qi0VWX58uZ6uqIJQBflJWE3pz3rar5tHd6CDGaDOeVnU+viqWs+qqGS/z
+        9i4BPC9KdLvxZbSJvvyL1jlmd/Pb3Cj6eptNbu6cG0Ve/yWWGM8j00MTcFk09GGxvCCCt+jm9Xo6
+        zfNZPqPvG/ps3Xx5/lJA0LfZZVaU6AuQ2+wCpMVvMmk38s5Hv+T7vyT5fwDRAmkn8AIAAA==
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json]
+      Date: ['Tue, 22 Mar 2016 23:42:06 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [ac94e149-f0e1-46f3-b941-ada6f5037469]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [ac94e149-f0e1-46f3-b941-ada6f5037469]
+      x-ms-routing-request-id: ['WESTUS:20160322T234207Z:ac94e149-f0e1-46f3-b941-ada6f5037469']
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      bnVsbA==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['4']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b05c8a8a-f087-11e5-86f8-54ee7574ca37]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Tue, 22 Mar 2016 23:42:08 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [dd383a2c-7add-4423-912e-a2279b2d92e3]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [dd383a2c-7add-4423-912e-a2279b2d92e3]
+      x-ms-routing-request-id: ['WESTUS:20160322T234208Z:dd383a2c-7add-4423-912e-a2279b2d92e3']
     status: {code: 200, message: OK}
 version: 1
