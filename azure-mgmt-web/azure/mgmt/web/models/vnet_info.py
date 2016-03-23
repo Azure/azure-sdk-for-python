@@ -47,6 +47,8 @@ class VnetInfo(Resource):
     :type cert_blob: str
     :param routes: The routes that this virtual network connection uses.
     :type routes: list of :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
+    :param resync_required: Flag to determine if a resync is required
+    :type resync_required: bool
     """ 
 
     _validation = {
@@ -63,11 +65,13 @@ class VnetInfo(Resource):
         'cert_thumbprint': {'key': 'properties.certThumbprint', 'type': 'str'},
         'cert_blob': {'key': 'properties.certBlob', 'type': 'str'},
         'routes': {'key': 'properties.routes', 'type': '[VnetRoute]'},
+        'resync_required': {'key': 'properties.resyncRequired', 'type': 'bool'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None, **kwargs):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None, resync_required=None, **kwargs):
         super(VnetInfo, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint = cert_thumbprint
         self.cert_blob = cert_blob
         self.routes = routes
+        self.resync_required = resync_required

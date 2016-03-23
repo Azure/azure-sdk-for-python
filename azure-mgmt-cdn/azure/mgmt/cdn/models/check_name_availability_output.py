@@ -24,14 +24,14 @@ from msrest.serialization import Model
 
 class CheckNameAvailabilityOutput(Model):
     """
-    Output of check name availability API
+    Output of check name availability API.
 
-    :param name_available: Indicates whether the name is available
+    :param name_available: Indicates whether the name is available.
     :type name_available: bool
-    :param reason: The reason why the name is not available
+    :param reason: The reason why the name is not available.
     :type reason: str
-    :param message: The detailed error message on why the name is not
-     available
+    :param message: The detailed error message describing why the name is not
+     available.
     :type message: str
     """ 
 

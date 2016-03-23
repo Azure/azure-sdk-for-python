@@ -46,12 +46,13 @@ class EndpointsOperations(object):
     def list_by_profile(
             self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Lists existing CDN endpoints within a profile
+        Lists existing CDN endpoints within a profile.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -113,14 +114,15 @@ class EndpointsOperations(object):
     def get(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Gets an existing CDN endpoint with the specified parameters
+        Gets an existing CDN endpoint with the specified parameters.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -176,17 +178,18 @@ class EndpointsOperations(object):
     def create(
             self, endpoint_name, endpoint_properties, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Creates a new CDN endpoint with the specified parameters
+        Creates a new CDN endpoint with the specified parameters.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
         :param endpoint_properties: Endpoint properties
         :type endpoint_properties: :class:`EndpointCreateParameters
          <azure.mgmt.cdn.models.EndpointCreateParameters>`
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -274,15 +277,16 @@ class EndpointsOperations(object):
         To update origins, use the Update Origin operation. To update custom
         domains, use the Update Custom Domain operation.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
         :param endpoint_properties: Endpoint properties
         :type endpoint_properties: :class:`EndpointUpdateParameters
          <azure.mgmt.cdn.models.EndpointUpdateParameters>`
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -365,14 +369,15 @@ class EndpointsOperations(object):
     def delete_if_exists(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        deletes an existing CDN endpoint with the specified parameters
+        Deletes an existing CDN endpoint with the specified parameters.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -441,14 +446,15 @@ class EndpointsOperations(object):
     def start(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Starts an existing stopped CDN endpoint
+        Starts an existing stopped CDN endpoint.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -517,14 +523,15 @@ class EndpointsOperations(object):
     def stop(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Stops an existing running CDN endpoint
+        Stops an existing running CDN endpoint.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -593,16 +600,17 @@ class EndpointsOperations(object):
     def purge_content(
             self, endpoint_name, profile_name, resource_group_name, content_paths, custom_headers={}, raw=False, **operation_config):
         """
-        Forcibly purges CDN endpoint content
+        Forcibly purges CDN endpoint content.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
-        :param content_paths: The path to the content to be purged, can
+        :param content_paths: The path to the content to be purged. Can
          describe a file path or a wild card directory.
         :type content_paths: list of str
         :param dict custom_headers: headers that will be added to the request
@@ -678,16 +686,17 @@ class EndpointsOperations(object):
     def load_content(
             self, endpoint_name, profile_name, resource_group_name, content_paths, custom_headers={}, raw=False, **operation_config):
         """
-        Forcibly pre-loads CDN endpoint content
+        Forcibly pre-loads CDN endpoint content.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
-        :param content_paths: The path to the content to be loaded, should
+        :param content_paths: The path to the content to be loaded. Should
          describe a file path.
         :type content_paths: list of str
         :param dict custom_headers: headers that will be added to the request
@@ -763,17 +772,19 @@ class EndpointsOperations(object):
     def validate_custom_domain(
             self, endpoint_name, profile_name, resource_group_name, host_name, custom_headers={}, raw=False, **operation_config):
         """
-        Validates a Custom Domain mapping to ensure it maps to the correct
-        CNAME in DNS
+        Validates a custom domain mapping to ensure it maps to the correct
+        CNAME in DNS.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
-        :param host_name: The host name of the custom domain
+        :param host_name: The host name of the custom domain. Must be a
+         domain name.
         :type host_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

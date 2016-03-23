@@ -22,26 +22,22 @@
 from msrest.serialization import Model
 
 
-class ProfileProperties(Model):
-    """ProfileProperties
+class IpSecurityRestriction(Model):
+    """
+    Represents an ip security restriction on a web app.
 
-    :param sku: Profile sku
-    :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
-    :param resource_state: Resource status of the profile. Possible values
-     include: 'Creating', 'Active', 'Deleting', 'Disabled'
-    :type resource_state: str
-    :param provisioning_state: Provisioning status of the profile. Possible
-     values include: 'Creating', 'Succeeded', 'Failed'
-    :type provisioning_state: str
+    :param ip_address: IP address the security restriction is valid for
+    :type ip_address: str
+    :param subnet_mask: Subnet mask for the range of IP addresses the
+     restriction is valid for
+    :type subnet_mask: str
     """ 
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'resource_state': {'key': 'resourceState', 'type': 'ProfileResourceState'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
     }
 
-    def __init__(self, sku=None, resource_state=None, provisioning_state=None, **kwargs):
-        self.sku = sku
-        self.resource_state = resource_state
-        self.provisioning_state = provisioning_state
+    def __init__(self, ip_address=None, subnet_mask=None, **kwargs):
+        self.ip_address = ip_address
+        self.subnet_mask = subnet_mask

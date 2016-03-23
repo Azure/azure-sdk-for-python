@@ -125,8 +125,8 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.models.VirtualMachineImageResource>`
+        :rtype: list of :class:`VirtualMachineExtensionImage
+         <azure.mgmt.compute.models.VirtualMachineExtensionImage>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -165,7 +165,7 @@ class VirtualMachineExtensionImagesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[VirtualMachineImageResource]', response)
+            deserialized = self._deserialize('[VirtualMachineExtensionImage]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -195,8 +195,8 @@ class VirtualMachineExtensionImagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`VirtualMachineImageResource
-         <azure.mgmt.compute.models.VirtualMachineImageResource>`
+        :rtype: list of :class:`VirtualMachineExtensionImage
+         <azure.mgmt.compute.models.VirtualMachineExtensionImage>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -242,7 +242,7 @@ class VirtualMachineExtensionImagesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[VirtualMachineImageResource]', response)
+            deserialized = self._deserialize('[VirtualMachineExtensionImage]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

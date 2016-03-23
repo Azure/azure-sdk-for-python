@@ -22,22 +22,26 @@
 from msrest.serialization import Model
 
 
-class ValidateCustomDomainInput(Model):
-    """
-    Input of the custom domain to be validated.
+class BgpSettings(Model):
+    """BgpSettings
 
-    :param host_name: The host name of the custom domain. Must be a domain
-     name.
-    :type host_name: str
+    :param asn: Gets or sets this BGP speaker's ASN
+    :type asn: long
+    :param bgp_peering_address: Gets or sets the BGP peering address and BGP
+     identifier of this BGP speaker
+    :type bgp_peering_address: str
+    :param peer_weight: Gets or sets the weight added to routes learned from
+     this BGP speaker
+    :type peer_weight: int
     """ 
 
-    _validation = {
-        'host_name': {'required': True},
-    }
-
     _attribute_map = {
-        'host_name': {'key': 'hostName', 'type': 'str'},
+        'asn': {'key': 'asn', 'type': 'long'},
+        'bgp_peering_address': {'key': 'bgpPeeringAddress', 'type': 'str'},
+        'peer_weight': {'key': 'peerWeight', 'type': 'int'},
     }
 
-    def __init__(self, host_name, **kwargs):
-        self.host_name = host_name
+    def __init__(self, asn=None, bgp_peering_address=None, peer_weight=None, **kwargs):
+        self.asn = asn
+        self.bgp_peering_address = bgp_peering_address
+        self.peer_weight = peer_weight

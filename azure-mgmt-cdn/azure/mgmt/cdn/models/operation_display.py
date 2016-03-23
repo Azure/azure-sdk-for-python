@@ -27,10 +27,10 @@ class OperationDisplay(Model):
 
     :param provider: Service provider: Microsoft.Cdn
     :type provider: str
-    :param resource: Resource on which the operation is performed: profile,
-     endpoint,.. etc
+    :param resource: Resource on which the operation is performed: Profile,
+     endpoint, etc.
     :type resource: str
-    :param operation: Operation type: read, write, delete,.. etc
+    :param operation: Operation type: Read, write, delete, etc.
     :type operation: str
     """ 
 

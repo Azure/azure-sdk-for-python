@@ -24,32 +24,32 @@ from msrest.serialization import Model
 
 class EndpointUpdateParameters(Model):
     """
-    Endpoint properties required for new endpoint creation
+    Endpoint properties required for new endpoint creation.
 
     :param tags: Endpoint tags
     :type tags: dict
-    :param origin_host_header: The host header CDN provider will send along
-     with content requests to origins. The default value would be the host
+    :param origin_host_header: The host header the CDN provider will send
+     along with content requests to origins. The default value is the host
      name of the origin.
     :type origin_host_header: str
-    :param origin_path: The path used for origin requests
+    :param origin_path: The path used for origin requests.
     :type origin_path: str
     :param content_types_to_compress: List of content types on which
-     compression will be applied. The value for the elements should be
-     Internet media type.
+     compression will be applied. The value for the elements should be a
+     valid MIME type.
     :type content_types_to_compress: list of str
-    :param is_compression_enabled: Indicates whether the compression is
+    :param is_compression_enabled: Indicates whether content compression is
      enabled. Default value is false. If compression is enabled, the content
-     transferred from cdn endpoint to end user will be compressed. The
-     requested content must be larger than 1 byte and smaller than 1 MB.
+     transferred from the CDN endpoint to the end user will be compressed.
+     The requested content must be larger than 1 byte and smaller than 1 MB.
     :type is_compression_enabled: bool
-    :param is_http_allowed: Indicates whether http traffic is allowed on the
-     endpoint. Default value is true. At least one protocol (http or https)
+    :param is_http_allowed: Indicates whether HTTP traffic is allowed on the
+     endpoint. Default value is true. At least one protocol (HTTP or HTTPS)
      must be allowed.
     :type is_http_allowed: bool
-    :param is_https_allowed: Indicates whether https traffic is allowed on
-     the endpoint. Default value is true. At least one protocol (http or
-     https) must be allowed.
+    :param is_https_allowed: Indicates whether HTTPS traffic is allowed on
+     the endpoint. Default value is true. At least one protocol (HTTP or
+     HTTPS) must be allowed.
     :type is_https_allowed: bool
     :param query_string_caching_behavior: Defines the query string caching
      behavior. Possible values include: 'IgnoreQueryString', 'BypassCaching',

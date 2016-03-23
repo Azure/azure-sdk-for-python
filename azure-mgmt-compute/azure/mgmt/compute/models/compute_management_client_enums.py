@@ -29,6 +29,11 @@ class StatusLevelTypes(Enum):
     error = "Error"
 
 
+class ForceUpdateTagTypes(Enum):
+
+    rerun_extension = "RerunExtension"
+
+
 class OperatingSystemTypes(Enum):
 
     windows = "Windows"
@@ -139,16 +144,6 @@ class VirtualMachineScaleSetSkuScaleType(Enum):
     none = "None"
 
 
-class OperationStatus(Enum):
+class InstanceViewTypes(Enum):
 
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-
-
-class ComputeOperationStatus(Enum):
-
-    in_progress = "InProgress"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    preempted = "Preempted"
+    instance_view = "instanceView"

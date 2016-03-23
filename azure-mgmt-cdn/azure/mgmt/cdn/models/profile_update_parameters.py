@@ -24,7 +24,7 @@ from msrest.serialization import Model
 
 class ProfileUpdateParameters(Model):
     """
-    Profile properties required for profile update
+    Profile properties required for profile update.
 
     :param tags: Profile tags
     :type tags: dict

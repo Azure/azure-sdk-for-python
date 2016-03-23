@@ -65,6 +65,7 @@ from .inbound_nat_pool import InboundNatPool
 from .outbound_nat_rule import OutboundNatRule
 from .load_balancer import LoadBalancer
 from .address_space import AddressSpace
+from .bgp_settings import BgpSettings
 from .local_network_gateway import LocalNetworkGateway
 from .usage_name import UsageName
 from .usage import Usage
@@ -186,6 +187,7 @@ __all__ = [
     'OutboundNatRule',
     'LoadBalancer',
     'AddressSpace',
+    'BgpSettings',
     'LocalNetworkGateway',
     'UsageName',
     'Usage',
