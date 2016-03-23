@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-graphrbac',
-    version='0.30.0rc1',
+    version='0.30.0rc2',
     description='Microsoft Azure Graph RBAC Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
