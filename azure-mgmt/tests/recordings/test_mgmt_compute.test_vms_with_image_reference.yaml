@@ -921,7 +921,7 @@ interactions:
       Date: ['Tue, 22 Mar 2016 21:02:23 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
-      Retry-After: ['10']
+      Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       x-ms-correlation-request-id: [aced8f92-c83e-42af-8f2a-be1b02c0b540]
