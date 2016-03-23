@@ -1,3 +1,19 @@
+2016-03-29 Version 2.0.0 / 0.30.0
+
+New:
+* Latest Swagger update for CDN (minor fixes, documentation)
+* Latest Swagger update for Compute  (minor fixes, documentation)
+* Latest Swagger update for Network  (minor fixes, documentation)
+* Rename resource/locks client from LockManagementClient to ManagementLockClient
+* Latest Swagger update for Webapps  (minor fixes, documentation)
+
+Fixes:
+* #552 #536 Broken parameters in some Network models
+
+Dependencies:
+* msrest must be >= 0.1.3 (see their ChangeLog for details)
+* msrestazure must be >= 0.1.2 (see their ChangeLog for details)
+
 2016-03-04 Version 2.0.0rc1 / 0.30.0rc1
 
 New:
