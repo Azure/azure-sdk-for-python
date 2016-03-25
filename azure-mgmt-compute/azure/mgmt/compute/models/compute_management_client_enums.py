@@ -29,11 +29,6 @@ class StatusLevelTypes(Enum):
     error = "Error"
 
 
-class ForceUpdateTagTypes(Enum):
-
-    rerun_extension = "RerunExtension"
-
-
 class OperatingSystemTypes(Enum):
 
     windows = "Windows"

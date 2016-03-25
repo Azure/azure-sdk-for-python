@@ -26,17 +26,25 @@ class ExpressRouteCircuitStats(Model):
     """
     Contains Stats associated with the peering
 
-    :param bytes_in: Gets BytesIn of the peering.
-    :type bytes_in: int
-    :param bytes_out: Gets BytesOut of the peering.
-    :type bytes_out: int
+    :param primarybytes_in: Gets BytesIn of the peering.
+    :type primarybytes_in: int
+    :param primarybytes_out: Gets BytesOut of the peering.
+    :type primarybytes_out: int
+    :param secondarybytes_in: Gets BytesIn of the peering.
+    :type secondarybytes_in: int
+    :param secondarybytes_out: Gets BytesOut of the peering.
+    :type secondarybytes_out: int
     """ 
 
     _attribute_map = {
-        'bytes_in': {'key': 'bytesIn', 'type': 'int'},
-        'bytes_out': {'key': 'bytesOut', 'type': 'int'},
+        'primarybytes_in': {'key': 'primarybytesIn', 'type': 'int'},
+        'primarybytes_out': {'key': 'primarybytesOut', 'type': 'int'},
+        'secondarybytes_in': {'key': 'secondarybytesIn', 'type': 'int'},
+        'secondarybytes_out': {'key': 'secondarybytesOut', 'type': 'int'},
     }
 
-    def __init__(self, bytes_in=None, bytes_out=None, **kwargs):
-        self.bytes_in = bytes_in
-        self.bytes_out = bytes_out
+    def __init__(self, primarybytes_in=None, primarybytes_out=None, secondarybytes_in=None, secondarybytes_out=None, **kwargs):
+        self.primarybytes_in = primarybytes_in
+        self.primarybytes_out = primarybytes_out
+        self.secondarybytes_in = secondarybytes_in
+        self.secondarybytes_out = secondarybytes_out

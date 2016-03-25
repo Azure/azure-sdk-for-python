@@ -102,7 +102,6 @@ from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
 from .virtual_machine_scale_set_vm_paged import VirtualMachineScaleSetVMPaged
 from .compute_management_client_enums import (
     StatusLevelTypes,
-    ForceUpdateTagTypes,
     OperatingSystemTypes,
     VirtualMachineSizeTypes,
     CachingTypes,
@@ -199,7 +198,6 @@ __all__ = [
     'VirtualMachineScaleSetSkuPaged',
     'VirtualMachineScaleSetVMPaged',
     'StatusLevelTypes',
-    'ForceUpdateTagTypes',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
     'CachingTypes',

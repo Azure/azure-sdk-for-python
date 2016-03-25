@@ -22,33 +22,22 @@
 from msrest.serialization import Model
 
 
-class ExpressRouteCircuitRoutesTable(Model):
+class ExpressRouteCircuitsArpTableListResult(Model):
     """
-    The routes table associated with the ExpressRouteCircuit
+    Response for ListArpTable associated with the Express Route Circuits Api
 
-    :param network: network.
-    :type network: str
-    :param next_hop: nextHop
-    :type next_hop: str
-    :param loc_prf: locPrf.
-    :type loc_prf: str
-    :param weight: weight.
-    :type weight: int
-    :param path: path .
-    :type path: str
+    :param value: Gets List of ArpTable
+    :type value: list of :class:`ExpressRouteCircuitArpTable
+     <azure.mgmt.network.models.ExpressRouteCircuitArpTable>`
+    :param next_link: Gets the URL to get the next set of results.
+    :type next_link: str
     """ 
 
     _attribute_map = {
-        'network': {'key': 'network', 'type': 'str'},
-        'next_hop': {'key': 'nextHop', 'type': 'str'},
-        'loc_prf': {'key': 'locPrf', 'type': 'str'},
-        'weight': {'key': 'weight', 'type': 'int'},
-        'path': {'key': 'path', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[ExpressRouteCircuitArpTable]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, network=None, next_hop=None, loc_prf=None, weight=None, path=None, **kwargs):
-        self.network = network
-        self.next_hop = next_hop
-        self.loc_prf = loc_prf
-        self.weight = weight
-        self.path = path
+    def __init__(self, value=None, next_link=None, **kwargs):
+        self.value = value
+        self.next_link = next_link

@@ -19,19 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ExpressRouteCircuitRoutesTablePaged(Paged):
+class ExpressRouteCircuitsRoutesTableSummaryListResult(Model):
     """
-    A paging container for iterating over a list of ExpressRouteCircuitRoutesTable object
-    """
+    Response for ListRoutesTable associated with the Express Route Circuits Api
+
+    :param value: Gets List of RoutesTable
+    :type value: list of :class:`ExpressRouteCircuitRoutesTableSummary
+     <azure.mgmt.network.models.ExpressRouteCircuitRoutesTableSummary>`
+    :param next_link: Gets the URL to get the next set of results.
+    :type next_link: str
+    """ 
 
     _attribute_map = {
+        'value': {'key': 'value', 'type': '[ExpressRouteCircuitRoutesTableSummary]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ExpressRouteCircuitRoutesTable]'}
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(ExpressRouteCircuitRoutesTablePaged, self).__init__(*args, **kwargs)
+    def __init__(self, value=None, next_link=None, **kwargs):
+        self.value = value
+        self.next_link = next_link

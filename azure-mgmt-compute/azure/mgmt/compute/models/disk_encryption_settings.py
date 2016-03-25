@@ -39,17 +39,13 @@ class DiskEncryptionSettings(Model):
     :type enabled: bool
     """ 
 
-    _validation = {
-        'disk_encryption_key': {'required': True},
-    }
-
     _attribute_map = {
         'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultSecretReference'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultKeyReference'},
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, disk_encryption_key, key_encryption_key=None, enabled=None, **kwargs):
+    def __init__(self, disk_encryption_key=None, key_encryption_key=None, enabled=None, **kwargs):
         self.disk_encryption_key = disk_encryption_key
         self.key_encryption_key = key_encryption_key
         self.enabled = enabled
