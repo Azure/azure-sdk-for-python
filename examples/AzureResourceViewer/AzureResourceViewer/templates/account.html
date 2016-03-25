@@ -12,13 +12,15 @@
         <tr>
             <th>Subscription ID</th>
             <th>Name</th>
+            <th>State</th>
         </tr>
     </thead>
     <tbody>
         {% for sub in model.subscriptions %}
         <tr>
-            <td><a href="{{ url_for('subscription_view', subscription_id=sub.id) }}">{{sub.id}}</a></td>
-            <td>{{sub.name}}</td>
+            <td><a href="{{ url_for('subscription_view', subscription_id=sub.subscription_id) }}">{{sub.subscription_id}}</a></td>
+            <td>{{sub.display_name}}</td>
+            <td>{{sub.state}}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -34,7 +36,7 @@
     <tbody>
         {% for tenant in model.tenants %}
         <tr>
-            <td>{{tenant}}</td>
+            <td>{{tenant.tenant_id}}</td>
         </tr>
         {% endfor %}
     </tbody>

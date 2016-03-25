@@ -20,8 +20,7 @@ from datetime import datetime
 from flask import render_template, redirect, url_for, request, jsonify, make_response, abort, session
 from . import app
 from . import models, auth
-from azure.common import AzureException
-from azure.mgmt.common import SubscriptionCloudCredentials
+from azure.common.exceptions import CloudError
 
 app.secret_key = auth.app_creds.SESSION_SECRET
 
@@ -102,7 +101,8 @@ def contact_view():
 @auth.require_login
 def account_view():
     """Renders the account details."""
-    model = models.get_account_details(_get_auth_token())
+    creds = _get_credentials()
+    model = models.get_account_details(creds)
     return render_template(
         'account.html',
         title='Account',
@@ -114,13 +114,13 @@ def account_view():
 @auth.require_login
 def subscription_view(subscription_id):
     """Renders the subscription details."""
-    creds = _get_credentials(subscription_id)
-    model = models.get_subscription_details(creds)
+    creds = _get_credentials()
+    model = models.get_subscription_details(subscription_id, creds)
     return render_template(
         'subscription.html',
         title=subscription_id,
         year=datetime.now().year,
-        subscription_id=creds.subscription_id,
+        subscription_id=subscription_id,
         model=model,
     )
 
@@ -128,13 +128,13 @@ def subscription_view(subscription_id):
 @auth.require_login
 def resourcegroup_view(subscription_id, resource_group_name):
     """Renders the resource group details."""
-    creds = _get_credentials(subscription_id)
-    model = models.get_resource_group_details(creds, resource_group_name)
+    creds = _get_credentials()
+    model = models.get_resource_group_details(subscription_id, creds, resource_group_name)
     return render_template(
         'resourcegroup.html',
         title=resource_group_name,
         year=datetime.now().year,
-        subscription_id=creds.subscription_id,
+        subscription_id=subscription_id,
         resource_group_name=resource_group_name,
         model=model,
     )
@@ -143,13 +143,13 @@ def resourcegroup_view(subscription_id, resource_group_name):
 @auth.require_login
 def vm_view(subscription_id, resource_group_name, vm_name):
     """Renders the vm details."""
-    creds = _get_credentials(subscription_id)
-    model = models.get_vm_details(creds, resource_group_name, vm_name)
+    creds = _get_credentials()
+    model = models.get_vm_details(subscription_id, creds, resource_group_name, vm_name)
     return render_template(
         'vm.html',
         title=vm_name,
         year=datetime.now().year,
-        subscription_id=creds.subscription_id,
+        subscription_id=subscription_id,
         resource_group_name=resource_group_name,
         model=model,
     )
@@ -158,13 +158,13 @@ def vm_view(subscription_id, resource_group_name, vm_name):
 @auth.require_login
 def virtual_network_view(subscription_id, resource_group_name, network_name):
     """Renders the vm details."""
-    creds = _get_credentials(subscription_id)
-    model = models.get_virtual_network_details(creds, resource_group_name, network_name)
+    creds = _get_credentials()
+    model = models.get_virtual_network_details(subscription_id, creds, resource_group_name, network_name)
     return render_template(
         'virtual_network.html',
         title=network_name,
         year=datetime.now().year,
-        subscription_id=creds.subscription_id,
+        subscription_id=subscription_id,
         resource_group_name=resource_group_name,
         model=model,
     )
@@ -173,13 +173,13 @@ def virtual_network_view(subscription_id, resource_group_name, network_name):
 @auth.require_login
 def storageaccount_view(subscription_id, resource_group_name, account_name):
     """Renders the storage account details."""
-    creds = _get_credentials(subscription_id)
-    model = models.get_storage_account_details(creds, resource_group_name, account_name)
+    creds = _get_credentials()
+    model = models.get_storage_account_details(subscription_id, creds, resource_group_name, account_name)
     return render_template(
         'storageaccount.html',
         title=account_name,
         year=datetime.now().year,
-        subscription_id=creds.subscription_id,
+        subscription_id=subscription_id,
         resource_group_name=resource_group_name,
         model=model,
     )
@@ -188,13 +188,13 @@ def storageaccount_view(subscription_id, resource_group_name, account_name):
 @auth.require_login
 def storageaccount_container_view(subscription_id, resource_group_name, account_name, container_name):
     """Renders the storage account container details."""
-    creds = _get_credentials(subscription_id)
-    model = models.get_container_details(creds, resource_group_name, account_name, container_name)
+    creds = _get_credentials()
+    model = models.get_container_details(subscription_id, creds, resource_group_name, account_name, container_name)
     return render_template(
         'storageaccount_container.html',
         title=container_name,
         year=datetime.now().year,
-        subscription_id=creds.subscription_id,
+        subscription_id=subscription_id,
         resource_group_name=resource_group_name,
         account_name=account_name,
         model=model,
@@ -204,13 +204,13 @@ def storageaccount_container_view(subscription_id, resource_group_name, account_
 @auth.require_login
 def storageaccount_queue_view(subscription_id, resource_group_name, account_name, queue_name):
     """Renders the storage account queue details."""
-    creds = _get_credentials(subscription_id)
-    model = models.get_queue_details(creds, resource_group_name, account_name, queue_name)
+    creds = _get_credentials()
+    model = models.get_queue_details(subscription_id, creds, resource_group_name, account_name, queue_name)
     return render_template(
         'storageaccount_queue.html',
         title=queue_name,
         year=datetime.now().year,
-        subscription_id=creds.subscription_id,
+        subscription_id=subscription_id,
         resource_group_name=resource_group_name,
         account_name=account_name,
         model=model,
@@ -220,13 +220,13 @@ def storageaccount_queue_view(subscription_id, resource_group_name, account_name
 @auth.require_login
 def storageaccount_table_view(subscription_id, resource_group_name, account_name, table_name):
     """Renders the storage account table details."""
-    creds = _get_credentials(subscription_id)
-    model = models.get_table_details(creds, resource_group_name, account_name, table_name)
+    creds = _get_credentials()
+    model = models.get_table_details(subscription_id, creds, resource_group_name, account_name, table_name)
     return render_template(
         'storageaccount_table.html',
         title=table_name,
         year=datetime.now().year,
-        subscription_id=creds.subscription_id,
+        subscription_id=subscription_id,
         resource_group_name=resource_group_name,
         account_name=account_name,
         model=model,
@@ -236,16 +236,16 @@ def storageaccount_table_view(subscription_id, resource_group_name, account_name
 @auth.require_login
 def provider_unregister_post(subscription_id, provider_namespace):
     """Unregister provider request."""
-    creds = _get_credentials(subscription_id)
-    models.unregister_provider(creds, provider_namespace)
+    creds = _get_credentials()
+    models.unregister_provider(subscription_id, creds, provider_namespace)
     return redirect(url_for('subscription_view', subscription_id=subscription_id))
 
 @app.route('/account/<subscription_id>/providers/<provider_namespace>/register', methods=['POST'])
 @auth.require_login
 def provider_register_post(subscription_id, provider_namespace):
     """Register provider request."""
-    creds = _get_credentials(subscription_id)
-    models.register_provider(creds, provider_namespace)
+    creds = _get_credentials()
+    models.register_provider(subscription_id, creds, provider_namespace)
     return redirect(url_for('subscription_view', subscription_id=subscription_id))
 
 
@@ -253,6 +253,23 @@ def provider_register_post(subscription_id, provider_namespace):
 # REST API
 
 # TODO: make better URLs for these, move some form params to URL query params
+
+def get_data_from_response(result):
+    status_code = result.status_code
+    if status_code == 409:
+        msg = "Failed"
+    elif status_code == 500:
+        msg = "InProgress"
+    elif status_code == 202:
+        msg = "InProgress"
+    elif status_code == 200:
+        msg = "Succeeded"
+    else:
+        msg = ""
+    return {
+        'code': status_code,
+        'status': msg,
+    }
 
 @app.route('/createstorageaccount', methods=['POST'])
 @auth.require_login
@@ -262,15 +279,12 @@ def storageaccount_create_rest_post():
     account_name = request.form['name']
     account_location = request.form['location']
     account_type = request.form['accounttype']
-    creds = _get_credentials(subscription_id)
+    creds = _get_credentials()
     try:
-        result = models.create_storage_account(creds, resource_group_name, account_name, account_location, account_type)
-        data = {
-            'operationStatusLink': result.operation_status_link,
-            'code': result.status_code,
-            'status': result.status,
-        }
-    except AzureException as ex:
+        result = models.create_storage_account(subscription_id, creds, resource_group_name, account_name, account_location, account_type)
+        data = get_data_from_response(result)
+        data['operationStatusLink'] = result.headers['Location']
+    except CloudError as ex:
         import json
         error_dict = json.loads(ex.error.decode('utf-8'))
         data = {
@@ -299,8 +313,8 @@ def storageaccount_delete_rest_post():
     subscription_id = request.form['subscriptionid']
     resource_group_name = request.form['resourcegroup']
     account_name = request.form['name']
-    creds = _get_credentials(subscription_id)
-    result = models.delete_storage_account(creds, resource_group_name, account_name)
+    creds = _get_credentials()
+    result = models.delete_storage_account(subscription_id, creds, resource_group_name, account_name)
     return '', 200
 
 @app.route('/getcreatestorageaccountstatus', methods=['GET'])
@@ -308,14 +322,9 @@ def storageaccount_delete_rest_post():
 def storageaccount_create_status_rest_get():
     subscription_id = request.args.get('subscriptionid')
     link = request.args.get('operationStatusLink')
-    creds = _get_credentials(subscription_id)
-    result = models.get_create_storage_account_status(creds, link)
-    code = result.status_code
-    msg = result.status
-    data = {
-        'code': result.status_code,
-        'status': result.status,
-    }
+    creds = _get_credentials()
+    result = models.get_create_storage_account_status(subscription_id, creds, link)
+    data = get_data_from_response(result)
     return jsonify(data)
 
 @app.route('/getmoretableentities', methods=['GET'])
@@ -327,9 +336,9 @@ def storageaccount_table_entities_rest_get():
     table_name = request.args.get('tableName')
     next_partition_key = request.args.get('nextPartitionKey')
     next_row_key = request.args.get('nextRowKey')
-    creds = _get_credentials(subscription_id)
+    creds = _get_credentials()
 
-    model = models.get_table_details(creds, resource_group_name, account_name, table_name, next_partition_key, next_row_key)
+    model = models.get_table_details(subscription_id, creds, resource_group_name, account_name, table_name, next_partition_key, next_row_key)
 
     result_entities = []
     for entity in model.entities:
@@ -351,9 +360,14 @@ def storageaccount_table_entities_rest_get():
 ##############################################################################
 # Helpers
 
-def _get_credentials(subscription_id):
+def _get_credentials():
     auth_token = _get_auth_token()
-    return SubscriptionCloudCredentials(subscription_id, auth_token)
+    from msrest.authentication import BasicTokenAuthentication
+    return BasicTokenAuthentication(
+        token = {
+            'access_token':auth_token
+        }
+    )
 
 def _get_auth_token():
     token = session.get('accessToken')

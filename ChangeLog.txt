@@ -1,4 +1,4 @@
-2016-03-29 Version 2.0.0 / 0.30.0
+2016-03-29 Version 2.0.0rc2 / 0.30.0rc2
 
 New:
 * Latest Swagger update for CDN (minor fixes, documentation)
