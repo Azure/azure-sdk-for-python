@@ -35,7 +35,6 @@ class MgmtAppsTest(AzureMgmtTestCase):
             azure.mgmt.web.WebSiteManagementClient
         )
 
-    @unittest.skip("https://github.com/Azure/azure-rest-api-specs/issues/137")
     @record
     def test_logic(self):
         self.create_resource_group()
@@ -68,7 +67,15 @@ class MgmtAppsTest(AzureMgmtTestCase):
                         type='Microsoft.Web/ServerFarms',
                         id=app_service_plan.id
                     )
-                )
+                ),
+                definition={ 
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "triggers": {},
+                    "actions": {},
+                    "outputs": {}
+                }
             )
         )
 
