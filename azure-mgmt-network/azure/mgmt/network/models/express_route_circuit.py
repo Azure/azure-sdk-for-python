@@ -39,6 +39,8 @@ class ExpressRouteCircuit(Resource):
     :param sku: Gets or sets sku
     :type sku: :class:`ExpressRouteCircuitSku
      <azure.mgmt.network.models.ExpressRouteCircuitSku>`
+    :param allow_classic_operations: allow classic operations
+    :type allow_classic_operations: bool
     :param circuit_provisioning_state: Gets or sets CircuitProvisioningState
      state of the resource
     :type circuit_provisioning_state: str
@@ -76,6 +78,7 @@ class ExpressRouteCircuit(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'ExpressRouteCircuitSku'},
+        'allow_classic_operations': {'key': 'properties.allowClassicOperations', 'type': 'bool'},
         'circuit_provisioning_state': {'key': 'properties.circuitProvisioningState', 'type': 'str'},
         'service_provider_provisioning_state': {'key': 'properties.serviceProviderProvisioningState', 'type': 'ServiceProviderProvisioningState'},
         'authorizations': {'key': 'properties.authorizations', 'type': '[ExpressRouteCircuitAuthorization]'},
@@ -87,9 +90,10 @@ class ExpressRouteCircuit(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, sku=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, etag=None, **kwargs):
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, etag=None, **kwargs):
         super(ExpressRouteCircuit, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.sku = sku
+        self.allow_classic_operations = allow_classic_operations
         self.circuit_provisioning_state = circuit_provisioning_state
         self.service_provider_provisioning_state = service_provider_provisioning_state
         self.authorizations = authorizations

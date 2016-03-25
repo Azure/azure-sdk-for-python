@@ -38,7 +38,6 @@ class VirtualMachineExtension(Resource):
     :type tags: dict
     :param force_update_tag: Gets or sets how the extension handler should be
      forced to update even if the extension configuration has not changed.
-     Possible values include: 'RerunExtension'
     :type force_update_tag: str
     :param publisher: Gets or sets the name of the extension handler
      publisher.
@@ -77,7 +76,7 @@ class VirtualMachineExtension(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'ForceUpdateTagTypes'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
         'virtual_machine_extension_type': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},

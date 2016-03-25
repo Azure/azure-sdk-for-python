@@ -47,8 +47,8 @@ class ResourcesOperations(object):
     def move_resources(
             self, source_resource_group_name, resources=None, target_resource_group=None, custom_headers={}, raw=False, **operation_config):
         """
-        Begin moving resources.To determine whether the operation has finished
-        processing the request, call GetLongRunningOperationStatus.
+        Move resources from one resource group to another. The resources being
+        moved should all be in the same resource group.
 
         :param source_resource_group_name: Source resource group name.
         :type source_resource_group_name: str
@@ -475,7 +475,7 @@ class ResourcesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -483,8 +483,6 @@ class ResourcesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('GenericResource', response)
-        if response.status_code == 204:
             deserialized = self._deserialize('GenericResource', response)
 
         if raw:

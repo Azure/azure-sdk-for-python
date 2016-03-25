@@ -26,6 +26,10 @@ class ExpressRouteCircuitArpTable(Model):
     """
     The arp table associated with the ExpressRouteCircuit
 
+    :param age: Age.
+    :type age: int
+    :param interface: Interface.
+    :type interface: str
     :param ip_address: Gets ipAddress.
     :type ip_address: str
     :param mac_address: Gets macAddress.
@@ -33,10 +37,14 @@ class ExpressRouteCircuitArpTable(Model):
     """ 
 
     _attribute_map = {
+        'age': {'key': 'age', 'type': 'int'},
+        'interface': {'key': 'interface', 'type': 'str'},
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
         'mac_address': {'key': 'macAddress', 'type': 'str'},
     }
 
-    def __init__(self, ip_address=None, mac_address=None, **kwargs):
+    def __init__(self, age=None, interface=None, ip_address=None, mac_address=None, **kwargs):
+        self.age = age
+        self.interface = interface
         self.ip_address = ip_address
         self.mac_address = mac_address
