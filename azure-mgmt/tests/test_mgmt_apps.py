@@ -18,6 +18,7 @@ import unittest
 
 import azure.mgmt.logic
 import azure.mgmt.web
+from msrest.version import msrest_version
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -35,6 +36,7 @@ class MgmtAppsTest(AzureMgmtTestCase):
             azure.mgmt.web.WebSiteManagementClient
         )
 
+    @unittest.skipIf(msrest_version.startswith("0.1."), "Fixed in msrest 0.2.0")
     @record
     def test_logic(self):
         self.create_resource_group()
