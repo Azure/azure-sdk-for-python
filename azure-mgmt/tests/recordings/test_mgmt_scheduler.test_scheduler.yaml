@@ -102,4 +102,110 @@ interactions:
       x-ms-request-id: [0afc7103-d56d-46e5-93ba-ae668fb9f410]
       x-ms-routing-request-id: ['CENTRALUS:20160216T190650Z:73a94200-b39d-4710-b807-fe688bbdf872']
     status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAibmFtZSI6ICJ0ZXN0X21nbXRfc2NoZWR1bGVyX3Rlc3Rf
+      c2NoZWR1bGVyZjVmYzBkZmYifQ==
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['76']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 resourcemanagementclient/2016-02-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a88d05e8-f2bf-11e5-b5cc-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_scheduler_test_schedulerf5fc0dff?api-version=2016-02-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_scheduler_test_schedulerf5fc0dff","name":"test_mgmt_scheduler_test_schedulerf5fc0dff","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['237']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 25 Mar 2016 19:27:46 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [3e33a974-0e98-46cd-9a7f-54ce5da36382]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [3e33a974-0e98-46cd-9a7f-54ce5da36382]
+      x-ms-routing-request-id: ['EASTUS:20160325T192747Z:3e33a974-0e98-46cd-9a7f-54ce5da36382']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      eyJsb2NhdGlvbiI6ICJXZXN0IFVTIiwgInByb3BlcnRpZXMiOiB7InNrdSI6IHsibmFtZSI6ICJG
+      cmVlIn19fQ==
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['64']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 schedulermanagementclient/2016-01-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [a9a54af0-f2bf-11e5-b59a-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_scheduler_test_schedulerf5fc0dff/providers/Microsoft.Scheduler/jobCollections/myjobcollection?api-version=2016-01-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_scheduler_test_schedulerf5fc0dff/providers/Microsoft.Scheduler/jobCollections/myjobcollection","type":"Microsoft.Scheduler/jobCollections","name":"myjobcollection","location":"West
+        US","properties":{"sku":{"name":"Free"},"state":"Enabled"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['324']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 25 Mar 2016 19:27:54 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [c1797486-d2c2-488d-a487-5f09794b077f]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['299']
+      x-ms-request-id: [2d297939-f514-4e0d-b6a7-54afffc9ab1e]
+      x-ms-routing-request-id: ['EASTUS:20160325T192754Z:c1797486-d2c2-488d-a487-5f09794b077f']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 schedulermanagementclient/2016-01-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [abe301b4-f2bf-11e5-9d9c-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_scheduler_test_schedulerf5fc0dff/providers/Microsoft.Scheduler/jobCollections/myjobcollection?api-version=2016-01-01
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
+        nuaf19V61dxt86b9/RcXi/b3b6bzfLYu8/r358/sn+f3z6c7s/Pzu6u6uixmed3c/aKY1lVTnbfj
+        16bV3Z+uJidVWeZTwWVxTR9M7QcfjT5qr1c54Xzzu9R2mS3Qtg+krKYZ//roo+8SlulXr+lDQmyV
+        122RNx89+sUfNW/X+KEgntV5/tEvGX3UtFmLv0+X2aTMZx/9kl/y/wBkojg6RAEAAA==
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 25 Mar 2016 19:27:54 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [3b77609a-78c5-418e-84d9-a6677ed99113]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [67f64c6e-a551-4c77-9e68-8ca36a65c614]
+      x-ms-routing-request-id: ['EASTUS:20160325T192755Z:3b77609a-78c5-418e-84d9-a6677ed99113']
+    status: {code: 200, message: OK}
 version: 1

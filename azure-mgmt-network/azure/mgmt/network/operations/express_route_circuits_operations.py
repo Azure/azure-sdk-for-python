@@ -280,7 +280,7 @@ class ExpressRouteCircuitsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list_arp_table(
-            self, resource_group_name, circuit_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, peering_name, device_path, custom_headers={}, raw=False, **operation_config):
         """
         The ListArpTable from ExpressRouteCircuit opertion retrieves the
         currently advertised arp table associated with the
@@ -290,72 +290,278 @@ class ExpressRouteCircuitsOperations(object):
         :type resource_group_name: str
         :param circuit_name: The name of the circuit.
         :type circuit_name: str
+        :param peering_name: The name of the peering.
+        :type peering_name: str
+        :param device_path: The path of the device.
+        :type device_path: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ExpressRouteCircuitArpTablePaged
-         <azure.mgmt.network.models.ExpressRouteCircuitArpTablePaged>`
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`ExpressRouteCircuitsArpTableListResult
+         <azure.mgmt.network.models.ExpressRouteCircuitsArpTableListResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/arpTables/{devicePath}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'devicePath': self._serialize.url("device_path", device_path, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/arpTable'
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        def long_running_send():
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            request = self._client.post(url, query_parameters)
+            return self._client.send(request, header_parameters, **operation_config)
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
+        def get_long_running_status(status_link, headers={}):
+
+            request = self._client.get(status_link)
+            request.headers.update(headers)
+            return self._client.send(
                 request, header_parameters, **operation_config)
 
-            if response.status_code not in [200]:
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            return response
+            deserialized = None
 
-        # Deserialize response
-        deserialized = models.ExpressRouteCircuitArpTablePaged(internal_paging, self._deserialize.dependencies)
+            if response.status_code == 200:
+                deserialized = self._deserialize('ExpressRouteCircuitsArpTableListResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.ExpressRouteCircuitArpTablePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+            response = long_running_send()
+            return get_long_running_output(response)
 
-        return deserialized
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
 
     def list_routes_table(
-            self, resource_group_name, circuit_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, peering_name, device_path, custom_headers={}, raw=False, **operation_config):
         """
         The ListRoutesTable from ExpressRouteCircuit opertion retrieves the
         currently advertised routes table associated with the
         ExpressRouteCircuits in a resource group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param circuit_name: The name of the circuit.
+        :type circuit_name: str
+        :param peering_name: The name of the peering.
+        :type peering_name: str
+        :param device_path: The path of the device.
+        :type device_path: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns
+         :class:`ExpressRouteCircuitsRoutesTableListResult
+         <azure.mgmt.network.models.ExpressRouteCircuitsRoutesTableListResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routesTable/{devicePath}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'devicePath': self._serialize.url("device_path", device_path, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        def long_running_send():
+
+            request = self._client.post(url, query_parameters)
+            return self._client.send(request, header_parameters, **operation_config)
+
+        def get_long_running_status(status_link, headers={}):
+
+            request = self._client.get(status_link)
+            request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('ExpressRouteCircuitsRoutesTableListResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+    def list_routes_table_summary(
+            self, resource_group_name, circuit_name, peering_name, device_path, custom_headers={}, raw=False, **operation_config):
+        """
+        The ListRoutesTable from ExpressRouteCircuit opertion retrieves the
+        currently advertised routes table associated with the
+        ExpressRouteCircuits in a resource group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param circuit_name: The name of the circuit.
+        :type circuit_name: str
+        :param peering_name: The name of the peering.
+        :type peering_name: str
+        :param device_path: The path of the device.
+        :type device_path: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns
+         :class:`ExpressRouteCircuitsRoutesTableSummaryListResult
+         <azure.mgmt.network.models.ExpressRouteCircuitsRoutesTableSummaryListResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routeTablesSummary/{devicePath}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'devicePath': self._serialize.url("device_path", device_path, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        def long_running_send():
+
+            request = self._client.post(url, query_parameters)
+            return self._client.send(request, header_parameters, **operation_config)
+
+        def get_long_running_status(status_link, headers={}):
+
+            request = self._client.get(status_link)
+            request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('ExpressRouteCircuitsRoutesTableSummaryListResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+    def get_stats(
+            self, resource_group_name, circuit_name, custom_headers={}, raw=False, **operation_config):
+        """
+        The Liststats ExpressRouteCircuit opertion retrieves all the stats
+        from a ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -366,127 +572,116 @@ class ExpressRouteCircuitsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ExpressRouteCircuitRoutesTablePaged
-         <azure.mgmt.network.models.ExpressRouteCircuitRoutesTablePaged>`
+        :rtype: :class:`ExpressRouteCircuitStats
+         <azure.mgmt.network.models.ExpressRouteCircuitStats>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/stats'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/routesTable'
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+        deserialized = None
 
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.ExpressRouteCircuitRoutesTablePaged(internal_paging, self._deserialize.dependencies)
+        if response.status_code == 200:
+            deserialized = self._deserialize('ExpressRouteCircuitStats', response)
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.ExpressRouteCircuitRoutesTablePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
 
-    def list_stats(
-            self, resource_group_name, circuit_name, custom_headers={}, raw=False, **operation_config):
+    def get_peering_stats(
+            self, resource_group_name, circuit_name, peering_name, custom_headers={}, raw=False, **operation_config):
         """
         The Liststats ExpressRouteCircuit opertion retrieves all the stats
         from a ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the loadBalancer.
+        :param circuit_name: The name of the circuit.
         :type circuit_name: str
+        :param peering_name: The name of the peering.
+        :type peering_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ExpressRouteCircuitStatsPaged
-         <azure.mgmt.network.models.ExpressRouteCircuitStatsPaged>`
+        :rtype: :class:`ExpressRouteCircuitStats
+         <azure.mgmt.network.models.ExpressRouteCircuitStats>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/stats'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/stats'
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+        deserialized = None
 
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.ExpressRouteCircuitStatsPaged(internal_paging, self._deserialize.dependencies)
+        if response.status_code == 200:
+            deserialized = self._deserialize('ExpressRouteCircuitStats', response)
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.ExpressRouteCircuitStatsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized

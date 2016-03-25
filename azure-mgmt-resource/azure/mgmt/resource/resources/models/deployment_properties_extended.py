@@ -59,6 +59,9 @@ class DeploymentPropertiesExtended(Model):
     :param mode: Gets or sets the deployment mode. Possible values include:
      'Incremental', 'Complete'
     :type mode: str
+    :param debug_setting: Gets or sets the debug setting of the deployment.
+    :type debug_setting: :class:`DebugSetting
+     <azure.mgmt.resource.resources.models.DebugSetting>`
     """ 
 
     _attribute_map = {
@@ -73,9 +76,10 @@ class DeploymentPropertiesExtended(Model):
         'parameters': {'key': 'parameters', 'type': 'object'},
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
+        'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
     }
 
-    def __init__(self, provisioning_state=None, correlation_id=None, timestamp=None, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, **kwargs):
+    def __init__(self, provisioning_state=None, correlation_id=None, timestamp=None, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None, **kwargs):
         self.provisioning_state = provisioning_state
         self.correlation_id = correlation_id
         self.timestamp = timestamp
@@ -87,3 +91,4 @@ class DeploymentPropertiesExtended(Model):
         self.parameters = parameters
         self.parameters_link = parameters_link
         self.mode = mode
+        self.debug_setting = debug_setting

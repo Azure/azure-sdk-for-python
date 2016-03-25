@@ -47,8 +47,7 @@ class DeploymentsOperations(object):
     def delete(
             self, resource_group_name, deployment_name, custom_headers={}, raw=False, **operation_config):
         """
-        Begin deleting deployment.To determine whether the operation has
-        finished processing the request, call GetLongRunningOperationStatus.
+        Delete deployment.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -460,6 +459,69 @@ class DeploymentsOperations(object):
             deserialized = self._deserialize('DeploymentValidateResult', response)
         if response.status_code == 400:
             deserialized = self._deserialize('DeploymentValidateResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def export_template(
+            self, resource_group_name, deployment_name, custom_headers={}, raw=False, **operation_config):
+        """
+        Exports a deployment template.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param deployment_name: The name of the deployment.
+        :type deployment_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DeploymentExportResult
+         <azure.mgmt.resource.resources.models.DeploymentExportResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern='^[-\w\._]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeploymentExportResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

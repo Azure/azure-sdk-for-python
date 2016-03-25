@@ -26,31 +26,29 @@ class ExpressRouteCircuitRoutesTable(Model):
     """
     The routes table associated with the ExpressRouteCircuit
 
-    :param address_prefix: Gets AddressPrefix.
-    :type address_prefix: str
-    :param next_hop_type: Gets NextHopType. Possible values include:
-     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
-     'None'
-    :type next_hop_type: str
-    :param next_hop_ip: Gets NextHopIP.
-    :type next_hop_ip: str
-    :param as_path: Gets AsPath.
-    :type as_path: str
+    :param network: network.
+    :type network: str
+    :param next_hop: nextHop
+    :type next_hop: str
+    :param loc_prf: locPrf.
+    :type loc_prf: str
+    :param weight: weight.
+    :type weight: int
+    :param path: path .
+    :type path: str
     """ 
 
-    _validation = {
-        'next_hop_type': {'required': True},
-    }
-
     _attribute_map = {
-        'address_prefix': {'key': 'addressPrefix', 'type': 'str'},
-        'next_hop_type': {'key': 'nextHopType', 'type': 'RouteNextHopType'},
-        'next_hop_ip': {'key': 'nextHopIP', 'type': 'str'},
-        'as_path': {'key': 'asPath', 'type': 'str'},
+        'network': {'key': 'network', 'type': 'str'},
+        'next_hop': {'key': 'nextHop', 'type': 'str'},
+        'loc_prf': {'key': 'locPrf', 'type': 'str'},
+        'weight': {'key': 'weight', 'type': 'int'},
+        'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, next_hop_type, address_prefix=None, next_hop_ip=None, as_path=None, **kwargs):
-        self.address_prefix = address_prefix
-        self.next_hop_type = next_hop_type
-        self.next_hop_ip = next_hop_ip
-        self.as_path = as_path
+    def __init__(self, network=None, next_hop=None, loc_prf=None, weight=None, path=None, **kwargs):
+        self.network = network
+        self.next_hop = next_hop
+        self.loc_prf = loc_prf
+        self.weight = weight
+        self.path = path

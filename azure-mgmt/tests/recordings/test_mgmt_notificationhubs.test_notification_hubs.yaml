@@ -69,4 +69,76 @@ interactions:
       x-ms-request-id: [c9674615-2848-4f6e-9dab-cd1f0f1250b7_M7_M7]
       x-ms-routing-request-id: ['WESTUS:20160216T185502Z:f6bdd6de-076f-4521-b474-177a638df198']
     status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAibmFtZSI6ICJ0ZXN0X21nbXRfbm90aWZpY2F0aW9uaHVi
+      c190ZXN0X25vdGlmaWNhdGlvbl9odWJzZmRiNzE0NTIifQ==
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['91']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 resourcemanagementclient/2016-02-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [150f829c-f2bf-11e5-844e-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452?api-version=2016-02-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_notificationhubs_test_notification_hubsfdb71452","name":"test_mgmt_notificationhubs_test_notification_hubsfdb71452","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['267']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 25 Mar 2016 19:23:41 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [4140f5b9-457a-4664-b6e8-6459aa89a47d]
+      x-ms-ratelimit-remaining-subscription-writes: ['1193']
+      x-ms-request-id: [4140f5b9-457a-4664-b6e8-6459aa89a47d]
+      x-ms-routing-request-id: ['WESTUS:20160325T192341Z:4140f5b9-457a-4664-b6e8-6459aa89a47d']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      eyJuYW1lIjogInB5YXJtbm90aWZpY2F0aW9uaHVic2ZkYjcxNDUyIn0=
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['41']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 notificationhubsmanagementclient/2014-09-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [1586befe-f2bf-11e5-8d39-54ee7574ca37]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NotificationHubs/checkNamespaceAvailability?api-version=2014-09-01
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR0Vz
+        fJkVZZFNyvyjR229zkcfFbOPHn10t1lPmmldrNqiWjZ3zx/ODnYfPMy39++d72zvfzqdbD98OJ1t
+        nz/Ym5xnk53s03uTu6u6uixmed3c/aKY1lVTnbfjF1VbnBfTDGC+TSDvTuf59O2LbJE3q2yac+/Z
+        hDBorz8afbSkz6nz1XVWL5bem3N683w2ebC7f3+PmrXXKzTb0AsAcQc3dFhW8tJHj5brsiTI2UVj
+        fqfhrPK6LXL6BJT5Jf8P5KiOgy8BAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 25 Mar 2016 19:23:41 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [ab27536e-7464-4a4e-a59a-bd07b2b93c84]
+      x-ms-ratelimit-remaining-subscription-writes: ['1195']
+      x-ms-request-id: [37d2c240-c522-4dad-888b-bb9c2f10c90c_M1_M1]
+      x-ms-routing-request-id: ['WESTUS:20160325T192342Z:ab27536e-7464-4a4e-a59a-bd07b2b93c84']
+    status: {code: 200, message: OK}
 version: 1

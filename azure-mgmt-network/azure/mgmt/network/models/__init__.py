@@ -42,7 +42,11 @@ from .express_route_circuit_sku import ExpressRouteCircuitSku
 from .express_route_circuit_service_provider_properties import ExpressRouteCircuitServiceProviderProperties
 from .express_route_circuit import ExpressRouteCircuit
 from .express_route_circuit_arp_table import ExpressRouteCircuitArpTable
+from .express_route_circuits_arp_table_list_result import ExpressRouteCircuitsArpTableListResult
 from .express_route_circuit_routes_table import ExpressRouteCircuitRoutesTable
+from .express_route_circuits_routes_table_list_result import ExpressRouteCircuitsRoutesTableListResult
+from .express_route_circuit_routes_table_summary import ExpressRouteCircuitRoutesTableSummary
+from .express_route_circuits_routes_table_summary_list_result import ExpressRouteCircuitsRoutesTableSummaryListResult
 from .express_route_service_provider_bandwidths_offered import ExpressRouteServiceProviderBandwidthsOffered
 from .express_route_service_provider import ExpressRouteServiceProvider
 from .subnet import Subnet
@@ -90,9 +94,6 @@ from .resource import Resource
 from .application_gateway_paged import ApplicationGatewayPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
-from .express_route_circuit_arp_table_paged import ExpressRouteCircuitArpTablePaged
-from .express_route_circuit_routes_table_paged import ExpressRouteCircuitRoutesTablePaged
-from .express_route_circuit_stats_paged import ExpressRouteCircuitStatsPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .load_balancer_paged import LoadBalancerPaged
@@ -123,11 +124,11 @@ from .network_management_client_enums import (
     ExpressRouteCircuitSkuTier,
     ExpressRouteCircuitSkuFamily,
     ServiceProviderProvisioningState,
-    RouteNextHopType,
     SecurityRuleProtocol,
     SecurityRuleAccess,
     SecurityRuleDirection,
     TransportProtocol,
+    RouteNextHopType,
     LoadDistribution,
     ProbeProtocol,
     VirtualNetworkGatewayType,
@@ -164,7 +165,11 @@ __all__ = [
     'ExpressRouteCircuitServiceProviderProperties',
     'ExpressRouteCircuit',
     'ExpressRouteCircuitArpTable',
+    'ExpressRouteCircuitsArpTableListResult',
     'ExpressRouteCircuitRoutesTable',
+    'ExpressRouteCircuitsRoutesTableListResult',
+    'ExpressRouteCircuitRoutesTableSummary',
+    'ExpressRouteCircuitsRoutesTableSummaryListResult',
     'ExpressRouteServiceProviderBandwidthsOffered',
     'ExpressRouteServiceProvider',
     'Subnet',
@@ -212,9 +217,6 @@ __all__ = [
     'ApplicationGatewayPaged',
     'ExpressRouteCircuitAuthorizationPaged',
     'ExpressRouteCircuitPeeringPaged',
-    'ExpressRouteCircuitArpTablePaged',
-    'ExpressRouteCircuitRoutesTablePaged',
-    'ExpressRouteCircuitStatsPaged',
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
     'LoadBalancerPaged',
@@ -244,11 +246,11 @@ __all__ = [
     'ExpressRouteCircuitSkuTier',
     'ExpressRouteCircuitSkuFamily',
     'ServiceProviderProvisioningState',
-    'RouteNextHopType',
     'SecurityRuleProtocol',
     'SecurityRuleAccess',
     'SecurityRuleDirection',
     'TransportProtocol',
+    'RouteNextHopType',
     'LoadDistribution',
     'ProbeProtocol',
     'VirtualNetworkGatewayType',
