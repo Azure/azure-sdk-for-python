@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "version":"0.1.0",
+    "language": "Python",
+    "autorest": "latest"
+  },
+  "data": {
+    "arm-authorization/2015-07-01/swagger/authorization.json": {
+      "autorest_options": "-Namespace azure.mgmt.authorization",
+      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
+    },
+    "arm-cdn/2015-06-01/swagger/cdn.json": {
+      "autorest_options": "-Namespace azure.mgmt.cdn",
+      "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
+    },
+    "arm-compute/2016-03-30/swagger/compute.json": {
+      "autorest_options": "-Namespace azure.mgmt.compute",
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
+    },
+    "arm-graphrbac/1.42-previewInternal/swagger/graphrbac.json": {
+      "autorest_options": "-Namespace azure.graphrbac",
+      "output_dir": "azure-graphrbac/azure/graphrbac"
+    },
+    "arm-logic/2015-02-01-preview/swagger/logic.json": {
+      "autorest_options": "-Namespace azure.mgmt.logic",
+      "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
+    },
+    "arm-network/2016-03-30/swagger/network.json": {
+      "autorest_options": "-Namespace azure.mgmt.network",
+      "output_dir": "azure-mgmt-network/azure/mgmt/network"
+    },
+    "arm-notificationhubs/2014-09-01/swagger/notificationhubs.json": {
+      "autorest_options": "-Namespace azure.mgmt.notificationhubs",
+      "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs"
+    },
+    "arm-redis/2015-08-01/swagger/redis.json": {
+      "autorest_options": "-Namespace azure.mgmt.redis",
+      "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
+    },
+    "arm-resources/locks/2015-01-01/swagger/locks.json": {
+      "autorest_options": "-Namespace azure.mgmt.resource.locks",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks"
+    },
+    "arm-resources/features/2015-12-01/swagger/features.json": {
+      "autorest_options": "-Namespace azure.mgmt.resource.feature",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
+    },
+    "arm-resources/resources/2016-02-01/swagger/resources.json": {
+      "autorest_options": "-Namespace azure.mgmt.resource.resources",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources"
+    },
+    "arm-resources/subscriptions/2015-11-01/swagger/subscriptions.json": {
+      "autorest_options": "-Namespace azure.mgmt.resource.subscriptions",
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions"
+    },
+    "arm-scheduler/2016-01-01/swagger/scheduler.json": {
+      "autorest_options": "-Namespace azure.mgmt.scheduler",
+      "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
+    },
+    "arm-storage/2015-06-15/swagger/storage.json": {
+      "autorest_options": "-Namespace azure.mgmt.storage",
+      "output_dir": "azure-mgmt-storage/azure/mgmt/storage"
+    },
+    "arm-web/2015-08-01/swagger/service.json": {
+      "autorest_options": "-Namespace azure.mgmt.web",
+      "output_dir": "azure-mgmt-web/azure/mgmt/web/"
+    }
+  }
+}
