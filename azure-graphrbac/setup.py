@@ -60,7 +60,6 @@ setup(
         'azure.graphrbac.operations',
     ],
     install_requires=[
-        'azure-common>=1.1.0',
-        'msrestazure>=0.1.0'
+        'azure-common[autorest]==1.1.2',
     ],
 )
