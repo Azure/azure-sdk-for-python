@@ -22,33 +22,16 @@
 from msrest.serialization import Model
 
 
-class ExpressRouteCircuitRoutesTable(Model):
-    """
-    The routes table associated with the ExpressRouteCircuit
+class DeploymentExportResult(Model):
+    """DeploymentExportResult
 
-    :param network: network.
-    :type network: str
-    :param next_hop: nextHop
-    :type next_hop: str
-    :param loc_prf: locPrf.
-    :type loc_prf: str
-    :param weight: weight.
-    :type weight: int
-    :param path: path .
-    :type path: str
+    :param template: Gets or sets the template content.
+    :type template: object
     """ 
 
     _attribute_map = {
-        'network': {'key': 'network', 'type': 'str'},
-        'next_hop': {'key': 'nextHop', 'type': 'str'},
-        'loc_prf': {'key': 'locPrf', 'type': 'str'},
-        'weight': {'key': 'weight', 'type': 'int'},
-        'path': {'key': 'path', 'type': 'str'},
+        'template': {'key': 'template', 'type': 'object'},
     }
 
-    def __init__(self, network=None, next_hop=None, loc_prf=None, weight=None, path=None, **kwargs):
-        self.network = network
-        self.next_hop = next_hop
-        self.loc_prf = loc_prf
-        self.weight = weight
-        self.path = path
+    def __init__(self, template=None, **kwargs):
+        self.template = template
