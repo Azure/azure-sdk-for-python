@@ -100,4 +100,39 @@ interactions:
       x-ms-request-id: [cde0e47f-f111-47a4-a3d8-f91ff57cf290]
       x-ms-routing-request-id: ['WESTUS:20160216T184909Z:e19cb037-7c4e-414c-ba9c-b7dd8f3feec3']
     status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.3 msrest_azure/0.1.2 networkmanagementclient/2016-03-30
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [1f28f61e-f2b8-11e5-9504-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?api-version=2016-03-30&domainNameLabel=pydomain
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UfZZVaU2aTMP3qUtvU6/42TX/L/AGV5chIZAAAA
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 25 Mar 2016 18:33:51 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [ef21c3ae-75e4-49e3-b157-5112b2471959]
+      x-ms-ratelimit-remaining-subscription-reads: ['14960']
+      x-ms-request-id: [adb323f4-696b-4d0a-920d-927b87ed4a8a]
+      x-ms-routing-request-id: ['WESTUS:20160325T183352Z:ef21c3ae-75e4-49e3-b157-5112b2471959']
+    status: {code: 200, message: OK}
 version: 1

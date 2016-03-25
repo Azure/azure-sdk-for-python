@@ -159,4 +159,64 @@ interactions:
       x-ms-request-id: [f4b6b1ab-c343-477d-8bd7-e3df891f16c6]
       x-ms-routing-request-id: ['CENTRALUS:20160216T185919Z:f4b6b1ab-c343-477d-8bd7-e3df891f16c6']
     status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.3 msrest_azure/0.1.2 resourcemanagementclient/2016-02-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [04a9998c-f2b9-11e5-af13-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2016-02-01
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Length: ['1653']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 25 Mar 2016 18:40:16 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [bb326c2b-7b44-4a7c-87c3-c597ad4c6a4d]
+      x-ms-ratelimit-remaining-subscription-reads: ['14988']
+      x-ms-request-id: [bb326c2b-7b44-4a7c-87c3-c597ad4c6a4d]
+      x-ms-routing-request-id: ['EASTUS:20160325T184017Z:bb326c2b-7b44-4a7c-87c3-c597ad4c6a4d']
+    status: {code: 200, message: OK}
 version: 1
