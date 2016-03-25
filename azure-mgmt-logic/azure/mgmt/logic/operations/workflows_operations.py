@@ -454,14 +454,12 @@ class WorkflowsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-        :return: A poller object which can return :class:`WorkflowRun
-         <azure.mgmt.logic.models.WorkflowRun>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+         instance that returns :class:`WorkflowRun
+         <azure.mgmt.logic.models.WorkflowRun>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.RunWorkflowParameters(name=name, outputs=outputs)
 
@@ -522,6 +520,10 @@ class WorkflowsOperations(object):
                 return client_raw_response
 
             return deserialized
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
