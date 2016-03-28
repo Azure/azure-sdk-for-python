@@ -26,17 +26,26 @@ class OSProfile(Model):
     """
     Describes an OS profile.
 
-    :param str computer_name: Gets or sets the computer name.
-    :param str admin_username: Gets or sets the admin user name.
-    :param str admin_password: Gets or sets the admin user password.
-    :param str custom_data: Gets or sets a base-64 encoded string of custom
-     data.
-    :param WindowsConfiguration windows_configuration: Gets or sets the
-     Windows Configuration of the OS profile.
-    :param LinuxConfiguration linux_configuration: Gets or sets the Linux
-     Configuration of the OS profile.
-    :param list secrets: Gets or sets the List of certificates for addition
-     to the VM.
+    :param computer_name: Gets or sets the computer name.
+    :type computer_name: str
+    :param admin_username: Gets or sets the admin user name.
+    :type admin_username: str
+    :param admin_password: Gets or sets the admin user password.
+    :type admin_password: str
+    :param custom_data: Gets or sets a base-64 encoded string of custom data.
+    :type custom_data: str
+    :param windows_configuration: Gets or sets the Windows Configuration of
+     the OS profile.
+    :type windows_configuration: :class:`WindowsConfiguration
+     <azure.mgmt.compute.models.WindowsConfiguration>`
+    :param linux_configuration: Gets or sets the Linux Configuration of the
+     OS profile.
+    :type linux_configuration: :class:`LinuxConfiguration
+     <azure.mgmt.compute.models.LinuxConfiguration>`
+    :param secrets: Gets or sets the List of certificates for addition to the
+     VM.
+    :type secrets: list of :class:`VaultSecretGroup
+     <azure.mgmt.compute.models.VaultSecretGroup>`
     """ 
 
     _attribute_map = {

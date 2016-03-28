@@ -26,8 +26,10 @@ class ResourceMetricName(Model):
     """
     Name of a metric for any resource
 
-    :param str value: metric name value
-    :param str localized_value: Localized metric name value
+    :param value: metric name value
+    :type value: str
+    :param localized_value: Localized metric name value
+    :type localized_value: str
     """ 
 
     _attribute_map = {

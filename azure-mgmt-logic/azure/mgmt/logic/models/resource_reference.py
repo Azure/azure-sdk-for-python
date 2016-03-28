@@ -25,9 +25,12 @@ from msrest.serialization import Model
 class ResourceReference(Model):
     """ResourceReference
 
-    :param str id: Gets or sets the resource id.
-    :param str name: Gets the resource name.
-    :param str type: Gets the resource type.
+    :param id: Gets or sets the resource id.
+    :type id: str
+    :param name: Gets the resource name.
+    :type name: str
+    :param type: Gets the resource type.
+    :type type: str
     """ 
 
     _attribute_map = {

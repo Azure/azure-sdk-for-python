@@ -25,12 +25,17 @@ from msrest.serialization import Model
 class HttpRequest(Model):
     """HttpRequest
 
-    :param HttpAuthentication authentication: Gets or sets the http
-     authentication.
-    :param str uri: Gets or sets the Uri.
-    :param str method: Gets or sets the method of the request.
-    :param str body: Gets or sets the request body.
-    :param dict headers: Gets or sets the headers.
+    :param authentication: Gets or sets the http authentication.
+    :type authentication: :class:`HttpAuthentication
+     <azure.mgmt.scheduler.models.HttpAuthentication>`
+    :param uri: Gets or sets the Uri.
+    :type uri: str
+    :param method: Gets or sets the method of the request.
+    :type method: str
+    :param body: Gets or sets the request body.
+    :type body: str
+    :param headers: Gets or sets the headers.
+    :type headers: dict
     """ 
 
     _attribute_map = {

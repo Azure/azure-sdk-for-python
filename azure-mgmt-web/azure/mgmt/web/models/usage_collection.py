@@ -26,8 +26,10 @@ class UsageCollection(Model):
     """
     Collection of usages
 
-    :param list value: Collection of resources
-    :param str next_link: Link to next page of resources
+    :param value: Collection of resources
+    :type value: list of :class:`Usage <azure.mgmt.web.models.Usage>`
+    :param next_link: Link to next page of resources
+    :type next_link: str
     """ 
 
     _attribute_map = {

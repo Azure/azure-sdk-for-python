@@ -26,10 +26,14 @@ class GroupCreateParameters(Model):
     """
     Request parameters for create a new group
 
-    :param str display_name: Group display name
-    :param bool mail_enabled: Mail
-    :param str mail_nickname: Mail nick name
-    :param bool security_enabled: Is security enabled
+    :param display_name: Group display name
+    :type display_name: str
+    :param mail_enabled: Mail
+    :type mail_enabled: bool
+    :param mail_nickname: Mail nick name
+    :type mail_nickname: str
+    :param security_enabled: Is security enabled
+    :type security_enabled: bool
     """ 
 
     _validation = {

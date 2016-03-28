@@ -26,8 +26,11 @@ class VirtualMachineScaleSetVMExtensionsSummary(Model):
     """
     Extensions summary for virtual machines of a virtual machine scale set.
 
-    :param str name: Gets the extension name.
-    :param list statuses_summary: Gets the extensions information.
+    :param name: Gets the extension name.
+    :type name: str
+    :param statuses_summary: Gets the extensions information.
+    :type statuses_summary: list of :class:`VirtualMachineStatusCodeCount
+     <azure.mgmt.compute.models.VirtualMachineStatusCodeCount>`
     """ 
 
     _attribute_map = {

@@ -57,10 +57,12 @@ class WorkflowRunsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowRunPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowRunPaged
+         <azure.mgmt.logic.models.WorkflowRunPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -130,10 +132,13 @@ class WorkflowRunsOperations(object):
         :param run_name: The workflow run name.
         :type run_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowRun
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowRun <azure.mgmt.logic.models.WorkflowRun>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/runs/{runName}'
@@ -191,10 +196,13 @@ class WorkflowRunsOperations(object):
         :param run_name: The workflow run name.
         :type run_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/runs/{runName}/cancel'

@@ -24,13 +24,16 @@ from msrest.serialization import Model
 
 class OriginParameters(Model):
     """
-    Origin properties needed for origin creation or update
+    Origin properties needed for origin creation or update.
 
-    :param str host_name: The host name of the origin
-    :param int http_port: The value of the http port, must be between 1 and
-     65535
-    :param int https_port: The value of the https port, must be between 1 and
-     65535
+    :param host_name: The address of the origin. Domain names, IPv4
+     addresses, and IPv6 addresses are supported.
+    :type host_name: str
+    :param http_port: The value of the HTTP port. Must be between 1 and 65535.
+    :type http_port: int
+    :param https_port: The value of the HTTPS port. Must be between 1 and
+     65535.
+    :type https_port: int
     """ 
 
     _validation = {

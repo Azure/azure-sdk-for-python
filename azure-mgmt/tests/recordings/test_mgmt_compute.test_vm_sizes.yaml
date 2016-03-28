@@ -152,4 +152,58 @@ interactions:
       x-ms-routing-request-id: ['WESTUS:20160216T184616Z:de3b69fa-0c44-48f7-87e8-29797c3478c3']
       x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_130991581835333371]
     status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.3 msrest_azure/0.1.2 computemanagementclient/2016-03-30
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [85f2299c-f2b6-11e5-8b9e-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/vmSizes?api-version=2016-03-30
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
+        6UeXWbnOP3qUfg9/pSl/iOejZbbA5x+9brPlLKtnv//xzkcj9+16McnrL89PqjpvqNmu+6pqnhbN
+        29fFD/Kz5RdP8N3O/oP79/dcC3qlWtfTvNNub2f/YMe1WuSLqr7W7x58euB9k717mrUZXj+p1suW
+        vt+VL3+JNto0jN2f5WE82P10cBi7Dx56ACLj2JMvbzOOvQ3j8Dr52uPYvXewtz80kHv3D/a9r/oD
+        2ZcvbzOQexsG4nXytQey93D3YHAgmC3vq/5ADuTL2wzk/oaBeGh+7YFsnJHd/Xv3PvW+64/kPaZk
+        f8NIPHJ97ZF8uvvw/t7XH8nup/LtbYby6Yah/Kxz197Bpw88EJGhvAd7Pdgwkp/1Sbn/4N6+R67I
+        SG6elCdZU0z/P25HdAw/20Zkf+fhp0Nj+HAjooP42bYgn+7uD0rGhxsQHcTPtvXY3ds7GGanD7Ye
+        OoqfbYW7t3//wTBDfZMK9+nu73+5ibG+Cem4v7u3MzSYGxnrRulwQ9nbPBQP0a89lN0dMulDY7mR
+        vW4UEjeWe5vH4tHsa4+FFe/QWG5mshtlxQ1mf/NgPKJ97cGwBh4azM12/X0k5v7m0ex6ZPvawznY
+        fTgsMzcb93vvITW7N2gAD9mvPZyNYnMzq72H3OzeoAQ8un3t0WwUnJt57T0EZ/cGNfCzLjk3s9r7
+        SM7uDYrgZ190dnf3Pz3wqBYZ0PvIzuufbceyY1L8oXyTlvP1plnxsPza49g7ePCp1yoYSGeM/YG8
+        h/i//tn2LzcN5GZF9h6i//pn28e8/2AvEG1/JDcrsfcR+9e7m8TE6+drj6WLrz+Wm2flffhrd5Ok
+        eOT82kPpalx/KN1h9ofyPgy2u0lWvgkO6ylbfyzdcfbH8n4stklcvhG7srf38N4DD1Awmt5Q+8N5
+        H7uySV6+CbPyQ4vINozDw/Jrj2N3k1/5TdqVTaLiUetrD2SjS3mzBnsPsd8kJx65vvZINrqTNyuw
+        9xH63U1i4nXztceyu4m9bp6V9+Cvn3WzspHBbp6W92Cwn3WzspHDvlmz8rNvVX6I0crxwYbBeL18
+        7bHce7gbqlx/LN/oxBw/3DCUb2ReNo7lFvPyPoPZ3bTEYrqhr352BvPNTszuJp38/7WZ+XzTYDxM
+        P2As9/Z8ogRjuVkr397AfP6zbV8eHHy6f89rFozkZha7vX35/GfbvOxSYEyDce2CoXzDDPazbl/u
+        7dJS0p6PsD+aXkzTH817GJjP728Yjc8cX3s0n9Ly/f59H2F/NPv3Dx74QCKj+fQ9RGZjcs/r5muP
+        pisW/liIBb854d+Y3vMw+Noj6UmFP5TuMPtDeQ/p35jg8zD42kPpiYQ/lN44+2N5H+nfmOP7RsS/
+        JxL+aHpD7Y/mfaT/9c+6+D/cfXB/x2clfzS9ofZHY6UfP77/Gye/5P8BV1M8T1UpAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 25 Mar 2016 18:22:25 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [342e7e2b-c99d-448d-8a5c-bc9154ea3dd2]
+      x-ms-ratelimit-remaining-subscription-reads: ['14955']
+      x-ms-request-id: [a335fb49-4f61-432b-8c38-821683ac1f5a]
+      x-ms-routing-request-id: ['WESTUS:20160325T182225Z:342e7e2b-c99d-448d-8a5c-bc9154ea3dd2']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131027280122225029]
+    status: {code: 200, message: OK}
 version: 1

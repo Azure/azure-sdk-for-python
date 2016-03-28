@@ -18,6 +18,7 @@ import unittest
 
 import azure.mgmt.logic
 import azure.mgmt.web
+from msrest.version import msrest_version
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -35,7 +36,7 @@ class MgmtAppsTest(AzureMgmtTestCase):
             azure.mgmt.web.WebSiteManagementClient
         )
 
-    @unittest.skip("https://github.com/Azure/azure-rest-api-specs/issues/137")
+    @unittest.skipIf(msrest_version.startswith("0.1."), "Fixed in msrest 0.2.0")
     @record
     def test_logic(self):
         self.create_resource_group()
@@ -68,7 +69,15 @@ class MgmtAppsTest(AzureMgmtTestCase):
                         type='Microsoft.Web/ServerFarms',
                         id=app_service_plan.id
                     )
-                )
+                ),
+                definition={ 
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "triggers": {},
+                    "actions": {},
+                    "outputs": {}
+                }
             )
         )
 

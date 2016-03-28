@@ -27,17 +27,28 @@ class VnetInfo(Resource):
     VNETInfo contract. This contract is public and is a stripped down version
     of VNETInfoInternal
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str vnet_resource_id: The vnet resource id
-    :param str cert_thumbprint: The client certificate thumbprint
-    :param str cert_blob: A certificate file (.cer) blob containing the
-     public key of the private key used to authenticate a
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param vnet_resource_id: The vnet resource id
+    :type vnet_resource_id: str
+    :param cert_thumbprint: The client certificate thumbprint
+    :type cert_thumbprint: str
+    :param cert_blob: A certificate file (.cer) blob containing the public
+     key of the private key used to authenticate a
      Point-To-Site VPN connection.
-    :param list routes: The routes that this virtual network connection uses.
+    :type cert_blob: str
+    :param routes: The routes that this virtual network connection uses.
+    :type routes: list of :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
+    :param resync_required: Flag to determine if a resync is required
+    :type resync_required: bool
     """ 
 
     _validation = {
@@ -54,11 +65,13 @@ class VnetInfo(Resource):
         'cert_thumbprint': {'key': 'properties.certThumbprint', 'type': 'str'},
         'cert_blob': {'key': 'properties.certBlob', 'type': 'str'},
         'routes': {'key': 'properties.routes', 'type': '[VnetRoute]'},
+        'resync_required': {'key': 'properties.resyncRequired', 'type': 'bool'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None, **kwargs):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None, resync_required=None, **kwargs):
         super(VnetInfo, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint = cert_thumbprint
         self.cert_blob = cert_blob
         self.routes = routes
+        self.resync_required = resync_required

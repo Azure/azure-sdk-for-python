@@ -24,10 +24,11 @@ from msrest.serialization import Model
 
 class PurgeParameters(Model):
     """
-    Parameters required for endpoint purge
+    Parameters required for endpoint purge.
 
-    :param list content_paths: The path to the content to be purged, can
-     describe a file path or a wild card directory.
+    :param content_paths: The path to the content to be purged. Can describe
+     a file path or a wild card directory.
+    :type content_paths: list of str
     """ 
 
     _validation = {

@@ -29,18 +29,21 @@ class AdditionalUnattendContent(Model):
     defined by setting name, component name, and the pass in which the
     content is a applied.
 
-    :param str pass_name: Gets or sets the pass name. Currently, the only
+    :param pass_name: Gets or sets the pass name. Currently, the only
      allowable value is oobeSystem. Possible values include: 'oobeSystem'
-    :param str component_name: Gets or sets the component name. Currently,
-     the only allowable value is Microsoft-Windows-Shell-Setup. Possible
-     values include: 'Microsoft-Windows-Shell-Setup'
-    :param str setting_name: Gets or sets setting name (e.g.
-     FirstLogonCommands, AutoLogon ). Possible values include: 'AutoLogon',
-     'FirstLogonCommands'
-    :param str content: Gets or sets XML formatted content that is added to
-     the unattend.xml file in the specified pass and component.The XML must
-     be less than 4 KB and must include the root element for the setting or
+    :type pass_name: str
+    :param component_name: Gets or sets the component name. Currently, the
+     only allowable value is Microsoft-Windows-Shell-Setup. Possible values
+     include: 'Microsoft-Windows-Shell-Setup'
+    :type component_name: str
+    :param setting_name: Gets or sets setting name (e.g. FirstLogonCommands,
+     AutoLogon ). Possible values include: 'AutoLogon', 'FirstLogonCommands'
+    :type setting_name: str
+    :param content: Gets or sets XML formatted content that is added to the
+     unattend.xml file in the specified pass and component.The XML must be
+     less than 4 KB and must include the root element for the setting or
      feature that is being inserted.
+    :type content: str
     """ 
 
     _attribute_map = {

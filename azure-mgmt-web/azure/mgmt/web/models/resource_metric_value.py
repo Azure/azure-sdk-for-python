@@ -26,12 +26,18 @@ class ResourceMetricValue(Model):
     """
     Value of resource metric
 
-    :param str time_stamp: Value timestamp
-    :param float average: Value average
-    :param float minimum: Value minimum
-    :param float maximum: Value maximum
-    :param float total: Value total
-    :param float count: Value count
+    :param time_stamp: Value timestamp
+    :type time_stamp: str
+    :param average: Value average
+    :type average: float
+    :param minimum: Value minimum
+    :type minimum: float
+    :param maximum: Value maximum
+    :type maximum: float
+    :param total: Value total
+    :type total: float
+    :param count: Value count
+    :type count: float
     """ 
 
     _attribute_map = {

@@ -19,19 +19,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ExpressRouteCircuitRoutesTablePaged(Paged):
+class IpSecurityRestriction(Model):
     """
-    A paging container for iterating over a list of ExpressRouteCircuitRoutesTable object
-    """
+    Represents an ip security restriction on a web app.
+
+    :param ip_address: IP address the security restriction is valid for
+    :type ip_address: str
+    :param subnet_mask: Subnet mask for the range of IP addresses the
+     restriction is valid for
+    :type subnet_mask: str
+    """ 
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ExpressRouteCircuitRoutesTable]'}
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(ExpressRouteCircuitRoutesTablePaged, self).__init__(*args, **kwargs)
+    def __init__(self, ip_address=None, subnet_mask=None, **kwargs):
+        self.ip_address = ip_address
+        self.subnet_mask = subnet_mask

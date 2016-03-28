@@ -25,19 +25,32 @@ from msrest.serialization import Model
 class WorkflowRunTrigger(Model):
     """WorkflowRunTrigger
 
-    :param str name: Gets the name.
-    :param object inputs: Gets the inputs.
-    :param ContentLink inputs_link: Gets the link to inputs.
-    :param object outputs: Gets the outputs.
-    :param ContentLink outputs_link: Gets the link to outputs.
-    :param datetime start_time: Gets the start time.
-    :param datetime end_time: Gets the end time.
-    :param str tracking_id: Gets the trackingId.
-    :param str code: Gets the code.
-    :param str status: Gets the status. Possible values include:
-     'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
-     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
-    :param object error: Gets the error.
+    :param name: Gets the name.
+    :type name: str
+    :param inputs: Gets the inputs.
+    :type inputs: object
+    :param inputs_link: Gets the link to inputs.
+    :type inputs_link: :class:`ContentLink
+     <azure.mgmt.logic.models.ContentLink>`
+    :param outputs: Gets the outputs.
+    :type outputs: object
+    :param outputs_link: Gets the link to outputs.
+    :type outputs_link: :class:`ContentLink
+     <azure.mgmt.logic.models.ContentLink>`
+    :param start_time: Gets the start time.
+    :type start_time: datetime
+    :param end_time: Gets the end time.
+    :type end_time: datetime
+    :param tracking_id: Gets the trackingId.
+    :type tracking_id: str
+    :param code: Gets the code.
+    :type code: str
+    :param status: Gets the status. Possible values include: 'NotSpecified',
+     'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
+     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
+    :type status: str
+    :param error: Gets the error.
+    :type error: object
     """ 
 
     _attribute_map = {

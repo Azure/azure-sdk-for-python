@@ -58,12 +58,17 @@ class VirtualMachineExtensionsOperations(object):
         :type vm_extension_name: str
         :param extension_parameters: Parameters supplied to the Create
          Virtual Machine Extension operation.
-        :type extension_parameters: VirtualMachineExtension
+        :type extension_parameters: :class:`VirtualMachineExtension
+         <azure.mgmt.compute.models.VirtualMachineExtension>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: VirtualMachineExtension
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`VirtualMachineExtension
+         <azure.mgmt.compute.models.VirtualMachineExtension>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
@@ -126,6 +131,10 @@ class VirtualMachineExtensionsOperations(object):
 
             return deserialized
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -146,10 +155,13 @@ class VirtualMachineExtensionsOperations(object):
         :param vm_extension_name: The name of the virtual machine extension.
         :type vm_extension_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
@@ -190,7 +202,7 @@ class VirtualMachineExtensionsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202, 204]:
+            if response.status_code not in [202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -198,6 +210,10 @@ class VirtualMachineExtensionsOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -221,10 +237,14 @@ class VirtualMachineExtensionsOperations(object):
         :param expand: The expand expression to apply on the operation.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: VirtualMachineExtension
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`VirtualMachineExtension
+         <azure.mgmt.compute.models.VirtualMachineExtension>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'

@@ -38,11 +38,12 @@ class CdnManagementClientConfiguration(AzureConfiguration):
     attributes.
 
     :param credentials: Gets Azure subscription credentials.
-    :type credentials: credentials
-    :param subscription_id: Azure Subscription ID
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
+    :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param api_version: Version of the API to be used with the client
-     request, current version is 2015-06-01
+     request. Current version is 2015-06-01
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.

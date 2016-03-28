@@ -46,18 +46,20 @@ class EndpointsOperations(object):
     def list_by_profile(
             self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Lists existing CDN endpoints within a profile
+        Lists existing CDN endpoints within a profile.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: EndpointPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`EndpointPaged <azure.mgmt.cdn.models.EndpointPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -112,20 +114,24 @@ class EndpointsOperations(object):
     def get(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Gets an existing CDN endpoint with the specified parameters
+        Gets an existing CDN endpoint with the specified parameters.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Endpoint
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Endpoint <azure.mgmt.cdn.models.Endpoint>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}'
@@ -172,22 +178,28 @@ class EndpointsOperations(object):
     def create(
             self, endpoint_name, endpoint_properties, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Creates a new CDN endpoint with the specified parameters
+        Creates a new CDN endpoint with the specified parameters.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
         :param endpoint_properties: Endpoint properties
-        :type endpoint_properties: EndpointCreateParameters
-        :param profile_name: Name of the CDN profile within the resource group
+        :type endpoint_properties: :class:`EndpointCreateParameters
+         <azure.mgmt.cdn.models.EndpointCreateParameters>`
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Endpoint
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`Endpoint
+         <azure.mgmt.cdn.models.Endpoint>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}'
@@ -248,6 +260,10 @@ class EndpointsOperations(object):
 
             return deserialized
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -263,20 +279,26 @@ class EndpointsOperations(object):
         To update origins, use the Update Origin operation. To update custom
         domains, use the Update Custom Domain operation.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
         :param endpoint_properties: Endpoint properties
-        :type endpoint_properties: EndpointUpdateParameters
-        :param profile_name: Name of the CDN profile within the resource group
+        :type endpoint_properties: :class:`EndpointUpdateParameters
+         <azure.mgmt.cdn.models.EndpointUpdateParameters>`
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Endpoint
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`Endpoint
+         <azure.mgmt.cdn.models.Endpoint>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}'
@@ -337,6 +359,10 @@ class EndpointsOperations(object):
 
             return deserialized
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -347,20 +373,24 @@ class EndpointsOperations(object):
     def delete_if_exists(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        deletes an existing CDN endpoint with the specified parameters
+        Deletes an existing CDN endpoint with the specified parameters.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}'
@@ -408,6 +438,10 @@ class EndpointsOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -418,20 +452,24 @@ class EndpointsOperations(object):
     def start(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Starts an existing stopped CDN endpoint
+        Starts an existing stopped CDN endpoint.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/start'
@@ -479,6 +517,10 @@ class EndpointsOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -489,20 +531,24 @@ class EndpointsOperations(object):
     def stop(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Stops an existing running CDN endpoint
+        Stops an existing running CDN endpoint.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/stop'
@@ -550,6 +596,10 @@ class EndpointsOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -560,23 +610,27 @@ class EndpointsOperations(object):
     def purge_content(
             self, endpoint_name, profile_name, resource_group_name, content_paths, custom_headers={}, raw=False, **operation_config):
         """
-        Forcibly purges CDN endpoint content
+        Forcibly purges CDN endpoint content.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
-        :param content_paths: The path to the content to be purged, can
+        :param content_paths: The path to the content to be purged. Can
          describe a file path or a wild card directory.
-        :type content_paths: list
+        :type content_paths: list of str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         content_file_paths = models.PurgeParameters(content_paths=content_paths)
 
@@ -630,6 +684,10 @@ class EndpointsOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -640,23 +698,27 @@ class EndpointsOperations(object):
     def load_content(
             self, endpoint_name, profile_name, resource_group_name, content_paths, custom_headers={}, raw=False, **operation_config):
         """
-        Forcibly pre-loads CDN endpoint content
+        Forcibly pre-loads CDN endpoint content.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
-        :param content_paths: The path to the content to be loaded, should
+        :param content_paths: The path to the content to be loaded. Should
          describe a file path.
-        :type content_paths: list
+        :type content_paths: list of str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         content_file_paths = models.LoadParameters(content_paths=content_paths)
 
@@ -710,6 +772,10 @@ class EndpointsOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -720,23 +786,29 @@ class EndpointsOperations(object):
     def validate_custom_domain(
             self, endpoint_name, profile_name, resource_group_name, host_name, custom_headers={}, raw=False, **operation_config):
         """
-        Validates a Custom Domain mapping to ensure it maps to the correct
-        CNAME in DNS
+        Validates a custom domain mapping to ensure it maps to the correct
+        CNAME in DNS.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
-        :param host_name: The host name of the custom domain
+        :param host_name: The host name of the custom domain. Must be a
+         domain name.
         :type host_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ValidateCustomDomainOutput
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ValidateCustomDomainOutput
+         <azure.mgmt.cdn.models.ValidateCustomDomainOutput>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         custom_domain_properties = models.ValidateCustomDomainInput(host_name=host_name)
 

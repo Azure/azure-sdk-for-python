@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "azure", "azure.pyproj", "{25B2C65A-0553-4452-8907-8B5B17544E68}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "msrest", "..\autorest\ClientRuntimes\Python\msrest\msrest.pyproj", "{8523BA22-21D4-4F69-A73E-958B617C9D37}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "msrestazure", "..\autorest\ClientRuntimes\Python\msrestazure\msrestazure.pyproj", "{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AzureResourceViewer", "examples\AzureResourceViewer\AzureResourceViewer.pyproj", "{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +19,14 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{25B2C65A-0553-4452-8907-8B5B17544E68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{25B2C65A-0553-4452-8907-8B5B17544E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8523BA22-21D4-4F69-A73E-958B617C9D37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8523BA22-21D4-4F69-A73E-958B617C9D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

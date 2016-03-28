@@ -26,11 +26,18 @@ class ApiError(Model):
     """
     Api error.
 
-    :param list details: Gets or sets the Api error details
-    :param InnerError innererror: Gets or sets the Api inner error
-    :param str code: Gets or sets the error code.
-    :param str target: Gets or sets the target of the particular error.
-    :param str message: Gets or sets the error message.
+    :param details: Gets or sets the Api error details
+    :type details: list of :class:`ApiErrorBase
+     <azure.mgmt.compute.models.ApiErrorBase>`
+    :param innererror: Gets or sets the Api inner error
+    :type innererror: :class:`InnerError
+     <azure.mgmt.compute.models.InnerError>`
+    :param code: Gets or sets the error code.
+    :type code: str
+    :param target: Gets or sets the target of the particular error.
+    :type target: str
+    :param message: Gets or sets the error message.
+    :type message: str
     """ 
 
     _attribute_map = {

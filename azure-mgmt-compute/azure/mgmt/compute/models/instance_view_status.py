@@ -26,14 +26,19 @@ class InstanceViewStatus(Model):
     """
     Instance view status.
 
-    :param str code: Gets or sets the status Code.
-    :param str level: Gets or sets the level Code. Possible values include:
+    :param code: Gets the status Code.
+    :type code: str
+    :param level: Gets or sets the level Code. Possible values include:
      'Info', 'Warning', 'Error'
-    :param str display_status: Gets or sets the short localizable label for
-     the status.
-    :param str message: Gets or sets the optional detailed Message, including
-     for alerts and error messages.
-    :param datetime time: Gets or sets the time of the status.
+    :type level: str
+    :param display_status: Gets or sets the short localizable label for the
+     status.
+    :type display_status: str
+    :param message: Gets or sets the detailed Message, including for alerts
+     and error messages.
+    :type message: str
+    :param time: Gets or sets the time of the status.
+    :type time: datetime
     """ 
 
     _attribute_map = {

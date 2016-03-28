@@ -26,30 +26,46 @@ class NetworkInterface(Resource):
     """
     A NetworkInterface in a resource group
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param SubResource virtual_machine: Gets or sets the reference of a
-     VirtualMachine
-    :param NetworkSecurityGroup network_security_group: Gets or sets the
-     reference of the NetworkSecurityGroup resource
-    :param list ip_configurations: Gets or sets list of IPConfigurations of
-     the NetworkInterface
-    :param NetworkInterfaceDnsSettings dns_settings: Gets or sets DNS
-     Settings in  NetworkInterface
-    :param str mac_address: Gets the MAC Address of the network interface
-    :param bool primary: Gets whether this is a primary NIC on a virtual
-     machine
-    :param bool enable_ip_forwarding: Gets or sets whether IPForwarding is
-     enabled on the NIC
-    :param str resource_guid: Gets or sets resource guid property of the
-     network interface resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param virtual_machine: Gets or sets the reference of a VirtualMachine
+    :type virtual_machine: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param network_security_group: Gets or sets the reference of the
+     NetworkSecurityGroup resource
+    :type network_security_group: :class:`NetworkSecurityGroup
+     <azure.mgmt.network.models.NetworkSecurityGroup>`
+    :param ip_configurations: Gets or sets list of IPConfigurations of the
+     NetworkInterface
+    :type ip_configurations: list of :class:`NetworkInterfaceIPConfiguration
+     <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
+    :param dns_settings: Gets or sets DNS Settings in  NetworkInterface
+    :type dns_settings: :class:`NetworkInterfaceDnsSettings
+     <azure.mgmt.network.models.NetworkInterfaceDnsSettings>`
+    :param mac_address: Gets the MAC Address of the network interface
+    :type mac_address: str
+    :param primary: Gets whether this is a primary NIC on a virtual machine
+    :type primary: bool
+    :param enable_ip_forwarding: Gets or sets whether IPForwarding is enabled
+     on the NIC
+    :type enable_ip_forwarding: bool
+    :param resource_guid: Gets or sets resource guid property of the network
+     interface resource
+    :type resource_guid: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {
@@ -70,10 +86,10 @@ class NetworkInterface(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, virtual_machine=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
         super(NetworkInterface, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.virtual_machine = virtual_machine
-        self.network_security_group = None
+        self.network_security_group = network_security_group
         self.ip_configurations = ip_configurations
         self.dns_settings = dns_settings
         self.mac_address = mac_address

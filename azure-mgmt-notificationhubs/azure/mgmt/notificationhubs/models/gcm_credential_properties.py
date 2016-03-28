@@ -26,8 +26,10 @@ class GcmCredentialProperties(Model):
     """
     Description of a NotificationHub GcmCredential.
 
-    :param str gcm_endpoint: Gets or sets the GCM endpoint.
-    :param str google_api_key: Gets or sets the Google API key.
+    :param gcm_endpoint: Gets or sets the GCM endpoint.
+    :type gcm_endpoint: str
+    :param google_api_key: Gets or sets the Google API key.
+    :type google_api_key: str
     """ 
 
     _attribute_map = {

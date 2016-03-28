@@ -22,31 +22,21 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """Resource
+class ResourceGroupExportResult(Model):
+    """ResourceGroupExportResult
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
+    :param template: Gets or sets the template content.
+    :type template: object
+    :param error: Gets or sets the error.
+    :type error: :class:`ResourceManagementErrorWithDetails
+     <azure.mgmt.resource.resources.models.ResourceManagementErrorWithDetails>`
     """ 
 
-    _validation = {
-        'location': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'template': {'key': 'template', 'type': 'object'},
+        'error': {'key': 'error', 'type': 'ResourceManagementErrorWithDetails'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, **kwargs):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.location = location
-        self.tags = tags
+    def __init__(self, template=None, error=None, **kwargs):
+        self.template = template
+        self.error = error

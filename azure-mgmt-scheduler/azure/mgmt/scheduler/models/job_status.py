@@ -25,16 +25,19 @@ from msrest.serialization import Model
 class JobStatus(Model):
     """JobStatus
 
-    :param int execution_count: Gets the number of times this job has
-     executed.
-    :param int failure_count: Gets the number of times this job has failed.
-    :param int faulted_count: Gets the number of faulted occurrences
-     (occurrences that were retried and failed as many times as the retry
-     policy states).
-    :param datetime last_execution_time: Gets the time the last occurrence
-     executed in ISO-8601 format.  Could be empty if job has not run yet.
-    :param datetime next_execution_time: Gets the time of the next occurrence
-     in ISO-8601 format. Could be empty if the job is completed.
+    :param execution_count: Gets the number of times this job has executed.
+    :type execution_count: int
+    :param failure_count: Gets the number of times this job has failed.
+    :type failure_count: int
+    :param faulted_count: Gets the number of faulted occurrences (occurrences
+     that were retried and failed as many times as the retry policy states).
+    :type faulted_count: int
+    :param last_execution_time: Gets the time the last occurrence executed in
+     ISO-8601 format.  Could be empty if job has not run yet.
+    :type last_execution_time: datetime
+    :param next_execution_time: Gets the time of the next occurrence in
+     ISO-8601 format. Could be empty if the job is completed.
+    :type next_execution_time: datetime
     """ 
 
     _attribute_map = {

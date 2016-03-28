@@ -25,10 +25,13 @@ from msrest.serialization import Model
 class JobCollectionQuota(Model):
     """JobCollectionQuota
 
-    :param int max_job_count: Gets or set the maximum job count.
-    :param int max_job_occurrence: Gets or sets the maximum job occurrence.
-    :param JobMaxRecurrence max_recurrence: Gets or set the maximum
-     recurrence.
+    :param max_job_count: Gets or set the maximum job count.
+    :type max_job_count: int
+    :param max_job_occurrence: Gets or sets the maximum job occurrence.
+    :type max_job_occurrence: int
+    :param max_recurrence: Gets or set the maximum recurrence.
+    :type max_recurrence: :class:`JobMaxRecurrence
+     <azure.mgmt.scheduler.models.JobMaxRecurrence>`
     """ 
 
     _attribute_map = {

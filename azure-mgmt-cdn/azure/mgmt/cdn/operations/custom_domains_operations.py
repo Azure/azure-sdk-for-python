@@ -46,20 +46,23 @@ class CustomDomainsOperations(object):
     def list_by_endpoint(
             self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Lists the existing CDN Custom Domains within an Endpoint
+        Lists the existing CDN custom domains within an endpoint.
 
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: CustomDomainPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`CustomDomainPaged
+         <azure.mgmt.cdn.models.CustomDomainPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -115,23 +118,27 @@ class CustomDomainsOperations(object):
     def get(
             self, custom_domain_name, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Gets an existing CDN Custom Domain within an Endpoint
+        Gets an existing CDN custom domain within an endpoint.
 
         :param custom_domain_name: Name of the custom domain within an
-         endpoint
+         endpoint.
         :type custom_domain_name: str
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: CustomDomain
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
@@ -179,25 +186,31 @@ class CustomDomainsOperations(object):
     def create(
             self, custom_domain_name, endpoint_name, profile_name, resource_group_name, host_name, custom_headers={}, raw=False, **operation_config):
         """
-        Creates a new CDN Custom Domain within an Endpoint
+        Creates a new CDN custom domain within an endpoint.
 
         :param custom_domain_name: Name of the custom domain within an
-         endpoint
+         endpoint.
         :type custom_domain_name: str
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
-        :param host_name: The host name of the custom domain
+        :param host_name: The host name of the custom domain. Must be a
+         domain name.
         :type host_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: CustomDomain
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`CustomDomain
+         <azure.mgmt.cdn.models.CustomDomain>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         custom_domain_properties = models.CustomDomainParameters(host_name=host_name)
 
@@ -261,6 +274,10 @@ class CustomDomainsOperations(object):
 
             return deserialized
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -271,25 +288,30 @@ class CustomDomainsOperations(object):
     def update(
             self, custom_domain_name, endpoint_name, profile_name, resource_group_name, host_name, custom_headers={}, raw=False, **operation_config):
         """
-        Updates an existing CDN Custom Domain within an Endpoint
+        Updates an existing CDN custom domain within an endpoint.
 
         :param custom_domain_name: Name of the custom domain within an
-         endpoint
+         endpoint.
         :type custom_domain_name: str
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
-        :param host_name: The host name of the custom domain
+        :param host_name: The host name of the custom domain. Must be a
+         domain name.
         :type host_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ErrorResponse
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ErrorResponse <azure.mgmt.cdn.models.ErrorResponse>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         custom_domain_properties = models.CustomDomainParameters(host_name=host_name)
 
@@ -336,23 +358,28 @@ class CustomDomainsOperations(object):
     def delete_if_exists(
             self, custom_domain_name, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Deletes an existing CDN Custom Domain within an Endpoint
+        Deletes an existing CDN custom domain within an endpoint.
 
         :param custom_domain_name: Name of the custom domain within an
-         endpoint
+         endpoint.
         :type custom_domain_name: str
-        :param endpoint_name: Name of the endpoint within the CDN profile
+        :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: CustomDomain
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`CustomDomain
+         <azure.mgmt.cdn.models.CustomDomain>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
@@ -407,6 +434,10 @@ class CustomDomainsOperations(object):
                 return client_raw_response
 
             return deserialized
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',

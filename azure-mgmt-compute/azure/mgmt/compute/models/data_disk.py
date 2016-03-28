@@ -26,20 +26,28 @@ class DataDisk(Model):
     """
     Describes a data disk.
 
-    :param int lun: Gets or sets the logical unit number.
-    :param str name: Gets or sets the disk name.
-    :param VirtualHardDisk vhd: Gets or sets the Virtual Hard Disk.
-    :param VirtualHardDisk image: Gets or sets the Source User Image
-     VirtualHardDisk. This VirtualHardDisk will be copied before using it to
-     attach to the Virtual Machine.If SourceImage is provided, the
-     destination VirtualHardDisk should not exist.
-    :param str caching: Gets or sets the caching type. Possible values
-     include: 'None', 'ReadOnly', 'ReadWrite'
-    :param str create_option: Gets or sets the create option. Possible values
+    :param lun: Gets or sets the logical unit number.
+    :type lun: int
+    :param name: Gets or sets the disk name.
+    :type name: str
+    :param vhd: Gets or sets the Virtual Hard Disk.
+    :type vhd: :class:`VirtualHardDisk
+     <azure.mgmt.compute.models.VirtualHardDisk>`
+    :param image: Gets or sets the Source User Image VirtualHardDisk. This
+     VirtualHardDisk will be copied before using it to attach to the Virtual
+     Machine.If SourceImage is provided, the destination VirtualHardDisk
+     should not exist.
+    :type image: :class:`VirtualHardDisk
+     <azure.mgmt.compute.models.VirtualHardDisk>`
+    :param caching: Gets or sets the caching type. Possible values include:
+     'None', 'ReadOnly', 'ReadWrite'
+    :type caching: str
+    :param create_option: Gets or sets the create option. Possible values
      include: 'fromImage', 'empty', 'attach'
-    :param int disk_size_gb: Gets or sets the initial disk size in GB for
-     blank data disks, and the new desired size for existing OS and Data
-     disks.
+    :type create_option: str
+    :param disk_size_gb: Gets or sets the initial disk size in GB for blank
+     data disks, and the new desired size for existing OS and Data disks.
+    :type disk_size_gb: int
     """ 
 
     _validation = {

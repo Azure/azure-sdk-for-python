@@ -28,7 +28,8 @@ class DhcpOptions(Model):
     the virtual networkStandard DHCP option for a subnet overrides VNET DHCP
     options.
 
-    :param list dns_servers: Gets or sets list of DNS servers IP addresses
+    :param dns_servers: Gets or sets list of DNS servers IP addresses
+    :type dns_servers: list of str
     """ 
 
     _attribute_map = {

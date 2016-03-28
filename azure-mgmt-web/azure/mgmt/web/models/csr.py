@@ -26,19 +26,30 @@ class Csr(Resource):
     """
     Certificate signing request object
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str csr_name: Name used to locate CSR object
-    :param str distinguished_name: Distinguished name of certificate to be
-     created
-    :param str csr_string: Actual CSR string created
-    :param str pfx_blob: PFX certifcate of created certificate
-    :param str password: PFX password
-    :param str public_key_hash: Hash of the certificates public key
-    :param str hosting_environment: Hosting environment
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param csr_name: Name used to locate CSR object
+    :type csr_name: str
+    :param distinguished_name: Distinguished name of certificate to be created
+    :type distinguished_name: str
+    :param csr_string: Actual CSR string created
+    :type csr_string: str
+    :param pfx_blob: PFX certifcate of created certificate
+    :type pfx_blob: str
+    :param password: PFX password
+    :type password: str
+    :param public_key_hash: Hash of the certificates public key
+    :type public_key_hash: str
+    :param hosting_environment: Hosting environment
+    :type hosting_environment: str
     """ 
 
     _validation = {

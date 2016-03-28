@@ -135,6 +135,8 @@ class RecordingTestCase(ExtendedTestCase):
                 for name, val in headers.items():
                     for i in range(len(val)):
                         val[i] = self._scrub(val[i])
+                    if name.lower() == 'retry-after':
+                        val[:] = ['0']
             body = response.get('body')
             if body:
                 body_str = body.get('string')

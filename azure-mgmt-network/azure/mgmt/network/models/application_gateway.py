@@ -26,41 +26,76 @@ class ApplicationGateway(Resource):
     """
     ApplicationGateways resource
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param ApplicationGatewaySku sku: Gets or sets sku of application gateway
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: Gets or sets sku of application gateway resource
+    :type sku: :class:`ApplicationGatewaySku
+     <azure.mgmt.network.models.ApplicationGatewaySku>`
+    :param operational_state: Gets operational state of application gateway
+     resource. Possible values include: 'Stopped', 'Starting', 'Running',
+     'Stopping'
+    :type operational_state: str
+    :param gateway_ip_configurations: Gets or sets subnets of application
+     gateway resource
+    :type gateway_ip_configurations: list of
+     :class:`ApplicationGatewayIPConfiguration
+     <azure.mgmt.network.models.ApplicationGatewayIPConfiguration>`
+    :param ssl_certificates: Gets or sets ssl certificates of application
+     gateway resource
+    :type ssl_certificates: list of :class:`ApplicationGatewaySslCertificate
+     <azure.mgmt.network.models.ApplicationGatewaySslCertificate>`
+    :param frontend_ip_configurations: Gets or sets frontend IP addresses of
+     application gateway resource
+    :type frontend_ip_configurations: list of
+     :class:`ApplicationGatewayFrontendIPConfiguration
+     <azure.mgmt.network.models.ApplicationGatewayFrontendIPConfiguration>`
+    :param frontend_ports: Gets or sets frontend ports of application gateway
      resource
-    :param str operational_state: Gets operational state of application
-     gateway resource. Possible values include: 'Stopped', 'Starting',
-     'Running', 'Stopping'
-    :param list gateway_ip_configurations: Gets or sets subnets of
+    :type frontend_ports: list of :class:`ApplicationGatewayFrontendPort
+     <azure.mgmt.network.models.ApplicationGatewayFrontendPort>`
+    :param probes: Gets or sets probes of application gateway resource
+    :type probes: list of :class:`ApplicationGatewayProbe
+     <azure.mgmt.network.models.ApplicationGatewayProbe>`
+    :param backend_address_pools: Gets or sets backend address pool of
      application gateway resource
-    :param list ssl_certificates: Gets or sets ssl certificates of
-     application gateway resource
-    :param list frontend_ip_configurations: Gets or sets frontend IP
-     addresses of application gateway resource
-    :param list frontend_ports: Gets or sets frontend ports of application
-     gateway resource
-    :param list probes: Gets or sets probes of application gateway resource
-    :param list backend_address_pools: Gets or sets backend address pool of
-     application gateway resource
-    :param list backend_http_settings_collection: Gets or sets backend http
+    :type backend_address_pools: list of
+     :class:`ApplicationGatewayBackendAddressPool
+     <azure.mgmt.network.models.ApplicationGatewayBackendAddressPool>`
+    :param backend_http_settings_collection: Gets or sets backend http
      settings of application gateway resource
-    :param list http_listeners: Gets or sets HTTP listeners of application
-     gateway resource
-    :param list url_path_maps: Gets or sets URL path map of application
-     gateway resource
-    :param list request_routing_rules: Gets or sets request routing rules of
+    :type backend_http_settings_collection: list of
+     :class:`ApplicationGatewayBackendHttpSettings
+     <azure.mgmt.network.models.ApplicationGatewayBackendHttpSettings>`
+    :param http_listeners: Gets or sets HTTP listeners of application gateway
+     resource
+    :type http_listeners: list of :class:`ApplicationGatewayHttpListener
+     <azure.mgmt.network.models.ApplicationGatewayHttpListener>`
+    :param url_path_maps: Gets or sets URL path map of application gateway
+     resource
+    :type url_path_maps: list of :class:`ApplicationGatewayUrlPathMap
+     <azure.mgmt.network.models.ApplicationGatewayUrlPathMap>`
+    :param request_routing_rules: Gets or sets request routing rules of
      application gateway resource
-    :param str resource_guid: Gets or sets resource guid property of the
+    :type request_routing_rules: list of
+     :class:`ApplicationGatewayRequestRoutingRule
+     <azure.mgmt.network.models.ApplicationGatewayRequestRoutingRule>`
+    :param resource_guid: Gets or sets resource guid property of the
      ApplicationGateway resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type resource_guid: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      ApplicationGateway resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

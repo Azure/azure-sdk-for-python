@@ -26,16 +26,26 @@ class DeploymentProperties(Model):
     """
     Deployment properties.
 
-    :param object template: Gets or sets the template content. Use only one
-     of Template or TemplateLink.
-    :param TemplateLink template_link: Gets or sets the URI referencing the
-     template. Use only one of Template or TemplateLink.
-    :param object parameters: Deployment parameters. Use only one of
-     Parameters or ParametersLink.
-    :param ParametersLink parameters_link: Gets or sets the URI referencing
-     the parameters. Use only one of Parameters or ParametersLink.
-    :param str mode: Gets or sets the deployment mode. Possible values
-     include: 'Incremental', 'Complete'
+    :param template: Gets or sets the template content. Use only one of
+     Template or TemplateLink.
+    :type template: object
+    :param template_link: Gets or sets the URI referencing the template. Use
+     only one of Template or TemplateLink.
+    :type template_link: :class:`TemplateLink
+     <azure.mgmt.resource.resources.models.TemplateLink>`
+    :param parameters: Deployment parameters. Use only one of Parameters or
+     ParametersLink.
+    :type parameters: object
+    :param parameters_link: Gets or sets the URI referencing the parameters.
+     Use only one of Parameters or ParametersLink.
+    :type parameters_link: :class:`ParametersLink
+     <azure.mgmt.resource.resources.models.ParametersLink>`
+    :param mode: Gets or sets the deployment mode. Possible values include:
+     'Incremental', 'Complete'
+    :type mode: str
+    :param debug_setting: Gets or sets the debug setting of the deployment.
+    :type debug_setting: :class:`DebugSetting
+     <azure.mgmt.resource.resources.models.DebugSetting>`
     """ 
 
     _attribute_map = {
@@ -44,11 +54,13 @@ class DeploymentProperties(Model):
         'parameters': {'key': 'parameters', 'type': 'object'},
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
+        'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
     }
 
-    def __init__(self, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, **kwargs):
+    def __init__(self, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None, **kwargs):
         self.template = template
         self.template_link = template_link
         self.parameters = parameters
         self.parameters_link = parameters_link
         self.mode = mode
+        self.debug_setting = debug_setting

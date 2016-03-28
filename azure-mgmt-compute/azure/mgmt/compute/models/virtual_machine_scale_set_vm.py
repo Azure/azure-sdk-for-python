@@ -26,33 +26,56 @@ class VirtualMachineScaleSetVM(Resource):
     """
     Describes a virtual machine scale set virtual machine.
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param str instance_id: Gets the virtual machine instance id.
-    :param Sku sku: Gets the virtual machine sku.
-    :param bool latest_model_applied: Specifies whether the latest model has
-     been applied to the virtual machine.
-    :param VirtualMachineInstanceView instance_view: Gets the virtual machine
-     instance view.
-    :param HardwareProfile hardware_profile: Gets or sets the hardware
-     profile.
-    :param StorageProfile storage_profile: Gets or sets the storage profile.
-    :param OSProfile os_profile: Gets or sets the OS profile.
-    :param NetworkProfile network_profile: Gets or sets the network profile.
-    :param DiagnosticsProfile diagnostics_profile: Gets or sets the
-     diagnostics profile.
-    :param SubResource availability_set: Gets or sets the reference Id of the
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param instance_id: Gets the virtual machine instance id.
+    :type instance_id: str
+    :param sku: Gets the virtual machine sku.
+    :type sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
+    :param latest_model_applied: Specifies whether the latest model has been
+     applied to the virtual machine.
+    :type latest_model_applied: bool
+    :param instance_view: Gets the virtual machine instance view.
+    :type instance_view: :class:`VirtualMachineInstanceView
+     <azure.mgmt.compute.models.VirtualMachineInstanceView>`
+    :param hardware_profile: Gets or sets the hardware profile.
+    :type hardware_profile: :class:`HardwareProfile
+     <azure.mgmt.compute.models.HardwareProfile>`
+    :param storage_profile: Gets or sets the storage profile.
+    :type storage_profile: :class:`StorageProfile
+     <azure.mgmt.compute.models.StorageProfile>`
+    :param os_profile: Gets or sets the OS profile.
+    :type os_profile: :class:`OSProfile <azure.mgmt.compute.models.OSProfile>`
+    :param network_profile: Gets or sets the network profile.
+    :type network_profile: :class:`NetworkProfile
+     <azure.mgmt.compute.models.NetworkProfile>`
+    :param diagnostics_profile: Gets or sets the diagnostics profile.
+    :type diagnostics_profile: :class:`DiagnosticsProfile
+     <azure.mgmt.compute.models.DiagnosticsProfile>`
+    :param availability_set: Gets or sets the reference Id of the
      availability set to which this virtual machine belongs.
-    :param str provisioning_state: Gets or sets the provisioning state, which
+    :type availability_set: :class:`SubResource
+     <azure.mgmt.compute.models.SubResource>`
+    :param provisioning_state: Gets or sets the provisioning state, which
      only appears in the response.
-    :param str license_type: Gets or sets the license type, which is for
-     bring your own license scenario.
-    :param Plan plan: Gets or sets the purchase plan when deploying virtual
+    :type provisioning_state: str
+    :param license_type: Gets or sets the license type, which is for bring
+     your own license scenario.
+    :type license_type: str
+    :param plan: Gets or sets the purchase plan when deploying virtual
      machine from VM Marketplace images.
-    :param list resources: Gets the virtual machine child extension resources.
+    :type plan: :class:`Plan <azure.mgmt.compute.models.Plan>`
+    :param resources: Gets the virtual machine child extension resources.
+    :type resources: list of :class:`VirtualMachineExtension
+     <azure.mgmt.compute.models.VirtualMachineExtension>`
     """ 
 
     _validation = {

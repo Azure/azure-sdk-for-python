@@ -26,12 +26,20 @@ class ProviderOperationsMetadata(Model):
     """
     Provider Operations metadata
 
-    :param str id: Gets or sets the provider id.
-    :param str name: Gets or sets the provider name
-    :param str type: Gets or sets the provider type
-    :param str display_name: Gets or sets the provider display name
-    :param list resource_types: Gets or sets the provider resource types
-    :param list operations: Gets or sets the provider operations
+    :param id: Gets or sets the provider id.
+    :type id: str
+    :param name: Gets or sets the provider name
+    :type name: str
+    :param type: Gets or sets the provider type
+    :type type: str
+    :param display_name: Gets or sets the provider display name
+    :type display_name: str
+    :param resource_types: Gets or sets the provider resource types
+    :type resource_types: list of :class:`ResourceType
+     <azure.mgmt.authorization.models.ResourceType>`
+    :param operations: Gets or sets the provider operations
+    :type operations: list of :class:`ProviderOperation
+     <azure.mgmt.authorization.models.ProviderOperation>`
     """ 
 
     _attribute_map = {

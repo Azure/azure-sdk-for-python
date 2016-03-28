@@ -26,10 +26,14 @@ class VirtualNetworkProfile(Model):
     """
     Specification for using a virtual network
 
-    :param str id: Resource id of the virtual network
-    :param str name: Name of the virtual network (read-only)
-    :param str type: Resource type of the virtual network (read-only)
-    :param str subnet: Subnet within the virtual network
+    :param id: Resource id of the virtual network
+    :type id: str
+    :param name: Name of the virtual network (read-only)
+    :type name: str
+    :param type: Resource type of the virtual network (read-only)
+    :type type: str
+    :param subnet: Subnet within the virtual network
+    :type subnet: str
     """ 
 
     _attribute_map = {

@@ -26,73 +26,118 @@ class HostingEnvironment(Resource):
     """
     Description of an hostingEnvironment (App Service Environment)
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str hosting_environment_name: Name of the hostingEnvironment (App
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param hosting_environment_name: Name of the hostingEnvironment (App
      Service Environment)
-    :param str hosting_environment_location: Location of the
-     hostingEnvironment (App Service Environment), e.g. "West US"
-    :param str status: Current status of the hostingEnvironment (App Service
+    :type hosting_environment_name: str
+    :param hosting_environment_location: Location of the hostingEnvironment
+     (App Service Environment), e.g. "West US"
+    :type hosting_environment_location: str
+    :param status: Current status of the hostingEnvironment (App Service
      Environment). Possible values include: 'Preparing', 'Ready', 'Scaling',
      'Deleting'
-    :param str vnet_name: Name of the hostingEnvironment's (App Service
+    :type status: str
+    :param vnet_name: Name of the hostingEnvironment's (App Service
      Environment) virtual network
-    :param str vnet_resource_group_name: Resource group of the
+    :type vnet_name: str
+    :param vnet_resource_group_name: Resource group of the
      hostingEnvironment's (App Service Environment) virtual network
-    :param str vnet_subnet_name: Subnet of the hostingEnvironment's (App
+    :type vnet_resource_group_name: str
+    :param vnet_subnet_name: Subnet of the hostingEnvironment's (App Service
+     Environment) virtual network
+    :type vnet_subnet_name: str
+    :param virtual_network: Description of the hostingEnvironment's (App
      Service Environment) virtual network
-    :param VirtualNetworkProfile virtual_network: Description of the
-     hostingEnvironment's (App Service Environment) virtual network
-    :param str internal_load_balancing_mode: Specifies which endpoints to
-     serve internally in the hostingEnvironment's (App Service Environment)
-     VNET. Possible values include: 'None', 'Web', 'Publishing'
-    :param str multi_size: Front-end VM size, e.g. "Medium", "Large"
-    :param int multi_role_count: Number of front-end instances
-    :param list worker_pools: Description of worker pools with worker size
-     ids, VM sizes, and number of workers in each pool
-    :param int ipssl_address_count: Number of IP SSL addresses reserved for
-     this hostingEnvironment (App Service Environment)
-    :param str database_edition: Edition of the metadata database for the
+    :type virtual_network: :class:`VirtualNetworkProfile
+     <azure.mgmt.web.models.VirtualNetworkProfile>`
+    :param internal_load_balancing_mode: Specifies which endpoints to serve
+     internally in the hostingEnvironment's (App Service Environment) VNET.
+     Possible values include: 'None', 'Web', 'Publishing'
+    :type internal_load_balancing_mode: str
+    :param multi_size: Front-end VM size, e.g. "Medium", "Large"
+    :type multi_size: str
+    :param multi_role_count: Number of front-end instances
+    :type multi_role_count: int
+    :param worker_pools: Description of worker pools with worker size ids, VM
+     sizes, and number of workers in each pool
+    :type worker_pools: list of :class:`WorkerPool
+     <azure.mgmt.web.models.WorkerPool>`
+    :param ipssl_address_count: Number of IP SSL addresses reserved for this
+     hostingEnvironment (App Service Environment)
+    :type ipssl_address_count: int
+    :param database_edition: Edition of the metadata database for the
      hostingEnvironment (App Service Environment) e.g. "Standard"
-    :param str database_service_objective: Service objective of the metadata
+    :type database_edition: str
+    :param database_service_objective: Service objective of the metadata
      database for the hostingEnvironment (App Service Environment) e.g. "S0"
-    :param int upgrade_domains: Number of upgrade domains of this
+    :type database_service_objective: str
+    :param upgrade_domains: Number of upgrade domains of this
      hostingEnvironment (App Service Environment)
-    :param str subscription_id: Subscription of the hostingEnvironment (App
+    :type upgrade_domains: int
+    :param subscription_id: Subscription of the hostingEnvironment (App
      Service Environment)
-    :param str dns_suffix: DNS suffix of the hostingEnvironment (App Service
+    :type subscription_id: str
+    :param dns_suffix: DNS suffix of the hostingEnvironment (App Service
      Environment)
-    :param str last_action: Last deployment action on this hostingEnvironment
+    :type dns_suffix: str
+    :param last_action: Last deployment action on this hostingEnvironment
      (App Service Environment)
-    :param str last_action_result: Result of the last deployment action on
-     this hostingEnvironment (App Service Environment)
-    :param str allowed_multi_sizes: List of comma separated strings
-     describing which VM sizes are allowed for front-ends
-    :param str allowed_worker_sizes: List of comma separated strings
-     describing which VM sizes are allowed for workers
-    :param int maximum_number_of_machines: Maximum number of VMs in this
+    :type last_action: str
+    :param last_action_result: Result of the last deployment action on this
      hostingEnvironment (App Service Environment)
-    :param list vip_mappings: Description of IP SSL mapping for this
+    :type last_action_result: str
+    :param allowed_multi_sizes: List of comma separated strings describing
+     which VM sizes are allowed for front-ends
+    :type allowed_multi_sizes: str
+    :param allowed_worker_sizes: List of comma separated strings describing
+     which VM sizes are allowed for workers
+    :type allowed_worker_sizes: str
+    :param maximum_number_of_machines: Maximum number of VMs in this
      hostingEnvironment (App Service Environment)
-    :param list environment_capacities: Current total, used, and available
-     worker capacities
-    :param list network_access_control_list: Access control list for
-     controlling traffic to the hostingEnvironment (App Service Environment)
-    :param bool environment_is_healthy: True/false indicating whether the
+    :type maximum_number_of_machines: int
+    :param vip_mappings: Description of IP SSL mapping for this
+     hostingEnvironment (App Service Environment)
+    :type vip_mappings: list of :class:`VirtualIPMapping
+     <azure.mgmt.web.models.VirtualIPMapping>`
+    :param environment_capacities: Current total, used, and available worker
+     capacities
+    :type environment_capacities: list of :class:`StampCapacity
+     <azure.mgmt.web.models.StampCapacity>`
+    :param network_access_control_list: Access control list for controlling
+     traffic to the hostingEnvironment (App Service Environment)
+    :type network_access_control_list: list of
+     :class:`NetworkAccessControlEntry
+     <azure.mgmt.web.models.NetworkAccessControlEntry>`
+    :param environment_is_healthy: True/false indicating whether the
      hostingEnvironment (App Service Environment) is healthy
-    :param str environment_status: Detailed message about with results of the
+    :type environment_is_healthy: bool
+    :param environment_status: Detailed message about with results of the
      last check of the hostingEnvironment (App Service Environment)
-    :param str resource_group: Resource group of the hostingEnvironment (App
+    :type environment_status: str
+    :param resource_group: Resource group of the hostingEnvironment (App
      Service Environment)
-    :param str api_management_account_id: Api Management Account associated
-     with this Hosting Environment
-    :param bool suspended: True/false indicating whether the
-     hostingEnvironment is suspended. The environment can be suspended e.g.
-     when the management endpoint is no longer available
+    :type resource_group: str
+    :param api_management_account_id: Api Management Account associated with
+     this Hosting Environment
+    :type api_management_account_id: str
+    :param suspended: True/false indicating whether the hostingEnvironment is
+     suspended. The environment can be suspended e.g. when the management
+     endpoint is no longer available
      (most likely because NSG blocked the incoming traffic)
+    :type suspended: bool
+    :param cluster_settings: Custom settings for changing the behavior of the
+     hosting environment
+    :type cluster_settings: list of :class:`NameValuePair
+     <azure.mgmt.web.models.NameValuePair>`
     """ 
 
     _validation = {
@@ -135,9 +180,10 @@ class HostingEnvironment(Resource):
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'api_management_account_id': {'key': 'properties.apiManagementAccountId', 'type': 'str'},
         'suspended': {'key': 'properties.suspended', 'type': 'bool'},
+        'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, hosting_environment_name=None, hosting_environment_location=None, status=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, database_edition=None, database_service_objective=None, upgrade_domains=None, subscription_id=None, dns_suffix=None, last_action=None, last_action_result=None, allowed_multi_sizes=None, allowed_worker_sizes=None, maximum_number_of_machines=None, vip_mappings=None, environment_capacities=None, network_access_control_list=None, environment_is_healthy=None, environment_status=None, resource_group=None, api_management_account_id=None, suspended=None, **kwargs):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, hosting_environment_name=None, hosting_environment_location=None, status=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, database_edition=None, database_service_objective=None, upgrade_domains=None, subscription_id=None, dns_suffix=None, last_action=None, last_action_result=None, allowed_multi_sizes=None, allowed_worker_sizes=None, maximum_number_of_machines=None, vip_mappings=None, environment_capacities=None, network_access_control_list=None, environment_is_healthy=None, environment_status=None, resource_group=None, api_management_account_id=None, suspended=None, cluster_settings=None, **kwargs):
         super(HostingEnvironment, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
         self.hosting_environment_name = hosting_environment_name
         self.hosting_environment_location = hosting_environment_location
@@ -169,3 +215,4 @@ class HostingEnvironment(Resource):
         self.resource_group = resource_group
         self.api_management_account_id = api_management_account_id
         self.suspended = suspended
+        self.cluster_settings = cluster_settings

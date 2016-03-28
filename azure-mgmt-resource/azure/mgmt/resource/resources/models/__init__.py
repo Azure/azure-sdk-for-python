@@ -29,7 +29,9 @@ from .resource_group_filter import ResourceGroupFilter
 from .template_link import TemplateLink
 from .parameters_link import ParametersLink
 from .deployment_properties import DeploymentProperties
+from .debug_setting import DebugSetting
 from .deployment import Deployment
+from .deployment_export_result import DeploymentExportResult
 from .resource_management_error import ResourceManagementError
 from .resource_management_error_with_details import ResourceManagementErrorWithDetails
 from .provider_resource_type import ProviderResourceType
@@ -44,17 +46,20 @@ from .plan import Plan
 from .resource_group import ResourceGroup
 from .resource_group_properties import ResourceGroupProperties
 from .resources_move_info import ResourcesMoveInfo
+from .export_template_request import ExportTemplateRequest
 from .tag_count import TagCount
 from .tag_value import TagValue
 from .tag_details import TagDetails
 from .target_resource import TargetResource
+from .http_message import HttpMessage
 from .deployment_operation_properties import DeploymentOperationProperties
 from .deployment_operation import DeploymentOperation
 from .resource_provider_operation_display_properties import ResourceProviderOperationDisplayProperties
 from .resource_provider_operation_definition import ResourceProviderOperationDefinition
 from .resource_provider_operation_detail_list_result import ResourceProviderOperationDetailListResult
-from .resource import Resource
+from .resource_model import ResourceModel
 from .sub_resource import SubResource
+from .resource_group_export_result import ResourceGroupExportResult
 from .deployment_extended_paged import DeploymentExtendedPaged
 from .provider_paged import ProviderPaged
 from .generic_resource_paged import GenericResourcePaged
@@ -78,7 +83,9 @@ __all__ = [
     'TemplateLink',
     'ParametersLink',
     'DeploymentProperties',
+    'DebugSetting',
     'Deployment',
+    'DeploymentExportResult',
     'ResourceManagementError',
     'ResourceManagementErrorWithDetails',
     'ProviderResourceType',
@@ -93,17 +100,20 @@ __all__ = [
     'ResourceGroup',
     'ResourceGroupProperties',
     'ResourcesMoveInfo',
+    'ExportTemplateRequest',
     'TagCount',
     'TagValue',
     'TagDetails',
     'TargetResource',
+    'HttpMessage',
     'DeploymentOperationProperties',
     'DeploymentOperation',
     'ResourceProviderOperationDisplayProperties',
     'ResourceProviderOperationDefinition',
     'ResourceProviderOperationDetailListResult',
-    'Resource',
+    'ResourceModel',
     'SubResource',
+    'ResourceGroupExportResult',
     'DeploymentExtendedPaged',
     'ProviderPaged',
     'GenericResourcePaged',

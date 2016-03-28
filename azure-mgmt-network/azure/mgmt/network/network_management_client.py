@@ -53,7 +53,8 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
     attributes.
 
     :param credentials: Gets Azure subscription credentials.
-    :type credentials: credentials
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
@@ -75,7 +76,7 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-06-15', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-03-30', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError('credentials must not be None.')
@@ -200,10 +201,14 @@ class NetworkManagementClient(object):
          ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
         :type domain_name_label: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: DnsNameAvailabilityResult
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DnsNameAvailabilityResult
+         <azure.mgmt.network.models.DnsNameAvailabilityResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'

@@ -26,16 +26,27 @@ class AvailabilitySet(Resource):
     """
     Create or update Availability Set parameters.
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param int platform_update_domain_count: Gets or sets Update Domain count.
-    :param int platform_fault_domain_count: Gets or sets Fault Domain count.
-    :param list virtual_machines: Gets or sets a list containing reference to
-     all Virtual Machines  created under this Availability Set.
-    :param list statuses: Gets or sets the resource status information.
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param platform_update_domain_count: Gets or sets Update Domain count.
+    :type platform_update_domain_count: int
+    :param platform_fault_domain_count: Gets or sets Fault Domain count.
+    :type platform_fault_domain_count: int
+    :param virtual_machines: Gets or sets a list containing reference to all
+     Virtual Machines  created under this Availability Set.
+    :type virtual_machines: list of :class:`SubResource
+     <azure.mgmt.compute.models.SubResource>`
+    :param statuses: Gets or sets the resource status information.
+    :type statuses: list of :class:`InstanceViewStatus
+     <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 
 
     _validation = {

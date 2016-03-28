@@ -26,26 +26,42 @@ class DeploymentPropertiesExtended(Model):
     """
     Deployment properties with additional details.
 
-    :param str provisioning_state: Gets or sets the state of the provisioning.
-    :param str correlation_id: Gets or sets the correlation ID of the
-     deployment.
-    :param datetime timestamp: Gets or sets the timestamp of the template
-     deployment.
-    :param object outputs: Gets or sets key/value pairs that represent
+    :param provisioning_state: Gets or sets the state of the provisioning.
+    :type provisioning_state: str
+    :param correlation_id: Gets or sets the correlation ID of the deployment.
+    :type correlation_id: str
+    :param timestamp: Gets or sets the timestamp of the template deployment.
+    :type timestamp: datetime
+    :param outputs: Gets or sets key/value pairs that represent
      deploymentoutput.
-    :param list providers: Gets the list of resource providers needed for the
+    :type outputs: object
+    :param providers: Gets the list of resource providers needed for the
      deployment.
-    :param list dependencies: Gets the list of deployment dependencies.
-    :param object template: Gets or sets the template content. Use only one
-     of Template or TemplateLink.
-    :param TemplateLink template_link: Gets or sets the URI referencing the
-     template. Use only one of Template or TemplateLink.
-    :param object parameters: Deployment parameters. Use only one of
-     Parameters or ParametersLink.
-    :param ParametersLink parameters_link: Gets or sets the URI referencing
-     the parameters. Use only one of Parameters or ParametersLink.
-    :param str mode: Gets or sets the deployment mode. Possible values
-     include: 'Incremental', 'Complete'
+    :type providers: list of :class:`Provider
+     <azure.mgmt.resource.resources.models.Provider>`
+    :param dependencies: Gets the list of deployment dependencies.
+    :type dependencies: list of :class:`Dependency
+     <azure.mgmt.resource.resources.models.Dependency>`
+    :param template: Gets or sets the template content. Use only one of
+     Template or TemplateLink.
+    :type template: object
+    :param template_link: Gets or sets the URI referencing the template. Use
+     only one of Template or TemplateLink.
+    :type template_link: :class:`TemplateLink
+     <azure.mgmt.resource.resources.models.TemplateLink>`
+    :param parameters: Deployment parameters. Use only one of Parameters or
+     ParametersLink.
+    :type parameters: object
+    :param parameters_link: Gets or sets the URI referencing the parameters.
+     Use only one of Parameters or ParametersLink.
+    :type parameters_link: :class:`ParametersLink
+     <azure.mgmt.resource.resources.models.ParametersLink>`
+    :param mode: Gets or sets the deployment mode. Possible values include:
+     'Incremental', 'Complete'
+    :type mode: str
+    :param debug_setting: Gets or sets the debug setting of the deployment.
+    :type debug_setting: :class:`DebugSetting
+     <azure.mgmt.resource.resources.models.DebugSetting>`
     """ 
 
     _attribute_map = {
@@ -60,9 +76,10 @@ class DeploymentPropertiesExtended(Model):
         'parameters': {'key': 'parameters', 'type': 'object'},
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
+        'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
     }
 
-    def __init__(self, provisioning_state=None, correlation_id=None, timestamp=None, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, **kwargs):
+    def __init__(self, provisioning_state=None, correlation_id=None, timestamp=None, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None, **kwargs):
         self.provisioning_state = provisioning_state
         self.correlation_id = correlation_id
         self.timestamp = timestamp
@@ -74,3 +91,4 @@ class DeploymentPropertiesExtended(Model):
         self.parameters = parameters
         self.parameters_link = parameters_link
         self.mode = mode
+        self.debug_setting = debug_setting

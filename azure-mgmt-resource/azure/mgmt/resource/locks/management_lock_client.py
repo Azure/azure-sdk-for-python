@@ -27,13 +27,14 @@ from .operations.management_locks_operations import ManagementLocksOperations
 from . import models
 
 
-class LockManagementClientConfiguration(AzureConfiguration):
-    """Configuration for LockManagementClient
+class ManagementLockClientConfiguration(AzureConfiguration):
+    """Configuration for ManagementLockClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credentials: Gets Azure subscription credentials.
-    :type credentials: credentials
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
@@ -64,9 +65,9 @@ class LockManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(LockManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(ManagementLockClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('lockmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('managementlockclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -77,11 +78,11 @@ class LockManagementClientConfiguration(AzureConfiguration):
         self.generate_client_request_id = generate_client_request_id
 
 
-class LockManagementClient(object):
-    """LockManagementClient
+class ManagementLockClient(object):
+    """ManagementLockClient
 
     :param config: Configuration for client.
-    :type config: LockManagementClientConfiguration
+    :type config: ManagementLockClientConfiguration
 
     :ivar management_locks: ManagementLocks operations
     :vartype management_locks: .operations.ManagementLocksOperations

@@ -26,10 +26,12 @@ class ResourceListKeys(Model):
     """
     Namespace/NotificationHub Connection String
 
-    :param str primary_connection_string: Gets or sets the
+    :param primary_connection_string: Gets or sets the
      primaryConnectionString of the created Namespace AuthorizationRule.
-    :param str secondary_connection_string: Gets or sets the
+    :type primary_connection_string: str
+    :param secondary_connection_string: Gets or sets the
      secondaryConnectionString of the created Namespace AuthorizationRule
+    :type secondary_connection_string: str
     """ 
 
     _attribute_map = {

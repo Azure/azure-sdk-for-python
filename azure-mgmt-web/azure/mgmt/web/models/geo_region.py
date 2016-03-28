@@ -26,14 +26,22 @@ class GeoRegion(Resource):
     """
     Geographical region
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str geo_region_name: Region name
-    :param str description: Region description
-    :param str display_name: Display name for region
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param geo_region_name: Region name
+    :type geo_region_name: str
+    :param description: Region description
+    :type description: str
+    :param display_name: Display name for region
+    :type display_name: str
     """ 
 
     _validation = {

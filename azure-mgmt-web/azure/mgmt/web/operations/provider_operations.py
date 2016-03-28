@@ -49,10 +49,14 @@ class ProviderOperations(object):
         Gets the source controls available for Azure websites
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: SourceControlCollection
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SourceControlCollection
+         <azure.mgmt.web.models.SourceControlCollection>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/providers/Microsoft.Web/sourcecontrols'
@@ -99,10 +103,13 @@ class ProviderOperations(object):
         :param source_control_type: Type of source control
         :type source_control_type: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: SourceControl
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SourceControl <azure.mgmt.web.models.SourceControl>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'
@@ -153,12 +160,16 @@ class ProviderOperations(object):
         :param source_control_type: Type of source control
         :type source_control_type: str
         :param request_message: Source control token information
-        :type request_message: SourceControl
+        :type request_message: :class:`SourceControl
+         <azure.mgmt.web.models.SourceControl>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: SourceControl
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SourceControl <azure.mgmt.web.models.SourceControl>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'
@@ -211,10 +222,13 @@ class ProviderOperations(object):
         Gets publishing user
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: User
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`User <azure.mgmt.web.models.User>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/providers/Microsoft.Web/publishingUsers/web'
@@ -259,12 +273,15 @@ class ProviderOperations(object):
         Updates publishing user
 
         :param request_message: Details of publishing user
-        :type request_message: User
+        :type request_message: :class:`User <azure.mgmt.web.models.User>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: User
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`User <azure.mgmt.web.models.User>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/providers/Microsoft.Web/publishingUsers/web'

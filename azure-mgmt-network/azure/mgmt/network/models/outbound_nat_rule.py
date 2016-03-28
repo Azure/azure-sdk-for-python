@@ -26,20 +26,28 @@ class OutboundNatRule(SubResource):
     """
     Outbound NAT pool of the loadbalancer
 
-    :param str id: Resource Id
-    :param int allocated_outbound_ports: Gets or sets the number of outbound
+    :param id: Resource Id
+    :type id: str
+    :param allocated_outbound_ports: Gets or sets the number of outbound
      ports to be used for SNAT
-    :param list frontend_ip_configurations: Gets or sets Frontend IP
-     addresses of the load balancer
-    :param SubResource backend_address_pool: Gets or sets a reference to a
-     pool of DIPs. Outbound traffic is randomly load balanced across IPs in
-     the backend IPs
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type allocated_outbound_ports: int
+    :param frontend_ip_configurations: Gets or sets Frontend IP addresses of
+     the load balancer
+    :type frontend_ip_configurations: list of :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param backend_address_pool: Gets or sets a reference to a pool of DIPs.
+     Outbound traffic is randomly load balanced across IPs in the backend IPs
+    :type backend_address_pool: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _validation = {

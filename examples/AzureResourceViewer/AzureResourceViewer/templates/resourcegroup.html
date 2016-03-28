@@ -225,7 +225,7 @@ $(function () {
         else {
             s.addClass('alert-info');
         }
-        s.html(result.status)
+        s.html(result.status);
         s.show();
     }
 
@@ -248,7 +248,7 @@ $(function () {
     }
 
     $("button#newaccountsubmit").click(function () {
-        displayStatus({ code: 0, status: 'Deleting' })
+        displayStatus({ code: 0, status: 'In progress' })
         var subscriptionid = $('input[name="newaccountsubscriptionid"]').val()
         var resourcegroup = $('input[name="newaccountresourcegroup"]').val();
         var name = $('input[name="newaccountname"]').val();

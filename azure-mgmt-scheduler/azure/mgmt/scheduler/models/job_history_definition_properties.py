@@ -25,17 +25,25 @@ from msrest.serialization import Model
 class JobHistoryDefinitionProperties(Model):
     """JobHistoryDefinitionProperties
 
-    :param datetime start_time: Gets the start time for this job.
-    :param datetime end_time: Gets the end time for this job.
-    :param datetime expected_execution_time: Gets the expected execution time
-     for this job.
-    :param str action_name: Gets the job history action name. Possible values
+    :param start_time: Gets the start time for this job.
+    :type start_time: datetime
+    :param end_time: Gets the end time for this job.
+    :type end_time: datetime
+    :param expected_execution_time: Gets the expected execution time for this
+     job.
+    :type expected_execution_time: datetime
+    :param action_name: Gets the job history action name. Possible values
      include: 'MainAction', 'ErrorAction'
-    :param str status: Gets the job history status. Possible values include:
+    :type action_name: str
+    :param status: Gets the job history status. Possible values include:
      'Completed', 'Failed', 'Postponed'
-    :param str message: Gets the message for the job history.
-    :param int retry_count: Gets the retry count for job.
-    :param int repeat_count: Gets the repeat count for the job.
+    :type status: str
+    :param message: Gets the message for the job history.
+    :type message: str
+    :param retry_count: Gets the retry count for job.
+    :type retry_count: int
+    :param repeat_count: Gets the repeat count for the job.
+    :type repeat_count: int
     """ 
 
     _attribute_map = {

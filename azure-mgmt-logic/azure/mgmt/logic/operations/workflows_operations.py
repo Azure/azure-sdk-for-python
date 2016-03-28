@@ -54,10 +54,11 @@ class WorkflowsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowPaged <azure.mgmt.logic.models.WorkflowPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -125,10 +126,11 @@ class WorkflowsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowPaged <azure.mgmt.logic.models.WorkflowPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -195,10 +197,13 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Workflow
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}'
@@ -253,12 +258,15 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param workflow: The workflow.
-        :type workflow: Workflow
+        :type workflow: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Workflow
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}'
@@ -319,12 +327,15 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param workflow: The workflow.
-        :type workflow: Workflow
+        :type workflow: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Workflow
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}'
@@ -383,10 +394,13 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}'
@@ -438,10 +452,14 @@ class WorkflowsOperations(object):
         :param outputs: Gets or sets the outputs of workflow run trigger.
         :type outputs: object
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowRun
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`WorkflowRun
+         <azure.mgmt.logic.models.WorkflowRun>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.RunWorkflowParameters(name=name, outputs=outputs)
 
@@ -503,6 +521,10 @@ class WorkflowsOperations(object):
 
             return deserialized
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -520,10 +542,13 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/disable'
@@ -571,10 +596,13 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/enable'
@@ -622,12 +650,15 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param workflow: The workflow.
-        :type workflow: Workflow
+        :type workflow: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/validate'

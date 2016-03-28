@@ -58,12 +58,17 @@ class VirtualNetworkGatewaysOperations(object):
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the Begin Create or update
          Virtual Network Gateway operation through Network resource provider.
-        :type parameters: VirtualNetworkGateway
+        :type parameters: :class:`VirtualNetworkGateway
+         <azure.mgmt.network.models.VirtualNetworkGateway>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: VirtualNetworkGateway
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`VirtualNetworkGateway
+         <azure.mgmt.network.models.VirtualNetworkGateway>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworkgateways/{virtualNetworkGatewayName}'
@@ -125,6 +130,10 @@ class VirtualNetworkGatewaysOperations(object):
 
             return deserialized
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -145,10 +154,14 @@ class VirtualNetworkGatewaysOperations(object):
          gateway.
         :type virtual_network_gateway_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: VirtualNetworkGateway
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`VirtualNetworkGateway
+         <azure.mgmt.network.models.VirtualNetworkGateway>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworkgateways/{virtualNetworkGatewayName}'
@@ -205,10 +218,13 @@ class VirtualNetworkGatewaysOperations(object):
          gateway.
         :type virtual_network_gateway_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworkgateways/{virtualNetworkGatewayName}'
@@ -257,6 +273,10 @@ class VirtualNetworkGatewaysOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -273,10 +293,12 @@ class VirtualNetworkGatewaysOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: VirtualNetworkGatewayPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`VirtualNetworkGatewayPaged
+         <azure.mgmt.network.models.VirtualNetworkGatewayPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -343,12 +365,17 @@ class VirtualNetworkGatewaysOperations(object):
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the Begin Reset Virtual
          Network Gateway operation through Network resource provider.
-        :type parameters: VirtualNetworkGateway
+        :type parameters: :class:`VirtualNetworkGateway
+         <azure.mgmt.network.models.VirtualNetworkGateway>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: VirtualNetworkGateway
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`VirtualNetworkGateway
+         <azure.mgmt.network.models.VirtualNetworkGateway>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworkgateways/{virtualNetworkGatewayName}/reset'
@@ -408,6 +435,10 @@ class VirtualNetworkGatewaysOperations(object):
 
             return deserialized
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -431,10 +462,13 @@ class VirtualNetworkGatewaysOperations(object):
          -Amd64/X86. Possible values include: 'Amd64', 'X86'
         :type processor_architecture: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: str
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.VpnClientParameters(processor_architecture=processor_architecture)
 

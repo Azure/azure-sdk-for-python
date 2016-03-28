@@ -26,14 +26,20 @@ class ResourceGroup(Model):
     """
     Resource group information.
 
-    :param str id: Gets the ID of the resource group.
-    :param str name: Gets or sets the Name of the resource group.
-    :param ResourceGroupProperties properties:
-    :param str location: Gets or sets the location of the resource group. It
+    :param id: Gets the ID of the resource group.
+    :type id: str
+    :param name: Gets or sets the Name of the resource group.
+    :type name: str
+    :param properties:
+    :type properties: :class:`ResourceGroupProperties
+     <azure.mgmt.resource.resources.models.ResourceGroupProperties>`
+    :param location: Gets or sets the location of the resource group. It
      cannot be changed after the resource group has been created. Has to be
      one of the supported Azure Locations, such as West US, East US, West
      Europe, East Asia, etc.
-    :param dict tags: Gets or sets the tags attached to the resource group.
+    :type location: str
+    :param tags: Gets or sets the tags attached to the resource group.
+    :type tags: dict
     """ 
 
     _validation = {

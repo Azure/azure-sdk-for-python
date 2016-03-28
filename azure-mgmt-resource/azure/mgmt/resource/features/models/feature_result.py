@@ -26,11 +26,15 @@ class FeatureResult(Model):
     """
     Previewed feature information.
 
-    :param str name: Gets or sets the name of the feature.
-    :param FeatureProperties properties: Gets or sets the properties of the
-     previewed feature.
-    :param str id: Gets or sets the Id of the feature.
-    :param str type: Gets or sets the type of the feature.
+    :param name: Gets or sets the name of the feature.
+    :type name: str
+    :param properties: Gets or sets the properties of the previewed feature.
+    :type properties: :class:`FeatureProperties
+     <azure.mgmt.resource.feature.models.FeatureProperties>`
+    :param id: Gets or sets the Id of the feature.
+    :type id: str
+    :param type: Gets or sets the type of the feature.
+    :type type: str
     """ 
 
     _attribute_map = {

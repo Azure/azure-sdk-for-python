@@ -56,10 +56,14 @@ class ProviderOperationsMetadataOperations(object):
         :param expand:
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ProviderOperationsMetadata
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ProviderOperationsMetadata
+         <azure.mgmt.authorization.models.ProviderOperationsMetadata>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/providers/Microsoft.Authorization/providerOperations/{resourceProviderNamespace}'
@@ -114,10 +118,12 @@ class ProviderOperationsMetadataOperations(object):
         :param expand:
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ProviderOperationsMetadataPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ProviderOperationsMetadataPaged
+         <azure.mgmt.authorization.models.ProviderOperationsMetadataPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

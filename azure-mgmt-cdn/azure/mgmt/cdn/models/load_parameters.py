@@ -24,10 +24,11 @@ from msrest.serialization import Model
 
 class LoadParameters(Model):
     """
-    Parameters required for endpoint load
+    Parameters required for endpoint load.
 
-    :param list content_paths: The path to the content to be loaded, should
+    :param content_paths: The path to the content to be loaded. Should
      describe a file path.
+    :type content_paths: list of str
     """ 
 
     _validation = {

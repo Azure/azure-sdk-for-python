@@ -26,13 +26,18 @@ class AddressResponse(Model):
     """
     Describes main public ip address and any extra vips
 
-    :param str service_ip_address: Main public vip
-    :param str internal_ip_address: VNET internal ip address of the
+    :param service_ip_address: Main public vip
+    :type service_ip_address: str
+    :param internal_ip_address: VNET internal ip address of the
      hostingEnvironment (App Service Environment) if it is in internal
      load-balancing mode
-    :param list outbound_ip_addresses: IP addresses appearing on outbound
+    :type internal_ip_address: str
+    :param outbound_ip_addresses: IP addresses appearing on outbound
      connections
-    :param list vip_mappings: Additional vips
+    :type outbound_ip_addresses: list of str
+    :param vip_mappings: Additional vips
+    :type vip_mappings: list of :class:`VirtualIPMapping
+     <azure.mgmt.web.models.VirtualIPMapping>`
     """ 
 
     _attribute_map = {

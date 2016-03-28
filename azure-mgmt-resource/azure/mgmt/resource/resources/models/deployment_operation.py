@@ -26,10 +26,13 @@ class DeploymentOperation(Model):
     """
     Deployment operation information.
 
-    :param str id: Gets or sets full deployment operation id.
-    :param str operation_id: Gets or sets deployment operation id.
-    :param DeploymentOperationProperties properties: Gets or sets deployment
-     properties.
+    :param id: Gets or sets full deployment operation id.
+    :type id: str
+    :param operation_id: Gets or sets deployment operation id.
+    :type operation_id: str
+    :param properties: Gets or sets deployment properties.
+    :type properties: :class:`DeploymentOperationProperties
+     <azure.mgmt.resource.resources.models.DeploymentOperationProperties>`
     """ 
 
     _attribute_map = {

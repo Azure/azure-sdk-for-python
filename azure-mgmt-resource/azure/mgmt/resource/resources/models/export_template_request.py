@@ -19,19 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ExpressRouteCircuitStatsPaged(Paged):
+class ExportTemplateRequest(Model):
     """
-    A paging container for iterating over a list of ExpressRouteCircuitStats object
-    """
+    Export resource group template request parameters.
+
+    :param resources: Gets or sets the ids of the resources. The only
+     supported string currently is '*' (all resources). Future api updates
+     will support exporting specific resources.
+    :type resources: list of str
+    :param options: The export template options. Supported values include
+     'IncludeParameterDefaultValue', 'IncludeComments' or
+     'IncludeParameterDefaultValue, IncludeComments
+    :type options: str
+    """ 
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ExpressRouteCircuitStats]'}
+        'resources': {'key': 'resources', 'type': '[str]'},
+        'options': {'key': 'options', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(ExpressRouteCircuitStatsPaged, self).__init__(*args, **kwargs)
+    def __init__(self, resources=None, options=None, **kwargs):
+        self.resources = resources
+        self.options = options

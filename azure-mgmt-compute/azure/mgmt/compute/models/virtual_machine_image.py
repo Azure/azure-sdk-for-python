@@ -19,20 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .virtual_machine_image_resource import VirtualMachineImageResource
 
 
-class VirtualMachineImage(SubResource):
+class VirtualMachineImage(VirtualMachineImageResource):
     """
     Describes a Virtual Machine Image.
 
-    :param str id: Resource Id
-    :param PurchasePlan plan:
-    :param OSDiskImage os_disk_image:
-    :param list data_disk_images:
-    :param str name: Gets or sets the name of the resource.
-    :param str location: Gets or sets the location of the resource.
-    :param dict tags: Gets or sets the tags attached to the resource.
+    :param id: Resource Id
+    :type id: str
+    :param name: Gets or sets the name of the resource.
+    :type name: str
+    :param location: Gets or sets the location of the resource.
+    :type location: str
+    :param tags: Gets or sets the tags attached to the resource.
+    :type tags: dict
+    :param plan:
+    :type plan: :class:`PurchasePlan <azure.mgmt.compute.models.PurchasePlan>`
+    :param os_disk_image:
+    :type os_disk_image: :class:`OSDiskImage
+     <azure.mgmt.compute.models.OSDiskImage>`
+    :param data_disk_images:
+    :type data_disk_images: list of :class:`DataDiskImage
+     <azure.mgmt.compute.models.DataDiskImage>`
     """ 
 
     _validation = {
@@ -42,19 +51,16 @@ class VirtualMachineImage(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'plan': {'key': 'properties.plan', 'type': 'PurchasePlan'},
-        'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage'},
-        'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'plan': {'key': 'properties.plan', 'type': 'PurchasePlan'},
+        'os_disk_image': {'key': 'properties.osDiskImage', 'type': 'OSDiskImage'},
+        'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
     }
 
-    def __init__(self, name, location, id=None, plan=None, os_disk_image=None, data_disk_images=None, tags=None, **kwargs):
-        super(VirtualMachineImage, self).__init__(id=id, **kwargs)
+    def __init__(self, name, location, id=None, tags=None, plan=None, os_disk_image=None, data_disk_images=None, **kwargs):
+        super(VirtualMachineImage, self).__init__(id=id, name=name, location=location, tags=tags, **kwargs)
         self.plan = plan
         self.os_disk_image = os_disk_image
         self.data_disk_images = data_disk_images
-        self.name = name
-        self.location = location
-        self.tags = tags

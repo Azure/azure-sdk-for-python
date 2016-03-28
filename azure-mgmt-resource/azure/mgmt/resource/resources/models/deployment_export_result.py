@@ -19,19 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ExpressRouteCircuitArpTablePaged(Paged):
-    """
-    A paging container for iterating over a list of ExpressRouteCircuitArpTable object
-    """
+class DeploymentExportResult(Model):
+    """DeploymentExportResult
+
+    :param template: Gets or sets the template content.
+    :type template: object
+    """ 
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ExpressRouteCircuitArpTable]'}
+        'template': {'key': 'template', 'type': 'object'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(ExpressRouteCircuitArpTablePaged, self).__init__(*args, **kwargs)
+    def __init__(self, template=None, **kwargs):
+        self.template = template

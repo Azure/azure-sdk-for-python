@@ -26,17 +26,30 @@ class VirtualMachineScaleSet(Resource):
     """
     Describes a Virtual Machine Scale Set.
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param Sku sku: Gets or sets the virtual machine scale set sku.
-    :param UpgradePolicy upgrade_policy: Gets or sets the upgrade policy.
-    :param VirtualMachineScaleSetVMProfile virtual_machine_profile: Gets or
-     sets the virtual machine profile.
-    :param str provisioning_state: Gets or sets the provisioning state, which
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: Gets or sets the virtual machine scale set sku.
+    :type sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
+    :param upgrade_policy: Gets or sets the upgrade policy.
+    :type upgrade_policy: :class:`UpgradePolicy
+     <azure.mgmt.compute.models.UpgradePolicy>`
+    :param virtual_machine_profile: Gets or sets the virtual machine profile.
+    :type virtual_machine_profile: :class:`VirtualMachineScaleSetVMProfile
+     <azure.mgmt.compute.models.VirtualMachineScaleSetVMProfile>`
+    :param provisioning_state: Gets or sets the provisioning state, which
      only appears in the response.
+    :type provisioning_state: str
+    :param over_provision: Specifies whether the Virtual Machine Scale Set
+     should be overprovisioned.
+    :type over_provision: bool
     """ 
 
     _validation = {
@@ -53,11 +66,13 @@ class VirtualMachineScaleSet(Resource):
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'over_provision': {'key': 'properties.overProvision', 'type': 'bool'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, provisioning_state=None, **kwargs):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, provisioning_state=None, over_provision=None, **kwargs):
         super(VirtualMachineScaleSet, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.upgrade_policy = upgrade_policy
         self.virtual_machine_profile = virtual_machine_profile
         self.provisioning_state = provisioning_state
+        self.over_provision = over_provision

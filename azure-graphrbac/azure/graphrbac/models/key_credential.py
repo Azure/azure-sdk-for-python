@@ -26,12 +26,18 @@ class KeyCredential(Model):
     """
     Active Directory service principal Key Credential information
 
-    :param datetime start_date: Gets or sets start date
-    :param datetime end_date: Gets or sets end date
-    :param str value: Gets or sets value
-    :param str key_id: Gets or sets key Id
-    :param str usage: Gets or sets usage
-    :param str type: Gets or sets type
+    :param start_date: Gets or sets start date
+    :type start_date: datetime
+    :param end_date: Gets or sets end date
+    :type end_date: datetime
+    :param value: Gets or sets value
+    :type value: str
+    :param key_id: Gets or sets key Id
+    :type key_id: str
+    :param usage: Gets or sets usage
+    :type usage: str
+    :param type: Gets or sets type
+    :type type: str
     """ 
 
     _attribute_map = {

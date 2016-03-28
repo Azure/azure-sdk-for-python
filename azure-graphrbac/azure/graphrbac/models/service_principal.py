@@ -26,11 +26,16 @@ class ServicePrincipal(Model):
     """
     Active Directory service principal information
 
-    :param str object_id: Gets or sets object Id
-    :param str object_type: Gets or sets object type
-    :param str display_name: Gets or sets service principal display name
-    :param str app_id: Gets or sets app id
-    :param list service_principal_names: Gets or sets the list of names.
+    :param object_id: Gets or sets object Id
+    :type object_id: str
+    :param object_type: Gets or sets object type
+    :type object_type: str
+    :param display_name: Gets or sets service principal display name
+    :type display_name: str
+    :param app_id: Gets or sets app id
+    :type app_id: str
+    :param service_principal_names: Gets or sets the list of names.
+    :type service_principal_names: list of str
     """ 
 
     _attribute_map = {

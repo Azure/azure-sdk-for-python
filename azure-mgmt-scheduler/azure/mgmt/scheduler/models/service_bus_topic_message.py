@@ -25,17 +25,26 @@ from .service_bus_message import ServiceBusMessage
 class ServiceBusTopicMessage(ServiceBusMessage):
     """ServiceBusTopicMessage
 
-    :param ServiceBusAuthentication authentication: Gets or sets the
-     authentication.
-    :param ServiceBusBrokeredMessageProperties brokered_message_properties:
-     Gets or sets the brokered message properties.
-    :param dict custom_message_properties: Gets or sets the custom message
+    :param authentication: Gets or sets the authentication.
+    :type authentication: :class:`ServiceBusAuthentication
+     <azure.mgmt.scheduler.models.ServiceBusAuthentication>`
+    :param brokered_message_properties: Gets or sets the brokered message
      properties.
-    :param str message: Gets or sets the message.
-    :param str namespace: Gets or sets the namespace.
-    :param str transport_type: Gets or sets the transport type. Possible
-     values include: 'NotSpecified', 'NetMessaging', 'AMQP'
-    :param str topic_path: Gets or sets the topic path.
+    :type brokered_message_properties:
+     :class:`ServiceBusBrokeredMessageProperties
+     <azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties>`
+    :param custom_message_properties: Gets or sets the custom message
+     properties.
+    :type custom_message_properties: dict
+    :param message: Gets or sets the message.
+    :type message: str
+    :param namespace: Gets or sets the namespace.
+    :type namespace: str
+    :param transport_type: Gets or sets the transport type. Possible values
+     include: 'NotSpecified', 'NetMessaging', 'AMQP'
+    :type transport_type: str
+    :param topic_path: Gets or sets the topic path.
+    :type topic_path: str
     """ 
 
     _attribute_map = {

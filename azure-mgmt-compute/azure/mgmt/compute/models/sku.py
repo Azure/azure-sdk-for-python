@@ -26,9 +26,12 @@ class Sku(Model):
     """
     Describes a virtual machine scale set sku.
 
-    :param str name: Gets or sets the sku name.
-    :param str tier: Gets or sets the sku tier.
-    :param long capacity: Gets or sets the sku capacity.
+    :param name: Gets or sets the sku name.
+    :type name: str
+    :param tier: Gets or sets the sku tier.
+    :type tier: str
+    :param capacity: Gets or sets the sku capacity.
+    :type capacity: long
     """ 
 
     _attribute_map = {

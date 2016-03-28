@@ -26,7 +26,8 @@ class EnabledConfig(Model):
     """
     Enabled configuration
 
-    :param bool enabled: Enabled
+    :param enabled: Enabled
+    :type enabled: bool
     """ 
 
     _attribute_map = {

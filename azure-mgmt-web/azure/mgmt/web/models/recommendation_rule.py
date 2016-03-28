@@ -26,27 +26,40 @@ class RecommendationRule(Model):
     """
     Represents a recommendation rule that the recommendation engine can perform
 
-    :param str name: Unique name of the rule
-    :param str display_name: UI friendly name of the rule
-    :param str message: Localized name of the rule (Good for UI)
-    :param str recommendation_id: Recommendation ID of an associated
+    :param name: Unique name of the rule
+    :type name: str
+    :param display_name: UI friendly name of the rule
+    :type display_name: str
+    :param message: Localized name of the rule (Good for UI)
+    :type message: str
+    :param recommendation_id: Recommendation ID of an associated
      recommendation object tied to the rule, if exists.
      If such an object doesn't exist, it is set to null.
-    :param str description: Localized detailed description of the rule
-    :param str action_name: Name of action that is recommended by this rule
-     in string
-    :param int enabled: On/off flag indicating the rule is currently enabled
-     or disabled.
-    :param str level: Level of impact indicating how critical this rule is.
+    :type recommendation_id: str
+    :param description: Localized detailed description of the rule
+    :type description: str
+    :param action_name: Name of action that is recommended by this rule in
+     string
+    :type action_name: str
+    :param enabled: On/off flag indicating the rule is currently enabled or
+     disabled.
+    :type enabled: int
+    :param level: Level of impact indicating how critical this rule is.
      Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
-    :param str channels: List of available channels that this rule applies.
+    :type level: str
+    :param channels: List of available channels that this rule applies.
      Possible values include: 'Notification', 'Api', 'Email', 'All'
+    :type channels: str
+    :param category: The category that the rule belongs to. Possible values
+     include: 'Uncategorized', 'Test', 'UpSell', 'CrossSell', 'LiveSite'
+    :type category: str
     """ 
 
     _validation = {
         'level': {'required': True},
         'channels': {'required': True},
+        'category': {'required': True},
     }
 
     _attribute_map = {
@@ -59,9 +72,10 @@ class RecommendationRule(Model):
         'enabled': {'key': 'enabled', 'type': 'int'},
         'level': {'key': 'level', 'type': 'NotificationLevel'},
         'channels': {'key': 'channels', 'type': 'Channels'},
+        'category': {'key': 'category', 'type': 'Category'},
     }
 
-    def __init__(self, level, channels, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None, **kwargs):
+    def __init__(self, level, channels, category, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None, **kwargs):
         self.name = name
         self.display_name = display_name
         self.message = message
@@ -71,3 +85,4 @@ class RecommendationRule(Model):
         self.enabled = enabled
         self.level = level
         self.channels = channels
+        self.category = category

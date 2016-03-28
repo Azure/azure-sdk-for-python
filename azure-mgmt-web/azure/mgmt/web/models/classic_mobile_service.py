@@ -26,12 +26,18 @@ class ClassicMobileService(Resource):
     """
     A mobile service
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str classic_mobile_service_name: Name of the mobile service
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param classic_mobile_service_name: Name of the mobile service
+    :type classic_mobile_service_name: str
     """ 
 
     _validation = {
