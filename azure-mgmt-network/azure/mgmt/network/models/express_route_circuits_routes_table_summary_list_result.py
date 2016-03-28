@@ -22,31 +22,22 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """Resource
+class ExpressRouteCircuitsRoutesTableSummaryListResult(Model):
+    """
+    Response for ListRoutesTable associated with the Express Route Circuits Api
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
+    :param value: Gets List of RoutesTable
+    :type value: list of :class:`ExpressRouteCircuitRoutesTableSummary
+     <azure.mgmt.network.models.ExpressRouteCircuitRoutesTableSummary>`
+    :param next_link: Gets the URL to get the next set of results.
+    :type next_link: str
     """ 
 
-    _validation = {
-        'location': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'value': {'key': 'value', 'type': '[ExpressRouteCircuitRoutesTableSummary]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, **kwargs):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.location = location
-        self.tags = tags
+    def __init__(self, value=None, next_link=None, **kwargs):
+        self.value = value
+        self.next_link = next_link

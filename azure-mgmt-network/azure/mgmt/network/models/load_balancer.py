@@ -26,26 +26,46 @@ class LoadBalancer(Resource):
     """
     LoadBalancer resource
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param list frontend_ip_configurations: Gets or sets frontend IP
-     addresses of the load balancer
-    :param list backend_address_pools: Gets or sets Pools of backend IP
-     addresseses
-    :param list load_balancing_rules: Gets or sets loadbalancing rules
-    :param list probes: Gets or sets list of Load balancer probes
-    :param list inbound_nat_rules: Gets or sets list of inbound rules
-    :param list inbound_nat_pools: Gets or sets inbound NAT pools
-    :param list outbound_nat_rules: Gets or sets outbound NAT rules
-    :param str resource_guid: Gets or sets resource guid property of the Load
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param frontend_ip_configurations: Gets or sets frontend IP addresses of
+     the load balancer
+    :type frontend_ip_configurations: list of :class:`FrontendIPConfiguration
+     <azure.mgmt.network.models.FrontendIPConfiguration>`
+    :param backend_address_pools: Gets or sets Pools of backend IP addresseses
+    :type backend_address_pools: list of :class:`BackendAddressPool
+     <azure.mgmt.network.models.BackendAddressPool>`
+    :param load_balancing_rules: Gets or sets loadbalancing rules
+    :type load_balancing_rules: list of :class:`LoadBalancingRule
+     <azure.mgmt.network.models.LoadBalancingRule>`
+    :param probes: Gets or sets list of Load balancer probes
+    :type probes: list of :class:`Probe <azure.mgmt.network.models.Probe>`
+    :param inbound_nat_rules: Gets or sets list of inbound rules
+    :type inbound_nat_rules: list of :class:`InboundNatRule
+     <azure.mgmt.network.models.InboundNatRule>`
+    :param inbound_nat_pools: Gets or sets inbound NAT pools
+    :type inbound_nat_pools: list of :class:`InboundNatPool
+     <azure.mgmt.network.models.InboundNatPool>`
+    :param outbound_nat_rules: Gets or sets outbound NAT rules
+    :type outbound_nat_rules: list of :class:`OutboundNatRule
+     <azure.mgmt.network.models.OutboundNatRule>`
+    :param resource_guid: Gets or sets resource guid property of the Load
      balancer resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type resource_guid: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

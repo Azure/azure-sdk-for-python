@@ -26,36 +26,54 @@ class ManagedHostingEnvironment(Resource):
     """
     Description of a managed hosting environment
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str managed_hosting_environment_name: Name of the managed hosting
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param managed_hosting_environment_name: Name of the managed hosting
      environment
-    :param str managed_hosting_environment_location: Location of the managed
+    :type managed_hosting_environment_name: str
+    :param managed_hosting_environment_location: Location of the managed
      hosting environment e.g. "West US"
-    :param str status: Current status of the managed hosting environment.
+    :type managed_hosting_environment_location: str
+    :param status: Current status of the managed hosting environment.
      Possible values include: 'Preparing', 'Ready', 'Deleting'
-    :param VirtualNetworkProfile virtual_network: Description of the managed
-     hosting environment's virtual network
-    :param int ipssl_address_count: Number of ip ssl addresses reserved for
-     the managed hosting environment
-    :param str dns_suffix: DNS suffix of the managed hosting environment
-    :param str subscription_id: Subscription of the managed hosting
-     environment (read only)
-    :param str resource_group: Resource group of the managed hosting
-     environment (read only)
-    :param bool environment_is_healthy: True/false indicating whether the
-     managed hosting environment is healthy
-    :param str environment_status: Detailed message about with results of the
+    :type status: str
+    :param virtual_network: Description of the managed hosting environment's
+     virtual network
+    :type virtual_network: :class:`VirtualNetworkProfile
+     <azure.mgmt.web.models.VirtualNetworkProfile>`
+    :param ipssl_address_count: Number of ip ssl addresses reserved for the
+     managed hosting environment
+    :type ipssl_address_count: int
+    :param dns_suffix: DNS suffix of the managed hosting environment
+    :type dns_suffix: str
+    :param subscription_id: Subscription of the managed hosting environment
+     (read only)
+    :type subscription_id: str
+    :param resource_group: Resource group of the managed hosting environment
+     (read only)
+    :type resource_group: str
+    :param environment_is_healthy: True/false indicating whether the managed
+     hosting environment is healthy
+    :type environment_is_healthy: bool
+    :param environment_status: Detailed message about with results of the
      last check of the managed hosting environment
-    :param bool suspended: True/false indicating whether the managed hosting
+    :type environment_status: str
+    :param suspended: True/false indicating whether the managed hosting
      environment is suspended. The environment can be suspended e.g. when the
      management endpoint is no longer available
      (most likely because NSG blocked the incoming traffic)
-    :param str api_management_account: Resource id of the api management
-     account associated with this managed hosting environment (read only)
+    :type suspended: bool
+    :param api_management_account: Resource id of the api management account
+     associated with this managed hosting environment (read only)
+    :type api_management_account: str
     """ 
 
     _validation = {

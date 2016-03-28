@@ -27,9 +27,12 @@ class PurchasePlan(Model):
     Used for establishing the purchase context of any 3rd Party artifact
     through MarketPlace.
 
-    :param str publisher: Gets or sets the publisher ID.
-    :param str name: Gets or sets the plan ID.
-    :param str product: Gets or sets the product ID.
+    :param publisher: Gets or sets the publisher ID.
+    :type publisher: str
+    :param name: Gets or sets the plan ID.
+    :type name: str
+    :param product: Gets or sets the product ID.
+    :type product: str
     """ 
 
     _validation = {

@@ -209,6 +209,15 @@ class Channels(Enum):
     all = "All"
 
 
+class Category(Enum):
+
+    uncategorized = "Uncategorized"
+    test = "Test"
+    up_sell = "UpSell"
+    cross_sell = "CrossSell"
+    live_site = "LiveSite"
+
+
 class CloneAbilityResult(Enum):
 
     cloneable = "Cloneable"

@@ -46,13 +46,14 @@ class ProfilesOperations(object):
     def list_by_subscription_id(
             self, custom_headers={}, raw=False, **operation_config):
         """
-        Lists the CDN Profiles within an Azure subscitption
+        Lists the CDN profiles within an Azure subscitption.
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ProfilePaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ProfilePaged <azure.mgmt.cdn.models.ProfilePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -105,16 +106,17 @@ class ProfilesOperations(object):
     def list_by_resource_group(
             self, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Lists the CDN Profiles within a resource group
+        Lists the CDN profiles within a resource group.
 
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ProfilePaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ProfilePaged <azure.mgmt.cdn.models.ProfilePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -168,18 +170,22 @@ class ProfilesOperations(object):
     def get(
             self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Gets a CDN profile with the specified parameters
+        Gets a CDN profile with the specified parameters.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Profile
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`Profile <azure.mgmt.cdn.models.Profile>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'
@@ -225,20 +231,26 @@ class ProfilesOperations(object):
     def create(
             self, profile_name, profile_properties, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Creates a new CDN Profile with the specified parameters
+        Creates a new CDN profile with the specified parameters.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
-        :param profile_properties: Profile properties needed for creation
-        :type profile_properties: ProfileCreateParameters
+        :param profile_properties: Profile properties needed for creation.
+        :type profile_properties: :class:`ProfileCreateParameters
+         <azure.mgmt.cdn.models.ProfileCreateParameters>`
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Profile
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`Profile
+         <azure.mgmt.cdn.models.Profile>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'
@@ -298,6 +310,10 @@ class ProfilesOperations(object):
 
             return deserialized
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -308,20 +324,25 @@ class ProfilesOperations(object):
     def update(
             self, profile_name, resource_group_name, tags, custom_headers={}, raw=False, **operation_config):
         """
-        Updates an existing CDN Profile with the specified parameters
+        Updates an existing CDN profile with the specified parameters.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param tags: Profile tags
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: Profile
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`Profile
+         <azure.mgmt.cdn.models.Profile>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         profile_properties = models.ProfileUpdateParameters(tags=tags)
 
@@ -381,6 +402,10 @@ class ProfilesOperations(object):
 
             return deserialized
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -391,20 +416,24 @@ class ProfilesOperations(object):
     def delete_if_exists(
             self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Deletes an existing CDN Profile with the specified parameters.
-        Deleting a profile will result in the deletion of all sub resources
-        including endpoints, origins and CustomDomains
+        Deletes an existing CDN profile with the specified parameters.
+        Deleting a profile will result in the deletion of all subresources
+        including endpoints, origins and custom domains.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'
@@ -451,6 +480,10 @@ class ProfilesOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -466,16 +499,20 @@ class ProfilesOperations(object):
         Advanced HTTP Reports, and Real-time Stats and Alerts. The SSO URI
         changes approximately every 10 minutes.
 
-        :param profile_name: Name of the CDN profile within the resource group
+        :param profile_name: Name of the CDN profile within the resource
+         group.
         :type profile_name: str
         :param resource_group_name: Name of the resource group within the
-         Azure subscription
+         Azure subscription.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: SsoUri
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SsoUri <azure.mgmt.cdn.models.SsoUri>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/generateSsoUri'

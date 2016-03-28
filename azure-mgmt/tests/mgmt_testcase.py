@@ -122,13 +122,13 @@ class AzureMgmtTestCase(RecordingTestCase):
         )
 
     def delete_resource_group(self, wait_timeout):
-        try:
-            azure_poller = self.resource_client.resource_groups.delete(self.group_name)
-        except CloudError:
-            pass
-
+        azure_poller = self.resource_client.resource_groups.delete(self.group_name)
         if wait_timeout:
-            azure_poller.wait(wait_timeout)
-            if azure_poller.done():
-                return
-            self.assertTrue(False, 'Timed out waiting for resource group to be deleted.')
+            try:
+                azure_poller.wait(wait_timeout)
+                if azure_poller.done():
+                    return
+                self.assertTrue(False, 'Timed out waiting for resource group to be deleted.')            
+            except CloudError:
+                pass
+

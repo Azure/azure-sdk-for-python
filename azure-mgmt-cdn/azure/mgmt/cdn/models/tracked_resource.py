@@ -26,11 +26,16 @@ class TrackedResource(Resource):
     """
     ARM tracked resource
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
+    :param id: Resource ID
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
     """ 
 
     _validation = {

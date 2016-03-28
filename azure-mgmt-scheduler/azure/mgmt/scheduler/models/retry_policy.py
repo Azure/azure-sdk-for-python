@@ -25,12 +25,14 @@ from msrest.serialization import Model
 class RetryPolicy(Model):
     """RetryPolicy
 
-    :param str retry_type: Gets or sets the retry strategy to be used.
-     Possible values include: 'None', 'Fixed'
-    :param timedelta retry_interval: Gets or sets the retry interval between
-     retries.
-    :param int retry_count: Gets or sets the number of times a retry should
-     be attempted.
+    :param retry_type: Gets or sets the retry strategy to be used. Possible
+     values include: 'None', 'Fixed'
+    :type retry_type: str
+    :param retry_interval: Gets or sets the retry interval between retries.
+    :type retry_interval: timedelta
+    :param retry_count: Gets or sets the number of times a retry should be
+     attempted.
+    :type retry_count: int
     """ 
 
     _attribute_map = {

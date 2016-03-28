@@ -22,31 +22,16 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """Resource
+class DebugSetting(Model):
+    """DebugSetting
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
+    :param detail_level: Gets or sets the debug detail level.
+    :type detail_level: str
     """ 
 
-    _validation = {
-        'location': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'detail_level': {'key': 'detailLevel', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, **kwargs):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.location = location
-        self.tags = tags
+    def __init__(self, detail_level=None, **kwargs):
+        self.detail_level = detail_level

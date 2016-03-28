@@ -22,23 +22,16 @@
 from msrest.serialization import Model
 
 
-class ProfileProperties(Model):
-    """ProfileProperties
+class HttpMessage(Model):
+    """HttpMessage
 
-    :param Sku sku: Profile sku
-    :param str resource_state: Resource status of the profile. Possible
-     values include: 'Creating', 'Active', 'Deleting', 'Disabled'
-    :param str provisioning_state: Provisioning status of the profile.
-     Possible values include: 'Creating', 'Succeeded', 'Failed'
+    :param content: Gets or sets HTTP message content.
+    :type content: object
     """ 
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'resource_state': {'key': 'resourceState', 'type': 'ProfileResourceState'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'content': {'key': 'content', 'type': 'object'},
     }
 
-    def __init__(self, sku=None, resource_state=None, provisioning_state=None, **kwargs):
-        self.sku = sku
-        self.resource_state = resource_state
-        self.provisioning_state = provisioning_state
+    def __init__(self, content=None, **kwargs):
+        self.content = content

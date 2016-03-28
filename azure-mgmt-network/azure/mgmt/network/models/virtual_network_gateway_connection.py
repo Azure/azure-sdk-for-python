@@ -26,34 +26,58 @@ class VirtualNetworkGatewayConnection(Resource):
     """
     A common class for general resource information
 
-    :param str id: Resource Id
-    :param str name: Resource name
-    :param str type: Resource type
-    :param str location: Resource location
-    :param dict tags: Resource tags
-    :param str authorization_key: The authorizationKey.
-    :param VirtualNetworkGateway virtual_network_gateway1:
-    :param VirtualNetworkGateway virtual_network_gateway2:
-    :param LocalNetworkGateway local_network_gateway2:
-    :param str connection_type: Gateway connection type
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param authorization_key: The authorizationKey.
+    :type authorization_key: str
+    :param virtual_network_gateway1:
+    :type virtual_network_gateway1: :class:`VirtualNetworkGateway
+     <azure.mgmt.network.models.VirtualNetworkGateway>`
+    :param virtual_network_gateway2:
+    :type virtual_network_gateway2: :class:`VirtualNetworkGateway
+     <azure.mgmt.network.models.VirtualNetworkGateway>`
+    :param local_network_gateway2:
+    :type local_network_gateway2: :class:`LocalNetworkGateway
+     <azure.mgmt.network.models.LocalNetworkGateway>`
+    :param connection_type: Gateway connection type
      -Ipsec/Dedicated/VpnClient/Vnet2Vnet. Possible values include: 'IPsec',
      'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
-    :param int routing_weight: The Routing weight.
-    :param str shared_key: The Ipsec share key.
-    :param str connection_status: Virtual network Gateway connection status.
+    :type connection_type: str
+    :param routing_weight: The Routing weight.
+    :type routing_weight: int
+    :param shared_key: The Ipsec share key.
+    :type shared_key: str
+    :param connection_status: Virtual network Gateway connection status.
      Possible values include: 'Unknown', 'Connecting', 'Connected',
      'NotConnected'
-    :param long egress_bytes_transferred: The Egress Bytes Transferred in
-     this connection
-    :param long ingress_bytes_transferred: The Ingress Bytes Transferred in
-     this connection
-    :param SubResource peer: The reference to peerings resource.
-    :param str resource_guid: Gets or sets resource guid property of the
+    :type connection_status: str
+    :param egress_bytes_transferred: The Egress Bytes Transferred in this
+     connection
+    :type egress_bytes_transferred: long
+    :param ingress_bytes_transferred: The Ingress Bytes Transferred in this
+     connection
+    :type ingress_bytes_transferred: long
+    :param peer: The reference to peerings resource.
+    :type peer: :class:`SubResource <azure.mgmt.network.models.SubResource>`
+    :param enable_bgp: EnableBgp Flag
+    :type enable_bgp: bool
+    :param resource_guid: Gets or sets resource guid property of the
      VirtualNetworkGatewayConnection resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type resource_guid: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      VirtualNetworkGatewayConnection resource Updating/Deleting/Failed
-    :param str etag: Gets a unique read-only string that changes whenever the
+    :type provisioning_state: str
+    :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
+    :type etag: str
     """ 
 
     _attribute_map = {
@@ -73,12 +97,13 @@ class VirtualNetworkGatewayConnection(Resource):
         'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
         'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
         'peer': {'key': 'properties.peer', 'type': 'SubResource'},
+        'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, authorization_key=None, virtual_network_gateway1=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_type=None, routing_weight=None, shared_key=None, connection_status=None, egress_bytes_transferred=None, ingress_bytes_transferred=None, peer=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, authorization_key=None, virtual_network_gateway1=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_type=None, routing_weight=None, shared_key=None, connection_status=None, egress_bytes_transferred=None, ingress_bytes_transferred=None, peer=None, enable_bgp=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
         super(VirtualNetworkGatewayConnection, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
@@ -91,6 +116,7 @@ class VirtualNetworkGatewayConnection(Resource):
         self.egress_bytes_transferred = egress_bytes_transferred
         self.ingress_bytes_transferred = ingress_bytes_transferred
         self.peer = peer
+        self.enable_bgp = enable_bgp
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag

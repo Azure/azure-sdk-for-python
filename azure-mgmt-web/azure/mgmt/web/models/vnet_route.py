@@ -26,19 +26,27 @@ class VnetRoute(Resource):
     """
     VnetRoute contract used to pass routing information for a vnet.
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str vnet_route_name: The name of this route. This is only returned
-     by the server and does not need to be set by the client.
-    :param str start_address: The starting address for this route. This may
-     also include a CIDR notation, in which case the end address must not be
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param vnet_route_name: The name of this route. This is only returned by
+     the server and does not need to be set by the client.
+    :type vnet_route_name: str
+    :param start_address: The starting address for this route. This may also
+     include a CIDR notation, in which case the end address must not be
      specified.
-    :param str end_address: The ending address for this route. If the start
+    :type start_address: str
+    :param end_address: The ending address for this route. If the start
      address is specified in CIDR notation, this must be omitted.
-    :param str route_type: The type of route this is:
+    :type end_address: str
+    :param route_type: The type of route this is:
      DEFAULT - By default, every web app has routes to the local
      address ranges specified by RFC1918
      INHERITED - Routes inherited from the real Virtual Network
@@ -48,6 +56,7 @@ class VnetRoute(Resource):
      those from a Virtual Network. This operation will clear all DEFAULT and
      INHERITED routes and replace them
      with new INHERITED routes.
+    :type route_type: str
     """ 
 
     _validation = {

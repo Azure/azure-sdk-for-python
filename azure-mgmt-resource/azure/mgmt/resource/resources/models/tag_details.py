@@ -26,10 +26,16 @@ class TagDetails(Model):
     """
     Tag details.
 
-    :param str id: Gets or sets the tag ID.
-    :param str tag_name: Gets or sets the tag name.
-    :param TagCount count: Gets or sets the tag count.
-    :param list values: Gets or sets the list of tag values.
+    :param id: Gets or sets the tag ID.
+    :type id: str
+    :param tag_name: Gets or sets the tag name.
+    :type tag_name: str
+    :param count: Gets or sets the tag count.
+    :type count: :class:`TagCount
+     <azure.mgmt.resource.resources.models.TagCount>`
+    :param values: Gets or sets the list of tag values.
+    :type values: list of :class:`TagValue
+     <azure.mgmt.resource.resources.models.TagValue>`
     """ 
 
     _attribute_map = {

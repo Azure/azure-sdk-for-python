@@ -58,10 +58,12 @@ class ResourceGroupsOperations(object):
          groups.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: GenericResourcePaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`GenericResourcePaged
+         <azure.mgmt.resource.resources.models.GenericResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -127,10 +129,13 @@ class ResourceGroupsOperations(object):
          The name is case insensitive.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: bool
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -179,12 +184,17 @@ class ResourceGroupsOperations(object):
         :type resource_group_name: str
         :param parameters: Parameters supplied to the create or update
          resource group service operation.
-        :type parameters: ResourceGroup
+        :type parameters: :class:`ResourceGroup
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ResourceGroup
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ResourceGroup
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -237,17 +247,19 @@ class ResourceGroupsOperations(object):
     def delete(
             self, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Begin deleting resource group.To determine whether the operation has
-        finished processing the request, call GetLongRunningOperationStatus.
+        Delete resource group.
 
         :param resource_group_name: The name of the resource group to be
          deleted. The name is case insensitive.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -295,6 +307,10 @@ class ResourceGroupsOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
@@ -311,10 +327,14 @@ class ResourceGroupsOperations(object):
          The name is case insensitive.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ResourceGroup
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ResourceGroup
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -371,12 +391,17 @@ class ResourceGroupsOperations(object):
         :type resource_group_name: str
         :param parameters: Parameters supplied to the update state resource
          group service operation.
-        :type parameters: ResourceGroup
+        :type parameters: :class:`ResourceGroup
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ResourceGroup
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ResourceGroup
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -424,6 +449,80 @@ class ResourceGroupsOperations(object):
 
         return deserialized
 
+    def export_template(
+            self, resource_group_name, resources=None, options=None, custom_headers={}, raw=False, **operation_config):
+        """
+        Captures the specified resource group as a template.
+
+        :param resource_group_name: The name of the resource group to be
+         created or updated.
+        :type resource_group_name: str
+        :param resources: Gets or sets the ids of the resources. The only
+         supported string currently is '*' (all resources). Future api
+         updates will support exporting specific resources.
+        :type resources: list of str
+        :param options: The export template options. Supported values include
+         'IncludeParameterDefaultValue', 'IncludeComments' or
+         'IncludeParameterDefaultValue, IncludeComments
+        :type options: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ResourceGroupExportResult
+         <azure.mgmt.resource.resources.models.ResourceGroupExportResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        parameters = models.ExportTemplateRequest(resources=resources, options=options)
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/exportTemplate'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern='^[-\w\._]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'ExportTemplateRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ResourceGroupExportResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def list(
             self, filter=None, top=None, custom_headers={}, raw=False, **operation_config):
         """
@@ -435,10 +534,12 @@ class ResourceGroupsOperations(object):
          groups.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ResourceGroupPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ResourceGroupPaged
+         <azure.mgmt.resource.resources.models.ResourceGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

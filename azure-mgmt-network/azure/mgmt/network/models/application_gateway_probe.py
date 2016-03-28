@@ -26,20 +26,30 @@ class ApplicationGatewayProbe(SubResource):
     """
     Probe of application gateway
 
-    :param str id: Resource Id
-    :param str protocol: Gets or sets the protocol. Possible values include:
+    :param id: Resource Id
+    :type id: str
+    :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
-    :param str host: Gets or sets the host to send probe to
-    :param str path: Gets or sets the relative path of probe
-    :param int interval: Gets or sets probing interval in seconds
-    :param int timeout: Gets or sets probing timeout in seconds
-    :param int unhealthy_threshold: Gets or sets probing unhealthy threshold
-    :param str provisioning_state: Gets or sets Provisioning state of the
-     backend http settings resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type protocol: str
+    :param host: Gets or sets the host to send probe to
+    :type host: str
+    :param path: Gets or sets the relative path of probe
+    :type path: str
+    :param interval: Gets or sets probing interval in seconds
+    :type interval: int
+    :param timeout: Gets or sets probing timeout in seconds
+    :type timeout: int
+    :param unhealthy_threshold: Gets or sets probing unhealthy threshold
+    :type unhealthy_threshold: int
+    :param provisioning_state: Gets or sets Provisioning state of the backend
+     http settings resource Updating/Deleting/Failed
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

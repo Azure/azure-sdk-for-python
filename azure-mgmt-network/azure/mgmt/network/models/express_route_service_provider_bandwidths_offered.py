@@ -26,8 +26,10 @@ class ExpressRouteServiceProviderBandwidthsOffered(Model):
     """
     Contains Bandwidths offered in ExpressRouteServiceProviders
 
-    :param str offer_name: Gets the OfferName
-    :param int value_in_mbps: Gets the ValueInMbps.
+    :param offer_name: Gets the OfferName
+    :type offer_name: str
+    :param value_in_mbps: Gets the ValueInMbps.
+    :type value_in_mbps: int
     """ 
 
     _attribute_map = {

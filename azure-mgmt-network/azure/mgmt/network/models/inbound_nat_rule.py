@@ -26,43 +26,56 @@ class InboundNatRule(SubResource):
     """
     Inbound NAT rule of the loadbalancer
 
-    :param str id: Resource Id
-    :param SubResource frontend_ip_configuration: Gets or sets a reference to
-     frontend IP Addresses
-    :param NetworkInterfaceIPConfiguration backend_ip_configuration: Gets or
-     sets a reference to a private ip address defined on a NetworkInterface
-     of a VM. Traffic sent to frontendPort of each of the
-     frontendIPConfigurations is forwarded to the backed IP
-    :param str protocol: Gets or sets the transport potocol for the external
+    :param id: Resource Id
+    :type id: str
+    :param frontend_ip_configuration: Gets or sets a reference to frontend IP
+     Addresses
+    :type frontend_ip_configuration: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param backend_ip_configuration: Gets or sets a reference to a private ip
+     address defined on a NetworkInterface of a VM. Traffic sent to
+     frontendPort of each of the frontendIPConfigurations is forwarded to the
+     backed IP
+    :type backend_ip_configuration: :class:`NetworkInterfaceIPConfiguration
+     <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
+    :param protocol: Gets or sets the transport potocol for the external
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'
-    :param int frontend_port: Gets or sets the port for the external
-     endpoint. You can spcify any port number you choose, but the port
-     numbers specified for each role in the service must be unique. Possible
-     values range between 1 and 65535, inclusive
-    :param int backend_port: Gets or sets a port used for internal
-     connections on the endpoint. The localPort attribute maps the eternal
-     port of the endpoint to an internal port on a role. This is useful in
-     scenarios where a role must communicate to an internal compotnent on a
-     port that is different from the one that is exposed externally. If not
-     specified, the value of localPort is the same as the port attribute. Set
-     the value of localPort to '*' to automatically assign an unallocated
-     port that is discoverable using the runtime API
-    :param int idle_timeout_in_minutes: Gets or sets the timeout for the Tcp
-     idle connection. The value can be set between 4 and 30 minutes. The
-     default value is 4 minutes. This emlement is only used when the protocol
-     is set to Tcp
-    :param bool enable_floating_ip: Configures a virtual machine's endpoint
-     for the floating IP capability required to configure a SQL AlwaysOn
+    :type protocol: str
+    :param frontend_port: Gets or sets the port for the external endpoint.
+     You can spcify any port number you choose, but the port numbers
+     specified for each role in the service must be unique. Possible values
+     range between 1 and 65535, inclusive
+    :type frontend_port: int
+    :param backend_port: Gets or sets a port used for internal connections on
+     the endpoint. The localPort attribute maps the eternal port of the
+     endpoint to an internal port on a role. This is useful in scenarios
+     where a role must communicate to an internal compotnent on a port that
+     is different from the one that is exposed externally. If not specified,
+     the value of localPort is the same as the port attribute. Set the value
+     of localPort to '*' to automatically assign an unallocated port that is
+     discoverable using the runtime API
+    :type backend_port: int
+    :param idle_timeout_in_minutes: Gets or sets the timeout for the Tcp idle
+     connection. The value can be set between 4 and 30 minutes. The default
+     value is 4 minutes. This emlement is only used when the protocol is set
+     to Tcp
+    :type idle_timeout_in_minutes: int
+    :param enable_floating_ip: Configures a virtual machine's endpoint for
+     the floating IP capability required to configure a SQL AlwaysOn
      availability Group. This setting is required when using the SQL Always
      ON availability Groups in SQL server. This setting can't be changed
      after you create the endpoint
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type enable_floating_ip: bool
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {
@@ -79,10 +92,10 @@ class InboundNatRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, frontend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None, **kwargs):
+    def __init__(self, id=None, frontend_ip_configuration=None, backend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None, **kwargs):
         super(InboundNatRule, self).__init__(id=id, **kwargs)
         self.frontend_ip_configuration = frontend_ip_configuration
-        self.backend_ip_configuration = None
+        self.backend_ip_configuration = backend_ip_configuration
         self.protocol = protocol
         self.frontend_port = frontend_port
         self.backend_port = backend_port

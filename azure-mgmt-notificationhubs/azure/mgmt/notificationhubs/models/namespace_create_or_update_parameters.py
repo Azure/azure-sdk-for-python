@@ -26,10 +26,13 @@ class NamespaceCreateOrUpdateParameters(Model):
     """
     Parameters supplied to the CreateOrUpdate Namespace operation.
 
-    :param str location: Gets or sets Namespace data center location.
-    :param dict tags: Gets or sets Namespace tags.
-    :param NamespaceProperties properties: Gets or sets properties of the
-     Namespace.
+    :param location: Gets or sets Namespace data center location.
+    :type location: str
+    :param tags: Gets or sets Namespace tags.
+    :type tags: dict
+    :param properties: Gets or sets properties of the Namespace.
+    :type properties: :class:`NamespaceProperties
+     <azure.mgmt.notificationhubs.models.NamespaceProperties>`
     """ 
 
     _validation = {

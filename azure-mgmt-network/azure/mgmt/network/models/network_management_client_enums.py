@@ -113,15 +113,6 @@ class ServiceProviderProvisioningState(Enum):
     deprovisioning = "Deprovisioning"
 
 
-class RouteNextHopType(Enum):
-
-    virtual_network_gateway = "VirtualNetworkGateway"
-    vnet_local = "VnetLocal"
-    internet = "Internet"
-    virtual_appliance = "VirtualAppliance"
-    none = "None"
-
-
 class SecurityRuleProtocol(Enum):
 
     tcp = "Tcp"
@@ -147,6 +138,15 @@ class TransportProtocol(Enum):
     tcp = "Tcp"
 
 
+class RouteNextHopType(Enum):
+
+    virtual_network_gateway = "VirtualNetworkGateway"
+    vnet_local = "VnetLocal"
+    internet = "Internet"
+    virtual_appliance = "VirtualAppliance"
+    none = "None"
+
+
 class LoadDistribution(Enum):
 
     default = "Default"
@@ -158,11 +158,6 @@ class ProbeProtocol(Enum):
 
     http = "Http"
     tcp = "Tcp"
-
-
-class UsageUnit(Enum):
-
-    count = "Count"
 
 
 class VirtualNetworkGatewayType(Enum):

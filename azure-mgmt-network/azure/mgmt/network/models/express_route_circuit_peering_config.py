@@ -26,14 +26,18 @@ class ExpressRouteCircuitPeeringConfig(Model):
     """
     Specfies the peering config
 
-    :param list advertised_public_prefixes: Gets or sets the reference of
+    :param advertised_public_prefixes: Gets or sets the reference of
      AdvertisedPublicPrefixes
-    :param str advertised_public_prefixes_state: Gets or sets
+    :type advertised_public_prefixes: list of str
+    :param advertised_public_prefixes_state: Gets or sets
      AdvertisedPublicPrefixState of the Peering resource . Possible values
      include: 'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
-    :param int customer_asn: Gets or Sets CustomerAsn of the peering.
-    :param str routing_registry_name: Gets or Sets RoutingRegistryName of the
+    :type advertised_public_prefixes_state: str
+    :param customer_asn: Gets or Sets CustomerAsn of the peering.
+    :type customer_asn: int
+    :param routing_registry_name: Gets or Sets RoutingRegistryName of the
      config.
+    :type routing_registry_name: str
     """ 
 
     _attribute_map = {

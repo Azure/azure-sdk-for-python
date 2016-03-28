@@ -26,8 +26,9 @@ class RedisRegenerateKeyParameters(Model):
     """
     Specifies which redis access keys to reset.
 
-    :param str key_type: Which redis access key to reset. Possible values
+    :param key_type: Which redis access key to reset. Possible values
      include: 'Primary', 'Secondary'
+    :type key_type: str
     """ 
 
     _validation = {

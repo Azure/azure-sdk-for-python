@@ -26,8 +26,9 @@ class RoutingRule(Model):
     """
     Routing rules for TiP
 
-    :param str name: Name of the routing rule. The recommended name would be
-     to point to the slot which will receive the traffic in the experiment.
+    :param name: Name of the routing rule. The recommended name would be to
+     point to the slot which will receive the traffic in the experiment.
+    :type name: str
     """ 
 
     _attribute_map = {

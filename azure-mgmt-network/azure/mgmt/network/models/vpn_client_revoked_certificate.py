@@ -26,15 +26,20 @@ class VpnClientRevokedCertificate(SubResource):
     """
     VPN client revoked certificate of virtual network gateway
 
-    :param str id: Resource Id
-    :param str thumbprint: Gets or sets the revoked Vpn client certificate
+    :param id: Resource Id
+    :type id: str
+    :param thumbprint: Gets or sets the revoked Vpn client certificate
      thumbprint
-    :param str provisioning_state: Gets or sets Provisioning state of the VPN
+    :type thumbprint: str
+    :param provisioning_state: Gets or sets Provisioning state of the VPN
      client revoked certificate resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

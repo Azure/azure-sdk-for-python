@@ -26,21 +26,29 @@ class IPConfiguration(SubResource):
     """
     IPConfiguration
 
-    :param str id: Resource Id
-    :param str private_ip_address: Gets or sets the privateIPAddress of the
-     IP Configuration
-    :param str private_ip_allocation_method: Gets or sets PrivateIP
-     allocation method (Static/Dynamic). Possible values include: 'Static',
-     'Dynamic'
-    :param Subnet subnet: Gets or sets the reference of the subnet resource
-    :param PublicIPAddress public_ip_address: Gets or sets the reference of
-     the PublicIP resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :param id: Resource Id
+    :type id: str
+    :param private_ip_address: Gets or sets the privateIPAddress of the IP
+     Configuration
+    :type private_ip_address: str
+    :param private_ip_allocation_method: Gets or sets PrivateIP allocation
+     method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
+    :type private_ip_allocation_method: str
+    :param subnet: Gets or sets the reference of the subnet resource
+    :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :param public_ip_address: Gets or sets the reference of the PublicIP
+     resource
+    :type public_ip_address: :class:`PublicIPAddress
+     <azure.mgmt.network.models.PublicIPAddress>`
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {
@@ -54,12 +62,12 @@ class IPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, provisioning_state=None, name=None, etag=None, **kwargs):
+    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
         super(IPConfiguration, self).__init__(id=id, **kwargs)
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
-        self.subnet = None
-        self.public_ip_address = None
+        self.subnet = subnet
+        self.public_ip_address = public_ip_address
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag

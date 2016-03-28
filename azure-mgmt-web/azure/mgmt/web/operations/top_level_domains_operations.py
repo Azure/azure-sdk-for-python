@@ -49,10 +49,14 @@ class TopLevelDomainsOperations(object):
         Lists all top level domains supported for registration
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: TopLevelDomainCollection
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`TopLevelDomainCollection
+         <azure.mgmt.web.models.TopLevelDomainCollection>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains'
@@ -103,10 +107,13 @@ class TopLevelDomainsOperations(object):
         :param name: Name of the top level domain
         :type name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: TopLevelDomain
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`TopLevelDomain <azure.mgmt.web.models.TopLevelDomain>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains/{name}'
@@ -162,10 +169,14 @@ class TopLevelDomainsOperations(object):
          inclue agreements for domain privacy as well.
         :type include_privacy: bool
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: TldLegalAgreementCollection
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`TldLegalAgreementCollection
+         <azure.mgmt.web.models.TldLegalAgreementCollection>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         agreement_option = models.TopLevelDomainAgreementOption(include_privacy=include_privacy)
 

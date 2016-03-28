@@ -25,10 +25,13 @@ from msrest.serialization import Model
 class OperationDisplay(Model):
     """OperationDisplay
 
-    :param str provider: Service provider: Microsoft.Cdn
-    :param str resource: Resource on which the operation is performed:
-     profile, endpoint,.. etc
-    :param str operation: Operation type: read, write, delete,.. etc
+    :param provider: Service provider: Microsoft.Cdn
+    :type provider: str
+    :param resource: Resource on which the operation is performed: Profile,
+     endpoint, etc.
+    :type resource: str
+    :param operation: Operation type: Read, write, delete, etc.
+    :type operation: str
     """ 
 
     _attribute_map = {

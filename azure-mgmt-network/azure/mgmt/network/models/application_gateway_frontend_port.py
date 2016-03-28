@@ -26,14 +26,19 @@ class ApplicationGatewayFrontendPort(SubResource):
     """
     Frontend Port of application gateway
 
-    :param str id: Resource Id
-    :param int port: Gets or sets the frontend port
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :param id: Resource Id
+    :type id: str
+    :param port: Gets or sets the frontend port
+    :type port: int
+    :param provisioning_state: Gets or sets Provisioning state of the
      frontend port resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

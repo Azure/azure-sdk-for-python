@@ -24,11 +24,14 @@ from msrest.serialization import Model
 
 class ProfileCreateParameters(Model):
     """
-    Profile properties required for profile creation
+    Profile properties required for profile creation.
 
-    :param str location: Profile location
-    :param dict tags: Profile tags
-    :param Sku sku: Profile sku
+    :param location: Profile location
+    :type location: str
+    :param tags: Profile tags
+    :type tags: dict
+    :param sku: Profile SKU
+    :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
     """ 
 
     _validation = {

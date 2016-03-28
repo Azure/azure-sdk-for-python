@@ -27,8 +27,10 @@ class CsmMoveResourceEnvelope(Model):
     Class containing a list of the resources that need to be moved and the
     resource group they should be moved to
 
-    :param str target_resource_group:
-    :param list resources:
+    :param target_resource_group:
+    :type target_resource_group: str
+    :param resources:
+    :type resources: list of str
     """ 
 
     _attribute_map = {

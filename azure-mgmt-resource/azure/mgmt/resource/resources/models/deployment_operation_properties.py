@@ -26,25 +26,45 @@ class DeploymentOperationProperties(Model):
     """
     Deployment operation properties.
 
-    :param str provisioning_state: Gets or sets the state of the provisioning.
-    :param datetime timestamp: Gets or sets the date and time of the
-     operation.
-    :param str status_code: Gets or sets operation status code.
-    :param object status_message: Gets or sets operation status message.
-    :param TargetResource target_resource: Gets or sets the target resource.
+    :param provisioning_state: Gets or sets the state of the provisioning.
+    :type provisioning_state: str
+    :param timestamp: Gets or sets the date and time of the operation.
+    :type timestamp: datetime
+    :param service_request_id: Gets or sets deployment operation service
+     request id.
+    :type service_request_id: str
+    :param status_code: Gets or sets operation status code.
+    :type status_code: str
+    :param status_message: Gets or sets operation status message.
+    :type status_message: object
+    :param target_resource: Gets or sets the target resource.
+    :type target_resource: :class:`TargetResource
+     <azure.mgmt.resource.resources.models.TargetResource>`
+    :param request: Gets or sets the HTTP request message.
+    :type request: :class:`HttpMessage
+     <azure.mgmt.resource.resources.models.HttpMessage>`
+    :param response: Gets or sets the HTTP response message.
+    :type response: :class:`HttpMessage
+     <azure.mgmt.resource.resources.models.HttpMessage>`
     """ 
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'service_request_id': {'key': 'serviceRequestId', 'type': 'str'},
         'status_code': {'key': 'statusCode', 'type': 'str'},
         'status_message': {'key': 'statusMessage', 'type': 'object'},
         'target_resource': {'key': 'targetResource', 'type': 'TargetResource'},
+        'request': {'key': 'request', 'type': 'HttpMessage'},
+        'response': {'key': 'response', 'type': 'HttpMessage'},
     }
 
-    def __init__(self, provisioning_state=None, timestamp=None, status_code=None, status_message=None, target_resource=None, **kwargs):
+    def __init__(self, provisioning_state=None, timestamp=None, service_request_id=None, status_code=None, status_message=None, target_resource=None, request=None, response=None, **kwargs):
         self.provisioning_state = provisioning_state
         self.timestamp = timestamp
+        self.service_request_id = service_request_id
         self.status_code = status_code
         self.status_message = status_message
         self.target_resource = target_resource
+        self.request = request
+        self.response = response

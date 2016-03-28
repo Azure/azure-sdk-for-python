@@ -34,7 +34,8 @@ class SubscriptionClientConfiguration(AzureConfiguration):
     attributes.
 
     :param credentials: Gets Azure subscription credentials.
-    :type credentials: credentials
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
     :param api_version: Client Api Version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the

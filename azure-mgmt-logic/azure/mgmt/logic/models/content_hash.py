@@ -25,8 +25,10 @@ from msrest.serialization import Model
 class ContentHash(Model):
     """ContentHash
 
-    :param str algorithm: Gets or sets the algorithm.
-    :param str value: Gets or sets the value.
+    :param algorithm: Gets or sets the algorithm.
+    :type algorithm: str
+    :param value: Gets or sets the value.
+    :type value: str
     """ 
 
     _attribute_map = {

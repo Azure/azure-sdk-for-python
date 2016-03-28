@@ -25,9 +25,12 @@ from msrest.serialization import Model
 class Sku(Model):
     """Sku
 
-    :param str name: Gets or sets the name. Possible values include:
+    :param name: Gets or sets the name. Possible values include:
      'NotSpecified', 'Free', 'Shared', 'Basic', 'Standard', 'Premium'
-    :param ResourceReference plan: Gets or sets the reference to plan.
+    :type name: str
+    :param plan: Gets or sets the reference to plan.
+    :type plan: :class:`ResourceReference
+     <azure.mgmt.logic.models.ResourceReference>`
     """ 
 
     _attribute_map = {

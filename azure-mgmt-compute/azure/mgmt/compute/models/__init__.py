@@ -91,9 +91,7 @@ from .virtual_machine_scale_set_vm_instance_view import VirtualMachineScaleSetVM
 from .api_error_base import ApiErrorBase
 from .inner_error import InnerError
 from .api_error import ApiError
-from .delete_operation_result import DeleteOperationResult
 from .compute_long_running_operation_properties import ComputeLongRunningOperationProperties
-from .compute_long_running_operation_result import ComputeLongRunningOperationResult
 from .resource import Resource
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
@@ -114,8 +112,7 @@ from .compute_management_client_enums import (
     ProtocolTypes,
     UpgradeMode,
     VirtualMachineScaleSetSkuScaleType,
-    OperationStatus,
-    ComputeOperationStatus,
+    InstanceViewTypes,
 )
 
 __all__ = [
@@ -191,9 +188,7 @@ __all__ = [
     'ApiErrorBase',
     'InnerError',
     'ApiError',
-    'DeleteOperationResult',
     'ComputeLongRunningOperationProperties',
-    'ComputeLongRunningOperationResult',
     'Resource',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
@@ -213,6 +208,5 @@ __all__ = [
     'ProtocolTypes',
     'UpgradeMode',
     'VirtualMachineScaleSetSkuScaleType',
-    'OperationStatus',
-    'ComputeOperationStatus',
+    'InstanceViewTypes',
 ]

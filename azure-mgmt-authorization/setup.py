@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-authorization',
-    version='0.30.0rc1',
+    version='0.30.0rc2',
     description='Microsoft Azure Authorization Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -61,8 +61,7 @@ setup(
         'azure.mgmt.authorization.operations',
     ],
     install_requires=[
-        'azure-common>=1.1.0',
+        'azure-common[autorest]==1.1.2',
         'azure-mgmt-nspkg',
-        'msrestazure>=0.1.0'
     ],
 )

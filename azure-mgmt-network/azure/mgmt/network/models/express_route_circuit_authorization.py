@@ -26,16 +26,22 @@ class ExpressRouteCircuitAuthorization(SubResource):
     """
     Authorization in a ExpressRouteCircuit resource
 
-    :param str id: Resource Id
-    :param str authorization_key: Gets or sets the authorization key
-    :param str authorization_use_status: Gets or sets AuthorizationUseStatus.
+    :param id: Resource Id
+    :type id: str
+    :param authorization_key: Gets or sets the authorization key
+    :type authorization_key: str
+    :param authorization_use_status: Gets or sets AuthorizationUseStatus.
      Possible values include: 'Available', 'InUse'
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type authorization_use_status: str
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

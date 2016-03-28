@@ -26,14 +26,25 @@ class ResourceMetric(Model):
     """
     Object representing a metric for any resource
 
-    :param ResourceMetricName name: Name of metric
-    :param str unit: Metric unit
-    :param str time_grain: Metric granularity. E.g PT1H, PT5M, P1D
-    :param datetime start_time: Metric start time
-    :param datetime end_time: Metric end time
-    :param str resource_id: Metric resource Id
-    :param list metric_values: Metric values
-    :param list properties: Properties
+    :param name: Name of metric
+    :type name: :class:`ResourceMetricName
+     <azure.mgmt.web.models.ResourceMetricName>`
+    :param unit: Metric unit
+    :type unit: str
+    :param time_grain: Metric granularity. E.g PT1H, PT5M, P1D
+    :type time_grain: str
+    :param start_time: Metric start time
+    :type start_time: datetime
+    :param end_time: Metric end time
+    :type end_time: datetime
+    :param resource_id: Metric resource Id
+    :type resource_id: str
+    :param metric_values: Metric values
+    :type metric_values: list of :class:`ResourceMetricValue
+     <azure.mgmt.web.models.ResourceMetricValue>`
+    :param properties: Properties
+    :type properties: list of :class:`KeyValuePairStringString
+     <azure.mgmt.web.models.KeyValuePairStringString>`
     """ 
 
     _attribute_map = {

@@ -61,10 +61,12 @@ class PolicyAssignmentsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignmentPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignmentPaged
+         <azure.mgmt.resource.resources.models.PolicyAssignmentPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -133,10 +135,12 @@ class PolicyAssignmentsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignmentPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignmentPaged
+         <azure.mgmt.resource.resources.models.PolicyAssignmentPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -201,10 +205,14 @@ class PolicyAssignmentsOperations(object):
         :param policy_assignment_name: Policy assignment name.
         :type policy_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignment
+         <azure.mgmt.resource.resources.models.PolicyAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'
@@ -259,14 +267,19 @@ class PolicyAssignmentsOperations(object):
         :param policy_assignment_name: Policy assignment name.
         :type policy_assignment_name: str
         :param properties: Gets or sets the policy assignment properties.
-        :type properties: PolicyAssignmentProperties
+        :type properties: :class:`PolicyAssignmentProperties
+         <azure.mgmt.resource.resources.models.PolicyAssignmentProperties>`
         :param name: Gets or sets the policy assignment name.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignment
+         <azure.mgmt.resource.resources.models.PolicyAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.PolicyAssignment(properties=properties, name=name)
 
@@ -327,10 +340,14 @@ class PolicyAssignmentsOperations(object):
         :param policy_assignment_name: Policy assignment name.
         :type policy_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignment
+         <azure.mgmt.resource.resources.models.PolicyAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'
@@ -383,10 +400,14 @@ class PolicyAssignmentsOperations(object):
         :param policy_assignment_id: Policy assignment Id
         :type policy_assignment_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignment
+         <azure.mgmt.resource.resources.models.PolicyAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{policyAssignmentId}'
@@ -438,14 +459,19 @@ class PolicyAssignmentsOperations(object):
         :param policy_assignment_id: Policy assignment Id
         :type policy_assignment_id: str
         :param properties: Gets or sets the policy assignment properties.
-        :type properties: PolicyAssignmentProperties
+        :type properties: :class:`PolicyAssignmentProperties
+         <azure.mgmt.resource.resources.models.PolicyAssignmentProperties>`
         :param name: Gets or sets the policy assignment name.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignment
+         <azure.mgmt.resource.resources.models.PolicyAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.PolicyAssignment(properties=properties, name=name)
 
@@ -503,10 +529,14 @@ class PolicyAssignmentsOperations(object):
         :param policy_assignment_id: Policy assignment Id
         :type policy_assignment_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignment
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignment
+         <azure.mgmt.resource.resources.models.PolicyAssignment>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{policyAssignmentId}'
@@ -558,10 +588,12 @@ class PolicyAssignmentsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignmentPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignmentPaged
+         <azure.mgmt.resource.resources.models.PolicyAssignmentPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -625,10 +657,12 @@ class PolicyAssignmentsOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: PolicyAssignmentPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyAssignmentPaged
+         <azure.mgmt.resource.resources.models.PolicyAssignmentPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

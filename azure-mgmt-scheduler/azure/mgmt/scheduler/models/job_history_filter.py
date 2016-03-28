@@ -25,8 +25,9 @@ from msrest.serialization import Model
 class JobHistoryFilter(Model):
     """JobHistoryFilter
 
-    :param str status: Gets or sets the job execution status. Possible values
+    :param status: Gets or sets the job execution status. Possible values
      include: 'Completed', 'Failed', 'Postponed'
+    :type status: str
     """ 
 
     _attribute_map = {

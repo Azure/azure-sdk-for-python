@@ -21,6 +21,7 @@ from collections import namedtuple
 import azure.mgmt.compute
 import azure.mgmt.network
 import azure.mgmt.storage
+from azure.mgmt.compute.models import InstanceViewTypes
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -194,8 +195,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
         storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
             publisher='Canonical',
             offer='UbuntuServer',
-            sku='15.04',
-            version='15.04.201504220',
+            sku='15.10',
+            version='15.10.201603150',
         )
 
         params_create = azure.mgmt.compute.models.VirtualMachine(
@@ -214,7 +215,20 @@ class MgmtComputeTest(AzureMgmtTestCase):
             params_create,
         )
         result_create.wait()
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        
+        result_get = self.compute_client.virtual_machines.get(
+            self.group_name,
+            names.vm
+        )
+        self.assertEquals(result_get.name, names.vm)
+        self.assertIsNone(result_get.instance_view)
+        result_iv = self.compute_client.virtual_machines.get(
+            self.group_name,
+            names.vm,
+            expand=InstanceViewTypes.instance_view
+        )
+        self.assertTrue(result_iv.instance_view)
+
 
     @unittest.skip("reference_uri seems to be not supported in new ARM")
     @record

@@ -26,12 +26,18 @@ class ConnectionStringDictionary(Resource):
     """
     String dictionary resource
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param dict properties: Connection strings
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param properties: Connection strings
+    :type properties: dict
     """ 
 
     _validation = {

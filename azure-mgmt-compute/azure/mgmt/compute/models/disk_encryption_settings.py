@@ -26,21 +26,26 @@ class DiskEncryptionSettings(Model):
     """
     Describes a Encryption Settings for a Disk
 
-    :param KeyVaultSecretReference disk_encryption_key: Gets or sets the disk
-     encryption key which is a KeyVault Secret.
-    :param KeyVaultKeyReference key_encryption_key: Gets or sets the key
-     encryption key which is KeyVault Key.
+    :param disk_encryption_key: Gets or sets the disk encryption key which is
+     a KeyVault Secret.
+    :type disk_encryption_key: :class:`KeyVaultSecretReference
+     <azure.mgmt.compute.models.KeyVaultSecretReference>`
+    :param key_encryption_key: Gets or sets the key encryption key which is
+     KeyVault Key.
+    :type key_encryption_key: :class:`KeyVaultKeyReference
+     <azure.mgmt.compute.models.KeyVaultKeyReference>`
+    :param enabled: Gets or sets whether disk encryption should be enabled on
+     the Virtual Machine.
+    :type enabled: bool
     """ 
-
-    _validation = {
-        'disk_encryption_key': {'required': True},
-    }
 
     _attribute_map = {
         'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultSecretReference'},
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultKeyReference'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, disk_encryption_key, key_encryption_key=None, **kwargs):
+    def __init__(self, disk_encryption_key=None, key_encryption_key=None, enabled=None, **kwargs):
         self.disk_encryption_key = disk_encryption_key
         self.key_encryption_key = key_encryption_key
+        self.enabled = enabled

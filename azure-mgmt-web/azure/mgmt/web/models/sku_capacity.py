@@ -26,14 +26,14 @@ class SkuCapacity(Model):
     """
     Description of the App Service Plan scale options
 
-    :param int minimum: Minimum number of Workers for this App Service Plan
-     SKU
-    :param int maximum: Maximum number of Workers for this App Service Plan
-     SKU
-    :param int default: Default number of Workers for this App Service Plan
-     SKU
-    :param str scale_type: Available scale configurations for an App Service
-     Plan
+    :param minimum: Minimum number of Workers for this App Service Plan SKU
+    :type minimum: int
+    :param maximum: Maximum number of Workers for this App Service Plan SKU
+    :type maximum: int
+    :param default: Default number of Workers for this App Service Plan SKU
+    :type default: int
+    :param scale_type: Available scale configurations for an App Service Plan
+    :type scale_type: str
     """ 
 
     _attribute_map = {

@@ -26,9 +26,12 @@ class ExpressRouteCircuitServiceProviderProperties(Model):
     """
     Contains ServiceProviderProperties in an ExpressRouteCircuit
 
-    :param str service_provider_name: Gets or sets serviceProviderName.
-    :param str peering_location: Gets or sets peering location.
-    :param int bandwidth_in_mbps: Gets or sets BandwidthInMbps.
+    :param service_provider_name: Gets or sets serviceProviderName.
+    :type service_provider_name: str
+    :param peering_location: Gets or sets peering location.
+    :type peering_location: str
+    :param bandwidth_in_mbps: Gets or sets BandwidthInMbps.
+    :type bandwidth_in_mbps: int
     """ 
 
     _attribute_map = {

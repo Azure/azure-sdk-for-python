@@ -29,11 +29,14 @@ class HandlerMapping(Model):
     For example it is used to configure php-cgi.exe process to
     handle all HTTP requests with *.php extension.
 
-    :param str extension: Requests with this extension will be handled using
-     the specified FastCGI application.
-    :param str script_processor: The absolute path to the FastCGI application.
-    :param str arguments: Command-line arguments to be passed to the script
+    :param extension: Requests with this extension will be handled using the
+     specified FastCGI application.
+    :type extension: str
+    :param script_processor: The absolute path to the FastCGI application.
+    :type script_processor: str
+    :param arguments: Command-line arguments to be passed to the script
      processor.
+    :type arguments: str
     """ 
 
     _attribute_map = {

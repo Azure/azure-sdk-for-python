@@ -53,10 +53,14 @@ class ServicePrincipalOperations(object):
         :param account_enabled: Specifies if the account is enabled
         :type account_enabled: bool
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ServicePrincipal
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ServicePrincipal
+         <azure.graphrbac.models.ServicePrincipal>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         parameters = models.ServicePrincipalCreateParameters(app_id=app_id, account_enabled=account_enabled)
 
@@ -114,10 +118,12 @@ class ServicePrincipalOperations(object):
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ServicePrincipalPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ServicePrincipalPaged
+         <azure.graphrbac.models.ServicePrincipalPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -180,10 +186,13 @@ class ServicePrincipalOperations(object):
         :param object_id: Object id to delete service principal information.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
@@ -229,10 +238,14 @@ class ServicePrincipalOperations(object):
         :param object_id: Object id to get service principal information.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ServicePrincipal
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ServicePrincipal
+         <azure.graphrbac.models.ServicePrincipal>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
@@ -285,10 +298,12 @@ class ServicePrincipalOperations(object):
         :param next_link: Next link for list operation.
         :type next_link: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: ServicePrincipalPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ServicePrincipalPaged
+         <azure.graphrbac.models.ServicePrincipalPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

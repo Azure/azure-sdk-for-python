@@ -26,19 +26,30 @@ class BackendAddressPool(SubResource):
     """
     Pool of backend IP addresseses
 
-    :param str id: Resource Id
-    :param list backend_ip_configurations: Gets collection of references to
-     IPs defined in NICs
-    :param list load_balancing_rules: Gets Load Balancing rules that use this
+    :param id: Resource Id
+    :type id: str
+    :param backend_ip_configurations: Gets collection of references to IPs
+     defined in NICs
+    :type backend_ip_configurations: list of
+     :class:`NetworkInterfaceIPConfiguration
+     <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
+    :param load_balancing_rules: Gets Load Balancing rules that use this
      Backend Address Pool
-    :param SubResource outbound_nat_rule: Gets outbound rules that use this
-     Backend Address Pool
-    :param str provisioning_state: Provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type load_balancing_rules: list of :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param outbound_nat_rule: Gets outbound rules that use this Backend
+     Address Pool
+    :type outbound_nat_rule: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param provisioning_state: Provisioning state of the PublicIP resource
+     Updating/Deleting/Failed
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

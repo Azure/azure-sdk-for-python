@@ -46,16 +46,19 @@ class VirtualMachineSizesOperations(object):
     def list(
             self, location, custom_headers={}, raw=False, **operation_config):
         """
-        Lists virtual-machine-sizes available in a location for a subscription.
+        Lists all available virtual machine sizes for a subscription in a
+        location.
 
         :param location: The location upon which virtual-machine-sizes is
          queried.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: VirtualMachineSizePaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`VirtualMachineSizePaged
+         <azure.mgmt.compute.models.VirtualMachineSizePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

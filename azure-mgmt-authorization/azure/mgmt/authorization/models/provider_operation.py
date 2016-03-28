@@ -26,11 +26,16 @@ class ProviderOperation(Model):
     """
     Operation
 
-    :param str name: Gets or sets the operation name
-    :param str display_name: Gets or sets the operation display name
-    :param str description: Gets or sets the operation description
-    :param str origin: Gets or sets the operation origin
-    :param object properties: Gets or sets the operation properties
+    :param name: Gets or sets the operation name
+    :type name: str
+    :param display_name: Gets or sets the operation display name
+    :type display_name: str
+    :param description: Gets or sets the operation description
+    :type description: str
+    :param origin: Gets or sets the operation origin
+    :type origin: str
+    :param properties: Gets or sets the operation properties
+    :type properties: object
     """ 
 
     _attribute_map = {

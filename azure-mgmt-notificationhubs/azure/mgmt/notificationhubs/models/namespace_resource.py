@@ -26,13 +26,19 @@ class NamespaceResource(Model):
     """
     Description of a Namespace resource.
 
-    :param str id: Gets or sets the id of the created Namespace.
-    :param str location: Gets or sets datacenter location of the Namespace.
-    :param str name: Gets or sets name of the Namespace.
-    :param str type: Gets or sets resource type of the Namespace.
-    :param dict tags: Gets or sets tags of the Namespace.
-    :param NamespaceProperties properties: Gets or sets properties of the
-     Namespace.
+    :param id: Gets or sets the id of the created Namespace.
+    :type id: str
+    :param location: Gets or sets datacenter location of the Namespace.
+    :type location: str
+    :param name: Gets or sets name of the Namespace.
+    :type name: str
+    :param type: Gets or sets resource type of the Namespace.
+    :type type: str
+    :param tags: Gets or sets tags of the Namespace.
+    :type tags: dict
+    :param properties: Gets or sets properties of the Namespace.
+    :type properties: :class:`NamespaceProperties
+     <azure.mgmt.notificationhubs.models.NamespaceProperties>`
     """ 
 
     _attribute_map = {

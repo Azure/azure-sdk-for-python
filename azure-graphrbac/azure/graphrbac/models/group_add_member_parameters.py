@@ -26,7 +26,8 @@ class GroupAddMemberParameters(Model):
     """
     Request parameters for adding members to a groups
 
-    :param str url: Group display name
+    :param url: Group display name
+    :type url: str
     """ 
 
     _validation = {

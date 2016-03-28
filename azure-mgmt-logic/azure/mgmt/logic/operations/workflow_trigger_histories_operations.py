@@ -57,10 +57,12 @@ class WorkflowTriggerHistoriesOperations(object):
         :param top: The number of items to be included in the result.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowTriggerHistoryPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowTriggerHistoryPaged
+         <azure.mgmt.logic.models.WorkflowTriggerHistoryPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -131,10 +133,14 @@ class WorkflowTriggerHistoriesOperations(object):
         :param history_name: The workflow trigger history name.
         :type history_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: WorkflowTriggerHistory
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`WorkflowTriggerHistory
+         <azure.mgmt.logic.models.WorkflowTriggerHistory>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/triggers/{triggerName}/histories/{historyName}'

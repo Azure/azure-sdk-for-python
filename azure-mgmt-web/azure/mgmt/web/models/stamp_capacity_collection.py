@@ -26,8 +26,11 @@ class StampCapacityCollection(Model):
     """
     Collection of stamp capacities
 
-    :param list value: Collection of resources
-    :param str next_link: Link to next page of resources
+    :param value: Collection of resources
+    :type value: list of :class:`StampCapacity
+     <azure.mgmt.web.models.StampCapacity>`
+    :param next_link: Link to next page of resources
+    :type next_link: str
     """ 
 
     _attribute_map = {

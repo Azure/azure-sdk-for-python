@@ -26,29 +26,44 @@ class RestoreRequest(Resource):
     """
     Description of a restore request
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str storage_account_url: SAS URL to the container
-    :param str blob_name: Name of a blob which contains the backup
-    :param bool overwrite: True if the restore operation can overwrite target
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param storage_account_url: SAS URL to the container
+    :type storage_account_url: str
+    :param blob_name: Name of a blob which contains the backup
+    :type blob_name: str
+    :param overwrite: True if the restore operation can overwrite target
      site. "True" needed if trying to restore over an existing site.
-    :param str site_name: Name of a site (Web App)
-    :param list databases: Collection of databses which should be restored.
-     This list has to match the list of databases included in the backup.
-    :param bool ignore_conflicting_host_names: Changes a logic when restoring
-     a site with custom domains. If "true", custom domains are removed
+    :type overwrite: bool
+    :param site_name: Name of a site (Web App)
+    :type site_name: str
+    :param databases: Collection of databses which should be restored. This
+     list has to match the list of databases included in the backup.
+    :type databases: list of :class:`DatabaseBackupSetting
+     <azure.mgmt.web.models.DatabaseBackupSetting>`
+    :param ignore_conflicting_host_names: Changes a logic when restoring a
+     site with custom domains. If "true", custom domains are removed
      automatically. If "false", custom domains are added to
      the site object when it is being restored, but that might
      fail due to conflicts during the operation.
-    :param str operation_type: Operation type. Possible values include:
+    :type ignore_conflicting_host_names: bool
+    :param operation_type: Operation type. Possible values include:
      'Default', 'Clone', 'Relocation'
-    :param bool adjust_connection_strings: Gets or sets a flag showing if
+    :type operation_type: str
+    :param adjust_connection_strings: Gets or sets a flag showing if
      SiteConfig.ConnectionStrings should be set in new site
-    :param str hosting_environment: App Service Environment name, if needed
-     (only when restoring a site to an App Service Environment)
+    :type adjust_connection_strings: bool
+    :param hosting_environment: App Service Environment name, if needed (only
+     when restoring a site to an App Service Environment)
+    :type hosting_environment: str
     """ 
 
     _validation = {

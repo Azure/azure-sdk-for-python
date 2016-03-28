@@ -26,21 +26,35 @@ class Usage(Resource):
     """
     Class that represents usage of the quota resource.
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str display_name: Friendly name shown in the UI
-    :param str usage_name: Name of the quota
-    :param str resource_name: Name of the quota resource
-    :param str unit: Units of measurement for the quota resource
-    :param long current_value: The current value of the resource counter
-    :param long limit: The resource limit
-    :param datetime next_reset_time: Next reset time for the resource counter
-    :param str compute_mode: ComputeMode used for this usage. Possible values
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param display_name: Friendly name shown in the UI
+    :type display_name: str
+    :param usage_name: Name of the quota
+    :type usage_name: str
+    :param resource_name: Name of the quota resource
+    :type resource_name: str
+    :param unit: Units of measurement for the quota resource
+    :type unit: str
+    :param current_value: The current value of the resource counter
+    :type current_value: long
+    :param limit: The resource limit
+    :type limit: long
+    :param next_reset_time: Next reset time for the resource counter
+    :type next_reset_time: datetime
+    :param compute_mode: ComputeMode used for this usage. Possible values
      include: 'Shared', 'Dedicated'
-    :param str site_mode: SiteMode used for this usage
+    :type compute_mode: str
+    :param site_mode: SiteMode used for this usage
+    :type site_mode: str
     """ 
 
     _validation = {

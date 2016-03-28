@@ -25,11 +25,14 @@ from .http_authentication import HttpAuthentication
 class BasicAuthentication(HttpAuthentication):
     """BasicAuthentication
 
-    :param str type: Gets or sets the http authentication type. Possible
-     values include: 'NotSpecified', 'ClientCertificate',
-     'ActiveDirectoryOAuth', 'Basic'
-    :param str username: Gets or sets the username.
-    :param str password: Gets or sets the password.
+    :param type: Gets or sets the http authentication type. Possible values
+     include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
+     'Basic'
+    :type type: str
+    :param username: Gets or sets the username.
+    :type username: str
+    :param password: Gets or sets the password.
+    :type password: str
     """ 
 
     _attribute_map = {

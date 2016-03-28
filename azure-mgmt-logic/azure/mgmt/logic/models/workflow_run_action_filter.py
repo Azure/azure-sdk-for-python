@@ -25,10 +25,11 @@ from msrest.serialization import Model
 class WorkflowRunActionFilter(Model):
     """WorkflowRunActionFilter
 
-    :param str status: Gets or sets the status of workflow run action.
-     Possible values include: 'NotSpecified', 'Paused', 'Running', 'Waiting',
+    :param status: Gets or sets the status of workflow run action. Possible
+     values include: 'NotSpecified', 'Paused', 'Running', 'Waiting',
      'Succeeded', 'Skipped', 'Suspended', 'Cancelled', 'Failed', 'Faulted',
      'TimedOut', 'Aborted'
+    :type status: str
     """ 
 
     _attribute_map = {

@@ -1,3 +1,25 @@
+2016-03-29 Version 2.0.0rc2 / 0.30.0rc2
+
+New:
+* Latest Swagger update for CDN (minor fixes, documentation)
+* Latest Swagger update for Compute (API-version 2016-03-30, minor fixes, documentation)
+* Latest Swagger update for Network (API-version 2016-03-30, minor fixes, documentation)
+* Latest Swagger update for Resources (API-version 2016-02-01, export_template, minor fixes, documentation)
+* Rename resource/locks client from LockManagementClient to ManagementLockClient
+* Latest Swagger update for Webapps  (minor fixes, documentation)
+
+Fixes:
+* #552 #536 Broken parameters in some Network models
+* Raw=true in async methods now returns the direct server answer, not an AzureOperationPoller instance
+
+Dependencies:
+* msrest must be >= 0.2.0 (see their ChangeLog for details)
+* msrestazure must be >= 0.2.0 (see their ChangeLog for details)
+* azure-common[autorest] == 1.1.2, provides automatic autorest right dependencies
+
+Misc:
+* The AzureResourceViewer example in the 'example' folder has been updated to SDK 2.0.0rc2
+
 2016-03-04 Version 2.0.0rc1 / 0.30.0rc1
 
 New:

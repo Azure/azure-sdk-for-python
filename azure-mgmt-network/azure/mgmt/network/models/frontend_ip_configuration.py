@@ -26,29 +26,45 @@ class FrontendIPConfiguration(SubResource):
     """
     Frontend IP address of the load balancer
 
-    :param str id: Resource Id
-    :param list inbound_nat_rules: Read only.Inbound rules URIs that use this
+    :param id: Resource Id
+    :type id: str
+    :param inbound_nat_rules: Read only.Inbound rules URIs that use this
      frontend IP
-    :param list inbound_nat_pools: Read only.Inbound pools URIs that use this
+    :type inbound_nat_rules: list of :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param inbound_nat_pools: Read only.Inbound pools URIs that use this
      frontend IP
-    :param list outbound_nat_rules: Read only.Outbound rules URIs that use
-     this frontend IP
-    :param list load_balancing_rules: Gets Load Balancing rules URIs that use
-     this frontend IP
-    :param str private_ip_address: Gets or sets the privateIPAddress of the
-     IP Configuration
-    :param str private_ip_allocation_method: Gets or sets PrivateIP
-     allocation method (Static/Dynamic). Possible values include: 'Static',
-     'Dynamic'
-    :param Subnet subnet: Gets or sets the reference of the subnet resource
-    :param PublicIPAddress public_ip_address: Gets or sets the reference of
-     the PublicIP resource
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :type inbound_nat_pools: list of :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param outbound_nat_rules: Read only.Outbound rules URIs that use this
+     frontend IP
+    :type outbound_nat_rules: list of :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param load_balancing_rules: Gets Load Balancing rules URIs that use this
+     frontend IP
+    :type load_balancing_rules: list of :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param private_ip_address: Gets or sets the privateIPAddress of the IP
+     Configuration
+    :type private_ip_address: str
+    :param private_ip_allocation_method: Gets or sets PrivateIP allocation
+     method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
+    :type private_ip_allocation_method: str
+    :param subnet: Gets or sets the reference of the subnet resource
+    :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :param public_ip_address: Gets or sets the reference of the PublicIP
+     resource
+    :type public_ip_address: :class:`PublicIPAddress
+     <azure.mgmt.network.models.PublicIPAddress>`
+    :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

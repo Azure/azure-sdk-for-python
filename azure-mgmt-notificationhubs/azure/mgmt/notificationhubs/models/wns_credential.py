@@ -26,8 +26,10 @@ class WnsCredential(Model):
     """
     Description of a NotificationHub WnsCredential.
 
-    :param WnsCredentialProperties properties: Gets or sets properties of
-     NotificationHub WnsCredential.
+    :param properties: Gets or sets properties of NotificationHub
+     WnsCredential.
+    :type properties: :class:`WnsCredentialProperties
+     <azure.mgmt.notificationhubs.models.WnsCredentialProperties>`
     """ 
 
     _attribute_map = {

@@ -26,13 +26,19 @@ class RestoreResponse(Resource):
     """
     Response for a restore site request
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str location: Resource Location
-    :param str type: Resource type
-    :param dict tags: Resource tags
-    :param str operation_id: When server starts the restore process, it will
+    :param id: Resource Id
+    :type id: str
+    :param name: Resource Name
+    :type name: str
+    :param location: Resource Location
+    :type location: str
+    :param type: Resource type
+    :type type: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param operation_id: When server starts the restore process, it will
      return an OperationId identifying that particular restore operation
+    :type operation_id: str
     """ 
 
     _validation = {

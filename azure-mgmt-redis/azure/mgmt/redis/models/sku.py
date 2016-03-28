@@ -26,13 +26,16 @@ class Sku(Model):
     """
     Sku parameters supplied to the create redis operation.
 
-    :param str name: What type of redis cache to deploy. Valid values:
-     (Basic, Standard, Premium). Possible values include: 'Basic',
-     'Standard', 'Premium'
-    :param str family: Which family to use. Valid values: (C, P). Possible
-     values include: 'C', 'P'
-    :param int capacity: What size of redis cache to deploy. Valid values:
-     for C family (0, 1, 2, 3, 4, 5, 6), for P family (1, 2, 3, 4)
+    :param name: What type of redis cache to deploy. Valid values: (Basic,
+     Standard, Premium). Possible values include: 'Basic', 'Standard',
+     'Premium'
+    :type name: str
+    :param family: Which family to use. Valid values: (C, P). Possible values
+     include: 'C', 'P'
+    :type family: str
+    :param capacity: What size of redis cache to deploy. Valid values: for C
+     family (0, 1, 2, 3, 4, 5, 6), for P family (1, 2, 3, 4)
+    :type capacity: int
     """ 
 
     _validation = {

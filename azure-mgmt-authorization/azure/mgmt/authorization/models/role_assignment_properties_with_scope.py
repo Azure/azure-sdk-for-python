@@ -26,9 +26,12 @@ class RoleAssignmentPropertiesWithScope(Model):
     """
     Role assignment properties with scope.
 
-    :param str scope: Gets or sets role assignment scope.
-    :param str role_definition_id: Gets or sets role definition id.
-    :param str principal_id: Gets or sets principal Id.
+    :param scope: Gets or sets role assignment scope.
+    :type scope: str
+    :param role_definition_id: Gets or sets role definition id.
+    :type role_definition_id: str
+    :param principal_id: Gets or sets principal Id.
+    :type principal_id: str
     """ 
 
     _attribute_map = {

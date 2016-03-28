@@ -49,10 +49,12 @@ class JobCollectionsOperations(object):
         Gets all job collections under specified subscription.
 
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: JobCollectionDefinitionPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`JobCollectionDefinitionPaged
+         <azure.mgmt.scheduler.models.JobCollectionDefinitionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -112,10 +114,12 @@ class JobCollectionsOperations(object):
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: JobCollectionDefinitionPaged
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`JobCollectionDefinitionPaged
+         <azure.mgmt.scheduler.models.JobCollectionDefinitionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -178,10 +182,14 @@ class JobCollectionsOperations(object):
         :param job_collection_name: The job collection name.
         :type job_collection_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: JobCollectionDefinition
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`JobCollectionDefinition
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}'
@@ -236,12 +244,17 @@ class JobCollectionsOperations(object):
         :param job_collection_name: The job collection name.
         :type job_collection_name: str
         :param job_collection: The job collection definition.
-        :type job_collection: JobCollectionDefinition
+        :type job_collection: :class:`JobCollectionDefinition
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: JobCollectionDefinition
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`JobCollectionDefinition
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}'
@@ -302,12 +315,17 @@ class JobCollectionsOperations(object):
         :param job_collection_name: The job collection name.
         :type job_collection_name: str
         :param job_collection: The job collection definition.
-        :type job_collection: JobCollectionDefinition
+        :type job_collection: :class:`JobCollectionDefinition
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype: JobCollectionDefinition
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`JobCollectionDefinition
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}'
@@ -366,10 +384,13 @@ class JobCollectionsOperations(object):
         :param job_collection_name: The job collection name.
         :type job_collection_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}'
@@ -417,10 +438,13 @@ class JobCollectionsOperations(object):
         :param job_collection_name: The job collection name.
         :type job_collection_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}/enable'
@@ -468,10 +492,13 @@ class JobCollectionsOperations(object):
         :param job_collection_name: The job collection name.
         :type job_collection_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param boolean raw: returns the direct response alongside the
+        :param bool raw: returns the direct response alongside the
          deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
         :rtype: None
-        :rtype: msrest.pipeline.ClientRawResponse if raw=True
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}/disable'

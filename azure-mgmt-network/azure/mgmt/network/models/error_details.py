@@ -25,9 +25,12 @@ from msrest.serialization import Model
 class ErrorDetails(Model):
     """ErrorDetails
 
-    :param str code:
-    :param str target:
-    :param str message:
+    :param code:
+    :type code: str
+    :param target:
+    :type target: str
+    :param message:
+    :type message: str
     """ 
 
     _attribute_map = {

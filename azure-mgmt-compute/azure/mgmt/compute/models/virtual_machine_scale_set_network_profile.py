@@ -26,8 +26,11 @@ class VirtualMachineScaleSetNetworkProfile(Model):
     """
     Describes a virtual machine scale set network profile.
 
-    :param list network_interface_configurations: Gets or sets the list of
-     network configurations.
+    :param network_interface_configurations: Gets or sets the list of network
+     configurations.
+    :type network_interface_configurations: list of
+     :class:`VirtualMachineScaleSetNetworkConfiguration
+     <azure.mgmt.compute.models.VirtualMachineScaleSetNetworkConfiguration>`
     """ 
 
     _attribute_map = {

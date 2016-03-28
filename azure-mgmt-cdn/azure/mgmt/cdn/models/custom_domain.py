@@ -25,17 +25,24 @@ from .resource import Resource
 class CustomDomain(Resource):
     """
     CDN CustomDomain represents a mapping between a user specified domain name
-    and an Endpoint. It is a common practice to use custom domain names to
-    represent the URLs for branding purposes.
+    and a CDN endpoint. This is to use custom domain names to represent the
+    URLs for branding purposes.
 
-    :param str id: Resource Id
-    :param str name: Resource Name
-    :param str type: Resource type
-    :param str host_name: The host name of the custom domain
-    :param str resource_state: Resource status of the custom domain. Possible
+    :param id: Resource ID
+    :type id: str
+    :param name: Resource name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param host_name: The host name of the custom domain. Must be a domain
+     name.
+    :type host_name: str
+    :param resource_state: Resource status of the custom domain. Possible
      values include: 'Creating', 'Active', 'Deleting'
-    :param str provisioning_state: Provisioning status of the custom domain.
+    :type resource_state: str
+    :param provisioning_state: Provisioning status of the custom domain.
      Possible values include: 'Creating', 'Succeeded', 'Failed'
+    :type provisioning_state: str
     """ 
 
     _validation = {

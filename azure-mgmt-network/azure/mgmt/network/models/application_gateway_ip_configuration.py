@@ -26,15 +26,20 @@ class ApplicationGatewayIPConfiguration(SubResource):
     """
     IP configuration of application gateway
 
-    :param str id: Resource Id
-    :param SubResource subnet: Gets or sets the reference of the subnet
-     resource.A subnet from where appliation gateway gets its private address
-    :param str provisioning_state: Gets or sets Provisioning state of the
+    :param id: Resource Id
+    :type id: str
+    :param subnet: Gets or sets the reference of the subnet resource.A subnet
+     from where appliation gateway gets its private address
+    :type subnet: :class:`SubResource <azure.mgmt.network.models.SubResource>`
+    :param provisioning_state: Gets or sets Provisioning state of the
      application gateway subnet resource Updating/Deleting/Failed
-    :param str name: Gets name of the resource that is unique within a
-     resource group. This name can be used to access the resource
-    :param str etag: A unique read-only string that changes whenever the
-     resource is updated
+    :type provisioning_state: str
+    :param name: Gets name of the resource that is unique within a resource
+     group. This name can be used to access the resource
+    :type name: str
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated
+    :type etag: str
     """ 
 
     _attribute_map = {

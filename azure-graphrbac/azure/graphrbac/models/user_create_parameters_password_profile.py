@@ -25,9 +25,11 @@ from msrest.serialization import Model
 class UserCreateParametersPasswordProfile(Model):
     """UserCreateParametersPasswordProfile
 
-    :param str password: Password
-    :param bool force_change_password_next_login: Force change password on
-     next login
+    :param password: Password
+    :type password: str
+    :param force_change_password_next_login: Force change password on next
+     login
+    :type force_change_password_next_login: bool
     """ 
 
     _validation = {

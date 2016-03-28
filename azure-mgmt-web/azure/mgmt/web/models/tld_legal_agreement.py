@@ -26,10 +26,14 @@ class TldLegalAgreement(Model):
     """
     Represents a legal agreement for top level domain
 
-    :param str agreement_key: Unique identifier for the agreement
-    :param str title: Agreement title
-    :param str content: Agreement details
-    :param str url: Url where a copy of the agreement details is hosted
+    :param agreement_key: Unique identifier for the agreement
+    :type agreement_key: str
+    :param title: Agreement title
+    :type title: str
+    :param content: Agreement details
+    :type content: str
+    :param url: Url where a copy of the agreement details is hosted
+    :type url: str
     """ 
 
     _attribute_map = {
