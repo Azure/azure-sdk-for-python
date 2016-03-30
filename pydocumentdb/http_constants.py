@@ -133,6 +133,11 @@ class HttpHeaders:
 
     # Offer type.
     OfferType = 'x-ms-offer-type'
+    
+    # Partitioned collection headers
+    OfferThroughput = "x-ms-offer-throughput"
+    PartitionKey = "x-ms-documentdb-partitionkey"
+    EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
 
     # Upsert header
     IsUpsert = 'x-ms-documentdb-is-upsert'
@@ -202,8 +207,8 @@ class CookieHeaders:
 class Versions:
     """Constants of versions.
     """
-    CurrentVersion = '2015-08-06'
-    UserAgent = 'documentdb-python-sdk-1.5.0'
+    CurrentVersion = '2015-12-16'
+    UserAgent = 'documentdb-python-sdk-1.6.0'
 
 
 class Delimiters:

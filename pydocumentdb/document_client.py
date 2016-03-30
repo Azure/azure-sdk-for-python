@@ -82,6 +82,8 @@ class DocumentClient(object):
 
         self.partition_resolvers = {}
 
+        self.partition_key_definition_cache = {}
+
         self.default_headers = {
             http_constants.HttpHeaders.CacheControl: 'no-cache',
             http_constants.HttpHeaders.Version:
@@ -599,6 +601,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
+
     def ReadDocuments(self, collection_link, feed_options={}):
         """Reads all documents in a collection.
 
@@ -647,8 +650,6 @@ class DocumentClient(object):
         :Parameters:
             - `database_or_collection_link`: str, the link to the database when using partitioning, otherwise link to the document collection.
             - `document`: dict, the Azure DocumentDB document to create.
-            - `document['id']`: str, id of the document, MUST be unique for each
-              document.
             - `options`: dict, the request options for the request.
             - `options['disableAutomaticIdGeneration']`: bool, disables the
               automatic id generation. If id is missing in the body and this
@@ -658,6 +659,10 @@ class DocumentClient(object):
             dict
 
         """
+        # We check the link to be document collection link since it can be database link in case of client side partitioning
+        if(base.IsDocumentCollectionLink(database_or_collection_link)):
+            options = self._AddPartitionKey(database_or_collection_link, document, options)
+
         collection_id, document, path = self._GetCollectionIdWithPathForDocument(database_or_collection_link, document, options)
         return self.Create(document,
                            path,
@@ -672,8 +677,6 @@ class DocumentClient(object):
         :Parameters:
             - `database_or_collection_link`: str, the link to the database when using partitioning, otherwise link to the document collection.
             - `document`: dict, the Azure DocumentDB document to upsert.
-            - `document['id']`: str, id of the document, MUST be unique for each
-              document.
             - `options`: dict, the request options for the request.
             - `options['disableAutomaticIdGeneration']`: bool, disables the
               automatic id generation. If id is missing in the body and this
@@ -683,6 +686,10 @@ class DocumentClient(object):
             dict
 
         """
+        # We check the link to be document collection link since it can be database link in case of client side partitioning
+        if(base.IsDocumentCollectionLink(database_or_collection_link)):
+            options = self._AddPartitionKey(database_or_collection_link, document, options)
+
         collection_id, document, path = self._GetCollectionIdWithPathForDocument(database_or_collection_link, document, options)
         return self.Upsert(document,
                            path,
@@ -722,7 +729,6 @@ class DocumentClient(object):
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, document, path
     
- 
     def ReadDocument(self, document_link, options={}):
         """Reads a document.
 
@@ -1146,6 +1152,11 @@ class DocumentClient(object):
         DocumentClient.__ValidateResource(new_document)
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
+        
+        # Extract the document collection link and add the partition key to options
+        collection_link = base.GetDocumentCollectionLink(document_link)
+        options = self._AddPartitionKey(collection_link, new_document, options)
+        
         return self.Replace(new_document,
                             path,
                             'docs',
@@ -1551,12 +1562,13 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def ExecuteStoredProcedure(self, sproc_link, params):
+    def ExecuteStoredProcedure(self, sproc_link, params, options={}):
         """Executes a store procedure.
 
         :Parameters:
             - `sproc_link`: str, the link to the stored procedure.
             - `params`: dict, list or None
+            - `options`: dict, the request options for the request.
 
         :Returns:
             dict
@@ -1580,7 +1592,7 @@ class DocumentClient(object):
                                   path,
                                   sproc_id,
                                   'sprocs',
-                                  {})
+                                  options)
 
         result, self.last_response_headers = self.__Post(url_connection,
                                                          path,
@@ -2111,3 +2123,105 @@ class DocumentClient(object):
 
             if id[-1] == ' ':
                 raise ValueError('Id ends with a space.')
+
+    # Adds the partition key to options
+    def _AddPartitionKey(self, collection_link, document, options):
+        collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
+        
+        # If the document collection link is present in the cache, then use the cached partitionkey definition
+        if collection_link in self.partition_key_definition_cache:
+            partitionKeyDefinition = self.partition_key_definition_cache.get(collection_link)
+        # Else read the collection from backend and add it to the cache
+        else:
+            collection = self.ReadCollection(collection_link)
+            partitionKeyDefinition = collection.get('partitionKey')
+            self.partition_key_definition_cache[collection_link] = partitionKeyDefinition
+        
+        # If the collection doesn't have a partition key definition, skip it as it's a legacy collection 
+        if partitionKeyDefinition:
+            # If the user has passed in the partitionKey in options use that elase extract it from the document
+            if('partitionKey' not in options):
+                partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
+                options['partitionKey'] = partitionKeyValue
+        
+        return options
+
+    # Extracts the partition key from the document using the partitionKey definition
+    def _ExtractPartitionKey(self, partitionKeyDefinition, document):
+
+        # Parses the paths into a list of token each representing a property
+        partition_key_parts = self._ParsePaths(partitionKeyDefinition.get('paths'))
+
+        # Navigates the document to retrieve the partitionKey specified in the paths
+        return self._RetrievePartitionKey(partition_key_parts, document)
+
+    # Parses the paths into a list of token each representing a property
+    def _ParsePaths(self, paths):
+        if(len(paths) != 1):
+            raise ValueError("Unsupported paths count.")
+        
+        segmentSeparator = '/'
+        path = paths[0]
+        tokens = []
+        currentIndex = 0
+
+        while currentIndex < len(path):
+            if path[currentIndex] != segmentSeparator:
+                raise ValueError("Invalid path character at index " + currentIndex)
+            
+            currentIndex += 1
+            if currentIndex == len(path):
+                break
+
+            if path[currentIndex] == '\"' or path[currentIndex] == '\'':
+                quote = path[currentIndex]
+                newIndex = currentIndex + 1
+                while True:
+                    newIndex = path.find(quote, newIndex)
+                    if newIndex == -1:
+                        raise ValueError("Invalid path character at index " + currentIndex)
+                    if path[newIndex - 1] != '\\':
+                        break
+                    newIndex += 1
+
+                token = path[currentIndex:newIndex+1]
+                tokens.append(token)
+                currentIndex = newIndex + 1
+            else:
+                newIndex = path.find(segmentSeparator, currentIndex)
+                token = None;
+                if newIndex == -1:
+                    token = path[currentIndex:]
+                    currentIndex = len(path)
+                else:
+                    token = path[currentIndex:newIndex]
+                    currentIndex = newIndex
+
+                token = token.strip();
+                tokens.append(token)
+
+        return tokens
+
+    # Navigates the document to retrieve the partitionKey specified in the partition key parts
+    def _RetrievePartitionKey(self, partition_key_parts, document):
+        expected_matchCount = len(partition_key_parts)
+        matchCount = 0
+        partitionKey = document
+
+        for part in partition_key_parts:
+            # At any point if we don't find the value of a sub-property in the document, we return as Undefined
+            if part not in partitionKey:
+                return documents.Undefined
+            else:
+                partitionKey = partitionKey.get(part)
+                matchCount += 1
+                # Once we reach the "leaf" value(not a dict), we break from loop
+                if not isinstance(partitionKey, dict):
+                    break
+
+        # Match the count of hops we did to get the partitionKey with the length of partition key parts and validate that it's not a dict at that level
+        if ((matchCount != expected_matchCount) or isinstance(partitionKey, dict)):
+            return documents.Undefined
+         
+        return partitionKey
+    
