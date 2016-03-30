@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
 
 """AzureDocument classes and enums.
 """
@@ -111,6 +111,13 @@ class IndexKind(object):
     Hash = 'Hash'
     Range = 'Range'
 
+class PartitionKind(object):
+    """Specifies the kind of partitioning to be applied.
+
+    :Attributes:
+        - `Hash`: The partition key definition path is hashed.
+    """
+    Hash = 'Hash'
 
 class DataType(object):
     """Specifies the data type of index specs.
@@ -274,3 +281,7 @@ class RetryPolicy(object):
     def __init__(self):
         self.MaxRetryAttemptsOnRequest = 0
         self.MaxRetryAttemptsOnQuery = 3
+
+class Undefined(object):
+    """Represents undefined value for partitionKey when it's mising.
+    """

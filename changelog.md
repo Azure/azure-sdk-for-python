@@ -1,3 +1,7 @@
+## Changes in 1.6.0 : ##
+
+- Added the support for server side partitioned collections feature.
+
 ## Changes in 1.5.0 : ##
 
 - Added Client-side sharding framework to the SDK. Implemented HashPartionResolver and RangePartitionResolver classes.

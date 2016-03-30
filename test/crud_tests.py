@@ -172,6 +172,773 @@ class CRUDTests(unittest.TestCase):
                                            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based))
 
     
+    def test_partitioned_collection(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+
+        collection_definition = {   'id': 'sample collection', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/id'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        options = { 'offerThroughput': 10100 }
+
+        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition, 
+                                options)
+        
+        self.assertEqual(collection_definition.get('id'), created_collection.get('id'))
+        self.assertEqual(collection_definition.get('partitionKey').get('paths')[0], created_collection.get('partitionKey').get('paths')[0])
+        self.assertEqual(collection_definition.get('partitionKey').get('kind'), created_collection.get('partitionKey').get('kind'))
+
+        offers = list(client.ReadOffers())
+        self.assertEqual(1, len(offers))
+        expected_offer = offers[0]
+        self.assertEqual(expected_offer.get('content').get('offerThroughput'), options.get('offerThroughput'))
+
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
+
+    def test_partitioned_collection_partition_key_extraction(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        collection_definition = {   'id': 'sample collection', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/address/state'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition)
+
+        document_definition = {'id': 'document1',
+                               'address' : { 'street' : '1 Microsoft Way',
+                                             'city' : 'Redmond',
+                                             'state' : 'WA',
+                                             'zip code' : 98052
+                                           }
+                               }
+
+        # create document without partition key being specified
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition)
+
+        self.assertEqual(created_document.get('id'), document_definition.get('id'))
+        self.assertEqual(created_document.get('address').get('state'), document_definition.get('address').get('state'))
+
+        # create document by specifying a different partition key in options than what's in the document will result in BadRequest(status code 400)
+        document_definition['id'] = 'document2'
+        options = { 'partitionKey': 'NY' }
+
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.CreateDocument,
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition,
+            options)
+
+        collection_definition1 = {   'id': 'sample collection1', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/address'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        created_collection1 = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition1)
+
+        options = {}
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection1),
+            document_definition, options)
+
+        self.assertTrue(options['partitionKey'], documents.Undefined)
+
+        collection_definition2 = {   'id': 'sample collection2', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/address/state/city'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        created_collection2 = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition2)
+
+        options = {}
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection2),
+            document_definition, options)
+
+        self.assertEqual(options['partitionKey'], documents.Undefined)
+
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection1))
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection2))
+
+    def test_partitioned_collection_document_crud_and_query(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        collection_definition = {   'id': 'sample collection', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/id'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition)
+
+        document_definition = {'id': 'document',
+                               'key': 'value'}
+
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition)
+
+        self.assertEqual(created_document.get('id'), document_definition.get('id'))
+        self.assertEqual(created_document.get('key'), document_definition.get('key'))
+
+        # For ReadDocument, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.ReadDocument,
+            self.GetDocumentLink(created_db, created_collection, created_document))
+
+        # read document
+        options = { 'partitionKey': document_definition.get('id') }
+        read_document = client.ReadDocument(
+            self.GetDocumentLink(created_db, created_collection, created_document), 
+            options)
+
+        self.assertEqual(read_document.get('id'), created_document.get('id'))
+        self.assertEqual(read_document.get('key'), created_document.get('key'))
+
+        # Read document feed doesn't require partitionKey as it's always a cross partition query
+        documentlist = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection)))
+        self.assertEqual(1, len(documentlist))
+
+        # replace document
+        document_definition['key'] = 'new value'
+
+        replaced_document = client.ReplaceDocument(
+            self.GetDocumentLink(created_db, created_collection, created_document),
+            document_definition)
+
+        self.assertEqual(replaced_document.get('key'), document_definition.get('key'))
+
+        # upsert document(create scenario)
+        document_definition['id'] = 'document2'
+        document_definition['key'] = 'value2'
+
+        upserted_document = client.UpsertDocument(self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition)
+
+        self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
+        self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
+
+        documentlist = list(client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection)))
+        self.assertEqual(2, len(documentlist))
+
+        # For DeleteDocument, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.DeleteDocument,
+            self.GetDocumentLink(created_db, created_collection, upserted_document))
+
+        # delete document
+        options = { 'partitionKey': upserted_document.get('id') }
+        client.DeleteDocument(
+            self.GetDocumentLink(created_db, created_collection, upserted_document), 
+            options)
+
+        # query document on the partition key secified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
+        documentlist = list(client.QueryDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            {
+                'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''
+            }))
+        self.assertEqual(1, len(documentlist))
+
+        # query document on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
+        try:
+            list(client.QueryDocuments(
+                self.GetDocumentCollectionLink(created_db, created_collection),
+                {
+                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''
+                }))
+        except Exception:
+            pass
+
+        # cross partition query
+        options = { 'enableCrossPartitionQuery': True }
+        documentlist = list(client.QueryDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            {
+                'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''
+            }, options))
+
+        self.assertEqual(1, len(documentlist))
+
+        # query document by providing the partitionKey value
+        options = { 'partitionKey': replaced_document.get('id') }
+        documentlist = list(client.QueryDocuments(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            {
+                'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''
+            }, options))
+
+        self.assertEqual(1, len(documentlist))
+
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
+
+    def test_partitioned_collection_permissions(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+
+        collection_definition = {   'id': 'sample collection', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/key'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        collection_definition['id'] = 'all collection'
+        
+        all_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition)
+
+        collection_definition['id'] = 'read collection'
+
+        read_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition)
+
+        user = client.CreateUser(self.GetDatabaseLink(created_db), { 'id': 'user' })
+
+        permission_definition = {
+            'id': 'all permission',
+            'permissionMode': documents.PermissionMode.All,
+            'resource': self.GetDocumentCollectionLink(created_db, all_collection),
+            'resourcePartitionKey' : [1]
+        }
+
+        all_permission = client.CreatePermission(self.GetUserLink(created_db, user), permission_definition)
+
+        permission_definition = {
+            'id': 'read permission',
+            'permissionMode': documents.PermissionMode.Read,
+            'resource': self.GetDocumentCollectionLink(created_db, read_collection),
+            'resourcePartitionKey' : [1]
+        }
+
+        read_permission = client.CreatePermission(self.GetUserLink(created_db, user), permission_definition)
+
+        resource_tokens = {}
+        # storing the resource tokens based on Resource IDs
+        resource_tokens[all_collection['_rid']] = (all_permission['_token'])
+        resource_tokens[read_collection['_rid']] = (read_permission['_token'])
+        
+        restricted_client = document_client.DocumentClient(
+            host, {'resourceTokens': resource_tokens})
+
+        document_definition = {'id': 'document1',
+                               'key': 1
+                               }
+        
+        # Create document in all_collection should succeed since the partitionKey is 1 which is what specified as resourcePartitionKey in permission object and it has all permissions
+        created_document = restricted_client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, all_collection, False),
+            document_definition)
+
+        # Create document in read_collection should fail since it has only read permissions for this collection
+        self.__AssertHTTPFailureWithStatus(
+            403,
+            restricted_client.CreateDocument,
+            self.GetDocumentCollectionLink(created_db, read_collection, False),
+            document_definition)
+
+        # Read document feed should succeed for this collection. Note that I need to pass in partitionKey here since permission has resourcePartitionKey defined
+        options = { 'partitionKey': document_definition.get('key') }
+        documentlist = list(restricted_client.ReadDocuments(
+            self.GetDocumentCollectionLink(created_db, read_collection, False),
+            options))
+
+        self.assertEqual(0, len(documentlist))
+
+        document_definition['key'] = 2
+        options = { 'partitionKey': document_definition.get('key') }
+        # Create document should fail since the partitionKey is 2 which is different that what is specified as resourcePartitionKey in permission object
+        self.__AssertHTTPFailureWithStatus(
+            403,
+            restricted_client.CreateDocument,
+            self.GetDocumentCollectionLink(created_db, all_collection, False),
+            document_definition,
+            options)
+        
+        document_definition['key'] = 1
+        options = { 'partitionKey': document_definition.get('key') }
+        # Delete document should succeed since the partitionKey is 1 which is what specified as resourcePartitionKey in permission object
+        created_document = restricted_client.DeleteDocument(
+            self.GetDocumentLink(created_db, all_collection, created_document, False),
+            options)
+
+        # Delete document in read_collection should fail since it has only read permissions for this collection
+        self.__AssertHTTPFailureWithStatus(
+            403,
+            restricted_client.DeleteDocument,
+            self.GetDocumentCollectionLink(created_db, read_collection, False),
+            options)
+
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, all_collection))
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, read_collection))
+
+    def test_partitioned_collection_execute_stored_procedure(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+
+        collection_definition = {   'id': 'sample collection', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/pk'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition)
+        
+        sproc = {
+            'id': 'storedProcedure',
+            'body': (
+                'function () {' +
+                '   var client = getContext().getCollection();' +
+                '   client.createDocument(client.getSelfLink(), { id: \'testDoc\', pk : 2}, {}, function(err, docCreated, options) { ' +
+                '   if(err) throw new Error(\'Error while creating document: \' + err.message);' +
+                '   else {' +
+                         '   getContext().getResponse().setBody(1);' +
+                '        }' +
+                '   });}')
+        }
+
+        created_sproc = client.CreateStoredProcedure(self.GetDocumentCollectionLink(created_db, created_collection), sproc)
+
+        # Partiton Key value same as what is specified in the stored procedure body
+        client.ExecuteStoredProcedure(self.GetStoredProcedureLink(created_db, created_collection, created_sproc),
+                                               None, { 'partitionKey' : 2})
+
+        # Partiton Key value different than what is specified in the stored procedure body will cause a bad request(400) error
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.ExecuteStoredProcedure,
+            self.GetStoredProcedureLink(created_db, created_collection, created_sproc),
+            None,
+            { 'partitionKey' : 3})
+        
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
+
+    def test_partitioned_collection_attachment_crud_and_query(self):
+        class ReadableStream(object):
+            """Customized file-like stream.
+            """
+
+            def __init__(self, chunks = ['first chunk ', 'second chunk']):
+                """Initialization.
+
+                :Parameters:
+                    - `chunks`: list
+
+                """
+                self._chunks = list(chunks)
+
+            def read(self, n=-1):
+                """Simulates the read method in a file stream.
+
+                :Parameters:
+                    - `n`: int
+
+                :Returns:
+                    str
+
+                """
+                if self._chunks:
+                    return self._chunks.pop(0)
+                else:
+                    return ''
+
+            def __len__(self):
+                """To make len(ReadableStream) work.
+                """
+                return sum([len(chunk) for chunk in self._chunks])
+
+
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        collection_definition = {   'id': 'sample collection', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/id'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        collection = client.CreateCollection(self.GetDatabaseLink(db), collection_definition)
+        
+        document_definition = {'id': 'sample document',
+                               'key': 'value'}
+
+        document = client.CreateDocument(self.GetDocumentCollectionLink(db, collection),
+                                         document_definition)
+
+        content_stream = ReadableStream()
+        options = { 'slug': 'sample attachment',
+                    'contentType': 'application/text' }
+
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.CreateAttachmentAndUploadMedia,
+            self.GetDocumentLink(db, collection, document),
+            content_stream,
+            options)
+
+        content_stream = ReadableStream()
+        # Setting the partitionKey as part of options is required for attachment CRUD
+        options = { 'slug': 'sample attachment',
+                    'contentType': 'application/text',
+                    'partitionKey' :  document_definition.get('id') }
+        
+        # create attachment and upload media
+        attachment = client.CreateAttachmentAndUploadMedia(
+            self.GetDocumentLink(db, collection, document), content_stream, options)
+
+        self.assertEqual(attachment['id'], options['slug'])
+
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        try:
+            list(client.ReadAttachments(
+            self.GetDocumentLink(db, collection, document)))
+        except Exception:
+            pass
+
+        # Read attachment feed requires partitionKey to be passed
+        options = { 'partitionKey': document_definition.get('id') }
+        attachmentlist = list(client.ReadAttachments(
+            self.GetDocumentLink(db, collection, document), options))
+        self.assertEqual(1, len(attachmentlist))
+
+        content_stream = ReadableStream()
+        options = { 'slug': 'new attachment',
+                    'contentType': 'application/text' }
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.UpsertAttachmentAndUploadMedia,
+            self.GetDocumentLink(db, collection, document),
+            content_stream,
+            options)
+
+        content_stream = ReadableStream()
+        # Setting the partitionKey as part of options is required for attachment CRUD
+        options = { 'slug': 'new attachment',
+                    'contentType': 'application/text',
+                    'partitionKey' :  document_definition.get('id') }
+        
+        # upsert attachment and upload media
+        attachment = client.UpsertAttachmentAndUploadMedia(
+            self.GetDocumentLink(db, collection, document), content_stream, options)
+
+        self.assertEqual(attachment['id'], options['slug'])
+
+        options = { 'partitionKey': document_definition.get('id') }
+        attachmentlist = list(client.ReadAttachments(
+            self.GetDocumentLink(db, collection, document), options))
+        self.assertEqual(2, len(attachmentlist))
+
+        # create attachment with media link
+        dynamic_attachment = {
+            'id': 'dynamic attachment',
+            'media': 'http://xstore.',
+            'MediaType': 'Book',
+            'Author':'My Book Author',
+            'Title':'My Book Title',
+            'contentType':'application/text'
+        }
+
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.CreateAttachment,
+            self.GetDocumentLink(db, collection, document),
+            dynamic_attachment)
+
+        # create dynamic attachment
+        options = { 'partitionKey': document_definition.get('id') }
+        attachment = client.CreateAttachment(self.GetDocumentLink(db, collection, document),
+                                             dynamic_attachment, options)
+
+        self.assertEqual(attachment['MediaType'], dynamic_attachment['MediaType'])
+        self.assertEqual(attachment['Author'], dynamic_attachment['Author'])
+
+        # Read Attachment feed
+        options = { 'partitionKey': document_definition.get('id') }
+        attachmentlist = list(client.ReadAttachments(
+            self.GetDocumentLink(db, collection, document), options))
+        self.assertEqual(3, len(attachmentlist))
+        
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.ReadAttachment,
+            self.GetAttachmentLink(db, collection, document, attachment))
+
+        # Read attachment
+        options = { 'partitionKey': document_definition.get('id') }
+        read_attachment = client.ReadAttachment(self.GetAttachmentLink(db, collection, document, attachment),
+                                                options)
+
+        self.assertEqual(attachment['id'], read_attachment['id'])
+
+        attachment['Author'] = 'new author'
+        
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.ReplaceAttachment,
+            self.GetAttachmentLink(db, collection, document, attachment),
+            attachment)
+
+        # replace the attachment
+        options = { 'partitionKey': document_definition.get('id') }
+        replaced_attachment = client.ReplaceAttachment(self.GetAttachmentLink(db, collection, document, attachment), attachment, options)
+        
+        self.assertEqual(attachment['id'], replaced_attachment['id'])
+        self.assertEqual(attachment['Author'], replaced_attachment['Author'])
+
+        attachment['id'] = 'new dynamic attachment'
+        attachment['Title'] = 'new title'
+
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.UpsertAttachment,
+            self.GetDocumentLink(db, collection, document),
+            attachment)
+
+        # upsert attachment(create scenario)
+        options = { 'partitionKey': document_definition.get('id') }
+        upserted_attachment = client.UpsertAttachment(self.GetDocumentLink(db, collection, document), attachment, options)
+        
+        self.assertEqual(attachment['id'], upserted_attachment['id'])
+        self.assertEqual(attachment['Title'], upserted_attachment['Title'])
+
+        # query attachments will fail without passing in the partitionKey value
+        try:
+            list(client.QueryAttachments(
+                self.GetDocumentLink(db, collection, document),
+                {
+                    'query': 'SELECT * FROM root r WHERE r.MediaType=\'' + dynamic_attachment.get('MediaType') + '\''
+                }))
+        except Exception:
+            pass
+
+        # query attachments by providing the partitionKey value
+        options = { 'partitionKey': document_definition.get('id') }
+        attachmentlist = list(client.QueryAttachments(
+            self.GetDocumentLink(db, collection, document),
+            {
+                'query': 'SELECT * FROM root r WHERE r.MediaType=\'' + dynamic_attachment.get('MediaType') + '\''
+            }, options))
+
+        self.assertEqual(2, len(attachmentlist))
+
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.DeleteAttachment,
+            self.GetAttachmentLink(db, collection, document, attachment))
+
+        # deleting attachment
+        options = { 'partitionKey': document_definition.get('id') }
+        client.DeleteAttachment(self.GetAttachmentLink(db, collection, document, attachment), options)
+        
+        client.DeleteCollection(self.GetDocumentCollectionLink(db, collection))
+
+    def test_partitioned_collection_partition_key_value_types(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        
+        collection_definition = {   'id': 'sample collection1', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/key'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition)
+
+        document_definition = {'id': 'document1',
+                               'key' : None,
+                               'spam': 'eggs'}
+
+        # create document with partitionKey set as None here
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition)
+
+        document_definition = {'id': 'document1',
+                               'spam': 'eggs'}
+
+        # create document with partitionKey set as Undefined here
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition, {})
+
+        document_definition = {'id': 'document1',
+                               'key' : True,
+                               'spam': 'eggs'}
+
+        # create document with bool partitionKey
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition, {})
+
+        document_definition = {'id': 'document1',
+                               'key' : 'value',
+                               'spam': 'eggs'}
+
+        # create document with string partitionKey
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition, {})
+
+        document_definition = {'id': 'document1',
+                               'key' : 100,
+                               'spam': 'eggs'}
+
+        # create document with int partitionKey
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition, {})
+
+        document_definition = {'id': 'document1',
+                               'key' : 10.50,
+                               'spam': 'eggs'}
+
+        # create document with float partitionKey
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            document_definition, {})
+
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
+
+    def test_partitioned_collection_conflit_crud_and_query(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+
+        collection_definition = {   'id': 'sample collection', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/id'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+
+        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition)
+
+        conflict_definition = {'id': 'new conflict',
+                               'resourceId' : 'doc1',
+                               'operationType' : 'create',
+                               'resourceType' : 'document'
+                              }
+
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.ReadConflict,
+            self.GetConflictLink(created_db, created_collection, conflict_definition))
+
+        # read conflict here will return resource not found(404) since there is no conflict here
+        options = { 'partitionKey': conflict_definition.get('id') }
+        self.__AssertHTTPFailureWithStatus(
+            404,
+            client.ReadConflict,
+            self.GetConflictLink(created_db, created_collection, conflict_definition),
+            options)
+
+        # Read conflict feed doesn't requires partitionKey to be specified as it's a cross partition thing
+        conflictlist = list(client.ReadConflicts(self.GetDocumentCollectionLink(created_db, created_collection)))
+        self.assertEqual(0, len(conflictlist))
+
+        # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
+        self.__AssertHTTPFailureWithStatus(
+            400,
+            client.DeleteConflict,
+            self.GetConflictLink(created_db, created_collection, conflict_definition))
+
+        # delete conflict here will return resource not found(404) since there is no conflict here
+        options = { 'partitionKey': conflict_definition.get('id') }
+        self.__AssertHTTPFailureWithStatus(
+            404,
+            client.DeleteConflict,
+            self.GetConflictLink(created_db, created_collection, conflict_definition),
+            options)
+
+        # query conflicts on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
+        try:
+            list(client.QueryConflicts(
+                self.GetDocumentCollectionLink(created_db, created_collection),
+                {
+                    'query': 'SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\''
+                }))
+        except Exception:
+            pass
+
+        # cross partition query
+        options = { 'enableCrossPartitionQuery': True }
+        conflictlist = list(client.QueryConflicts(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            {
+                'query': 'SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\''
+            }, options))
+        
+        self.assertEqual(0, len(conflictlist))
+
+        # query conflicts by providing the partitionKey value
+        options = { 'partitionKey': conflict_definition.get('id') }
+        conflictlist = list(client.QueryConflicts(
+            self.GetDocumentCollectionLink(created_db, created_collection),
+            {
+                'query': 'SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\''
+            }, options))
+
+        self.assertEqual(0, len(conflictlist))
+
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
+
     def test_document_crud_self_link(self):
         self._test_document_crud(False)
 
@@ -2170,7 +2937,7 @@ class CRUDTests(unittest.TestCase):
         }
         client.DeleteCollection(self.GetDocumentCollectionLink(db, consistent_collection, is_name_based))
         collectio_with_indexing_policy = client.CreateCollection(self.GetDatabaseLink(db, is_name_based), collection_definition)
-        self.assertEqual(2,
+        self.assertEqual(1,
                          len(collectio_with_indexing_policy['indexingPolicy']['includedPaths']),
                          'Unexpected includedPaths length')
         self.assertEqual(1,
@@ -2261,15 +3028,12 @@ class CRUDTests(unittest.TestCase):
 
         # no excluded paths.
         self.assertEqual(0, len(indexing_policy['excludedPaths']))
-        # included paths should be 2: '_ts' and '/'.
-        self.assertEqual(2, len(indexing_policy['includedPaths']))
+        # included paths should be 1: '/'.
+        self.assertEqual(1, len(indexing_policy['includedPaths']))
 
         root_included_path = __get_first([included_path for included_path in indexing_policy['includedPaths']
                               if included_path['path'] == '/*'])
-        ts_included_path = __get_first([included_path for included_path in indexing_policy['includedPaths']
-                              if included_path['path'] == '/*'])
         self.assert_(root_included_path);
-        self.assert_(ts_included_path);
 
         # There should be one HashIndex of String type and one RangeIndex of Number type in the root included path.
         hash_index = __get_first([index for index in root_included_path['indexes'] if index['kind'] == 'Hash'])
@@ -2872,63 +3636,63 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_definition2['id'], created_collection2['id'])
 
 
-    def GetDatabaseLink(self, database, is_name_based):
+    def GetDatabaseLink(self, database, is_name_based=True):
         if is_name_based:
             return 'dbs/' + database['id']
         else:
             return database['_self']
 
-    def GetUserLink(self, database, user, is_name_based):
+    def GetUserLink(self, database, user, is_name_based=True):
         if is_name_based:
-            return self.GetDatabaseLink(database, True) + '/users/' + user['id']
+            return self.GetDatabaseLink(database) + '/users/' + user['id']
         else:
             return user['_self']
 
-    def GetPermissionLink(self, database, user, permission, is_name_based):
+    def GetPermissionLink(self, database, user, permission, is_name_based=True):
         if is_name_based:
-            return self.GetUserLink(database, user, True) + '/permissions/' + permission['id']
+            return self.GetUserLink(database, user) + '/permissions/' + permission['id']
         else:
             return permission['_self']
 
-    def GetDocumentCollectionLink(self, database, document_collection, is_name_based):
+    def GetDocumentCollectionLink(self, database, document_collection, is_name_based=True):
         if is_name_based:
-            return self.GetDatabaseLink(database, True) + '/colls/' + document_collection['id']
+            return self.GetDatabaseLink(database) + '/colls/' + document_collection['id']
         else:
             return document_collection['_self']
 
-    def GetDocumentLink(self, database, document_collection, document, is_name_based):
+    def GetDocumentLink(self, database, document_collection, document, is_name_based=True):
         if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection, True) + '/docs/' + document['id']
+            return self.GetDocumentCollectionLink(database, document_collection) + '/docs/' + document['id']
         else:
             return document['_self']
 
-    def GetAttachmentLink(self, database, document_collection, document, attachment, is_name_based):
+    def GetAttachmentLink(self, database, document_collection, document, attachment, is_name_based=True):
         if is_name_based:
-            return self.GetDocumentLink(database, document_collection, document, True) + '/attachments/' + attachment['id']
+            return self.GetDocumentLink(database, document_collection, document) + '/attachments/' + attachment['id']
         else:
             return attachment['_self']
 
-    def GetTriggerLink(self, database, document_collection, trigger, is_name_based):
+    def GetTriggerLink(self, database, document_collection, trigger, is_name_based=True):
         if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection, True) + '/triggers/' + trigger['id']
+            return self.GetDocumentCollectionLink(database, document_collection) + '/triggers/' + trigger['id']
         else:
             return trigger['_self']
 
-    def GetUserDefinedFunctionLink(self, database, document_collection, user_defined_function, is_name_based):
+    def GetUserDefinedFunctionLink(self, database, document_collection, user_defined_function, is_name_based=True):
         if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection, True) + '/udfs/' + user_defined_function['id']
+            return self.GetDocumentCollectionLink(database, document_collection) + '/udfs/' + user_defined_function['id']
         else:
             return user_defined_function['_self']
 
-    def GetStoredProcedureLink(self, database, document_collection, stored_procedure, is_name_based):
+    def GetStoredProcedureLink(self, database, document_collection, stored_procedure, is_name_based=True):
         if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection, True) + '/sprocs/' + stored_procedure['id']
+            return self.GetDocumentCollectionLink(database, document_collection) + '/sprocs/' + stored_procedure['id']
         else:
             return stored_procedure['_self']
 
-    def GetConflictLink(self, database, document_collection, conflict, is_name_based):
+    def GetConflictLink(self, database, document_collection, conflict, is_name_based=True):
         if is_name_based:
-            return self.GetDocumentCollectionLink(database, document_collection, True) + '/conflicts/' + conflict['id']
+            return self.GetDocumentCollectionLink(database, document_collection) + '/conflicts/' + conflict['id']
         else:
             return conflict['_self']
 
