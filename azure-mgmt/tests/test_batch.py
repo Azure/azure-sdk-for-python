@@ -120,6 +120,7 @@ class BatchMgmtTestCase(RecordingTestCase):
 
     @classmethod
     def setUpClass(cls):
+        LOG.warning('Starting Batch tests')
         LOG.debug("Setting up Batch tests:")
         cls.working_folder = os.path.dirname(__file__)
         try:
@@ -183,6 +184,7 @@ class BatchMgmtTestCase(RecordingTestCase):
                 deleting.wait()
             except: pass
         LOG.debug("    finished")
+        LOG.warning("Batch tests complete")
         return super(BatchMgmtTestCase, cls).tearDownClass()
 
     def _scrub(self, val):
