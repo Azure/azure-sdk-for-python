@@ -3,6 +3,7 @@ source =
         ../../azure-common/azure
         ../../azure-mgmt/azure
         ../../azure-mgmt-authorization/azure
+        ../../azure-mgmt-batch/azure
         ../../azure-mgmt-cdn/azure
         ../../azure-mgmt-compute/azure
         ../../azure-mgmt-logic/azure
@@ -13,5 +14,6 @@ source =
         ../../azure-mgmt-scheduler/azure
         ../../azure-mgmt-storage/azure
         ../../azure-mgmt-web/azure
+        ../../azure-batch/azure
         ../../azure-graphrbac/azure
 omit = */test*
