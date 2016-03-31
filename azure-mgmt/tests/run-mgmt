@@ -1,8 +1,10 @@
 #!/bin/bash
 
+export PYTHONPATH=$PYTHONPATH:../../azure-batch
 export PYTHONPATH=$PYTHONPATH:../../azure-common
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-authorization
+export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-batch
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-cdn
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-compute
 export PYTHONPATH=$PYTHONPATH:../../azure-mgmt-logic
@@ -23,4 +25,4 @@ then
 else
         LAUNCHER='python'
 fi
-$LAUNCHER -m unittest discover -p "test_mgmt_*.py"
+$LAUNCHER -m unittest discover -p "test_*.py"
