@@ -18,13 +18,15 @@
     </CommandLineArguments>
     <InterpreterPath />
     <InterpreterArguments />
-    <InterpreterId>{2fb10581-a3e7-46c7-b09b-53a7dc29fd3f}</InterpreterId>
-    <InterpreterVersion>3.5</InterpreterVersion>
+    <InterpreterId>
+    </InterpreterId>
+    <InterpreterVersion>
+    </InterpreterVersion>
     <SccProjectName>SAK</SccProjectName>
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;..\autorest\ClientRuntimes\Python\msrestazure\;..\autorest\ClientRuntimes\Python\msrest\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\</SearchPath>
+    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;..\autorest\ClientRuntimes\Python\msrestazure\;..\autorest\ClientRuntimes\Python\msrest\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -36,6 +38,186 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="azure-batch\azure\batch\batch_service_client.py" />
+    <Compile Include="azure-batch\azure\batch\batch_auth.py" />
+    <Compile Include="azure-batch\azure\batch\models\affinity_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\application_get_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\application_list_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\application_package_reference.py" />
+    <Compile Include="azure-batch\azure\batch\models\application_summary.py" />
+    <Compile Include="azure-batch\azure\batch\models\application_summary_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\auto_pool_specification.py" />
+    <Compile Include="azure-batch\azure\batch\models\auto_scale_run.py" />
+    <Compile Include="azure-batch\azure\batch\models\auto_scale_run_error.py" />
+    <Compile Include="azure-batch\azure\batch\models\batch_error.py" />
+    <Compile Include="azure-batch\azure\batch\models\batch_error_detail.py" />
+    <Compile Include="azure-batch\azure\batch\models\batch_service_client_enums.py" />
+    <Compile Include="azure-batch\azure\batch\models\certificate.py" />
+    <Compile Include="azure-batch\azure\batch\models\certificate_add_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\certificate_add_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\certificate_cancel_deletion_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\certificate_delete_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\certificate_get_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\certificate_list_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\certificate_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\certificate_reference.py" />
+    <Compile Include="azure-batch\azure\batch\models\cloud_job.py" />
+    <Compile Include="azure-batch\azure\batch\models\cloud_job_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\cloud_job_schedule.py" />
+    <Compile Include="azure-batch\azure\batch\models\cloud_job_schedule_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\cloud_pool.py" />
+    <Compile Include="azure-batch\azure\batch\models\cloud_pool_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\cloud_task.py" />
+    <Compile Include="azure-batch\azure\batch\models\cloud_task_list_subtasks_result.py" />
+    <Compile Include="azure-batch\azure\batch\models\cloud_task_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_add_user_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_delete_user_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_disable_scheduling_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_enable_scheduling_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_error.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_get_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_get_remote_desktop_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_list_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_reboot_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_reimage_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_update_user_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\compute_node_user.py" />
+    <Compile Include="azure-batch\azure\batch\models\delete_certificate_error.py" />
+    <Compile Include="azure-batch\azure\batch\models\environment_setting.py" />
+    <Compile Include="azure-batch\azure\batch\models\error_message.py" />
+    <Compile Include="azure-batch\azure\batch\models\file_delete_from_compute_node_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\file_delete_from_task_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\file_get_from_compute_node_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\file_get_from_task_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\file_get_node_file_properties_from_compute_node_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\file_get_node_file_properties_from_task_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\file_list_from_compute_node_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\file_list_from_task_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\file_properties.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_add_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_add_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_constraints.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_delete_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_disable_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_disable_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_enable_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_execution_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_get_all_jobs_lifetime_statistics_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_get_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_list_from_job_schedule_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_list_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_list_preparation_and_release_task_status_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_manager_task.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_patch_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_patch_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_preparation_and_release_task_execution_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_preparation_and_release_task_execution_information_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_preparation_task.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_preparation_task_execution_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_release_task.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_release_task_execution_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_add_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_add_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_delete_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_disable_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_enable_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_execution_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_exists_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_get_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_list_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_patch_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_patch_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_statistics.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_terminate_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_update_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_schedule_update_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_scheduling_error.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_specification.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_statistics.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_terminate_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_terminate_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_update_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\job_update_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\metadata_item.py" />
+    <Compile Include="azure-batch\azure\batch\models\multi_instance_settings.py" />
+    <Compile Include="azure-batch\azure\batch\models\name_value_pair.py" />
+    <Compile Include="azure-batch\azure\batch\models\node_disable_scheduling_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\node_file.py" />
+    <Compile Include="azure-batch\azure\batch\models\node_file_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\node_reboot_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\node_reimage_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\node_remove_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\node_update_user_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_add_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_add_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_delete_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_disable_auto_scale_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_enable_auto_scale_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_enable_auto_scale_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_evaluate_auto_scale_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_evaluate_auto_scale_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_exists_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_get_all_pools_lifetime_statistics_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_get_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_list_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_list_pool_usage_metrics_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_patch_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_patch_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_remove_nodes_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_resize_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_resize_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_specification.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_statistics.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_stop_resize_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_update_properties_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_update_properties_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_upgrade_os_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_upgrade_os_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_usage_metrics.py" />
+    <Compile Include="azure-batch\azure\batch\models\pool_usage_metrics_paged.py" />
+    <Compile Include="azure-batch\azure\batch\models\recent_job.py" />
+    <Compile Include="azure-batch\azure\batch\models\resize_error.py" />
+    <Compile Include="azure-batch\azure\batch\models\resource_file.py" />
+    <Compile Include="azure-batch\azure\batch\models\resource_statistics.py" />
+    <Compile Include="azure-batch\azure\batch\models\schedule.py" />
+    <Compile Include="azure-batch\azure\batch\models\start_task.py" />
+    <Compile Include="azure-batch\azure\batch\models\start_task_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\subtask_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_add_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_add_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_constraints.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_delete_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_dependencies.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_execution_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_get_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_id_range.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_information.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_list_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_list_subtasks_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_scheduling_error.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_scheduling_policy.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_statistics.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_terminate_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_update_options.py" />
+    <Compile Include="azure-batch\azure\batch\models\task_update_parameter.py" />
+    <Compile Include="azure-batch\azure\batch\models\usage_statistics.py" />
+    <Compile Include="azure-batch\azure\batch\models\__init__.py" />
+    <Compile Include="azure-batch\azure\batch\operations\application_operations.py" />
+    <Compile Include="azure-batch\azure\batch\operations\certificate_operations.py" />
+    <Compile Include="azure-batch\azure\batch\operations\compute_node_operations.py" />
+    <Compile Include="azure-batch\azure\batch\operations\file_operations.py" />
+    <Compile Include="azure-batch\azure\batch\operations\job_operations.py" />
+    <Compile Include="azure-batch\azure\batch\operations\job_schedule_operations.py" />
+    <Compile Include="azure-batch\azure\batch\operations\pool_operations.py" />
+    <Compile Include="azure-batch\azure\batch\operations\task_operations.py" />
+    <Compile Include="azure-batch\azure\batch\operations\__init__.py" />
+    <Compile Include="azure-batch\azure\batch\__init__.py" />
+    <Compile Include="azure-batch\azure\__init__.py" />
+    <Compile Include="azure-batch\setup.py" />
     <Compile Include="azure-common\azure\common\credentials.py" />
     <Compile Include="azure-common\azure\common\exceptions.py" />
     <Compile Include="azure-common\azure\__init__.py" />
@@ -111,6 +293,37 @@
     <Compile Include="azure-mgmt-authorization\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-authorization\azure\__init__.py" />
     <Compile Include="azure-mgmt-authorization\setup.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\batch_management_client.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\account_base_properties.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\account_resource.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\account_resource_paged.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\activate_application_package_parameters.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\add_application_package_result.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\add_application_parameters.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\application.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\application_package.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\application_paged.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\auto_storage_base_properties.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\auto_storage_properties.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\batch_account_create_parameters.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\batch_account_list_key_result.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\batch_account_regenerate_key_parameters.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\batch_account_regenerate_key_result.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\batch_account_update_parameters.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\batch_management_client_enums.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\get_application_package_result.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\resource.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\subscription_quotas_get_result.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\update_application_parameters.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\models\__init__.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\operations\account_operations.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\operations\application_operations.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\operations\subscription_operations.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\operations\__init__.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\batch\__init__.py" />
+    <Compile Include="azure-mgmt-batch\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-batch\azure\__init__.py" />
+    <Compile Include="azure-mgmt-batch\setup.py" />
     <Compile Include="azure-mgmt-cdn\azure\mgmt\cdn\cdn_management_client.py" />
     <Compile Include="azure-mgmt-cdn\azure\mgmt\cdn\models\cdn_management_client_enums.py" />
     <Compile Include="azure-mgmt-cdn\azure\mgmt\cdn\models\check_name_availability_input.py" />
@@ -820,6 +1033,7 @@
     <Compile Include="azure-mgmt\tests\mgmt_settings_fake.py" />
     <Compile Include="azure-mgmt\tests\mgmt_settings_real.py" />
     <Compile Include="azure-mgmt\tests\mgmt_testcase.py" />
+    <Compile Include="azure-mgmt\tests\test_batch.py" />
     <Compile Include="azure-mgmt\tests\test_graphrbac.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_authorization.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_cdn.py" />
@@ -924,6 +1138,11 @@
     <Compile Include="setup.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="azure-batch\" />
+    <Folder Include="azure-batch\azure\" />
+    <Folder Include="azure-batch\azure\batch\" />
+    <Folder Include="azure-batch\azure\batch\models\" />
+    <Folder Include="azure-batch\azure\batch\operations\" />
     <Folder Include="azure-common\testutils\" />
     <Folder Include="azure-graphrbac\" />
     <Folder Include="azure-graphrbac\azure\" />
@@ -936,6 +1155,12 @@
     <Folder Include="azure-mgmt-authorization\azure\mgmt\authorization\" />
     <Folder Include="azure-mgmt-authorization\azure\mgmt\authorization\models\" />
     <Folder Include="azure-mgmt-authorization\azure\mgmt\authorization\operations\" />
+    <Folder Include="azure-mgmt-batch\" />
+    <Folder Include="azure-mgmt-batch\azure\" />
+    <Folder Include="azure-mgmt-batch\azure\mgmt\" />
+    <Folder Include="azure-mgmt-batch\azure\mgmt\batch\" />
+    <Folder Include="azure-mgmt-batch\azure\mgmt\batch\models\" />
+    <Folder Include="azure-mgmt-batch\azure\mgmt\batch\operations\" />
     <Folder Include="azure-mgmt-cdn\" />
     <Folder Include="azure-mgmt-cdn\azure\" />
     <Folder Include="azure-mgmt-cdn\azure\mgmt\" />
@@ -1033,14 +1258,12 @@
     <Folder Include="azure\" />
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.7" />
-    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.4" />
-    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.5" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include=".gitattributes" />
     <Content Include=".gitignore" />
     <Content Include=".travis.yml" />
+    <Content Include="azure-batch\MANIFEST.in" />
+    <Content Include="azure-batch\README.rst" />
+    <Content Include="azure-batch\setup.cfg" />
     <Content Include="azure-common\MANIFEST.in" />
     <Content Include="azure-common\README.rst" />
     <Content Include="azure-common\setup.cfg" />
@@ -1050,6 +1273,9 @@
     <Content Include="azure-mgmt-authorization\MANIFEST.in" />
     <Content Include="azure-mgmt-authorization\README.rst" />
     <Content Include="azure-mgmt-authorization\setup.cfg" />
+    <Content Include="azure-mgmt-batch\MANIFEST.in" />
+    <Content Include="azure-mgmt-batch\README.rst" />
+    <Content Include="azure-mgmt-batch\setup.cfg" />
     <Content Include="azure-mgmt-cdn\MANIFEST.in" />
     <Content Include="azure-mgmt-cdn\README.rst" />
     <Content Include="azure-mgmt-cdn\setup.cfg" />
@@ -1085,6 +1311,13 @@
     <Content Include="azure-mgmt-web\setup.cfg" />
     <Content Include="azure-mgmt\README.rst" />
     <Content Include="azure-mgmt\setup.cfg" />
+    <Content Include="azure-mgmt\tests\recordings\test_batch.test_batch_accounts.yaml" />
+    <Content Include="azure-mgmt\tests\recordings\test_batch.test_batch_applications.yaml" />
+    <Content Include="azure-mgmt\tests\recordings\test_batch.test_batch_certificates.yaml" />
+    <Content Include="azure-mgmt\tests\recordings\test_batch.test_batch_compute_nodes.yaml" />
+    <Content Include="azure-mgmt\tests\recordings\test_batch.test_batch_jobs.yaml" />
+    <Content Include="azure-mgmt\tests\recordings\test_batch.test_batch_job_schedules.yaml" />
+    <Content Include="azure-mgmt\tests\recordings\test_batch.test_batch_pools.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_graphrbac.test_graphrbac_users.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_apps.test_logic.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_authorization.test_authorization.yaml" />
@@ -1367,19 +1600,6 @@
     <Content Include="LICENSE.txt" />
     <Content Include="README.rst" />
     <Content Include="requirements.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Interpreter Include="env\">
-      <Id>{2fb10581-a3e7-46c7-b09b-53a7dc29fd3f}</Id>
-      <BaseInterpreter>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</BaseInterpreter>
-      <Version>3.5</Version>
-      <Description>env (Python 64-bit 3.5)</Description>
-      <InterpreterPath>Scripts\python.exe</InterpreterPath>
-      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
-      <LibraryPath>Lib\</LibraryPath>
-      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
-      <Architecture>Amd64</Architecture>
-    </Interpreter>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

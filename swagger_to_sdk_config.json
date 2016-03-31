@@ -9,6 +9,10 @@
       "autorest_options": "-Namespace azure.mgmt.authorization",
       "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
     },
+    "arm-batch/2015-12-01/swagger/BatchManagement.json": {
+      "autorest_options": "-Namespace azure.mgmt.batch",
+      "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
+    },
     "arm-cdn/2015-06-01/swagger/cdn.json": {
       "autorest_options": "-Namespace azure.mgmt.cdn",
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
@@ -64,6 +68,10 @@
     "arm-web/2015-08-01/swagger/service.json": {
       "autorest_options": "-Namespace azure.mgmt.web",
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
+    },
+	"batch/2016-02-01.3.0/swagger/BatchService.json": {
+      "autorest_options": "-Namespace azure.batch",
+      "output_dir": "azure-batch/azure/batch/"
     }
   }
 }
