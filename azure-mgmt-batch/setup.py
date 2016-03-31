@@ -33,7 +33,7 @@ except ImportError:
     pass
 
 setup(
-    name='azure-batch',
+    name='azure-mgmt-batch',
     version='0.30.0rc2',
     description='Microsoft Azure Batch Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
