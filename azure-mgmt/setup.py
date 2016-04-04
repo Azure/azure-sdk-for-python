@@ -55,6 +55,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'azure-mgmt-authorization==0.30.0rc2',
+        'azure-mgmt-batch==0.30.0rc2',
         'azure-mgmt-cdn==0.30.0rc2',
         'azure-mgmt-compute==0.30.0rc2',
         'azure-mgmt-logic==0.30.0rc2',

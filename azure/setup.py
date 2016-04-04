@@ -56,6 +56,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'azure-mgmt==0.30.0rc2',
+        'azure-batch==0.30.0rc2',
         'azure-graphrbac==0.30.0rc2',
         'azure-servicebus==0.20.1',
         'azure-storage==0.30.0',
