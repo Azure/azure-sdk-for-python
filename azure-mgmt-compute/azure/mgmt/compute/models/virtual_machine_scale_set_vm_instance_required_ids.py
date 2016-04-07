@@ -39,5 +39,5 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
         'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
     }
 
-    def __init__(self, instance_ids, **kwargs):
+    def __init__(self, instance_ids):
         self.instance_ids = instance_ids

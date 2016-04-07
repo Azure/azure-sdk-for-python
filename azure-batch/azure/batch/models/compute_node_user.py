@@ -53,7 +53,7 @@ class ComputeNodeUser(Model):
         'ssh_public_key': {'key': 'sshPublicKey', 'type': 'str'},
     }
 
-    def __init__(self, name, is_admin=None, expiry_time=None, password=None, ssh_public_key=None, **kwargs):
+    def __init__(self, name, is_admin=None, expiry_time=None, password=None, ssh_public_key=None):
         self.name = name
         self.is_admin = is_admin
         self.expiry_time = expiry_time

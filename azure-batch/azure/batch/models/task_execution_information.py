@@ -71,7 +71,7 @@ class TaskExecutionInformation(Model):
         'last_requeue_time': {'key': 'lastRequeueTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, retry_count, requeue_count, start_time=None, end_time=None, exit_code=None, scheduling_error=None, last_retry_time=None, last_requeue_time=None, **kwargs):
+    def __init__(self, retry_count, requeue_count, start_time=None, end_time=None, exit_code=None, scheduling_error=None, last_retry_time=None, last_requeue_time=None):
         self.start_time = start_time
         self.end_time = end_time
         self.exit_code = exit_code

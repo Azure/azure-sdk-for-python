@@ -39,5 +39,5 @@ class TaskAddCollectionParameter(Model):
         'value': {'key': 'value', 'type': '[TaskAddParameter]'},
     }
 
-    def __init__(self, value, **kwargs):
+    def __init__(self, value):
         self.value = value

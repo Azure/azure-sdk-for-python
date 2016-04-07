@@ -53,6 +53,6 @@ class StringDictionary(Resource):
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, properties=None, **kwargs):
-        super(StringDictionary, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, properties=None):
+        super(StringDictionary, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.properties = properties

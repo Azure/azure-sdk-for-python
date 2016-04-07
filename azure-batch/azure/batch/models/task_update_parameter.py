@@ -36,5 +36,5 @@ class TaskUpdateParameter(Model):
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
     }
 
-    def __init__(self, constraints=None, **kwargs):
+    def __init__(self, constraints=None):
         self.constraints = constraints

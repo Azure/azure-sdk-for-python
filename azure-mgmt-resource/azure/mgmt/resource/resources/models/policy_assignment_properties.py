@@ -40,7 +40,7 @@ class PolicyAssignmentProperties(Model):
         'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
     }
 
-    def __init__(self, scope=None, display_name=None, policy_definition_id=None, **kwargs):
+    def __init__(self, scope=None, display_name=None, policy_definition_id=None):
         self.scope = scope
         self.display_name = display_name
         self.policy_definition_id = policy_definition_id

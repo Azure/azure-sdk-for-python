@@ -58,8 +58,8 @@ class ExpressRouteServiceProvider(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None, **kwargs):
-        super(ExpressRouteServiceProvider, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None):
+        super(ExpressRouteServiceProvider, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.peering_locations = peering_locations
         self.bandwidths_offered = bandwidths_offered
         self.provisioning_state = provisioning_state

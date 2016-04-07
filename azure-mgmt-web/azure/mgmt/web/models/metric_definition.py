@@ -67,8 +67,8 @@ class MetricDefinition(Resource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, metric_definition_name=None, unit=None, primary_aggregation_type=None, metric_availabilities=None, display_name=None, **kwargs):
-        super(MetricDefinition, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, metric_definition_name=None, unit=None, primary_aggregation_type=None, metric_availabilities=None, display_name=None):
+        super(MetricDefinition, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.metric_definition_name = metric_definition_name
         self.unit = unit
         self.primary_aggregation_type = primary_aggregation_type

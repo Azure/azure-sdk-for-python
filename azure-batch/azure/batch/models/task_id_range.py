@@ -41,6 +41,6 @@ class TaskIdRange(Model):
         'end': {'key': 'end', 'type': 'int'},
     }
 
-    def __init__(self, start, end, **kwargs):
+    def __init__(self, start, end):
         self.start = start
         self.end = end

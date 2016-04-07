@@ -48,8 +48,8 @@ class VirtualMachineImageResource(SubResource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, name, location, id=None, tags=None, **kwargs):
-        super(VirtualMachineImageResource, self).__init__(id=id, **kwargs)
+    def __init__(self, name, location, id=None, tags=None):
+        super(VirtualMachineImageResource, self).__init__(id=id)
         self.name = name
         self.location = location
         self.tags = tags

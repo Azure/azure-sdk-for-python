@@ -35,5 +35,5 @@ class CloudTaskListSubtasksResult(Model):
         'value': {'key': 'value', 'type': '[SubtaskInformation]'},
     }
 
-    def __init__(self, value=None, **kwargs):
+    def __init__(self, value=None):
         self.value = value

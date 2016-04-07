@@ -45,7 +45,7 @@ class DeploymentExtended(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, name, id=None, properties=None, **kwargs):
+    def __init__(self, name, id=None, properties=None):
         self.id = id
         self.name = name
         self.properties = properties

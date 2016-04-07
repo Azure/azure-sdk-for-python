@@ -46,7 +46,7 @@ class NetworkInterfaceDnsSettings(Model):
         'internal_fqdn': {'key': 'internalFqdn', 'type': 'str'},
     }
 
-    def __init__(self, dns_servers=None, applied_dns_servers=None, internal_dns_name_label=None, internal_fqdn=None, **kwargs):
+    def __init__(self, dns_servers=None, applied_dns_servers=None, internal_dns_name_label=None, internal_fqdn=None):
         self.dns_servers = dns_servers
         self.applied_dns_servers = applied_dns_servers
         self.internal_dns_name_label = internal_dns_name_label

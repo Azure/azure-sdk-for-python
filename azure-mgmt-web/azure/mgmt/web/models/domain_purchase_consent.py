@@ -43,7 +43,7 @@ class DomainPurchaseConsent(Model):
         'agreed_at': {'key': 'agreedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, agreement_keys=None, agreed_by=None, agreed_at=None, **kwargs):
+    def __init__(self, agreement_keys=None, agreed_by=None, agreed_at=None):
         self.agreement_keys = agreement_keys
         self.agreed_by = agreed_by
         self.agreed_at = agreed_at

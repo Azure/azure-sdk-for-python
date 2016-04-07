@@ -48,7 +48,7 @@ class FileListFromTaskOptions(Model):
     :type ocp_date: datetime
     """ 
 
-    def __init__(self, filter=None, max_results=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None, **kwargs):
+    def __init__(self, filter=None, max_results=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None):
         self.filter = filter
         self.max_results = max_results
         self.timeout = timeout

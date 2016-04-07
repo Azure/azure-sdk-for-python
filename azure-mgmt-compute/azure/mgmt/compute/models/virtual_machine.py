@@ -94,8 +94,8 @@ class VirtualMachine(Resource):
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, instance_view=None, license_type=None, resources=None, **kwargs):
-        super(VirtualMachine, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, instance_view=None, license_type=None, resources=None):
+        super(VirtualMachine, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.plan = plan
         self.hardware_profile = hardware_profile
         self.storage_profile = storage_profile

@@ -68,8 +68,8 @@ class VnetInfo(Resource):
         'resync_required': {'key': 'properties.resyncRequired', 'type': 'bool'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None, resync_required=None, **kwargs):
-        super(VnetInfo, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None, resync_required=None):
+        super(VnetInfo, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint = cert_thumbprint
         self.cert_blob = cert_blob

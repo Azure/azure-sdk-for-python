@@ -56,7 +56,7 @@ class TopLevelDomain(Resource):
         'privacy': {'key': 'properties.privacy', 'type': 'bool'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, top_level_domain_name=None, privacy=None, **kwargs):
-        super(TopLevelDomain, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, top_level_domain_name=None, privacy=None):
+        super(TopLevelDomain, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.top_level_domain_name = top_level_domain_name
         self.privacy = privacy

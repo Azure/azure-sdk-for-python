@@ -41,6 +41,6 @@ class UserCreateParametersPasswordProfile(Model):
         'force_change_password_next_login': {'key': 'forceChangePasswordNextLogin', 'type': 'bool'},
     }
 
-    def __init__(self, password, force_change_password_next_login=None, **kwargs):
+    def __init__(self, password, force_change_password_next_login=None):
         self.password = password
         self.force_change_password_next_login = force_change_password_next_login

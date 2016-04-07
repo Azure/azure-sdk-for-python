@@ -49,8 +49,8 @@ class ApplicationGatewayFrontendPort(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, port=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(ApplicationGatewayFrontendPort, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, port=None, provisioning_state=None, name=None, etag=None):
+        super(ApplicationGatewayFrontendPort, self).__init__(id=id)
         self.port = port
         self.provisioning_state = provisioning_state
         self.name = name

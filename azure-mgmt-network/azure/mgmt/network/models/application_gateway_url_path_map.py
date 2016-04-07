@@ -60,8 +60,8 @@ class ApplicationGatewayUrlPathMap(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, default_backend_address_pool=None, default_backend_http_settings=None, path_rules=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(ApplicationGatewayUrlPathMap, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, default_backend_address_pool=None, default_backend_http_settings=None, path_rules=None, provisioning_state=None, name=None, etag=None):
+        super(ApplicationGatewayUrlPathMap, self).__init__(id=id)
         self.default_backend_address_pool = default_backend_address_pool
         self.default_backend_http_settings = default_backend_http_settings
         self.path_rules = path_rules

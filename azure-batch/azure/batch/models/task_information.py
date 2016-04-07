@@ -57,7 +57,7 @@ class TaskInformation(Model):
         'execution_info': {'key': 'executionInfo', 'type': 'TaskExecutionInformation'},
     }
 
-    def __init__(self, task_state, task_url=None, job_id=None, task_id=None, subtask_id=None, execution_info=None, **kwargs):
+    def __init__(self, task_state, task_url=None, job_id=None, task_id=None, subtask_id=None, execution_info=None):
         self.task_url = task_url
         self.job_id = job_id
         self.task_id = task_id

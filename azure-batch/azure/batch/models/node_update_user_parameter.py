@@ -42,7 +42,7 @@ class NodeUpdateUserParameter(Model):
         'ssh_public_key': {'key': 'sshPublicKey', 'type': 'str'},
     }
 
-    def __init__(self, password=None, expiry_time=None, ssh_public_key=None, **kwargs):
+    def __init__(self, password=None, expiry_time=None, ssh_public_key=None):
         self.password = password
         self.expiry_time = expiry_time
         self.ssh_public_key = ssh_public_key

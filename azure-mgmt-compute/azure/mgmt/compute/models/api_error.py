@@ -48,7 +48,7 @@ class ApiError(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, details=None, innererror=None, code=None, target=None, message=None, **kwargs):
+    def __init__(self, details=None, innererror=None, code=None, target=None, message=None):
         self.details = details
         self.innererror = innererror
         self.code = code

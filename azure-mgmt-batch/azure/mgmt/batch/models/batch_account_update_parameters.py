@@ -38,6 +38,6 @@ class BatchAccountUpdateParameters(Model):
         'properties': {'key': 'properties', 'type': 'AccountBaseProperties'},
     }
 
-    def __init__(self, tags=None, properties=None, **kwargs):
+    def __init__(self, tags=None, properties=None):
         self.tags = tags
         self.properties = properties

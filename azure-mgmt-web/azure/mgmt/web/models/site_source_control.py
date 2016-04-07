@@ -66,8 +66,8 @@ class SiteSourceControl(Resource):
         'is_mercurial': {'key': 'properties.isMercurial', 'type': 'bool'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None, **kwargs):
-        super(SiteSourceControl, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None):
+        super(SiteSourceControl, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.repo_url = repo_url
         self.branch = branch
         self.is_manual_integration = is_manual_integration

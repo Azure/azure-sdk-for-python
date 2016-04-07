@@ -56,7 +56,7 @@ class Application(Model):
         'reply_urls': {'key': 'replyUrls', 'type': '[str]'},
     }
 
-    def __init__(self, object_id=None, object_type=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, **kwargs):
+    def __init__(self, object_id=None, object_type=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None):
         self.object_id = object_id
         self.object_type = object_type
         self.app_id = app_id

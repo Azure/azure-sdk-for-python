@@ -44,7 +44,7 @@ class CsmSiteRecoveryEntity(Model):
         'slot_name': {'key': 'slotName', 'type': 'str'},
     }
 
-    def __init__(self, snapshot_time=None, site_name=None, slot_name=None, **kwargs):
+    def __init__(self, snapshot_time=None, site_name=None, slot_name=None):
         self.snapshot_time = snapshot_time
         self.site_name = site_name
         self.slot_name = slot_name

@@ -44,7 +44,7 @@ class ResourceManagementError(Model):
         'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, code, message, target=None, **kwargs):
+    def __init__(self, code, message, target=None):
         self.code = code
         self.message = message
         self.target = target

@@ -49,7 +49,7 @@ class VirtualMachineCaptureParameters(Model):
         'overwrite_vhds': {'key': 'overwriteVhds', 'type': 'bool'},
     }
 
-    def __init__(self, vhd_prefix, destination_container_name, overwrite_vhds, **kwargs):
+    def __init__(self, vhd_prefix, destination_container_name, overwrite_vhds):
         self.vhd_prefix = vhd_prefix
         self.destination_container_name = destination_container_name
         self.overwrite_vhds = overwrite_vhds

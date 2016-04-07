@@ -49,7 +49,7 @@ class JobRecurrence(Model):
         'schedule': {'key': 'schedule', 'type': 'JobRecurrenceSchedule'},
     }
 
-    def __init__(self, frequency=None, interval=None, count=None, end_time=None, schedule=None, **kwargs):
+    def __init__(self, frequency=None, interval=None, count=None, end_time=None, schedule=None):
         self.frequency = frequency
         self.interval = interval
         self.count = count

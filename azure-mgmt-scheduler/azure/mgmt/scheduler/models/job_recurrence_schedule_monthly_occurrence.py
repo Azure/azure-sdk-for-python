@@ -39,6 +39,6 @@ class JobRecurrenceScheduleMonthlyOccurrence(Model):
         'occurrence': {'key': 'Occurrence', 'type': 'int'},
     }
 
-    def __init__(self, day=None, occurrence=None, **kwargs):
+    def __init__(self, day=None, occurrence=None):
         self.day = day
         self.occurrence = occurrence

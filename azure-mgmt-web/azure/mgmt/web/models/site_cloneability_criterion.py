@@ -37,6 +37,6 @@ class SiteCloneabilityCriterion(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, name=None, description=None, **kwargs):
+    def __init__(self, name=None, description=None):
         self.name = name
         self.description = description

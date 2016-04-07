@@ -39,5 +39,5 @@ class PoolEvaluateAutoScaleParameter(Model):
         'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
     }
 
-    def __init__(self, auto_scale_formula, **kwargs):
+    def __init__(self, auto_scale_formula):
         self.auto_scale_formula = auto_scale_formula

@@ -59,8 +59,8 @@ class User(Resource):
         'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None, **kwargs):
-        super(User, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None):
+        super(User, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.user_name = user_name
         self.publishing_user_name = publishing_user_name
         self.publishing_password = publishing_password

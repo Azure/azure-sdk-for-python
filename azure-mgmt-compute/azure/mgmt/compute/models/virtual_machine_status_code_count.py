@@ -39,6 +39,6 @@ class VirtualMachineStatusCodeCount(Model):
         'count': {'key': 'count', 'type': 'int'},
     }
 
-    def __init__(self, code=None, count=None, **kwargs):
+    def __init__(self, code=None, count=None):
         self.code = code
         self.count = count

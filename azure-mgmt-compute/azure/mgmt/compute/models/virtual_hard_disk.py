@@ -35,5 +35,5 @@ class VirtualHardDisk(Model):
         'uri': {'key': 'uri', 'type': 'str'},
     }
 
-    def __init__(self, uri=None, **kwargs):
+    def __init__(self, uri=None):
         self.uri = uri

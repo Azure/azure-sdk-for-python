@@ -55,7 +55,7 @@ class UserCreateParameters(Model):
         'password_profile': {'key': 'passwordProfile', 'type': 'UserCreateParametersPasswordProfile'},
     }
 
-    def __init__(self, user_principal_name, account_enabled, display_name, mail_nickname, password_profile, **kwargs):
+    def __init__(self, user_principal_name, account_enabled, display_name, mail_nickname, password_profile):
         self.user_principal_name = user_principal_name
         self.account_enabled = account_enabled
         self.display_name = display_name

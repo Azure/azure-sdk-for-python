@@ -95,8 +95,8 @@ class ServerFarmWithRichSku(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, status=None, subscription=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, geo_region=None, per_site_scaling=None, number_of_sites=None, resource_group=None, sku=None, **kwargs):
-        super(ServerFarmWithRichSku, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, status=None, subscription=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, geo_region=None, per_site_scaling=None, number_of_sites=None, resource_group=None, sku=None):
+        super(ServerFarmWithRichSku, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.server_farm_with_rich_sku_name = server_farm_with_rich_sku_name
         self.worker_tier_name = worker_tier_name
         self.status = status

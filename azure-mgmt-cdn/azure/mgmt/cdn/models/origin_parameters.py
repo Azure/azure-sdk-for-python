@@ -46,7 +46,7 @@ class OriginParameters(Model):
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
     }
 
-    def __init__(self, host_name, http_port=None, https_port=None, **kwargs):
+    def __init__(self, host_name, http_port=None, https_port=None):
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port

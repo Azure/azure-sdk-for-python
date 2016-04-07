@@ -104,8 +104,8 @@ class RedisResourceWithAccessKey(Resource):
         'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
     }
 
-    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, access_keys=None, provisioning_state=None, host_name=None, port=None, ssl_port=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None, **kwargs):
-        super(RedisResourceWithAccessKey, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, access_keys=None, provisioning_state=None, host_name=None, port=None, ssl_port=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None):
+        super(RedisResourceWithAccessKey, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.access_keys = access_keys
         self.provisioning_state = provisioning_state
         self.host_name = host_name

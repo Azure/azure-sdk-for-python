@@ -36,5 +36,5 @@ class WorkflowRunFilter(Model):
         'status': {'key': 'status', 'type': 'WorkflowStatus'},
     }
 
-    def __init__(self, status=None, **kwargs):
+    def __init__(self, status=None):
         self.status = status

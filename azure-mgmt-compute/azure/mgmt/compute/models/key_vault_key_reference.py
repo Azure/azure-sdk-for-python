@@ -44,6 +44,6 @@ class KeyVaultKeyReference(Model):
         'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
     }
 
-    def __init__(self, key_url, source_vault, **kwargs):
+    def __init__(self, key_url, source_vault):
         self.key_url = key_url
         self.source_vault = source_vault

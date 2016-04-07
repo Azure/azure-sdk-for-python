@@ -87,8 +87,8 @@ class VirtualMachineExtension(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, force_update_tag=None, publisher=None, virtual_machine_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None, instance_view=None, **kwargs):
-        super(VirtualMachineExtension, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, force_update_tag=None, publisher=None, virtual_machine_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None, instance_view=None):
+        super(VirtualMachineExtension, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.virtual_machine_extension_type = virtual_machine_extension_type

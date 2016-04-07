@@ -35,5 +35,5 @@ class Sku(Model):
         'name': {'key': 'name', 'type': 'SkuName'},
     }
 
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, name=None):
         self.name = name

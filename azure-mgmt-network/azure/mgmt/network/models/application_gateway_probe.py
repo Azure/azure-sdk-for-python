@@ -65,8 +65,8 @@ class ApplicationGatewayProbe(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, protocol=None, host=None, path=None, interval=None, timeout=None, unhealthy_threshold=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(ApplicationGatewayProbe, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, protocol=None, host=None, path=None, interval=None, timeout=None, unhealthy_threshold=None, provisioning_state=None, name=None, etag=None):
+        super(ApplicationGatewayProbe, self).__init__(id=id)
         self.protocol = protocol
         self.host = host
         self.path = path

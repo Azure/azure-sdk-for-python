@@ -45,7 +45,7 @@ class ProfileCreateParameters(Model):
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
     }
 
-    def __init__(self, location, sku, tags=None, **kwargs):
+    def __init__(self, location, sku, tags=None):
         self.location = location
         self.tags = tags
         self.sku = sku

@@ -47,7 +47,7 @@ class ManagementLockObject(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, level=None, notes=None, id=None, type=None, name=None, **kwargs):
+    def __init__(self, level=None, notes=None, id=None, type=None, name=None):
         self.level = level
         self.notes = notes
         self.id = id

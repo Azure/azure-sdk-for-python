@@ -46,7 +46,7 @@ class ADGroup(Model):
         'mail': {'key': 'mail', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, display_name=None, security_enabled=None, mail=None, **kwargs):
+    def __init__(self, object_id=None, object_type=None, display_name=None, security_enabled=None, mail=None):
         self.object_id = object_id
         self.object_type = object_type
         self.display_name = display_name

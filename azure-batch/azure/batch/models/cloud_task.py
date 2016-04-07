@@ -125,7 +125,7 @@ class CloudTask(Model):
         'depends_on': {'key': 'dependsOn', 'type': 'TaskDependencies'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, run_elevated=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None, **kwargs):
+    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, run_elevated=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None):
         self.id = id
         self.display_name = display_name
         self.url = url

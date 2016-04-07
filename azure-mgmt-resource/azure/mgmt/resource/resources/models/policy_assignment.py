@@ -38,6 +38,6 @@ class PolicyAssignment(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, properties=None, name=None, **kwargs):
+    def __init__(self, properties=None, name=None):
         self.properties = properties
         self.name = name

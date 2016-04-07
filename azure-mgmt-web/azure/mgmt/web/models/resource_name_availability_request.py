@@ -40,7 +40,7 @@ class ResourceNameAvailabilityRequest(Model):
         'is_fqdn': {'key': 'isFqdn', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, type=None, is_fqdn=None, **kwargs):
+    def __init__(self, name=None, type=None, is_fqdn=None):
         self.name = name
         self.type = type
         self.is_fqdn = is_fqdn

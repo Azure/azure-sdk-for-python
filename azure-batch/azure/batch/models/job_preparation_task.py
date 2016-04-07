@@ -71,7 +71,7 @@ class JobPreparationTask(Model):
         'rerun_on_node_reboot_after_success': {'key': 'rerunOnNodeRebootAfterSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, command_line=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, run_elevated=None, rerun_on_node_reboot_after_success=None, **kwargs):
+    def __init__(self, id=None, command_line=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, run_elevated=None, rerun_on_node_reboot_after_success=None):
         self.id = id
         self.command_line = command_line
         self.resource_files = resource_files

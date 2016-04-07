@@ -77,8 +77,8 @@ class SlotDifference(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, slot_difference_type=None, setting_type=None, diff_rule=None, setting_name=None, value_in_current_slot=None, value_in_target_slot=None, description=None, **kwargs):
-        super(SlotDifference, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, slot_difference_type=None, setting_type=None, diff_rule=None, setting_name=None, value_in_current_slot=None, value_in_target_slot=None, description=None):
+        super(SlotDifference, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.slot_difference_type = slot_difference_type
         self.setting_type = setting_type
         self.diff_rule = diff_rule

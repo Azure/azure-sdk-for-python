@@ -65,8 +65,8 @@ class Profile(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
 
-    def __init__(self, location, tags, id=None, name=None, type=None, sku=None, resource_state=None, provisioning_state=None, **kwargs):
-        super(Profile, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, tags, id=None, name=None, type=None, sku=None, resource_state=None, provisioning_state=None):
+        super(Profile, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.sku = sku
         self.resource_state = resource_state
         self.provisioning_state = provisioning_state

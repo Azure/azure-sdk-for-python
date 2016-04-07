@@ -41,6 +41,6 @@ class VaultSecretGroup(Model):
         'vault_certificates': {'key': 'vaultCertificates', 'type': '[VaultCertificate]'},
     }
 
-    def __init__(self, source_vault=None, vault_certificates=None, **kwargs):
+    def __init__(self, source_vault=None, vault_certificates=None):
         self.source_vault = source_vault
         self.vault_certificates = vault_certificates

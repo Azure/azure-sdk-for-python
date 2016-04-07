@@ -44,6 +44,6 @@ class WorkflowOutputParameter(WorkflowParameter):
         'error': {'key': 'error', 'type': 'object'},
     }
 
-    def __init__(self, type=None, value=None, metadata=None, error=None, **kwargs):
-        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata, **kwargs)
+    def __init__(self, type=None, value=None, metadata=None, error=None):
+        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata)
         self.error = error

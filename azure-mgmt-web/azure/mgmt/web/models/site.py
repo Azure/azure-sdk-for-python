@@ -168,8 +168,8 @@ class Site(Resource):
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, container_size=None, max_number_of_workers=None, cloning_info=None, resource_group=None, is_default_container=None, default_host_name=None, **kwargs):
-        super(Site, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, container_size=None, max_number_of_workers=None, cloning_info=None, resource_group=None, is_default_container=None, default_host_name=None):
+        super(Site, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.site_name = site_name
         self.state = state
         self.host_names = host_names

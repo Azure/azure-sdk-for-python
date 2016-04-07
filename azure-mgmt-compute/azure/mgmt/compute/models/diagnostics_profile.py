@@ -35,5 +35,5 @@ class DiagnosticsProfile(Model):
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnostics'},
     }
 
-    def __init__(self, boot_diagnostics=None, **kwargs):
+    def __init__(self, boot_diagnostics=None):
         self.boot_diagnostics = boot_diagnostics

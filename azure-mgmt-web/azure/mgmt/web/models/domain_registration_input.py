@@ -109,8 +109,8 @@ class DomainRegistrationInput(Resource):
         'consent': {'key': 'properties.consent', 'type': 'DomainPurchaseConsent'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, domain_registration_input_name=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None, **kwargs):
-        super(DomainRegistrationInput, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, domain_registration_input_name=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None):
+        super(DomainRegistrationInput, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.domain_registration_input_name = domain_registration_input_name
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing

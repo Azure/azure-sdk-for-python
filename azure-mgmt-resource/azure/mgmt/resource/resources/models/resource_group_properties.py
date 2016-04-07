@@ -34,5 +34,5 @@ class ResourceGroupProperties(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, provisioning_state=None, **kwargs):
+    def __init__(self, provisioning_state=None):
         self.provisioning_state = provisioning_state

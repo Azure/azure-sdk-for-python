@@ -38,6 +38,6 @@ class NetworkInterfaceReference(SubResource):
         'primary': {'key': 'properties.primary', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, primary=None, **kwargs):
-        super(NetworkInterfaceReference, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, primary=None):
+        super(NetworkInterfaceReference, self).__init__(id=id)
         self.primary = primary

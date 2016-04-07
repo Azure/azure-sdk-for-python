@@ -38,6 +38,6 @@ class Sku(Model):
         'plan': {'key': 'plan', 'type': 'ResourceReference'},
     }
 
-    def __init__(self, name=None, plan=None, **kwargs):
+    def __init__(self, name=None, plan=None):
         self.name = name
         self.plan = plan

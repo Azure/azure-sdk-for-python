@@ -60,7 +60,7 @@ class JobScheduleGetOptions(Model):
     :type if_unmodified_since: datetime
     """ 
 
-    def __init__(self, select=None, expand=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None, if_match=None, if_none_match=None, if_modified_since=None, if_unmodified_since=None, **kwargs):
+    def __init__(self, select=None, expand=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None, if_match=None, if_none_match=None, if_modified_since=None, if_unmodified_since=None):
         self.select = select
         self.expand = expand
         self.timeout = timeout

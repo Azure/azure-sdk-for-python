@@ -47,7 +47,7 @@ class TaskConstraints(Model):
         'max_task_retry_count': {'key': 'maxTaskRetryCount', 'type': 'int'},
     }
 
-    def __init__(self, max_wall_clock_time=None, retention_time=None, max_task_retry_count=None, **kwargs):
+    def __init__(self, max_wall_clock_time=None, retention_time=None, max_task_retry_count=None):
         self.max_wall_clock_time = max_wall_clock_time
         self.retention_time = retention_time
         self.max_task_retry_count = max_task_retry_count

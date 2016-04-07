@@ -47,7 +47,7 @@ class CsmUsageQuota(Model):
         'name': {'key': 'name', 'type': 'LocalizableString'},
     }
 
-    def __init__(self, unit=None, next_reset_time=None, current_value=None, limit=None, name=None, **kwargs):
+    def __init__(self, unit=None, next_reset_time=None, current_value=None, limit=None, name=None):
         self.unit = unit
         self.next_reset_time = next_reset_time
         self.current_value = current_value

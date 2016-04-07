@@ -70,8 +70,8 @@ class WorkflowRun(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, start_time=None, end_time=None, status=None, code=None, error=None, correlation_id=None, workflow=None, trigger=None, outputs=None, name=None, type=None, **kwargs):
-        super(WorkflowRun, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, start_time=None, end_time=None, status=None, code=None, error=None, correlation_id=None, workflow=None, trigger=None, outputs=None, name=None, type=None):
+        super(WorkflowRun, self).__init__(id=id)
         self.start_time = start_time
         self.end_time = end_time
         self.status = status

@@ -40,7 +40,7 @@ class ExpressRouteCircuitServiceProviderProperties(Model):
         'bandwidth_in_mbps': {'key': 'bandwidthInMbps', 'type': 'int'},
     }
 
-    def __init__(self, service_provider_name=None, peering_location=None, bandwidth_in_mbps=None, **kwargs):
+    def __init__(self, service_provider_name=None, peering_location=None, bandwidth_in_mbps=None):
         self.service_provider_name = service_provider_name
         self.peering_location = peering_location
         self.bandwidth_in_mbps = bandwidth_in_mbps

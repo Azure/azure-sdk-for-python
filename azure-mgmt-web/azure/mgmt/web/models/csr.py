@@ -71,8 +71,8 @@ class Csr(Resource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, csr_name=None, distinguished_name=None, csr_string=None, pfx_blob=None, password=None, public_key_hash=None, hosting_environment=None, **kwargs):
-        super(Csr, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, csr_name=None, distinguished_name=None, csr_string=None, pfx_blob=None, password=None, public_key_hash=None, hosting_environment=None):
+        super(Csr, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.csr_name = csr_name
         self.distinguished_name = distinguished_name
         self.csr_string = csr_string

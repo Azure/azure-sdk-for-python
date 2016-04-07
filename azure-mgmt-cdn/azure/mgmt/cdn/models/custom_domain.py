@@ -58,8 +58,8 @@ class CustomDomain(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
 
-    def __init__(self, host_name, id=None, name=None, type=None, resource_state=None, provisioning_state=None, **kwargs):
-        super(CustomDomain, self).__init__(id=id, name=name, type=type, **kwargs)
+    def __init__(self, host_name, id=None, name=None, type=None, resource_state=None, provisioning_state=None):
+        super(CustomDomain, self).__init__(id=id, name=name, type=type)
         self.host_name = host_name
         self.resource_state = resource_state
         self.provisioning_state = provisioning_state

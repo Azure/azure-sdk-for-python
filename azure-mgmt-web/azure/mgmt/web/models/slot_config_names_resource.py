@@ -56,7 +56,7 @@ class SlotConfigNamesResource(Resource):
         'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, connection_string_names=None, app_setting_names=None, **kwargs):
-        super(SlotConfigNamesResource, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, connection_string_names=None, app_setting_names=None):
+        super(SlotConfigNamesResource, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.connection_string_names = connection_string_names
         self.app_setting_names = app_setting_names

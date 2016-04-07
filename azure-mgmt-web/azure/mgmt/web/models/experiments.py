@@ -36,5 +36,5 @@ class Experiments(Model):
         'ramp_up_rules': {'key': 'rampUpRules', 'type': '[RampUpRule]'},
     }
 
-    def __init__(self, ramp_up_rules=None, **kwargs):
+    def __init__(self, ramp_up_rules=None):
         self.ramp_up_rules = ramp_up_rules

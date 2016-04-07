@@ -40,6 +40,6 @@ class SlotConfigNames(Model):
         'app_setting_names': {'key': 'appSettingNames', 'type': '[str]'},
     }
 
-    def __init__(self, connection_string_names=None, app_setting_names=None, **kwargs):
+    def __init__(self, connection_string_names=None, app_setting_names=None):
         self.connection_string_names = connection_string_names
         self.app_setting_names = app_setting_names

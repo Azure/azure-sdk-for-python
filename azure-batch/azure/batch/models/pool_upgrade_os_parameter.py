@@ -39,5 +39,5 @@ class PoolUpgradeOSParameter(Model):
         'target_os_version': {'key': 'targetOSVersion', 'type': 'str'},
     }
 
-    def __init__(self, target_os_version, **kwargs):
+    def __init__(self, target_os_version):
         self.target_os_version = target_os_version

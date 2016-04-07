@@ -46,7 +46,7 @@ class HttpRequest(Model):
         'headers': {'key': 'headers', 'type': '{str}'},
     }
 
-    def __init__(self, authentication=None, uri=None, method=None, body=None, headers=None, **kwargs):
+    def __init__(self, authentication=None, uri=None, method=None, body=None, headers=None):
         self.authentication = authentication
         self.uri = uri
         self.method = method

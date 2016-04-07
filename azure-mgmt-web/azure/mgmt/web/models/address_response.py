@@ -47,7 +47,7 @@ class AddressResponse(Model):
         'vip_mappings': {'key': 'vipMappings', 'type': '[VirtualIPMapping]'},
     }
 
-    def __init__(self, service_ip_address=None, internal_ip_address=None, outbound_ip_addresses=None, vip_mappings=None, **kwargs):
+    def __init__(self, service_ip_address=None, internal_ip_address=None, outbound_ip_addresses=None, vip_mappings=None):
         self.service_ip_address = service_ip_address
         self.internal_ip_address = internal_ip_address
         self.outbound_ip_addresses = outbound_ip_addresses

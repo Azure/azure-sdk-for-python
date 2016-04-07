@@ -104,8 +104,8 @@ class VirtualMachineScaleSetVM(Resource):
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, instance_id=None, sku=None, latest_model_applied=None, instance_view=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, license_type=None, plan=None, resources=None, **kwargs):
-        super(VirtualMachineScaleSetVM, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, instance_id=None, sku=None, latest_model_applied=None, instance_view=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, license_type=None, plan=None, resources=None):
+        super(VirtualMachineScaleSetVM, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.instance_id = instance_id
         self.sku = sku
         self.latest_model_applied = latest_model_applied

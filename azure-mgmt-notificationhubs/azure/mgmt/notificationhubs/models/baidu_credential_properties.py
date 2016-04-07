@@ -40,7 +40,7 @@ class BaiduCredentialProperties(Model):
         'baidu_secret_key': {'key': 'baiduSecretKey', 'type': 'str'},
     }
 
-    def __init__(self, baidu_api_key=None, baidu_end_point=None, baidu_secret_key=None, **kwargs):
+    def __init__(self, baidu_api_key=None, baidu_end_point=None, baidu_secret_key=None):
         self.baidu_api_key = baidu_api_key
         self.baidu_end_point = baidu_end_point
         self.baidu_secret_key = baidu_secret_key

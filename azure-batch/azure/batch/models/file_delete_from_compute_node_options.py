@@ -43,7 +43,7 @@ class FileDeleteFromComputeNodeOptions(Model):
     :type ocp_date: datetime
     """ 
 
-    def __init__(self, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None, **kwargs):
+    def __init__(self, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None):
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id

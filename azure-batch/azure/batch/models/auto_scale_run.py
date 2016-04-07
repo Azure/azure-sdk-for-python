@@ -50,7 +50,7 @@ class AutoScaleRun(Model):
         'error': {'key': 'error', 'type': 'AutoScaleRunError'},
     }
 
-    def __init__(self, timestamp, results=None, error=None, **kwargs):
+    def __init__(self, timestamp, results=None, error=None):
         self.timestamp = timestamp
         self.results = results
         self.error = error

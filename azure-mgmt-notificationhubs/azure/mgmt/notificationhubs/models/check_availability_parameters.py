@@ -49,7 +49,7 @@ class CheckAvailabilityParameters(Model):
         'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, name, location=None, tags=None, is_availiable=None, **kwargs):
+    def __init__(self, name, location=None, tags=None, is_availiable=None):
         self.name = name
         self.location = location
         self.tags = tags

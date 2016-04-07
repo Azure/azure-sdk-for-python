@@ -46,7 +46,7 @@ class Error(Model):
         'inner_error': {'key': 'innerError', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None, target=None, details=None, inner_error=None, **kwargs):
+    def __init__(self, code=None, message=None, target=None, details=None, inner_error=None):
         self.code = code
         self.message = message
         self.target = target

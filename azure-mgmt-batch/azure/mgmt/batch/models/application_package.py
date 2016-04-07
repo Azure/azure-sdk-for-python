@@ -45,7 +45,7 @@ class ApplicationPackage(Model):
         'last_activation_time': {'key': 'lastActivationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, version=None, state=None, format=None, last_activation_time=None, **kwargs):
+    def __init__(self, version=None, state=None, format=None, last_activation_time=None):
         self.version = version
         self.state = state
         self.format = format

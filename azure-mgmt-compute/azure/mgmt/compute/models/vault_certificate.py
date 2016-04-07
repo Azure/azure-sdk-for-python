@@ -40,6 +40,6 @@ class VaultCertificate(Model):
         'certificate_store': {'key': 'certificateStore', 'type': 'str'},
     }
 
-    def __init__(self, certificate_url=None, certificate_store=None, **kwargs):
+    def __init__(self, certificate_url=None, certificate_store=None):
         self.certificate_url = certificate_url
         self.certificate_store = certificate_store

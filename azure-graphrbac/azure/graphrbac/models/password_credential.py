@@ -43,7 +43,7 @@ class PasswordCredential(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, start_date=None, end_date=None, key_id=None, value=None, **kwargs):
+    def __init__(self, start_date=None, end_date=None, key_id=None, value=None):
         self.start_date = start_date
         self.end_date = end_date
         self.key_id = key_id

@@ -53,6 +53,6 @@ class SiteInstance(Resource):
         'site_instance_name': {'key': 'properties.name', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, site_instance_name=None, **kwargs):
-        super(SiteInstance, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, site_instance_name=None):
+        super(SiteInstance, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.site_instance_name = site_instance_name

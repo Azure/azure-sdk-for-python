@@ -64,8 +64,8 @@ class VirtualMachineScaleSetExtension(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, publisher=None, type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None, **kwargs):
-        super(VirtualMachineScaleSetExtension, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, name=None, publisher=None, type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None):
+        super(VirtualMachineScaleSetExtension, self).__init__(id=id)
         self.name = name
         self.publisher = publisher
         self.type = type

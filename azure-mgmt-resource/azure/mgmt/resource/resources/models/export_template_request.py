@@ -41,6 +41,6 @@ class ExportTemplateRequest(Model):
         'options': {'key': 'options', 'type': 'str'},
     }
 
-    def __init__(self, resources=None, options=None, **kwargs):
+    def __init__(self, resources=None, options=None):
         self.resources = resources
         self.options = options
