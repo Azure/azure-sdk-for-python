@@ -43,7 +43,7 @@ class VirtualNetworkProfile(Model):
         'subnet': {'key': 'subnet', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, subnet=None, **kwargs):
+    def __init__(self, id=None, name=None, type=None, subnet=None):
         self.id = id
         self.name = name
         self.type = type

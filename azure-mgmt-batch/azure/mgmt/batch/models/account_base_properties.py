@@ -35,5 +35,5 @@ class AccountBaseProperties(Model):
         'auto_storage': {'key': 'autoStorage', 'type': 'AutoStorageBaseProperties'},
     }
 
-    def __init__(self, auto_storage=None, **kwargs):
+    def __init__(self, auto_storage=None):
         self.auto_storage = auto_storage

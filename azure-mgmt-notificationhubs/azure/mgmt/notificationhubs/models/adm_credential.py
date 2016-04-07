@@ -36,5 +36,5 @@ class AdmCredential(Model):
         'properties': {'key': 'properties', 'type': 'AdmCredentialProperties'},
     }
 
-    def __init__(self, properties=None, **kwargs):
+    def __init__(self, properties=None):
         self.properties = properties

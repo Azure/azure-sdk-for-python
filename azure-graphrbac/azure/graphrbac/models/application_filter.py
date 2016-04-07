@@ -40,7 +40,7 @@ class ApplicationFilter(Model):
         'identifier_uri': {'key': 'identifierUri', 'type': 'str'},
     }
 
-    def __init__(self, display_name_starts_with=None, app_id=None, identifier_uri=None, **kwargs):
+    def __init__(self, display_name_starts_with=None, app_id=None, identifier_uri=None):
         self.display_name_starts_with = display_name_starts_with
         self.app_id = app_id
         self.identifier_uri = identifier_uri

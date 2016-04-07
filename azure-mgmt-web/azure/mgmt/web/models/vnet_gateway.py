@@ -57,7 +57,7 @@ class VnetGateway(Resource):
         'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_name=None, vpn_package_uri=None, **kwargs):
-        super(VnetGateway, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_name=None, vpn_package_uri=None):
+        super(VnetGateway, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.vnet_name = vnet_name
         self.vpn_package_uri = vpn_package_uri

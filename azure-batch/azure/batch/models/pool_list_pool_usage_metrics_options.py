@@ -54,7 +54,7 @@ class PoolListPoolUsageMetricsOptions(Model):
     :type ocp_date: datetime
     """ 
 
-    def __init__(self, start_time=None, end_time=None, filter=None, max_results=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None, **kwargs):
+    def __init__(self, start_time=None, end_time=None, filter=None, max_results=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None):
         self.start_time = start_time
         self.end_time = end_time
         self.filter = filter

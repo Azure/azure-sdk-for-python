@@ -53,6 +53,6 @@ class ClassicMobileService(Resource):
         'classic_mobile_service_name': {'key': 'properties.name', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, classic_mobile_service_name=None, **kwargs):
-        super(ClassicMobileService, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, classic_mobile_service_name=None):
+        super(ClassicMobileService, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.classic_mobile_service_name = classic_mobile_service_name

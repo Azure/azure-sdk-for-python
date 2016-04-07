@@ -57,6 +57,6 @@ class ServiceBusTopicMessage(ServiceBusMessage):
         'topic_path': {'key': 'topicPath', 'type': 'str'},
     }
 
-    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, topic_path=None, **kwargs):
-        super(ServiceBusTopicMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type, **kwargs)
+    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, topic_path=None):
+        super(ServiceBusTopicMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type)
         self.topic_path = topic_path

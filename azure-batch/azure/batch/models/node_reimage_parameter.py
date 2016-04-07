@@ -37,5 +37,5 @@ class NodeReimageParameter(Model):
         'node_reimage_option': {'key': 'nodeReimageOption', 'type': 'ComputeNodeReimageOption'},
     }
 
-    def __init__(self, node_reimage_option=None, **kwargs):
+    def __init__(self, node_reimage_option=None):
         self.node_reimage_option = node_reimage_option

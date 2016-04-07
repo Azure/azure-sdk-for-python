@@ -39,6 +39,6 @@ class AzureTableStorageApplicationLogsConfig(Model):
         'sas_url': {'key': 'sasUrl', 'type': 'str'},
     }
 
-    def __init__(self, level=None, sas_url=None, **kwargs):
+    def __init__(self, level=None, sas_url=None):
         self.level = level
         self.sas_url = sas_url

@@ -36,6 +36,6 @@ class ContentHash(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, algorithm=None, value=None, **kwargs):
+    def __init__(self, algorithm=None, value=None):
         self.algorithm = algorithm
         self.value = value

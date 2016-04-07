@@ -74,8 +74,8 @@ class HostNameBinding(Resource):
         'host_name_type': {'key': 'properties.hostNameType', 'type': 'HostNameType'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, **kwargs):
-        super(HostNameBinding, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None):
+        super(HostNameBinding, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.host_name_binding_name = host_name_binding_name
         self.site_name = site_name
         self.domain_id = domain_id

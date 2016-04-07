@@ -87,8 +87,8 @@ class RestoreRequest(Resource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=None, operation_type=None, adjust_connection_strings=None, hosting_environment=None, **kwargs):
-        super(RestoreRequest, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=None, operation_type=None, adjust_connection_strings=None, hosting_environment=None):
+        super(RestoreRequest, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name
         self.overwrite = overwrite

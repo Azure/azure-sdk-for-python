@@ -46,7 +46,7 @@ class ContentLink(Model):
         'metadata': {'key': 'metadata', 'type': 'object'},
     }
 
-    def __init__(self, uri=None, content_version=None, content_size=None, content_hash=None, metadata=None, **kwargs):
+    def __init__(self, uri=None, content_version=None, content_size=None, content_hash=None, metadata=None):
         self.uri = uri
         self.content_version = content_version
         self.content_size = content_size

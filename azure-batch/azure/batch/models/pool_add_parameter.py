@@ -118,7 +118,7 @@ class PoolAddParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, id, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, start_task=None, certificate_references=None, application_package_references=None, max_tasks_per_node=None, task_scheduling_policy=None, metadata=None, **kwargs):
+    def __init__(self, id, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, start_task=None, certificate_references=None, application_package_references=None, max_tasks_per_node=None, task_scheduling_policy=None, metadata=None):
         self.id = id
         self.display_name = display_name
         self.vm_size = vm_size

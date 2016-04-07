@@ -49,7 +49,7 @@ class Address(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, address1=None, address2=None, city=None, country=None, postal_code=None, state=None, **kwargs):
+    def __init__(self, address1=None, address2=None, city=None, country=None, postal_code=None, state=None):
         self.address1 = address1
         self.address2 = address2
         self.city = city

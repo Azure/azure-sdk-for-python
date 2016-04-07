@@ -55,8 +55,8 @@ class ApplicationGatewaySslCertificate(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, data=None, password=None, public_cert_data=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(ApplicationGatewaySslCertificate, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, data=None, password=None, public_cert_data=None, provisioning_state=None, name=None, etag=None):
+        super(ApplicationGatewaySslCertificate, self).__init__(id=id)
         self.data = data
         self.password = password
         self.public_cert_data = public_cert_data

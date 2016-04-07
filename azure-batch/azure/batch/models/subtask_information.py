@@ -75,7 +75,7 @@ class SubtaskInformation(Model):
         'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, id=None, node_info=None, start_time=None, end_time=None, exit_code=None, scheduling_error=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, **kwargs):
+    def __init__(self, id=None, node_info=None, start_time=None, end_time=None, exit_code=None, scheduling_error=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None):
         self.id = id
         self.node_info = node_info
         self.start_time = start_time

@@ -33,5 +33,5 @@ class HttpMessage(Model):
         'content': {'key': 'content', 'type': 'object'},
     }
 
-    def __init__(self, content=None, **kwargs):
+    def __init__(self, content=None):
         self.content = content

@@ -37,6 +37,6 @@ class Permission(Model):
         'not_actions': {'key': 'notActions', 'type': '[str]'},
     }
 
-    def __init__(self, actions=None, not_actions=None, **kwargs):
+    def __init__(self, actions=None, not_actions=None):
         self.actions = actions
         self.not_actions = not_actions

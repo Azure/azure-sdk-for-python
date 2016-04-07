@@ -40,7 +40,7 @@ class ServiceBusAuthentication(Model):
         'type': {'key': 'type', 'type': 'ServiceBusAuthenticationType'},
     }
 
-    def __init__(self, sas_key=None, sas_key_name=None, type=None, **kwargs):
+    def __init__(self, sas_key=None, sas_key_name=None, type=None):
         self.sas_key = sas_key
         self.sas_key_name = sas_key_name
         self.type = type

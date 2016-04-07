@@ -123,7 +123,7 @@ class CloudJob(Model):
         'stats': {'key': 'stats', 'type': 'JobStatistics'},
     }
 
-    def __init__(self, id=None, display_name=None, uses_task_dependencies=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, priority=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, metadata=None, execution_info=None, stats=None, **kwargs):
+    def __init__(self, id=None, display_name=None, uses_task_dependencies=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, priority=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, metadata=None, execution_info=None, stats=None):
         self.id = id
         self.display_name = display_name
         self.uses_task_dependencies = uses_task_dependencies

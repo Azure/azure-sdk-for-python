@@ -70,8 +70,8 @@ class WorkerPool(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None, instance_names=None, sku=None, **kwargs):
-        super(WorkerPool, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None, instance_names=None, sku=None):
+        super(WorkerPool, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.worker_size_id = worker_size_id
         self.compute_mode = compute_mode
         self.worker_size = worker_size

@@ -34,5 +34,5 @@ class JobHistoryFilter(Model):
         'status': {'key': 'status', 'type': 'JobExecutionStatus'},
     }
 
-    def __init__(self, status=None, **kwargs):
+    def __init__(self, status=None):
         self.status = status

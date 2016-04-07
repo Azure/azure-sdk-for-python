@@ -70,8 +70,8 @@ class AccountResource(Resource):
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, account_endpoint=None, provisioning_state=None, auto_storage=None, core_quota=None, pool_quota=None, active_job_and_job_schedule_quota=None, **kwargs):
-        super(AccountResource, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, account_endpoint=None, provisioning_state=None, auto_storage=None, core_quota=None, pool_quota=None, active_job_and_job_schedule_quota=None):
+        super(AccountResource, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.account_endpoint = account_endpoint
         self.provisioning_state = provisioning_state
         self.auto_storage = auto_storage

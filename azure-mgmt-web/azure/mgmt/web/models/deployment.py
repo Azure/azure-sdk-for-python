@@ -80,8 +80,8 @@ class Deployment(Resource):
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None, **kwargs):
-        super(Deployment, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
+        super(Deployment, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.deployment_id = deployment_id
         self.status = status
         self.message = message

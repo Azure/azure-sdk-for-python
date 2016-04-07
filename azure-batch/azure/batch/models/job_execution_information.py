@@ -56,7 +56,7 @@ class JobExecutionInformation(Model):
         'terminate_reason': {'key': 'terminateReason', 'type': 'str'},
     }
 
-    def __init__(self, start_time, end_time=None, pool_id=None, scheduling_error=None, terminate_reason=None, **kwargs):
+    def __init__(self, start_time, end_time=None, pool_id=None, scheduling_error=None, terminate_reason=None):
         self.start_time = start_time
         self.end_time = end_time
         self.pool_id = pool_id

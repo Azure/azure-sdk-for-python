@@ -49,7 +49,7 @@ class PublicIPAddressDnsSettings(Model):
         'reverse_fqdn': {'key': 'reverseFqdn', 'type': 'str'},
     }
 
-    def __init__(self, domain_name_label=None, fqdn=None, reverse_fqdn=None, **kwargs):
+    def __init__(self, domain_name_label=None, fqdn=None, reverse_fqdn=None):
         self.domain_name_label = domain_name_label
         self.fqdn = fqdn
         self.reverse_fqdn = reverse_fqdn

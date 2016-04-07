@@ -49,7 +49,7 @@ class InstanceViewStatus(Model):
         'time': {'key': 'time', 'type': 'iso-8601'},
     }
 
-    def __init__(self, code=None, level=None, display_status=None, message=None, time=None, **kwargs):
+    def __init__(self, code=None, level=None, display_status=None, message=None, time=None):
         self.code = code
         self.level = level
         self.display_status = display_status

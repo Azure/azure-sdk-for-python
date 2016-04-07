@@ -105,8 +105,8 @@ class StorageAccount(Resource):
         'secondary_endpoints': {'key': 'properties.secondaryEndpoints', 'type': 'Endpoints'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, provisioning_state=None, account_type=None, primary_endpoints=None, primary_location=None, status_of_primary=None, last_geo_failover_time=None, secondary_location=None, status_of_secondary=None, creation_time=None, custom_domain=None, secondary_endpoints=None, **kwargs):
-        super(StorageAccount, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, provisioning_state=None, account_type=None, primary_endpoints=None, primary_location=None, status_of_primary=None, last_geo_failover_time=None, secondary_location=None, status_of_secondary=None, creation_time=None, custom_domain=None, secondary_endpoints=None):
+        super(StorageAccount, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.provisioning_state = provisioning_state
         self.account_type = account_type
         self.primary_endpoints = primary_endpoints

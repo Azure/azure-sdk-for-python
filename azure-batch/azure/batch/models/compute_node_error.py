@@ -44,7 +44,7 @@ class ComputeNodeError(Model):
         'error_details': {'key': 'errorDetails', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, code=None, message=None, error_details=None, **kwargs):
+    def __init__(self, code=None, message=None, error_details=None):
         self.code = code
         self.message = message
         self.error_details = error_details

@@ -40,7 +40,7 @@ class TargetResource(Model):
         'resource_type': {'key': 'resourceType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, resource_name=None, resource_type=None, **kwargs):
+    def __init__(self, id=None, resource_name=None, resource_type=None):
         self.id = id
         self.resource_name = resource_name
         self.resource_type = resource_type

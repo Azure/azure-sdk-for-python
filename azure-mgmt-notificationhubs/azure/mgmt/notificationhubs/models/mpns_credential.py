@@ -36,5 +36,5 @@ class MpnsCredential(Model):
         'properties': {'key': 'properties', 'type': 'MpnsCredentialProperties'},
     }
 
-    def __init__(self, properties=None, **kwargs):
+    def __init__(self, properties=None):
         self.properties = properties

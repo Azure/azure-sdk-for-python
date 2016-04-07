@@ -100,8 +100,8 @@ class BackupItem(Resource):
         'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, backup_item_id=None, storage_account_url=None, blob_name=None, backup_item_name=None, status=None, size_in_bytes=None, created=None, log=None, databases=None, scheduled=None, last_restore_time_stamp=None, finished_time_stamp=None, correlation_id=None, website_size_in_bytes=None, **kwargs):
-        super(BackupItem, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, backup_item_id=None, storage_account_url=None, blob_name=None, backup_item_name=None, status=None, size_in_bytes=None, created=None, log=None, databases=None, scheduled=None, last_restore_time_stamp=None, finished_time_stamp=None, correlation_id=None, website_size_in_bytes=None):
+        super(BackupItem, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.backup_item_id = backup_item_id
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name

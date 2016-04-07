@@ -39,6 +39,6 @@ class ResourceProviderOperationDefinition(Model):
         'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplayProperties'},
     }
 
-    def __init__(self, name=None, display=None, **kwargs):
+    def __init__(self, name=None, display=None):
         self.name = name
         self.display = display

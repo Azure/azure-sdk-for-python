@@ -36,6 +36,6 @@ class RunWorkflowParameters(Model):
         'outputs': {'key': 'outputs', 'type': 'object'},
     }
 
-    def __init__(self, name=None, outputs=None, **kwargs):
+    def __init__(self, name=None, outputs=None):
         self.name = name
         self.outputs = outputs

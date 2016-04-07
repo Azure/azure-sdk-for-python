@@ -40,7 +40,7 @@ class AdmCredentialProperties(Model):
         'auth_token_url': {'key': 'authTokenUrl', 'type': 'str'},
     }
 
-    def __init__(self, client_id=None, client_secret=None, auth_token_url=None, **kwargs):
+    def __init__(self, client_id=None, client_secret=None, auth_token_url=None):
         self.client_id = client_id
         self.client_secret = client_secret
         self.auth_token_url = auth_token_url

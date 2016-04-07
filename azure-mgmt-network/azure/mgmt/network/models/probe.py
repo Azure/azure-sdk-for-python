@@ -84,8 +84,8 @@ class Probe(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, port, id=None, load_balancing_rules=None, interval_in_seconds=None, number_of_probes=None, request_path=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(Probe, self).__init__(id=id, **kwargs)
+    def __init__(self, protocol, port, id=None, load_balancing_rules=None, interval_in_seconds=None, number_of_probes=None, request_path=None, provisioning_state=None, name=None, etag=None):
+        super(Probe, self).__init__(id=id)
         self.load_balancing_rules = load_balancing_rules
         self.protocol = protocol
         self.port = port

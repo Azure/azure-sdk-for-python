@@ -60,7 +60,7 @@ class PoolStatistics(Model):
         'resource_stats': {'key': 'resourceStats', 'type': 'ResourceStatistics'},
     }
 
-    def __init__(self, url, start_time, last_update_time, usage_stats=None, resource_stats=None, **kwargs):
+    def __init__(self, url, start_time, last_update_time, usage_stats=None, resource_stats=None):
         self.url = url
         self.start_time = start_time
         self.last_update_time = last_update_time

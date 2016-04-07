@@ -46,7 +46,7 @@ class JobSchedulePatchParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, schedule=None, job_specification=None, metadata=None, **kwargs):
+    def __init__(self, schedule=None, job_specification=None, metadata=None):
         self.schedule = schedule
         self.job_specification = job_specification
         self.metadata = metadata

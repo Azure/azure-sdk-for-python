@@ -52,7 +52,7 @@ class JobRecurrenceSchedule(Model):
         'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[JobRecurrenceScheduleMonthlyOccurrence]'},
     }
 
-    def __init__(self, week_days=None, hours=None, minutes=None, month_days=None, monthly_occurrences=None, **kwargs):
+    def __init__(self, week_days=None, hours=None, minutes=None, month_days=None, monthly_occurrences=None):
         self.week_days = week_days
         self.hours = hours
         self.minutes = minutes

@@ -39,6 +39,6 @@ class CsmSlotEntity(Model):
         'preserve_vnet': {'key': 'preserveVnet', 'type': 'bool'},
     }
 
-    def __init__(self, target_slot=None, preserve_vnet=None, **kwargs):
+    def __init__(self, target_slot=None, preserve_vnet=None):
         self.target_slot = target_slot
         self.preserve_vnet = preserve_vnet

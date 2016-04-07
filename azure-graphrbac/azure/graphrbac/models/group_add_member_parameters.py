@@ -38,5 +38,5 @@ class GroupAddMemberParameters(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, url, **kwargs):
+    def __init__(self, url):
         self.url = url

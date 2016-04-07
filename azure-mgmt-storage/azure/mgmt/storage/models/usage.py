@@ -54,7 +54,7 @@ class Usage(Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    def __init__(self, unit, current_value, limit, name, **kwargs):
+    def __init__(self, unit, current_value, limit, name):
         self.unit = unit
         self.current_value = current_value
         self.limit = limit

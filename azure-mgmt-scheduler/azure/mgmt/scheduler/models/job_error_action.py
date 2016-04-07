@@ -57,7 +57,7 @@ class JobErrorAction(Model):
         'retry_policy': {'key': 'retryPolicy', 'type': 'RetryPolicy'},
     }
 
-    def __init__(self, type=None, request=None, queue_message=None, service_bus_queue_message=None, service_bus_topic_message=None, retry_policy=None, **kwargs):
+    def __init__(self, type=None, request=None, queue_message=None, service_bus_queue_message=None, service_bus_topic_message=None, retry_policy=None):
         self.type = type
         self.request = request
         self.queue_message = queue_message

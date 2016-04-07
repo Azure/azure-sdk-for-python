@@ -42,7 +42,7 @@ class VirtualNetworkGatewaySku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, tier=None, capacity=None, **kwargs):
+    def __init__(self, name=None, tier=None, capacity=None):
         self.name = name
         self.tier = tier
         self.capacity = capacity

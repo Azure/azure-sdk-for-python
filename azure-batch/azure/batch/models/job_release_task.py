@@ -68,7 +68,7 @@ class JobReleaseTask(Model):
         'run_elevated': {'key': 'runElevated', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, command_line=None, resource_files=None, environment_settings=None, max_wall_clock_time=None, retention_time=None, run_elevated=None, **kwargs):
+    def __init__(self, id=None, command_line=None, resource_files=None, environment_settings=None, max_wall_clock_time=None, retention_time=None, run_elevated=None):
         self.id = id
         self.command_line = command_line
         self.resource_files = resource_files

@@ -43,7 +43,7 @@ class SkuCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'str'},
     }
 
-    def __init__(self, minimum=None, maximum=None, default=None, scale_type=None, **kwargs):
+    def __init__(self, minimum=None, maximum=None, default=None, scale_type=None):
         self.minimum = minimum
         self.maximum = maximum
         self.default = default

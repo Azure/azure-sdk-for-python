@@ -38,6 +38,6 @@ class SubscriptionPolicies(Model):
         'quota_id': {'key': 'quotaId', 'type': 'str'},
     }
 
-    def __init__(self, location_placement_id=None, quota_id=None, **kwargs):
+    def __init__(self, location_placement_id=None, quota_id=None):
         self.location_placement_id = location_placement_id
         self.quota_id = quota_id

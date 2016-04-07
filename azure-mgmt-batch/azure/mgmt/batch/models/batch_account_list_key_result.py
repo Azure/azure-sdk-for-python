@@ -37,6 +37,6 @@ class BatchAccountListKeyResult(Model):
         'secondary': {'key': 'secondary', 'type': 'str'},
     }
 
-    def __init__(self, primary=None, secondary=None, **kwargs):
+    def __init__(self, primary=None, secondary=None):
         self.primary = primary
         self.secondary = secondary

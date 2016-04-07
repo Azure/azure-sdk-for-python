@@ -92,8 +92,8 @@ class InboundNatRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, frontend_ip_configuration=None, backend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(InboundNatRule, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, frontend_ip_configuration=None, backend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None):
+        super(InboundNatRule, self).__init__(id=id)
         self.frontend_ip_configuration = frontend_ip_configuration
         self.backend_ip_configuration = backend_ip_configuration
         self.protocol = protocol

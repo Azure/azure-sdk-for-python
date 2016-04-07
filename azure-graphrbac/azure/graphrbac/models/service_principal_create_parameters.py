@@ -42,6 +42,6 @@ class ServicePrincipalCreateParameters(Model):
         'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, app_id, account_enabled, **kwargs):
+    def __init__(self, app_id, account_enabled):
         self.app_id = app_id
         self.account_enabled = account_enabled

@@ -82,8 +82,8 @@ class FrontendIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, load_balancing_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(FrontendIPConfiguration, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, load_balancing_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
+        super(FrontendIPConfiguration, self).__init__(id=id)
         self.inbound_nat_rules = inbound_nat_rules
         self.inbound_nat_pools = inbound_nat_pools
         self.outbound_nat_rules = outbound_nat_rules

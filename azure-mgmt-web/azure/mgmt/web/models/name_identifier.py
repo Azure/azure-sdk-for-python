@@ -34,5 +34,5 @@ class NameIdentifier(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, name=None):
         self.name = name

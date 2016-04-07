@@ -37,5 +37,5 @@ class NodeRebootParameter(Model):
         'node_reboot_option': {'key': 'nodeRebootOption', 'type': 'ComputeNodeRebootOption'},
     }
 
-    def __init__(self, node_reboot_option=None, **kwargs):
+    def __init__(self, node_reboot_option=None):
         self.node_reboot_option = node_reboot_option

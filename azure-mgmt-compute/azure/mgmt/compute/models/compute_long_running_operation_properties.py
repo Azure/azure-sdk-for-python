@@ -34,5 +34,5 @@ class ComputeLongRunningOperationProperties(Model):
         'output': {'key': 'output', 'type': 'object'},
     }
 
-    def __init__(self, output=None, **kwargs):
+    def __init__(self, output=None):
         self.output = output

@@ -36,5 +36,5 @@ class DataDiskImage(Model):
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
-    def __init__(self, lun=None, **kwargs):
+    def __init__(self, lun=None):
         self.lun = lun

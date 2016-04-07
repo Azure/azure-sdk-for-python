@@ -44,6 +44,6 @@ class CustomDomain(Model):
         'use_sub_domain': {'key': 'useSubDomain', 'type': 'bool'},
     }
 
-    def __init__(self, name, use_sub_domain=None, **kwargs):
+    def __init__(self, name, use_sub_domain=None):
         self.name = name
         self.use_sub_domain = use_sub_domain

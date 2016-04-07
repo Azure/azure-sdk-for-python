@@ -86,8 +86,8 @@ class LoadBalancer(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
-        super(LoadBalancer, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, frontend_ip_configurations=None, backend_address_pools=None, load_balancing_rules=None, probes=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(LoadBalancer, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pools = backend_address_pools
         self.load_balancing_rules = load_balancing_rules

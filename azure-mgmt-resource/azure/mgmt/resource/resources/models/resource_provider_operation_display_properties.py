@@ -46,7 +46,7 @@ class ResourceProviderOperationDisplayProperties(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, publisher=None, provider=None, resource=None, operation=None, description=None, **kwargs):
+    def __init__(self, publisher=None, provider=None, resource=None, operation=None, description=None):
         self.publisher = publisher
         self.provider = provider
         self.resource = resource

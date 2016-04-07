@@ -65,7 +65,7 @@ class StartTaskInformation(Model):
         'last_retry_time': {'key': 'lastRetryTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, state, start_time, retry_count, end_time=None, exit_code=None, scheduling_error=None, last_retry_time=None, **kwargs):
+    def __init__(self, state, start_time, retry_count, end_time=None, exit_code=None, scheduling_error=None, last_retry_time=None):
         self.state = state
         self.start_time = start_time
         self.end_time = end_time

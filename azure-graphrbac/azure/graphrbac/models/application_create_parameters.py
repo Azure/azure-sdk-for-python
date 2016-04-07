@@ -63,7 +63,7 @@ class ApplicationCreateParameters(Model):
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, available_to_other_tenants, display_name, homepage, identifier_uris, reply_urls=None, key_credentials=None, password_credentials=None, **kwargs):
+    def __init__(self, available_to_other_tenants, display_name, homepage, identifier_uris, reply_urls=None, key_credentials=None, password_credentials=None):
         self.available_to_other_tenants = available_to_other_tenants
         self.display_name = display_name
         self.homepage = homepage

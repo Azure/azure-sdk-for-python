@@ -35,5 +35,5 @@ class ApplicationListResult(Model):
         'value': {'key': 'value', 'type': '[Application]'},
     }
 
-    def __init__(self, value=None, **kwargs):
+    def __init__(self, value=None):
         self.value = value

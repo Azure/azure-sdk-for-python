@@ -64,8 +64,8 @@ class Route(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, next_hop_type, id=None, address_prefix=None, next_hop_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(Route, self).__init__(id=id, **kwargs)
+    def __init__(self, next_hop_type, id=None, address_prefix=None, next_hop_ip_address=None, provisioning_state=None, name=None, etag=None):
+        super(Route, self).__init__(id=id)
         self.address_prefix = address_prefix
         self.next_hop_type = next_hop_type
         self.next_hop_ip_address = next_hop_ip_address

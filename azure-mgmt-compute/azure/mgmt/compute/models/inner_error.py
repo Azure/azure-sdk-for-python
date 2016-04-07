@@ -38,6 +38,6 @@ class InnerError(Model):
         'errordetail': {'key': 'errordetail', 'type': 'str'},
     }
 
-    def __init__(self, exceptiontype=None, errordetail=None, **kwargs):
+    def __init__(self, exceptiontype=None, errordetail=None):
         self.exceptiontype = exceptiontype
         self.errordetail = errordetail

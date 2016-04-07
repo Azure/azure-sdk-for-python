@@ -35,5 +35,5 @@ class FileSystemApplicationLogsConfig(Model):
         'level': {'key': 'level', 'type': 'LogLevel'},
     }
 
-    def __init__(self, level=None, **kwargs):
+    def __init__(self, level=None):
         self.level = level

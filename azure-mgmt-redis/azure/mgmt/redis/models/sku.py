@@ -50,7 +50,7 @@ class Sku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name, family, capacity, **kwargs):
+    def __init__(self, name, family, capacity):
         self.name = name
         self.family = family
         self.capacity = capacity

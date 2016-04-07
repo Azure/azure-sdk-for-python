@@ -74,8 +74,8 @@ class WorkflowTriggerHistory(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, start_time=None, end_time=None, status=None, code=None, error=None, tracking_id=None, inputs_link=None, outputs_link=None, fired=None, run=None, name=None, type=None, **kwargs):
-        super(WorkflowTriggerHistory, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, start_time=None, end_time=None, status=None, code=None, error=None, tracking_id=None, inputs_link=None, outputs_link=None, fired=None, run=None, name=None, type=None):
+        super(WorkflowTriggerHistory, self).__init__(id=id)
         self.start_time = start_time
         self.end_time = end_time
         self.status = status

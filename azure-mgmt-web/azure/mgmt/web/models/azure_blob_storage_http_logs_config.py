@@ -43,7 +43,7 @@ class AzureBlobStorageHttpLogsConfig(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, sas_url=None, retention_in_days=None, enabled=None, **kwargs):
+    def __init__(self, sas_url=None, retention_in_days=None, enabled=None):
         self.sas_url = sas_url
         self.retention_in_days = retention_in_days
         self.enabled = enabled

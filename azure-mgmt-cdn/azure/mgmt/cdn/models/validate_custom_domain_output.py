@@ -41,7 +41,7 @@ class ValidateCustomDomainOutput(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, custom_domain_validated=None, reason=None, message=None, **kwargs):
+    def __init__(self, custom_domain_validated=None, reason=None, message=None):
         self.custom_domain_validated = custom_domain_validated
         self.reason = reason
         self.message = message

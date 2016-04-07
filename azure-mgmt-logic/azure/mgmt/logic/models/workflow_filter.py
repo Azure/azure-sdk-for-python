@@ -34,5 +34,5 @@ class WorkflowFilter(Model):
         'state': {'key': 'state', 'type': 'WorkflowState'},
     }
 
-    def __init__(self, state=None, **kwargs):
+    def __init__(self, state=None):
         self.state = state

@@ -42,7 +42,7 @@ class NetworkAccessControlEntry(Model):
         'remote_subnet': {'key': 'remoteSubnet', 'type': 'str'},
     }
 
-    def __init__(self, action=None, description=None, order=None, remote_subnet=None, **kwargs):
+    def __init__(self, action=None, description=None, order=None, remote_subnet=None):
         self.action = action
         self.description = description
         self.order = order

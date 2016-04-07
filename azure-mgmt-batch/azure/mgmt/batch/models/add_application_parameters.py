@@ -38,6 +38,6 @@ class AddApplicationParameters(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
-    def __init__(self, allow_updates=None, display_name=None, **kwargs):
+    def __init__(self, allow_updates=None, display_name=None):
         self.allow_updates = allow_updates
         self.display_name = display_name

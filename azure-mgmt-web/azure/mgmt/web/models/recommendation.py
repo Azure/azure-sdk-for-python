@@ -105,7 +105,7 @@ class Recommendation(Model):
         'score': {'key': 'score', 'type': 'float'},
     }
 
-    def __init__(self, level, channels, category, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, action_name=None, enabled=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None, **kwargs):
+    def __init__(self, level, channels, category, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, action_name=None, enabled=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None):
         self.creation_time = creation_time
         self.recommendation_id = recommendation_id
         self.resource_id = resource_id

@@ -69,7 +69,7 @@ class NotificationHubProperties(Model):
         'baidu_credential': {'key': 'baiduCredential', 'type': 'BaiduCredential'},
     }
 
-    def __init__(self, name=None, registration_ttl=None, authorization_rules=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None, **kwargs):
+    def __init__(self, name=None, registration_ttl=None, authorization_rules=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None):
         self.name = name
         self.registration_ttl = registration_ttl
         self.authorization_rules = authorization_rules

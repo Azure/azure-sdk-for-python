@@ -45,7 +45,7 @@ class GetObjectsParameters(Model):
         'include_directory_object_references': {'key': 'includeDirectoryObjectReferences', 'type': 'bool'},
     }
 
-    def __init__(self, include_directory_object_references, object_ids=None, types=None, **kwargs):
+    def __init__(self, include_directory_object_references, object_ids=None, types=None):
         self.object_ids = object_ids
         self.types = types
         self.include_directory_object_references = include_directory_object_references

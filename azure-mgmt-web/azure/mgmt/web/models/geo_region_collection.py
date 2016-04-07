@@ -37,6 +37,6 @@ class GeoRegionCollection(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value=None, next_link=None, **kwargs):
+    def __init__(self, value=None, next_link=None):
         self.value = value
         self.next_link = next_link

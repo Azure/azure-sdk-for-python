@@ -38,7 +38,7 @@ class Usage(Model):
     """ 
 
     _validation = {
-        'unit': {'required': True},
+        'unit': {'required': True, 'constant': True},
         'current_value': {'required': True},
         'limit': {'required': True},
         'name': {'required': True},
@@ -51,7 +51,7 @@ class Usage(Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    def __init__(self, current_value, limit, name, **kwargs):
+    def __init__(self, current_value, limit, name):
         self.unit = "Count"
         self.current_value = current_value
         self.limit = limit

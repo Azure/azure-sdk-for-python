@@ -83,7 +83,7 @@ class JobSpecification(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, priority=None, display_name=None, uses_task_dependencies=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, metadata=None, **kwargs):
+    def __init__(self, priority=None, display_name=None, uses_task_dependencies=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, metadata=None):
         self.priority = priority
         self.display_name = display_name
         self.uses_task_dependencies = uses_task_dependencies

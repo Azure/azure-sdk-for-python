@@ -42,6 +42,6 @@ class TaskDependencies(Model):
         'task_id_ranges': {'key': 'taskIdRanges', 'type': '[TaskIdRange]'},
     }
 
-    def __init__(self, task_ids=None, task_id_ranges=None, **kwargs):
+    def __init__(self, task_ids=None, task_id_ranges=None):
         self.task_ids = task_ids
         self.task_id_ranges = task_id_ranges

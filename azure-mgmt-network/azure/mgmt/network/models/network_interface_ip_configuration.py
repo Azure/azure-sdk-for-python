@@ -70,8 +70,8 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(NetworkInterfaceIPConfiguration, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
+        super(NetworkInterfaceIPConfiguration, self).__init__(id=id)
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
         self.load_balancer_inbound_nat_rules = load_balancer_inbound_nat_rules
         self.private_ip_address = private_ip_address

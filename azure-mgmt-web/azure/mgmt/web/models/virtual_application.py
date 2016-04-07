@@ -43,7 +43,7 @@ class VirtualApplication(Model):
         'virtual_directories': {'key': 'virtualDirectories', 'type': '[VirtualDirectory]'},
     }
 
-    def __init__(self, virtual_path=None, physical_path=None, preload_enabled=None, virtual_directories=None, **kwargs):
+    def __init__(self, virtual_path=None, physical_path=None, preload_enabled=None, virtual_directories=None):
         self.virtual_path = virtual_path
         self.physical_path = physical_path
         self.preload_enabled = preload_enabled
