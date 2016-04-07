@@ -49,7 +49,7 @@ class JobCollectionDefinition(Model):
         'properties': {'key': 'properties', 'type': 'JobCollectionProperties'},
     }
 
-    def __init__(self, id=None, type=None, name=None, location=None, tags=None, properties=None, **kwargs):
+    def __init__(self, id=None, type=None, name=None, location=None, tags=None, properties=None):
         self.id = id
         self.type = type
         self.name = name

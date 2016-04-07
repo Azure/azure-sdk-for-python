@@ -76,8 +76,8 @@ class VirtualMachineExtensionImage(Resource):
         'supports_multiple_extensions': {'key': 'properties.supportsMultipleExtensions', 'type': 'bool'},
     }
 
-    def __init__(self, location, operating_system, compute_role, handler_schema, id=None, name=None, type=None, tags=None, vm_scale_set_enabled=None, supports_multiple_extensions=None, **kwargs):
-        super(VirtualMachineExtensionImage, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, operating_system, compute_role, handler_schema, id=None, name=None, type=None, tags=None, vm_scale_set_enabled=None, supports_multiple_extensions=None):
+        super(VirtualMachineExtensionImage, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.operating_system = operating_system
         self.compute_role = compute_role
         self.handler_schema = handler_schema

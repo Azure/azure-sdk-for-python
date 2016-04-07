@@ -38,5 +38,5 @@ class ActivateApplicationPackageParameters(Model):
         'format': {'key': 'format', 'type': 'str'},
     }
 
-    def __init__(self, format, **kwargs):
+    def __init__(self, format):
         self.format = format

@@ -33,5 +33,5 @@ class SubResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None, **kwargs):
+    def __init__(self, id=None):
         self.id = id

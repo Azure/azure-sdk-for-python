@@ -70,7 +70,7 @@ class JobManagerTask(Model):
         'run_exclusive': {'key': 'runExclusive', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, display_name=None, command_line=None, resource_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, run_elevated=None, run_exclusive=None, **kwargs):
+    def __init__(self, id=None, display_name=None, command_line=None, resource_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, run_elevated=None, run_exclusive=None):
         self.id = id
         self.display_name = display_name
         self.command_line = command_line

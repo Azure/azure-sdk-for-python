@@ -52,7 +52,7 @@ class JobPatchParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, priority=None, constraints=None, pool_info=None, metadata=None, **kwargs):
+    def __init__(self, priority=None, constraints=None, pool_info=None, metadata=None):
         self.priority = priority
         self.constraints = constraints
         self.pool_info = pool_info

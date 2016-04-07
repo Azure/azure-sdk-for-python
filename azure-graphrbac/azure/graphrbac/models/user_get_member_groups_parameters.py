@@ -40,5 +40,5 @@ class UserGetMemberGroupsParameters(Model):
         'security_enabled_only': {'key': 'securityEnabledOnly', 'type': 'bool'},
     }
 
-    def __init__(self, security_enabled_only, **kwargs):
+    def __init__(self, security_enabled_only):
         self.security_enabled_only = security_enabled_only

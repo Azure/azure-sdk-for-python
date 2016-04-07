@@ -45,7 +45,7 @@ class CertificateGetOptions(Model):
     :type ocp_date: datetime
     """ 
 
-    def __init__(self, select=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None, **kwargs):
+    def __init__(self, select=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None):
         self.select = select
         self.timeout = timeout
         self.client_request_id = client_request_id

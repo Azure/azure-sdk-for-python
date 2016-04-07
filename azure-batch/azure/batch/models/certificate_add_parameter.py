@@ -61,7 +61,7 @@ class CertificateAddParameter(Model):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, thumbprint, thumbprint_algorithm, data, certificate_format=None, password=None, **kwargs):
+    def __init__(self, thumbprint, thumbprint_algorithm, data, certificate_format=None, password=None):
         self.thumbprint = thumbprint
         self.thumbprint_algorithm = thumbprint_algorithm
         self.data = data

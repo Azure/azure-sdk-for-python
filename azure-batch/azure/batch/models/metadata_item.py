@@ -39,6 +39,6 @@ class MetadataItem(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name=None, value=None, **kwargs):
+    def __init__(self, name=None, value=None):
         self.name = name
         self.value = value

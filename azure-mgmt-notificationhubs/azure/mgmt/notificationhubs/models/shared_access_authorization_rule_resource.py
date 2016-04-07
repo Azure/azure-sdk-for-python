@@ -53,7 +53,7 @@ class SharedAccessAuthorizationRuleResource(Model):
         'properties': {'key': 'properties', 'type': 'SharedAccessAuthorizationRuleProperties'},
     }
 
-    def __init__(self, id=None, location=None, name=None, type=None, tags=None, properties=None, **kwargs):
+    def __init__(self, id=None, location=None, name=None, type=None, tags=None, properties=None):
         self.id = id
         self.location = location
         self.name = name

@@ -46,7 +46,7 @@ class Provider(Model):
         'resource_types': {'key': 'resourceTypes', 'type': '[ProviderResourceType]'},
     }
 
-    def __init__(self, id=None, namespace=None, registration_state=None, resource_types=None, **kwargs):
+    def __init__(self, id=None, namespace=None, registration_state=None, resource_types=None):
         self.id = id
         self.namespace = namespace
         self.registration_state = registration_state

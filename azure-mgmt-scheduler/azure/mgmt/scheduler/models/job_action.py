@@ -60,7 +60,7 @@ class JobAction(Model):
         'error_action': {'key': 'errorAction', 'type': 'JobErrorAction'},
     }
 
-    def __init__(self, type=None, request=None, queue_message=None, service_bus_queue_message=None, service_bus_topic_message=None, retry_policy=None, error_action=None, **kwargs):
+    def __init__(self, type=None, request=None, queue_message=None, service_bus_queue_message=None, service_bus_topic_message=None, retry_policy=None, error_action=None):
         self.type = type
         self.request = request
         self.queue_message = queue_message

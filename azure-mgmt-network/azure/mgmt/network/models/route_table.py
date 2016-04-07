@@ -60,8 +60,8 @@ class RouteTable(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, routes=None, subnets=None, provisioning_state=None, etag=None, **kwargs):
-        super(RouteTable, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, routes=None, subnets=None, provisioning_state=None, etag=None):
+        super(RouteTable, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.routes = routes
         self.subnets = subnets
         self.provisioning_state = provisioning_state

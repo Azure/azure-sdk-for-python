@@ -40,6 +40,6 @@ class AutoHealRules(Model):
         'actions': {'key': 'actions', 'type': 'AutoHealActions'},
     }
 
-    def __init__(self, triggers=None, actions=None, **kwargs):
+    def __init__(self, triggers=None, actions=None):
         self.triggers = triggers
         self.actions = actions

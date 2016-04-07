@@ -36,5 +36,5 @@ class DhcpOptions(Model):
         'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
     }
 
-    def __init__(self, dns_servers=None, **kwargs):
+    def __init__(self, dns_servers=None):
         self.dns_servers = dns_servers

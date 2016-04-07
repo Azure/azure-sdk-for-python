@@ -38,6 +38,6 @@ class VirtualMachineScaleSetVMExtensionsSummary(Model):
         'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
     }
 
-    def __init__(self, name=None, statuses_summary=None, **kwargs):
+    def __init__(self, name=None, statuses_summary=None):
         self.name = name
         self.statuses_summary = statuses_summary

@@ -52,7 +52,7 @@ class TaskSchedulingError(Model):
         'details': {'key': 'details', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, category, code=None, message=None, details=None, **kwargs):
+    def __init__(self, category, code=None, message=None, details=None):
         self.category = category
         self.code = code
         self.message = message

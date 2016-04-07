@@ -45,7 +45,7 @@ class HandlerMapping(Model):
         'arguments': {'key': 'arguments', 'type': 'str'},
     }
 
-    def __init__(self, extension=None, script_processor=None, arguments=None, **kwargs):
+    def __init__(self, extension=None, script_processor=None, arguments=None):
         self.extension = extension
         self.script_processor = script_processor
         self.arguments = arguments

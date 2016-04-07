@@ -50,7 +50,7 @@ class DeepCreatedOrigin(Model):
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
     }
 
-    def __init__(self, name, host_name, http_port=None, https_port=None, **kwargs):
+    def __init__(self, name, host_name, http_port=None, https_port=None):
         self.name = name
         self.host_name = host_name
         self.http_port = http_port

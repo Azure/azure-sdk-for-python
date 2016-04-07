@@ -40,7 +40,7 @@ class ApiErrorBase(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code=None, target=None, message=None, **kwargs):
+    def __init__(self, code=None, target=None, message=None):
         self.code = code
         self.target = target
         self.message = message

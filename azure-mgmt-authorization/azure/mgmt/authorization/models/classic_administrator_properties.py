@@ -37,6 +37,6 @@ class ClassicAdministratorProperties(Model):
         'role': {'key': 'role', 'type': 'str'},
     }
 
-    def __init__(self, email_address=None, role=None, **kwargs):
+    def __init__(self, email_address=None, role=None):
         self.email_address = email_address
         self.role = role

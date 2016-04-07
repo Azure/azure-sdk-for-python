@@ -33,6 +33,10 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :param subnet: Gets or sets the subnet.
     :type subnet: :class:`ApiEntityReference
      <azure.mgmt.compute.models.ApiEntityReference>`
+    :param application_gateway_backend_address_pools: Gets or sets the
+     application gateway backend address pools.
+    :type application_gateway_backend_address_pools: list of
+     :class:`SubResource <azure.mgmt.compute.models.SubResource>`
     :param load_balancer_backend_address_pools: Gets or sets the load
      balancer backend address pools.
     :type load_balancer_backend_address_pools: list of :class:`SubResource
@@ -52,13 +56,15 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'ApiEntityReference'},
+        'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[SubResource]'},
         'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[SubResource]'},
         'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
     }
 
-    def __init__(self, name, subnet, id=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_pools=None, **kwargs):
-        super(VirtualMachineScaleSetIPConfiguration, self).__init__(id=id, **kwargs)
+    def __init__(self, name, subnet, id=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_pools=None):
+        super(VirtualMachineScaleSetIPConfiguration, self).__init__(id=id)
         self.name = name
         self.subnet = subnet
+        self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
         self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools

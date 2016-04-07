@@ -49,7 +49,7 @@ class KeyCredential(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, start_date=None, end_date=None, value=None, key_id=None, usage=None, type=None, **kwargs):
+    def __init__(self, start_date=None, end_date=None, value=None, key_id=None, usage=None, type=None):
         self.start_date = start_date
         self.end_date = end_date
         self.value = value

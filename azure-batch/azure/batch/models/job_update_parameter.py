@@ -56,7 +56,7 @@ class JobUpdateParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, pool_info, priority=None, constraints=None, metadata=None, **kwargs):
+    def __init__(self, pool_info, priority=None, constraints=None, metadata=None):
         self.priority = priority
         self.constraints = constraints
         self.pool_info = pool_info

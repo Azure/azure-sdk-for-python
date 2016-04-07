@@ -40,7 +40,7 @@ class WnsCredentialProperties(Model):
         'windows_live_endpoint': {'key': 'windowsLiveEndpoint', 'type': 'str'},
     }
 
-    def __init__(self, package_sid=None, secret_key=None, windows_live_endpoint=None, **kwargs):
+    def __init__(self, package_sid=None, secret_key=None, windows_live_endpoint=None):
         self.package_sid = package_sid
         self.secret_key = secret_key
         self.windows_live_endpoint = windows_live_endpoint

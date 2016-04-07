@@ -40,7 +40,7 @@ class RoleAssignmentPropertiesWithScope(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
     }
 
-    def __init__(self, scope=None, role_definition_id=None, principal_id=None, **kwargs):
+    def __init__(self, scope=None, role_definition_id=None, principal_id=None):
         self.scope = scope
         self.role_definition_id = role_definition_id
         self.principal_id = principal_id

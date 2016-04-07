@@ -50,7 +50,7 @@ class CloudServiceConfiguration(Model):
         'current_os_version': {'key': 'currentOSVersion', 'type': 'str'},
     }
 
-    def __init__(self, os_family, target_os_version=None, current_os_version=None, **kwargs):
+    def __init__(self, os_family, target_os_version=None, current_os_version=None):
         self.os_family = os_family
         self.target_os_version = target_os_version
         self.current_os_version = current_os_version

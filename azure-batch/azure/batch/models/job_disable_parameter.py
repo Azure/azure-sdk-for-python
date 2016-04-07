@@ -39,5 +39,5 @@ class JobDisableParameter(Model):
         'disable_tasks': {'key': 'disableTasks', 'type': 'DisableJobOption'},
     }
 
-    def __init__(self, disable_tasks, **kwargs):
+    def __init__(self, disable_tasks):
         self.disable_tasks = disable_tasks

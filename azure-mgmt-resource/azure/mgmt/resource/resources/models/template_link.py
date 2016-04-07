@@ -42,6 +42,6 @@ class TemplateLink(Model):
         'content_version': {'key': 'contentVersion', 'type': 'str'},
     }
 
-    def __init__(self, uri, content_version=None, **kwargs):
+    def __init__(self, uri, content_version=None):
         self.uri = uri
         self.content_version = content_version

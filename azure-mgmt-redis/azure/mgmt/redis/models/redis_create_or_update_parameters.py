@@ -88,8 +88,8 @@ class RedisCreateOrUpdateParameters(Resource):
         'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
     }
 
-    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None, **kwargs):
-        super(RedisCreateOrUpdateParameters, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None):
+        super(RedisCreateOrUpdateParameters, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.redis_version = redis_version
         self.sku = sku
         self.redis_configuration = redis_configuration

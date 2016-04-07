@@ -82,8 +82,8 @@ class Workflow(Resource):
         'parameters': {'key': 'properties.parameters', 'type': '{WorkflowParameter}'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, provisioning_state=None, created_time=None, changed_time=None, state=None, version=None, access_endpoint=None, sku=None, definition_link=None, definition=None, parameters_link=None, parameters=None, **kwargs):
-        super(Workflow, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, provisioning_state=None, created_time=None, changed_time=None, state=None, version=None, access_endpoint=None, sku=None, definition_link=None, definition=None, parameters_link=None, parameters=None):
+        super(Workflow, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.provisioning_state = provisioning_state
         self.created_time = created_time
         self.changed_time = changed_time

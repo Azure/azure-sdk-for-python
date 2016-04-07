@@ -41,7 +41,7 @@ class WorkflowParameter(Model):
         'metadata': {'key': 'metadata', 'type': 'object'},
     }
 
-    def __init__(self, type=None, value=None, metadata=None, **kwargs):
+    def __init__(self, type=None, value=None, metadata=None):
         self.type = type
         self.value = value
         self.metadata = metadata

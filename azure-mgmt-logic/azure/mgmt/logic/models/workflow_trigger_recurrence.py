@@ -43,7 +43,7 @@ class WorkflowTriggerRecurrence(Model):
         'time_zone': {'key': 'timeZone', 'type': 'str'},
     }
 
-    def __init__(self, frequency=None, interval=None, start_time=None, time_zone=None, **kwargs):
+    def __init__(self, frequency=None, interval=None, start_time=None, time_zone=None):
         self.frequency = frequency
         self.interval = interval
         self.start_time = start_time

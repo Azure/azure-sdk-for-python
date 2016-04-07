@@ -75,7 +75,7 @@ class RecommendationRule(Model):
         'category': {'key': 'category', 'type': 'Category'},
     }
 
-    def __init__(self, level, channels, category, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None, **kwargs):
+    def __init__(self, level, channels, category, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None):
         self.name = name
         self.display_name = display_name
         self.message = message

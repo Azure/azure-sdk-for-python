@@ -43,6 +43,6 @@ class ApplicationPackageReference(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, application_id, version=None, **kwargs):
+    def __init__(self, application_id, version=None):
         self.application_id = application_id
         self.version = version

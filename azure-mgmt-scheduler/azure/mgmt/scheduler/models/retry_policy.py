@@ -41,7 +41,7 @@ class RetryPolicy(Model):
         'retry_count': {'key': 'retryCount', 'type': 'int'},
     }
 
-    def __init__(self, retry_type=None, retry_interval=None, retry_count=None, **kwargs):
+    def __init__(self, retry_type=None, retry_interval=None, retry_count=None):
         self.retry_type = retry_type
         self.retry_interval = retry_interval
         self.retry_count = retry_count

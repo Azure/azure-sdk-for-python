@@ -38,6 +38,6 @@ class MetricAvailabilily(Model):
         'retention': {'key': 'retention', 'type': 'str'},
     }
 
-    def __init__(self, time_grain=None, retention=None, **kwargs):
+    def __init__(self, time_grain=None, retention=None):
         self.time_grain = time_grain
         self.retention = retention

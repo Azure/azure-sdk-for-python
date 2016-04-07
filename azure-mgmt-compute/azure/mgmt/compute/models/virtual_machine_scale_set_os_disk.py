@@ -62,7 +62,7 @@ class VirtualMachineScaleSetOSDisk(Model):
         'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},
     }
 
-    def __init__(self, name, create_option, caching=None, os_type=None, image=None, vhd_containers=None, **kwargs):
+    def __init__(self, name, create_option, caching=None, os_type=None, image=None, vhd_containers=None):
         self.name = name
         self.caching = caching
         self.create_option = create_option

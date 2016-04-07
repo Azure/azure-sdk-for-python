@@ -40,6 +40,6 @@ class StorageAccountCheckNameAvailabilityParameters(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name, type="Microsoft.Storage/storageAccounts", **kwargs):
+    def __init__(self, name, type="Microsoft.Storage/storageAccounts"):
         self.name = name
         self.type = type

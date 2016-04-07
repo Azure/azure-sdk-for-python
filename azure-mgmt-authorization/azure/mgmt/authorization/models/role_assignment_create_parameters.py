@@ -35,5 +35,5 @@ class RoleAssignmentCreateParameters(Model):
         'properties': {'key': 'properties', 'type': 'RoleAssignmentProperties'},
     }
 
-    def __init__(self, properties=None, **kwargs):
+    def __init__(self, properties=None):
         self.properties = properties

@@ -73,7 +73,7 @@ class NamespaceProperties(Model):
         'namespace_type': {'key': 'namespaceType', 'type': 'NamespaceType'},
     }
 
-    def __init__(self, name=None, provisioning_state=None, region=None, status=None, created_at=None, service_bus_endpoint=None, subscription_id=None, scale_unit=None, enabled=None, critical=None, namespace_type=None, **kwargs):
+    def __init__(self, name=None, provisioning_state=None, region=None, status=None, created_at=None, service_bus_endpoint=None, subscription_id=None, scale_unit=None, enabled=None, critical=None, namespace_type=None):
         self.name = name
         self.provisioning_state = provisioning_state
         self.region = region

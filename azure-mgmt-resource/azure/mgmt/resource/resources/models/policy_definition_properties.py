@@ -40,7 +40,7 @@ class PolicyDefinitionProperties(Model):
         'policy_rule': {'key': 'policyRule', 'type': 'object'},
     }
 
-    def __init__(self, description=None, display_name=None, policy_rule=None, **kwargs):
+    def __init__(self, description=None, display_name=None, policy_rule=None):
         self.description = description
         self.display_name = display_name
         self.policy_rule = policy_rule

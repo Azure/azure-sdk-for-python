@@ -49,7 +49,7 @@ class AutoHealActions(Model):
         'min_process_execution_time': {'key': 'minProcessExecutionTime', 'type': 'str'},
     }
 
-    def __init__(self, action_type, custom_action=None, min_process_execution_time=None, **kwargs):
+    def __init__(self, action_type, custom_action=None, min_process_execution_time=None):
         self.action_type = action_type
         self.custom_action = custom_action
         self.min_process_execution_time = min_process_execution_time

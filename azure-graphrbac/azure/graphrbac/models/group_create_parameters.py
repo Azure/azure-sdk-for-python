@@ -50,7 +50,7 @@ class GroupCreateParameters(Model):
         'security_enabled': {'key': 'securityEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, display_name, mail_enabled, mail_nickname, security_enabled, **kwargs):
+    def __init__(self, display_name, mail_enabled, mail_nickname, security_enabled):
         self.display_name = display_name
         self.mail_enabled = mail_enabled
         self.mail_nickname = mail_nickname

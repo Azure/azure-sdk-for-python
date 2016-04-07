@@ -109,7 +109,7 @@ class JobScheduleStatistics(Model):
         'wait_time': {'key': 'waitTime', 'type': 'duration'},
     }
 
-    def __init__(self, url, start_time, last_update_time, user_cpu_time, kernel_cpu_time, wall_clock_time, read_iops, write_iops, read_io_gi_b, write_io_gi_b, num_succeeded_tasks, num_failed_tasks, num_task_retries, wait_time, **kwargs):
+    def __init__(self, url, start_time, last_update_time, user_cpu_time, kernel_cpu_time, wall_clock_time, read_iops, write_iops, read_io_gi_b, write_io_gi_b, num_succeeded_tasks, num_failed_tasks, num_task_retries, wait_time):
         self.url = url
         self.start_time = start_time
         self.last_update_time = last_update_time

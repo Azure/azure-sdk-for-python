@@ -47,7 +47,7 @@ class PurchasePlan(Model):
         'product': {'key': 'product', 'type': 'str'},
     }
 
-    def __init__(self, publisher, name, product, **kwargs):
+    def __init__(self, publisher, name, product):
         self.publisher = publisher
         self.name = name
         self.product = product

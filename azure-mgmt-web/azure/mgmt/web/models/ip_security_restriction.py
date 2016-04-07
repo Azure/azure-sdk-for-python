@@ -38,6 +38,6 @@ class IpSecurityRestriction(Model):
         'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
     }
 
-    def __init__(self, ip_address=None, subnet_mask=None, **kwargs):
+    def __init__(self, ip_address=None, subnet_mask=None):
         self.ip_address = ip_address
         self.subnet_mask = subnet_mask

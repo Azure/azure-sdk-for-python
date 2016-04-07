@@ -71,8 +71,8 @@ class RelayServiceConnectionEntity(Resource):
         'biztalk_uri': {'key': 'properties.biztalkUri', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None, **kwargs):
-        super(RelayServiceConnectionEntity, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None):
+        super(RelayServiceConnectionEntity, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.entity_name = entity_name
         self.entity_connection_string = entity_connection_string
         self.resource_type = resource_type

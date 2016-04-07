@@ -36,6 +36,6 @@ class WorkflowSecretKeys(Model):
         'secondary_secret_key': {'key': 'secondarySecretKey', 'type': 'str'},
     }
 
-    def __init__(self, primary_secret_key=None, secondary_secret_key=None, **kwargs):
+    def __init__(self, primary_secret_key=None, secondary_secret_key=None):
         self.primary_secret_key = primary_secret_key
         self.secondary_secret_key = secondary_secret_key

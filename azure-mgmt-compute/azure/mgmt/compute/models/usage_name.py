@@ -38,6 +38,6 @@ class UsageName(Model):
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, value=None, localized_value=None, **kwargs):
+    def __init__(self, value=None, localized_value=None):
         self.value = value
         self.localized_value = localized_value

@@ -37,6 +37,6 @@ class RecentJob(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, id=None, url=None, **kwargs):
+    def __init__(self, id=None, url=None):
         self.id = id
         self.url = url

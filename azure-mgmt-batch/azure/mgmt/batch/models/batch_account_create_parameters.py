@@ -41,7 +41,7 @@ class BatchAccountCreateParameters(Model):
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
     }
 
-    def __init__(self, location=None, tags=None, auto_storage=None, **kwargs):
+    def __init__(self, location=None, tags=None, auto_storage=None):
         self.location = location
         self.tags = tags
         self.auto_storage = auto_storage

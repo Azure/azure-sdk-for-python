@@ -37,6 +37,6 @@ class ErrorMessage(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, lang=None, value=None, **kwargs):
+    def __init__(self, lang=None, value=None):
         self.lang = lang
         self.value = value

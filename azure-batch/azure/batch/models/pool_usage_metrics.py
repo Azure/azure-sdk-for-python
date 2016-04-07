@@ -68,7 +68,7 @@ class PoolUsageMetrics(Model):
         'data_egress_gi_b': {'key': 'dataEgressGiB', 'type': 'float'},
     }
 
-    def __init__(self, pool_id, start_time, end_time, vm_size, total_core_hours, data_ingress_gi_b, data_egress_gi_b, **kwargs):
+    def __init__(self, pool_id, start_time, end_time, vm_size, total_core_hours, data_ingress_gi_b, data_egress_gi_b):
         self.pool_id = pool_id
         self.start_time = start_time
         self.end_time = end_time

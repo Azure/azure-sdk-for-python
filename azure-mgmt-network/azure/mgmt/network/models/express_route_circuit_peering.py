@@ -88,8 +88,8 @@ class ExpressRouteCircuitPeering(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, stats=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(ExpressRouteCircuitPeering, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, stats=None, provisioning_state=None, name=None, etag=None):
+        super(ExpressRouteCircuitPeering, self).__init__(id=id)
         self.peering_type = peering_type
         self.state = state
         self.azure_asn = azure_asn

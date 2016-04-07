@@ -59,8 +59,8 @@ class GeoRegion(Resource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, geo_region_name=None, description=None, display_name=None, **kwargs):
-        super(GeoRegion, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, geo_region_name=None, description=None, display_name=None):
+        super(GeoRegion, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.geo_region_name = geo_region_name
         self.description = description
         self.display_name = display_name

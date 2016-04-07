@@ -63,8 +63,8 @@ class NetworkFeatures(Resource):
         'hybrid_connections': {'key': 'properties.hybridConnections', 'type': '[RelayServiceConnectionEntity]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, virtual_network_name=None, virtual_network_connection=None, hybrid_connections=None, **kwargs):
-        super(NetworkFeatures, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, virtual_network_name=None, virtual_network_connection=None, hybrid_connections=None):
+        super(NetworkFeatures, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.virtual_network_name = virtual_network_name
         self.virtual_network_connection = virtual_network_connection
         self.hybrid_connections = hybrid_connections

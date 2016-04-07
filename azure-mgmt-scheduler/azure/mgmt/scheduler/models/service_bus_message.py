@@ -54,7 +54,7 @@ class ServiceBusMessage(Model):
         'transport_type': {'key': 'transportType', 'type': 'ServiceBusTransportType'},
     }
 
-    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, **kwargs):
+    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None):
         self.authentication = authentication
         self.brokered_message_properties = brokered_message_properties
         self.custom_message_properties = custom_message_properties

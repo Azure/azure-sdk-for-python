@@ -69,8 +69,8 @@ class LocalNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, local_network_address_space=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
-        super(LocalNetworkGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, local_network_address_space=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(LocalNetworkGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.local_network_address_space = local_network_address_space
         self.gateway_ip_address = gateway_ip_address
         self.bgp_settings = bgp_settings

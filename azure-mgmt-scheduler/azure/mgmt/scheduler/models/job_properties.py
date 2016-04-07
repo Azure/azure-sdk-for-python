@@ -47,7 +47,7 @@ class JobProperties(Model):
         'status': {'key': 'status', 'type': 'JobStatus'},
     }
 
-    def __init__(self, start_time=None, action=None, recurrence=None, state=None, status=None, **kwargs):
+    def __init__(self, start_time=None, action=None, recurrence=None, state=None, status=None):
         self.start_time = start_time
         self.action = action
         self.recurrence = recurrence

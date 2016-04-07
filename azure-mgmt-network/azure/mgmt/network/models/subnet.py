@@ -63,8 +63,8 @@ class Subnet(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, address_prefix=None, network_security_group=None, route_table=None, ip_configurations=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(Subnet, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, address_prefix=None, network_security_group=None, route_table=None, ip_configurations=None, provisioning_state=None, name=None, etag=None):
+        super(Subnet, self).__init__(id=id)
         self.address_prefix = address_prefix
         self.network_security_group = network_security_group
         self.route_table = route_table

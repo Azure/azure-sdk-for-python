@@ -41,7 +41,7 @@ class MpnsCredentialProperties(Model):
         'thumbprint': {'key': 'thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, mpns_certificate=None, certificate_key=None, thumbprint=None, **kwargs):
+    def __init__(self, mpns_certificate=None, certificate_key=None, thumbprint=None):
         self.mpns_certificate = mpns_certificate
         self.certificate_key = certificate_key
         self.thumbprint = thumbprint
