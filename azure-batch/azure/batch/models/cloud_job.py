@@ -84,7 +84,7 @@ class CloudJob(Model):
     :type common_environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
     :param pool_info: Gets or sets the pool on which the Batch service runs
-     the jobâ€™s tasks.
+     the job’s tasks.
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
     :param metadata: Gets or sets a list of name-value pairs associated with
