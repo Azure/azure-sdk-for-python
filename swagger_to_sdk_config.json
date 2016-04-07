@@ -6,71 +6,71 @@
   },
   "data": {
     "arm-authorization/2015-07-01/swagger/authorization.json": {
-      "autorest_options": "-Namespace azure.mgmt.authorization",
+      "autorest_options": "-Namespace azure.mgmt.authorization -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
     },
     "arm-batch/2015-12-01/swagger/BatchManagement.json": {
-      "autorest_options": "-Namespace azure.mgmt.batch",
+      "autorest_options": "-Namespace azure.mgmt.batch -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
     "arm-cdn/2015-06-01/swagger/cdn.json": {
-      "autorest_options": "-Namespace azure.mgmt.cdn",
+      "autorest_options": "-Namespace azure.mgmt.cdn -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
     "arm-compute/2016-03-30/swagger/compute.json": {
-      "autorest_options": "-Namespace azure.mgmt.compute",
+      "autorest_options": "-Namespace azure.mgmt.compute -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
     "arm-graphrbac/1.42-previewInternal/swagger/graphrbac.json": {
-      "autorest_options": "-Namespace azure.graphrbac",
+      "autorest_options": "-Namespace azure.graphrbac -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-graphrbac/azure/graphrbac"
     },
     "arm-logic/2015-02-01-preview/swagger/logic.json": {
-      "autorest_options": "-Namespace azure.mgmt.logic",
+      "autorest_options": "-Namespace azure.mgmt.logic -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
     },
     "arm-network/2016-03-30/swagger/network.json": {
-      "autorest_options": "-Namespace azure.mgmt.network",
+      "autorest_options": "-Namespace azure.mgmt.network -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-network/azure/mgmt/network"
     },
     "arm-notificationhubs/2014-09-01/swagger/notificationhubs.json": {
-      "autorest_options": "-Namespace azure.mgmt.notificationhubs",
+      "autorest_options": "-Namespace azure.mgmt.notificationhubs -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs"
     },
     "arm-redis/2015-08-01/swagger/redis.json": {
-      "autorest_options": "-Namespace azure.mgmt.redis",
+      "autorest_options": "-Namespace azure.mgmt.redis -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
     },
     "arm-resources/locks/2015-01-01/swagger/locks.json": {
-      "autorest_options": "-Namespace azure.mgmt.resource.locks",
+      "autorest_options": "-Namespace azure.mgmt.resource.locks -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks"
     },
     "arm-resources/features/2015-12-01/swagger/features.json": {
-      "autorest_options": "-Namespace azure.mgmt.resource.feature",
+      "autorest_options": "-Namespace azure.mgmt.resource.feature -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
     },
     "arm-resources/resources/2016-02-01/swagger/resources.json": {
-      "autorest_options": "-Namespace azure.mgmt.resource.resources",
+      "autorest_options": "-Namespace azure.mgmt.resource.resources -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources"
     },
     "arm-resources/subscriptions/2015-11-01/swagger/subscriptions.json": {
-      "autorest_options": "-Namespace azure.mgmt.resource.subscriptions",
+      "autorest_options": "-Namespace azure.mgmt.resource.subscriptions -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions"
     },
     "arm-scheduler/2016-01-01/swagger/scheduler.json": {
-      "autorest_options": "-Namespace azure.mgmt.scheduler",
+      "autorest_options": "-Namespace azure.mgmt.scheduler -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
     },
     "arm-storage/2015-06-15/swagger/storage.json": {
-      "autorest_options": "-Namespace azure.mgmt.storage",
+      "autorest_options": "-Namespace azure.mgmt.storage -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage"
     },
     "arm-web/2015-08-01/swagger/service.json": {
-      "autorest_options": "-Namespace azure.mgmt.web",
+      "autorest_options": "-Namespace azure.mgmt.web -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
 	"batch/2016-02-01.3.0/swagger/BatchService.json": {
-      "autorest_options": "-Namespace azure.batch",
+      "autorest_options": "-Namespace azure.batch -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-batch/azure/batch/"
     }
   }
