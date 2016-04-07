@@ -35,5 +35,5 @@ class SubscriptionQuotasGetResult(Model):
         'account_quota': {'key': 'accountQuota', 'type': 'int'},
     }
 
-    def __init__(self, account_quota=None, **kwargs):
+    def __init__(self, account_quota=None):
         self.account_quota = account_quota

@@ -78,8 +78,8 @@ class Usage(Resource):
         'site_mode': {'key': 'properties.siteMode', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, display_name=None, usage_name=None, resource_name=None, unit=None, current_value=None, limit=None, next_reset_time=None, compute_mode=None, site_mode=None, **kwargs):
-        super(Usage, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, display_name=None, usage_name=None, resource_name=None, unit=None, current_value=None, limit=None, next_reset_time=None, compute_mode=None, site_mode=None):
+        super(Usage, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.display_name = display_name
         self.usage_name = usage_name
         self.resource_name = resource_name

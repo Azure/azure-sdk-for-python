@@ -44,7 +44,7 @@ class Dependency(Model):
         'resource_name': {'key': 'resourceName', 'type': 'str'},
     }
 
-    def __init__(self, depends_on=None, id=None, resource_type=None, resource_name=None, **kwargs):
+    def __init__(self, depends_on=None, id=None, resource_type=None, resource_name=None):
         self.depends_on = depends_on
         self.id = id
         self.resource_type = resource_type

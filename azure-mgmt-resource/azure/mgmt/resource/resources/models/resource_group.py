@@ -54,7 +54,7 @@ class ResourceGroup(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, id=None, name=None, properties=None, tags=None, **kwargs):
+    def __init__(self, location, id=None, name=None, properties=None, tags=None):
         self.id = id
         self.name = name
         self.properties = properties

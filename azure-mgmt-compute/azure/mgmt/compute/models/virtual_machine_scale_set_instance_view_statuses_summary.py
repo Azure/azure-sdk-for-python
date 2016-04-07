@@ -36,5 +36,5 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
         'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
     }
 
-    def __init__(self, statuses_summary=None, **kwargs):
+    def __init__(self, statuses_summary=None):
         self.statuses_summary = statuses_summary

@@ -39,5 +39,5 @@ class RedisRegenerateKeyParameters(Model):
         'key_type': {'key': 'keyType', 'type': 'RedisKeyType'},
     }
 
-    def __init__(self, key_type, **kwargs):
+    def __init__(self, key_type):
         self.key_type = key_type

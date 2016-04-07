@@ -43,7 +43,7 @@ class TldLegalAgreement(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, agreement_key=None, title=None, content=None, url=None, **kwargs):
+    def __init__(self, agreement_key=None, title=None, content=None, url=None):
         self.agreement_key = agreement_key
         self.title = title
         self.content = content

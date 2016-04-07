@@ -34,5 +34,5 @@ class RoleAssignmentFilter(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
     }
 
-    def __init__(self, principal_id=None, **kwargs):
+    def __init__(self, principal_id=None):
         self.principal_id = principal_id

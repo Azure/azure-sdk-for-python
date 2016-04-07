@@ -45,6 +45,6 @@ class AutoStorageProperties(Model):
         'last_key_sync': {'key': 'lastKeySync', 'type': 'iso-8601'},
     }
 
-    def __init__(self, storage_account_id, last_key_sync, **kwargs):
+    def __init__(self, storage_account_id, last_key_sync):
         self.storage_account_id = storage_account_id
         self.last_key_sync = last_key_sync

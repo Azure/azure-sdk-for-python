@@ -57,6 +57,6 @@ class ServiceBusQueueMessage(ServiceBusMessage):
         'queue_name': {'key': 'queueName', 'type': 'str'},
     }
 
-    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, queue_name=None, **kwargs):
-        super(ServiceBusQueueMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type, **kwargs)
+    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, queue_name=None):
+        super(ServiceBusQueueMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type)
         self.queue_name = queue_name

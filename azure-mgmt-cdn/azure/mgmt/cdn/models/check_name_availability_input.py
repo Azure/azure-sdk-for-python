@@ -43,6 +43,6 @@ class CheckNameAvailabilityInput(Model):
         'type': {'key': 'type', 'type': 'ResourceType'},
     }
 
-    def __init__(self, name, type, **kwargs):
+    def __init__(self, name, type):
         self.name = name
         self.type = type

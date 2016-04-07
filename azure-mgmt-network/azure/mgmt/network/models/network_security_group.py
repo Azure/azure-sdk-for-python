@@ -76,8 +76,8 @@ class NetworkSecurityGroup(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, security_rules=None, default_security_rules=None, network_interfaces=None, subnets=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
-        super(NetworkSecurityGroup, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, security_rules=None, default_security_rules=None, network_interfaces=None, subnets=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(NetworkSecurityGroup, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.security_rules = security_rules
         self.default_security_rules = default_security_rules
         self.network_interfaces = network_interfaces

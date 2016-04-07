@@ -42,7 +42,7 @@ class ExpressRouteCircuitSku(Model):
         'family': {'key': 'family', 'type': 'ExpressRouteCircuitSkuFamily'},
     }
 
-    def __init__(self, name=None, tier=None, family=None, **kwargs):
+    def __init__(self, name=None, tier=None, family=None):
         self.name = name
         self.tier = tier
         self.family = family

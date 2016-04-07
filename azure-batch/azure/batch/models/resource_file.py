@@ -45,7 +45,7 @@ class ResourceFile(Model):
         'file_mode': {'key': 'fileMode', 'type': 'str'},
     }
 
-    def __init__(self, blob_source=None, file_path=None, file_mode=None, **kwargs):
+    def __init__(self, blob_source=None, file_path=None, file_mode=None):
         self.blob_source = blob_source
         self.file_path = file_path
         self.file_mode = file_mode

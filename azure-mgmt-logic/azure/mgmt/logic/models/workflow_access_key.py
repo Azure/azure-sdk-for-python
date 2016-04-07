@@ -45,8 +45,8 @@ class WorkflowAccessKey(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, not_before=None, not_after=None, name=None, type=None, **kwargs):
-        super(WorkflowAccessKey, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, not_before=None, not_after=None, name=None, type=None):
+        super(WorkflowAccessKey, self).__init__(id=id)
         self.not_before = not_before
         self.not_after = not_after
         self.name = name

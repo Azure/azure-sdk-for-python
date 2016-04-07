@@ -56,7 +56,7 @@ class GetApplicationPackageResult(Model):
         'last_activation_time': {'key': 'lastActivationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, id=None, version=None, state=None, format=None, storage_url=None, storage_url_expiry=None, last_activation_time=None, **kwargs):
+    def __init__(self, id=None, version=None, state=None, format=None, storage_url=None, storage_url_expiry=None, last_activation_time=None):
         self.id = id
         self.version = version
         self.state = state

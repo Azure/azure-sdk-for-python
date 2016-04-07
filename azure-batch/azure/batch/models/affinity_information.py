@@ -38,5 +38,5 @@ class AffinityInformation(Model):
         'affinity_id': {'key': 'affinityId', 'type': 'str'},
     }
 
-    def __init__(self, affinity_id=None, **kwargs):
+    def __init__(self, affinity_id=None):
         self.affinity_id = affinity_id

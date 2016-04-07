@@ -35,5 +35,5 @@ class ResourceProviderOperationDetailListResult(Model):
         'value': {'key': 'value', 'type': '[ResourceProviderOperationDefinition]'},
     }
 
-    def __init__(self, value=None, **kwargs):
+    def __init__(self, value=None):
         self.value = value

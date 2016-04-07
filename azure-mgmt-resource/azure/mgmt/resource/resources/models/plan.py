@@ -43,7 +43,7 @@ class Plan(Model):
         'promotion_code': {'key': 'promotionCode', 'type': 'str'},
     }
 
-    def __init__(self, name=None, publisher=None, product=None, promotion_code=None, **kwargs):
+    def __init__(self, name=None, publisher=None, product=None, promotion_code=None):
         self.name = name
         self.publisher = publisher
         self.product = product

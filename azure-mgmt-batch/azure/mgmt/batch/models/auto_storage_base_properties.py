@@ -39,5 +39,5 @@ class AutoStorageBaseProperties(Model):
         'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
     }
 
-    def __init__(self, storage_account_id, **kwargs):
+    def __init__(self, storage_account_id):
         self.storage_account_id = storage_account_id

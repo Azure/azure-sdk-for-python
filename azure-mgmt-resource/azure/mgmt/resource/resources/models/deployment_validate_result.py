@@ -39,6 +39,6 @@ class DeploymentValidateResult(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, error=None, properties=None, **kwargs):
+    def __init__(self, error=None, properties=None):
         self.error = error
         self.properties = properties

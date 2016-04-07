@@ -36,6 +36,6 @@ class KeyValuePairStringString(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, key=None, value=None, **kwargs):
+    def __init__(self, key=None, value=None):
         self.key = key
         self.value = value

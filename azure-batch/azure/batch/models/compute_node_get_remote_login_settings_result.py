@@ -44,6 +44,6 @@ class ComputeNodeGetRemoteLoginSettingsResult(Model):
         'remote_login_port': {'key': 'remoteLoginPort', 'type': 'int'},
     }
 
-    def __init__(self, remote_login_ip_address, remote_login_port, **kwargs):
+    def __init__(self, remote_login_ip_address, remote_login_port):
         self.remote_login_ip_address = remote_login_ip_address
         self.remote_login_port = remote_login_port

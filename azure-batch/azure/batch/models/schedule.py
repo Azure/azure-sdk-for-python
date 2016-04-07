@@ -55,7 +55,7 @@ class Schedule(Model):
         'recurrence_interval': {'key': 'recurrenceInterval', 'type': 'duration'},
     }
 
-    def __init__(self, do_not_run_until=None, do_not_run_after=None, start_window=None, recurrence_interval=None, **kwargs):
+    def __init__(self, do_not_run_until=None, do_not_run_after=None, start_window=None, recurrence_interval=None):
         self.do_not_run_until = do_not_run_until
         self.do_not_run_after = do_not_run_after
         self.start_window = start_window

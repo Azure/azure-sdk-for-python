@@ -35,5 +35,5 @@ class VpnClientParameters(Model):
         'processor_architecture': {'key': 'ProcessorArchitecture', 'type': 'ProcessorArchitecture'},
     }
 
-    def __init__(self, processor_architecture=None, **kwargs):
+    def __init__(self, processor_architecture=None):
         self.processor_architecture = processor_architecture

@@ -42,7 +42,7 @@ class SiteProperties(Model):
         'app_settings': {'key': 'appSettings', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, metadata=None, properties=None, app_settings=None, **kwargs):
+    def __init__(self, metadata=None, properties=None, app_settings=None):
         self.metadata = metadata
         self.properties = properties
         self.app_settings = app_settings

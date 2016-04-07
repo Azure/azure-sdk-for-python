@@ -46,7 +46,7 @@ class SkuDescription(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, tier=None, size=None, family=None, capacity=None, **kwargs):
+    def __init__(self, name=None, tier=None, size=None, family=None, capacity=None):
         self.name = name
         self.tier = tier
         self.size = size

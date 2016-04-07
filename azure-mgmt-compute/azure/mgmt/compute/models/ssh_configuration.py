@@ -36,5 +36,5 @@ class SshConfiguration(Model):
         'public_keys': {'key': 'publicKeys', 'type': '[SshPublicKey]'},
     }
 
-    def __init__(self, public_keys=None, **kwargs):
+    def __init__(self, public_keys=None):
         self.public_keys = public_keys

@@ -47,5 +47,5 @@ class HardwareProfile(Model):
         'vm_size': {'key': 'vmSize', 'type': 'VirtualMachineSizeTypes'},
     }
 
-    def __init__(self, vm_size=None, **kwargs):
+    def __init__(self, vm_size=None):
         self.vm_size = vm_size

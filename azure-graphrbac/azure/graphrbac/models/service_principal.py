@@ -46,7 +46,7 @@ class ServicePrincipal(Model):
         'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
     }
 
-    def __init__(self, object_id=None, object_type=None, display_name=None, app_id=None, service_principal_names=None, **kwargs):
+    def __init__(self, object_id=None, object_type=None, display_name=None, app_id=None, service_principal_names=None):
         self.object_id = object_id
         self.object_type = object_type
         self.display_name = display_name

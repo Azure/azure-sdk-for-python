@@ -44,6 +44,6 @@ class PoolInformation(Model):
         'auto_pool_specification': {'key': 'autoPoolSpecification', 'type': 'AutoPoolSpecification'},
     }
 
-    def __init__(self, pool_id=None, auto_pool_specification=None, **kwargs):
+    def __init__(self, pool_id=None, auto_pool_specification=None):
         self.pool_id = pool_id
         self.auto_pool_specification = auto_pool_specification

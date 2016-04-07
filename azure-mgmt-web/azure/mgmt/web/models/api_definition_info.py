@@ -34,5 +34,5 @@ class ApiDefinitionInfo(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, url=None, **kwargs):
+    def __init__(self, url=None):
         self.url = url

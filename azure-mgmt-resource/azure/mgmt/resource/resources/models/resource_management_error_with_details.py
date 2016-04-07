@@ -48,6 +48,6 @@ class ResourceManagementErrorWithDetails(ResourceManagementError):
         'details': {'key': 'details', 'type': '[ResourceManagementError]'},
     }
 
-    def __init__(self, code, message, target=None, details=None, **kwargs):
-        super(ResourceManagementErrorWithDetails, self).__init__(code=code, message=message, target=target, **kwargs)
+    def __init__(self, code, message, target=None, details=None):
+        super(ResourceManagementErrorWithDetails, self).__init__(code=code, message=message, target=target)
         self.details = details

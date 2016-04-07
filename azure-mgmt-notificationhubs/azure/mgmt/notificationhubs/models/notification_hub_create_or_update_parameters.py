@@ -46,7 +46,7 @@ class NotificationHubCreateOrUpdateParameters(Model):
         'properties': {'key': 'properties', 'type': 'NotificationHubProperties'},
     }
 
-    def __init__(self, location, properties, tags=None, **kwargs):
+    def __init__(self, location, properties, tags=None):
         self.location = location
         self.tags = tags
         self.properties = properties

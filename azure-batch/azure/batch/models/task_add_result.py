@@ -55,7 +55,7 @@ class TaskAddResult(Model):
         'error': {'key': 'error', 'type': 'BatchError'},
     }
 
-    def __init__(self, status, task_id, e_tag=None, last_modified=None, location=None, error=None, **kwargs):
+    def __init__(self, status, task_id, e_tag=None, last_modified=None, location=None, error=None):
         self.status = status
         self.task_id = task_id
         self.e_tag = e_tag

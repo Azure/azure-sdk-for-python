@@ -45,7 +45,7 @@ class AddApplicationPackageResult(Model):
         'storage_url_expiry': {'key': 'storageUrlExpiry', 'type': 'iso-8601'},
     }
 
-    def __init__(self, id=None, version=None, storage_url=None, storage_url_expiry=None, **kwargs):
+    def __init__(self, id=None, version=None, storage_url=None, storage_url_expiry=None):
         self.id = id
         self.version = version
         self.storage_url = storage_url

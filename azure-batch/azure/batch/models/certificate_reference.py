@@ -61,7 +61,7 @@ class CertificateReference(Model):
         'visibility': {'key': 'visibility', 'type': '[CertificateVisibility]'},
     }
 
-    def __init__(self, thumbprint, thumbprint_algorithm, store_location=None, store_name=None, visibility=None, **kwargs):
+    def __init__(self, thumbprint, thumbprint_algorithm, store_location=None, store_name=None, visibility=None):
         self.thumbprint = thumbprint
         self.thumbprint_algorithm = thumbprint_algorithm
         self.store_location = store_location

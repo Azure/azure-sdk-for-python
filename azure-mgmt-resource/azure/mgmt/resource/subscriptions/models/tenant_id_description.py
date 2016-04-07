@@ -37,6 +37,6 @@ class TenantIdDescription(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, id=None, tenant_id=None, **kwargs):
+    def __init__(self, id=None, tenant_id=None):
         self.id = id
         self.tenant_id = tenant_id

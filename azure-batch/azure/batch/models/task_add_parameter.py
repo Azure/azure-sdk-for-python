@@ -87,7 +87,7 @@ class TaskAddParameter(Model):
         'depends_on': {'key': 'dependsOn', 'type': 'TaskDependencies'},
     }
 
-    def __init__(self, id, command_line, display_name=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, run_elevated=None, multi_instance_settings=None, depends_on=None, **kwargs):
+    def __init__(self, id, command_line, display_name=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, run_elevated=None, multi_instance_settings=None, depends_on=None):
         self.id = id
         self.display_name = display_name
         self.command_line = command_line

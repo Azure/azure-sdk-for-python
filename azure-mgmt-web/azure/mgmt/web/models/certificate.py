@@ -97,8 +97,8 @@ class Certificate(Resource):
         'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, friendly_name=None, subject_name=None, host_names=None, pfx_blob=None, site_name=None, self_link=None, issuer=None, issue_date=None, expiration_date=None, password=None, thumbprint=None, valid=None, cer_blob=None, public_key_hash=None, hosting_environment_profile=None, **kwargs):
-        super(Certificate, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, friendly_name=None, subject_name=None, host_names=None, pfx_blob=None, site_name=None, self_link=None, issuer=None, issue_date=None, expiration_date=None, password=None, thumbprint=None, valid=None, cer_blob=None, public_key_hash=None, hosting_environment_profile=None):
+        super(Certificate, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.friendly_name = friendly_name
         self.subject_name = subject_name
         self.host_names = host_names

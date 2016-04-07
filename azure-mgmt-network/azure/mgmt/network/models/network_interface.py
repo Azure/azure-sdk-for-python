@@ -86,8 +86,8 @@ class NetworkInterface(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
-        super(NetworkInterface, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(NetworkInterface, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.virtual_machine = virtual_machine
         self.network_security_group = network_security_group
         self.ip_configurations = ip_configurations

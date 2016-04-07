@@ -45,7 +45,7 @@ class BatchError(Model):
         'values': {'key': 'values', 'type': '[BatchErrorDetail]'},
     }
 
-    def __init__(self, code=None, message=None, values=None, **kwargs):
+    def __init__(self, code=None, message=None, values=None):
         self.code = code
         self.message = message
         self.values = values

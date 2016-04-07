@@ -71,8 +71,8 @@ class VirtualNetwork(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
-        super(VirtualNetwork, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(VirtualNetwork, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.address_space = address_space
         self.dhcp_options = dhcp_options
         self.subnets = subnets

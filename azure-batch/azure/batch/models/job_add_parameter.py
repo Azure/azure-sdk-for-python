@@ -88,7 +88,7 @@ class JobAddParameter(Model):
         'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
     }
 
-    def __init__(self, id, pool_info, display_name=None, priority=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, metadata=None, uses_task_dependencies=None, **kwargs):
+    def __init__(self, id, pool_info, display_name=None, priority=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, metadata=None, uses_task_dependencies=None):
         self.id = id
         self.display_name = display_name
         self.priority = priority

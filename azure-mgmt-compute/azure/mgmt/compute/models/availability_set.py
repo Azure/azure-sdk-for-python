@@ -65,8 +65,8 @@ class AvailabilitySet(Resource):
         'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None, statuses=None, **kwargs):
-        super(AvailabilitySet, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None, statuses=None):
+        super(AvailabilitySet, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.platform_update_domain_count = platform_update_domain_count
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines

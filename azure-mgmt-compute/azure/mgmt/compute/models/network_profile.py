@@ -35,5 +35,5 @@ class NetworkProfile(Model):
         'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterfaceReference]'},
     }
 
-    def __init__(self, network_interfaces=None, **kwargs):
+    def __init__(self, network_interfaces=None):
         self.network_interfaces = network_interfaces

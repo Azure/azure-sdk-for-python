@@ -56,7 +56,7 @@ class GenericResource(ResourceModel):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, properties=None, **kwargs):
-        super(GenericResource, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, properties=None):
+        super(GenericResource, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.plan = plan
         self.properties = properties

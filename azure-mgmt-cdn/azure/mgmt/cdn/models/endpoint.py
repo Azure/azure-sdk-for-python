@@ -106,8 +106,8 @@ class Endpoint(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
 
-    def __init__(self, location, tags, id=None, name=None, type=None, host_name=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, origins=None, resource_state=None, provisioning_state=None, **kwargs):
-        super(Endpoint, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, tags, id=None, name=None, type=None, host_name=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, origins=None, resource_state=None, provisioning_state=None):
+        super(Endpoint, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.host_name = host_name
         self.origin_host_header = origin_host_header
         self.origin_path = origin_path

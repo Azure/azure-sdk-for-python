@@ -40,5 +40,5 @@ class TaskSchedulingPolicy(Model):
         'node_fill_type': {'key': 'nodeFillType', 'type': 'ComputeNodeFillType'},
     }
 
-    def __init__(self, node_fill_type, **kwargs):
+    def __init__(self, node_fill_type):
         self.node_fill_type = node_fill_type

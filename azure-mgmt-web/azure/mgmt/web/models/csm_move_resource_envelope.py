@@ -38,6 +38,6 @@ class CsmMoveResourceEnvelope(Model):
         'resources': {'key': 'resources', 'type': '[str]'},
     }
 
-    def __init__(self, target_resource_group=None, resources=None, **kwargs):
+    def __init__(self, target_resource_group=None, resources=None):
         self.target_resource_group = target_resource_group
         self.resources = resources

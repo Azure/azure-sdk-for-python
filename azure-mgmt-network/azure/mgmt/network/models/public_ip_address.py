@@ -78,8 +78,8 @@ class PublicIPAddress(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, public_ip_allocation_method=None, ip_configuration=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
-        super(PublicIPAddress, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, public_ip_allocation_method=None, ip_configuration=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(PublicIPAddress, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.public_ip_allocation_method = public_ip_allocation_method
         self.ip_configuration = ip_configuration
         self.dns_settings = dns_settings

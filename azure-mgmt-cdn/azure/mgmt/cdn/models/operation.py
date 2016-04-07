@@ -38,6 +38,6 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, name=None, display=None, **kwargs):
+    def __init__(self, name=None, display=None):
         self.name = name
         self.display = display

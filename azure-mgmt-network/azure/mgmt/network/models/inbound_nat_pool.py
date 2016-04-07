@@ -85,8 +85,8 @@ class InboundNatPool(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, frontend_port_range_start, frontend_port_range_end, backend_port, id=None, frontend_ip_configuration=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(InboundNatPool, self).__init__(id=id, **kwargs)
+    def __init__(self, protocol, frontend_port_range_start, frontend_port_range_end, backend_port, id=None, frontend_ip_configuration=None, provisioning_state=None, name=None, etag=None):
+        super(InboundNatPool, self).__init__(id=id)
         self.frontend_ip_configuration = frontend_ip_configuration
         self.protocol = protocol
         self.frontend_port_range_start = frontend_port_range_start

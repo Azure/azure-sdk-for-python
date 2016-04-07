@@ -43,7 +43,7 @@ class JobHistoryDefinition(Model):
         'properties': {'key': 'properties', 'type': 'JobHistoryDefinitionProperties'},
     }
 
-    def __init__(self, id=None, type=None, name=None, properties=None, **kwargs):
+    def __init__(self, id=None, type=None, name=None, properties=None):
         self.id = id
         self.type = type
         self.name = name

@@ -39,6 +39,6 @@ class RedisListKeysResult(Model):
         'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
     }
 
-    def __init__(self, primary_key=None, secondary_key=None, **kwargs):
+    def __init__(self, primary_key=None, secondary_key=None):
         self.primary_key = primary_key
         self.secondary_key = secondary_key

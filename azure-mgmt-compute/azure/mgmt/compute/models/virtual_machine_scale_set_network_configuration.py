@@ -53,8 +53,8 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetIPConfiguration]'},
     }
 
-    def __init__(self, name, ip_configurations, id=None, primary=None, **kwargs):
-        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id, **kwargs)
+    def __init__(self, name, ip_configurations, id=None, primary=None):
+        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id)
         self.name = name
         self.primary = primary
         self.ip_configurations = ip_configurations

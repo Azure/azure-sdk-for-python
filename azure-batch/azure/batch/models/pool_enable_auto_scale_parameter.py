@@ -39,6 +39,6 @@ class PoolEnableAutoScaleParameter(Model):
         'auto_scale_evaluation_interval': {'key': 'autoScaleEvaluationInterval', 'type': 'duration'},
     }
 
-    def __init__(self, auto_scale_formula=None, auto_scale_evaluation_interval=None, **kwargs):
+    def __init__(self, auto_scale_formula=None, auto_scale_evaluation_interval=None):
         self.auto_scale_formula = auto_scale_formula
         self.auto_scale_evaluation_interval = auto_scale_evaluation_interval

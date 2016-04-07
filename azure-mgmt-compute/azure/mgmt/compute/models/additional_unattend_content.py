@@ -53,7 +53,7 @@ class AdditionalUnattendContent(Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    def __init__(self, pass_name=None, component_name=None, setting_name=None, content=None, **kwargs):
+    def __init__(self, pass_name=None, component_name=None, setting_name=None, content=None):
         self.pass_name = pass_name
         self.component_name = component_name
         self.setting_name = setting_name

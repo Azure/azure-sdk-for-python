@@ -53,6 +53,6 @@ class ConnectionStringDictionary(Resource):
         'properties': {'key': 'properties', 'type': '{ConnStringValueTypePair}'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, properties=None, **kwargs):
-        super(ConnectionStringDictionary, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, properties=None):
+        super(ConnectionStringDictionary, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.properties = properties

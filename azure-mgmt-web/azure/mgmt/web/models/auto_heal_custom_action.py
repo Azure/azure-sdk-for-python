@@ -38,6 +38,6 @@ class AutoHealCustomAction(Model):
         'parameters': {'key': 'parameters', 'type': 'str'},
     }
 
-    def __init__(self, exe=None, parameters=None, **kwargs):
+    def __init__(self, exe=None, parameters=None):
         self.exe = exe
         self.parameters = parameters

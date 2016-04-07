@@ -55,8 +55,8 @@ class ApplicationGatewayBackendAddressPool(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, backend_ip_configurations=None, backend_addresses=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(ApplicationGatewayBackendAddressPool, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, backend_ip_configurations=None, backend_addresses=None, provisioning_state=None, name=None, etag=None):
+        super(ApplicationGatewayBackendAddressPool, self).__init__(id=id)
         self.backend_ip_configurations = backend_ip_configurations
         self.backend_addresses = backend_addresses
         self.provisioning_state = provisioning_state

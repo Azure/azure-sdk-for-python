@@ -53,7 +53,7 @@ class JobScheduleUpdateParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, schedule, job_specification, metadata=None, **kwargs):
+    def __init__(self, schedule, job_specification, metadata=None):
         self.schedule = schedule
         self.job_specification = job_specification
         self.metadata = metadata

@@ -73,8 +73,8 @@ class BackupRequest(Resource):
         'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None, **kwargs):
-        super(BackupRequest, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
+        super(BackupRequest, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.backup_request_name = backup_request_name
         self.enabled = enabled
         self.storage_account_url = storage_account_url

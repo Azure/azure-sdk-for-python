@@ -44,7 +44,7 @@ class VirtualMachineScaleSetSkuCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'VirtualMachineScaleSetSkuScaleType'},
     }
 
-    def __init__(self, minimum=None, maximum=None, default_capacity=None, scale_type=None, **kwargs):
+    def __init__(self, minimum=None, maximum=None, default_capacity=None, scale_type=None):
         self.minimum = minimum
         self.maximum = maximum
         self.default_capacity = default_capacity

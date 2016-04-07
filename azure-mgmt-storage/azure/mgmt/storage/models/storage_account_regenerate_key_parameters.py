@@ -38,5 +38,5 @@ class StorageAccountRegenerateKeyParameters(Model):
         'key_name': {'key': 'keyName', 'type': 'KeyName'},
     }
 
-    def __init__(self, key_name, **kwargs):
+    def __init__(self, key_name):
         self.key_name = key_name

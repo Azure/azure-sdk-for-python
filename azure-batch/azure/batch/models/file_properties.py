@@ -53,7 +53,7 @@ class FileProperties(Model):
         'file_mode': {'key': 'fileMode', 'type': 'str'},
     }
 
-    def __init__(self, last_modified, content_length, creation_time=None, content_type=None, file_mode=None, **kwargs):
+    def __init__(self, last_modified, content_length, creation_time=None, content_type=None, file_mode=None):
         self.creation_time = creation_time
         self.last_modified = last_modified
         self.content_length = content_length

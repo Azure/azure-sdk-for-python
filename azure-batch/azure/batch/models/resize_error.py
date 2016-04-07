@@ -44,7 +44,7 @@ class ResizeError(Model):
         'values': {'key': 'values', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, code=None, message=None, values=None, **kwargs):
+    def __init__(self, code=None, message=None, values=None):
         self.code = code
         self.message = message
         self.values = values

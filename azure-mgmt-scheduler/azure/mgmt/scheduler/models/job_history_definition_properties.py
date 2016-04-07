@@ -57,7 +57,7 @@ class JobHistoryDefinitionProperties(Model):
         'repeat_count': {'key': 'repeatCount', 'type': 'int'},
     }
 
-    def __init__(self, start_time=None, end_time=None, expected_execution_time=None, action_name=None, status=None, message=None, retry_count=None, repeat_count=None, **kwargs):
+    def __init__(self, start_time=None, end_time=None, expected_execution_time=None, action_name=None, status=None, message=None, retry_count=None, repeat_count=None):
         self.start_time = start_time
         self.end_time = end_time
         self.expected_execution_time = expected_execution_time

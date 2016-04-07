@@ -38,6 +38,6 @@ class DiskInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, name=None, statuses=None, **kwargs):
+    def __init__(self, name=None, statuses=None):
         self.name = name
         self.statuses = statuses

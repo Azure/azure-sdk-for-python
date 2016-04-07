@@ -45,7 +45,7 @@ class ConnStringInfo(Model):
         'type': {'key': 'type', 'type': 'DatabaseServerType'},
     }
 
-    def __init__(self, type, name=None, connection_string=None, **kwargs):
+    def __init__(self, type, name=None, connection_string=None):
         self.name = name
         self.connection_string = connection_string
         self.type = type

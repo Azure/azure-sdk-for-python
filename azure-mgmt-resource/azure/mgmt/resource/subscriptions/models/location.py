@@ -50,7 +50,7 @@ class Location(Model):
         'longitude': {'key': 'longitude', 'type': 'str'},
     }
 
-    def __init__(self, id=None, subscription_id=None, name=None, display_name=None, latitude=None, longitude=None, **kwargs):
+    def __init__(self, id=None, subscription_id=None, name=None, display_name=None, latitude=None, longitude=None):
         self.id = id
         self.subscription_id = subscription_id
         self.name = name

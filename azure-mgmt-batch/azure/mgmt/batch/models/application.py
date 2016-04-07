@@ -50,7 +50,7 @@ class Application(Model):
         'default_version': {'key': 'defaultVersion', 'type': 'str'},
     }
 
-    def __init__(self, id=None, display_name=None, packages=None, allow_updates=None, default_version=None, **kwargs):
+    def __init__(self, id=None, display_name=None, packages=None, allow_updates=None, default_version=None):
         self.id = id
         self.display_name = display_name
         self.packages = packages

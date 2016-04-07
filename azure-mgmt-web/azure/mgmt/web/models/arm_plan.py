@@ -46,7 +46,7 @@ class ArmPlan(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, name=None, publisher=None, product=None, promotion_code=None, version=None, **kwargs):
+    def __init__(self, name=None, publisher=None, product=None, promotion_code=None, version=None):
         self.name = name
         self.publisher = publisher
         self.product = product

@@ -72,8 +72,8 @@ class WorkflowTrigger(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, provisioning_state=None, created_time=None, changed_time=None, state=None, status=None, last_execution_time=None, next_execution_time=None, recurrence=None, workflow=None, name=None, type=None, **kwargs):
-        super(WorkflowTrigger, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, provisioning_state=None, created_time=None, changed_time=None, state=None, status=None, last_execution_time=None, next_execution_time=None, recurrence=None, workflow=None, name=None, type=None):
+        super(WorkflowTrigger, self).__init__(id=id)
         self.provisioning_state = provisioning_state
         self.created_time = created_time
         self.changed_time = changed_time

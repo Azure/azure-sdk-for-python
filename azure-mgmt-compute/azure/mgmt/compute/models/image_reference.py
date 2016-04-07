@@ -45,7 +45,7 @@ class ImageReference(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, publisher=None, offer=None, sku=None, version=None, **kwargs):
+    def __init__(self, publisher=None, offer=None, sku=None, version=None):
         self.publisher = publisher
         self.offer = offer
         self.sku = sku

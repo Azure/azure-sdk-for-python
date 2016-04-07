@@ -36,5 +36,5 @@ class VirtualMachineScaleSetExtensionProfile(Model):
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetExtension]'},
     }
 
-    def __init__(self, extensions=None, **kwargs):
+    def __init__(self, extensions=None):
         self.extensions = extensions

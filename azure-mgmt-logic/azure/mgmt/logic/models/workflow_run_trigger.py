@@ -67,7 +67,7 @@ class WorkflowRunTrigger(Model):
         'error': {'key': 'error', 'type': 'object'},
     }
 
-    def __init__(self, name=None, inputs=None, inputs_link=None, outputs=None, outputs_link=None, start_time=None, end_time=None, tracking_id=None, code=None, status=None, error=None, **kwargs):
+    def __init__(self, name=None, inputs=None, inputs_link=None, outputs=None, outputs_link=None, start_time=None, end_time=None, tracking_id=None, code=None, status=None, error=None):
         self.name = name
         self.inputs = inputs
         self.inputs_link = inputs_link

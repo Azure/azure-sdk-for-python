@@ -49,7 +49,7 @@ class User(Model):
         'mail': {'key': 'mail', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, user_principal_name=None, display_name=None, sign_in_name=None, mail=None, **kwargs):
+    def __init__(self, object_id=None, object_type=None, user_principal_name=None, display_name=None, sign_in_name=None, mail=None):
         self.object_id = object_id
         self.object_type = object_type
         self.user_principal_name = user_principal_name

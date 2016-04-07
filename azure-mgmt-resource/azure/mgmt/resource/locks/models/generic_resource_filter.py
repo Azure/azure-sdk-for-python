@@ -40,7 +40,7 @@ class GenericResourceFilter(Model):
         'tagvalue': {'key': 'tagvalue', 'type': 'str'},
     }
 
-    def __init__(self, resource_type=None, tagname=None, tagvalue=None, **kwargs):
+    def __init__(self, resource_type=None, tagname=None, tagvalue=None):
         self.resource_type = resource_type
         self.tagname = tagname
         self.tagvalue = tagvalue

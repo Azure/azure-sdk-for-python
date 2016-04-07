@@ -54,6 +54,6 @@ class RestoreResponse(Resource):
         'operation_id': {'key': 'properties.operationId', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, operation_id=None, **kwargs):
-        super(RestoreResponse, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, operation_id=None):
+        super(RestoreResponse, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.operation_id = operation_id

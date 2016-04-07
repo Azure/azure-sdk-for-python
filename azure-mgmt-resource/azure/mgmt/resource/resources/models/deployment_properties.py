@@ -57,7 +57,7 @@ class DeploymentProperties(Model):
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
     }
 
-    def __init__(self, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None, **kwargs):
+    def __init__(self, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None):
         self.template = template
         self.template_link = template_link
         self.parameters = parameters

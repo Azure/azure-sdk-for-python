@@ -62,8 +62,8 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(ApplicationGatewayFrontendIPConfiguration, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
+        super(ApplicationGatewayFrontendIPConfiguration, self).__init__(id=id)
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
         self.subnet = subnet

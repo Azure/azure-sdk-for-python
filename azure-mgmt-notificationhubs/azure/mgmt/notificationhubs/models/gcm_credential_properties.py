@@ -37,6 +37,6 @@ class GcmCredentialProperties(Model):
         'google_api_key': {'key': 'googleApiKey', 'type': 'str'},
     }
 
-    def __init__(self, gcm_endpoint=None, google_api_key=None, **kwargs):
+    def __init__(self, gcm_endpoint=None, google_api_key=None):
         self.gcm_endpoint = gcm_endpoint
         self.google_api_key = google_api_key

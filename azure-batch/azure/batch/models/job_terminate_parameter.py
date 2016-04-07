@@ -35,5 +35,5 @@ class JobTerminateParameter(Model):
         'terminate_reason': {'key': 'terminateReason', 'type': 'str'},
     }
 
-    def __init__(self, terminate_reason=None, **kwargs):
+    def __init__(self, terminate_reason=None):
         self.terminate_reason = terminate_reason

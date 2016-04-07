@@ -49,7 +49,7 @@ class PoolResizeParameter(Model):
         'node_deallocation_option': {'key': 'nodeDeallocationOption', 'type': 'ComputeNodeDeallocationOption'},
     }
 
-    def __init__(self, target_dedicated, resize_timeout=None, node_deallocation_option=None, **kwargs):
+    def __init__(self, target_dedicated, resize_timeout=None, node_deallocation_option=None):
         self.target_dedicated = target_dedicated
         self.resize_timeout = resize_timeout
         self.node_deallocation_option = node_deallocation_option

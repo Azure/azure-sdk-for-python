@@ -102,7 +102,7 @@ class ComputeNode(Model):
         'errors': {'key': 'errors', 'type': '[ComputeNodeError]'},
     }
 
-    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, **kwargs):
+    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None):
         self.id = id
         self.url = url
         self.state = state

@@ -75,8 +75,8 @@ class VnetRoute(Resource):
         'route_type': {'key': 'properties.routeType', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None, **kwargs):
-        super(VnetRoute, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
+        super(VnetRoute, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
         self.vnet_route_name = vnet_route_name
         self.start_address = start_address
         self.end_address = end_address

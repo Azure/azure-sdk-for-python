@@ -43,7 +43,7 @@ class JobScheduleExecutionInformation(Model):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, next_run_time=None, recent_job=None, end_time=None, **kwargs):
+    def __init__(self, next_run_time=None, recent_job=None, end_time=None):
         self.next_run_time = next_run_time
         self.recent_job = recent_job
         self.end_time = end_time

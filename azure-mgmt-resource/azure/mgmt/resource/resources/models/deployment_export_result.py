@@ -33,5 +33,5 @@ class DeploymentExportResult(Model):
         'template': {'key': 'template', 'type': 'object'},
     }
 
-    def __init__(self, template=None, **kwargs):
+    def __init__(self, template=None):
         self.template = template

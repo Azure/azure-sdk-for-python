@@ -34,5 +34,5 @@ class EnabledConfig(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, enabled=None, **kwargs):
+    def __init__(self, enabled=None):
         self.enabled = enabled

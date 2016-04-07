@@ -47,7 +47,7 @@ class RoleDefinitionProperties(Model):
         'assignable_scopes': {'key': 'assignableScopes', 'type': '[str]'},
     }
 
-    def __init__(self, role_name=None, description=None, type=None, permissions=None, assignable_scopes=None, **kwargs):
+    def __init__(self, role_name=None, description=None, type=None, permissions=None, assignable_scopes=None):
         self.role_name = role_name
         self.description = description
         self.type = type

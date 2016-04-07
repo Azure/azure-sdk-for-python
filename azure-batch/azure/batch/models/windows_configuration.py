@@ -35,5 +35,5 @@ class WindowsConfiguration(Model):
         'enable_automatic_updates': {'key': 'enableAutomaticUpdates', 'type': 'bool'},
     }
 
-    def __init__(self, enable_automatic_updates=None, **kwargs):
+    def __init__(self, enable_automatic_updates=None):
         self.enable_automatic_updates = enable_automatic_updates

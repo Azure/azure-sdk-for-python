@@ -48,7 +48,7 @@ class Subscription(Model):
         'subscription_policies': {'key': 'subscriptionPolicies', 'type': 'SubscriptionPolicies'},
     }
 
-    def __init__(self, id=None, subscription_id=None, display_name=None, state=None, subscription_policies=None, **kwargs):
+    def __init__(self, id=None, subscription_id=None, display_name=None, state=None, subscription_policies=None):
         self.id = id
         self.subscription_id = subscription_id
         self.display_name = display_name
