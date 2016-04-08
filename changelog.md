@@ -1,3 +1,7 @@
+## Changes in 1.6.1 : ##
+
+- Bug fixes related to server side partitioning to allow special characters in partitionkey path.
+
 ## Changes in 1.6.0 : ##
 
 - Added the support for server side partitioned collections feature.

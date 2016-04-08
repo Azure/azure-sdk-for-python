@@ -601,7 +601,6 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-
     def ReadDocuments(self, collection_link, feed_options={}):
         """Reads all documents in a collection.
 
@@ -2128,6 +2127,8 @@ class DocumentClient(object):
     def _AddPartitionKey(self, collection_link, document, options):
         collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
         
+        #TODO: Refresh the cache if partition is extracted automatically and we get a 400.1001
+
         # If the document collection link is present in the cache, then use the cached partitionkey definition
         if collection_link in self.partition_key_definition_cache:
             partitionKeyDefinition = self.partition_key_definition_cache.get(collection_link)
@@ -2150,57 +2151,10 @@ class DocumentClient(object):
     def _ExtractPartitionKey(self, partitionKeyDefinition, document):
 
         # Parses the paths into a list of token each representing a property
-        partition_key_parts = self._ParsePaths(partitionKeyDefinition.get('paths'))
+        partition_key_parts = base.ParsePaths(partitionKeyDefinition.get('paths'))
 
         # Navigates the document to retrieve the partitionKey specified in the paths
         return self._RetrievePartitionKey(partition_key_parts, document)
-
-    # Parses the paths into a list of token each representing a property
-    def _ParsePaths(self, paths):
-        if(len(paths) != 1):
-            raise ValueError("Unsupported paths count.")
-        
-        segmentSeparator = '/'
-        path = paths[0]
-        tokens = []
-        currentIndex = 0
-
-        while currentIndex < len(path):
-            if path[currentIndex] != segmentSeparator:
-                raise ValueError("Invalid path character at index " + currentIndex)
-            
-            currentIndex += 1
-            if currentIndex == len(path):
-                break
-
-            if path[currentIndex] == '\"' or path[currentIndex] == '\'':
-                quote = path[currentIndex]
-                newIndex = currentIndex + 1
-                while True:
-                    newIndex = path.find(quote, newIndex)
-                    if newIndex == -1:
-                        raise ValueError("Invalid path character at index " + currentIndex)
-                    if path[newIndex - 1] != '\\':
-                        break
-                    newIndex += 1
-
-                token = path[currentIndex:newIndex+1]
-                tokens.append(token)
-                currentIndex = newIndex + 1
-            else:
-                newIndex = path.find(segmentSeparator, currentIndex)
-                token = None;
-                if newIndex == -1:
-                    token = path[currentIndex:]
-                    currentIndex = len(path)
-                else:
-                    token = path[currentIndex:newIndex]
-                    currentIndex = newIndex
-
-                token = token.strip();
-                tokens.append(token)
-
-        return tokens
 
     # Navigates the document to retrieve the partitionKey specified in the partition key parts
     def _RetrievePartitionKey(self, partition_key_parts, document):

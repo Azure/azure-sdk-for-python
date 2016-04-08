@@ -282,6 +282,7 @@ class RetryPolicy(object):
         self.MaxRetryAttemptsOnRequest = 0
         self.MaxRetryAttemptsOnQuery = 3
 
+
 class Undefined(object):
     """Represents undefined value for partitionKey when it's mising.
     """

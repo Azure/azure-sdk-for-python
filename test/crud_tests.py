@@ -5,6 +5,8 @@
 
 import logging
 import unittest
+import json
+import os.path
 
 import pydocumentdb.documents as documents
 import pydocumentdb.document_client as document_client
@@ -16,11 +18,11 @@ import pydocumentdb.murmur_hash as murmur_hash
 import pydocumentdb.consistent_hash_ring as consistent_hash_ring
 import pydocumentdb.range as partition_range
 import test_partition_resolver as test_partition_resolver
+import pydocumentdb.base as base
 
 from struct import *
 from __builtin__ import *
 
-# localhost
 masterKey = '[YOUR_KEY_HERE]'
 host = '[YOUR_ENDPOINT_HERE]'
 
@@ -256,12 +258,13 @@ class CRUDTests(unittest.TestCase):
         created_collection1 = client.CreateCollection(self.GetDatabaseLink(created_db),
                                 collection_definition1)
 
+        # Create document with partitionkey not present as a leaf level property but a dict
         options = {}
         created_document = client.CreateDocument(
             self.GetDocumentCollectionLink(created_db, created_collection1),
             document_definition, options)
 
-        self.assertTrue(options['partitionKey'], documents.Undefined)
+        self.assertEqual(options['partitionKey'], documents.Undefined)
 
         collection_definition2 = {   'id': 'sample collection2', 
                                     'partitionKey': 
@@ -274,6 +277,7 @@ class CRUDTests(unittest.TestCase):
         created_collection2 = client.CreateCollection(self.GetDatabaseLink(created_db),
                                 collection_definition2)
 
+        # Create document with partitionkey not present in the document
         options = {}
         created_document = client.CreateDocument(
             self.GetDocumentCollectionLink(created_db, created_collection2),
@@ -284,6 +288,74 @@ class CRUDTests(unittest.TestCase):
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection1))
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection2))
+
+    def test_partitioned_collection_partition_key_extraction_special_chars(self):
+        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+
+        created_db = client.CreateDatabase({ 'id': 'sample database' })
+
+        collection_definition1 = {   'id': 'sample collection1', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/\"level\' 1*()\"/\"le/vel2\"'],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+        
+        created_collection1 = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition1)
+
+        document_definition = {'id': 'document1',
+                               "level' 1*()" : { "le/vel2" : 'val1' }
+                              }
+
+        options = {}
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection1),
+            document_definition, options)
+
+        self.assertEqual(options['partitionKey'], 'val1')
+
+        collection_definition2 = {   'id': 'sample collection2', 
+                                    'partitionKey': 
+                                    {   
+                                        'paths': ['/\'level\" 1*()\'/\'le/vel2\''],
+                                        'kind': documents.PartitionKind.Hash
+                                    }
+                                }
+        
+        created_collection2 = client.CreateCollection(self.GetDatabaseLink(created_db),
+                                collection_definition2)
+
+        document_definition = {'id': 'document2',
+                               'level\" 1*()' : { 'le/vel2' : 'val2' }
+                              }
+
+        options = {}
+        created_document = client.CreateDocument(
+            self.GetDocumentCollectionLink(created_db, created_collection2),
+            document_definition, options)
+
+        self.assertEqual(options['partitionKey'], 'val2')
+
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection1))
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection2))
+
+        
+    def test_partitioned_collection_path_parser(self):
+        entries = json.loads(open(os.path.abspath("../../.net/Microsoft.Azure.Documents.Client.Test/Routing/resources/BaselineTest.PathParser.json")).read())
+        for entry in entries:
+            parts = base.ParsePaths([entry['path']])
+            self.assertEqual(parts, entry['parts'])
+
+        paths = ["/\"Ke \\ \\\" \\\' \\? \\a \\\b \\\f \\\n \\\r \\\t \\v y1\"/*"]
+        parts = [ "Ke \\ \\\" \\\' \\? \\a \\\b \\\f \\\n \\\r \\\t \\v y1", "*" ]
+        self.assertEqual(parts, base.ParsePaths(paths))
+
+        paths = ["/'Ke \\ \\\" \\\' \\? \\a \\\b \\\f \\\n \\\r \\\t \\v y1'/*"]
+        parts = [ "Ke \\ \\\" \\\' \\? \\a \\\b \\\f \\\n \\\r \\\t \\v y1", "*" ]
+        self.assertEqual(parts, base.ParsePaths(paths))
+        
 
     def test_partitioned_collection_document_crud_and_query(self):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
