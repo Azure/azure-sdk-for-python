@@ -46,7 +46,8 @@ class CertificatesOperations(object):
     def get_certificates(
             self, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        Get certificates for a subscription in the specified resource group.
+        Get all certificates for a subscription in the specified resource
+        group.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
