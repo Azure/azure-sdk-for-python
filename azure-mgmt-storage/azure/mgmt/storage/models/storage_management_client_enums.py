@@ -50,12 +50,6 @@ class AccountStatus(Enum):
     unavailable = "Unavailable"
 
 
-class KeyName(Enum):
-
-    key1 = "key1"
-    key2 = "key2"
-
-
 class UsageUnit(Enum):
 
     count = "Count"
