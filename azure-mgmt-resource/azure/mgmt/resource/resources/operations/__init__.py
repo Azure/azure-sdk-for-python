@@ -26,8 +26,6 @@ from .resources_operations import ResourcesOperations
 from .tags_operations import TagsOperations
 from .deployment_operations_operations import DeploymentOperationsOperations
 from .resource_provider_operation_details_operations import ResourceProviderOperationDetailsOperations
-from .policy_definitions_operations import PolicyDefinitionsOperations
-from .policy_assignments_operations import PolicyAssignmentsOperations
 
 __all__ = [
     'DeploymentsOperations',
@@ -37,6 +35,4 @@ __all__ = [
     'TagsOperations',
     'DeploymentOperationsOperations',
     'ResourceProviderOperationDetailsOperations',
-    'PolicyDefinitionsOperations',
-    'PolicyAssignmentsOperations',
 ]
