@@ -1,8 +1,8 @@
 Batch
 =====
 
-For more information on the Azure Batch service, check out the `Azure Documentation<https://azure.microsoft.com/en-us/documentation/services/batch/>`
-For working samples, `see the Batch samples repo<https://github.com/Azure/azure-batch-samples/tree/master/Python>`.
+For more information on the Azure Batch service, check out the `Azure Documentation <https://azure.microsoft.com/en-us/documentation/services/batch/>`__.
+For working samples, `see the Batch samples repo <https://github.com/Azure/azure-batch-samples/tree/master/Python>`__.
 
 Create the Batch client
 -----------------------
@@ -31,7 +31,7 @@ Manage Pools and Nodes
 -----------------------
 
 The Batch Client allows you to create, modify, and delete Batch Pools.
-For more information of pools, `see this article<https://azure.microsoft.com/en-us/documentation/articles/batch-api-basics/#pool>`.
+For more information of pools, `see this article <https://azure.microsoft.com/en-us/documentation/articles/batch-api-basics/#pool>`__.
 
 .. code:: python
 
@@ -71,7 +71,7 @@ For more information of pools, `see this article<https://azure.microsoft.com/en-
 
 Existing pools can be upgraded, patched, and resized.
 You can change the size of a pool either explicitly, or via an auto-scaling formula.
-For more information, `see this article<https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling/>`.
+For more information, `see this article <https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling/>`__.
 
 .. code:: python
 

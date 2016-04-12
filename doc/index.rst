@@ -29,7 +29,7 @@ Documentation:
 --------------
 * Azure Resource Management
    * :doc:`Authorization Resource Management<resourcemanagementauthorization>` -- (:doc:`API <ref/azure.mgmt.authorization>`)
-   * :doc:`Batch Resource Management<resourcemanagementbatch>` -- (:doc:`API <ref/azure.mgmt.batch>`)
+   * :doc:`Batch Management<resourcemanagementbatch>` -- (:doc:`API <ref/azure.mgmt.batch>`)
    * :doc:`CDN Resource Management<resourcemanagementcdn>` -- (:doc:`API <ref/azure.mgmt.cdn>`)
    * :doc:`Compute Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.compute>`)
    * Apps
@@ -41,7 +41,7 @@ Documentation:
    * :doc:`Resource Management<resourcemanagement>` -- (:doc:`API <ref/azure.mgmt.resource>`)   
    * :doc:`Scheduler Management<resourcemanagementscheduler>` -- (:doc:`API <ref/azure.mgmt.scheduler>`)
    * :doc:`Storage Resource Management<resourcemanagementstorage>` -- (:doc:`API <ref/azure.mgmt.storage>`)
-* :doc:`Batch Runtime<batch>` -- (:doc:`API <ref/azure.batch>`)
+* :doc:`Batch<batch>` -- (:doc:`API <ref/azure.batch>`)
 * :doc:`Azure Active Directory Graph RBAC<graphrbac>` -- (:doc:`API <ref/azure.graphrbac>`)
 * :doc:`Service Management<servicemanagement>` -- (:doc:`API <ref/azure.servicemanagement>`)
 * :doc:`Service Bus<servicebus>` -- (:doc:`API <ref/azure.servicebus>`)
