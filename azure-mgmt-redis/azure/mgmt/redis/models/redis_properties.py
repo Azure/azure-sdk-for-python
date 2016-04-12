@@ -19,23 +19,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class RedisResource(Resource):
+class RedisProperties(Model):
     """
-    A single redis item in List or Get Operation.
+    Parameters supplied to CreateOrUpdate redis operation.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param redis_version: RedisVersion parameter has been deprecated. As
      such, it is no longer necessary to provide this parameter and any value
      specified is ignored.
@@ -64,44 +54,25 @@ class RedisResource(Resource):
     :param static_ip: Required when deploying a redis cache inside an
      existing Azure Virtual Network.
     :type static_ip: str
-    :param provisioning_state: Redis instance provisioning status
-    :type provisioning_state: str
-    :param host_name: Redis host name
-    :type host_name: str
-    :param port: Redis non-ssl port
-    :type port: int
-    :param ssl_port: Redis ssl port
-    :type ssl_port: int
     """ 
 
     _validation = {
-        'location': {'required': True},
         'sku': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'redis_version': {'key': 'properties.redisVersion', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}'},
-        'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
-        'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
-        'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'str'},
-        'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
-        'ssl_port': {'key': 'properties.sslPort', 'type': 'int'},
+        'redis_version': {'key': 'redisVersion', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'redis_configuration': {'key': 'redisConfiguration', 'type': '{str}'},
+        'enable_non_ssl_port': {'key': 'enableNonSslPort', 'type': 'bool'},
+        'tenant_settings': {'key': 'tenantSettings', 'type': '{str}'},
+        'shard_count': {'key': 'shardCount', 'type': 'int'},
+        'virtual_network': {'key': 'virtualNetwork', 'type': 'str'},
+        'subnet': {'key': 'subnet', 'type': 'str'},
+        'static_ip': {'key': 'staticIP', 'type': 'str'},
     }
 
-    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None, provisioning_state=None, host_name=None, port=None, ssl_port=None):
-        super(RedisResource, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, sku, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None):
         self.redis_version = redis_version
         self.sku = sku
         self.redis_configuration = redis_configuration
@@ -111,7 +82,3 @@ class RedisResource(Resource):
         self.virtual_network = virtual_network
         self.subnet = subnet
         self.static_ip = static_ip
-        self.provisioning_state = provisioning_state
-        self.host_name = host_name
-        self.port = port
-        self.ssl_port = ssl_port
