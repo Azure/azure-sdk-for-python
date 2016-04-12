@@ -25,8 +25,7 @@ from msrest.serialization import Model
 class StorageAccountRegenerateKeyParameters(Model):
     """StorageAccountRegenerateKeyParameters
 
-    :param key_name: Specifies name of the key which should be regenerated:
-     key1 or key2. Possible values include: 'key1', 'key2'
+    :param key_name:
     :type key_name: str
     """ 
 
@@ -35,7 +34,7 @@ class StorageAccountRegenerateKeyParameters(Model):
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'KeyName'},
+        'key_name': {'key': 'keyName', 'type': 'str'},
     }
 
     def __init__(self, key_name):

@@ -630,8 +630,7 @@ class StorageAccountsOperations(object):
          and 24 characters in length and use numbers and lower-case letters
          only.
         :type account_name: str
-        :param key_name: Specifies name of the key which should be
-         regenerated: key1 or key2. Possible values include: 'key1', 'key2'
+        :param key_name:
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

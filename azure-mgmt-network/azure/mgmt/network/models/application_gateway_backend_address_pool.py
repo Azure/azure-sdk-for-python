@@ -28,10 +28,11 @@ class ApplicationGatewayBackendAddressPool(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param backend_ip_configurations: Gets or sets backendIPConfiguration of
-     application gateway
-    :type backend_ip_configurations: list of :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+    :param backend_ip_configurations: Gets collection of references to IPs
+     defined in NICs
+    :type backend_ip_configurations: list of
+     :class:`NetworkInterfaceIPConfiguration
+     <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
     :param backend_addresses: Gets or sets the backend addresses
     :type backend_addresses: list of :class:`ApplicationGatewayBackendAddress
      <azure.mgmt.network.models.ApplicationGatewayBackendAddress>`
@@ -48,7 +49,7 @@ class ApplicationGatewayBackendAddressPool(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[SubResource]'},
+        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'backend_addresses': {'key': 'properties.backendAddresses', 'type': '[ApplicationGatewayBackendAddress]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},

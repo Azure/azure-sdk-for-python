@@ -467,7 +467,8 @@ class EndpointsOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
+         instance that returns :class:`Endpoint
+         <azure.mgmt.cdn.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -513,9 +514,16 @@ class EndpointsOperations(object):
             if response.status_code not in [202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
+            deserialized = None
+
+            if response.status_code == 202:
+                deserialized = self._deserialize('Endpoint', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         if raw:
             response = long_running_send()
@@ -546,7 +554,8 @@ class EndpointsOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
+         instance that returns :class:`Endpoint
+         <azure.mgmt.cdn.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -592,9 +601,16 @@ class EndpointsOperations(object):
             if response.status_code not in [202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
+            deserialized = None
+
+            if response.status_code == 202:
+                deserialized = self._deserialize('Endpoint', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         if raw:
             response = long_running_send()

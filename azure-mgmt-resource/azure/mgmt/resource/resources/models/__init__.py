@@ -19,10 +19,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_assignment_properties import PolicyAssignmentProperties
-from .policy_assignment import PolicyAssignment
-from .policy_definition_properties import PolicyDefinitionProperties
-from .policy_definition import PolicyDefinition
 from .deployment_extended_filter import DeploymentExtendedFilter
 from .generic_resource_filter import GenericResourceFilter
 from .resource_group_filter import ResourceGroupFilter
@@ -67,16 +63,11 @@ from .resource_group_paged import ResourceGroupPaged
 from .tag_details_paged import TagDetailsPaged
 from .deployment_operation_paged import DeploymentOperationPaged
 from .resource_provider_operation_definition_paged import ResourceProviderOperationDefinitionPaged
-from .policy_assignment_paged import PolicyAssignmentPaged
 from .resource_management_client_enums import (
     DeploymentMode,
 )
 
 __all__ = [
-    'PolicyAssignmentProperties',
-    'PolicyAssignment',
-    'PolicyDefinitionProperties',
-    'PolicyDefinition',
     'DeploymentExtendedFilter',
     'GenericResourceFilter',
     'ResourceGroupFilter',
@@ -121,6 +112,5 @@ __all__ = [
     'TagDetailsPaged',
     'DeploymentOperationPaged',
     'ResourceProviderOperationDefinitionPaged',
-    'PolicyAssignmentPaged',
     'DeploymentMode',
 ]
