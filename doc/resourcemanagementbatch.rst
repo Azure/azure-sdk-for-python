@@ -120,7 +120,7 @@ Application Packages
 Application packages can be configured to be used by the the :doc:`Batch Client <batch>` for running tasks.
 An Application can have multiple versioned packages (ziped directories containing the application to be executed on the Compute Node) associated with it.
 
-.. code::python
+.. code:: python
 
 	# Create Application reference
 	batch_client.application.add(
@@ -153,3 +153,4 @@ An Application can have multiple versioned packages (ziped directories containin
 		'v1.0',
 		'zip'
 	)
+
