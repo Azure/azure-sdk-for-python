@@ -1,8 +1,8 @@
 Batch Management
 ================
 
-For more information on the Azure Batch service, check out the `Azure Documentation<https://azure.microsoft.com/en-us/documentation/services/batch/>`
-For working samples, `see the Batch samples repo<https://github.com/Azure/azure-batch-samples/tree/master/Python>`.
+For more information on the Azure Batch service, check out the `Azure Documentation <https://azure.microsoft.com/en-us/documentation/services/batch/>`__.
+For working samples, `see the Batch samples repo <https://github.com/Azure/azure-batch-samples/tree/master/Python>`__.
 
 Create the Batch Management client
 ----------------------------------
@@ -37,8 +37,11 @@ for details on getting a ``Credentials`` instance.
 Create a Batch Account
 ----------------------
 
+A Batch Account will need to be created in a specified location and resource group.
 The default Batch Account quota is 1 per location per subscription, but can be increased to a maximum of 50.
 Please contact support if you require a quota increase.
+For more information on resource groups and resource management, see :doc:`Resource Management<resourcemanagement>`.
+
 In order to make use of Application Packages, a storage account will need to be linked to the Batch Account.
 This can be created with the :doc:`Storage Resource Management Client <resourcemanagementstorage>`.
 
