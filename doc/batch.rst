@@ -19,11 +19,11 @@ see the :doc:`Batch Management Client <resourcemanagementbatch>`.
     from azure.batch import BatchServiceClient, BatchServiceClientConfiguration
     from azure.batch.batch_auth import SharedKeyCredentials
 
-    credentials = SharedKeyCredentials(AZURE_BATCH_ACCOUNT, account_key)
+    credentials = SharedKeyCredentials(BATCH_ACCOUNT_NAME, BATCH_ACCOUNT_KEY)
     batch_client = BatchServiceClient(
         BatchServiceClientConfiguration(
             credentials,
-			base_url=account_url
+            base_url=BATCH_ACCOUNT_URL
         )
     )
 
@@ -67,7 +67,8 @@ For more information of pools, `see this article<https://azure.microsoft.com/en-
     )
 	batch_client.pool.add(new_pool)
 
-	
+
+
 Existing pools can be upgraded, patched, and resized.
 You can change the size of a pool either explicitly, or via an auto-scaling formula.
 For more information, `see this article<https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling/>`.
@@ -86,7 +87,7 @@ For more information, `see this article<https://azure.microsoft.com/en-us/docume
 		auto_scale_evaluation_interval=autoscale_interval
 	)
 
-	# Update or patch pool. Note that when updating, all pool parameters must be updated,
+	# Update or patch a pool. Note that when updating, all pool parameters must be updated,
 	# but when patching, individual parameters can be selectively updated.
 	updated_info=batch.models.PoolPatchPropertiesParameter(
 		metadata=[batch.models.MetadataItem('foo', 'bar')]
@@ -96,8 +97,9 @@ For more information, `see this article<https://azure.microsoft.com/en-us/docume
 	# Upgrade pool OS
 	batch_client.pool.upgrade_os('my_pool', 'WA-GUEST-OS-4.28_201601-01')
 
-You can monitor pools by retrieving individually, or grouped.
-Pools can also be listed using OData filters. 
+	
+
+You can monitor pools by retrieving data individually, or grouped using OData filters.
 You can also retrieve statistics on the usage of a specific pool, or all the pools in the lifetime of your Batch account.
 
 .. code:: python
@@ -111,12 +113,13 @@ You can also retrieve statistics on the usage of a specific pool, or all the poo
 	all_pools = [p.id for p in pools]
 
 	# Or retrieve just a selection of pools
-	options = batch.models.PoolListOptions(filter='startswith(id,\'my_pool\')')
+	options = batch.models.PoolListOptions(filter='startswith(id,\'my_\')')
 	my_pools = batch_client.pool.list(options)
 	only_my_pools = [p.id for p in my_pools]
 
 	stats = batch_client.pool.get_all_pools_lifetime_statistics()
 	print("Average CPU usage across pools: {}%".format(stats.resource_stats.avg_cpu_percentage))
+
 
 
 The Batch client also allows you to access individual nodes within a pool.
@@ -159,6 +162,7 @@ The Batch client also allows you to access individual nodes within a pool.
 	batch_client.compute_node.reimage('my_pool', working_nodes[1])
 	batch_client.compute_node.reboot('my_pool', working_nodes[2])
 
+	
 
 Manage Jobs and Tasks
 ---------------------
@@ -185,7 +189,10 @@ You can also set up job schedules for future or recurring jobs.
 	# Add lots of tasks (up to 100 per call)
 	tasks = []
 	for i in range(2, 50):
-		tasks.append(batch.models.TaskAddParameter('python_task_{}'.format(i), 'cmd /c echo hello world {}'.format(i)))
+		tasks.append(batch.models.TaskAddParameter(
+			'python_task_{}'.format(i),
+			'cmd /c echo hello world {}'.format(i))
+		)
 	batch_client.task.add_collection('python_test_job', tasks)
 
 	# Download task output
