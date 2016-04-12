@@ -1,3 +1,8 @@
+2016-04-08
+
+azure-storage 0.31.0
+  * `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
+
 2016-03-31
 
 azure-servicemanagement-legacy 0.20.3
