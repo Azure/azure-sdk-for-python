@@ -22,29 +22,30 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class JobStateAuditRecord(Model):
     """
-    Describes if a resource name is available
+    The Data Lake Analytics U-SQL job state audit records for tracking the
+    lifecycle of a job.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param new_state: Gets the new state the job is in.
+    :type new_state: str
+    :param time_stamp: Gets the time stamp that the state change took place.
+    :type time_stamp: datetime
+    :param requested_by_user: Gets the user who requests the change.
+    :type requested_by_user: str
+    :param details: Gets  the details of the audit log.
+    :type details: str
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'new_state': {'key': 'newState', 'type': 'str'},
+        'time_stamp': {'key': 'timeStamp', 'type': 'iso-8601'},
+        'requested_by_user': {'key': 'requestedByUser', 'type': 'str'},
+        'details': {'key': 'details', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, new_state=None, time_stamp=None, requested_by_user=None, details=None):
+        self.new_state = new_state
+        self.time_stamp = time_stamp
+        self.requested_by_user = requested_by_user
+        self.details = details

@@ -22,29 +22,22 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class JobStatistics(Model):
     """
-    Describes if a resource name is available
+    The Data Lake Analytics U-SQL job execution statistics.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param last_update_time_utc: Gets the last update time for the statistics.
+    :type last_update_time_utc: datetime
+    :param stages: Gets the list of stages for the job.
+    :type stages: list of :class:`JobStatisticsVertexStage
+     <azure.mgmt.datalake.analytics.job.models.JobStatisticsVertexStage>`
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'last_update_time_utc': {'key': 'lastUpdateTimeUtc', 'type': 'iso-8601'},
+        'stages': {'key': 'stages', 'type': '[JobStatisticsVertexStage]'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, last_update_time_utc=None, stages=None):
+        self.last_update_time_utc = last_update_time_utc
+        self.stages = stages

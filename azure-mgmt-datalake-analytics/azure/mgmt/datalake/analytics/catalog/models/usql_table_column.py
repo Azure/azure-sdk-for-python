@@ -22,29 +22,22 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class USqlTableColumn(Model):
     """
-    Describes if a resource name is available
+    A Data Lake Analytics catalog U-SQL table column item.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param name: Gets or sets the name of the column in the table.
+    :type name: str
+    :param type: Gets or sets the object type of the specified column (such
+     as System.String).
+    :type type: str
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, name=None, type=None):
+        self.name = name
+        self.type = type

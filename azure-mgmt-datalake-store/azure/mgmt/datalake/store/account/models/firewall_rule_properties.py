@@ -22,29 +22,23 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class FirewallRuleProperties(Model):
     """
-    Describes if a resource name is available
+    Data Lake Store firewall rule properties information
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param start_ip_address: Gets or sets the start IP address for the
+     firewall rule.
+    :type start_ip_address: str
+    :param end_ip_address: Gets or sets the end IP address for the firewall
+     rule.
+    :type end_ip_address: str
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'start_ip_address': {'key': 'startIpAddress', 'type': 'str'},
+        'end_ip_address': {'key': 'endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, start_ip_address=None, end_ip_address=None):
+        self.start_ip_address = start_ip_address
+        self.end_ip_address = end_ip_address

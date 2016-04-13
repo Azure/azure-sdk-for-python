@@ -22,29 +22,23 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class AddDataLakeStoreParameters(Model):
     """
-    Describes if a resource name is available
+    Additional Data Lake Store parameters.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param properties: Gets or sets the properties for the Data Lake Store
+     account being added.
+    :type properties: :class:`DataLakeStoreAccountInfoProperties
+     <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
     """ 
 
-    _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+    _validation = {
+        'properties': {'required': True},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'DataLakeStoreAccountInfoProperties'},
+    }
+
+    def __init__(self, properties):
+        self.properties = properties

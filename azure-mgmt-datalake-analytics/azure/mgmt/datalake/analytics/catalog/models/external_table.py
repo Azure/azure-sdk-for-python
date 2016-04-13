@@ -22,29 +22,24 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class ExternalTable(Model):
     """
-    Describes if a resource name is available
+    A Data Lake Analytics catalog external table item.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param table_name: Gets or sets the name of the table associated with
+     this database and schema.
+    :type table_name: str
+    :param data_source: Gets or sets the data source associated with this
+     external table.
+    :type data_source: :class:`EntityId
+     <azure.mgmt.datalake.analytics.catalog.models.EntityId>`
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'table_name': {'key': 'tableName', 'type': 'str'},
+        'data_source': {'key': 'dataSource', 'type': 'EntityId'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, table_name=None, data_source=None):
+        self.table_name = table_name
+        self.data_source = data_source
