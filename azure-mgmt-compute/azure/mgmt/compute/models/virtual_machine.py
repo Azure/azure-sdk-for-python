@@ -66,6 +66,8 @@ class VirtualMachine(Resource):
     :param license_type: Gets or sets the license type, which is for bring
      your own license scenario.
     :type license_type: str
+    :param vm_id: Gets the virtual machine unique id.
+    :type vm_id: str
     :param resources: Gets the virtual machine child extension resources.
     :type resources: list of :class:`VirtualMachineExtension
      <azure.mgmt.compute.models.VirtualMachineExtension>`
@@ -91,10 +93,11 @@ class VirtualMachine(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
+        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, instance_view=None, license_type=None, resources=None):
+    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, instance_view=None, license_type=None, vm_id=None, resources=None):
         super(VirtualMachine, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.plan = plan
         self.hardware_profile = hardware_profile
@@ -106,4 +109,5 @@ class VirtualMachine(Resource):
         self.provisioning_state = provisioning_state
         self.instance_view = instance_view
         self.license_type = license_type
+        self.vm_id = vm_id
         self.resources = resources

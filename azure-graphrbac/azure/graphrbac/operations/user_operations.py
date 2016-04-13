@@ -63,7 +63,6 @@ class UserOperations(object):
         url = '/{tenantID}/users/{user}'
         path_format_arguments = {
             'user': self._serialize.url("user", user, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -115,7 +114,6 @@ class UserOperations(object):
         # Construct URL
         url = '/{tenantID}/users'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -178,7 +176,6 @@ class UserOperations(object):
                 # Construct URL
                 url = '/{tenantID}/users'
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -246,7 +243,6 @@ class UserOperations(object):
         url = '/{tenantID}/users/{upnOrObjectId}'
         path_format_arguments = {
             'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -313,7 +309,6 @@ class UserOperations(object):
                 url = '/{tenantID}/users/{objectId}/getMemberGroups'
                 path_format_arguments = {
                     'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -382,7 +377,6 @@ class UserOperations(object):
                 url = '/{tenantID}/{nextLink}'
                 path_format_arguments = {
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
