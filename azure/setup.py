@@ -59,7 +59,7 @@ setup(
         'azure-batch==0.30.0rc2',
         'azure-graphrbac==0.30.0rc2',
         'azure-servicebus==0.20.1',
-        'azure-storage==0.30.0',
+        'azure-storage==0.31.0',
         'azure-servicemanagement-legacy==0.20.2',
     ],
 )

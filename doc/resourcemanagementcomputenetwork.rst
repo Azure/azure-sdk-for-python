@@ -53,7 +53,7 @@ credentials you created in the previous section.
     from azure.mgmt.resource.resources import ResourceManagementClient, ResourceManagementClientConfiguration
 
     resource_client = ResourceManagementClient(
-        ResourceManagementClient(
+        ResourceManagementClientConfiguration(
             credentials,
             subscription_id
         )
