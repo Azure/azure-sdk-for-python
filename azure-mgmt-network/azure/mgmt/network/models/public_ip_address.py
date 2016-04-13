@@ -39,6 +39,9 @@ class PublicIPAddress(Resource):
     :param public_ip_allocation_method: Gets or sets PublicIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type public_ip_allocation_method: str
+    :param public_ip_address_version: Gets or sets PublicIP address version
+     (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
+    :type public_ip_address_version: str
     :param ip_configuration:
     :type ip_configuration: :class:`IPConfiguration
      <azure.mgmt.network.models.IPConfiguration>`
@@ -69,6 +72,7 @@ class PublicIPAddress(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'IPAllocationMethod'},
+        'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'IPVersion'},
         'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
@@ -78,9 +82,10 @@ class PublicIPAddress(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, public_ip_allocation_method=None, ip_configuration=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, public_ip_allocation_method=None, public_ip_address_version=None, ip_configuration=None, dns_settings=None, ip_address=None, idle_timeout_in_minutes=None, resource_guid=None, provisioning_state=None, etag=None):
         super(PublicIPAddress, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.public_ip_allocation_method = public_ip_allocation_method
+        self.public_ip_address_version = public_ip_address_version
         self.ip_configuration = ip_configuration
         self.dns_settings = dns_settings
         self.ip_address = ip_address
