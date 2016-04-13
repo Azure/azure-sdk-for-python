@@ -22,29 +22,18 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class USqlAssemblyDependencyInfo(Model):
     """
-    Describes if a resource name is available
+    A Data Lake Analytics catalog U-SQL dependency information item.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param entity_id: Gets or sets the EntityId of the dependency.
+    :type entity_id: :class:`EntityId
+     <azure.mgmt.datalake.analytics.catalog.models.EntityId>`
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'entity_id': {'key': 'entityId', 'type': 'EntityId'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, entity_id=None):
+        self.entity_id = entity_id

@@ -22,29 +22,30 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class BlobContainer(Model):
     """
-    Describes if a resource name is available
+    Azure Storage blob container information.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param name: Gets or sets the name of the blob container.
+    :type name: str
+    :param id: Gets or sets the unique identifier of the blob container.
+    :type id: str
+    :param type: Gets or sets the type of the blob container.
+    :type type: str
+    :param properties: Gets or sets the properties of the blob container.
+    :type properties: :class:`BlobContainerProperties
+     <azure.mgmt.datalake.analytics.account.models.BlobContainerProperties>`
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'BlobContainerProperties'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, name=None, id=None, type=None, properties=None):
+        self.name = name
+        self.id = id
+        self.type = type
+        self.properties = properties

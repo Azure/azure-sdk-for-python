@@ -22,29 +22,19 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class AclStatusResult(Model):
     """
-    Describes if a resource name is available
+    Data Lake Store file or directory Access Control List information.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param acl_status: Gets or sets the AclStatus object for a given file or
+     directory.
+    :type acl_status: :class:`AclStatus
+     <azure.mgmt.datalake.store.filesystem.models.AclStatus>`
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'acl_status': {'key': 'AclStatus', 'type': 'AclStatus'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, acl_status=None):
+        self.acl_status = acl_status

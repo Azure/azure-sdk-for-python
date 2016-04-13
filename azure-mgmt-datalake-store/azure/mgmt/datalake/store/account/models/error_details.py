@@ -22,29 +22,27 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class ErrorDetails(Model):
     """
-    Describes if a resource name is available
+    Data Lake Store error details information
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
+    :param code: Gets the HTTP status code or error code associated with this
+     error
+    :type code: str
+    :param message: Gets the error message localized based on Accept-Language
     :type message: str
+    :param target: Gets the target of the particular error (for example, the
+     name of the property in error).
+    :type target: str
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
+    def __init__(self, code=None, message=None, target=None):
+        self.code = code
         self.message = message
+        self.target = target

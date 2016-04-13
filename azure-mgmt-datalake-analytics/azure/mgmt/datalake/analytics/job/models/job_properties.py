@@ -22,29 +22,35 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class JobProperties(Model):
     """
-    Describes if a resource name is available
+    The common Data Lake Analytics job properties.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param runtime_version: Gets or sets the runtime version of the U-SQL
+     engine to use
+    :type runtime_version: str
+    :param script: Gets or sets the U-SQL script to run
+    :type script: str
+    :param type: Polymorphic Discriminator
+    :type type: str
     """ 
 
-    _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+    _validation = {
+        'script': {'required': True},
+        'type': {'required': True},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    _attribute_map = {
+        'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
+        'script': {'key': 'script', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'USql': 'USqlJobProperties', 'Hive': 'HiveJobProperties'}
+    }
+
+    def __init__(self, script, runtime_version=None):
+        self.runtime_version = runtime_version
+        self.script = script
+        self.type = None

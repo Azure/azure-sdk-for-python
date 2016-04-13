@@ -22,29 +22,18 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class ContentSummaryResult(Model):
     """
-    Describes if a resource name is available
+    Data Lake Store filesystem content summary information response.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param content_summary: Gets the content summary for the specified path
+    :type content_summary: :class:`ContentSummary
+     <azure.mgmt.datalake.store.filesystem.models.ContentSummary>`
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'content_summary': {'key': 'ContentSummary', 'type': 'ContentSummary'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, content_summary=None):
+        self.content_summary = content_summary

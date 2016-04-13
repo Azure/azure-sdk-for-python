@@ -22,29 +22,21 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class CatalogItemList(Model):
     """
-    Describes if a resource name is available
+    A Data Lake Analytics catalog item list.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param count: Gets or sets the count of items in the list.
+    :type count: int
+    :param next_link: Gets or sets the link to the next page of results.
+    :type next_link: str
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, count=None, next_link=None):
+        self.count = count
+        self.next_link = next_link

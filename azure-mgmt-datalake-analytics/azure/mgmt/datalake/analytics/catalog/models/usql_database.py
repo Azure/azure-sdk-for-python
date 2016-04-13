@@ -19,32 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .catalog_item import CatalogItem
 
 
-class ResourceNameAvailability(Model):
+class USqlDatabase(CatalogItem):
     """
-    Describes if a resource name is available
+    A Data Lake Analytics catalog U-SQL database item.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param compute_account_name: Gets or sets the name of the Data Lake
+     Analytics account.
+    :type compute_account_name: str
+    :param version: Gets or sets the version of the catalog item.
+    :type version: str
+    :param name: Gets or sets the name of the database.
+    :type name: str
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'name': {'key': 'databaseName', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, compute_account_name=None, version=None, name=None):
+        super(USqlDatabase, self).__init__(compute_account_name=compute_account_name, version=version)
+        self.name = name

@@ -22,29 +22,25 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class JobDataPath(Model):
     """
-    Describes if a resource name is available
+    A Data Lake Analytics U-SQL job data path item.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param job_id: Gets the id of the job this data is for.
+    :type job_id: str
+    :param command: Gets the command that this job data relates to.
+    :type command: str
+    :param paths: Gets the list of paths to all of the job data.
+    :type paths: list of str
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'job_id': {'key': 'jobId', 'type': 'str'},
+        'command': {'key': 'command', 'type': 'str'},
+        'paths': {'key': 'paths', 'type': '[str]'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, job_id=None, command=None, paths=None):
+        self.job_id = job_id
+        self.command = command
+        self.paths = paths

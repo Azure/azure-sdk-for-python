@@ -22,29 +22,28 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class USqlAssemblyFileInfo(Model):
     """
-    Describes if a resource name is available
+    A Data Lake Analytics catalog U-SQL assembly file information item.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param type: Gets or sets the assembly file type. Possible values
+     include: 'Assembly', 'Resource'
+    :type type: str
+    :param original_path: Gets or sets the the original path to the assembly
+     file.
+    :type original_path: str
+    :param content_path: Gets or sets the the content path to the assembly
+     file.
+    :type content_path: str
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'FileType'},
+        'original_path': {'key': 'originalPath', 'type': 'str'},
+        'content_path': {'key': 'contentPath', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, type=None, original_path=None, content_path=None):
+        self.type = type
+        self.original_path = original_path
+        self.content_path = content_path

@@ -22,29 +22,29 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class ContentSummary(Model):
     """
-    Describes if a resource name is available
+    Data Lake Store content summary information
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param directory_count: Gets the number of directories.
+    :type directory_count: long
+    :param file_count: Gets the number of files.
+    :type file_count: long
+    :param length: Gets the number of bytes used by the contet.
+    :type length: long
+    :param space_consumed: Gets the disk space consumed by the content.
+    :type space_consumed: long
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'directory_count': {'key': 'directoryCount', 'type': 'long'},
+        'file_count': {'key': 'fileCount', 'type': 'long'},
+        'length': {'key': 'length', 'type': 'long'},
+        'space_consumed': {'key': 'spaceConsumed', 'type': 'long'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, directory_count=None, file_count=None, length=None, space_consumed=None):
+        self.directory_count = directory_count
+        self.file_count = file_count
+        self.length = length
+        self.space_consumed = space_consumed

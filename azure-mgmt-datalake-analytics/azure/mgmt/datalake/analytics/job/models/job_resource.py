@@ -22,29 +22,26 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class JobResource(Model):
     """
-    Describes if a resource name is available
+    The Data Lake Analytics U-SQL job resources.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param name: Gets or set the name of the resource.
+    :type name: str
+    :param resource_path: Gets or sets the path to the resource.
+    :type resource_path: str
+    :param type: Gets or sets the job resource type. Possible values include:
+     'VertexResource', 'StatisticsResource'
+    :type type: str
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'resource_path': {'key': 'resourcePath', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'JobResourceType'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, name=None, resource_path=None, type=None):
+        self.name = name
+        self.resource_path = resource_path
+        self.type = type

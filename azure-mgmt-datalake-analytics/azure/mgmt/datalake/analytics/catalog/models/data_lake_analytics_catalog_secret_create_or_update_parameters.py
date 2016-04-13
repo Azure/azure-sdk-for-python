@@ -22,29 +22,26 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(Model):
     """
-    Describes if a resource name is available
+    DataLakeAnalytics DataLakeAnalyticsAccount information.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param password: Gets or sets the password for the secret to pass in
+    :type password: str
+    :param uri: Gets or sets the URI identifier for the secret in the format
+     <hostname>:<port>
+    :type uri: str
     """ 
 
-    _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+    _validation = {
+        'password': {'required': True},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    _attribute_map = {
+        'password': {'key': 'password', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+    }
+
+    def __init__(self, password, uri=None):
+        self.password = password
+        self.uri = uri

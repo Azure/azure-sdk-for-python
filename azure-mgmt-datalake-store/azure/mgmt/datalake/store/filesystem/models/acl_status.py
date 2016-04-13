@@ -22,29 +22,31 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailability(Model):
+class AclStatus(Model):
     """
-    Describes if a resource name is available
+    Data Lake Store file or directory Access Control List information.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
-    :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp serviceâ€™s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
-    :type reason: str
-    :param message:
-    :type message: str
+    :param entries: Gets or sets the list of ACLSpec entries on a file or
+     directory.
+    :type entries: list of str
+    :param group: Gets or sets the group owner, an AAD Object ID.
+    :type group: str
+    :param owner: Gets or sets the user owner, an AAD Object ID.
+    :type owner: str
+    :param sticky_bit: Gets or sets the indicator of whether the sticky bit
+     is on or off.
+    :type sticky_bit: bool
     """ 
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'entries': {'key': 'entries', 'type': '[str]'},
+        'group': {'key': 'group', 'type': 'str'},
+        'owner': {'key': 'owner', 'type': 'str'},
+        'sticky_bit': {'key': 'stickyBit', 'type': 'bool'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self, entries=None, group=None, owner=None, sticky_bit=None):
+        self.entries = entries
+        self.group = group
+        self.owner = owner
+        self.sticky_bit = sticky_bit
