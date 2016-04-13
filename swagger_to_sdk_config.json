@@ -69,9 +69,29 @@
       "autorest_options": "-Namespace azure.mgmt.web -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
-	"batch/2016-02-01.3.0/swagger/BatchService.json": {
+    "batch/2016-02-01.3.0/swagger/BatchService.json": {
       "autorest_options": "-Namespace azure.batch -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-batch/azure/batch/"
+    },
+    "arm-datalake-analytics/account/2015-10-01/swagger/account.json": {
+      "autorest_options": "-Namespace azure.mgmt.datalake.analytics.account -header MICROSOFT_APACHE_NO_VERSION",
+      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/"
+    },
+    "arm-datalake-analytics/catalog/2015-10-01/swagger/catalog.json": {
+      "autorest_options": "-Namespace azure.mgmt.datalake.analytics.catalog -header MICROSOFT_APACHE_NO_VERSION",
+      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/"
+    },
+    "arm-datalake-analytics/job/2016-03-20/swagger/job.json": {
+      "autorest_options": "-Namespace azure.mgmt.datalake.analytics.job -header MICROSOFT_APACHE_NO_VERSION",
+      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/"
+    },
+    "arm-datalake-store/account/2015-10-01/swagger/account.json": {
+      "autorest_options": "-Namespace azure.mgmt.datalake.store.account -header MICROSOFT_APACHE_NO_VERSION",
+      "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/account/"
+    },
+    "arm-datalake-store/filesystem/2015-10-01/swagger/filesystem.json": {
+      "autorest_options": "-Namespace azure.mgmt.datalake.store.filesystem -header MICROSOFT_APACHE_NO_VERSION",
+      "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/filesystem/"
     }
   }
 }
