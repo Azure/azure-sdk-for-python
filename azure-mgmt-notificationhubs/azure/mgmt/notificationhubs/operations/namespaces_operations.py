@@ -545,8 +545,7 @@ class NamespacesOperations(object):
         # Construct URL
         url = '/{operationStatusLink}'
         path_format_arguments = {
-            'operationStatusLink': self._serialize.url("operation_status_link", operation_status_link, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'operationStatusLink': self._serialize.url("operation_status_link", operation_status_link, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 

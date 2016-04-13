@@ -60,7 +60,6 @@ class ObjectsOperations(object):
         # Construct URL
         url = '/{tenantID}/me'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -121,7 +120,6 @@ class ObjectsOperations(object):
                 # Construct URL
                 url = '/{tenantID}/getObjectsByObjectIds'
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -191,7 +189,6 @@ class ObjectsOperations(object):
                 url = '/{tenantID}/{nextLink}'
                 path_format_arguments = {
                     'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
