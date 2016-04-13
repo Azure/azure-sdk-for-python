@@ -25,7 +25,7 @@ class GraphRbacTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(GraphRbacTest, self).setUp()
-        self.graphrbac_client = self.create_mgmt_client(
+        self.graphrbac_client = self.create_basic_client(
             azure.graphrbac.GraphRbacManagementClientConfiguration,
             azure.graphrbac.GraphRbacManagementClient,
             tenant_id=self.settings.AD_DOMAIN

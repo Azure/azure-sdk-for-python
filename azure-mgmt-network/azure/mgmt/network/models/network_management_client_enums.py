@@ -40,6 +40,46 @@ class IPAllocationMethod(Enum):
     dynamic = "Dynamic"
 
 
+class TransportProtocol(Enum):
+
+    udp = "Udp"
+    tcp = "Tcp"
+
+
+class IPVersion(Enum):
+
+    ipv4 = "IPv4"
+    ipv6 = "IPv6"
+
+
+class SecurityRuleProtocol(Enum):
+
+    tcp = "Tcp"
+    udp = "Udp"
+    asterisk = "*"
+
+
+class SecurityRuleAccess(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class SecurityRuleDirection(Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
+class RouteNextHopType(Enum):
+
+    virtual_network_gateway = "VirtualNetworkGateway"
+    vnet_local = "VnetLocal"
+    internet = "Internet"
+    virtual_appliance = "VirtualAppliance"
+    none = "None"
+
+
 class ApplicationGatewayProtocol(Enum):
 
     http = "Http"
@@ -111,40 +151,6 @@ class ServiceProviderProvisioningState(Enum):
     provisioning = "Provisioning"
     provisioned = "Provisioned"
     deprovisioning = "Deprovisioning"
-
-
-class SecurityRuleProtocol(Enum):
-
-    tcp = "Tcp"
-    udp = "Udp"
-    asterisk = "*"
-
-
-class SecurityRuleAccess(Enum):
-
-    allow = "Allow"
-    deny = "Deny"
-
-
-class SecurityRuleDirection(Enum):
-
-    inbound = "Inbound"
-    outbound = "Outbound"
-
-
-class TransportProtocol(Enum):
-
-    udp = "Udp"
-    tcp = "Tcp"
-
-
-class RouteNextHopType(Enum):
-
-    virtual_network_gateway = "VirtualNetworkGateway"
-    vnet_local = "VnetLocal"
-    internet = "Internet"
-    virtual_appliance = "VirtualAppliance"
-    none = "None"
 
 
 class LoadDistribution(Enum):

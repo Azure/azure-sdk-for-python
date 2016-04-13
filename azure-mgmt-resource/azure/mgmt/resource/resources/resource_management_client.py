@@ -30,8 +30,6 @@ from .operations.resources_operations import ResourcesOperations
 from .operations.tags_operations import TagsOperations
 from .operations.deployment_operations_operations import DeploymentOperationsOperations
 from .operations.resource_provider_operation_details_operations import ResourceProviderOperationDetailsOperations
-from .operations.policy_definitions_operations import PolicyDefinitionsOperations
-from .operations.policy_assignments_operations import PolicyAssignmentsOperations
 from . import models
 
 
@@ -106,10 +104,6 @@ class ResourceManagementClient(object):
     :vartype deployment_operations: .operations.DeploymentOperationsOperations
     :ivar resource_provider_operation_details: ResourceProviderOperationDetails operations
     :vartype resource_provider_operation_details: .operations.ResourceProviderOperationDetailsOperations
-    :ivar policy_definitions: PolicyDefinitions operations
-    :vartype policy_definitions: .operations.PolicyDefinitionsOperations
-    :ivar policy_assignments: PolicyAssignments operations
-    :vartype policy_assignments: .operations.PolicyAssignmentsOperations
     """
 
     def __init__(self, config):
@@ -134,8 +128,4 @@ class ResourceManagementClient(object):
         self.deployment_operations = DeploymentOperationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.resource_provider_operation_details = ResourceProviderOperationDetailsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.policy_definitions = PolicyDefinitionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.policy_assignments = PolicyAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
