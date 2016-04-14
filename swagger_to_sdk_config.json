@@ -81,7 +81,7 @@
       "autorest_options": "-Namespace azure.mgmt.datalake.analytics.catalog -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/"
     },
-    "arm-datalake-analytics/job/2016-03-20-preview/swagger/job.json": {
+    "arm-datalake-analytics/job/2015-11-01-preview/swagger/job.json": {
       "autorest_options": "-Namespace azure.mgmt.datalake.analytics.job -header MICROSOFT_APACHE_NO_VERSION",
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/"
     },
