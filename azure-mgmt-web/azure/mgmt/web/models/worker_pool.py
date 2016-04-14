@@ -30,6 +30,8 @@ class WorkerPool(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -39,7 +41,7 @@ class WorkerPool(Resource):
     :param worker_size_id: Worker size id for referencing this worker pool
     :type worker_size_id: int
     :param compute_mode: Shared or dedicated web app hosting. Possible values
-     include: 'Shared', 'Dedicated'
+     include: 'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str
     :param worker_size: VM size of the worker pool instances
     :type worker_size: str
@@ -59,6 +61,7 @@ class WorkerPool(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -70,8 +73,8 @@ class WorkerPool(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None, instance_names=None, sku=None):
-        super(WorkerPool, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None, instance_names=None, sku=None):
+        super(WorkerPool, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.worker_size_id = worker_size_id
         self.compute_mode = compute_mode
         self.worker_size = worker_size

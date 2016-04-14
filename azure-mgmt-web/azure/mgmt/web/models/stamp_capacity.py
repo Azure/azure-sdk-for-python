@@ -37,7 +37,7 @@ class StampCapacity(Model):
     :param unit: Name of the unit
     :type unit: str
     :param compute_mode: Shared/Dedicated workers. Possible values include:
-     'Shared', 'Dedicated'
+     'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str
     :param worker_size: Size of the machines. Possible values include:
      'Default', 'Small', 'Medium', 'Large'
