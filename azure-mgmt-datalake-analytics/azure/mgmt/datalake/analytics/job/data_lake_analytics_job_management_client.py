@@ -35,6 +35,10 @@ class DataLakeAnalyticsJobManagementClientConfiguration(AzureConfiguration):
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify Microsoft Azure subscription. The subscription ID forms part of
+     the URI for every service call.
+    :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
     :param adla_job_dns_suffix: Gets the DNS suffix used as the base for all
@@ -54,10 +58,12 @@ class DataLakeAnalyticsJobManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, adla_job_dns_suffix, api_version='2016-03-20-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
+            self, credentials, subscription_id, adla_job_dns_suffix, api_version='2015-11-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
 
         if credentials is None:
             raise ValueError('credentials must not be None.')
+        if subscription_id is None:
+            raise ValueError('subscription_id must not be None.')
         if adla_job_dns_suffix is None:
             raise ValueError('adla_job_dns_suffix must not be None.')
         base_url = 'https://{accountName}.{adlaJobDnsSuffix}'
@@ -68,6 +74,7 @@ class DataLakeAnalyticsJobManagementClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
+        self.subscription_id = subscription_id
         self.api_version = api_version
         self.adla_job_dns_suffix = adla_job_dns_suffix
         self.accept_language = accept_language

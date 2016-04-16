@@ -37,7 +37,7 @@ class JobCollectionDefinition(Model):
     :type tags: dict
     :param properties: Gets or sets the job collection properties.
     :type properties: :class:`JobCollectionProperties
-     <azure.mgmt.scheduler.models.JobCollectionProperties>`
+     <schedulermanagementclient.models.JobCollectionProperties>`
     """ 
 
     _attribute_map = {

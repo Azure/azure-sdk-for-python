@@ -61,7 +61,7 @@ class EndpointCreateParameters(Model):
      origins exist, the first origin will be used as primary and rest will be
      used as failover options.
     :type origins: list of :class:`DeepCreatedOrigin
-     <azure.mgmt.cdn.models.DeepCreatedOrigin>`
+     <cdnmanagementclient.models.DeepCreatedOrigin>`
     """ 
 
     _validation = {

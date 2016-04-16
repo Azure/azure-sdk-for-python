@@ -28,10 +28,10 @@ class ApiError(Model):
 
     :param details: Gets or sets the Api error details
     :type details: list of :class:`ApiErrorBase
-     <azure.mgmt.compute.models.ApiErrorBase>`
+     <computemanagementclient.models.ApiErrorBase>`
     :param innererror: Gets or sets the Api inner error
     :type innererror: :class:`InnerError
-     <azure.mgmt.compute.models.InnerError>`
+     <computemanagementclient.models.InnerError>`
     :param code: Gets or sets the error code.
     :type code: str
     :param target: Gets or sets the target of the particular error.

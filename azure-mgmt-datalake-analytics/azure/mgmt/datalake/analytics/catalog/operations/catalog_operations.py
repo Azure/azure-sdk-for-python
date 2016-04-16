@@ -68,7 +68,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSecret
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -95,6 +95,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -146,7 +147,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSecret
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -173,6 +174,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -218,7 +220,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSecret
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -243,6 +245,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -308,6 +311,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -345,7 +349,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlExternalDataSource
-         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlExternalDataSource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -370,6 +374,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -435,7 +440,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlExternalDataSourcePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSourcePaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlExternalDataSourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -478,6 +483,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -522,7 +528,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlCredential
-         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlCredential>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -547,6 +553,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -610,7 +617,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlCredentialPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlCredentialPaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlCredentialPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -653,6 +660,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -699,7 +707,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlProcedure
-         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlProcedure>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -725,6 +733,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -791,7 +800,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlProcedurePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedurePaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlProcedurePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -835,6 +844,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -880,7 +890,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTable
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -906,6 +916,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -971,7 +982,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTablePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlTablePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1015,6 +1026,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1060,7 +1072,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlView
-         <azure.mgmt.datalake.analytics.catalog.models.USqlView>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlView>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1086,6 +1098,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1151,7 +1164,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlViewPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlViewPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1195,6 +1208,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1243,7 +1257,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableStatistics
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlTableStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1270,6 +1284,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1338,7 +1353,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableStatisticsPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlTableStatisticsPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1383,6 +1398,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1451,7 +1467,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTypePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTypePaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlTypePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1495,6 +1511,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1544,7 +1561,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableValuedFunction
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlTableValuedFunction>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1570,6 +1587,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1638,7 +1656,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableValuedFunctionPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlTableValuedFunctionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1682,6 +1700,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1726,7 +1745,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlAssembly
-         <azure.mgmt.datalake.analytics.catalog.models.USqlAssembly>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlAssembly>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1751,6 +1770,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1815,7 +1835,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlAssemblyClrPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClrPaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlAssemblyClrPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1858,6 +1878,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1901,7 +1922,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSchema
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlSchema>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1926,6 +1947,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1989,7 +2011,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSchemaPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSchemaPaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlSchemaPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2032,6 +2054,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -2073,7 +2096,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlDatabase
-         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlDatabase>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2097,6 +2120,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -2158,7 +2182,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlDatabasePaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabasePaged>`
+         <datalakeanalyticscatalogmanagementclient.models.USqlDatabasePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2200,6 +2224,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 

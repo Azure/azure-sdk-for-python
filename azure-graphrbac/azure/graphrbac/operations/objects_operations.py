@@ -53,7 +53,8 @@ class ObjectsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AADObject <azure.graphrbac.models.AADObject>`
+        :rtype: :class:`AADObject
+         <graphrbacmanagementclient.models.AADObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -105,14 +106,14 @@ class ObjectsOperations(object):
 
         :param parameters: Objects filtering parameters.
         :type parameters: :class:`GetObjectsParameters
-         <azure.graphrbac.models.GetObjectsParameters>`
+         <graphrbacmanagementclient.models.GetObjectsParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AADObjectPaged
-         <azure.graphrbac.models.AADObjectPaged>`
+         <graphrbacmanagementclient.models.AADObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -180,7 +181,7 @@ class ObjectsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AADObjectPaged
-         <azure.graphrbac.models.AADObjectPaged>`
+         <graphrbacmanagementclient.models.AADObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

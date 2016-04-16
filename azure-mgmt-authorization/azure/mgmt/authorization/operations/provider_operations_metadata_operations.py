@@ -61,7 +61,7 @@ class ProviderOperationsMetadataOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProviderOperationsMetadata
-         <azure.mgmt.authorization.models.ProviderOperationsMetadata>`
+         <authorizationmanagementclient.models.ProviderOperationsMetadata>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -123,7 +123,7 @@ class ProviderOperationsMetadataOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProviderOperationsMetadataPaged
-         <azure.mgmt.authorization.models.ProviderOperationsMetadataPaged>`
+         <authorizationmanagementclient.models.ProviderOperationsMetadataPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

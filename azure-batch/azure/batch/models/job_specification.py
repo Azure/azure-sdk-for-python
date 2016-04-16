@@ -41,33 +41,33 @@ class JobSpecification(Model):
     :param constraints: Gets or sets the execution constraints for jobs
      created under this schedule.
     :type constraints: :class:`JobConstraints
-     <azure.batch.models.JobConstraints>`
+     <batchserviceclient.models.JobConstraints>`
     :param job_manager_task: Gets or sets the details of a Job Manager task
      to be launched when a job is started under this schedule.
     :type job_manager_task: :class:`JobManagerTask
-     <azure.batch.models.JobManagerTask>`
+     <batchserviceclient.models.JobManagerTask>`
     :param job_preparation_task: Gets or sets the Job Preparation task for
      jobs created under this schedule.
     :type job_preparation_task: :class:`JobPreparationTask
-     <azure.batch.models.JobPreparationTask>`
+     <batchserviceclient.models.JobPreparationTask>`
     :param job_release_task: Gets or sets the Job Release task for jobs
      created under this schedule.
     :type job_release_task: :class:`JobReleaseTask
-     <azure.batch.models.JobReleaseTask>`
+     <batchserviceclient.models.JobReleaseTask>`
     :param common_environment_settings: Gets or sets a list of common
      environment variable settings.  These environment variables are set for
      all tasks in jobs created under this schedule (including the Job
      Manager, Job Preparation and Job Release tasks).
     :type common_environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+     <batchserviceclient.models.EnvironmentSetting>`
     :param pool_info: Gets or sets the pool on which the Batch service runs
      the tasks of jobs created under this schedule.
     :type pool_info: :class:`PoolInformation
-     <azure.batch.models.PoolInformation>`
+     <batchserviceclient.models.PoolInformation>`
     :param metadata: Gets or sets a list of name-value pairs associated with
      each job created under this schedule as metadata.
     :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+     <batchserviceclient.models.MetadataItem>`
     """ 
 
     _attribute_map = {

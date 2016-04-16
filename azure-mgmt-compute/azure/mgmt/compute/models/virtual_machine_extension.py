@@ -63,7 +63,7 @@ class VirtualMachineExtension(Resource):
     :param instance_view: Gets or sets the virtual machine extension instance
      view.
     :type instance_view: :class:`VirtualMachineExtensionInstanceView
-     <azure.mgmt.compute.models.VirtualMachineExtensionInstanceView>`
+     <computemanagementclient.models.VirtualMachineExtensionInstanceView>`
     """ 
 
     _validation = {

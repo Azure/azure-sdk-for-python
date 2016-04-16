@@ -49,7 +49,7 @@ class JobReleaseTaskExecutionInformation(Model):
     :param scheduling_error: Gets or sets any error starting the Job Release
      task.
     :type scheduling_error: :class:`TaskSchedulingError
-     <azure.batch.models.TaskSchedulingError>`
+     <batchserviceclient.models.TaskSchedulingError>`
     """ 
 
     _validation = {

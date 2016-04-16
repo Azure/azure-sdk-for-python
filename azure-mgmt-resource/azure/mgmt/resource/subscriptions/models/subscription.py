@@ -37,7 +37,7 @@ class Subscription(Model):
     :type state: str
     :param subscription_policies: Gets or sets the subscription policies.
     :type subscription_policies: :class:`SubscriptionPolicies
-     <azure.mgmt.resource.subscriptions.models.SubscriptionPolicies>`
+     <subscriptionclient.models.SubscriptionPolicies>`
     """ 
 
     _attribute_map = {

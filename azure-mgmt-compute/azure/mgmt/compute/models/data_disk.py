@@ -32,13 +32,13 @@ class DataDisk(Model):
     :type name: str
     :param vhd: Gets or sets the Virtual Hard Disk.
     :type vhd: :class:`VirtualHardDisk
-     <azure.mgmt.compute.models.VirtualHardDisk>`
+     <computemanagementclient.models.VirtualHardDisk>`
     :param image: Gets or sets the Source User Image VirtualHardDisk. This
      VirtualHardDisk will be copied before using it to attach to the Virtual
      Machine.If SourceImage is provided, the destination VirtualHardDisk
      should not exist.
     :type image: :class:`VirtualHardDisk
-     <azure.mgmt.compute.models.VirtualHardDisk>`
+     <computemanagementclient.models.VirtualHardDisk>`
     :param caching: Gets or sets the caching type. Possible values include:
      'None', 'ReadOnly', 'ReadWrite'
     :type caching: str

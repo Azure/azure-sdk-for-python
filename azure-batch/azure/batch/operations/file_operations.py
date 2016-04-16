@@ -63,7 +63,7 @@ class FileOperations(object):
         :param file_delete_from_task_options: Additional parameters for the
          operation
         :type file_delete_from_task_options:
-         :class:`FileDeleteFromTaskOptions <azure.batch.models.FileDeleteFromTaskOptions>`
+         :class:`FileDeleteFromTaskOptions <batchserviceclient.models.FileDeleteFromTaskOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -149,7 +149,7 @@ class FileOperations(object):
         :param file_get_from_task_options: Additional parameters for the
          operation
         :type file_get_from_task_options: :class:`FileGetFromTaskOptions
-         <azure.batch.models.FileGetFromTaskOptions>`
+         <batchserviceclient.models.FileGetFromTaskOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -272,7 +272,7 @@ class FileOperations(object):
          parameters for the operation
         :type file_get_node_file_properties_from_task_options:
          :class:`FileGetNodeFilePropertiesFromTaskOptions
-         <azure.batch.models.FileGetNodeFilePropertiesFromTaskOptions>`
+         <batchserviceclient.models.FileGetNodeFilePropertiesFromTaskOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -381,7 +381,7 @@ class FileOperations(object):
          for the operation
         :type file_delete_from_compute_node_options:
          :class:`FileDeleteFromComputeNodeOptions
-         <azure.batch.models.FileDeleteFromComputeNodeOptions>`
+         <batchserviceclient.models.FileDeleteFromComputeNodeOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -468,7 +468,7 @@ class FileOperations(object):
          the operation
         :type file_get_from_compute_node_options:
          :class:`FileGetFromComputeNodeOptions
-         <azure.batch.models.FileGetFromComputeNodeOptions>`
+         <batchserviceclient.models.FileGetFromComputeNodeOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -590,7 +590,7 @@ class FileOperations(object):
          Additional parameters for the operation
         :type file_get_node_file_properties_from_compute_node_options:
          :class:`FileGetNodeFilePropertiesFromComputeNodeOptions
-         <azure.batch.models.FileGetNodeFilePropertiesFromComputeNodeOptions>`
+         <batchserviceclient.models.FileGetNodeFilePropertiesFromComputeNodeOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -691,13 +691,14 @@ class FileOperations(object):
         :param file_list_from_task_options: Additional parameters for the
          operation
         :type file_list_from_task_options: :class:`FileListFromTaskOptions
-         <azure.batch.models.FileListFromTaskOptions>`
+         <batchserviceclient.models.FileListFromTaskOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
+        :rtype: :class:`NodeFilePaged
+         <batchserviceclient.models.NodeFilePaged>`
         """
         filter = None
         if file_list_from_task_options is not None:
@@ -798,13 +799,14 @@ class FileOperations(object):
          the operation
         :type file_list_from_compute_node_options:
          :class:`FileListFromComputeNodeOptions
-         <azure.batch.models.FileListFromComputeNodeOptions>`
+         <batchserviceclient.models.FileListFromComputeNodeOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
+        :rtype: :class:`NodeFilePaged
+         <batchserviceclient.models.NodeFilePaged>`
         """
         filter = None
         if file_list_from_compute_node_options is not None:

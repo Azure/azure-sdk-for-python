@@ -45,7 +45,7 @@ class MetricDefinition(Resource):
     :param metric_availabilities: List of time grains supported for the
      metric together with retention period
     :type metric_availabilities: list of :class:`MetricAvailabilily
-     <azure.mgmt.web.models.MetricAvailabilily>`
+     <websitemanagementclient.models.MetricAvailabilily>`
     :param display_name: Friendly name shown in the UI
     :type display_name: str
     """ 

@@ -43,10 +43,10 @@ class WorkflowRun(SubResource):
     :type correlation_id: str
     :param workflow: Gets the reference to workflow version.
     :type workflow: :class:`ResourceReference
-     <azure.mgmt.logic.models.ResourceReference>`
+     <logicmanagementclient.models.ResourceReference>`
     :param trigger: Gets the fired trigger.
     :type trigger: :class:`WorkflowRunTrigger
-     <azure.mgmt.logic.models.WorkflowRunTrigger>`
+     <logicmanagementclient.models.WorkflowRunTrigger>`
     :param outputs: Gets the outputs.
     :type outputs: dict
     :param name: Gets the workflow run name.

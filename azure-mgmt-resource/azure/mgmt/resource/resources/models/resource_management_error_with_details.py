@@ -33,7 +33,7 @@ class ResourceManagementErrorWithDetails(ResourceManagementError):
     :type target: str
     :param details: Gets or sets validation error.
     :type details: list of :class:`ResourceManagementError
-     <azure.mgmt.resource.resources.models.ResourceManagementError>`
+     <resourcemanagementclient.models.ResourceManagementError>`
     """ 
 
     _validation = {

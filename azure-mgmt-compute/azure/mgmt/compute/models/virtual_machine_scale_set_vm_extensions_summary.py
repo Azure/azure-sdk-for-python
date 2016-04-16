@@ -30,7 +30,7 @@ class VirtualMachineScaleSetVMExtensionsSummary(Model):
     :type name: str
     :param statuses_summary: Gets the extensions information.
     :type statuses_summary: list of :class:`VirtualMachineStatusCodeCount
-     <azure.mgmt.compute.models.VirtualMachineStatusCodeCount>`
+     <computemanagementclient.models.VirtualMachineStatusCodeCount>`
     """ 
 
     _attribute_map = {

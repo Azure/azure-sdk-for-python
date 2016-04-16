@@ -31,13 +31,13 @@ class InboundNatRule(SubResource):
     :param frontend_ip_configuration: Gets or sets a reference to frontend IP
      Addresses
     :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <networkmanagementclient.models.SubResource>`
     :param backend_ip_configuration: Gets or sets a reference to a private ip
      address defined on a NetworkInterface of a VM. Traffic sent to
      frontendPort of each of the frontendIPConfigurations is forwarded to the
      backed IP
     :type backend_ip_configuration: :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
+     <networkmanagementclient.models.NetworkInterfaceIPConfiguration>`
     :param protocol: Gets or sets the transport potocol for the external
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'

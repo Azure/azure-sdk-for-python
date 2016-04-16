@@ -35,11 +35,11 @@ class IPConfiguration(SubResource):
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str
     :param subnet: Gets or sets the reference of the subnet resource
-    :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :type subnet: :class:`Subnet <networkmanagementclient.models.Subnet>`
     :param public_ip_address: Gets or sets the reference of the PublicIP
      resource
     :type public_ip_address: :class:`PublicIPAddress
-     <azure.mgmt.network.models.PublicIPAddress>`
+     <networkmanagementclient.models.PublicIPAddress>`
     :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
     :type provisioning_state: str
