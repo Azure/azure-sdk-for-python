@@ -67,7 +67,7 @@ class Certificate(Resource):
     :param hosting_environment_profile: Specification for the hosting
      environment (App Service Environment) to use for the certificate
     :type hosting_environment_profile: :class:`HostingEnvironmentProfile
-     <azure.mgmt.web.models.HostingEnvironmentProfile>`
+     <websitemanagementclient.models.HostingEnvironmentProfile>`
     """ 
 
     _validation = {

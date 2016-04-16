@@ -57,14 +57,14 @@ class VirtualMachinesOperations(object):
         :param parameters: Parameters supplied to the Capture Virtual Machine
          operation.
         :type parameters: :class:`VirtualMachineCaptureParameters
-         <azure.mgmt.compute.models.VirtualMachineCaptureParameters>`
+         <computemanagementclient.models.VirtualMachineCaptureParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualMachineCaptureResult
-         <azure.mgmt.compute.models.VirtualMachineCaptureResult>`
+         <computemanagementclient.models.VirtualMachineCaptureResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -149,14 +149,14 @@ class VirtualMachinesOperations(object):
         :param parameters: Parameters supplied to the Create Virtual Machine
          operation.
         :type parameters: :class:`VirtualMachine
-         <azure.mgmt.compute.models.VirtualMachine>`
+         <computemanagementclient.models.VirtualMachine>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualMachine
-         <azure.mgmt.compute.models.VirtualMachine>`
+         <computemanagementclient.models.VirtualMachine>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -325,7 +325,7 @@ class VirtualMachinesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachine
-         <azure.mgmt.compute.models.VirtualMachine>`
+         <computemanagementclient.models.VirtualMachine>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -519,7 +519,7 @@ class VirtualMachinesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachinePaged
-         <azure.mgmt.compute.models.VirtualMachinePaged>`
+         <computemanagementclient.models.VirtualMachinePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -585,7 +585,7 @@ class VirtualMachinesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachinePaged
-         <azure.mgmt.compute.models.VirtualMachinePaged>`
+         <computemanagementclient.models.VirtualMachinePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -653,7 +653,7 @@ class VirtualMachinesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineSizePaged
-         <azure.mgmt.compute.models.VirtualMachineSizePaged>`
+         <computemanagementclient.models.VirtualMachineSizePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

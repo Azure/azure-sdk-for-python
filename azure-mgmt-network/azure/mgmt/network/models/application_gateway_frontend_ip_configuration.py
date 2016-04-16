@@ -35,11 +35,12 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str
     :param subnet: Gets or sets the reference of the subnet resource
-    :type subnet: :class:`SubResource <azure.mgmt.network.models.SubResource>`
+    :type subnet: :class:`SubResource
+     <networkmanagementclient.models.SubResource>`
     :param public_ip_address: Gets or sets the reference of the PublicIP
      resource
     :type public_ip_address: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <networkmanagementclient.models.SubResource>`
     :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
     :type provisioning_state: str

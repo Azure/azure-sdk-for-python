@@ -43,10 +43,10 @@ class AvailabilitySet(Resource):
     :param virtual_machines: Gets or sets a list containing reference to all
      Virtual Machines  created under this Availability Set.
     :type virtual_machines: list of :class:`SubResource
-     <azure.mgmt.compute.models.SubResource>`
+     <computemanagementclient.models.SubResource>`
     :param statuses: Gets or sets the resource status information.
     :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.models.InstanceViewStatus>`
+     <computemanagementclient.models.InstanceViewStatus>`
     """ 
 
     _validation = {

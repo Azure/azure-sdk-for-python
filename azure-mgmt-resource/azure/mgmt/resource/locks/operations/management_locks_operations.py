@@ -54,14 +54,14 @@ class ManagementLocksOperations(object):
         :type lock_name: str
         :param parameters: The management lock parameters.
         :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+         <managementlockclient.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+         <managementlockclient.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -134,14 +134,14 @@ class ManagementLocksOperations(object):
         :type lock_name: str
         :param parameters: Create or update management lock parameters.
         :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+         <managementlockclient.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+         <managementlockclient.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -273,14 +273,14 @@ class ManagementLocksOperations(object):
         :type lock_name: str
         :param parameters: The management lock parameters.
         :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+         <managementlockclient.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+         <managementlockclient.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -396,7 +396,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.models.ManagementLockObject>`
+         <managementlockclient.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -513,7 +513,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
+         <managementlockclient.models.ManagementLockObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -593,7 +593,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
+         <managementlockclient.models.ManagementLockObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -666,7 +666,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
+         <managementlockclient.models.ManagementLockObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -731,7 +731,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
+         <managementlockclient.models.ManagementLockObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

@@ -57,7 +57,7 @@ class BackupItem(Resource):
     :type log: str
     :param databases: List of databases included in the backup
     :type databases: list of :class:`DatabaseBackupSetting
-     <azure.mgmt.web.models.DatabaseBackupSetting>`
+     <websitemanagementclient.models.DatabaseBackupSetting>`
     :param scheduled: True if this backup has been created due to a schedule
      being triggered.
     :type scheduled: bool

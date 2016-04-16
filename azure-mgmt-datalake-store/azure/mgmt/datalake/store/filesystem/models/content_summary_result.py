@@ -28,7 +28,7 @@ class ContentSummaryResult(Model):
 
     :param content_summary: Gets the content summary for the specified path
     :type content_summary: :class:`ContentSummary
-     <azure.mgmt.datalake.store.filesystem.models.ContentSummary>`
+     <datalakestorefilesystemmanagementclient.models.ContentSummary>`
     """ 
 
     _attribute_map = {

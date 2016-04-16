@@ -53,7 +53,7 @@ class GlobalModelOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.mgmt.web.models.User>`
+        :rtype: :class:`User <websitemanagementclient.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -104,13 +104,14 @@ class GlobalModelOperations(object):
         Updates publishing credentials for the subscription owner
 
         :param request_message: requestMessage with new publishing credentials
-        :type request_message: :class:`User <azure.mgmt.web.models.User>`
+        :type request_message: :class:`User
+         <websitemanagementclient.models.User>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.mgmt.web.models.User>`
+        :rtype: :class:`User <websitemanagementclient.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -170,7 +171,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GeoRegionCollection
-         <azure.mgmt.web.models.GeoRegionCollection>`
+         <websitemanagementclient.models.GeoRegionCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -226,7 +227,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CertificateCollection
-         <azure.mgmt.web.models.CertificateCollection>`
+         <websitemanagementclient.models.CertificateCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -286,7 +287,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmCollection
-         <azure.mgmt.web.models.ServerFarmCollection>`
+         <websitemanagementclient.models.ServerFarmCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -343,7 +344,8 @@ class GlobalModelOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteCollection <azure.mgmt.web.models.SiteCollection>`
+        :rtype: :class:`SiteCollection
+         <websitemanagementclient.models.SiteCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -400,7 +402,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostingEnvironmentCollection
-         <azure.mgmt.web.models.HostingEnvironmentCollection>`
+         <websitemanagementclient.models.HostingEnvironmentCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -456,7 +458,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagedHostingEnvironmentCollection
-         <azure.mgmt.web.models.ManagedHostingEnvironmentCollection>`
+         <websitemanagementclient.models.ManagedHostingEnvironmentCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -512,7 +514,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ClassicMobileServiceCollection
-         <azure.mgmt.web.models.ClassicMobileServiceCollection>`
+         <websitemanagementclient.models.ClassicMobileServiceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -735,14 +737,14 @@ class GlobalModelOperations(object):
 
         :param request: Name availability request
         :type request: :class:`ResourceNameAvailabilityRequest
-         <azure.mgmt.web.models.ResourceNameAvailabilityRequest>`
+         <websitemanagementclient.models.ResourceNameAvailabilityRequest>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceNameAvailability
-         <azure.mgmt.web.models.ResourceNameAvailability>`
+         <websitemanagementclient.models.ResourceNameAvailability>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

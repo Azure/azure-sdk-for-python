@@ -60,7 +60,7 @@ class WorkflowVersionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowVersion
-         <azure.mgmt.logic.models.WorkflowVersion>`
+         <logicmanagementclient.models.WorkflowVersion>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

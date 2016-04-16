@@ -206,7 +206,7 @@ class NetworkManagementClient(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.models.DnsNameAvailabilityResult>`
+         <networkmanagementclient.models.DnsNameAvailabilityResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

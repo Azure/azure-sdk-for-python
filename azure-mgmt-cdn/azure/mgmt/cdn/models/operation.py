@@ -30,7 +30,7 @@ class Operation(Model):
     :type name: str
     :param display:
     :type display: :class:`OperationDisplay
-     <azure.mgmt.cdn.models.OperationDisplay>`
+     <cdnmanagementclient.models.OperationDisplay>`
     """ 
 
     _attribute_map = {

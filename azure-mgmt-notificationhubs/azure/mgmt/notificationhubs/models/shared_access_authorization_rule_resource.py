@@ -41,7 +41,7 @@ class SharedAccessAuthorizationRuleResource(Model):
     :type tags: dict
     :param properties: Gets or sets properties of the Namespace.
     :type properties: :class:`SharedAccessAuthorizationRuleProperties
-     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
+     <notificationhubsmanagementclient.models.SharedAccessAuthorizationRuleProperties>`
     """ 
 
     _attribute_map = {

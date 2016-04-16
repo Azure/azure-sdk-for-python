@@ -41,7 +41,7 @@ class AutoPoolSpecification(Model):
     :type keep_alive: bool
     :param pool: Gets or sets the pool specification for the auto pool.
     :type pool: :class:`PoolSpecification
-     <azure.batch.models.PoolSpecification>`
+     <batchserviceclient.models.PoolSpecification>`
     """ 
 
     _validation = {

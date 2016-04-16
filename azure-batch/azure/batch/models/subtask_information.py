@@ -31,7 +31,7 @@ class SubtaskInformation(Model):
     :param node_info: Gets or sets information about the compute node on
      which the subtask ran.
     :type node_info: :class:`ComputeNodeInformation
-     <azure.batch.models.ComputeNodeInformation>`
+     <batchserviceclient.models.ComputeNodeInformation>`
     :param start_time: Gets or sets the time at which the subtask started
      running. If the subtask has been restarted or retried, this is the most
      recent time at which the subtask started running.
@@ -45,7 +45,7 @@ class SubtaskInformation(Model):
     :param scheduling_error: Gets or sets details of any error encountered
      scheduling the subtask.
     :type scheduling_error: :class:`TaskSchedulingError
-     <azure.batch.models.TaskSchedulingError>`
+     <batchserviceclient.models.TaskSchedulingError>`
     :param state: Gets or sets the current state of the subtask. Possible
      values include: 'active', 'preparing', 'running', 'completed'
     :type state: str

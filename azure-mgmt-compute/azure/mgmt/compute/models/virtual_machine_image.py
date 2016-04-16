@@ -35,13 +35,14 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :param tags: Gets or sets the tags attached to the resource.
     :type tags: dict
     :param plan:
-    :type plan: :class:`PurchasePlan <azure.mgmt.compute.models.PurchasePlan>`
+    :type plan: :class:`PurchasePlan
+     <computemanagementclient.models.PurchasePlan>`
     :param os_disk_image:
     :type os_disk_image: :class:`OSDiskImage
-     <azure.mgmt.compute.models.OSDiskImage>`
+     <computemanagementclient.models.OSDiskImage>`
     :param data_disk_images:
     :type data_disk_images: list of :class:`DataDiskImage
-     <azure.mgmt.compute.models.DataDiskImage>`
+     <computemanagementclient.models.DataDiskImage>`
     """ 
 
     _validation = {

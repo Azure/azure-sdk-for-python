@@ -38,7 +38,7 @@ class JobRecurrence(Model):
     :type end_time: datetime
     :param schedule:
     :type schedule: :class:`JobRecurrenceSchedule
-     <azure.mgmt.scheduler.models.JobRecurrenceSchedule>`
+     <schedulermanagementclient.models.JobRecurrenceSchedule>`
     """ 
 
     _attribute_map = {

@@ -30,7 +30,7 @@ class USqlDistributionInfo(Model):
     :type type: int
     :param keys: Gets or sets the list of directed columns in the distribution
     :type keys: list of :class:`USqlDirectedColumn
-     <azure.mgmt.datalake.analytics.catalog.models.USqlDirectedColumn>`
+     <datalakeanalyticscatalogmanagementclient.models.USqlDirectedColumn>`
     :param count: Gets or sets the count of indices using this distribution.
     :type count: int
     :param dynamic_count: Gets or sets the dynamic count of indices using

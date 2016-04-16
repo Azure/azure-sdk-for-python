@@ -57,14 +57,14 @@ class VirtualMachineScaleSetsOperations(object):
         :param parameters: Parameters supplied to the Create Virtual Machine
          Scale Set operation.
         :type parameters: :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.models.VirtualMachineScaleSet>`
+         <computemanagementclient.models.VirtualMachineScaleSet>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.models.VirtualMachineScaleSet>`
+         <computemanagementclient.models.VirtualMachineScaleSet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -321,7 +321,7 @@ class VirtualMachineScaleSetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSet
-         <azure.mgmt.compute.models.VirtualMachineScaleSet>`
+         <computemanagementclient.models.VirtualMachineScaleSet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -469,7 +469,7 @@ class VirtualMachineScaleSetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetInstanceView
-         <azure.mgmt.compute.models.VirtualMachineScaleSetInstanceView>`
+         <computemanagementclient.models.VirtualMachineScaleSetInstanceView>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -530,7 +530,7 @@ class VirtualMachineScaleSetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetPaged
-         <azure.mgmt.compute.models.VirtualMachineScaleSetPaged>`
+         <computemanagementclient.models.VirtualMachineScaleSetPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -597,7 +597,7 @@ class VirtualMachineScaleSetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetPaged
-         <azure.mgmt.compute.models.VirtualMachineScaleSetPaged>`
+         <computemanagementclient.models.VirtualMachineScaleSetPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -664,7 +664,7 @@ class VirtualMachineScaleSetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetSkuPaged
-         <azure.mgmt.compute.models.VirtualMachineScaleSetSkuPaged>`
+         <computemanagementclient.models.VirtualMachineScaleSetSkuPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

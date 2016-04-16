@@ -29,7 +29,7 @@ class ApnsCredential(Model):
     :param properties: Gets or sets properties of NotificationHub
      ApnsCredential.
     :type properties: :class:`ApnsCredentialProperties
-     <azure.mgmt.notificationhubs.models.ApnsCredentialProperties>`
+     <notificationhubsmanagementclient.models.ApnsCredentialProperties>`
     """ 
 
     _attribute_map = {

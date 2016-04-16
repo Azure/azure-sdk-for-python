@@ -31,14 +31,15 @@ class LoadBalancingRule(SubResource):
     :param frontend_ip_configuration: Gets or sets a reference to frontend IP
      Addresses
     :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <networkmanagementclient.models.SubResource>`
     :param backend_address_pool: Gets or sets  a reference to a pool of DIPs.
      Inbound traffic is randomly load balanced across IPs in the backend IPs
     :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <networkmanagementclient.models.SubResource>`
     :param probe: Gets or sets the reference of the load balancer probe used
      by the Load Balancing rule.
-    :type probe: :class:`SubResource <azure.mgmt.network.models.SubResource>`
+    :type probe: :class:`SubResource
+     <networkmanagementclient.models.SubResource>`
     :param protocol: Gets or sets the transport protocol for the external
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'

@@ -31,7 +31,7 @@ class JobCollectionQuota(Model):
     :type max_job_occurrence: int
     :param max_recurrence: Gets or set the maximum recurrence.
     :type max_recurrence: :class:`JobMaxRecurrence
-     <azure.mgmt.scheduler.models.JobMaxRecurrence>`
+     <schedulermanagementclient.models.JobMaxRecurrence>`
     """ 
 
     _attribute_map = {

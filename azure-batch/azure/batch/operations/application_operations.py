@@ -50,14 +50,14 @@ class ApplicationOperations(object):
         :param application_list_options: Additional parameters for the
          operation
         :type application_list_options: :class:`ApplicationListOptions
-         <azure.batch.models.ApplicationListOptions>`
+         <batchserviceclient.models.ApplicationListOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationSummaryPaged
-         <azure.batch.models.ApplicationSummaryPaged>`
+         <batchserviceclient.models.ApplicationSummaryPaged>`
         """
         max_results = None
         if application_list_options is not None:
@@ -139,14 +139,14 @@ class ApplicationOperations(object):
         :param application_get_options: Additional parameters for the
          operation
         :type application_get_options: :class:`ApplicationGetOptions
-         <azure.batch.models.ApplicationGetOptions>`
+         <batchserviceclient.models.ApplicationGetOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationSummary
-         <azure.batch.models.ApplicationSummary>`
+         <batchserviceclient.models.ApplicationSummary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

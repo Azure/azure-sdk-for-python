@@ -40,13 +40,13 @@ class VirtualNetworkGatewayConnection(Resource):
     :type authorization_key: str
     :param virtual_network_gateway1:
     :type virtual_network_gateway1: :class:`VirtualNetworkGateway
-     <azure.mgmt.network.models.VirtualNetworkGateway>`
+     <networkmanagementclient.models.VirtualNetworkGateway>`
     :param virtual_network_gateway2:
     :type virtual_network_gateway2: :class:`VirtualNetworkGateway
-     <azure.mgmt.network.models.VirtualNetworkGateway>`
+     <networkmanagementclient.models.VirtualNetworkGateway>`
     :param local_network_gateway2:
     :type local_network_gateway2: :class:`LocalNetworkGateway
-     <azure.mgmt.network.models.LocalNetworkGateway>`
+     <networkmanagementclient.models.LocalNetworkGateway>`
     :param connection_type: Gateway connection type
      -Ipsec/Dedicated/VpnClient/Vnet2Vnet. Possible values include: 'IPsec',
      'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
@@ -66,7 +66,8 @@ class VirtualNetworkGatewayConnection(Resource):
      connection
     :type ingress_bytes_transferred: long
     :param peer: The reference to peerings resource.
-    :type peer: :class:`SubResource <azure.mgmt.network.models.SubResource>`
+    :type peer: :class:`SubResource
+     <networkmanagementclient.models.SubResource>`
     :param enable_bgp: EnableBgp Flag
     :type enable_bgp: bool
     :param resource_guid: Gets or sets resource guid property of the

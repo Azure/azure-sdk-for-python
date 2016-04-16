@@ -29,7 +29,8 @@ class Contact(Model):
     available through the Whois directories as per ICANN requirements.
 
     :param address_mailing: Mailing address
-    :type address_mailing: :class:`Address <azure.mgmt.web.models.Address>`
+    :type address_mailing: :class:`Address
+     <websitemanagementclient.models.Address>`
     :param email: Email address
     :type email: str
     :param fax: Fax number

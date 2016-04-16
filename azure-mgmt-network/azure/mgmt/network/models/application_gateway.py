@@ -38,7 +38,7 @@ class ApplicationGateway(Resource):
     :type tags: dict
     :param sku: Gets or sets sku of application gateway resource
     :type sku: :class:`ApplicationGatewaySku
-     <azure.mgmt.network.models.ApplicationGatewaySku>`
+     <networkmanagementclient.models.ApplicationGatewaySku>`
     :param operational_state: Gets operational state of application gateway
      resource. Possible values include: 'Stopped', 'Starting', 'Running',
      'Stopping'
@@ -47,46 +47,46 @@ class ApplicationGateway(Resource):
      gateway resource
     :type gateway_ip_configurations: list of
      :class:`ApplicationGatewayIPConfiguration
-     <azure.mgmt.network.models.ApplicationGatewayIPConfiguration>`
+     <networkmanagementclient.models.ApplicationGatewayIPConfiguration>`
     :param ssl_certificates: Gets or sets ssl certificates of application
      gateway resource
     :type ssl_certificates: list of :class:`ApplicationGatewaySslCertificate
-     <azure.mgmt.network.models.ApplicationGatewaySslCertificate>`
+     <networkmanagementclient.models.ApplicationGatewaySslCertificate>`
     :param frontend_ip_configurations: Gets or sets frontend IP addresses of
      application gateway resource
     :type frontend_ip_configurations: list of
      :class:`ApplicationGatewayFrontendIPConfiguration
-     <azure.mgmt.network.models.ApplicationGatewayFrontendIPConfiguration>`
+     <networkmanagementclient.models.ApplicationGatewayFrontendIPConfiguration>`
     :param frontend_ports: Gets or sets frontend ports of application gateway
      resource
     :type frontend_ports: list of :class:`ApplicationGatewayFrontendPort
-     <azure.mgmt.network.models.ApplicationGatewayFrontendPort>`
+     <networkmanagementclient.models.ApplicationGatewayFrontendPort>`
     :param probes: Gets or sets probes of application gateway resource
     :type probes: list of :class:`ApplicationGatewayProbe
-     <azure.mgmt.network.models.ApplicationGatewayProbe>`
+     <networkmanagementclient.models.ApplicationGatewayProbe>`
     :param backend_address_pools: Gets or sets backend address pool of
      application gateway resource
     :type backend_address_pools: list of
      :class:`ApplicationGatewayBackendAddressPool
-     <azure.mgmt.network.models.ApplicationGatewayBackendAddressPool>`
+     <networkmanagementclient.models.ApplicationGatewayBackendAddressPool>`
     :param backend_http_settings_collection: Gets or sets backend http
      settings of application gateway resource
     :type backend_http_settings_collection: list of
      :class:`ApplicationGatewayBackendHttpSettings
-     <azure.mgmt.network.models.ApplicationGatewayBackendHttpSettings>`
+     <networkmanagementclient.models.ApplicationGatewayBackendHttpSettings>`
     :param http_listeners: Gets or sets HTTP listeners of application gateway
      resource
     :type http_listeners: list of :class:`ApplicationGatewayHttpListener
-     <azure.mgmt.network.models.ApplicationGatewayHttpListener>`
+     <networkmanagementclient.models.ApplicationGatewayHttpListener>`
     :param url_path_maps: Gets or sets URL path map of application gateway
      resource
     :type url_path_maps: list of :class:`ApplicationGatewayUrlPathMap
-     <azure.mgmt.network.models.ApplicationGatewayUrlPathMap>`
+     <networkmanagementclient.models.ApplicationGatewayUrlPathMap>`
     :param request_routing_rules: Gets or sets request routing rules of
      application gateway resource
     :type request_routing_rules: list of
      :class:`ApplicationGatewayRequestRoutingRule
-     <azure.mgmt.network.models.ApplicationGatewayRequestRoutingRule>`
+     <networkmanagementclient.models.ApplicationGatewayRequestRoutingRule>`
     :param resource_guid: Gets or sets resource guid property of the
      ApplicationGateway resource
     :type resource_guid: str

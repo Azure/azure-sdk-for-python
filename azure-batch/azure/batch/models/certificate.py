@@ -58,7 +58,7 @@ class Certificate(Model):
      the last attempt to delete this certificate.  This property is set only
      if the certificate is in the deletefailed state.
     :type delete_certificate_error: :class:`DeleteCertificateError
-     <azure.batch.models.DeleteCertificateError>`
+     <batchserviceclient.models.DeleteCertificateError>`
     """ 
 
     _attribute_map = {

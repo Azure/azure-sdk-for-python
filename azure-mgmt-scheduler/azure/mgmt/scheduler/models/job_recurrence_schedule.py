@@ -41,7 +41,7 @@ class JobRecurrenceSchedule(Model):
      month.
     :type monthly_occurrences: list of
      :class:`JobRecurrenceScheduleMonthlyOccurrence
-     <azure.mgmt.scheduler.models.JobRecurrenceScheduleMonthlyOccurrence>`
+     <schedulermanagementclient.models.JobRecurrenceScheduleMonthlyOccurrence>`
     """ 
 
     _attribute_map = {

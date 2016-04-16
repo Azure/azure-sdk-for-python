@@ -32,7 +32,7 @@ class AutoHealActions(Model):
     :type action_type: str
     :param custom_action: CustomAction - custom action to be taken
     :type custom_action: :class:`AutoHealCustomAction
-     <azure.mgmt.web.models.AutoHealCustomAction>`
+     <websitemanagementclient.models.AutoHealCustomAction>`
     :param min_process_execution_time: MinProcessExecutionTime - minimum time
      the process must execute
      before taking the action

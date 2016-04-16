@@ -56,7 +56,7 @@ class DomainsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DomainCollection
-         <azure.mgmt.web.models.DomainCollection>`
+         <websitemanagementclient.models.DomainCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -116,7 +116,7 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Domain <azure.mgmt.web.models.Domain>`
+        :rtype: :class:`Domain <websitemanagementclient.models.Domain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -173,13 +173,13 @@ class DomainsOperations(object):
         :param domain_name: Name of the domain
         :type domain_name: str
         :param domain: Domain registration information
-        :type domain: :class:`Domain <azure.mgmt.web.models.Domain>`
+        :type domain: :class:`Domain <websitemanagementclient.models.Domain>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Domain <azure.mgmt.web.models.Domain>`
+        :rtype: :class:`Domain <websitemanagementclient.models.Domain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -308,13 +308,13 @@ class DomainsOperations(object):
         :param domain_name: Name of the domain
         :type domain_name: str
         :param domain: Domain registration information
-        :type domain: :class:`Domain <azure.mgmt.web.models.Domain>`
+        :type domain: :class:`Domain <websitemanagementclient.models.Domain>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Domain <azure.mgmt.web.models.Domain>`
+        :rtype: :class:`Domain <websitemanagementclient.models.Domain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -383,7 +383,7 @@ class DomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Domain <azure.mgmt.web.models.Domain>`
+        :rtype: :class:`Domain <websitemanagementclient.models.Domain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

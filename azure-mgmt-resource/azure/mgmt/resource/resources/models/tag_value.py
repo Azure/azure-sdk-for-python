@@ -31,8 +31,7 @@ class TagValue(Model):
     :param tag_value: Gets or sets the tag value.
     :type tag_value: str
     :param count: Gets or sets the tag value count.
-    :type count: :class:`TagCount
-     <azure.mgmt.resource.resources.models.TagCount>`
+    :type count: :class:`TagCount <resourcemanagementclient.models.TagCount>`
     """ 
 
     _attribute_map = {

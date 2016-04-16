@@ -66,37 +66,38 @@ class CloudJob(Model):
     :type priority: int
     :param constraints: Gets or sets the execution constraints for the job.
     :type constraints: :class:`JobConstraints
-     <azure.batch.models.JobConstraints>`
+     <batchserviceclient.models.JobConstraints>`
     :param job_manager_task: Gets or sets details of a Job Manager task to be
      launched when the job is started.
     :type job_manager_task: :class:`JobManagerTask
-     <azure.batch.models.JobManagerTask>`
+     <batchserviceclient.models.JobManagerTask>`
     :param job_preparation_task: Gets or sets the Job Preparation task.
     :type job_preparation_task: :class:`JobPreparationTask
-     <azure.batch.models.JobPreparationTask>`
+     <batchserviceclient.models.JobPreparationTask>`
     :param job_release_task: Gets or sets the Job Release task.
     :type job_release_task: :class:`JobReleaseTask
-     <azure.batch.models.JobReleaseTask>`
+     <batchserviceclient.models.JobReleaseTask>`
     :param common_environment_settings: Gets or sets the list of common
      environment variable settings.  These environment variables are set for
      all tasks in the job (including the Job Manager, Job Preparation and Job
      Release tasks).
     :type common_environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+     <batchserviceclient.models.EnvironmentSetting>`
     :param pool_info: Gets or sets the pool on which the Batch service runs
-     the jobâ€™s tasks.
+     the job’s tasks.
     :type pool_info: :class:`PoolInformation
-     <azure.batch.models.PoolInformation>`
+     <batchserviceclient.models.PoolInformation>`
     :param metadata: Gets or sets a list of name-value pairs associated with
      the job as metadata.
     :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+     <batchserviceclient.models.MetadataItem>`
     :param execution_info: Gets or sets the execution information for the job.
     :type execution_info: :class:`JobExecutionInformation
-     <azure.batch.models.JobExecutionInformation>`
+     <batchserviceclient.models.JobExecutionInformation>`
     :param stats: Gets or sets resource usage statistics for the entire
      lifetime of the job.
-    :type stats: :class:`JobStatistics <azure.batch.models.JobStatistics>`
+    :type stats: :class:`JobStatistics
+     <batchserviceclient.models.JobStatistics>`
     """ 
 
     _attribute_map = {

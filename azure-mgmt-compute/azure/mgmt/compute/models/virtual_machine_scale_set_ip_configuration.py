@@ -32,19 +32,19 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :type name: str
     :param subnet: Gets or sets the subnet.
     :type subnet: :class:`ApiEntityReference
-     <azure.mgmt.compute.models.ApiEntityReference>`
+     <computemanagementclient.models.ApiEntityReference>`
     :param application_gateway_backend_address_pools: Gets or sets the
      application gateway backend address pools.
     :type application_gateway_backend_address_pools: list of
-     :class:`SubResource <azure.mgmt.compute.models.SubResource>`
+     :class:`SubResource <computemanagementclient.models.SubResource>`
     :param load_balancer_backend_address_pools: Gets or sets the load
      balancer backend address pools.
     :type load_balancer_backend_address_pools: list of :class:`SubResource
-     <azure.mgmt.compute.models.SubResource>`
+     <computemanagementclient.models.SubResource>`
     :param load_balancer_inbound_nat_pools: Gets or sets the load balancer
      inbound nat pools.
     :type load_balancer_inbound_nat_pools: list of :class:`SubResource
-     <azure.mgmt.compute.models.SubResource>`
+     <computemanagementclient.models.SubResource>`
     """ 
 
     _validation = {

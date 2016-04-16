@@ -261,7 +261,8 @@ class ApplicationOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Application <azure.mgmt.batch.models.Application>`
+        :rtype: :class:`Application
+         <batchmanagementclient.models.Application>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -323,7 +324,7 @@ class ApplicationOperations(object):
         :type application_id: str
         :param parameters: The parameters for the request.
         :type parameters: :class:`UpdateApplicationParameters
-         <azure.mgmt.batch.models.UpdateApplicationParameters>`
+         <batchmanagementclient.models.UpdateApplicationParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -394,7 +395,7 @@ class ApplicationOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AddApplicationPackageResult
-         <azure.mgmt.batch.models.AddApplicationPackageResult>`
+         <batchmanagementclient.models.AddApplicationPackageResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -524,7 +525,7 @@ class ApplicationOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GetApplicationPackageResult
-         <azure.mgmt.batch.models.GetApplicationPackageResult>`
+         <batchmanagementclient.models.GetApplicationPackageResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -592,7 +593,7 @@ class ApplicationOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationPaged
-         <azure.mgmt.batch.models.ApplicationPaged>`
+         <batchmanagementclient.models.ApplicationPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

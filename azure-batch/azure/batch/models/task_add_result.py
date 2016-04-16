@@ -38,7 +38,7 @@ class TaskAddResult(Model):
     :param location: The URL of the task, if the task was successfully added.
     :type location: str
     :param error: The error encountered while attempting to add the task.
-    :type error: :class:`BatchError <azure.batch.models.BatchError>`
+    :type error: :class:`BatchError <batchserviceclient.models.BatchError>`
     """ 
 
     _validation = {

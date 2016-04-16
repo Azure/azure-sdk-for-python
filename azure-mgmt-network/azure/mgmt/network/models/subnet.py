@@ -33,14 +33,14 @@ class Subnet(SubResource):
     :param network_security_group: Gets or sets the reference of the
      NetworkSecurityGroup resource
     :type network_security_group: :class:`NetworkSecurityGroup
-     <azure.mgmt.network.models.NetworkSecurityGroup>`
+     <networkmanagementclient.models.NetworkSecurityGroup>`
     :param route_table: Gets or sets the reference of the RouteTable resource
     :type route_table: :class:`RouteTable
-     <azure.mgmt.network.models.RouteTable>`
+     <networkmanagementclient.models.RouteTable>`
     :param ip_configurations: Gets array of references to the network
      interface IP configurations using subnet
     :type ip_configurations: list of :class:`IPConfiguration
-     <azure.mgmt.network.models.IPConfiguration>`
+     <networkmanagementclient.models.IPConfiguration>`
     :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
     :type provisioning_state: str
