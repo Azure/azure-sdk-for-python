@@ -44,11 +44,11 @@ class PublicIPAddress(Resource):
     :type public_ip_address_version: str
     :param ip_configuration:
     :type ip_configuration: :class:`IPConfiguration
-     <azure.mgmt.network.models.IPConfiguration>`
+     <networkmanagementclient.models.IPConfiguration>`
     :param dns_settings: Gets or sets FQDN of the DNS record associated with
      the public IP address
     :type dns_settings: :class:`PublicIPAddressDnsSettings
-     <azure.mgmt.network.models.PublicIPAddressDnsSettings>`
+     <networkmanagementclient.models.PublicIPAddressDnsSettings>`
     :param ip_address:
     :type ip_address: str
     :param idle_timeout_in_minutes: Gets or sets the Idletimeout of the

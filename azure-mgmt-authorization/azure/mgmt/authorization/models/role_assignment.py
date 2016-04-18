@@ -34,7 +34,7 @@ class RoleAssignment(Model):
     :type type: str
     :param properties: Gets or sets role assignment properties.
     :type properties: :class:`RoleAssignmentPropertiesWithScope
-     <azure.mgmt.authorization.models.RoleAssignmentPropertiesWithScope>`
+     <authorizationmanagementclient.models.RoleAssignmentPropertiesWithScope>`
     """ 
 
     _attribute_map = {

@@ -101,13 +101,13 @@ class UserOperations(object):
 
         :param parameters: Parameters to create a user.
         :type parameters: :class:`UserCreateParameters
-         <azure.graphrbac.models.UserCreateParameters>`
+         <graphrbacmanagementclient.models.UserCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.graphrbac.models.User>`
+        :rtype: :class:`User <graphrbacmanagementclient.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -168,7 +168,8 @@ class UserOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`UserPaged <azure.graphrbac.models.UserPaged>`
+        :rtype: :class:`UserPaged
+         <graphrbacmanagementclient.models.UserPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -235,7 +236,7 @@ class UserOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.graphrbac.models.User>`
+        :rtype: :class:`User <graphrbacmanagementclient.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -298,7 +299,7 @@ class UserOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`strPaged <azure.graphrbac.models.strPaged>`
+        :rtype: :class:`strPaged <graphrbacmanagementclient.models.strPaged>`
         """
         parameters = models.UserGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
 
@@ -368,7 +369,8 @@ class UserOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`UserPaged <azure.graphrbac.models.UserPaged>`
+        :rtype: :class:`UserPaged
+         <graphrbacmanagementclient.models.UserPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

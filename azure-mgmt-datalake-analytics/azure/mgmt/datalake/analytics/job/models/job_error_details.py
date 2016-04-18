@@ -56,9 +56,9 @@ class JobErrorDetails(Model):
     :param inner_error: Gets the inner error of this specific job error
      message, if any.
     :type inner_error: :class:`JobInnerError
-     <azure.mgmt.datalake.analytics.job.models.JobInnerError>`
+     <datalakeanalyticsjobmanagementclient.models.JobInnerError>`
     :param severity: Gets the severity level of the failure. Possible values
-     include: 'Warning', 'Error', 'Info'
+     include: 'Warning', 'Error'
     :type severity: str
     :param source: Gets the ultimate source of the failure (usually either
      SYSTEM or USER).

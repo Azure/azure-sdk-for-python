@@ -34,7 +34,7 @@ class TaskDependencies(Model):
     :param task_id_ranges: Gets or sets the list of task ranges that must
      complete before this task can be scheduled.
     :type task_id_ranges: list of :class:`TaskIdRange
-     <azure.batch.models.TaskIdRange>`
+     <batchserviceclient.models.TaskIdRange>`
     """ 
 
     _attribute_map = {

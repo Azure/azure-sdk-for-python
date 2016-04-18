@@ -50,10 +50,9 @@ class Recommendation(Model):
     :param channels: List of channels that this recommendation can apply.
      Possible values include: 'Notification', 'Api', 'Email', 'All'
     :type channels: str
-    :param category: The category that this recommendation belongs to.
-     Possible values include: 'Uncategorized', 'Test', 'UpSell', 'CrossSell',
-     'LiveSite'
-    :type category: str
+    :param tags: The list of category tags that this recommendation belongs
+     to.
+    :type tags: list of str
     :param action_name: Name of action recommended by this object.
     :type action_name: str
     :param enabled: On/off flag indicating the rule is currently enabled or
@@ -81,7 +80,6 @@ class Recommendation(Model):
     _validation = {
         'level': {'required': True},
         'channels': {'required': True},
-        'category': {'required': True},
     }
 
     _attribute_map = {
@@ -94,7 +92,7 @@ class Recommendation(Model):
         'message': {'key': 'message', 'type': 'str'},
         'level': {'key': 'level', 'type': 'NotificationLevel'},
         'channels': {'key': 'channels', 'type': 'Channels'},
-        'category': {'key': 'category', 'type': 'Category'},
+        'tags': {'key': 'tags', 'type': '[str]'},
         'action_name': {'key': 'actionName', 'type': 'str'},
         'enabled': {'key': 'enabled', 'type': 'int'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
@@ -105,7 +103,7 @@ class Recommendation(Model):
         'score': {'key': 'score', 'type': 'float'},
     }
 
-    def __init__(self, level, channels, category, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, action_name=None, enabled=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None):
+    def __init__(self, level, channels, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, tags=None, action_name=None, enabled=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None):
         self.creation_time = creation_time
         self.recommendation_id = recommendation_id
         self.resource_id = resource_id
@@ -115,7 +113,7 @@ class Recommendation(Model):
         self.message = message
         self.level = level
         self.channels = channels
-        self.category = category
+        self.tags = tags
         self.action_name = action_name
         self.enabled = enabled
         self.start_time = start_time

@@ -38,7 +38,7 @@ class NotificationHubResource(Model):
     :type tags: dict
     :param properties: Gets or sets properties of the NotificatioHub.
     :type properties: :class:`NotificationHubProperties
-     <azure.mgmt.notificationhubs.models.NotificationHubProperties>`
+     <notificationhubsmanagementclient.models.NotificationHubProperties>`
     """ 
 
     _attribute_map = {

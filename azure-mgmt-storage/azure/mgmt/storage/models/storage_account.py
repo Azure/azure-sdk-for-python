@@ -48,7 +48,7 @@ class StorageAccount(Resource):
      retrieval of a public blob, queue or table object.Note that StandardZRS
      and PremiumLRS accounts only return the blob endpoint.
     :type primary_endpoints: :class:`Endpoints
-     <azure.mgmt.storage.models.Endpoints>`
+     <storagemanagementclient.models.Endpoints>`
     :param primary_location: Gets the location of the primary for the storage
      account.
     :type primary_location: str
@@ -77,13 +77,13 @@ class StorageAccount(Resource):
     :param custom_domain: Gets the user assigned custom domain assigned to
      this storage account.
     :type custom_domain: :class:`CustomDomain
-     <azure.mgmt.storage.models.CustomDomain>`
+     <storagemanagementclient.models.CustomDomain>`
     :param secondary_endpoints: Gets the URLs that are used to perform a
      retrieval of a public blob, queue or table object from the secondary
      location of the storage account. Only available if the accountType is
      StandardRAGRS.
     :type secondary_endpoints: :class:`Endpoints
-     <azure.mgmt.storage.models.Endpoints>`
+     <storagemanagementclient.models.Endpoints>`
     """ 
 
     _attribute_map = {

@@ -29,7 +29,7 @@ class GcmCredential(Model):
     :param properties: Gets or sets properties of NotificationHub
      GcmCredential.
     :type properties: :class:`GcmCredentialProperties
-     <azure.mgmt.notificationhubs.models.GcmCredentialProperties>`
+     <notificationhubsmanagementclient.models.GcmCredentialProperties>`
     """ 
 
     _attribute_map = {

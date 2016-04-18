@@ -28,7 +28,7 @@ class BackupItemCollection(Model):
 
     :param value: Collection of resources
     :type value: list of :class:`BackupItem
-     <azure.mgmt.web.models.BackupItem>`
+     <websitemanagementclient.models.BackupItem>`
     :param next_link: Link to next page of resources
     :type next_link: str
     """ 

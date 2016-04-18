@@ -32,7 +32,7 @@ class NotificationHubCreateOrUpdateParameters(Model):
     :type tags: dict
     :param properties: Gets or sets properties of the NotificationHub.
     :type properties: :class:`NotificationHubProperties
-     <azure.mgmt.notificationhubs.models.NotificationHubProperties>`
+     <notificationhubsmanagementclient.models.NotificationHubProperties>`
     """ 
 
     _validation = {

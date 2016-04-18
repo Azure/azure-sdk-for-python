@@ -38,7 +38,7 @@ class DataLakeStoreAccount(Model):
     :type tags: dict
     :param properties: Gets or sets the Data Lake Store account properties.
     :type properties: :class:`DataLakeStoreAccountProperties
-     <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountProperties>`
+     <datalakestoreaccountmanagementclient.models.DataLakeStoreAccountProperties>`
     """ 
 
     _attribute_map = {

@@ -39,13 +39,13 @@ class DeploymentOperationProperties(Model):
     :type status_message: object
     :param target_resource: Gets or sets the target resource.
     :type target_resource: :class:`TargetResource
-     <azure.mgmt.resource.resources.models.TargetResource>`
+     <resourcemanagementclient.models.TargetResource>`
     :param request: Gets or sets the HTTP request message.
     :type request: :class:`HttpMessage
-     <azure.mgmt.resource.resources.models.HttpMessage>`
+     <resourcemanagementclient.models.HttpMessage>`
     :param response: Gets or sets the HTTP response message.
     :type response: :class:`HttpMessage
-     <azure.mgmt.resource.resources.models.HttpMessage>`
+     <resourcemanagementclient.models.HttpMessage>`
     """ 
 
     _attribute_map = {

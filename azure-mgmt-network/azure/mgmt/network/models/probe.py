@@ -30,7 +30,7 @@ class Probe(SubResource):
     :type id: str
     :param load_balancing_rules: Gets Load balancer rules that use this probe
     :type load_balancing_rules: list of :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <networkmanagementclient.models.SubResource>`
     :param protocol: Gets or sets the protocol of the end point. Possible
      values are http pr Tcp. If Tcp is specified, a received ACK is required
      for the probe to be successful. If http is specified,a 200 OK response

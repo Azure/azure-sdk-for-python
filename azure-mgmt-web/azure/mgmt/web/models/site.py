@@ -30,6 +30,8 @@ class Site(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -66,13 +68,14 @@ class Site(Resource):
     :param host_name_ssl_states: Hostname SSL states are  used to manage the
      SSL bindings for site's hostnames.
     :type host_name_ssl_states: list of :class:`HostNameSslState
-     <azure.mgmt.web.models.HostNameSslState>`
+     <websitemanagementclient.models.HostNameSslState>`
     :param server_farm_id:
     :type server_farm_id: str
     :param last_modified_time_utc: Last time web app was modified in UTC
     :type last_modified_time_utc: datetime
     :param site_config: Configuration of web app
-    :type site_config: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
+    :type site_config: :class:`SiteConfig
+     <websitemanagementclient.models.SiteConfig>`
     :param traffic_manager_host_names: Read-only list of Azure Traffic
      manager hostnames associated with web app
     :type traffic_manager_host_names: list of str
@@ -88,7 +91,7 @@ class Site(Resource):
     :param hosting_environment_profile: Specification for the hosting
      environment (App Service Environment) to use for the web app
     :type hosting_environment_profile: :class:`HostingEnvironmentProfile
-     <azure.mgmt.web.models.HostingEnvironmentProfile>`
+     <websitemanagementclient.models.HostingEnvironmentProfile>`
     :param micro_service:
     :type micro_service: str
     :param gateway_site_name: Name of gateway app associated with web app
@@ -118,7 +121,7 @@ class Site(Resource):
      specified, web app is cloned from
      a source web app
     :type cloning_info: :class:`CloningInfo
-     <azure.mgmt.web.models.CloningInfo>`
+     <websitemanagementclient.models.CloningInfo>`
     :param resource_group: Resource group web app belongs to
     :type resource_group: str
     :param is_default_container: Site is a default container
@@ -134,6 +137,7 @@ class Site(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -168,8 +172,8 @@ class Site(Resource):
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, container_size=None, max_number_of_workers=None, cloning_info=None, resource_group=None, is_default_container=None, default_host_name=None):
-        super(Site, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, site_name=None, state=None, host_names=None, repository_site_name=None, usage_state=None, enabled=None, enabled_host_names=None, availability_state=None, host_name_ssl_states=None, server_farm_id=None, last_modified_time_utc=None, site_config=None, traffic_manager_host_names=None, premium_app_deployed=None, scm_site_also_stopped=None, target_swap_slot=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, outbound_ip_addresses=None, container_size=None, max_number_of_workers=None, cloning_info=None, resource_group=None, is_default_container=None, default_host_name=None):
+        super(Site, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.site_name = site_name
         self.state = state
         self.host_names = host_names

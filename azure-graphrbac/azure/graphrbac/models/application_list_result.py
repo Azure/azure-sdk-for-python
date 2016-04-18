@@ -28,7 +28,7 @@ class ApplicationListResult(Model):
 
     :param value: Application list.
     :type value: list of :class:`Application
-     <azure.graphrbac.models.Application>`
+     <graphrbacmanagementclient.models.Application>`
     """ 
 
     _attribute_map = {

@@ -30,7 +30,7 @@ class Sku(Model):
     :type name: str
     :param plan: Gets or sets the reference to plan.
     :type plan: :class:`ResourceReference
-     <azure.mgmt.logic.models.ResourceReference>`
+     <logicmanagementclient.models.ResourceReference>`
     """ 
 
     _attribute_map = {

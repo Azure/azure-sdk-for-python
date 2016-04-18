@@ -28,7 +28,7 @@ class DeploymentCollection(Model):
 
     :param value: Collection of resources
     :type value: list of :class:`Deployment
-     <azure.mgmt.web.models.Deployment>`
+     <websitemanagementclient.models.Deployment>`
     :param next_link: Link to next page of resources
     :type next_link: str
     """ 

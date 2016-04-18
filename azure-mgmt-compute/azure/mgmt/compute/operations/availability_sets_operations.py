@@ -56,14 +56,14 @@ class AvailabilitySetsOperations(object):
         :param parameters: Parameters supplied to the Create Availability Set
          operation.
         :type parameters: :class:`AvailabilitySet
-         <azure.mgmt.compute.models.AvailabilitySet>`
+         <computemanagementclient.models.AvailabilitySet>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AvailabilitySet
-         <azure.mgmt.compute.models.AvailabilitySet>`
+         <computemanagementclient.models.AvailabilitySet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -183,7 +183,7 @@ class AvailabilitySetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AvailabilitySet
-         <azure.mgmt.compute.models.AvailabilitySet>`
+         <computemanagementclient.models.AvailabilitySet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -243,7 +243,7 @@ class AvailabilitySetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AvailabilitySetPaged
-         <azure.mgmt.compute.models.AvailabilitySetPaged>`
+         <computemanagementclient.models.AvailabilitySetPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -312,7 +312,7 @@ class AvailabilitySetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineSizePaged
-         <azure.mgmt.compute.models.VirtualMachineSizePaged>`
+         <computemanagementclient.models.VirtualMachineSizePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

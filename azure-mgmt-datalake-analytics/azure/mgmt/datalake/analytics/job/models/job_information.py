@@ -38,7 +38,7 @@ class JobInformation(Model):
     :param error_message: Gets the error message details for the job, if the
      job failed.
     :type error_message: list of :class:`JobErrorDetails
-     <azure.mgmt.datalake.analytics.job.models.JobErrorDetails>`
+     <datalakeanalyticsjobmanagementclient.models.JobErrorDetails>`
     :param degree_of_parallelism: Gets or sets the degree of parallelism used
      for this job. This must be greater than 0.
     :type degree_of_parallelism: int
@@ -64,10 +64,10 @@ class JobInformation(Model):
     :param state_audit_records: Gets the job state audit records, indicating
      when various operations have been performed on this job.
     :type state_audit_records: list of :class:`JobStateAuditRecord
-     <azure.mgmt.datalake.analytics.job.models.JobStateAuditRecord>`
+     <datalakeanalyticsjobmanagementclient.models.JobStateAuditRecord>`
     :param properties: Gets or sets the job specific properties.
     :type properties: :class:`JobProperties
-     <azure.mgmt.datalake.analytics.job.models.JobProperties>`
+     <datalakeanalyticsjobmanagementclient.models.JobProperties>`
     """ 
 
     _validation = {

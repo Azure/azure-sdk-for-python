@@ -63,14 +63,14 @@ class AccountOperations(object):
         :type account_name: str
         :param parameters: Additional parameters for account creation.
         :type parameters: :class:`BatchAccountCreateParameters
-         <azure.mgmt.batch.models.BatchAccountCreateParameters>`
+         <batchmanagementclient.models.BatchAccountCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`AccountResource
-         <azure.mgmt.batch.models.AccountResource>`
+         <batchmanagementclient.models.AccountResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -158,14 +158,14 @@ class AccountOperations(object):
         :type tags: dict
         :param properties: The properties of the account.
         :type properties: :class:`AccountBaseProperties
-         <azure.mgmt.batch.models.AccountBaseProperties>`
+         <batchmanagementclient.models.AccountBaseProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AccountResource
-         <azure.mgmt.batch.models.AccountResource>`
+         <batchmanagementclient.models.AccountResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -312,7 +312,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AccountResource
-         <azure.mgmt.batch.models.AccountResource>`
+         <batchmanagementclient.models.AccountResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -371,7 +371,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AccountResourcePaged
-         <azure.mgmt.batch.models.AccountResourcePaged>`
+         <batchmanagementclient.models.AccountResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -438,7 +438,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AccountResourcePaged
-         <azure.mgmt.batch.models.AccountResourcePaged>`
+         <batchmanagementclient.models.AccountResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -567,7 +567,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BatchAccountRegenerateKeyResult
-         <azure.mgmt.batch.models.BatchAccountRegenerateKeyResult>`
+         <batchmanagementclient.models.BatchAccountRegenerateKeyResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -637,7 +637,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BatchAccountListKeyResult
-         <azure.mgmt.batch.models.BatchAccountListKeyResult>`
+         <batchmanagementclient.models.BatchAccountListKeyResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

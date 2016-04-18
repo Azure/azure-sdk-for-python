@@ -38,12 +38,12 @@ class LocalNetworkGateway(Resource):
     :type tags: dict
     :param local_network_address_space: Local network site Address space
     :type local_network_address_space: :class:`AddressSpace
-     <azure.mgmt.network.models.AddressSpace>`
+     <networkmanagementclient.models.AddressSpace>`
     :param gateway_ip_address: IP address of local network gateway.
     :type gateway_ip_address: str
     :param bgp_settings: Local network gateway's BGP speaker settings
     :type bgp_settings: :class:`BgpSettings
-     <azure.mgmt.network.models.BgpSettings>`
+     <networkmanagementclient.models.BgpSettings>`
     :param resource_guid: Gets or sets resource guid property of the
      LocalNetworkGateway resource
     :type resource_guid: str

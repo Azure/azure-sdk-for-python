@@ -28,7 +28,7 @@ class ManagedHostingEnvironmentCollection(Model):
 
     :param value: Collection of resources
     :type value: list of :class:`ManagedHostingEnvironment
-     <azure.mgmt.web.models.ManagedHostingEnvironment>`
+     <websitemanagementclient.models.ManagedHostingEnvironment>`
     :param next_link: Link to next page of resources
     :type next_link: str
     """ 

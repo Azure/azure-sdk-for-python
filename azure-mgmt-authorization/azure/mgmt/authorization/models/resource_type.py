@@ -32,7 +32,7 @@ class ResourceType(Model):
     :type display_name: str
     :param operations: Gets or sets the resource type operations
     :type operations: list of :class:`ProviderOperation
-     <azure.mgmt.authorization.models.ProviderOperation>`
+     <authorizationmanagementclient.models.ProviderOperation>`
     """ 
 
     _attribute_map = {

@@ -39,7 +39,7 @@ class StorageAccountUpdateParameters(Model):
      account at this time. To clear the existing custom domain, use an empty
      string for the custom domain name property.
     :type custom_domain: :class:`CustomDomain
-     <azure.mgmt.storage.models.CustomDomain>`
+     <storagemanagementclient.models.CustomDomain>`
     """ 
 
     _attribute_map = {

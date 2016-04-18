@@ -47,11 +47,11 @@ class DataLakeAnalyticsAccountProperties(Model):
     :param data_lake_store_accounts: Gets or sets the list of Data Lake
      storage accounts associated with this account.
     :type data_lake_store_accounts: list of :class:`DataLakeStoreAccountInfo
-     <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo>`
+     <datalakeanalyticsaccountmanagementclient.models.DataLakeStoreAccountInfo>`
     :param storage_accounts: Gets or sets the list of Azure Blob storage
      accounts associated with this account.
     :type storage_accounts: list of :class:`StorageAccountInfo
-     <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
+     <datalakeanalyticsaccountmanagementclient.models.StorageAccountInfo>`
     :param creation_time: Gets or sets the account creation time.
     :type creation_time: datetime
     :param last_modified_time: Gets or sets the account last modified time.
