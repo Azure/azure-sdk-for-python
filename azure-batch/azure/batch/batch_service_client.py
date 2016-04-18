@@ -63,7 +63,11 @@ class BatchServiceClientConfiguration(AzureConfiguration):
             self, credentials, api_version='2016-02-01.3.0', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
-            raise ValueError('credentials must not be None.')
+            raise ValueError("Parameter 'credentials' must not be None.")
+        if api_version is not None and not isinstance(api_version, str):
+            raise TypeError("Optional parameter 'api_version' must be str.")
+        if accept_language is not None and not isinstance(accept_language, str):
+            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://batch.core.windows.net'
 

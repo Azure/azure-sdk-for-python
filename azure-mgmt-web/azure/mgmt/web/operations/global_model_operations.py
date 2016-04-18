@@ -160,10 +160,12 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_subscription_geo_regions(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, sku=None, custom_headers={}, raw=False, **operation_config):
         """
         Gets list of available geo regions
 
+        :param sku: Filter only to regions that support this sku
+        :type sku: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -183,6 +185,8 @@ class GlobalModelOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if sku is not None:
+            query_parameters['sku'] = self._serialize.query("sku", sku, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
@@ -612,7 +616,7 @@ class GlobalModelOperations(object):
 
         return deserialized
 
-    def is_hosting_environment_with_legacy_name_available(
+    def is_hosting_environment_name_available(
             self, name, custom_headers={}, raw=False, **operation_config):
         """
         Whether hosting environment name is available
@@ -629,15 +633,15 @@ class GlobalModelOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/ishostingenvironmentnameavailable/{name}'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/ishostingenvironmentnameavailable'
         path_format_arguments = {
-            'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['name'] = self._serialize.query("name", name, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
@@ -670,7 +674,7 @@ class GlobalModelOperations(object):
 
         return deserialized
 
-    def is_hosting_environment_name_available(
+    def is_hosting_environment_with_legacy_name_available(
             self, name, custom_headers={}, raw=False, **operation_config):
         """
         Whether hosting environment name is available
@@ -687,15 +691,15 @@ class GlobalModelOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/ishostingenvironmentnameavailable'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/ishostingenvironmentnameavailable/{name}'
         path_format_arguments = {
+            'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['name'] = self._serialize.query("name", name, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers

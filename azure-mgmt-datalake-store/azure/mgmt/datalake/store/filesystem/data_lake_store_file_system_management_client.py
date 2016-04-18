@@ -35,6 +35,10 @@ class DataLakeStoreFileSystemManagementClientConfiguration(AzureConfiguration):
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify Microsoft Azure subscription. The subscription ID forms part of
+     the URI for every service call.
+    :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
     :param adls_file_system_dns_suffix: Gets the URI used as the base for all
@@ -54,12 +58,22 @@ class DataLakeStoreFileSystemManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, adls_file_system_dns_suffix, api_version='2015-10-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
+            self, credentials, subscription_id, adls_file_system_dns_suffix, api_version='2015-10-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
 
         if credentials is None:
-            raise ValueError('credentials must not be None.')
+            raise ValueError("Parameter 'credentials' must not be None.")
+        if subscription_id is None:
+            raise ValueError("Parameter 'subscription_id' must not be None.")
+        if not isinstance(subscription_id, str):
+            raise TypeError("Parameter 'subscription_id' must be str.")
+        if api_version is not None and not isinstance(api_version, str):
+            raise TypeError("Optional parameter 'api_version' must be str.")
         if adls_file_system_dns_suffix is None:
-            raise ValueError('adls_file_system_dns_suffix must not be None.')
+            raise ValueError("Parameter 'adls_file_system_dns_suffix' must not be None.")
+        if not isinstance(adls_file_system_dns_suffix, str):
+            raise TypeError("Parameter 'adls_file_system_dns_suffix' must be str.")
+        if accept_language is not None and not isinstance(accept_language, str):
+            raise TypeError("Optional parameter 'accept_language' must be str.")
         base_url = 'https://{accountName}.{adlsFileSystemDnsSuffix}'
 
         super(DataLakeStoreFileSystemManagementClientConfiguration, self).__init__(base_url, filepath)
@@ -68,6 +82,7 @@ class DataLakeStoreFileSystemManagementClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
+        self.subscription_id = subscription_id
         self.api_version = api_version
         self.adls_file_system_dns_suffix = adls_file_system_dns_suffix
         self.accept_language = accept_language

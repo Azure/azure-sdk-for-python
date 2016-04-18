@@ -74,13 +74,13 @@ class JobStatisticsVertexStage(Model):
     :type total_count: int
     :param total_failed_time: Gets the amount of time that failed vertices
      took up in this stage.
-    :type total_failed_time: timedelta
+    :type total_failed_time: str
     :param total_progress: Gets the current progress of this stage, as a
      percentage.
     :type total_progress: int
     :param total_succeeded_time: Gets the amount of time all successful
      vertices took in this stage.
-    :type total_succeeded_time: timedelta
+    :type total_succeeded_time: str
     """ 
 
     _attribute_map = {
@@ -101,9 +101,9 @@ class JobStatisticsVertexStage(Model):
         'succeeded_count': {'key': 'succeededCount', 'type': 'int'},
         'temp_data_written': {'key': 'tempDataWritten', 'type': 'long'},
         'total_count': {'key': 'totalCount', 'type': 'int'},
-        'total_failed_time': {'key': 'totalFailedTime', 'type': 'duration'},
+        'total_failed_time': {'key': 'totalFailedTime', 'type': 'str'},
         'total_progress': {'key': 'totalProgress', 'type': 'int'},
-        'total_succeeded_time': {'key': 'totalSucceededTime', 'type': 'duration'},
+        'total_succeeded_time': {'key': 'totalSucceededTime', 'type': 'str'},
     }
 
     def __init__(self, data_read=None, data_read_cross_pod=None, data_read_intra_pod=None, data_to_read=None, data_written=None, duplicate_discard_count=None, failed_count=None, max_vertex_data_read=None, min_vertex_data_read=None, read_failure_count=None, revocation_count=None, running_count=None, scheduled_count=None, stage_name=None, succeeded_count=None, temp_data_written=None, total_count=None, total_failed_time=None, total_progress=None, total_succeeded_time=None):
