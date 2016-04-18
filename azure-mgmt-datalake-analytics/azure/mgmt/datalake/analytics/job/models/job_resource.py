@@ -38,7 +38,7 @@ class JobResource(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'resource_path': {'key': 'resourcePath', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'JobResourceType'},
+        'type': {'key': 'type', 'type': 'Type'},
     }
 
     def __init__(self, name=None, resource_path=None, type=None):
