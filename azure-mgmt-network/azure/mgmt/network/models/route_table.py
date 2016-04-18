@@ -37,9 +37,11 @@ class RouteTable(Resource):
     :param tags: Resource tags
     :type tags: dict
     :param routes: Gets or sets Routes in a Route Table
-    :type routes: list of :class:`Route <azure.mgmt.network.models.Route>`
+    :type routes: list of :class:`Route
+     <networkmanagementclient.models.Route>`
     :param subnets: Gets collection of references to subnets
-    :type subnets: list of :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :type subnets: list of :class:`Subnet
+     <networkmanagementclient.models.Subnet>`
     :param provisioning_state: Gets or sets Provisioning state of the
      resource Updating/Deleting/Failed
     :type provisioning_state: str

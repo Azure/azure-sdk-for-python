@@ -39,11 +39,11 @@ class PoolStatistics(Model):
     :param usage_stats: Gets or sets statistics related to pool usage
      information, such as the amount of core-time used.
     :type usage_stats: :class:`UsageStatistics
-     <azure.batch.models.UsageStatistics>`
+     <batchserviceclient.models.UsageStatistics>`
     :param resource_stats: Gets or sets statistics related to resource
      consumption by compute nodes in the pool.
     :type resource_stats: :class:`ResourceStatistics
-     <azure.batch.models.ResourceStatistics>`
+     <batchserviceclient.models.ResourceStatistics>`
     """ 
 
     _validation = {

@@ -28,7 +28,7 @@ class AccountBaseProperties(Model):
 
     :param auto_storage: The properties related to auto storage.
     :type auto_storage: :class:`AutoStorageBaseProperties
-     <azure.mgmt.batch.models.AutoStorageBaseProperties>`
+     <batchmanagementclient.models.AutoStorageBaseProperties>`
     """ 
 
     _attribute_map = {

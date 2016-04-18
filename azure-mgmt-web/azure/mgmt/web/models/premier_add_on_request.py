@@ -31,11 +31,12 @@ class PremierAddOnRequest(Model):
     :param tags: Tags associated with resource
     :type tags: dict
     :param plan: Azure resource manager plan
-    :type plan: :class:`ArmPlan <azure.mgmt.web.models.ArmPlan>`
+    :type plan: :class:`ArmPlan <websitemanagementclient.models.ArmPlan>`
     :param properties: Resource specific properties
     :type properties: object
     :param sku: Sku description of the resource
-    :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
+    :type sku: :class:`SkuDescription
+     <websitemanagementclient.models.SkuDescription>`
     """ 
 
     _attribute_map = {

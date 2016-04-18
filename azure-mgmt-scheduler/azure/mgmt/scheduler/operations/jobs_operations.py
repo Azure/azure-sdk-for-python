@@ -60,7 +60,7 @@ class JobsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobDefinition
-         <azure.mgmt.scheduler.models.JobDefinition>`
+         <schedulermanagementclient.models.JobDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -121,14 +121,14 @@ class JobsOperations(object):
         :type job_name: str
         :param job: The job definition.
         :type job: :class:`JobDefinition
-         <azure.mgmt.scheduler.models.JobDefinition>`
+         <schedulermanagementclient.models.JobDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobDefinition
-         <azure.mgmt.scheduler.models.JobDefinition>`
+         <schedulermanagementclient.models.JobDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -195,14 +195,14 @@ class JobsOperations(object):
         :type job_name: str
         :param job: The job definition.
         :type job: :class:`JobDefinition
-         <azure.mgmt.scheduler.models.JobDefinition>`
+         <schedulermanagementclient.models.JobDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobDefinition
-         <azure.mgmt.scheduler.models.JobDefinition>`
+         <schedulermanagementclient.models.JobDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -390,7 +390,7 @@ class JobsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobDefinitionPaged
-         <azure.mgmt.scheduler.models.JobDefinitionPaged>`
+         <schedulermanagementclient.models.JobDefinitionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -475,7 +475,7 @@ class JobsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobHistoryDefinitionPaged
-         <azure.mgmt.scheduler.models.JobHistoryDefinitionPaged>`
+         <schedulermanagementclient.models.JobHistoryDefinitionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

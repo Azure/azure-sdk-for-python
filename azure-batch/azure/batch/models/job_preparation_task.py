@@ -38,15 +38,15 @@ class JobPreparationTask(Model):
     :param resource_files: Gets or sets a list of files that Batch will
      download to the compute node before running the command line.
     :type resource_files: list of :class:`ResourceFile
-     <azure.batch.models.ResourceFile>`
+     <batchserviceclient.models.ResourceFile>`
     :param environment_settings: Gets or sets a list of environment variable
      settings for the Job Preparation task.
     :type environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+     <batchserviceclient.models.EnvironmentSetting>`
     :param constraints: Gets or sets constraints that apply to the Job
      Preparation task..
     :type constraints: :class:`TaskConstraints
-     <azure.batch.models.TaskConstraints>`
+     <batchserviceclient.models.TaskConstraints>`
     :param wait_for_success: Gets or sets whether the Batch Service should
      wait for the Job Preparation task to complete successfully before
      scheduling any other tasks of the job on the compute node.

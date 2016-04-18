@@ -37,7 +37,7 @@ class AzureAsyncOperationResult(Model):
      include: 'InProgress', 'Succeeded', 'Failed'
     :type status: str
     :param error:
-    :type error: :class:`Error <azure.mgmt.network.models.Error>`
+    :type error: :class:`Error <networkmanagementclient.models.Error>`
     """ 
 
     _attribute_map = {

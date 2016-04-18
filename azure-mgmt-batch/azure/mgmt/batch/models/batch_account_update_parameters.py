@@ -30,7 +30,7 @@ class BatchAccountUpdateParameters(Model):
     :type tags: dict
     :param properties: The properties of the account.
     :type properties: :class:`AccountBaseProperties
-     <azure.mgmt.batch.models.AccountBaseProperties>`
+     <batchmanagementclient.models.AccountBaseProperties>`
     """ 
 
     _attribute_map = {

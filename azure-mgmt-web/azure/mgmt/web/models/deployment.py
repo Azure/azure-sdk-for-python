@@ -30,6 +30,8 @@ class Deployment(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -65,6 +67,7 @@ class Deployment(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -80,8 +83,8 @@ class Deployment(Resource):
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
-        super(Deployment, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
+        super(Deployment, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.deployment_id = deployment_id
         self.status = status
         self.message = message

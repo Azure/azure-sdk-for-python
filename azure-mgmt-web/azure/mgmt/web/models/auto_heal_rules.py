@@ -29,10 +29,10 @@ class AutoHealRules(Model):
     :param triggers: Triggers - Conditions that describe when to execute the
      auto-heal actions
     :type triggers: :class:`AutoHealTriggers
-     <azure.mgmt.web.models.AutoHealTriggers>`
+     <websitemanagementclient.models.AutoHealTriggers>`
     :param actions: Actions - Actions to be executed when a rule is triggered
     :type actions: :class:`AutoHealActions
-     <azure.mgmt.web.models.AutoHealActions>`
+     <websitemanagementclient.models.AutoHealActions>`
     """ 
 
     _attribute_map = {

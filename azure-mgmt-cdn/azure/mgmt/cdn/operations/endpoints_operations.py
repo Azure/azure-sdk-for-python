@@ -59,7 +59,8 @@ class EndpointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`EndpointPaged <azure.mgmt.cdn.models.EndpointPaged>`
+        :rtype: :class:`EndpointPaged
+         <cdnmanagementclient.models.EndpointPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -129,7 +130,7 @@ class EndpointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Endpoint <azure.mgmt.cdn.models.Endpoint>`
+        :rtype: :class:`Endpoint <cdnmanagementclient.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -184,7 +185,7 @@ class EndpointsOperations(object):
         :type endpoint_name: str
         :param endpoint_properties: Endpoint properties
         :type endpoint_properties: :class:`EndpointCreateParameters
-         <azure.mgmt.cdn.models.EndpointCreateParameters>`
+         <cdnmanagementclient.models.EndpointCreateParameters>`
         :param profile_name: Name of the CDN profile within the resource
          group.
         :type profile_name: str
@@ -197,7 +198,7 @@ class EndpointsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Endpoint
-         <azure.mgmt.cdn.models.Endpoint>`
+         <cdnmanagementclient.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -283,7 +284,7 @@ class EndpointsOperations(object):
         :type endpoint_name: str
         :param endpoint_properties: Endpoint properties
         :type endpoint_properties: :class:`EndpointUpdateParameters
-         <azure.mgmt.cdn.models.EndpointUpdateParameters>`
+         <cdnmanagementclient.models.EndpointUpdateParameters>`
         :param profile_name: Name of the CDN profile within the resource
          group.
         :type profile_name: str
@@ -296,7 +297,7 @@ class EndpointsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Endpoint
-         <azure.mgmt.cdn.models.Endpoint>`
+         <cdnmanagementclient.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -468,7 +469,7 @@ class EndpointsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Endpoint
-         <azure.mgmt.cdn.models.Endpoint>`
+         <cdnmanagementclient.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -555,7 +556,7 @@ class EndpointsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Endpoint
-         <azure.mgmt.cdn.models.Endpoint>`
+         <cdnmanagementclient.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -822,7 +823,7 @@ class EndpointsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ValidateCustomDomainOutput
-         <azure.mgmt.cdn.models.ValidateCustomDomainOutput>`
+         <cdnmanagementclient.models.ValidateCustomDomainOutput>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

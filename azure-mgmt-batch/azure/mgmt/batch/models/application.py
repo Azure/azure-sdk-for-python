@@ -33,7 +33,7 @@ class Application(Model):
     :type display_name: str
     :param packages: The list of packages under this application.
     :type packages: list of :class:`ApplicationPackage
-     <azure.mgmt.batch.models.ApplicationPackage>`
+     <batchmanagementclient.models.ApplicationPackage>`
     :param allow_updates: A value indicating whether packages within the
      application may be overwritten using the same version string.
     :type allow_updates: bool

@@ -23,7 +23,7 @@ from .deployment_extended_filter import DeploymentExtendedFilter
 from .generic_resource_filter import GenericResourceFilter
 from .resource_group_filter import ResourceGroupFilter
 from .management_lock_object import ManagementLockObject
-from .resource_model import ResourceModel
+from .resource import Resource
 from .sub_resource import SubResource
 from .management_lock_object_paged import ManagementLockObjectPaged
 from .management_lock_client_enums import (
@@ -35,7 +35,7 @@ __all__ = [
     'GenericResourceFilter',
     'ResourceGroupFilter',
     'ManagementLockObject',
-    'ResourceModel',
+    'Resource',
     'SubResource',
     'ManagementLockObjectPaged',
     'LockLevel',

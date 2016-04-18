@@ -27,7 +27,8 @@ class DomainCollection(Model):
     Collection of domains
 
     :param value: Collection of resources
-    :type value: list of :class:`Domain <azure.mgmt.web.models.Domain>`
+    :type value: list of :class:`Domain
+     <websitemanagementclient.models.Domain>`
     :param next_link: Link to next page of resources
     :type next_link: str
     """ 

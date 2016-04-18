@@ -39,7 +39,8 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :param request_timeout: Gets or sets request timeout
     :type request_timeout: int
     :param probe: Gets or sets probe resource of application gateway
-    :type probe: :class:`SubResource <azure.mgmt.network.models.SubResource>`
+    :type probe: :class:`SubResource
+     <networkmanagementclient.models.SubResource>`
     :param provisioning_state: Gets or sets Provisioning state of the backend
      http settings resource Updating/Deleting/Failed
     :type provisioning_state: str

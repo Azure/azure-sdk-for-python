@@ -65,7 +65,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StorageAccountInfo
-         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
+         <datalakeanalyticsaccountmanagementclient.models.StorageAccountInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -191,7 +191,7 @@ class AccountOperations(object):
         :param properties: Gets or sets the properties for the Azure Storage
          account being added.
         :type properties: :class:`StorageAccountProperties
-         <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
+         <datalakeanalyticsaccountmanagementclient.models.StorageAccountProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -262,7 +262,7 @@ class AccountOperations(object):
         :param properties: Gets or sets the properties for the Azure Storage
          account being added.
         :type properties: :class:`StorageAccountProperties
-         <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
+         <datalakeanalyticsaccountmanagementclient.models.StorageAccountProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -339,7 +339,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BlobContainer
-         <azure.mgmt.datalake.analytics.account.models.BlobContainer>`
+         <datalakeanalyticsaccountmanagementclient.models.BlobContainer>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -410,7 +410,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BlobContainerPaged
-         <azure.mgmt.datalake.analytics.account.models.BlobContainerPaged>`
+         <datalakeanalyticsaccountmanagementclient.models.BlobContainerPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -480,7 +480,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BlobContainerPaged
-         <azure.mgmt.datalake.analytics.account.models.BlobContainerPaged>`
+         <datalakeanalyticsaccountmanagementclient.models.BlobContainerPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -546,7 +546,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SasTokenInfoPaged
-         <azure.mgmt.datalake.analytics.account.models.SasTokenInfoPaged>`
+         <datalakeanalyticsaccountmanagementclient.models.SasTokenInfoPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -621,7 +621,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SasTokenInfoPaged
-         <azure.mgmt.datalake.analytics.account.models.SasTokenInfoPaged>`
+         <datalakeanalyticsaccountmanagementclient.models.SasTokenInfoPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -698,7 +698,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeStoreAccountInfo
-         <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeStoreAccountInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -825,7 +825,7 @@ class AccountOperations(object):
         :param properties: Gets or sets the properties for the Data Lake
          Store account being added.
         :type properties: :class:`DataLakeStoreAccountInfoProperties
-         <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeStoreAccountInfoProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -929,7 +929,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StorageAccountInfoPaged
-         <azure.mgmt.datalake.analytics.account.models.StorageAccountInfoPaged>`
+         <datalakeanalyticsaccountmanagementclient.models.StorageAccountInfoPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1052,7 +1052,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeStoreAccountInfoPaged
-         <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoPaged>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeStoreAccountInfoPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1172,7 +1172,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeAnalyticsAccountPaged
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountPaged>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccountPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1288,7 +1288,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeAnalyticsAccountPaged
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountPaged>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccountPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1375,7 +1375,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1516,14 +1516,14 @@ class AccountOperations(object):
         :param parameters: Parameters supplied to the create Data Lake
          Analytics account operation.
         :type parameters: :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccount>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1612,14 +1612,14 @@ class AccountOperations(object):
         :param parameters: Parameters supplied to the update Data Lake
          Analytics account operation.
         :type parameters: :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccount>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DataLakeAnalyticsAccount
-         <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
+         <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

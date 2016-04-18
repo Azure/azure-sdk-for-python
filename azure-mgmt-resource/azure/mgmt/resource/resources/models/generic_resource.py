@@ -19,10 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_model import ResourceModel
+from .resource import Resource
 
 
-class GenericResource(ResourceModel):
+class GenericResource(Resource):
     """
     Resource information.
 
@@ -37,7 +37,7 @@ class GenericResource(ResourceModel):
     :param tags: Resource tags
     :type tags: dict
     :param plan: Gets or sets the plan of the resource.
-    :type plan: :class:`Plan <azure.mgmt.resource.resources.models.Plan>`
+    :type plan: :class:`Plan <resourcemanagementclient.models.Plan>`
     :param properties: Gets or sets the resource properties.
     :type properties: object
     """ 

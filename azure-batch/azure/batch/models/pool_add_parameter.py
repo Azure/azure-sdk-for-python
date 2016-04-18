@@ -41,12 +41,12 @@ class PoolAddParameter(Model):
      VirtualMachineConfiguration are mutually exclusive and one of the
      properties must be specified.
     :type cloud_service_configuration: :class:`CloudServiceConfiguration
-     <azure.batch.models.CloudServiceConfiguration>`
+     <batchserviceclient.models.CloudServiceConfiguration>`
     :param virtual_machine_configuration: Gets or sets the virtual machine
      configuration for the pool. This property and CloudServiceConfiguration
      are mutually exclusive and one of the properties must be specified.
     :type virtual_machine_configuration: :class:`VirtualMachineConfiguration
-     <azure.batch.models.VirtualMachineConfiguration>`
+     <batchserviceclient.models.VirtualMachineConfiguration>`
     :param resize_timeout: Gets or sets the timeout for allocation of compute
      nodes to the pool. In a Get Pool operation, this is the timeout for the
      most recent resize operation. The default value is 10 minutes.
@@ -70,27 +70,27 @@ class PoolAddParameter(Model):
     :type enable_inter_node_communication: bool
     :param start_task: Gets or sets a task specified to run on each compute
      node as it joins the pool.
-    :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
+    :type start_task: :class:`StartTask <batchserviceclient.models.StartTask>`
     :param certificate_references: Gets or sets the list of certificates to
      be installed on each compute node in the pool.
     :type certificate_references: list of :class:`CertificateReference
-     <azure.batch.models.CertificateReference>`
+     <batchserviceclient.models.CertificateReference>`
     :param application_package_references: Gets or sets the list of
      application packages to be installed on each compute node in the pool.
     :type application_package_references: list of
      :class:`ApplicationPackageReference
-     <azure.batch.models.ApplicationPackageReference>`
+     <batchserviceclient.models.ApplicationPackageReference>`
     :param max_tasks_per_node: Gets or sets the maximum number of tasks that
      can run concurrently on a single compute node in the pool.
     :type max_tasks_per_node: int
     :param task_scheduling_policy: Gets or sets how the Batch service
      distributes tasks between compute nodes in the pool.
     :type task_scheduling_policy: :class:`TaskSchedulingPolicy
-     <azure.batch.models.TaskSchedulingPolicy>`
+     <batchserviceclient.models.TaskSchedulingPolicy>`
     :param metadata: Gets or sets a list of name-value pairs associated with
      the pool as metadata.
     :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+     <batchserviceclient.models.MetadataItem>`
     """ 
 
     _validation = {
