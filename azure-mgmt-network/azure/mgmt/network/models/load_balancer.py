@@ -39,24 +39,25 @@ class LoadBalancer(Resource):
     :param frontend_ip_configurations: Gets or sets frontend IP addresses of
      the load balancer
     :type frontend_ip_configurations: list of :class:`FrontendIPConfiguration
-     <azure.mgmt.network.models.FrontendIPConfiguration>`
+     <networkmanagementclient.models.FrontendIPConfiguration>`
     :param backend_address_pools: Gets or sets Pools of backend IP addresseses
     :type backend_address_pools: list of :class:`BackendAddressPool
-     <azure.mgmt.network.models.BackendAddressPool>`
+     <networkmanagementclient.models.BackendAddressPool>`
     :param load_balancing_rules: Gets or sets loadbalancing rules
     :type load_balancing_rules: list of :class:`LoadBalancingRule
-     <azure.mgmt.network.models.LoadBalancingRule>`
+     <networkmanagementclient.models.LoadBalancingRule>`
     :param probes: Gets or sets list of Load balancer probes
-    :type probes: list of :class:`Probe <azure.mgmt.network.models.Probe>`
+    :type probes: list of :class:`Probe
+     <networkmanagementclient.models.Probe>`
     :param inbound_nat_rules: Gets or sets list of inbound rules
     :type inbound_nat_rules: list of :class:`InboundNatRule
-     <azure.mgmt.network.models.InboundNatRule>`
+     <networkmanagementclient.models.InboundNatRule>`
     :param inbound_nat_pools: Gets or sets inbound NAT pools
     :type inbound_nat_pools: list of :class:`InboundNatPool
-     <azure.mgmt.network.models.InboundNatPool>`
+     <networkmanagementclient.models.InboundNatPool>`
     :param outbound_nat_rules: Gets or sets outbound NAT rules
     :type outbound_nat_rules: list of :class:`OutboundNatRule
-     <azure.mgmt.network.models.OutboundNatRule>`
+     <networkmanagementclient.models.OutboundNatRule>`
     :param resource_guid: Gets or sets resource guid property of the Load
      balancer resource
     :type resource_guid: str

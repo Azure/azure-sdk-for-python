@@ -28,25 +28,25 @@ class PoolUpdatePropertiesParameter(Model):
 
     :param start_task: Sets a task to run on each compute node as it joins
      the pool. If omitted, any existing start task is removed from the pool.
-    :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
+    :type start_task: :class:`StartTask <batchserviceclient.models.StartTask>`
     :param certificate_references: Sets a list of certificates to be
      installed on each compute node in the pool. If you specify an empty
      collection, any existing certificate references are removed from the
      pool.
     :type certificate_references: list of :class:`CertificateReference
-     <azure.batch.models.CertificateReference>`
+     <batchserviceclient.models.CertificateReference>`
     :param application_package_references: Sets a list of application
      packages to be installed on each compute node in the pool. If you
      specify an empty collection, any existing application packages
      references are removed from the pool.
     :type application_package_references: list of
      :class:`ApplicationPackageReference
-     <azure.batch.models.ApplicationPackageReference>`
+     <batchserviceclient.models.ApplicationPackageReference>`
     :param metadata: Sets a list of name-value pairs associated with the pool
      as metadata. If you specify an empty collection, any existing metadata
      is removed from the pool.
     :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+     <batchserviceclient.models.MetadataItem>`
     """ 
 
     _validation = {

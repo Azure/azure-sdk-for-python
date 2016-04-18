@@ -28,7 +28,7 @@ class ExpressRouteCircuitsArpTableListResult(Model):
 
     :param value: Gets List of ArpTable
     :type value: list of :class:`ExpressRouteCircuitArpTable
-     <azure.mgmt.network.models.ExpressRouteCircuitArpTable>`
+     <networkmanagementclient.models.ExpressRouteCircuitArpTable>`
     :param next_link: Gets the URL to get the next set of results.
     :type next_link: str
     """ 

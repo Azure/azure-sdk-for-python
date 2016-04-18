@@ -27,7 +27,7 @@ class SiteCollection(Model):
     Collection of sites
 
     :param value: Collection of resources
-    :type value: list of :class:`Site <azure.mgmt.web.models.Site>`
+    :type value: list of :class:`Site <websitemanagementclient.models.Site>`
     :param next_link: Link to next page of resources
     :type next_link: str
     """ 

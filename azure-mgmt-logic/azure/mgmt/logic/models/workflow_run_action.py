@@ -43,10 +43,10 @@ class WorkflowRunAction(SubResource):
     :type tracking_id: str
     :param inputs_link: Gets the link to inputs.
     :type inputs_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+     <logicmanagementclient.models.ContentLink>`
     :param outputs_link: Gets the link to outputs.
     :type outputs_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+     <logicmanagementclient.models.ContentLink>`
     :param name: Gets the workflow run action name.
     :type name: str
     :param type: Gets the workflow run action type.

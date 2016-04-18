@@ -39,7 +39,7 @@ class TaskExecutionInformation(Model):
     :param scheduling_error: Gets or sets details of any error encountered
      scheduling the task.
     :type scheduling_error: :class:`TaskSchedulingError
-     <azure.batch.models.TaskSchedulingError>`
+     <batchserviceclient.models.TaskSchedulingError>`
     :param retry_count: Gets or sets the number of times the task has been
      retried by the Batch service.
     :type retry_count: int

@@ -35,29 +35,29 @@ class USqlJobProperties(JobProperties):
     :param resources: Gets or sets the list of resources that are required by
      the job
     :type resources: list of :class:`JobResource
-     <azure.mgmt.datalake.analytics.job.models.JobResource>`
+     <datalakeanalyticsjobmanagementclient.models.JobResource>`
     :param statistics: Gets or sets the job specific statistics.
     :type statistics: :class:`JobStatistics
-     <azure.mgmt.datalake.analytics.job.models.JobStatistics>`
+     <datalakeanalyticsjobmanagementclient.models.JobStatistics>`
     :param debug_data: Gets or sets the job specific debug data locations.
     :type debug_data: :class:`JobDataPath
-     <azure.mgmt.datalake.analytics.job.models.JobDataPath>`
+     <datalakeanalyticsjobmanagementclient.models.JobDataPath>`
     :param algebra_file_path: Gets the U-SQL algebra file path after the job
      has completed
     :type algebra_file_path: str
     :param total_compilation_time: Gets the total time this job spent
      compiling. This value should not be set by the user and will be ignored
      if it is.
-    :type total_compilation_time: timedelta
+    :type total_compilation_time: str
     :param total_pause_time: Gets the total time this job spent paused. This
      value should not be set by the user and will be ignored if it is.
-    :type total_pause_time: timedelta
+    :type total_pause_time: str
     :param total_queued_time: Gets the total time this job spent queued. This
      value should not be set by the user and will be ignored if it is.
-    :type total_queued_time: timedelta
+    :type total_queued_time: str
     :param total_running_time: Gets the total time this job spent executing.
      This value should not be set by the user and will be ignored if it is.
-    :type total_running_time: timedelta
+    :type total_running_time: str
     :param root_process_node_id: Gets the ID used to identify the job manager
      coordinating job execution. This value should not be set by the user and
      will be ignored if it is.
@@ -88,10 +88,10 @@ class USqlJobProperties(JobProperties):
         'statistics': {'key': 'statistics', 'type': 'JobStatistics'},
         'debug_data': {'key': 'debugData', 'type': 'JobDataPath'},
         'algebra_file_path': {'key': 'algebraFilePath', 'type': 'str'},
-        'total_compilation_time': {'key': 'totalCompilationTime', 'type': 'duration'},
-        'total_pause_time': {'key': 'totalPauseTime', 'type': 'duration'},
-        'total_queued_time': {'key': 'totalQueuedTime', 'type': 'duration'},
-        'total_running_time': {'key': 'totalRunningTime', 'type': 'duration'},
+        'total_compilation_time': {'key': 'totalCompilationTime', 'type': 'str'},
+        'total_pause_time': {'key': 'totalPauseTime', 'type': 'str'},
+        'total_queued_time': {'key': 'totalQueuedTime', 'type': 'str'},
+        'total_running_time': {'key': 'totalRunningTime', 'type': 'str'},
         'root_process_node_id': {'key': 'rootProcessNodeId', 'type': 'str'},
         'yarn_application_id': {'key': 'yarnApplicationId', 'type': 'str'},
         'yarn_application_time_stamp': {'key': 'yarnApplicationTimeStamp', 'type': 'long'},

@@ -30,14 +30,14 @@ class VirtualMachineScaleSetInstanceView(Model):
      virtual machine scale set.
     :type virtual_machine:
      :class:`VirtualMachineScaleSetInstanceViewStatusesSummary
-     <azure.mgmt.compute.models.VirtualMachineScaleSetInstanceViewStatusesSummary>`
+     <computemanagementclient.models.VirtualMachineScaleSetInstanceViewStatusesSummary>`
     :param extensions: Gets the extensions information.
     :type extensions: list of
      :class:`VirtualMachineScaleSetVMExtensionsSummary
-     <azure.mgmt.compute.models.VirtualMachineScaleSetVMExtensionsSummary>`
+     <computemanagementclient.models.VirtualMachineScaleSetVMExtensionsSummary>`
     :param statuses: Gets or sets the resource status information.
     :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.models.InstanceViewStatus>`
+     <computemanagementclient.models.InstanceViewStatus>`
     """ 
 
     _attribute_map = {

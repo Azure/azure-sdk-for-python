@@ -29,7 +29,7 @@ class AddStorageAccountParameters(Model):
     :param properties: Gets or sets the properties for the Azure Storage
      account being added.
     :type properties: :class:`StorageAccountProperties
-     <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
+     <datalakeanalyticsaccountmanagementclient.models.StorageAccountProperties>`
     """ 
 
     _validation = {

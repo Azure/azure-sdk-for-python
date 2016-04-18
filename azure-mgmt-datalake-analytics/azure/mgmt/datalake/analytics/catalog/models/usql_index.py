@@ -30,12 +30,12 @@ class USqlIndex(Model):
     :type name: str
     :param index_keys: Gets or sets the list of directed columns in the index
     :type index_keys: list of :class:`USqlDirectedColumn
-     <azure.mgmt.datalake.analytics.catalog.models.USqlDirectedColumn>`
+     <datalakeanalyticscatalogmanagementclient.models.USqlDirectedColumn>`
     :param columns: Gets or sets the list of columns in the index
     :type columns: list of str
     :param distribution_info: Gets or sets the distributions info of the index
     :type distribution_info: :class:`USqlDistributionInfo
-     <azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo>`
+     <datalakeanalyticscatalogmanagementclient.models.USqlDistributionInfo>`
     :param partition_function: Gets or sets partition function ID for the
      index.
     :type partition_function: str

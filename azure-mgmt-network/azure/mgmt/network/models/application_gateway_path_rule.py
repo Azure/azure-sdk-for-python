@@ -33,11 +33,11 @@ class ApplicationGatewayPathRule(SubResource):
     :param backend_address_pool: Gets or sets backend address pool resource
      of URL path map
     :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <networkmanagementclient.models.SubResource>`
     :param backend_http_settings: Gets or sets backend http settings resource
      of URL path map
     :type backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <networkmanagementclient.models.SubResource>`
     :param provisioning_state: Gets or sets path rule of URL path map
      resource Updating/Deleting/Failed
     :type provisioning_state: str

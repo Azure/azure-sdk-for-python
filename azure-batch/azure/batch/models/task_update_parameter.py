@@ -29,7 +29,7 @@ class TaskUpdateParameter(Model):
     :param constraints: Sets constraints that apply to this task. If omitted,
      the task is given the default constraints.
     :type constraints: :class:`TaskConstraints
-     <azure.batch.models.TaskConstraints>`
+     <batchserviceclient.models.TaskConstraints>`
     """ 
 
     _attribute_map = {

@@ -37,15 +37,15 @@ class VirtualMachineScaleSetOSProfile(Model):
     :param windows_configuration: Gets or sets the Windows Configuration of
      the OS profile.
     :type windows_configuration: :class:`WindowsConfiguration
-     <azure.mgmt.compute.models.WindowsConfiguration>`
+     <computemanagementclient.models.WindowsConfiguration>`
     :param linux_configuration: Gets or sets the Linux Configuration of the
      OS profile.
     :type linux_configuration: :class:`LinuxConfiguration
-     <azure.mgmt.compute.models.LinuxConfiguration>`
+     <computemanagementclient.models.LinuxConfiguration>`
     :param secrets: Gets or sets the List of certificates for addition to the
      VM.
     :type secrets: list of :class:`VaultSecretGroup
-     <azure.mgmt.compute.models.VaultSecretGroup>`
+     <computemanagementclient.models.VaultSecretGroup>`
     """ 
 
     _attribute_map = {

@@ -28,7 +28,7 @@ class TaskAddCollectionParameter(Model):
 
     :param value: The collection of tasks to add.
     :type value: list of :class:`TaskAddParameter
-     <azure.batch.models.TaskAddParameter>`
+     <batchserviceclient.models.TaskAddParameter>`
     """ 
 
     _validation = {

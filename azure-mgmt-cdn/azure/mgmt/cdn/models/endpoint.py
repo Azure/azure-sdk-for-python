@@ -72,7 +72,7 @@ class Endpoint(TrackedResource):
      origins exist, the first origin will be used as primary and rest will be
      used as failover options.
     :type origins: list of :class:`DeepCreatedOrigin
-     <azure.mgmt.cdn.models.DeepCreatedOrigin>`
+     <cdnmanagementclient.models.DeepCreatedOrigin>`
     :param resource_state: Resource status of the endpoint. Possible values
      include: 'Creating', 'Deleting', 'Running', 'Starting', 'Stopped',
      'Stopping'

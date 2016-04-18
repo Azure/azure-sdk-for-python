@@ -38,7 +38,7 @@ class NamespaceResource(Model):
     :type tags: dict
     :param properties: Gets or sets properties of the Namespace.
     :type properties: :class:`NamespaceProperties
-     <azure.mgmt.notificationhubs.models.NamespaceProperties>`
+     <notificationhubsmanagementclient.models.NamespaceProperties>`
     """ 
 
     _attribute_map = {

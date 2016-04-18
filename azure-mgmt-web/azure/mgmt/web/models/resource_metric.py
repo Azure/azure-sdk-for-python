@@ -28,7 +28,7 @@ class ResourceMetric(Model):
 
     :param name: Name of metric
     :type name: :class:`ResourceMetricName
-     <azure.mgmt.web.models.ResourceMetricName>`
+     <websitemanagementclient.models.ResourceMetricName>`
     :param unit: Metric unit
     :type unit: str
     :param time_grain: Metric granularity. E.g PT1H, PT5M, P1D
@@ -41,10 +41,10 @@ class ResourceMetric(Model):
     :type resource_id: str
     :param metric_values: Metric values
     :type metric_values: list of :class:`ResourceMetricValue
-     <azure.mgmt.web.models.ResourceMetricValue>`
+     <websitemanagementclient.models.ResourceMetricValue>`
     :param properties: Properties
     :type properties: list of :class:`KeyValuePairStringString
-     <azure.mgmt.web.models.KeyValuePairStringString>`
+     <websitemanagementclient.models.KeyValuePairStringString>`
     """ 
 
     _attribute_map = {

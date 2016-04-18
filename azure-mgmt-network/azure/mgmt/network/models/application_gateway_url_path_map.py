@@ -31,14 +31,14 @@ class ApplicationGatewayUrlPathMap(SubResource):
     :param default_backend_address_pool: Gets or sets default backend address
      pool resource of URL path map
     :type default_backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <networkmanagementclient.models.SubResource>`
     :param default_backend_http_settings: Gets or sets default backend http
      settings resource of URL path map
     :type default_backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <networkmanagementclient.models.SubResource>`
     :param path_rules: Gets or sets path rule of URL path map resource
     :type path_rules: list of :class:`ApplicationGatewayPathRule
-     <azure.mgmt.network.models.ApplicationGatewayPathRule>`
+     <networkmanagementclient.models.ApplicationGatewayPathRule>`
     :param provisioning_state: Gets or sets Provisioning state of the backend
      http settings resource Updating/Deleting/Failed
     :type provisioning_state: str

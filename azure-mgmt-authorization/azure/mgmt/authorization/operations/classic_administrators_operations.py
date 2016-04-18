@@ -56,7 +56,7 @@ class ClassicAdministratorsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ClassicAdministratorPaged
-         <azure.mgmt.authorization.models.ClassicAdministratorPaged>`
+         <authorizationmanagementclient.models.ClassicAdministratorPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

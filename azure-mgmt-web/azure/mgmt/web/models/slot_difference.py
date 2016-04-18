@@ -31,6 +31,8 @@ class SlotDifference(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -65,6 +67,7 @@ class SlotDifference(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -77,8 +80,8 @@ class SlotDifference(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, slot_difference_type=None, setting_type=None, diff_rule=None, setting_name=None, value_in_current_slot=None, value_in_target_slot=None, description=None):
-        super(SlotDifference, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, slot_difference_type=None, setting_type=None, diff_rule=None, setting_name=None, value_in_current_slot=None, value_in_target_slot=None, description=None):
+        super(SlotDifference, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.slot_difference_type = slot_difference_type
         self.setting_type = setting_type
         self.diff_rule = diff_rule

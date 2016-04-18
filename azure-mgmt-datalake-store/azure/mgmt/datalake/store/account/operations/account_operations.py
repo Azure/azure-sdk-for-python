@@ -123,7 +123,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FirewallRule
-         <azure.mgmt.datalake.store.account.models.FirewallRule>`
+         <datalakestoreaccountmanagementclient.models.FirewallRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -189,7 +189,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FirewallRulePaged
-         <azure.mgmt.datalake.store.account.models.FirewallRulePaged>`
+         <datalakestoreaccountmanagementclient.models.FirewallRulePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -258,7 +258,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FirewallRulePaged
-         <azure.mgmt.datalake.store.account.models.FirewallRulePaged>`
+         <datalakestoreaccountmanagementclient.models.FirewallRulePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -326,14 +326,14 @@ class AccountOperations(object):
         :param parameters: Parameters supplied to create the create firewall
          rule.
         :type parameters: :class:`FirewallRule
-         <azure.mgmt.datalake.store.account.models.FirewallRule>`
+         <datalakestoreaccountmanagementclient.models.FirewallRule>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FirewallRule
-         <azure.mgmt.datalake.store.account.models.FirewallRule>`
+         <datalakestoreaccountmanagementclient.models.FirewallRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -398,14 +398,14 @@ class AccountOperations(object):
         :param parameters: Parameters supplied to create the Data Lake Store
          account.
         :type parameters: :class:`DataLakeStoreAccount
-         <azure.mgmt.datalake.store.account.models.DataLakeStoreAccount>`
+         <datalakestoreaccountmanagementclient.models.DataLakeStoreAccount>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DataLakeStoreAccount
-         <azure.mgmt.datalake.store.account.models.DataLakeStoreAccount>`
+         <datalakestoreaccountmanagementclient.models.DataLakeStoreAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -493,14 +493,14 @@ class AccountOperations(object):
         :param parameters: Parameters supplied to update the Data Lake Store
          account.
         :type parameters: :class:`DataLakeStoreAccount
-         <azure.mgmt.datalake.store.account.models.DataLakeStoreAccount>`
+         <datalakestoreaccountmanagementclient.models.DataLakeStoreAccount>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DataLakeStoreAccount
-         <azure.mgmt.datalake.store.account.models.DataLakeStoreAccount>`
+         <datalakestoreaccountmanagementclient.models.DataLakeStoreAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -670,7 +670,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeStoreAccount
-         <azure.mgmt.datalake.store.account.models.DataLakeStoreAccount>`
+         <datalakestoreaccountmanagementclient.models.DataLakeStoreAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -764,7 +764,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeStoreAccountPaged
-         <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountPaged>`
+         <datalakestoreaccountmanagementclient.models.DataLakeStoreAccountPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -879,7 +879,7 @@ class AccountOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeStoreAccountPaged
-         <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountPaged>`
+         <datalakestoreaccountmanagementclient.models.DataLakeStoreAccountPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

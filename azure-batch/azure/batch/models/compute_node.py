@@ -65,22 +65,22 @@ class ComputeNode(Model):
     :param recent_tasks: Gets or sets the list of tasks that are currently
      running on the compute node.
     :type recent_tasks: list of :class:`TaskInformation
-     <azure.batch.models.TaskInformation>`
+     <batchserviceclient.models.TaskInformation>`
     :param start_task: Gets or sets the task specified to run on the compute
      node as it joins the pool.
-    :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
+    :type start_task: :class:`StartTask <batchserviceclient.models.StartTask>`
     :param start_task_info: Gets or sets runtime information about the
      execution of the start task on the compute node.
     :type start_task_info: :class:`StartTaskInformation
-     <azure.batch.models.StartTaskInformation>`
+     <batchserviceclient.models.StartTaskInformation>`
     :param certificate_references: Gets or sets the list of certificates
      installed on the compute node.
     :type certificate_references: list of :class:`CertificateReference
-     <azure.batch.models.CertificateReference>`
+     <batchserviceclient.models.CertificateReference>`
     :param errors: Gets or sets the list of errors that are currently being
      encountered by the compute node.
     :type errors: list of :class:`ComputeNodeError
-     <azure.batch.models.ComputeNodeError>`
+     <batchserviceclient.models.ComputeNodeError>`
     """ 
 
     _attribute_map = {
