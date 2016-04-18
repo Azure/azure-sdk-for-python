@@ -36,7 +36,7 @@ class CsmUsageQuota(Model):
     :type limit: long
     :param name: Quota name
     :type name: :class:`LocalizableString
-     <azure.mgmt.web.models.LocalizableString>`
+     <websitemanagementclient.models.LocalizableString>`
     """ 
 
     _attribute_map = {

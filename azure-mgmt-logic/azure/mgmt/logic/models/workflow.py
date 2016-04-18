@@ -50,15 +50,15 @@ class Workflow(Resource):
     :param access_endpoint: Gets the access endpoint.
     :type access_endpoint: str
     :param sku: Gets or sets the sku.
-    :type sku: :class:`Sku <azure.mgmt.logic.models.Sku>`
+    :type sku: :class:`Sku <logicmanagementclient.models.Sku>`
     :param definition_link: Gets or sets the link to definition.
     :type definition_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+     <logicmanagementclient.models.ContentLink>`
     :param definition: Gets or sets the definition.
     :type definition: object
     :param parameters_link: Gets or sets the link to parameters.
     :type parameters_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+     <logicmanagementclient.models.ContentLink>`
     :param parameters: Gets or sets the parameters.
     :type parameters: dict
     """ 

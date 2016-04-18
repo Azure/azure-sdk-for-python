@@ -31,6 +31,8 @@ class VnetInfo(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -46,9 +48,13 @@ class VnetInfo(Resource):
      Point-To-Site VPN connection.
     :type cert_blob: str
     :param routes: The routes that this virtual network connection uses.
-    :type routes: list of :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
+    :type routes: list of :class:`VnetRoute
+     <websitemanagementclient.models.VnetRoute>`
     :param resync_required: Flag to determine if a resync is required
     :type resync_required: bool
+    :param dns_servers: Dns servers to be used by this VNET. This should be a
+     comma-separated list of IP addresses.
+    :type dns_servers: str
     """ 
 
     _validation = {
@@ -58,6 +64,7 @@ class VnetInfo(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -66,12 +73,14 @@ class VnetInfo(Resource):
         'cert_blob': {'key': 'properties.certBlob', 'type': 'str'},
         'routes': {'key': 'properties.routes', 'type': '[VnetRoute]'},
         'resync_required': {'key': 'properties.resyncRequired', 'type': 'bool'},
+        'dns_servers': {'key': 'properties.dnsServers', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None, resync_required=None):
-        super(VnetInfo, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, vnet_resource_id=None, cert_thumbprint=None, cert_blob=None, routes=None, resync_required=None, dns_servers=None):
+        super(VnetInfo, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint = cert_thumbprint
         self.cert_blob = cert_blob
         self.routes = routes
         self.resync_required = resync_required
+        self.dns_servers = dns_servers

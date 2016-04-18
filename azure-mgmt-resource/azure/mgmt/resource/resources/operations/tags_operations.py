@@ -111,8 +111,7 @@ class TagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TagValue
-         <azure.mgmt.resource.resources.models.TagValue>`
+        :rtype: :class:`TagValue <resourcemanagementclient.models.TagValue>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -174,7 +173,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagDetails
-         <azure.mgmt.resource.resources.models.TagDetails>`
+         <resourcemanagementclient.models.TagDetails>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -284,7 +283,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagDetailsPaged
-         <azure.mgmt.resource.resources.models.TagDetailsPaged>`
+         <resourcemanagementclient.models.TagDetailsPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

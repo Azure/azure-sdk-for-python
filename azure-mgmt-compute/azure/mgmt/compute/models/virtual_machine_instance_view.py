@@ -35,19 +35,19 @@ class VirtualMachineInstanceView(Model):
     :type rdp_thumb_print: str
     :param vm_agent: Gets or sets the VM Agent running on the virtual machine.
     :type vm_agent: :class:`VirtualMachineAgentInstanceView
-     <azure.mgmt.compute.models.VirtualMachineAgentInstanceView>`
+     <computemanagementclient.models.VirtualMachineAgentInstanceView>`
     :param disks: Gets or sets the disks information.
     :type disks: list of :class:`DiskInstanceView
-     <azure.mgmt.compute.models.DiskInstanceView>`
+     <computemanagementclient.models.DiskInstanceView>`
     :param extensions: Gets or sets the extensions information.
     :type extensions: list of :class:`VirtualMachineExtensionInstanceView
-     <azure.mgmt.compute.models.VirtualMachineExtensionInstanceView>`
+     <computemanagementclient.models.VirtualMachineExtensionInstanceView>`
     :param boot_diagnostics: Gets or sets the boot diagnostics.
     :type boot_diagnostics: :class:`BootDiagnosticsInstanceView
-     <azure.mgmt.compute.models.BootDiagnosticsInstanceView>`
+     <computemanagementclient.models.BootDiagnosticsInstanceView>`
     :param statuses: Gets or sets the resource status information.
     :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.models.InstanceViewStatus>`
+     <computemanagementclient.models.InstanceViewStatus>`
     """ 
 
     _attribute_map = {

@@ -38,11 +38,11 @@ class JobReleaseTask(Model):
     :param resource_files: Gets or sets a list of files that Batch will
      download to the compute node before running the command line.
     :type resource_files: list of :class:`ResourceFile
-     <azure.batch.models.ResourceFile>`
+     <batchserviceclient.models.ResourceFile>`
     :param environment_settings: Gets or sets a list of environment variable
      settings for the Job Release task.
     :type environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+     <batchserviceclient.models.EnvironmentSetting>`
     :param max_wall_clock_time: Gets or sets the maximum elapsed time that
      the Job Release task may run on a given compute node, measured from the
      time the task starts. If the task does not complete within the time

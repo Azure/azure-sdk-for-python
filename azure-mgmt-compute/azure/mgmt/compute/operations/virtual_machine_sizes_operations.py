@@ -58,7 +58,7 @@ class VirtualMachineSizesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineSizePaged
-         <azure.mgmt.compute.models.VirtualMachineSizePaged>`
+         <computemanagementclient.models.VirtualMachineSizePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

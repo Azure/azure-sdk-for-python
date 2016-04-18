@@ -33,7 +33,7 @@ class JobHistoryDefinition(Model):
     :type name: str
     :param properties: Gets or sets the job history properties.
     :type properties: :class:`JobHistoryDefinitionProperties
-     <azure.mgmt.scheduler.models.JobHistoryDefinitionProperties>`
+     <schedulermanagementclient.models.JobHistoryDefinitionProperties>`
     """ 
 
     _attribute_map = {

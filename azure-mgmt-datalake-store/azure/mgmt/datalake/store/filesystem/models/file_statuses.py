@@ -29,7 +29,7 @@ class FileStatuses(Model):
     :param file_status: Gets the object containing the list of properties of
      the files.
     :type file_status: list of :class:`FileStatusProperties
-     <azure.mgmt.datalake.store.filesystem.models.FileStatusProperties>`
+     <datalakestorefilesystemmanagementclient.models.FileStatusProperties>`
     """ 
 
     _attribute_map = {

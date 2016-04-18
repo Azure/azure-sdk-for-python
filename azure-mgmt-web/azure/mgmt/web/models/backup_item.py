@@ -30,6 +30,8 @@ class BackupItem(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -57,7 +59,7 @@ class BackupItem(Resource):
     :type log: str
     :param databases: List of databases included in the backup
     :type databases: list of :class:`DatabaseBackupSetting
-     <azure.mgmt.web.models.DatabaseBackupSetting>`
+     <websitemanagementclient.models.DatabaseBackupSetting>`
     :param scheduled: True if this backup has been created due to a schedule
      being triggered.
     :type scheduled: bool
@@ -81,6 +83,7 @@ class BackupItem(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -100,8 +103,8 @@ class BackupItem(Resource):
         'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, backup_item_id=None, storage_account_url=None, blob_name=None, backup_item_name=None, status=None, size_in_bytes=None, created=None, log=None, databases=None, scheduled=None, last_restore_time_stamp=None, finished_time_stamp=None, correlation_id=None, website_size_in_bytes=None):
-        super(BackupItem, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, backup_item_id=None, storage_account_url=None, blob_name=None, backup_item_name=None, status=None, size_in_bytes=None, created=None, log=None, databases=None, scheduled=None, last_restore_time_stamp=None, finished_time_stamp=None, correlation_id=None, website_size_in_bytes=None):
+        super(BackupItem, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.backup_item_id = backup_item_id
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name

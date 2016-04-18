@@ -28,7 +28,7 @@ class ResourceProviderOperationDetailListResult(Model):
 
     :param value: Gets or sets the list of resource provider operations.
     :type value: list of :class:`ResourceProviderOperationDefinition
-     <azure.mgmt.resource.resources.models.ResourceProviderOperationDefinition>`
+     <resourcemanagementclient.models.ResourceProviderOperationDefinition>`
     """ 
 
     _attribute_map = {

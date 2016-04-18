@@ -29,7 +29,7 @@ class FileStatusResult(Model):
     :param file_status: Gets the file status object associated with the
      specified path.
     :type file_status: :class:`FileStatusProperties
-     <azure.mgmt.datalake.store.filesystem.models.FileStatusProperties>`
+     <datalakestorefilesystemmanagementclient.models.FileStatusProperties>`
     """ 
 
     _attribute_map = {

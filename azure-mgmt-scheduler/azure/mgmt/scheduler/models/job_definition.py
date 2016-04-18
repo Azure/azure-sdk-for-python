@@ -33,7 +33,7 @@ class JobDefinition(Model):
     :type name: str
     :param properties: Gets or sets the job properties.
     :type properties: :class:`JobProperties
-     <azure.mgmt.scheduler.models.JobProperties>`
+     <schedulermanagementclient.models.JobProperties>`
     """ 
 
     _attribute_map = {

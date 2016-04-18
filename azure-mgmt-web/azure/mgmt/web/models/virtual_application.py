@@ -33,7 +33,7 @@ class VirtualApplication(Model):
     :type preload_enabled: bool
     :param virtual_directories:
     :type virtual_directories: list of :class:`VirtualDirectory
-     <azure.mgmt.web.models.VirtualDirectory>`
+     <websitemanagementclient.models.VirtualDirectory>`
     """ 
 
     _attribute_map = {

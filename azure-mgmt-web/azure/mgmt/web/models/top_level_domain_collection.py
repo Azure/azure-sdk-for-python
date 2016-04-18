@@ -28,7 +28,7 @@ class TopLevelDomainCollection(Model):
 
     :param value: Collection of resources
     :type value: list of :class:`TopLevelDomain
-     <azure.mgmt.web.models.TopLevelDomain>`
+     <websitemanagementclient.models.TopLevelDomain>`
     :param next_link: Link to next page of resources
     :type next_link: str
     """ 

@@ -53,7 +53,7 @@ from .deployment_operation import DeploymentOperation
 from .resource_provider_operation_display_properties import ResourceProviderOperationDisplayProperties
 from .resource_provider_operation_definition import ResourceProviderOperationDefinition
 from .resource_provider_operation_detail_list_result import ResourceProviderOperationDetailListResult
-from .resource_model import ResourceModel
+from .resource import Resource
 from .sub_resource import SubResource
 from .resource_group_export_result import ResourceGroupExportResult
 from .deployment_extended_paged import DeploymentExtendedPaged
@@ -102,7 +102,7 @@ __all__ = [
     'ResourceProviderOperationDisplayProperties',
     'ResourceProviderOperationDefinition',
     'ResourceProviderOperationDetailListResult',
-    'ResourceModel',
+    'Resource',
     'SubResource',
     'ResourceGroupExportResult',
     'DeploymentExtendedPaged',

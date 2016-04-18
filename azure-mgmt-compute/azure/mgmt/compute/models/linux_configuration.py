@@ -31,7 +31,7 @@ class LinuxConfiguration(Model):
     :type disable_password_authentication: bool
     :param ssh: Gets or sets the SSH configuration for linux VMs
     :type ssh: :class:`SshConfiguration
-     <azure.mgmt.compute.models.SshConfiguration>`
+     <computemanagementclient.models.SshConfiguration>`
     """ 
 
     _attribute_map = {

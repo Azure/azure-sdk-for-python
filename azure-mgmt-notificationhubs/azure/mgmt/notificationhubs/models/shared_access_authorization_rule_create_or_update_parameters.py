@@ -33,7 +33,7 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
     :param properties: Gets or sets properties of the Namespace
      AuthorizationRules.
     :type properties: :class:`SharedAccessAuthorizationRuleProperties
-     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
+     <notificationhubsmanagementclient.models.SharedAccessAuthorizationRuleProperties>`
     """ 
 
     _validation = {

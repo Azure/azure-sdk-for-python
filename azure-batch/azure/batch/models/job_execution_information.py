@@ -38,7 +38,7 @@ class JobExecutionInformation(Model):
     :param scheduling_error: Gets or sets details of any error encountered by
      the service in starting the job.
     :type scheduling_error: :class:`JobSchedulingError
-     <azure.batch.models.JobSchedulingError>`
+     <batchserviceclient.models.JobSchedulingError>`
     :param terminate_reason: Gets or sets a string describing the reason the
      job ended.
     :type terminate_reason: str

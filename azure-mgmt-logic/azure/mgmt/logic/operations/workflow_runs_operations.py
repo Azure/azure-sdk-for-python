@@ -62,7 +62,7 @@ class WorkflowRunsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowRunPaged
-         <azure.mgmt.logic.models.WorkflowRunPaged>`
+         <logicmanagementclient.models.WorkflowRunPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -136,7 +136,8 @@ class WorkflowRunsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkflowRun <azure.mgmt.logic.models.WorkflowRun>`
+        :rtype: :class:`WorkflowRun
+         <logicmanagementclient.models.WorkflowRun>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

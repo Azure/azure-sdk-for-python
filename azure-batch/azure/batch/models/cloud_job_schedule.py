@@ -57,23 +57,23 @@ class CloudJobSchedule(Model):
     :type previous_state_transition_time: datetime
     :param schedule: Gets or sets the schedule according to which jobs will
      be created.
-    :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
+    :type schedule: :class:`Schedule <batchserviceclient.models.Schedule>`
     :param job_specification: Gets or sets the details of the jobs to be
      created on this schedule.
     :type job_specification: :class:`JobSpecification
-     <azure.batch.models.JobSpecification>`
+     <batchserviceclient.models.JobSpecification>`
     :param execution_info: Gets or sets information about jobs that have been
      and will be run under this schedule.
     :type execution_info: :class:`JobScheduleExecutionInformation
-     <azure.batch.models.JobScheduleExecutionInformation>`
+     <batchserviceclient.models.JobScheduleExecutionInformation>`
     :param metadata: Gets or sets a list of name-value pairs associated with
      the schedule as metadata.
     :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+     <batchserviceclient.models.MetadataItem>`
     :param stats: Gets or sets the lifetime resource usage statistics for the
      job schedule.
     :type stats: :class:`JobScheduleStatistics
-     <azure.batch.models.JobScheduleStatistics>`
+     <batchserviceclient.models.JobScheduleStatistics>`
     """ 
 
     _attribute_map = {

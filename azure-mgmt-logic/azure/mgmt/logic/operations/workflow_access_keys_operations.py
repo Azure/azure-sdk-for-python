@@ -60,7 +60,7 @@ class WorkflowAccessKeysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowAccessKeyPaged
-         <azure.mgmt.logic.models.WorkflowAccessKeyPaged>`
+         <logicmanagementclient.models.WorkflowAccessKeyPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -133,7 +133,7 @@ class WorkflowAccessKeysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowAccessKey
-         <azure.mgmt.logic.models.WorkflowAccessKey>`
+         <logicmanagementclient.models.WorkflowAccessKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -194,14 +194,14 @@ class WorkflowAccessKeysOperations(object):
         :type access_key_name: str
         :param workflow_accesskey: The workflow access key.
         :type workflow_accesskey: :class:`WorkflowAccessKey
-         <azure.mgmt.logic.models.WorkflowAccessKey>`
+         <logicmanagementclient.models.WorkflowAccessKey>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowAccessKey
-         <azure.mgmt.logic.models.WorkflowAccessKey>`
+         <logicmanagementclient.models.WorkflowAccessKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -329,7 +329,7 @@ class WorkflowAccessKeysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowSecretKeys
-         <azure.mgmt.logic.models.WorkflowSecretKeys>`
+         <logicmanagementclient.models.WorkflowSecretKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -397,7 +397,7 @@ class WorkflowAccessKeysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowSecretKeys
-         <azure.mgmt.logic.models.WorkflowSecretKeys>`
+         <logicmanagementclient.models.WorkflowSecretKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

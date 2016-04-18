@@ -137,7 +137,7 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationGateway
-         <azure.mgmt.network.models.ApplicationGateway>`
+         <networkmanagementclient.models.ApplicationGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -197,14 +197,14 @@ class ApplicationGatewaysOperations(object):
         :param parameters: Parameters supplied to the create/delete
          ApplicationGateway operation
         :type parameters: :class:`ApplicationGateway
-         <azure.mgmt.network.models.ApplicationGateway>`
+         <networkmanagementclient.models.ApplicationGateway>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ApplicationGateway
-         <azure.mgmt.network.models.ApplicationGateway>`
+         <networkmanagementclient.models.ApplicationGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -293,7 +293,7 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationGatewayPaged
-         <azure.mgmt.network.models.ApplicationGatewayPaged>`
+         <networkmanagementclient.models.ApplicationGatewayPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -358,7 +358,7 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationGatewayPaged
-         <azure.mgmt.network.models.ApplicationGatewayPaged>`
+         <networkmanagementclient.models.ApplicationGatewayPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

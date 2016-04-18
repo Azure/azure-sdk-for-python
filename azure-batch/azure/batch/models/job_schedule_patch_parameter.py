@@ -29,15 +29,15 @@ class JobSchedulePatchParameter(Model):
     :param schedule: Sets the schedule according to which jobs will be
      created. If you do not specify this element, the existing schedule is
      not modified.
-    :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
+    :type schedule: :class:`Schedule <batchserviceclient.models.Schedule>`
     :param job_specification: Sets the details of the jobs to be created on
      this schedule.
     :type job_specification: :class:`JobSpecification
-     <azure.batch.models.JobSpecification>`
+     <batchserviceclient.models.JobSpecification>`
     :param metadata: Sets a list of name-value pairs associated with the job
      schedule as metadata.
     :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+     <batchserviceclient.models.MetadataItem>`
     """ 
 
     _attribute_map = {

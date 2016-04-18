@@ -60,14 +60,14 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          Virtual Network Gateway connection operation through Network
          resource provider.
         :type parameters: :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.models.VirtualNetworkGatewayConnection>`
+         <networkmanagementclient.models.VirtualNetworkGatewayConnection>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.models.VirtualNetworkGatewayConnection>`
+         <networkmanagementclient.models.VirtualNetworkGatewayConnection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -160,7 +160,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkGatewayConnection
-         <azure.mgmt.network.models.VirtualNetworkGatewayConnection>`
+         <networkmanagementclient.models.VirtualNetworkGatewayConnection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -304,7 +304,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ConnectionSharedKeyResult
-         <azure.mgmt.network.models.ConnectionSharedKeyResult>`
+         <networkmanagementclient.models.ConnectionSharedKeyResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -365,7 +365,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkGatewayConnectionPaged
-         <azure.mgmt.network.models.VirtualNetworkGatewayConnectionPaged>`
+         <networkmanagementclient.models.VirtualNetworkGatewayConnectionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -440,7 +440,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ConnectionResetSharedKey
-         <azure.mgmt.network.models.ConnectionResetSharedKey>`
+         <networkmanagementclient.models.ConnectionResetSharedKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -536,7 +536,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ConnectionSharedKey
-         <azure.mgmt.network.models.ConnectionSharedKey>`
+         <networkmanagementclient.models.ConnectionSharedKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

@@ -35,10 +35,10 @@ class Error(Model):
     :type target: str
     :param details: Gets or sets the list of error details
     :type details: list of :class:`ErrorDetails
-     <azure.mgmt.datalake.analytics.account.models.ErrorDetails>`
+     <datalakeanalyticsaccountmanagementclient.models.ErrorDetails>`
     :param inner_error: Gets or sets the inner exceptions or errors, if any
     :type inner_error: :class:`InnerError
-     <azure.mgmt.datalake.analytics.account.models.InnerError>`
+     <datalakeanalyticsaccountmanagementclient.models.InnerError>`
     """ 
 
     _attribute_map = {

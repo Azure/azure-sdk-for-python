@@ -29,7 +29,7 @@ class ResourceGroupExportResult(Model):
     :type template: object
     :param error: Gets or sets the error.
     :type error: :class:`ResourceManagementErrorWithDetails
-     <azure.mgmt.resource.resources.models.ResourceManagementErrorWithDetails>`
+     <resourcemanagementclient.models.ResourceManagementErrorWithDetails>`
     """ 
 
     _attribute_map = {

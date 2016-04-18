@@ -38,7 +38,7 @@ class TaskSchedulingError(Model):
     :param details: Gets or sets the list of additional error details related
      to the scheduling error.
     :type details: list of :class:`NameValuePair
-     <azure.batch.models.NameValuePair>`
+     <batchserviceclient.models.NameValuePair>`
     """ 
 
     _validation = {

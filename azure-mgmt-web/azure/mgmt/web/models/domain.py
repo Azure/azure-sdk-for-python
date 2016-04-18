@@ -30,6 +30,8 @@ class Domain(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -37,13 +39,17 @@ class Domain(Resource):
     :param tags: Resource tags
     :type tags: dict
     :param contact_admin: Admin contact information
-    :type contact_admin: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :type contact_admin: :class:`Contact
+     <websitemanagementclient.models.Contact>`
     :param contact_billing: Billing contact information
-    :type contact_billing: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :type contact_billing: :class:`Contact
+     <websitemanagementclient.models.Contact>`
     :param contact_registrant: Registrant contact information
-    :type contact_registrant: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :type contact_registrant: :class:`Contact
+     <websitemanagementclient.models.Contact>`
     :param contact_tech: Technical contact information
-    :type contact_tech: :class:`Contact <azure.mgmt.web.models.Contact>`
+    :type contact_tech: :class:`Contact
+     <websitemanagementclient.models.Contact>`
     :param registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
@@ -73,10 +79,10 @@ class Domain(Resource):
     :param managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources
     :type managed_host_names: list of :class:`HostName
-     <azure.mgmt.web.models.HostName>`
+     <websitemanagementclient.models.HostName>`
     :param consent: Legal agreement consent
     :type consent: :class:`DomainPurchaseConsent
-     <azure.mgmt.web.models.DomainPurchaseConsent>`
+     <websitemanagementclient.models.DomainPurchaseConsent>`
     """ 
 
     _validation = {
@@ -86,6 +92,7 @@ class Domain(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -106,8 +113,8 @@ class Domain(Resource):
         'consent': {'key': 'properties.consent', 'type': 'DomainPurchaseConsent'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None):
-        super(Domain, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None):
+        super(Domain, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing
         self.contact_registrant = contact_registrant

@@ -53,7 +53,7 @@ class GlobalModelOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.mgmt.web.models.User>`
+        :rtype: :class:`User <websitemanagementclient.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -104,13 +104,14 @@ class GlobalModelOperations(object):
         Updates publishing credentials for the subscription owner
 
         :param request_message: requestMessage with new publishing credentials
-        :type request_message: :class:`User <azure.mgmt.web.models.User>`
+        :type request_message: :class:`User
+         <websitemanagementclient.models.User>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <azure.mgmt.web.models.User>`
+        :rtype: :class:`User <websitemanagementclient.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -160,17 +161,19 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_subscription_geo_regions(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, sku=None, custom_headers={}, raw=False, **operation_config):
         """
         Gets list of available geo regions
 
+        :param sku: Filter only to regions that support this sku
+        :type sku: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GeoRegionCollection
-         <azure.mgmt.web.models.GeoRegionCollection>`
+         <websitemanagementclient.models.GeoRegionCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -183,6 +186,8 @@ class GlobalModelOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if sku is not None:
+            query_parameters['sku'] = self._serialize.query("sku", sku, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
@@ -226,7 +231,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CertificateCollection
-         <azure.mgmt.web.models.CertificateCollection>`
+         <websitemanagementclient.models.CertificateCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -286,7 +291,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmCollection
-         <azure.mgmt.web.models.ServerFarmCollection>`
+         <websitemanagementclient.models.ServerFarmCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -343,7 +348,8 @@ class GlobalModelOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteCollection <azure.mgmt.web.models.SiteCollection>`
+        :rtype: :class:`SiteCollection
+         <websitemanagementclient.models.SiteCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -400,7 +406,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostingEnvironmentCollection
-         <azure.mgmt.web.models.HostingEnvironmentCollection>`
+         <websitemanagementclient.models.HostingEnvironmentCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -456,7 +462,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagedHostingEnvironmentCollection
-         <azure.mgmt.web.models.ManagedHostingEnvironmentCollection>`
+         <websitemanagementclient.models.ManagedHostingEnvironmentCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -512,7 +518,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ClassicMobileServiceCollection
-         <azure.mgmt.web.models.ClassicMobileServiceCollection>`
+         <websitemanagementclient.models.ClassicMobileServiceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -612,64 +618,6 @@ class GlobalModelOperations(object):
 
         return deserialized
 
-    def is_hosting_environment_with_legacy_name_available(
-            self, name, custom_headers={}, raw=False, **operation_config):
-        """
-        Whether hosting environment name is available
-
-        :param name: Hosting environment name
-        :type name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: object
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/ishostingenvironmentnameavailable/{name}'
-        path_format_arguments = {
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def is_hosting_environment_name_available(
             self, name, custom_headers={}, raw=False, **operation_config):
         """
@@ -728,6 +676,64 @@ class GlobalModelOperations(object):
 
         return deserialized
 
+    def is_hosting_environment_with_legacy_name_available(
+            self, name, custom_headers={}, raw=False, **operation_config):
+        """
+        Whether hosting environment name is available
+
+        :param name: Hosting environment name
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: object
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/ishostingenvironmentnameavailable/{name}'
+        path_format_arguments = {
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('object', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def check_name_availability(
             self, request, custom_headers={}, raw=False, **operation_config):
         """
@@ -735,14 +741,14 @@ class GlobalModelOperations(object):
 
         :param request: Name availability request
         :type request: :class:`ResourceNameAvailabilityRequest
-         <azure.mgmt.web.models.ResourceNameAvailabilityRequest>`
+         <websitemanagementclient.models.ResourceNameAvailabilityRequest>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceNameAvailability
-         <azure.mgmt.web.models.ResourceNameAvailability>`
+         <websitemanagementclient.models.ResourceNameAvailability>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

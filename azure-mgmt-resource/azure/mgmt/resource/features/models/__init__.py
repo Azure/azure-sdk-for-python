@@ -24,7 +24,7 @@ from .generic_resource_filter import GenericResourceFilter
 from .resource_group_filter import ResourceGroupFilter
 from .feature_properties import FeatureProperties
 from .feature_result import FeatureResult
-from .resource_model import ResourceModel
+from .resource import Resource
 from .sub_resource import SubResource
 from .feature_result_paged import FeatureResultPaged
 
@@ -34,7 +34,7 @@ __all__ = [
     'ResourceGroupFilter',
     'FeatureProperties',
     'FeatureResult',
-    'ResourceModel',
+    'Resource',
     'SubResource',
     'FeatureResultPaged',
 ]
