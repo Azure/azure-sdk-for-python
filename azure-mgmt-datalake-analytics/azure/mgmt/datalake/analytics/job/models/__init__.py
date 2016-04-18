@@ -33,7 +33,7 @@ from .job_inner_error import JobInnerError
 from .job_information import JobInformation
 from .job_information_paged import JobInformationPaged
 from .data_lake_analytics_job_management_client_enums import (
-    JobResourceType,
+    Type,
     CompileMode,
     SeverityTypes,
     JobType,
@@ -55,7 +55,7 @@ __all__ = [
     'JobInnerError',
     'JobInformation',
     'JobInformationPaged',
-    'JobResourceType',
+    'Type',
     'CompileMode',
     'SeverityTypes',
     'JobType',

@@ -30,6 +30,8 @@ class HostingEnvironment(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -42,6 +44,10 @@ class HostingEnvironment(Resource):
     :param hosting_environment_location: Location of the hostingEnvironment
      (App Service Environment), e.g. "West US"
     :type hosting_environment_location: str
+    :param provisioning_state: Provisioning state of the hostingEnvironment
+     (App Service Environment). Possible values include: 'Succeeded',
+     'Failed', 'Canceled', 'InProgress', 'Deleting'
+    :type provisioning_state: str
     :param status: Current status of the hostingEnvironment (App Service
      Environment). Possible values include: 'Preparing', 'Ready', 'Scaling',
      'Deleting'
@@ -147,11 +153,13 @@ class HostingEnvironment(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'hosting_environment_name': {'key': 'properties.name', 'type': 'str'},
         'hosting_environment_location': {'key': 'properties.location', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'status': {'key': 'properties.status', 'type': 'HostingEnvironmentStatus'},
         'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
         'vnet_resource_group_name': {'key': 'properties.vnetResourceGroupName', 'type': 'str'},
@@ -183,10 +191,11 @@ class HostingEnvironment(Resource):
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, hosting_environment_name=None, hosting_environment_location=None, status=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, database_edition=None, database_service_objective=None, upgrade_domains=None, subscription_id=None, dns_suffix=None, last_action=None, last_action_result=None, allowed_multi_sizes=None, allowed_worker_sizes=None, maximum_number_of_machines=None, vip_mappings=None, environment_capacities=None, network_access_control_list=None, environment_is_healthy=None, environment_status=None, resource_group=None, api_management_account_id=None, suspended=None, cluster_settings=None):
-        super(HostingEnvironment, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, hosting_environment_name=None, hosting_environment_location=None, provisioning_state=None, status=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, database_edition=None, database_service_objective=None, upgrade_domains=None, subscription_id=None, dns_suffix=None, last_action=None, last_action_result=None, allowed_multi_sizes=None, allowed_worker_sizes=None, maximum_number_of_machines=None, vip_mappings=None, environment_capacities=None, network_access_control_list=None, environment_is_healthy=None, environment_status=None, resource_group=None, api_management_account_id=None, suspended=None, cluster_settings=None):
+        super(HostingEnvironment, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.hosting_environment_name = hosting_environment_name
         self.hosting_environment_location = hosting_environment_location
+        self.provisioning_state = provisioning_state
         self.status = status
         self.vnet_name = vnet_name
         self.vnet_resource_group_name = vnet_resource_group_name
