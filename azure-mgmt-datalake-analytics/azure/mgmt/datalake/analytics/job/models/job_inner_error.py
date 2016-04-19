@@ -29,7 +29,7 @@ class JobInnerError(Model):
     :param diagnostic_code: Gets the diagnostic error code.
     :type diagnostic_code: int
     :param severity: Gets the severity level of the failure. Possible values
-     include: 'Warning', 'Error', 'Info'
+     include: 'Warning', 'Error'
     :type severity: str
     :param details: Gets the details of the error message.
     :type details: str
