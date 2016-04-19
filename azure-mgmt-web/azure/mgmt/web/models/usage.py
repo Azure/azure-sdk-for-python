@@ -30,6 +30,8 @@ class Usage(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -51,7 +53,7 @@ class Usage(Resource):
     :param next_reset_time: Next reset time for the resource counter
     :type next_reset_time: datetime
     :param compute_mode: ComputeMode used for this usage. Possible values
-     include: 'Shared', 'Dedicated'
+     include: 'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str
     :param site_mode: SiteMode used for this usage
     :type site_mode: str
@@ -64,6 +66,7 @@ class Usage(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -78,8 +81,8 @@ class Usage(Resource):
         'site_mode': {'key': 'properties.siteMode', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, display_name=None, usage_name=None, resource_name=None, unit=None, current_value=None, limit=None, next_reset_time=None, compute_mode=None, site_mode=None):
-        super(Usage, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, display_name=None, usage_name=None, resource_name=None, unit=None, current_value=None, limit=None, next_reset_time=None, compute_mode=None, site_mode=None):
+        super(Usage, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.display_name = display_name
         self.usage_name = usage_name
         self.resource_name = resource_name

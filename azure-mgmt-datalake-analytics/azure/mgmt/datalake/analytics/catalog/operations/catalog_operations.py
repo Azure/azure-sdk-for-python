@@ -95,6 +95,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -173,6 +174,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -243,6 +245,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -308,6 +311,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -370,6 +374,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -478,6 +483,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -547,6 +553,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -653,6 +660,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -725,6 +733,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -835,6 +844,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -906,6 +916,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1015,6 +1026,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1086,6 +1098,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1195,6 +1208,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1270,6 +1284,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1383,6 +1398,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1495,6 +1511,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1570,6 +1587,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1682,6 +1700,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1751,6 +1770,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1858,6 +1878,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1926,6 +1947,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -2032,6 +2054,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -2097,6 +2120,7 @@ class CatalogOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -2200,6 +2224,7 @@ class CatalogOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
