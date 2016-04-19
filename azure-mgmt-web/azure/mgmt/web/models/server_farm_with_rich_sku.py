@@ -30,6 +30,8 @@ class ServerFarmWithRichSku(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -78,6 +80,7 @@ class ServerFarmWithRichSku(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -95,8 +98,8 @@ class ServerFarmWithRichSku(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, status=None, subscription=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, geo_region=None, per_site_scaling=None, number_of_sites=None, resource_group=None, sku=None):
-        super(ServerFarmWithRichSku, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, status=None, subscription=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, geo_region=None, per_site_scaling=None, number_of_sites=None, resource_group=None, sku=None):
+        super(ServerFarmWithRichSku, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.server_farm_with_rich_sku_name = server_farm_with_rich_sku_name
         self.worker_tier_name = worker_tier_name
         self.status = status
