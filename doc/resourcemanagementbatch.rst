@@ -1,14 +1,13 @@
 Batch Management
 ================
 
-For more information on the Azure Batch service, check out the `Azure Documentation <https://azure.microsoft.com/en-us/documentation/services/batch/>`__.
+For more information on the Azure Batch service, check out the `Batch Documentation <https://azure.microsoft.com/en-us/documentation/services/batch/>`__.
 For working samples, `see the Batch samples repo <https://github.com/Azure/azure-batch-samples/tree/master/Python>`__.
 
 Create the Batch Management client
 ----------------------------------
 
 The following code creates an instance of the management client.
-
 You will need to provide your ``subscription_id`` which can be retrieved
 from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
@@ -25,8 +24,8 @@ for details on handling Azure Active Directory authentication with the Python SD
 	
     # See above for details on creating Credentials
     credentials = UserPassCredentials(
-		'user@domain.com',  # Your user
-		'my_password',  	# Your password
+		'user@domain.com',	# Your user
+		'my_password',		# Your password
 	)
 
     batch_client = BatchManagementClient(
