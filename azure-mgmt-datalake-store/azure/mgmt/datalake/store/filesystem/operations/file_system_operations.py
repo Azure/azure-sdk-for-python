@@ -44,7 +44,7 @@ class FileSystemOperations(object):
         self.config = config
 
     def concurrent_append(
-            self, file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCURRENTAPPEND", append_mode=None, custom_headers={}, raw=False, callback=None, **operation_config):
+            self, file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCURRENTAPPEND", transfer_encoding="chunked", append_mode=None, custom_headers={}, raw=False, callback=None, **operation_config):
         """
         Appends to the specified file. This method supports multiple
         concurrent appends to the file. NOTE: Concurrent append and normal
@@ -63,6 +63,9 @@ class FileSystemOperations(object):
         :type stream_contents: Generator
         :param op: The constant value for the operation.
         :type op: str
+        :param transfer_encoding: Indicates the data being sent to the server
+         is being streamed in chunks.
+        :type transfer_encoding: str
         :param append_mode: Indicates the concurrent append call should
          create the file if it doesn't exist or just open the existing file
          for append. Possible values include: 'autocreate'
@@ -104,7 +107,7 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
+        header_parameters['Transfer-Encoding'] = self._serialize.header("transfer_encoding", transfer_encoding, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -173,7 +176,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -234,7 +236,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -307,7 +308,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -391,7 +391,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -413,7 +412,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def list_file_status(
-            self, list_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="LISTSTATUS", custom_headers={}, raw=False, **operation_config):
+            self, list_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MSLISTSTATUS", list_size=None, list_after=None, list_before=None, custom_headers={}, raw=False, **operation_config):
         """
         Get the list of file status objects specified by the file path, with
         optional pagination parameters
@@ -426,6 +425,19 @@ class FileSystemOperations(object):
         :type list_file_path: str
         :param op: The constant value for the operation.
         :type op: str
+        :param list_size: Gets or sets the number of items to return.
+         Optional.
+        :type list_size: int
+        :param list_after: Gets or sets the item or lexographical index after
+         which to begin returning results. For example, a file list of
+         'a','b','d' and listAfter='b' will return 'd', and a listAfter='c'
+         will also return 'd'. Optional.
+        :type list_after: str
+        :param list_before: Gets or sets the item or lexographical index
+         before which to begin returning results. For example, a file list of
+         'a','b','d' and listBefore='d' will return 'a','b', and a
+         listBefore='c' will also return 'a','b'. Optional.
+        :type list_before: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -447,6 +459,12 @@ class FileSystemOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if list_size is not None:
+            query_parameters['listSize'] = self._serialize.query("list_size", list_size, 'int')
+        if list_after is not None:
+            query_parameters['listAfter'] = self._serialize.query("list_after", list_after, 'str')
+        if list_before is not None:
+            query_parameters['listBefore'] = self._serialize.query("list_before", list_before, 'str')
         query_parameters['op'] = self._serialize.query("op", op, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
@@ -457,7 +475,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -525,7 +542,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -593,7 +609,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -618,7 +633,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def append(
-            self, direct_file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="APPEND", append="true", custom_headers={}, raw=False, callback=None, **operation_config):
+            self, direct_file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="APPEND", append="true", transfer_encoding="chunked", custom_headers={}, raw=False, callback=None, **operation_config):
         """
         Appends to the specified file. This method does not support multiple
         concurrent appends to the file. NOTE: Concurrent append and normal
@@ -640,6 +655,9 @@ class FileSystemOperations(object):
         :type op: str
         :param append: The constant value for the operation.
         :type append: str
+        :param transfer_encoding: Indicates the data being sent to the server
+         is being streamed in chunks.
+        :type transfer_encoding: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -676,7 +694,7 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
+        header_parameters['Transfer-Encoding'] = self._serialize.header("transfer_encoding", transfer_encoding, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -698,7 +716,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def create(
-            self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CREATE", write="true", stream_contents=None, overwrite=None, custom_headers={}, raw=False, callback=None, **operation_config):
+            self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CREATE", write="true", transfer_encoding="chunked", stream_contents=None, overwrite=None, custom_headers={}, raw=False, callback=None, **operation_config):
         """
         Creates a file with optionally specified content.
 
@@ -712,6 +730,9 @@ class FileSystemOperations(object):
         :type op: str
         :param write: The constant value for the operation.
         :type write: str
+        :param transfer_encoding: Indicates the data being sent to the server
+         is being streamed in chunks.
+        :type transfer_encoding: str
         :param stream_contents: The file contents to include when creating
          the file. This parameter is optional, resulting in an empty file if
          not specified.
@@ -756,7 +777,7 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
+        header_parameters['Transfer-Encoding'] = self._serialize.header("transfer_encoding", transfer_encoding, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -836,7 +857,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -907,7 +927,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -972,7 +991,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1037,7 +1055,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1098,7 +1115,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1160,7 +1176,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1233,7 +1248,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1304,7 +1318,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1381,7 +1394,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -1446,7 +1458,6 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['subscriptionId'] = self._serialize.header("self.config.subscription_id", self.config.subscription_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
