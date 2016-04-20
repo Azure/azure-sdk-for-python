@@ -22,7 +22,7 @@ for details on handling Azure Active Directory authentication with the Python SD
     # Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
 	
-    # See above for details on creating Credentials
+    # See above for details on creating different types of AAD credentials
     credentials = UserPassCredentials(
 		'user@domain.com',	# Your user
 		'my_password',		# Your password
@@ -35,6 +35,25 @@ for details on handling Azure Active Directory authentication with the Python SD
         )
     )
 
+
+Registration
+------------
+
+Some operations in the ARM APIs require a one-time registration of the provider with your subscription.
+
+Use the following code to do the registration. You can use the same
+credentials you created in the previous section.
+
+.. code:: python
+
+    from azure.mgmt.resource.resources import ResourceManagementClient, ResourceManagementClientConfiguration
+
+    resource_client = ResourceManagementClient(
+        ResourceManagementClientConfiguration(
+            credentials,
+            subscription_id
+        )
+    resource_client.providers.register('Microsoft.Batch')
 
 
 Create a Batch Account
