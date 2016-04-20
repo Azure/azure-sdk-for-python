@@ -86,7 +86,7 @@ class NotificationHubsManagementClientConfiguration(AzureConfiguration):
 
 
 class NotificationHubsManagementClient(object):
-    """.Net client wrapper for the REST API for Azure NotificationHub Service
+    """Azure NotificationHub client
 
     :param config: Configuration for client.
     :type config: NotificationHubsManagementClientConfiguration
