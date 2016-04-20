@@ -100,7 +100,7 @@ For more information, see this article on `automatically scaling nodes in a Batc
 	
 
 You can monitor pools by retrieving data individually, or grouped using OData filters.
-You can learn more about filters with this article on `Querying the Batch Service Efficiently <https://azure.microsoft.com/en-us/documentation/articles/batch-efficient-list-queries/>`__.
+You can learn more about filters with this article on `querying the Batch service efficiently <https://azure.microsoft.com/en-us/documentation/articles/batch-efficient-list-queries/>`__.
 You can also retrieve statistics on the usage of a specific pool, or all the pools in the lifetime of your Batch account.
 
 .. code:: python
