@@ -31,12 +31,12 @@ class WorkflowRunTrigger(Model):
     :type inputs: object
     :param inputs_link: Gets the link to inputs.
     :type inputs_link: :class:`ContentLink
-     <logicmanagementclient.models.ContentLink>`
+     <azure.mgmt.logic.models.ContentLink>`
     :param outputs: Gets the outputs.
     :type outputs: object
     :param outputs_link: Gets the link to outputs.
     :type outputs_link: :class:`ContentLink
-     <logicmanagementclient.models.ContentLink>`
+     <azure.mgmt.logic.models.ContentLink>`
     :param start_time: Gets the start time.
     :type start_time: datetime
     :param end_time: Gets the end time.

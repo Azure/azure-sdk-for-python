@@ -39,18 +39,17 @@ class NetworkSecurityGroup(Resource):
     :param security_rules: Gets or sets Security rules of network security
      group
     :type security_rules: list of :class:`SecurityRule
-     <networkmanagementclient.models.SecurityRule>`
+     <azure.mgmt.network.models.SecurityRule>`
     :param default_security_rules: Gets or sets Default security rules of
      network security group
     :type default_security_rules: list of :class:`SecurityRule
-     <networkmanagementclient.models.SecurityRule>`
+     <azure.mgmt.network.models.SecurityRule>`
     :param network_interfaces: Gets collection of references to Network
      Interfaces
     :type network_interfaces: list of :class:`NetworkInterface
-     <networkmanagementclient.models.NetworkInterface>`
+     <azure.mgmt.network.models.NetworkInterface>`
     :param subnets: Gets collection of references to subnets
-    :type subnets: list of :class:`Subnet
-     <networkmanagementclient.models.Subnet>`
+    :type subnets: list of :class:`Subnet <azure.mgmt.network.models.Subnet>`
     :param resource_guid: Gets or sets resource guid property of the network
      security group resource
     :type resource_guid: str

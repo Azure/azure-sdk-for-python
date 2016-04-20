@@ -50,14 +50,13 @@ class ApplicationOperations(object):
 
         :param parameters: Parameters to create an application.
         :type parameters: :class:`ApplicationCreateParameters
-         <graphrbacmanagementclient.models.ApplicationCreateParameters>`
+         <azure.graphrbac.models.ApplicationCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Application
-         <graphrbacmanagementclient.models.Application>`
+        :rtype: :class:`Application <azure.graphrbac.models.Application>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -119,7 +118,7 @@ class ApplicationOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationListResult
-         <graphrbacmanagementclient.models.ApplicationListResult>`
+         <azure.graphrbac.models.ApplicationListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -229,8 +228,7 @@ class ApplicationOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Application
-         <graphrbacmanagementclient.models.Application>`
+        :rtype: :class:`Application <azure.graphrbac.models.Application>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -285,7 +283,7 @@ class ApplicationOperations(object):
         :type application_object_id: str
         :param parameters: Parameters to create an application.
         :type parameters: :class:`ApplicationCreateParameters
-         <graphrbacmanagementclient.models.ApplicationCreateParameters>`
+         <azure.graphrbac.models.ApplicationCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

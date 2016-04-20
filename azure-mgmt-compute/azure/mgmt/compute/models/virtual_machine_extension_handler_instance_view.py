@@ -34,7 +34,7 @@ class VirtualMachineExtensionHandlerInstanceView(Model):
     :type type_handler_version: str
     :param status: Gets or sets the extension handler status.
     :type status: :class:`InstanceViewStatus
-     <computemanagementclient.models.InstanceViewStatus>`
+     <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 
 
     _attribute_map = {

@@ -141,7 +141,7 @@ class NetworkSecurityGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkSecurityGroup
-         <networkmanagementclient.models.NetworkSecurityGroup>`
+         <azure.mgmt.network.models.NetworkSecurityGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -204,14 +204,14 @@ class NetworkSecurityGroupsOperations(object):
         :param parameters: Parameters supplied to the create/update Network
          Security Group operation
         :type parameters: :class:`NetworkSecurityGroup
-         <networkmanagementclient.models.NetworkSecurityGroup>`
+         <azure.mgmt.network.models.NetworkSecurityGroup>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`NetworkSecurityGroup
-         <networkmanagementclient.models.NetworkSecurityGroup>`
+         <azure.mgmt.network.models.NetworkSecurityGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -298,7 +298,7 @@ class NetworkSecurityGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkSecurityGroupPaged
-         <networkmanagementclient.models.NetworkSecurityGroupPaged>`
+         <azure.mgmt.network.models.NetworkSecurityGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -364,7 +364,7 @@ class NetworkSecurityGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkSecurityGroupPaged
-         <networkmanagementclient.models.NetworkSecurityGroupPaged>`
+         <azure.mgmt.network.models.NetworkSecurityGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

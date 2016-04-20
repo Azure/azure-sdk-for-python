@@ -28,7 +28,7 @@ class Deployment(Model):
 
     :param properties: Gets or sets the deployment properties.
     :type properties: :class:`DeploymentProperties
-     <resourcemanagementclient.models.DeploymentProperties>`
+     <azure.mgmt.resource.resources.models.DeploymentProperties>`
     """ 
 
     _attribute_map = {

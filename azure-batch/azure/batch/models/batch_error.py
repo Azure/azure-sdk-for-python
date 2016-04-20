@@ -32,12 +32,11 @@ class BatchError(Model):
     :type code: str
     :param message: Gets or sets a message describing the error, intended to
      be suitable for display in a user interface.
-    :type message: :class:`ErrorMessage
-     <batchserviceclient.models.ErrorMessage>`
+    :type message: :class:`ErrorMessage <azure.batch.models.ErrorMessage>`
     :param values: Gets or sets a collection of key-value pairs containing
      additional details about the error.
     :type values: list of :class:`BatchErrorDetail
-     <batchserviceclient.models.BatchErrorDetail>`
+     <azure.batch.models.BatchErrorDetail>`
     """ 
 
     _attribute_map = {

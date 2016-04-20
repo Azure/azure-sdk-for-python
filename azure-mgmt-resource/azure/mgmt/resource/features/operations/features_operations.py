@@ -55,7 +55,7 @@ class FeaturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FeatureResultPaged
-         <featureclient.models.FeatureResultPaged>`
+         <azure.mgmt.resource.feature.models.FeatureResultPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -121,7 +121,7 @@ class FeaturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FeatureResultPaged
-         <featureclient.models.FeatureResultPaged>`
+         <azure.mgmt.resource.feature.models.FeatureResultPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -189,7 +189,8 @@ class FeaturesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`FeatureResult <featureclient.models.FeatureResult>`
+        :rtype: :class:`FeatureResult
+         <azure.mgmt.resource.feature.models.FeatureResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -251,7 +252,8 @@ class FeaturesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`FeatureResult <featureclient.models.FeatureResult>`
+        :rtype: :class:`FeatureResult
+         <azure.mgmt.resource.feature.models.FeatureResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

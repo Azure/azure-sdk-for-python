@@ -28,7 +28,7 @@ class CloudTaskListSubtasksResult(Model):
 
     :param value: Gets or sets the list of information of subtasks.
     :type value: list of :class:`SubtaskInformation
-     <batchserviceclient.models.SubtaskInformation>`
+     <azure.batch.models.SubtaskInformation>`
     """ 
 
     _attribute_map = {

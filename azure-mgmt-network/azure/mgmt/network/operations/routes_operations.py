@@ -141,7 +141,7 @@ class RoutesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Route <networkmanagementclient.models.Route>`
+        :rtype: :class:`Route <azure.mgmt.network.models.Route>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -204,14 +204,14 @@ class RoutesOperations(object):
         :param route_parameters: Parameters supplied to the create/update
          routeoperation
         :type route_parameters: :class:`Route
-         <networkmanagementclient.models.Route>`
+         <azure.mgmt.network.models.Route>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Route
-         <networkmanagementclient.models.Route>`
+         <azure.mgmt.network.models.Route>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -302,8 +302,7 @@ class RoutesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RoutePaged
-         <networkmanagementclient.models.RoutePaged>`
+        :rtype: :class:`RoutePaged <azure.mgmt.network.models.RoutePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

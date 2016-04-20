@@ -60,7 +60,7 @@ class NameAvailabilityOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CheckNameAvailabilityOutput
-         <cdnmanagementclient.models.CheckNameAvailabilityOutput>`
+         <azure.mgmt.cdn.models.CheckNameAvailabilityOutput>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

@@ -63,7 +63,7 @@ class ResourceGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GenericResourcePaged
-         <resourcemanagementclient.models.GenericResourcePaged>`
+         <azure.mgmt.resource.resources.models.GenericResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -185,14 +185,14 @@ class ResourceGroupsOperations(object):
         :param parameters: Parameters supplied to the create or update
          resource group service operation.
         :type parameters: :class:`ResourceGroup
-         <resourcemanagementclient.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroup
-         <resourcemanagementclient.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -332,7 +332,7 @@ class ResourceGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroup
-         <resourcemanagementclient.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -392,14 +392,14 @@ class ResourceGroupsOperations(object):
         :param parameters: Parameters supplied to the update state resource
          group service operation.
         :type parameters: :class:`ResourceGroup
-         <resourcemanagementclient.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroup
-         <resourcemanagementclient.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.models.ResourceGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -471,7 +471,7 @@ class ResourceGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroupExportResult
-         <resourcemanagementclient.models.ResourceGroupExportResult>`
+         <azure.mgmt.resource.resources.models.ResourceGroupExportResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -539,7 +539,7 @@ class ResourceGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroupPaged
-         <resourcemanagementclient.models.ResourceGroupPaged>`
+         <azure.mgmt.resource.resources.models.ResourceGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

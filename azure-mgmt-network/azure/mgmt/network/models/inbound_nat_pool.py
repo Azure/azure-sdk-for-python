@@ -31,7 +31,7 @@ class InboundNatPool(SubResource):
     :param frontend_ip_configuration: Gets or sets a reference to frontend IP
      Addresses
     :type frontend_ip_configuration: :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param protocol: Gets or sets the transport potocol for the external
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'

@@ -32,7 +32,7 @@ class NodeAgentSku(Model):
      compatible with the node agent SKU. This collection is not exhaustive;
      the node agent SKU may be compatible with other images.
     :type verified_image_references: list of :class:`ImageReference
-     <batchserviceclient.models.ImageReference>`
+     <azure.batch.models.ImageReference>`
     :param os_type: Gets or sets the type of OS that the node Agent SKU is
      targeted against. Possible values include: 'linux', 'windows', 'unmapped'
     :type os_type: str

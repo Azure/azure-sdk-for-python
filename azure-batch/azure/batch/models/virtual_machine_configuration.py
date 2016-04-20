@@ -29,7 +29,7 @@ class VirtualMachineConfiguration(Model):
     :param image_reference: Gets or sets information about the platform or
      marketplace image to use.
     :type image_reference: :class:`ImageReference
-     <batchserviceclient.models.ImageReference>`
+     <azure.batch.models.ImageReference>`
     :param node_agent_sku_id: Gets or sets the SKU of Batch Node Agent that
      needs to be provisioned on the compute node. This property must match
      the ImageReference property.
@@ -38,7 +38,7 @@ class VirtualMachineConfiguration(Model):
      settings on the virtual machine. This property must not be specified if
      the ImageReference property referencs a Linux OS image.
     :type windows_configuration: :class:`WindowsConfiguration
-     <batchserviceclient.models.WindowsConfiguration>`
+     <azure.batch.models.WindowsConfiguration>`
     """ 
 
     _validation = {

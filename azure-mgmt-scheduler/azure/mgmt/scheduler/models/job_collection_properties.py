@@ -26,13 +26,13 @@ class JobCollectionProperties(Model):
     """JobCollectionProperties
 
     :param sku: Gets or sets the SKU.
-    :type sku: :class:`Sku <schedulermanagementclient.models.Sku>`
+    :type sku: :class:`Sku <azure.mgmt.scheduler.models.Sku>`
     :param state: Gets or sets the state. Possible values include: 'Enabled',
      'Disabled', 'Suspended', 'Deleted'
     :type state: str
     :param quota: Gets or sets the job collection quota.
     :type quota: :class:`JobCollectionQuota
-     <schedulermanagementclient.models.JobCollectionQuota>`
+     <azure.mgmt.scheduler.models.JobCollectionQuota>`
     """ 
 
     _attribute_map = {

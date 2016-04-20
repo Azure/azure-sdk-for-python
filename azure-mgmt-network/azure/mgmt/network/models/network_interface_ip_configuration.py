@@ -32,16 +32,16 @@ class NetworkInterfaceIPConfiguration(SubResource):
      reference of ApplicationGatewayBackendAddressPool resource
     :type application_gateway_backend_address_pools: list of
      :class:`ApplicationGatewayBackendAddressPool
-     <networkmanagementclient.models.ApplicationGatewayBackendAddressPool>`
+     <azure.mgmt.network.models.ApplicationGatewayBackendAddressPool>`
     :param load_balancer_backend_address_pools: Gets or sets the reference of
      LoadBalancerBackendAddressPool resource
     :type load_balancer_backend_address_pools: list of
      :class:`BackendAddressPool
-     <networkmanagementclient.models.BackendAddressPool>`
+     <azure.mgmt.network.models.BackendAddressPool>`
     :param load_balancer_inbound_nat_rules: Gets or sets list of references
      of LoadBalancerInboundNatRules
     :type load_balancer_inbound_nat_rules: list of :class:`InboundNatRule
-     <networkmanagementclient.models.InboundNatRule>`
+     <azure.mgmt.network.models.InboundNatRule>`
     :param private_ip_address:
     :type private_ip_address: str
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation
@@ -51,10 +51,10 @@ class NetworkInterfaceIPConfiguration(SubResource):
      (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str
     :param subnet:
-    :type subnet: :class:`Subnet <networkmanagementclient.models.Subnet>`
+    :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
     :param public_ip_address:
     :type public_ip_address: :class:`PublicIPAddress
-     <networkmanagementclient.models.PublicIPAddress>`
+     <azure.mgmt.network.models.PublicIPAddress>`
     :param provisioning_state:
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource

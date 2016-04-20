@@ -64,7 +64,7 @@ class HostingEnvironment(Resource):
     :param virtual_network: Description of the hostingEnvironment's (App
      Service Environment) virtual network
     :type virtual_network: :class:`VirtualNetworkProfile
-     <websitemanagementclient.models.VirtualNetworkProfile>`
+     <azure.mgmt.web.models.VirtualNetworkProfile>`
     :param internal_load_balancing_mode: Specifies which endpoints to serve
      internally in the hostingEnvironment's (App Service Environment) VNET.
      Possible values include: 'None', 'Web', 'Publishing'
@@ -76,7 +76,7 @@ class HostingEnvironment(Resource):
     :param worker_pools: Description of worker pools with worker size ids, VM
      sizes, and number of workers in each pool
     :type worker_pools: list of :class:`WorkerPool
-     <websitemanagementclient.models.WorkerPool>`
+     <azure.mgmt.web.models.WorkerPool>`
     :param ipssl_address_count: Number of IP SSL addresses reserved for this
      hostingEnvironment (App Service Environment)
     :type ipssl_address_count: int
@@ -113,16 +113,16 @@ class HostingEnvironment(Resource):
     :param vip_mappings: Description of IP SSL mapping for this
      hostingEnvironment (App Service Environment)
     :type vip_mappings: list of :class:`VirtualIPMapping
-     <websitemanagementclient.models.VirtualIPMapping>`
+     <azure.mgmt.web.models.VirtualIPMapping>`
     :param environment_capacities: Current total, used, and available worker
      capacities
     :type environment_capacities: list of :class:`StampCapacity
-     <websitemanagementclient.models.StampCapacity>`
+     <azure.mgmt.web.models.StampCapacity>`
     :param network_access_control_list: Access control list for controlling
      traffic to the hostingEnvironment (App Service Environment)
     :type network_access_control_list: list of
      :class:`NetworkAccessControlEntry
-     <websitemanagementclient.models.NetworkAccessControlEntry>`
+     <azure.mgmt.web.models.NetworkAccessControlEntry>`
     :param environment_is_healthy: True/false indicating whether the
      hostingEnvironment (App Service Environment) is healthy
     :type environment_is_healthy: bool
@@ -143,7 +143,7 @@ class HostingEnvironment(Resource):
     :param cluster_settings: Custom settings for changing the behavior of the
      hosting environment
     :type cluster_settings: list of :class:`NameValuePair
-     <websitemanagementclient.models.NameValuePair>`
+     <azure.mgmt.web.models.NameValuePair>`
     """ 
 
     _validation = {

@@ -59,7 +59,7 @@ class ManagedHostingEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagedHostingEnvironment
-         <websitemanagementclient.models.ManagedHostingEnvironment>`
+         <azure.mgmt.web.models.ManagedHostingEnvironment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -118,14 +118,14 @@ class ManagedHostingEnvironmentsOperations(object):
         :param managed_hosting_environment_envelope: Properties of managed
          hosting environment
         :type managed_hosting_environment_envelope:
-         :class:`HostingEnvironment <websitemanagementclient.models.HostingEnvironment>`
+         :class:`HostingEnvironment <azure.mgmt.web.models.HostingEnvironment>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`HostingEnvironment
-         <websitemanagementclient.models.HostingEnvironment>`
+         <azure.mgmt.web.models.HostingEnvironment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -299,7 +299,7 @@ class ManagedHostingEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostingEnvironmentCollection
-         <websitemanagementclient.models.HostingEnvironmentCollection>`
+         <azure.mgmt.web.models.HostingEnvironmentCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -360,7 +360,7 @@ class ManagedHostingEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AddressResponse
-         <websitemanagementclient.models.AddressResponse>`
+         <azure.mgmt.web.models.AddressResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -490,8 +490,7 @@ class ManagedHostingEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteCollection
-         <websitemanagementclient.models.SiteCollection>`
+        :rtype: :class:`SiteCollection <azure.mgmt.web.models.SiteCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -556,7 +555,7 @@ class ManagedHostingEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmCollection
-         <websitemanagementclient.models.ServerFarmCollection>`
+         <azure.mgmt.web.models.ServerFarmCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -619,7 +618,7 @@ class ManagedHostingEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmCollection
-         <websitemanagementclient.models.ServerFarmCollection>`
+         <azure.mgmt.web.models.ServerFarmCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

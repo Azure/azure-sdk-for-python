@@ -58,7 +58,7 @@ class ResourceProviderOperationDetailsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceProviderOperationDefinitionPaged
-         <resourcemanagementclient.models.ResourceProviderOperationDefinitionPaged>`
+         <azure.mgmt.resource.resources.models.ResourceProviderOperationDefinitionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

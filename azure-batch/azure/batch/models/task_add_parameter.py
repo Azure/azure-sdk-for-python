@@ -43,30 +43,30 @@ class TaskAddParameter(Model):
      multi-instance tasks, the resource files will only be downloaded to the
      compute node on which the primary subtask is executed.
     :type resource_files: list of :class:`ResourceFile
-     <batchserviceclient.models.ResourceFile>`
+     <azure.batch.models.ResourceFile>`
     :param environment_settings: Gets or sets a list of environment variable
      settings for the task.
     :type environment_settings: list of :class:`EnvironmentSetting
-     <batchserviceclient.models.EnvironmentSetting>`
+     <azure.batch.models.EnvironmentSetting>`
     :param affinity_info: Gets or sets a locality hint that can be used by
      the Batch service to select a compute node on which to start the new
      task.
     :type affinity_info: :class:`AffinityInformation
-     <batchserviceclient.models.AffinityInformation>`
+     <azure.batch.models.AffinityInformation>`
     :param constraints: Gets or sets the execution constraints that apply to
      this task.
     :type constraints: :class:`TaskConstraints
-     <batchserviceclient.models.TaskConstraints>`
+     <azure.batch.models.TaskConstraints>`
     :param run_elevated: Gets or sets whether to run the task in elevated
      mode.
     :type run_elevated: bool
     :param multi_instance_settings: Gets or sets information about how to run
      the multi-instance task.
     :type multi_instance_settings: :class:`MultiInstanceSettings
-     <batchserviceclient.models.MultiInstanceSettings>`
+     <azure.batch.models.MultiInstanceSettings>`
     :param depends_on: Gets or sets any dependencies this task has.
     :type depends_on: :class:`TaskDependencies
-     <batchserviceclient.models.TaskDependencies>`
+     <azure.batch.models.TaskDependencies>`
     """ 
 
     _validation = {

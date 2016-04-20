@@ -29,7 +29,7 @@ class AclStatusResult(Model):
     :param acl_status: Gets or sets the AclStatus object for a given file or
      directory.
     :type acl_status: :class:`AclStatus
-     <datalakestorefilesystemmanagementclient.models.AclStatus>`
+     <azure.mgmt.datalake.store.filesystem.models.AclStatus>`
     """ 
 
     _attribute_map = {

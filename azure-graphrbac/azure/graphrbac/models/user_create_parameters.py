@@ -36,7 +36,7 @@ class UserCreateParameters(Model):
     :type mail_nickname: str
     :param password_profile: Password Profile
     :type password_profile: :class:`UserCreateParametersPasswordProfile
-     <graphrbacmanagementclient.models.UserCreateParametersPasswordProfile>`
+     <azure.graphrbac.models.UserCreateParametersPasswordProfile>`
     """ 
 
     _validation = {

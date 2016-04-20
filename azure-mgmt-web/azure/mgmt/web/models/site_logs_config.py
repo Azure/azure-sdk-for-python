@@ -40,16 +40,16 @@ class SiteLogsConfig(Resource):
     :type tags: dict
     :param application_logs: Application logs configuration
     :type application_logs: :class:`ApplicationLogsConfig
-     <websitemanagementclient.models.ApplicationLogsConfig>`
+     <azure.mgmt.web.models.ApplicationLogsConfig>`
     :param http_logs: Http logs configuration
     :type http_logs: :class:`HttpLogsConfig
-     <websitemanagementclient.models.HttpLogsConfig>`
+     <azure.mgmt.web.models.HttpLogsConfig>`
     :param failed_requests_tracing: Failed requests tracing configuration
     :type failed_requests_tracing: :class:`EnabledConfig
-     <websitemanagementclient.models.EnabledConfig>`
+     <azure.mgmt.web.models.EnabledConfig>`
     :param detailed_error_messages: Detailed error messages configuration
     :type detailed_error_messages: :class:`EnabledConfig
-     <websitemanagementclient.models.EnabledConfig>`
+     <azure.mgmt.web.models.EnabledConfig>`
     """ 
 
     _validation = {

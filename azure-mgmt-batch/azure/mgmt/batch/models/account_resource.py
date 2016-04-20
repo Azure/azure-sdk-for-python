@@ -46,7 +46,7 @@ class AccountResource(Resource):
     :param auto_storage: The properties and status of any auto storage
      associated with the account.
     :type auto_storage: :class:`AutoStorageProperties
-     <batchmanagementclient.models.AutoStorageProperties>`
+     <azure.mgmt.batch.models.AutoStorageProperties>`
     :param core_quota: The core quota for this Batch account.
     :type core_quota: int
     :param pool_quota: The pool quota for this Batch account.

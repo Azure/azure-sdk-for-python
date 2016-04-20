@@ -142,7 +142,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitAuthorization
-         <networkmanagementclient.models.ExpressRouteCircuitAuthorization>`
+         <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -206,14 +206,14 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          create/update ExpressRouteCircuitAuthorization operation
         :type authorization_parameters:
          :class:`ExpressRouteCircuitAuthorization
-         <networkmanagementclient.models.ExpressRouteCircuitAuthorization>`
+         <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ExpressRouteCircuitAuthorization
-         <networkmanagementclient.models.ExpressRouteCircuitAuthorization>`
+         <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -305,7 +305,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitAuthorizationPaged
-         <networkmanagementclient.models.ExpressRouteCircuitAuthorizationPaged>`
+         <azure.mgmt.network.models.ExpressRouteCircuitAuthorizationPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

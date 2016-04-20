@@ -28,12 +28,12 @@ class StorageProfile(Model):
 
     :param image_reference: Gets or sets the image reference.
     :type image_reference: :class:`ImageReference
-     <computemanagementclient.models.ImageReference>`
+     <azure.mgmt.compute.models.ImageReference>`
     :param os_disk: Gets or sets the OS disk.
-    :type os_disk: :class:`OSDisk <computemanagementclient.models.OSDisk>`
+    :type os_disk: :class:`OSDisk <azure.mgmt.compute.models.OSDisk>`
     :param data_disks: Gets or sets the data disks.
     :type data_disks: list of :class:`DataDisk
-     <computemanagementclient.models.DataDisk>`
+     <azure.mgmt.compute.models.DataDisk>`
     """ 
 
     _attribute_map = {

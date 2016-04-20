@@ -28,7 +28,7 @@ class TldLegalAgreementCollection(Model):
 
     :param value: Collection of resources
     :type value: list of :class:`TldLegalAgreement
-     <websitemanagementclient.models.TldLegalAgreement>`
+     <azure.mgmt.web.models.TldLegalAgreement>`
     :param next_link: Link to next page of resources
     :type next_link: str
     """ 

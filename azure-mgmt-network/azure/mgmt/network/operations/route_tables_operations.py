@@ -137,8 +137,7 @@ class RouteTablesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RouteTable
-         <networkmanagementclient.models.RouteTable>`
+        :rtype: :class:`RouteTable <azure.mgmt.network.models.RouteTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -200,14 +199,14 @@ class RouteTablesOperations(object):
         :param parameters: Parameters supplied to the create/update Route
          Table operation
         :type parameters: :class:`RouteTable
-         <networkmanagementclient.models.RouteTable>`
+         <azure.mgmt.network.models.RouteTable>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`RouteTable
-         <networkmanagementclient.models.RouteTable>`
+         <azure.mgmt.network.models.RouteTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -295,7 +294,7 @@ class RouteTablesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteTablePaged
-         <networkmanagementclient.models.RouteTablePaged>`
+         <azure.mgmt.network.models.RouteTablePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -359,7 +358,7 @@ class RouteTablesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteTablePaged
-         <networkmanagementclient.models.RouteTablePaged>`
+         <azure.mgmt.network.models.RouteTablePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

@@ -47,10 +47,10 @@ class WorkflowTrigger(SubResource):
     :type next_execution_time: datetime
     :param recurrence: Gets the workflow trigger recurrence.
     :type recurrence: :class:`WorkflowTriggerRecurrence
-     <logicmanagementclient.models.WorkflowTriggerRecurrence>`
+     <azure.mgmt.logic.models.WorkflowTriggerRecurrence>`
     :param workflow: Gets the reference to workflow.
     :type workflow: :class:`ResourceReference
-     <logicmanagementclient.models.ResourceReference>`
+     <azure.mgmt.logic.models.ResourceReference>`
     :param name: Gets the workflow trigger name.
     :type name: str
     :param type: Gets the workflow trigger type.

@@ -54,7 +54,7 @@ class ProviderOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SourceControlCollection
-         <websitemanagementclient.models.SourceControlCollection>`
+         <azure.mgmt.web.models.SourceControlCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -107,8 +107,7 @@ class ProviderOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SourceControl
-         <websitemanagementclient.models.SourceControl>`
+        :rtype: :class:`SourceControl <azure.mgmt.web.models.SourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -162,14 +161,13 @@ class ProviderOperations(object):
         :type source_control_type: str
         :param request_message: Source control token information
         :type request_message: :class:`SourceControl
-         <websitemanagementclient.models.SourceControl>`
+         <azure.mgmt.web.models.SourceControl>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SourceControl
-         <websitemanagementclient.models.SourceControl>`
+        :rtype: :class:`SourceControl <azure.mgmt.web.models.SourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -228,7 +226,7 @@ class ProviderOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <websitemanagementclient.models.User>`
+        :rtype: :class:`User <azure.mgmt.web.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -275,14 +273,13 @@ class ProviderOperations(object):
         Updates publishing user
 
         :param request_message: Details of publishing user
-        :type request_message: :class:`User
-         <websitemanagementclient.models.User>`
+        :type request_message: :class:`User <azure.mgmt.web.models.User>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`User <websitemanagementclient.models.User>`
+        :rtype: :class:`User <azure.mgmt.web.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

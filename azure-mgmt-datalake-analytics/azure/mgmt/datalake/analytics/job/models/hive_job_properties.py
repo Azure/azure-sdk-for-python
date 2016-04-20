@@ -35,7 +35,7 @@ class HiveJobProperties(JobProperties):
     :param statement_info: Gets or sets the statement information for each
      statement in the script
     :type statement_info: list of :class:`HiveJobStatementInfo
-     <datalakeanalyticsjobmanagementclient.models.HiveJobStatementInfo>`
+     <azure.mgmt.datalake.analytics.job.models.HiveJobStatementInfo>`
     :param logs_location: Gets or sets the Hive logs location
     :type logs_location: str
     :param warehouse_location: Gets or sets the runtime version of the U-SQL

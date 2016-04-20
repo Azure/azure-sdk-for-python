@@ -31,7 +31,7 @@ class DataLakeStoreAccountInfo(Model):
     :param properties: Gets or sets the properties associated with this Data
      Lake Store account.
     :type properties: :class:`DataLakeStoreAccountInfoProperties
-     <datalakeanalyticsaccountmanagementclient.models.DataLakeStoreAccountInfoProperties>`
+     <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
     """ 
 
     _validation = {

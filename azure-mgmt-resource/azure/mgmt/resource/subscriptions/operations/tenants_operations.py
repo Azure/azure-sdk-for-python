@@ -54,7 +54,7 @@ class TenantsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TenantIdDescriptionPaged
-         <subscriptionclient.models.TenantIdDescriptionPaged>`
+         <azure.mgmt.resource.subscriptions.models.TenantIdDescriptionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

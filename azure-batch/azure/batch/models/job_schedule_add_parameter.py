@@ -34,15 +34,15 @@ class JobScheduleAddParameter(Model):
     :type display_name: str
     :param schedule: Gets or sets the schedule according to which jobs will
      be created.
-    :type schedule: :class:`Schedule <batchserviceclient.models.Schedule>`
+    :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
     :param job_specification: Gets or sets the details of the jobs to be
      created on this schedule.
     :type job_specification: :class:`JobSpecification
-     <batchserviceclient.models.JobSpecification>`
+     <azure.batch.models.JobSpecification>`
     :param metadata: Gets or sets a list of name-value pairs associated with
      the schedule as metadata.
     :type metadata: list of :class:`MetadataItem
-     <batchserviceclient.models.MetadataItem>`
+     <azure.batch.models.MetadataItem>`
     """ 
 
     _validation = {

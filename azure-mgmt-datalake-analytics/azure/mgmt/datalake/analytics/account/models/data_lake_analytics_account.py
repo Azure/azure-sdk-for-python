@@ -40,7 +40,7 @@ class DataLakeAnalyticsAccount(Model):
     :param properties: Gets or sets the properties defined by Data Lake
      Analytics all properties are specific to each resource provider.
     :type properties: :class:`DataLakeAnalyticsAccountProperties
-     <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccountProperties>`
+     <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountProperties>`
     """ 
 
     _attribute_map = {

@@ -27,12 +27,12 @@ class ServiceBusQueueMessage(ServiceBusMessage):
 
     :param authentication: Gets or sets the authentication.
     :type authentication: :class:`ServiceBusAuthentication
-     <schedulermanagementclient.models.ServiceBusAuthentication>`
+     <azure.mgmt.scheduler.models.ServiceBusAuthentication>`
     :param brokered_message_properties: Gets or sets the brokered message
      properties.
     :type brokered_message_properties:
      :class:`ServiceBusBrokeredMessageProperties
-     <schedulermanagementclient.models.ServiceBusBrokeredMessageProperties>`
+     <azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties>`
     :param custom_message_properties: Gets or sets the custom message
      properties.
     :type custom_message_properties: dict

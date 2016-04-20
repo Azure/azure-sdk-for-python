@@ -29,7 +29,7 @@ class AddDataLakeStoreParameters(Model):
     :param properties: Gets or sets the properties for the Data Lake Store
      account being added.
     :type properties: :class:`DataLakeStoreAccountInfoProperties
-     <datalakeanalyticsaccountmanagementclient.models.DataLakeStoreAccountInfoProperties>`
+     <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
     """ 
 
     _validation = {

@@ -29,7 +29,7 @@ class AdmCredential(Model):
     :param properties: Gets or sets properties of NotificationHub
      AdmCredential.
     :type properties: :class:`AdmCredentialProperties
-     <notificationhubsmanagementclient.models.AdmCredentialProperties>`
+     <azure.mgmt.notificationhubs.models.AdmCredentialProperties>`
     """ 
 
     _attribute_map = {

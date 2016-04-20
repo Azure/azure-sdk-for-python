@@ -37,7 +37,7 @@ class AutoScaleRun(Model):
     :param error: Gets or sets details of the error encountered evaluating
      the autoscale formula on the pool, if the evaluation was unsuccessful.
     :type error: :class:`AutoScaleRunError
-     <batchserviceclient.models.AutoScaleRunError>`
+     <azure.batch.models.AutoScaleRunError>`
     """ 
 
     _validation = {

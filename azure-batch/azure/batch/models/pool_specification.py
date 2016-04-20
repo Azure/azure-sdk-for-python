@@ -36,19 +36,19 @@ class PoolSpecification(Model):
      VirtualMachineConfiguration are mutually exclusive and one of the
      properties must be specified.
     :type cloud_service_configuration: :class:`CloudServiceConfiguration
-     <batchserviceclient.models.CloudServiceConfiguration>`
+     <azure.batch.models.CloudServiceConfiguration>`
     :param virtual_machine_configuration: Gets or sets the virtual machine
      configuration for the pool. This property and CloudServiceConfiguration
      are mutually exclusive and one of the properties must be specified.
     :type virtual_machine_configuration: :class:`VirtualMachineConfiguration
-     <batchserviceclient.models.VirtualMachineConfiguration>`
+     <azure.batch.models.VirtualMachineConfiguration>`
     :param max_tasks_per_node: Gets or sets the maximum number of tasks that
      can run concurrently on a single compute node in the pool.
     :type max_tasks_per_node: int
     :param task_scheduling_policy: Gets or sets how tasks are distributed
      among compute nodes in the pool.
     :type task_scheduling_policy: :class:`TaskSchedulingPolicy
-     <batchserviceclient.models.TaskSchedulingPolicy>`
+     <azure.batch.models.TaskSchedulingPolicy>`
     :param resize_timeout: Gets or sets the timeout for allocation of compute
      nodes to the pool.
     :type resize_timeout: timedelta
@@ -70,20 +70,20 @@ class PoolSpecification(Model):
     :param start_task: Gets or sets a task to run on each compute node as it
      joins the pool. The task runs when the node is added to the pool or when
      the node is restarted.
-    :type start_task: :class:`StartTask <batchserviceclient.models.StartTask>`
+    :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
     :param certificate_references: Gets or sets a list of certificates to be
      installed on each compute node in the pool.
     :type certificate_references: list of :class:`CertificateReference
-     <batchserviceclient.models.CertificateReference>`
+     <azure.batch.models.CertificateReference>`
     :param application_package_references: Gets or sets the list of
      application packages to be installed on each compute node in the pool.
     :type application_package_references: list of
      :class:`ApplicationPackageReference
-     <batchserviceclient.models.ApplicationPackageReference>`
+     <azure.batch.models.ApplicationPackageReference>`
     :param metadata: Gets or sets a list of name-value pairs associated with
      the pool as metadata.
     :type metadata: list of :class:`MetadataItem
-     <batchserviceclient.models.MetadataItem>`
+     <azure.batch.models.MetadataItem>`
     """ 
 
     _attribute_map = {

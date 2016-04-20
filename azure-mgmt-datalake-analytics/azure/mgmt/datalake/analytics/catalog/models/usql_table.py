@@ -40,17 +40,17 @@ class USqlTable(CatalogItem):
     :type name: str
     :param column_list: Gets or sets the list of columns in this table
     :type column_list: list of :class:`USqlTableColumn
-     <datalakeanalyticscatalogmanagementclient.models.USqlTableColumn>`
+     <azure.mgmt.datalake.analytics.catalog.models.USqlTableColumn>`
     :param index_list: Gets or sets the list of indices in this table
     :type index_list: list of :class:`USqlIndex
-     <datalakeanalyticscatalogmanagementclient.models.USqlIndex>`
+     <azure.mgmt.datalake.analytics.catalog.models.USqlIndex>`
     :param partition_key_list: Gets or sets the list of partition keys in the
      table
     :type partition_key_list: list of str
     :param external_table: Gets or sets the external table associated with
      the table.
     :type external_table: :class:`ExternalTable
-     <datalakeanalyticscatalogmanagementclient.models.ExternalTable>`
+     <azure.mgmt.datalake.analytics.catalog.models.ExternalTable>`
     """ 
 
     _attribute_map = {

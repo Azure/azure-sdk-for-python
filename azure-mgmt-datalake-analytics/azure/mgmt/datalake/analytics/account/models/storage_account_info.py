@@ -32,7 +32,7 @@ class StorageAccountInfo(Model):
     :param properties: Gets or sets the properties associated with this
      storage account.
     :type properties: :class:`StorageAccountProperties
-     <datalakeanalyticsaccountmanagementclient.models.StorageAccountProperties>`
+     <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
     """ 
 
     _validation = {

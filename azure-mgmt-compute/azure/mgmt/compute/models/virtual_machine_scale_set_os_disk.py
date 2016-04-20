@@ -42,7 +42,7 @@ class VirtualMachineScaleSetOSDisk(Model):
      Machine.If SourceImage is provided, the destination VirtualHardDisk
      should not exist.
     :type image: :class:`VirtualHardDisk
-     <computemanagementclient.models.VirtualHardDisk>`
+     <azure.mgmt.compute.models.VirtualHardDisk>`
     :param vhd_containers: Gets or sets the list of virtual hard disk
      container uris.
     :type vhd_containers: list of str

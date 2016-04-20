@@ -34,19 +34,19 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :param backend_address_pool: Gets or sets backend address pool resource
      of application gateway
     :type backend_address_pool: :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param backend_http_settings: Gets or sets frontend port resource of
      application gateway
     :type backend_http_settings: :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param http_listener: Gets or sets http listener resource of application
      gateway
     :type http_listener: :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param url_path_map: Gets or sets url path map resource of application
      gateway
     :type url_path_map: :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param provisioning_state: Gets or sets Provisioning state of the request
      routing rule resource Updating/Deleting/Failed
     :type provisioning_state: str

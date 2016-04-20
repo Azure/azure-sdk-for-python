@@ -33,7 +33,7 @@ class ContentLink(Model):
     :type content_size: long
     :param content_hash: Gets or sets the content hash.
     :type content_hash: :class:`ContentHash
-     <logicmanagementclient.models.ContentHash>`
+     <azure.mgmt.logic.models.ContentHash>`
     :param metadata: Gets or sets the metadata.
     :type metadata: object
     """ 

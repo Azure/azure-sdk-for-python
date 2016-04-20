@@ -142,7 +142,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitPeering
-         <networkmanagementclient.models.ExpressRouteCircuitPeering>`
+         <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -205,14 +205,14 @@ class ExpressRouteCircuitPeeringsOperations(object):
         :param peering_parameters: Parameters supplied to the create/update
          ExpressRouteCircuit Peering operation
         :type peering_parameters: :class:`ExpressRouteCircuitPeering
-         <networkmanagementclient.models.ExpressRouteCircuitPeering>`
+         <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ExpressRouteCircuitPeering
-         <networkmanagementclient.models.ExpressRouteCircuitPeering>`
+         <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -304,7 +304,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitPeeringPaged
-         <networkmanagementclient.models.ExpressRouteCircuitPeeringPaged>`
+         <azure.mgmt.network.models.ExpressRouteCircuitPeeringPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

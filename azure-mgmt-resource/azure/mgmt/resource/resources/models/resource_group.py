@@ -32,7 +32,7 @@ class ResourceGroup(Model):
     :type name: str
     :param properties:
     :type properties: :class:`ResourceGroupProperties
-     <resourcemanagementclient.models.ResourceGroupProperties>`
+     <azure.mgmt.resource.resources.models.ResourceGroupProperties>`
     :param location: Gets or sets the location of the resource group. It
      cannot be changed after the resource group has been created. Has to be
      one of the supported Azure Locations, such as West US, East US, West

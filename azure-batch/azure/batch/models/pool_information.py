@@ -36,7 +36,7 @@ class PoolInformation(Model):
      job has completed. You must specify either PoolId or
      AutoPoolSpecification, but not both.
     :type auto_pool_specification: :class:`AutoPoolSpecification
-     <batchserviceclient.models.AutoPoolSpecification>`
+     <azure.batch.models.AutoPoolSpecification>`
     """ 
 
     _attribute_map = {

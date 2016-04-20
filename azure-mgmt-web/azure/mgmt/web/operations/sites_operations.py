@@ -63,7 +63,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <websitemanagementclient.models.VnetInfo>`
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -126,7 +126,7 @@ class SitesOperations(object):
         :param connection_envelope: The properties of this Virtual Network
          Connection
         :type connection_envelope: :class:`VnetInfo
-         <websitemanagementclient.models.VnetInfo>`
+         <azure.mgmt.web.models.VnetInfo>`
         :param slot: The name of the slot for this web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -134,7 +134,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <websitemanagementclient.models.VnetInfo>`
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -269,7 +269,7 @@ class SitesOperations(object):
         :param connection_envelope: The properties of this Virtual Network
          Connection
         :type connection_envelope: :class:`VnetInfo
-         <websitemanagementclient.models.VnetInfo>`
+         <azure.mgmt.web.models.VnetInfo>`
         :param slot: The name of the slot for this web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -277,7 +277,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <websitemanagementclient.models.VnetInfo>`
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -347,7 +347,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <websitemanagementclient.models.VnetInfo>`
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -409,13 +409,13 @@ class SitesOperations(object):
         :param connection_envelope: The properties of this Virtual Network
          Connection
         :type connection_envelope: :class:`VnetInfo
-         <websitemanagementclient.models.VnetInfo>`
+         <azure.mgmt.web.models.VnetInfo>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <websitemanagementclient.models.VnetInfo>`
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -546,13 +546,13 @@ class SitesOperations(object):
         :param connection_envelope: The properties of this Virtual Network
          Connection
         :type connection_envelope: :class:`VnetInfo
-         <websitemanagementclient.models.VnetInfo>`
+         <azure.mgmt.web.models.VnetInfo>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <websitemanagementclient.models.VnetInfo>`
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -624,7 +624,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkFeatures
-         <websitemanagementclient.models.NetworkFeatures>`
+         <azure.mgmt.web.models.NetworkFeatures>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -691,7 +691,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkFeatures
-         <websitemanagementclient.models.NetworkFeatures>`
+         <azure.mgmt.web.models.NetworkFeatures>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1089,7 +1089,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SlotDifferenceCollection
-         <websitemanagementclient.models.SlotDifferenceCollection>`
+         <azure.mgmt.web.models.SlotDifferenceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1165,7 +1165,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SlotDifferenceCollection
-         <websitemanagementclient.models.SlotDifferenceCollection>`
+         <azure.mgmt.web.models.SlotDifferenceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1515,7 +1515,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SlotConfigNamesResource
-         <websitemanagementclient.models.SlotConfigNamesResource>`
+         <azure.mgmt.web.models.SlotConfigNamesResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1575,14 +1575,14 @@ class SitesOperations(object):
         :param slot_config_names: Request body containing the names of
          application settings and connection strings
         :type slot_config_names: :class:`SlotConfigNamesResource
-         <websitemanagementclient.models.SlotConfigNamesResource>`
+         <azure.mgmt.web.models.SlotConfigNamesResource>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SlotConfigNamesResource
-         <websitemanagementclient.models.SlotConfigNamesResource>`
+         <azure.mgmt.web.models.SlotConfigNamesResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1650,8 +1650,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteCollection
-         <websitemanagementclient.models.SiteCollection>`
+        :rtype: :class:`SiteCollection <azure.mgmt.web.models.SiteCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1720,8 +1719,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteCollection
-         <websitemanagementclient.models.SiteCollection>`
+        :rtype: :class:`SiteCollection <azure.mgmt.web.models.SiteCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1790,7 +1788,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Site <websitemanagementclient.models.Site>`
+        :rtype: :class:`Site <azure.mgmt.web.models.Site>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1849,8 +1847,7 @@ class SitesOperations(object):
         :param name: Name of the web app
         :type name: str
         :param site_envelope: Details of web app if it exists already
-        :type site_envelope: :class:`Site
-         <websitemanagementclient.models.Site>`
+        :type site_envelope: :class:`Site <azure.mgmt.web.models.Site>`
         :param skip_dns_registration: If true web app hostname is not
          registered with DNS on creation. This parameter is
          only used for app creation
@@ -1870,8 +1867,7 @@ class SitesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Site
-         <websitemanagementclient.models.Site>`
+         instance that returns :class:`Site <azure.mgmt.web.models.Site>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2053,7 +2049,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Site <websitemanagementclient.models.Site>`
+        :rtype: :class:`Site <azure.mgmt.web.models.Site>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2113,8 +2109,7 @@ class SitesOperations(object):
         :param name: Name of the web app
         :type name: str
         :param site_envelope: Details of web app if it exists already
-        :type site_envelope: :class:`Site
-         <websitemanagementclient.models.Site>`
+        :type site_envelope: :class:`Site <azure.mgmt.web.models.Site>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -2137,8 +2132,7 @@ class SitesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Site
-         <websitemanagementclient.models.Site>`
+         instance that returns :class:`Site <azure.mgmt.web.models.Site>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2320,7 +2314,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteCloneability
-         <websitemanagementclient.models.SiteCloneability>`
+         <azure.mgmt.web.models.SiteCloneability>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2385,7 +2379,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteCloneability
-         <websitemanagementclient.models.SiteCloneability>`
+         <azure.mgmt.web.models.SiteCloneability>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2446,14 +2440,13 @@ class SitesOperations(object):
          Snapshot information can be obtained by calling GetDeletedSites or
          GetSiteSnapshots API.
         :type recovery_entity: :class:`CsmSiteRecoveryEntity
-         <websitemanagementclient.models.CsmSiteRecoveryEntity>`
+         <azure.mgmt.web.models.CsmSiteRecoveryEntity>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Site
-         <websitemanagementclient.models.Site>`
+         instance that returns :class:`Site <azure.mgmt.web.models.Site>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2539,7 +2532,7 @@ class SitesOperations(object):
          Snapshot information can be obtained by calling GetDeletedSites or
          GetSiteSnapshots API.
         :type recovery_entity: :class:`CsmSiteRecoveryEntity
-         <websitemanagementclient.models.CsmSiteRecoveryEntity>`
+         <azure.mgmt.web.models.CsmSiteRecoveryEntity>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -2548,8 +2541,7 @@ class SitesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Site
-         <websitemanagementclient.models.Site>`
+         instance that returns :class:`Site <azure.mgmt.web.models.Site>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2766,7 +2758,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeletedSiteCollection
-         <websitemanagementclient.models.DeletedSiteCollection>`
+         <azure.mgmt.web.models.DeletedSiteCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2831,7 +2823,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentCollection
-         <websitemanagementclient.models.DeploymentCollection>`
+         <azure.mgmt.web.models.DeploymentCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2896,7 +2888,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentCollection
-         <websitemanagementclient.models.DeploymentCollection>`
+         <azure.mgmt.web.models.DeploymentCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2961,7 +2953,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentCollection
-         <websitemanagementclient.models.DeploymentCollection>`
+         <azure.mgmt.web.models.DeploymentCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3029,7 +3021,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentCollection
-         <websitemanagementclient.models.DeploymentCollection>`
+         <azure.mgmt.web.models.DeploymentCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3096,8 +3088,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3161,14 +3152,13 @@ class SitesOperations(object):
         :type instance_id: str
         :param deployment: Details of deployment
         :type deployment: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+         <azure.mgmt.web.models.Deployment>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3304,8 +3294,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3366,14 +3355,13 @@ class SitesOperations(object):
         :type id: str
         :param deployment: Details of deployment
         :type deployment: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+         <azure.mgmt.web.models.Deployment>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3508,8 +3496,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3574,14 +3561,13 @@ class SitesOperations(object):
         :type slot: str
         :param deployment: Details of deployment
         :type deployment: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+         <azure.mgmt.web.models.Deployment>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3723,8 +3709,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3792,14 +3777,13 @@ class SitesOperations(object):
         :type instance_id: str
         :param deployment: Details of deployment
         :type deployment: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+         <azure.mgmt.web.models.Deployment>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Deployment
-         <websitemanagementclient.models.Deployment>`
+        :rtype: :class:`Deployment <azure.mgmt.web.models.Deployment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -3939,7 +3923,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteInstanceCollection
-         <websitemanagementclient.models.SiteInstanceCollection>`
+         <azure.mgmt.web.models.SiteInstanceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4004,7 +3988,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteInstanceCollection
-         <websitemanagementclient.models.SiteInstanceCollection>`
+         <azure.mgmt.web.models.SiteInstanceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4067,7 +4051,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostNameBindingCollection
-         <websitemanagementclient.models.HostNameBindingCollection>`
+         <azure.mgmt.web.models.HostNameBindingCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4132,7 +4116,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostNameBindingCollection
-         <websitemanagementclient.models.HostNameBindingCollection>`
+         <azure.mgmt.web.models.HostNameBindingCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4197,7 +4181,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostNameBinding
-         <websitemanagementclient.models.HostNameBinding>`
+         <azure.mgmt.web.models.HostNameBinding>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4258,14 +4242,14 @@ class SitesOperations(object):
         :type host_name: str
         :param host_name_binding: Host name binding information
         :type host_name_binding: :class:`HostNameBinding
-         <websitemanagementclient.models.HostNameBinding>`
+         <azure.mgmt.web.models.HostNameBinding>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostNameBinding
-         <websitemanagementclient.models.HostNameBinding>`
+         <azure.mgmt.web.models.HostNameBinding>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4401,7 +4385,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostNameBinding
-         <websitemanagementclient.models.HostNameBinding>`
+         <azure.mgmt.web.models.HostNameBinding>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4463,7 +4447,7 @@ class SitesOperations(object):
         :type host_name: str
         :param host_name_binding: Host name binding information
         :type host_name_binding: :class:`HostNameBinding
-         <websitemanagementclient.models.HostNameBinding>`
+         <azure.mgmt.web.models.HostNameBinding>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -4473,7 +4457,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostNameBinding
-         <websitemanagementclient.models.HostNameBinding>`
+         <azure.mgmt.web.models.HostNameBinding>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4608,8 +4592,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+        :rtype: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4668,14 +4651,13 @@ class SitesOperations(object):
         :param site_config: Request body that contains the configuraiton
          setting for the web app
         :type site_config: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+         <azure.mgmt.web.models.SiteConfig>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+        :rtype: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4738,14 +4720,13 @@ class SitesOperations(object):
         :param site_config: Request body that contains the configuraiton
          setting for the web app
         :type site_config: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+         <azure.mgmt.web.models.SiteConfig>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+        :rtype: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4813,8 +4794,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+        :rtype: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4874,7 +4854,7 @@ class SitesOperations(object):
         :param site_config: Request body that contains the configuraiton
          setting for the web app
         :type site_config: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+         <azure.mgmt.web.models.SiteConfig>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -4883,8 +4863,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+        :rtype: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -4948,7 +4927,7 @@ class SitesOperations(object):
         :param site_config: Request body that contains the configuraiton
          setting for the web app
         :type site_config: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+         <azure.mgmt.web.models.SiteConfig>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -4957,8 +4936,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteConfig
-         <websitemanagementclient.models.SiteConfig>`
+        :rtype: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5025,7 +5003,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5084,14 +5062,14 @@ class SitesOperations(object):
         :param site_source_control: Request body that contains the source
          control parameters
         :type site_source_control: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5215,14 +5193,14 @@ class SitesOperations(object):
         :param site_source_control: Request body that contains the source
          control parameters
         :type site_source_control: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5291,7 +5269,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5351,7 +5329,7 @@ class SitesOperations(object):
         :param site_source_control: Request body that contains the source
          control parameters
         :type site_source_control: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -5361,7 +5339,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5490,7 +5468,7 @@ class SitesOperations(object):
         :param site_source_control: Request body that contains the source
          control parameters
         :type site_source_control: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -5500,7 +5478,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteSourceControl
-         <websitemanagementclient.models.SiteSourceControl>`
+         <azure.mgmt.web.models.SiteSourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5570,7 +5548,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5633,7 +5611,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5691,14 +5669,14 @@ class SitesOperations(object):
         :type name: str
         :param app_settings: Application settings of web app
         :type app_settings: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5760,7 +5738,7 @@ class SitesOperations(object):
         :type name: str
         :param app_settings: Application settings of web app
         :type app_settings: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -5770,7 +5748,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5837,7 +5815,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ConnectionStringDictionary
-         <websitemanagementclient.models.ConnectionStringDictionary>`
+         <azure.mgmt.web.models.ConnectionStringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5902,7 +5880,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ConnectionStringDictionary
-         <websitemanagementclient.models.ConnectionStringDictionary>`
+         <azure.mgmt.web.models.ConnectionStringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -5961,14 +5939,14 @@ class SitesOperations(object):
         :type name: str
         :param connection_strings: Connection strings associated with web app
         :type connection_strings: :class:`ConnectionStringDictionary
-         <websitemanagementclient.models.ConnectionStringDictionary>`
+         <azure.mgmt.web.models.ConnectionStringDictionary>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ConnectionStringDictionary
-         <websitemanagementclient.models.ConnectionStringDictionary>`
+         <azure.mgmt.web.models.ConnectionStringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6030,7 +6008,7 @@ class SitesOperations(object):
         :type name: str
         :param connection_strings: Connection strings associated with web app
         :type connection_strings: :class:`ConnectionStringDictionary
-         <websitemanagementclient.models.ConnectionStringDictionary>`
+         <azure.mgmt.web.models.ConnectionStringDictionary>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -6040,7 +6018,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ConnectionStringDictionary
-         <websitemanagementclient.models.ConnectionStringDictionary>`
+         <azure.mgmt.web.models.ConnectionStringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6108,7 +6086,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteAuthSettings
-         <websitemanagementclient.models.SiteAuthSettings>`
+         <azure.mgmt.web.models.SiteAuthSettings>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6174,7 +6152,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteAuthSettings
-         <websitemanagementclient.models.SiteAuthSettings>`
+         <azure.mgmt.web.models.SiteAuthSettings>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6234,14 +6212,14 @@ class SitesOperations(object):
         :type name: str
         :param site_auth_settings: Auth settings associated with web app
         :type site_auth_settings: :class:`SiteAuthSettings
-         <websitemanagementclient.models.SiteAuthSettings>`
+         <azure.mgmt.web.models.SiteAuthSettings>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteAuthSettings
-         <websitemanagementclient.models.SiteAuthSettings>`
+         <azure.mgmt.web.models.SiteAuthSettings>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6304,7 +6282,7 @@ class SitesOperations(object):
         :type name: str
         :param site_auth_settings: Auth settings associated with web app
         :type site_auth_settings: :class:`SiteAuthSettings
-         <websitemanagementclient.models.SiteAuthSettings>`
+         <azure.mgmt.web.models.SiteAuthSettings>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -6314,7 +6292,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SiteAuthSettings
-         <websitemanagementclient.models.SiteAuthSettings>`
+         <azure.mgmt.web.models.SiteAuthSettings>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6380,8 +6358,7 @@ class SitesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`User
-         <websitemanagementclient.models.User>`
+         instance that returns :class:`User <azure.mgmt.web.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6467,8 +6444,7 @@ class SitesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`User
-         <websitemanagementclient.models.User>`
+         instance that returns :class:`User <azure.mgmt.web.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6553,7 +6529,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6618,7 +6594,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6677,14 +6653,14 @@ class SitesOperations(object):
         :type name: str
         :param metadata: Meta data of web app
         :type metadata: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6746,7 +6722,7 @@ class SitesOperations(object):
         :type name: str
         :param metadata: Meta data of web app
         :type metadata: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -6756,7 +6732,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StringDictionary
-         <websitemanagementclient.models.StringDictionary>`
+         <azure.mgmt.web.models.StringDictionary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6822,8 +6798,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteLogsConfig
-         <websitemanagementclient.models.SiteLogsConfig>`
+        :rtype: :class:`SiteLogsConfig <azure.mgmt.web.models.SiteLogsConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6881,14 +6856,13 @@ class SitesOperations(object):
         :type name: str
         :param site_logs_config: Site logs configuration
         :type site_logs_config: :class:`SiteLogsConfig
-         <websitemanagementclient.models.SiteLogsConfig>`
+         <azure.mgmt.web.models.SiteLogsConfig>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteLogsConfig
-         <websitemanagementclient.models.SiteLogsConfig>`
+        :rtype: :class:`SiteLogsConfig <azure.mgmt.web.models.SiteLogsConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -6956,8 +6930,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteLogsConfig
-         <websitemanagementclient.models.SiteLogsConfig>`
+        :rtype: :class:`SiteLogsConfig <azure.mgmt.web.models.SiteLogsConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -7016,7 +6989,7 @@ class SitesOperations(object):
         :type name: str
         :param site_logs_config: Site logs configuration
         :type site_logs_config: :class:`SiteLogsConfig
-         <websitemanagementclient.models.SiteLogsConfig>`
+         <azure.mgmt.web.models.SiteLogsConfig>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -7025,8 +6998,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteLogsConfig
-         <websitemanagementclient.models.SiteLogsConfig>`
+        :rtype: :class:`SiteLogsConfig <azure.mgmt.web.models.SiteLogsConfig>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -7276,7 +7248,7 @@ class SitesOperations(object):
         :type premier_add_on_name: str
         :param premier_add_on:
         :type premier_add_on: :class:`PremierAddOnRequest
-         <websitemanagementclient.models.PremierAddOnRequest>`
+         <azure.mgmt.web.models.PremierAddOnRequest>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -7475,7 +7447,7 @@ class SitesOperations(object):
         :type premier_add_on_name: str
         :param premier_add_on:
         :type premier_add_on: :class:`PremierAddOnRequest
-         <websitemanagementclient.models.PremierAddOnRequest>`
+         <azure.mgmt.web.models.PremierAddOnRequest>`
         :param slot:
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -7616,8 +7588,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+        :rtype: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -7681,8 +7652,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+        :rtype: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -7741,14 +7711,13 @@ class SitesOperations(object):
         :type name: str
         :param request: Information on backup request
         :type request: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+         <azure.mgmt.web.models.BackupRequest>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+        :rtype: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -7810,7 +7779,7 @@ class SitesOperations(object):
         :type name: str
         :param request: Information on backup request
         :type request: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+         <azure.mgmt.web.models.BackupRequest>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -7819,8 +7788,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+        :rtype: :class:`BackupRequest <azure.mgmt.web.models.BackupRequest>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -7883,14 +7851,13 @@ class SitesOperations(object):
         :type name: str
         :param request: Information on backup request
         :type request: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+         <azure.mgmt.web.models.BackupRequest>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItem
-         <websitemanagementclient.models.BackupItem>`
+        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -7952,7 +7919,7 @@ class SitesOperations(object):
         :type name: str
         :param request: Information on backup request
         :type request: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+         <azure.mgmt.web.models.BackupRequest>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -7961,8 +7928,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItem
-         <websitemanagementclient.models.BackupItem>`
+        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8025,14 +7991,13 @@ class SitesOperations(object):
         :type name: str
         :param request: Information on restore request
         :type request: :class:`RestoreRequest
-         <websitemanagementclient.models.RestoreRequest>`
+         <azure.mgmt.web.models.RestoreRequest>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RestoreRequest
-         <websitemanagementclient.models.RestoreRequest>`
+        :rtype: :class:`RestoreRequest <azure.mgmt.web.models.RestoreRequest>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8094,7 +8059,7 @@ class SitesOperations(object):
         :type name: str
         :param request: Information on restore request
         :type request: :class:`RestoreRequest
-         <websitemanagementclient.models.RestoreRequest>`
+         <azure.mgmt.web.models.RestoreRequest>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -8103,8 +8068,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RestoreRequest
-         <websitemanagementclient.models.RestoreRequest>`
+        :rtype: :class:`RestoreRequest <azure.mgmt.web.models.RestoreRequest>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8171,7 +8135,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BackupItemCollection
-         <websitemanagementclient.models.BackupItemCollection>`
+         <azure.mgmt.web.models.BackupItemCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8236,7 +8200,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BackupItemCollection
-         <websitemanagementclient.models.BackupItemCollection>`
+         <azure.mgmt.web.models.BackupItemCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8300,8 +8264,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItem
-         <websitemanagementclient.models.BackupItem>`
+        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8365,8 +8328,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItem
-         <websitemanagementclient.models.BackupItem>`
+        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8433,8 +8395,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItem
-         <websitemanagementclient.models.BackupItem>`
+        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8502,8 +8463,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItem
-         <websitemanagementclient.models.BackupItem>`
+        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8568,7 +8528,7 @@ class SitesOperations(object):
         :type backup_id: str
         :param request: Information on backup request
         :type request: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+         <azure.mgmt.web.models.BackupRequest>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -8577,8 +8537,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItem
-         <websitemanagementclient.models.BackupItem>`
+        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8647,14 +8606,13 @@ class SitesOperations(object):
         :type backup_id: str
         :param request: Information on backup request
         :type request: :class:`BackupRequest
-         <websitemanagementclient.models.BackupRequest>`
+         <azure.mgmt.web.models.BackupRequest>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItem
-         <websitemanagementclient.models.BackupItem>`
+        :rtype: :class:`BackupItem <azure.mgmt.web.models.BackupItem>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8719,14 +8677,14 @@ class SitesOperations(object):
         :type backup_id: str
         :param request: Information on restore request
         :type request: :class:`RestoreRequest
-         <websitemanagementclient.models.RestoreRequest>`
+         <azure.mgmt.web.models.RestoreRequest>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`RestoreResponse
-         <websitemanagementclient.models.RestoreResponse>`
+         <azure.mgmt.web.models.RestoreResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8813,7 +8771,7 @@ class SitesOperations(object):
         :type backup_id: str
         :param request: Information on restore request
         :type request: :class:`RestoreRequest
-         <websitemanagementclient.models.RestoreRequest>`
+         <azure.mgmt.web.models.RestoreRequest>`
         :param slot: Name of web app slot. If not specified then will default
          to production slot.
         :type slot: str
@@ -8823,7 +8781,7 @@ class SitesOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`RestoreResponse
-         <websitemanagementclient.models.RestoreResponse>`
+         <azure.mgmt.web.models.RestoreResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8919,7 +8877,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CsmUsageQuotaCollection
-         <websitemanagementclient.models.CsmUsageQuotaCollection>`
+         <azure.mgmt.web.models.CsmUsageQuotaCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -8992,7 +8950,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CsmUsageQuotaCollection
-         <websitemanagementclient.models.CsmUsageQuotaCollection>`
+         <azure.mgmt.web.models.CsmUsageQuotaCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -9065,7 +9023,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceMetricCollection
-         <websitemanagementclient.models.ResourceMetricCollection>`
+         <azure.mgmt.web.models.ResourceMetricCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -9142,7 +9100,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceMetricCollection
-         <websitemanagementclient.models.ResourceMetricCollection>`
+         <azure.mgmt.web.models.ResourceMetricCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -9212,7 +9170,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`MetricDefinitionCollection
-         <websitemanagementclient.models.MetricDefinitionCollection>`
+         <azure.mgmt.web.models.MetricDefinitionCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -9275,7 +9233,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`MetricDefinitionCollection
-         <websitemanagementclient.models.MetricDefinitionCollection>`
+         <azure.mgmt.web.models.MetricDefinitionCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10147,7 +10105,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10210,14 +10168,14 @@ class SitesOperations(object):
         :type entity_name: str
         :param connection_envelope: The details of the Hybrid Connection
         :type connection_envelope: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10350,14 +10308,14 @@ class SitesOperations(object):
         :type entity_name: str
         :param connection_envelope: The details of the Hybrid Connection
         :type connection_envelope: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10429,7 +10387,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10493,7 +10451,7 @@ class SitesOperations(object):
         :type entity_name: str
         :param connection_envelope: The details of the Hybrid Connection
         :type connection_envelope: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :param slot: The name of the slot for the web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -10502,7 +10460,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10639,7 +10597,7 @@ class SitesOperations(object):
         :type entity_name: str
         :param connection_envelope: The details of the Hybrid Connection
         :type connection_envelope: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :param slot: The name of the slot for the web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -10648,7 +10606,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10718,7 +10676,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10781,7 +10739,7 @@ class SitesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RelayServiceConnectionEntity
-         <websitemanagementclient.models.RelayServiceConnectionEntity>`
+         <azure.mgmt.web.models.RelayServiceConnectionEntity>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10917,7 +10875,7 @@ class SitesOperations(object):
         :param connection_envelope: The properties to update this gateway
          with.
         :type connection_envelope: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+         <azure.mgmt.web.models.VnetGateway>`
         :param slot: The name of the slot for this web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -10925,8 +10883,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -10997,7 +10954,7 @@ class SitesOperations(object):
         :param connection_envelope: The properties to update this gateway
          with.
         :type connection_envelope: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+         <azure.mgmt.web.models.VnetGateway>`
         :param slot: The name of the slot for this web app.
         :type slot: str
         :param dict custom_headers: headers that will be added to the request
@@ -11005,8 +10962,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -11146,14 +11102,13 @@ class SitesOperations(object):
         :param connection_envelope: The properties to update this gateway
          with.
         :type connection_envelope: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+         <azure.mgmt.web.models.VnetGateway>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -11223,14 +11178,13 @@ class SitesOperations(object):
         :param connection_envelope: The properties to update this gateway
          with.
         :type connection_envelope: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+         <azure.mgmt.web.models.VnetGateway>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -11298,8 +11252,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`VnetInfo
-         <websitemanagementclient.models.VnetInfo>`
+        :rtype: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -11363,8 +11316,7 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`VnetInfo
-         <websitemanagementclient.models.VnetInfo>`
+        :rtype: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

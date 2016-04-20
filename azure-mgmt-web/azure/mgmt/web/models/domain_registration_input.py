@@ -41,17 +41,13 @@ class DomainRegistrationInput(Resource):
     :param domain_registration_input_name: Name of the domain
     :type domain_registration_input_name: str
     :param contact_admin: Admin contact information
-    :type contact_admin: :class:`Contact
-     <websitemanagementclient.models.Contact>`
+    :type contact_admin: :class:`Contact <azure.mgmt.web.models.Contact>`
     :param contact_billing: Billing contact information
-    :type contact_billing: :class:`Contact
-     <websitemanagementclient.models.Contact>`
+    :type contact_billing: :class:`Contact <azure.mgmt.web.models.Contact>`
     :param contact_registrant: Registrant contact information
-    :type contact_registrant: :class:`Contact
-     <websitemanagementclient.models.Contact>`
+    :type contact_registrant: :class:`Contact <azure.mgmt.web.models.Contact>`
     :param contact_tech: Technical contact information
-    :type contact_tech: :class:`Contact
-     <websitemanagementclient.models.Contact>`
+    :type contact_tech: :class:`Contact <azure.mgmt.web.models.Contact>`
     :param registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
@@ -81,10 +77,10 @@ class DomainRegistrationInput(Resource):
     :param managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources
     :type managed_host_names: list of :class:`HostName
-     <websitemanagementclient.models.HostName>`
+     <azure.mgmt.web.models.HostName>`
     :param consent: Legal agreement consent
     :type consent: :class:`DomainPurchaseConsent
-     <websitemanagementclient.models.DomainPurchaseConsent>`
+     <azure.mgmt.web.models.DomainPurchaseConsent>`
     """ 
 
     _validation = {

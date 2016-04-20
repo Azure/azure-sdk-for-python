@@ -34,7 +34,7 @@ class RoleDefinitionProperties(Model):
     :type type: str
     :param permissions: Gets or sets role definition permissions.
     :type permissions: list of :class:`Permission
-     <authorizationmanagementclient.models.Permission>`
+     <azure.mgmt.authorization.models.Permission>`
     :param assignable_scopes: Gets or sets role definition assignable scopes.
     :type assignable_scopes: list of str
     """ 

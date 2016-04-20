@@ -51,8 +51,7 @@ class WorkerPool(Resource):
      only)
     :type instance_names: list of str
     :param sku:
-    :type sku: :class:`SkuDescription
-     <websitemanagementclient.models.SkuDescription>`
+    :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
     """ 
 
     _validation = {

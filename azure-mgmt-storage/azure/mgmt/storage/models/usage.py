@@ -37,7 +37,7 @@ class Usage(Model):
      allocated in the subscription.
     :type limit: int
     :param name: Gets the name of the type of usage.
-    :type name: :class:`UsageName <storagemanagementclient.models.UsageName>`
+    :type name: :class:`UsageName <azure.mgmt.storage.models.UsageName>`
     """ 
 
     _validation = {

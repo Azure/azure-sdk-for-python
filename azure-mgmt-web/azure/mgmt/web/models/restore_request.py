@@ -50,7 +50,7 @@ class RestoreRequest(Resource):
     :param databases: Collection of databses which should be restored. This
      list has to match the list of databases included in the backup.
     :type databases: list of :class:`DatabaseBackupSetting
-     <websitemanagementclient.models.DatabaseBackupSetting>`
+     <azure.mgmt.web.models.DatabaseBackupSetting>`
     :param ignore_conflicting_host_names: Changes a logic when restoring a
      site with custom domains. If "true", custom domains are removed
      automatically. If "false", custom domains are added to

@@ -54,7 +54,7 @@ class JobCollectionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobCollectionDefinitionPaged
-         <schedulermanagementclient.models.JobCollectionDefinitionPaged>`
+         <azure.mgmt.scheduler.models.JobCollectionDefinitionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -119,7 +119,7 @@ class JobCollectionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobCollectionDefinitionPaged
-         <schedulermanagementclient.models.JobCollectionDefinitionPaged>`
+         <azure.mgmt.scheduler.models.JobCollectionDefinitionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -187,7 +187,7 @@ class JobCollectionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobCollectionDefinition
-         <schedulermanagementclient.models.JobCollectionDefinition>`
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -245,14 +245,14 @@ class JobCollectionsOperations(object):
         :type job_collection_name: str
         :param job_collection: The job collection definition.
         :type job_collection: :class:`JobCollectionDefinition
-         <schedulermanagementclient.models.JobCollectionDefinition>`
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobCollectionDefinition
-         <schedulermanagementclient.models.JobCollectionDefinition>`
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -316,14 +316,14 @@ class JobCollectionsOperations(object):
         :type job_collection_name: str
         :param job_collection: The job collection definition.
         :type job_collection: :class:`JobCollectionDefinition
-         <schedulermanagementclient.models.JobCollectionDefinition>`
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobCollectionDefinition
-         <schedulermanagementclient.models.JobCollectionDefinition>`
+         <azure.mgmt.scheduler.models.JobCollectionDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

@@ -35,7 +35,7 @@ class ResizeError(Model):
     :param values: Gets or sets a list of additional error details related to
      the pool resize error.
     :type values: list of :class:`NameValuePair
-     <batchserviceclient.models.NameValuePair>`
+     <azure.batch.models.NameValuePair>`
     """ 
 
     _attribute_map = {

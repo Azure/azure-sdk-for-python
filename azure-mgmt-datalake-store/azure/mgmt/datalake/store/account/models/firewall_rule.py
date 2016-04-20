@@ -36,7 +36,7 @@ class FirewallRule(Model):
     :type location: str
     :param properties: Gets or sets the properties of the firewall rule.
     :type properties: :class:`FirewallRuleProperties
-     <datalakestoreaccountmanagementclient.models.FirewallRuleProperties>`
+     <azure.mgmt.datalake.store.account.models.FirewallRuleProperties>`
     """ 
 
     _attribute_map = {

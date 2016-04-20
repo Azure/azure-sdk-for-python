@@ -51,10 +51,10 @@ class TaskOperations(object):
         :type job_id: str
         :param task: Specifies the task to be added.
         :type task: :class:`TaskAddParameter
-         <batchserviceclient.models.TaskAddParameter>`
+         <azure.batch.models.TaskAddParameter>`
         :param task_add_options: Additional parameters for the operation
         :type task_add_options: :class:`TaskAddOptions
-         <batchserviceclient.models.TaskAddOptions>`
+         <azure.batch.models.TaskAddOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -137,14 +137,13 @@ class TaskOperations(object):
         :type job_id: str
         :param task_list_options: Additional parameters for the operation
         :type task_list_options: :class:`TaskListOptions
-         <batchserviceclient.models.TaskListOptions>`
+         <azure.batch.models.TaskListOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CloudTaskPaged
-         <batchserviceclient.models.CloudTaskPaged>`
+        :rtype: :class:`CloudTaskPaged <azure.batch.models.CloudTaskPaged>`
         """
         filter = None
         if task_list_options is not None:
@@ -245,18 +244,18 @@ class TaskOperations(object):
         :type job_id: str
         :param value: The collection of tasks to add.
         :type value: list of :class:`TaskAddParameter
-         <batchserviceclient.models.TaskAddParameter>`
+         <azure.batch.models.TaskAddParameter>`
         :param task_add_collection_options: Additional parameters for the
          operation
         :type task_add_collection_options: :class:`TaskAddCollectionOptions
-         <batchserviceclient.models.TaskAddCollectionOptions>`
+         <azure.batch.models.TaskAddCollectionOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TaskAddCollectionResult
-         <batchserviceclient.models.TaskAddCollectionResult>`
+         <azure.batch.models.TaskAddCollectionResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -342,7 +341,7 @@ class TaskOperations(object):
         :type task_id: str
         :param task_delete_options: Additional parameters for the operation
         :type task_delete_options: :class:`TaskDeleteOptions
-         <batchserviceclient.models.TaskDeleteOptions>`
+         <azure.batch.models.TaskDeleteOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -441,13 +440,13 @@ class TaskOperations(object):
         :type task_id: str
         :param task_get_options: Additional parameters for the operation
         :type task_get_options: :class:`TaskGetOptions
-         <batchserviceclient.models.TaskGetOptions>`
+         <azure.batch.models.TaskGetOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CloudTask <batchserviceclient.models.CloudTask>`
+        :rtype: :class:`CloudTask <azure.batch.models.CloudTask>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -562,11 +561,11 @@ class TaskOperations(object):
         :type task_id: str
         :param task_update_options: Additional parameters for the operation
         :type task_update_options: :class:`TaskUpdateOptions
-         <batchserviceclient.models.TaskUpdateOptions>`
+         <azure.batch.models.TaskUpdateOptions>`
         :param constraints: Sets constraints that apply to this task. If
          omitted, the task is given the default constraints.
         :type constraints: :class:`TaskConstraints
-         <batchserviceclient.models.TaskConstraints>`
+         <azure.batch.models.TaskConstraints>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -675,14 +674,14 @@ class TaskOperations(object):
         :param task_list_subtasks_options: Additional parameters for the
          operation
         :type task_list_subtasks_options: :class:`TaskListSubtasksOptions
-         <batchserviceclient.models.TaskListSubtasksOptions>`
+         <azure.batch.models.TaskListSubtasksOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudTaskListSubtasksResult
-         <batchserviceclient.models.CloudTaskListSubtasksResult>`
+         <azure.batch.models.CloudTaskListSubtasksResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -771,7 +770,7 @@ class TaskOperations(object):
         :type task_id: str
         :param task_terminate_options: Additional parameters for the operation
         :type task_terminate_options: :class:`TaskTerminateOptions
-         <batchserviceclient.models.TaskTerminateOptions>`
+         <azure.batch.models.TaskTerminateOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

@@ -55,8 +55,7 @@ class UsagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`UsagePaged
-         <networkmanagementclient.models.UsagePaged>`
+        :rtype: :class:`UsagePaged <azure.mgmt.network.models.UsagePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

@@ -56,7 +56,7 @@ class SubscriptionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LocationPaged
-         <subscriptionclient.models.LocationPaged>`
+         <azure.mgmt.resource.subscriptions.models.LocationPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -120,7 +120,8 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Subscription <subscriptionclient.models.Subscription>`
+        :rtype: :class:`Subscription
+         <azure.mgmt.resource.subscriptions.models.Subscription>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -176,7 +177,7 @@ class SubscriptionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SubscriptionPaged
-         <subscriptionclient.models.SubscriptionPaged>`
+         <azure.mgmt.resource.subscriptions.models.SubscriptionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

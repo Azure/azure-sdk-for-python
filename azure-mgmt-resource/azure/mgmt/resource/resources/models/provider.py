@@ -36,7 +36,7 @@ class Provider(Model):
     :param resource_types: Gets or sets the collection of provider resource
      types.
     :type resource_types: list of :class:`ProviderResourceType
-     <resourcemanagementclient.models.ProviderResourceType>`
+     <azure.mgmt.resource.resources.models.ProviderResourceType>`
     """ 
 
     _attribute_map = {

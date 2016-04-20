@@ -32,17 +32,17 @@ class SiteCloneability(Model):
     :param blocking_features: List of features enabled on web app that
      prevent cloning
     :type blocking_features: list of :class:`SiteCloneabilityCriterion
-     <websitemanagementclient.models.SiteCloneabilityCriterion>`
+     <azure.mgmt.web.models.SiteCloneabilityCriterion>`
     :param unsupported_features: List of features enabled on web app that are
      non-blocking but cannot be cloned. The web app can still be cloned
      but the features in this list will not be set up on cloned
      web app.
     :type unsupported_features: list of :class:`SiteCloneabilityCriterion
-     <websitemanagementclient.models.SiteCloneabilityCriterion>`
+     <azure.mgmt.web.models.SiteCloneabilityCriterion>`
     :param blocking_characteristics: List of blocking application
      characteristics
     :type blocking_characteristics: list of :class:`SiteCloneabilityCriterion
-     <websitemanagementclient.models.SiteCloneabilityCriterion>`
+     <azure.mgmt.web.models.SiteCloneabilityCriterion>`
     """ 
 
     _validation = {

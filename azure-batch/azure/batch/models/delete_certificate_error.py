@@ -36,7 +36,7 @@ class DeleteCertificateError(Model):
     :param values: Gets or sets a list of additional error details related to
      the certificate deletion error.
     :type values: list of :class:`NameValuePair
-     <batchserviceclient.models.NameValuePair>`
+     <azure.batch.models.NameValuePair>`
     """ 
 
     _attribute_map = {

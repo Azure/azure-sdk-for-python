@@ -35,7 +35,7 @@ class ComputeNodeError(Model):
     :param error_details: Gets or sets the list of additional error details
      related to the compute node error.
     :type error_details: list of :class:`NameValuePair
-     <batchserviceclient.models.NameValuePair>`
+     <azure.batch.models.NameValuePair>`
     """ 
 
     _attribute_map = {

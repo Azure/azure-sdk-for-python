@@ -54,7 +54,7 @@ class TopLevelDomainsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TopLevelDomainCollection
-         <websitemanagementclient.models.TopLevelDomainCollection>`
+         <azure.mgmt.web.models.TopLevelDomainCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -111,8 +111,7 @@ class TopLevelDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TopLevelDomain
-         <websitemanagementclient.models.TopLevelDomain>`
+        :rtype: :class:`TopLevelDomain <azure.mgmt.web.models.TopLevelDomain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -175,7 +174,7 @@ class TopLevelDomainsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TldLegalAgreementCollection
-         <websitemanagementclient.models.TldLegalAgreementCollection>`
+         <azure.mgmt.web.models.TldLegalAgreementCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

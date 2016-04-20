@@ -50,7 +50,7 @@ class ManagedHostingEnvironment(Resource):
     :param virtual_network: Description of the managed hosting environment's
      virtual network
     :type virtual_network: :class:`VirtualNetworkProfile
-     <websitemanagementclient.models.VirtualNetworkProfile>`
+     <azure.mgmt.web.models.VirtualNetworkProfile>`
     :param ipssl_address_count: Number of ip ssl addresses reserved for the
      managed hosting environment
     :type ipssl_address_count: int

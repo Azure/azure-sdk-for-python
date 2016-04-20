@@ -37,7 +37,7 @@ class AddressResponse(Model):
     :type outbound_ip_addresses: list of str
     :param vip_mappings: Additional vips
     :type vip_mappings: list of :class:`VirtualIPMapping
-     <websitemanagementclient.models.VirtualIPMapping>`
+     <azure.mgmt.web.models.VirtualIPMapping>`
     """ 
 
     _attribute_map = {

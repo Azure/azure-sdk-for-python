@@ -51,14 +51,14 @@ class AccountOperations(object):
          for the operation
         :type account_list_node_agent_skus_options:
          :class:`AccountListNodeAgentSkusOptions
-         <batchserviceclient.models.AccountListNodeAgentSkusOptions>`
+         <azure.batch.models.AccountListNodeAgentSkusOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NodeAgentSkuPaged
-         <batchserviceclient.models.NodeAgentSkuPaged>`
+         <azure.batch.models.NodeAgentSkuPaged>`
         """
         filter = None
         if account_list_node_agent_skus_options is not None:

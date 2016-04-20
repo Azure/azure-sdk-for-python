@@ -59,7 +59,7 @@ class JobOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobStatistics
-         <datalakeanalyticsjobmanagementclient.models.JobStatistics>`
+         <azure.mgmt.datalake.analytics.job.models.JobStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -122,7 +122,7 @@ class JobOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobDataPath
-         <datalakeanalyticsjobmanagementclient.models.JobDataPath>`
+         <azure.mgmt.datalake.analytics.job.models.JobDataPath>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -180,14 +180,14 @@ class JobOperations(object):
         :type account_name: str
         :param parameters: The parameters to build a job.
         :type parameters: :class:`JobInformation
-         <datalakeanalyticsjobmanagementclient.models.JobInformation>`
+         <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobInformation
-         <datalakeanalyticsjobmanagementclient.models.JobInformation>`
+         <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -308,7 +308,7 @@ class JobOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobInformation
-         <datalakeanalyticsjobmanagementclient.models.JobInformation>`
+         <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -367,14 +367,14 @@ class JobOperations(object):
         :type job_identity: str
         :param parameters: The parameters to submit a job.
         :type parameters: :class:`JobInformation
-         <datalakeanalyticsjobmanagementclient.models.JobInformation>`
+         <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobInformation
-         <datalakeanalyticsjobmanagementclient.models.JobInformation>`
+         <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -473,7 +473,7 @@ class JobOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobInformationPaged
-         <datalakeanalyticsjobmanagementclient.models.JobInformationPaged>`
+         <azure.mgmt.datalake.analytics.job.models.JobInformationPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

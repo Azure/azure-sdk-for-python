@@ -48,8 +48,7 @@ class VnetInfo(Resource):
      Point-To-Site VPN connection.
     :type cert_blob: str
     :param routes: The routes that this virtual network connection uses.
-    :type routes: list of :class:`VnetRoute
-     <websitemanagementclient.models.VnetRoute>`
+    :type routes: list of :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
     :param resync_required: Flag to determine if a resync is required
     :type resync_required: bool
     :param dns_servers: Dns servers to be used by this VNET. This should be a

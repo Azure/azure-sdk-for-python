@@ -35,13 +35,13 @@ class USqlJobProperties(JobProperties):
     :param resources: Gets or sets the list of resources that are required by
      the job
     :type resources: list of :class:`JobResource
-     <datalakeanalyticsjobmanagementclient.models.JobResource>`
+     <azure.mgmt.datalake.analytics.job.models.JobResource>`
     :param statistics: Gets or sets the job specific statistics.
     :type statistics: :class:`JobStatistics
-     <datalakeanalyticsjobmanagementclient.models.JobStatistics>`
+     <azure.mgmt.datalake.analytics.job.models.JobStatistics>`
     :param debug_data: Gets or sets the job specific debug data locations.
     :type debug_data: :class:`JobDataPath
-     <datalakeanalyticsjobmanagementclient.models.JobDataPath>`
+     <azure.mgmt.datalake.analytics.job.models.JobDataPath>`
     :param algebra_file_path: Gets the U-SQL algebra file path after the job
      has completed
     :type algebra_file_path: str

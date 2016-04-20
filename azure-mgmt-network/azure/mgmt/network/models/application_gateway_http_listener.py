@@ -31,11 +31,11 @@ class ApplicationGatewayHttpListener(SubResource):
     :param frontend_ip_configuration: Gets or sets frontend IP configuration
      resource of application gateway
     :type frontend_ip_configuration: :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param frontend_port: Gets or sets frontend port resource of application
      gateway
     :type frontend_port: :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
     :type protocol: str
@@ -44,7 +44,7 @@ class ApplicationGatewayHttpListener(SubResource):
     :param ssl_certificate: Gets or sets ssl certificate resource of
      application gateway
     :type ssl_certificate: :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param require_server_name_indication: Gets or sets the
      requireServerNameIndication of http listener
     :type require_server_name_indication: bool

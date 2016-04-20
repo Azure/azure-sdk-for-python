@@ -29,11 +29,11 @@ class VaultSecretGroup(Model):
     :param source_vault: Gets or sets the Relative URL of the Key Vault
      containing all of the certificates in VaultCertificates.
     :type source_vault: :class:`SubResource
-     <computemanagementclient.models.SubResource>`
+     <azure.mgmt.compute.models.SubResource>`
     :param vault_certificates: Gets or sets the list of key vault references
      in SourceVault which contain certificates
     :type vault_certificates: list of :class:`VaultCertificate
-     <computemanagementclient.models.VaultCertificate>`
+     <azure.mgmt.compute.models.VaultCertificate>`
     """ 
 
     _attribute_map = {

@@ -139,7 +139,7 @@ class VirtualNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetwork
-         <networkmanagementclient.models.VirtualNetwork>`
+         <azure.mgmt.network.models.VirtualNetwork>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -201,14 +201,14 @@ class VirtualNetworksOperations(object):
         :param parameters: Parameters supplied to the create/update Virtual
          Network operation
         :type parameters: :class:`VirtualNetwork
-         <networkmanagementclient.models.VirtualNetwork>`
+         <azure.mgmt.network.models.VirtualNetwork>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualNetwork
-         <networkmanagementclient.models.VirtualNetwork>`
+         <azure.mgmt.network.models.VirtualNetwork>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -294,7 +294,7 @@ class VirtualNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkPaged
-         <networkmanagementclient.models.VirtualNetworkPaged>`
+         <azure.mgmt.network.models.VirtualNetworkPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -360,7 +360,7 @@ class VirtualNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkPaged
-         <networkmanagementclient.models.VirtualNetworkPaged>`
+         <azure.mgmt.network.models.VirtualNetworkPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

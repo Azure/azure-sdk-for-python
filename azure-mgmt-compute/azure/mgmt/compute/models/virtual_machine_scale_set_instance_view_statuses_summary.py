@@ -29,7 +29,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
 
     :param statuses_summary: Gets the extensions information.
     :type statuses_summary: list of :class:`VirtualMachineStatusCodeCount
-     <computemanagementclient.models.VirtualMachineStatusCodeCount>`
+     <azure.mgmt.compute.models.VirtualMachineStatusCodeCount>`
     """ 
 
     _attribute_map = {
