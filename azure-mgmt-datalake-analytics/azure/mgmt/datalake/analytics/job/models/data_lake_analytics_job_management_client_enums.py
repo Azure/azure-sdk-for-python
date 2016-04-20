@@ -22,7 +22,7 @@
 from enum import Enum
 
 
-class Type(Enum):
+class JobResourceType(Enum):
 
     vertex_resource = "VertexResource"
     statistics_resource = "StatisticsResource"

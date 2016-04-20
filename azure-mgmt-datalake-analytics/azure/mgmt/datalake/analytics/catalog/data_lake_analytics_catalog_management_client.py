@@ -35,10 +35,6 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
-    :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
     :param adla_catalog_dns_suffix: Gets the DNS suffix used as the base for
@@ -58,14 +54,10 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, adla_catalog_dns_suffix, api_version='2015-10-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
+            self, credentials, adla_catalog_dns_suffix, api_version='2015-10-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if api_version is not None and not isinstance(api_version, str):
             raise TypeError("Optional parameter 'api_version' must be str.")
         if adla_catalog_dns_suffix is None:
@@ -82,7 +74,6 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.subscription_id = subscription_id
         self.api_version = api_version
         self.adla_catalog_dns_suffix = adla_catalog_dns_suffix
         self.accept_language = accept_language
