@@ -2,7 +2,7 @@ Batch
 =====
 
 For more information on the Azure Batch service, check out the `Batch Documentation <https://azure.microsoft.com/en-us/documentation/services/batch/>`__.
-For working samples, `see the Batch samples repo <https://github.com/Azure/azure-batch-samples/tree/master/Python>`__.
+For working samples, see the `Batch samples repo <https://github.com/Azure/azure-batch-samples/tree/master/Python>`__.
 
 Create the Batch client
 -----------------------
@@ -31,11 +31,11 @@ Manage Pools and Nodes
 -----------------------
 
 The Batch Client allows you to create, modify, and delete Batch Pools.
-You can find more information on pools in this `Overview of Azure Batch Features <https://azure.microsoft.com/en-us/documentation/articles/batch-api-basics/#pool>`__.
+You can find more information on pools in this `overview of Azure Batch features <https://azure.microsoft.com/en-us/documentation/articles/batch-api-basics/#pool>`__.
 
 .. code:: python
 
-	# Create a new pool with Cloud Services nodes
+	# Create a new pool of Windows nodes from Cloud Services
 	pool_config = batch.models.CloudServiceConfiguration(os_family='4')
 	new_pool = batch.models.PoolAddParameter(
 		'my_pool',
@@ -71,7 +71,7 @@ You can find more information on pools in this `Overview of Azure Batch Features
 
 Existing pools can be upgraded, patched, and resized.
 You can change the size of a pool either explicitly, or via an auto-scaling formula.
-For more information, see this article on `Automatically Scaling Nodes in a Batch Pool <https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling/>`__.
+For more information, see this article on `automatically scaling nodes in a Batch pool <https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling/>`__.
 
 .. code:: python
 
