@@ -91,7 +91,7 @@ A storage account can be created with the :doc:`Storage Resource Management Clie
 	)
 	creating.wait()
 
-	# Create Batch Account, specifying the storage account we want to link
+	# Create a Batch Account, specifying the storage account we want to link
 	storage_resource = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Storage/storageAccounts/{}'.format(
 		subscription_id,
 		RESOURCE_GROUP,
@@ -125,7 +125,7 @@ Application Packages
 
 Application packages can be configured to be used by the the :doc:`Batch Client <batch>` for running tasks.
 An Application can have multiple versioned packages (zipped directories containing the application to be executed on the Compute Node) associated with it.
-You can find an overview of this feature in this article on `Application deployment with Azure Batch Applications <https://azure.microsoft.com/en-us/documentation/articles/batch-application-packages/>`__.
+You can find an overview of this feature in this article on `application deployment with Azure Batch Applications <https://azure.microsoft.com/en-us/documentation/articles/batch-application-packages/>`__.
 
 .. code:: python
 
