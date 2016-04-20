@@ -2,7 +2,7 @@ Batch Management
 ================
 
 For more information on the Azure Batch service, check out the `Batch Documentation <https://azure.microsoft.com/en-us/documentation/services/batch/>`__.
-For working samples, `see the Batch samples repo <https://github.com/Azure/azure-batch-samples/tree/master/Python>`__.
+For working samples, see the `Batch samples repo <https://github.com/Azure/azure-batch-samples/tree/master/Python>`__.
 
 Create the Batch Management client
 ----------------------------------
@@ -45,7 +45,7 @@ The default Batch Account quota is 1 per location per subscription, but can be i
 Please contact support if you require a quota increase.
 For more information on resource groups and resource management, see :doc:`Resource Management<resourcemanagement>`.
 
-In order to make use of Application Packages, a storage account (known as 'auto-storage') will need to be linked to the Batch Account.
+In order to make use of Application Packages, a storage account will need to be linked to the Batch Account. A linked storage account is known as 'auto-storage'.
 A storage account can be created with the :doc:`Storage Resource Management Client <resourcemanagementstorage>`.
 
 .. code:: python
@@ -72,7 +72,7 @@ A storage account can be created with the :doc:`Storage Resource Management Clie
 	)
 
 
-	# Create an 'auto-storage' account (or use an existing one)
+	# Create a storage account for 'auto-storage' (or use an existing one)
 	import azure.mgmt.storage
 	storage_client = azure.mgmt.storage.StorageManagementClient(
 		azure.mgmt.storage.StorageManagementClientConfiguration(
@@ -91,7 +91,7 @@ A storage account can be created with the :doc:`Storage Resource Management Clie
 	)
 	creating.wait()
 
-	# Create Batch Account
+	# Create Batch Account, specifying the storage account we want to link
 	storage_resource = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Storage/storageAccounts/{}'.format(
 		subscription_id,
 		RESOURCE_GROUP,
