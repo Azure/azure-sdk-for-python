@@ -1,7 +1,7 @@
 Batch
 =====
 
-For more information on the Azure Batch service, check out the `Azure Documentation <https://azure.microsoft.com/en-us/documentation/services/batch/>`__.
+For more information on the Azure Batch service, check out the `Batch Documentation <https://azure.microsoft.com/en-us/documentation/services/batch/>`__.
 For working samples, `see the Batch samples repo <https://github.com/Azure/azure-batch-samples/tree/master/Python>`__.
 
 Create the Batch client
@@ -31,11 +31,11 @@ Manage Pools and Nodes
 -----------------------
 
 The Batch Client allows you to create, modify, and delete Batch Pools.
-For more information of pools, `see this article <https://azure.microsoft.com/en-us/documentation/articles/batch-api-basics/#pool>`__.
+You can find more information on pools in this `Overview of Azure Batch Features <https://azure.microsoft.com/en-us/documentation/articles/batch-api-basics/#pool>`__.
 
 .. code:: python
 
-	# Create a new PAAS pool
+	# Create a new pool with Cloud Services nodes
 	pool_config = batch.models.CloudServiceConfiguration(os_family='4')
 	new_pool = batch.models.PoolAddParameter(
 		'my_pool',
@@ -46,8 +46,8 @@ For more information of pools, `see this article <https://azure.microsoft.com/en
 
 	batch_client.pool.add(new_pool)
 	
-	# Create a new Linux IAAS pool
-	# For full example, see the Batch samples repo.
+	# Create a new pool with Linux nodes using Azure Virtual Machines
+	# Marketplace images. For full example, see the Batch samples repo.
 	pool = batch.models.PoolAddParameter( 
         id='my_pool', 
         enable_inter_node_communication=True, 
@@ -71,7 +71,7 @@ For more information of pools, `see this article <https://azure.microsoft.com/en
 
 Existing pools can be upgraded, patched, and resized.
 You can change the size of a pool either explicitly, or via an auto-scaling formula.
-For more information, `see this article <https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling/>`__.
+For more information, see this article on `Automatically Scaling Nodes in a Batch Pool <https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling/>`__.
 
 .. code:: python
 
@@ -100,6 +100,7 @@ For more information, `see this article <https://azure.microsoft.com/en-us/docum
 	
 
 You can monitor pools by retrieving data individually, or grouped using OData filters.
+You can learn more about filters with this article on `Querying the Batch Service Efficiently <https://azure.microsoft.com/en-us/documentation/articles/batch-efficient-list-queries/>`__.
 You can also retrieve statistics on the usage of a specific pool, or all the pools in the lifetime of your Batch account.
 
 .. code:: python
@@ -132,7 +133,7 @@ The Batch client also allows you to access individual nodes within a pool.
 	working_nodes = [n.id for n in nodes if n not in errored]
 	batch_client.pool.remove_nodes('my_pool', batch.models.NodeRemoveParameter(errored))
 
-	# Add a user account to a Windows PAAS node and retrieve RDP file
+	# Add a user account to a Windows Cloud Services node and retrieve an RDP file
 	user = batch.models.ComputeNodeUser('MyTestUser', password='kt#_gahr!@aGERDXA')
 	batch_client.compute_node.add_user('my_pool', working_nodes[0], user)
 	with open('node.rdp', 'w') as rdp_file:
@@ -140,7 +141,7 @@ The Batch client also allows you to access individual nodes within a pool.
 		for chunk in data:
 			rdp_file.write(chunk)
 			
-	# Add a user to a Linux IAAS node and retrieve login settings
+	# Add a user to a Linux node and retrieve login settings
 	# For full sample see the Batch samples repo
 	batch_client.compute_node.add_user( 
 		'my_pool', 

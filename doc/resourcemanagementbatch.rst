@@ -13,17 +13,21 @@ You will need to provide your ``subscription_id`` which can be retrieved
 from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
 See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
-for details on getting a ``Credentials`` instance.
+for details on handling Azure Active Directory authentication with the Python SDK, and creating a ``Credentials`` instance.
 
 .. code:: python
 
     from azure.mgmt.batch import BatchManagementClient, BatchManagementClientConfiguration
+	from azure.common.credentials import UserPassCredentials
 
-    # TODO: Replace this with your subscription id
+    # Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
 	
-    # TODO: See above how to get a Credentials instance
-    credentials = ...
+    # See above for details on creating Credentials
+    credentials = UserPassCredentials(
+		'user@domain.com',  # Your user
+		'my_password',  	# Your password
+	)
 
     batch_client = BatchManagementClient(
         BatchManagementClientConfiguration(
@@ -42,8 +46,8 @@ The default Batch Account quota is 1 per location per subscription, but can be i
 Please contact support if you require a quota increase.
 For more information on resource groups and resource management, see :doc:`Resource Management<resourcemanagement>`.
 
-In order to make use of Application Packages, a storage account will need to be linked to the Batch Account.
-This can be created with the :doc:`Storage Resource Management Client <resourcemanagementstorage>`.
+In order to make use of Application Packages, a storage account (known as 'auto-storage') will need to be linked to the Batch Account.
+A storage account can be created with the :doc:`Storage Resource Management Client <resourcemanagementstorage>`.
 
 .. code:: python
 
@@ -95,10 +99,10 @@ This can be created with the :doc:`Storage Resource Management Client <resourcem
 		'pythonstorageaccount'
 	)
 	batch_account = azure.mgmt.batch.models.BatchAccountCreateParameters(
-		location=AZURE_LOCATION,
+		location=LOCATION,
 		auto_storage=azure.mgmt.batch.models.AutoStorageBaseProperties(storage_resource)
 	)
-	creating = batch_client.account.create('MyBatchAccount', location, batch_account)
+	creating = batch_client.account.create('MyBatchAccount', LOCATION, batch_account)
 	creating.wait()
 
 
@@ -121,7 +125,8 @@ Application Packages
 --------------------
 
 Application packages can be configured to be used by the the :doc:`Batch Client <batch>` for running tasks.
-An Application can have multiple versioned packages (ziped directories containing the application to be executed on the Compute Node) associated with it.
+An Application can have multiple versioned packages (zipped directories containing the application to be executed on the Compute Node) associated with it.
+You can find an overview of this feature in this article on `Application deployment with Azure Batch Applications <https://azure.microsoft.com/en-us/documentation/articles/batch-application-packages/>`__.
 
 .. code:: python
 
