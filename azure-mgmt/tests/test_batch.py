@@ -896,7 +896,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             if jobs:
                 self.assertRuns(_e, _m, self.batch_client.job.delete, jobs[0].id)
 
-            _m = "Test Disbale Job Schedule"
+            _m = "Test Disable Job Schedule"
             LOG.debug(_m)
             response = self.assertRuns(_e, _m, self.batch_client.job_schedule.disable, 'python_test_schedule')
             self.assertIsNone(_e, _m, response)
