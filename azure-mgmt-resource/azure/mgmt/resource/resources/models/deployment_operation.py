@@ -32,7 +32,7 @@ class DeploymentOperation(Model):
     :type operation_id: str
     :param properties: Gets or sets deployment properties.
     :type properties: :class:`DeploymentOperationProperties
-     <resourcemanagementclient.models.DeploymentOperationProperties>`
+     <azure.mgmt.resource.resources.models.DeploymentOperationProperties>`
     """ 
 
     _attribute_map = {

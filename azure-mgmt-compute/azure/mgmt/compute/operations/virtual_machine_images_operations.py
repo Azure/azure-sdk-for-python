@@ -64,7 +64,7 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineImage
-         <computemanagementclient.models.VirtualMachineImage>`
+         <azure.mgmt.compute.models.VirtualMachineImage>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -139,7 +139,7 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: list of :class:`VirtualMachineImageResource
-         <computemanagementclient.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.models.VirtualMachineImageResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -209,7 +209,7 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: list of :class:`VirtualMachineImageResource
-         <computemanagementclient.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.models.VirtualMachineImageResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -269,7 +269,7 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: list of :class:`VirtualMachineImageResource
-         <computemanagementclient.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.models.VirtualMachineImageResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -332,7 +332,7 @@ class VirtualMachineImagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: list of :class:`VirtualMachineImageResource
-         <computemanagementclient.models.VirtualMachineImageResource>`
+         <azure.mgmt.compute.models.VirtualMachineImageResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

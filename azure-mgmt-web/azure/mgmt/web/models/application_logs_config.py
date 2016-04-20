@@ -28,14 +28,14 @@ class ApplicationLogsConfig(Model):
 
     :param file_system: Application logs to file system configuration
     :type file_system: :class:`FileSystemApplicationLogsConfig
-     <websitemanagementclient.models.FileSystemApplicationLogsConfig>`
+     <azure.mgmt.web.models.FileSystemApplicationLogsConfig>`
     :param azure_table_storage: Application logs to azure table storage
      configuration
     :type azure_table_storage: :class:`AzureTableStorageApplicationLogsConfig
-     <websitemanagementclient.models.AzureTableStorageApplicationLogsConfig>`
+     <azure.mgmt.web.models.AzureTableStorageApplicationLogsConfig>`
     :param azure_blob_storage: Application logs to blob storage configuration
     :type azure_blob_storage: :class:`AzureBlobStorageApplicationLogsConfig
-     <websitemanagementclient.models.AzureBlobStorageApplicationLogsConfig>`
+     <azure.mgmt.web.models.AzureBlobStorageApplicationLogsConfig>`
     """ 
 
     _attribute_map = {

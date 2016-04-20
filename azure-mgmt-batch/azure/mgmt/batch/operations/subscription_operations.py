@@ -57,7 +57,7 @@ class SubscriptionOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SubscriptionQuotasGetResult
-         <batchmanagementclient.models.SubscriptionQuotasGetResult>`
+         <azure.mgmt.batch.models.SubscriptionQuotasGetResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

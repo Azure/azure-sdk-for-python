@@ -68,7 +68,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSecret
-         <datalakeanalyticscatalogmanagementclient.models.USqlSecret>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -146,7 +146,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSecret
-         <datalakeanalyticscatalogmanagementclient.models.USqlSecret>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -218,7 +218,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSecret
-         <datalakeanalyticscatalogmanagementclient.models.USqlSecret>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -345,7 +345,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlExternalDataSource
-         <datalakeanalyticscatalogmanagementclient.models.USqlExternalDataSource>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -435,7 +435,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlExternalDataSourcePaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlExternalDataSourcePaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -522,7 +522,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlCredential
-         <datalakeanalyticscatalogmanagementclient.models.USqlCredential>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -610,7 +610,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlCredentialPaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlCredentialPaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlCredentialPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -699,7 +699,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlProcedure
-         <datalakeanalyticscatalogmanagementclient.models.USqlProcedure>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -791,7 +791,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlProcedurePaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlProcedurePaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlProcedurePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -880,7 +880,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTable
-         <datalakeanalyticscatalogmanagementclient.models.USqlTable>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -971,7 +971,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTablePaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlTablePaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1060,7 +1060,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlView
-         <datalakeanalyticscatalogmanagementclient.models.USqlView>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlView>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1151,7 +1151,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlViewPaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlViewPaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1243,7 +1243,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableStatistics
-         <datalakeanalyticscatalogmanagementclient.models.USqlTableStatistics>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1338,7 +1338,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableStatisticsPaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlTableStatisticsPaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1451,7 +1451,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTypePaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlTypePaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTypePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1544,7 +1544,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableValuedFunction
-         <datalakeanalyticscatalogmanagementclient.models.USqlTableValuedFunction>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1638,7 +1638,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableValuedFunctionPaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlTableValuedFunctionPaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1726,7 +1726,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlAssembly
-         <datalakeanalyticscatalogmanagementclient.models.USqlAssembly>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlAssembly>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1815,7 +1815,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlAssemblyClrPaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlAssemblyClrPaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClrPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1901,7 +1901,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSchema
-         <datalakeanalyticscatalogmanagementclient.models.USqlSchema>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1989,7 +1989,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSchemaPaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlSchemaPaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlSchemaPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2073,7 +2073,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlDatabase
-         <datalakeanalyticscatalogmanagementclient.models.USqlDatabase>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -2158,7 +2158,7 @@ class CatalogOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlDatabasePaged
-         <datalakeanalyticscatalogmanagementclient.models.USqlDatabasePaged>`
+         <azure.mgmt.datalake.analytics.catalog.models.USqlDatabasePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

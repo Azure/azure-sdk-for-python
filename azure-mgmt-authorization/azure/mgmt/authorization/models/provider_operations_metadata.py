@@ -36,10 +36,10 @@ class ProviderOperationsMetadata(Model):
     :type display_name: str
     :param resource_types: Gets or sets the provider resource types
     :type resource_types: list of :class:`ResourceType
-     <authorizationmanagementclient.models.ResourceType>`
+     <azure.mgmt.authorization.models.ResourceType>`
     :param operations: Gets or sets the provider operations
     :type operations: list of :class:`ProviderOperation
-     <authorizationmanagementclient.models.ProviderOperation>`
+     <azure.mgmt.authorization.models.ProviderOperation>`
     """ 
 
     _attribute_map = {

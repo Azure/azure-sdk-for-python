@@ -190,14 +190,14 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: Gets or sets the deployment properties.
         :type properties: :class:`DeploymentProperties
-         <resourcemanagementclient.models.DeploymentProperties>`
+         <azure.mgmt.resource.resources.models.DeploymentProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DeploymentExtended
-         <resourcemanagementclient.models.DeploymentExtended>`
+         <azure.mgmt.resource.resources.models.DeploymentExtended>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -290,7 +290,7 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentExtended
-         <resourcemanagementclient.models.DeploymentExtended>`
+         <azure.mgmt.resource.resources.models.DeploymentExtended>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -404,14 +404,14 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: Gets or sets the deployment properties.
         :type properties: :class:`DeploymentProperties
-         <resourcemanagementclient.models.DeploymentProperties>`
+         <azure.mgmt.resource.resources.models.DeploymentProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentValidateResult
-         <resourcemanagementclient.models.DeploymentValidateResult>`
+         <azure.mgmt.resource.resources.models.DeploymentValidateResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -482,7 +482,7 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentExportResult
-         <resourcemanagementclient.models.DeploymentExportResult>`
+         <azure.mgmt.resource.resources.models.DeploymentExportResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -548,7 +548,7 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentExtendedPaged
-         <resourcemanagementclient.models.DeploymentExtendedPaged>`
+         <azure.mgmt.resource.resources.models.DeploymentExtendedPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

@@ -28,17 +28,17 @@ class AutoHealTriggers(Model):
 
     :param requests: Requests - Defines a rule based on total requests
     :type requests: :class:`RequestsBasedTrigger
-     <websitemanagementclient.models.RequestsBasedTrigger>`
+     <azure.mgmt.web.models.RequestsBasedTrigger>`
     :param private_bytes_in_kb: PrivateBytesInKB - Defines a rule based on
      private bytes
     :type private_bytes_in_kb: int
     :param status_codes: StatusCodes - Defines a rule based on status codes
     :type status_codes: list of :class:`StatusCodesBasedTrigger
-     <websitemanagementclient.models.StatusCodesBasedTrigger>`
+     <azure.mgmt.web.models.StatusCodesBasedTrigger>`
     :param slow_requests: SlowRequests - Defines a rule based on request
      execution time
     :type slow_requests: :class:`SlowRequestsBasedTrigger
-     <websitemanagementclient.models.SlowRequestsBasedTrigger>`
+     <azure.mgmt.web.models.SlowRequestsBasedTrigger>`
     """ 
 
     _attribute_map = {

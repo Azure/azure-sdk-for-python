@@ -29,17 +29,17 @@ class JobScheduleUpdateParameter(Model):
     :param schedule: Sets the schedule according to which jobs will be
      created. If you do not specify this element, it is equivalent to passing
      the default schedule: that is, a single job scheduled to run immediately.
-    :type schedule: :class:`Schedule <batchserviceclient.models.Schedule>`
+    :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
     :param job_specification: Sets details of the jobs to be created on this
      schedule.
     :type job_specification: :class:`JobSpecification
-     <batchserviceclient.models.JobSpecification>`
+     <azure.batch.models.JobSpecification>`
     :param metadata: Sets a list of name-value pairs associated with the job
      schedule as metadata. If you do not specify this element, it takes the
      default value of an empty list; in effect, any existing metadata is
      deleted.
     :type metadata: list of :class:`MetadataItem
-     <batchserviceclient.models.MetadataItem>`
+     <azure.batch.models.MetadataItem>`
     """ 
 
     _validation = {

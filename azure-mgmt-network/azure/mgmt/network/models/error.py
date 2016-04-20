@@ -33,7 +33,7 @@ class Error(Model):
     :type target: str
     :param details:
     :type details: list of :class:`ErrorDetails
-     <networkmanagementclient.models.ErrorDetails>`
+     <azure.mgmt.network.models.ErrorDetails>`
     :param inner_error:
     :type inner_error: str
     """ 

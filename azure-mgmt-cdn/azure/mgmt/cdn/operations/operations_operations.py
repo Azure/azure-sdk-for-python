@@ -52,8 +52,7 @@ class OperationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OperationPaged
-         <cdnmanagementclient.models.OperationPaged>`
+        :rtype: :class:`OperationPaged <azure.mgmt.cdn.models.OperationPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

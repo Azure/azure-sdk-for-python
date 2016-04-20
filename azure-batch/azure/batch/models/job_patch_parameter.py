@@ -34,15 +34,15 @@ class JobPatchParameter(Model):
     :param constraints: Sets the execution constraints for the job. If
      omitted, the existing execution constraints are left unchanged.
     :type constraints: :class:`JobConstraints
-     <batchserviceclient.models.JobConstraints>`
+     <azure.batch.models.JobConstraints>`
     :param pool_info: Sets the pool on which the Batch service runs the job's
      tasks. If omitted, the job continues to run on its current pool.
     :type pool_info: :class:`PoolInformation
-     <batchserviceclient.models.PoolInformation>`
+     <azure.batch.models.PoolInformation>`
     :param metadata: Sets a list of name-value pairs associated with the job
      as metadata. If omitted, the existing job metadata is left unchanged.
     :type metadata: list of :class:`MetadataItem
-     <batchserviceclient.models.MetadataItem>`
+     <azure.batch.models.MetadataItem>`
     """ 
 
     _attribute_map = {

@@ -48,10 +48,10 @@ class BackupRequest(Resource):
     :param backup_schedule: Schedule for the backup if it is executed
      periodically
     :type backup_schedule: :class:`BackupSchedule
-     <websitemanagementclient.models.BackupSchedule>`
+     <azure.mgmt.web.models.BackupSchedule>`
     :param databases: Databases included in the backup
     :type databases: list of :class:`DatabaseBackupSetting
-     <websitemanagementclient.models.DatabaseBackupSetting>`
+     <azure.mgmt.web.models.DatabaseBackupSetting>`
     :param backup_request_type: Type of the backup. Possible values include:
      'Default', 'Clone', 'Relocation'
     :type backup_request_type: str

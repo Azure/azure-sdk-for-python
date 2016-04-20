@@ -31,7 +31,7 @@ class ProfileCreateParameters(Model):
     :param tags: Profile tags
     :type tags: dict
     :param sku: Profile SKU
-    :type sku: :class:`Sku <cdnmanagementclient.models.Sku>`
+    :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
     """ 
 
     _validation = {

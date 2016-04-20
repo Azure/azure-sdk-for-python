@@ -34,7 +34,7 @@ class BlobContainer(Model):
     :type type: str
     :param properties: Gets or sets the properties of the blob container.
     :type properties: :class:`BlobContainerProperties
-     <datalakeanalyticsaccountmanagementclient.models.BlobContainerProperties>`
+     <azure.mgmt.datalake.analytics.account.models.BlobContainerProperties>`
     """ 
 
     _attribute_map = {

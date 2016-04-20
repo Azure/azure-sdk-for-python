@@ -31,19 +31,19 @@ class FrontendIPConfiguration(SubResource):
     :param inbound_nat_rules: Read only.Inbound rules URIs that use this
      frontend IP
     :type inbound_nat_rules: list of :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param inbound_nat_pools: Read only.Inbound pools URIs that use this
      frontend IP
     :type inbound_nat_pools: list of :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param outbound_nat_rules: Read only.Outbound rules URIs that use this
      frontend IP
     :type outbound_nat_rules: list of :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param load_balancing_rules: Gets Load Balancing rules URIs that use this
      frontend IP
     :type load_balancing_rules: list of :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param private_ip_address: Gets or sets the privateIPAddress of the IP
      Configuration
     :type private_ip_address: str
@@ -51,11 +51,11 @@ class FrontendIPConfiguration(SubResource):
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str
     :param subnet: Gets or sets the reference of the subnet resource
-    :type subnet: :class:`Subnet <networkmanagementclient.models.Subnet>`
+    :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
     :param public_ip_address: Gets or sets the reference of the PublicIP
      resource
     :type public_ip_address: :class:`PublicIPAddress
-     <networkmanagementclient.models.PublicIPAddress>`
+     <azure.mgmt.network.models.PublicIPAddress>`
     :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
     :type provisioning_state: str

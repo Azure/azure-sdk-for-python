@@ -30,7 +30,7 @@ class FeatureResult(Model):
     :type name: str
     :param properties: Gets or sets the properties of the previewed feature.
     :type properties: :class:`FeatureProperties
-     <featureclient.models.FeatureProperties>`
+     <azure.mgmt.resource.feature.models.FeatureProperties>`
     :param id: Gets or sets the Id of the feature.
     :type id: str
     :param type: Gets or sets the type of the feature.

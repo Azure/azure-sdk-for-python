@@ -61,7 +61,7 @@ class OriginsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OriginPaged <cdnmanagementclient.models.OriginPaged>`
+        :rtype: :class:`OriginPaged <azure.mgmt.cdn.models.OriginPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -135,7 +135,7 @@ class OriginsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Origin <cdnmanagementclient.models.Origin>`
+        :rtype: :class:`Origin <azure.mgmt.cdn.models.Origin>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -192,7 +192,7 @@ class OriginsOperations(object):
         :type origin_name: str
         :param origin_properties: Origin properties
         :type origin_properties: :class:`OriginParameters
-         <cdnmanagementclient.models.OriginParameters>`
+         <azure.mgmt.cdn.models.OriginParameters>`
         :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
         :param profile_name: Name of the CDN profile within the resource
@@ -206,8 +206,7 @@ class OriginsOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Origin
-         <cdnmanagementclient.models.Origin>`
+         instance that returns :class:`Origin <azure.mgmt.cdn.models.Origin>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -292,7 +291,7 @@ class OriginsOperations(object):
         :type origin_name: str
         :param origin_properties: Origin properties
         :type origin_properties: :class:`OriginParameters
-         <cdnmanagementclient.models.OriginParameters>`
+         <azure.mgmt.cdn.models.OriginParameters>`
         :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
         :param profile_name: Name of the CDN profile within the resource
@@ -306,8 +305,7 @@ class OriginsOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Origin
-         <cdnmanagementclient.models.Origin>`
+         instance that returns :class:`Origin <azure.mgmt.cdn.models.Origin>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -403,8 +401,7 @@ class OriginsOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Origin
-         <cdnmanagementclient.models.Origin>`
+         instance that returns :class:`Origin <azure.mgmt.cdn.models.Origin>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

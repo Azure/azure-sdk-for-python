@@ -58,7 +58,7 @@ class ServicePrincipalOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServicePrincipal
-         <graphrbacmanagementclient.models.ServicePrincipal>`
+         <azure.graphrbac.models.ServicePrincipal>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -122,7 +122,7 @@ class ServicePrincipalOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServicePrincipalPaged
-         <graphrbacmanagementclient.models.ServicePrincipalPaged>`
+         <azure.graphrbac.models.ServicePrincipalPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -240,7 +240,7 @@ class ServicePrincipalOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServicePrincipal
-         <graphrbacmanagementclient.models.ServicePrincipal>`
+         <azure.graphrbac.models.ServicePrincipal>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -299,7 +299,7 @@ class ServicePrincipalOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServicePrincipalPaged
-         <graphrbacmanagementclient.models.ServicePrincipalPaged>`
+         <azure.graphrbac.models.ServicePrincipalPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

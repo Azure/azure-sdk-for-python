@@ -38,7 +38,7 @@ class AzureAsyncOperationResult(Model):
     :type status: str
     :param error:
     :type error: :class:`Error
-     <datalakestoreaccountmanagementclient.models.Error>`
+     <azure.mgmt.datalake.store.account.models.Error>`
     """ 
 
     _attribute_map = {

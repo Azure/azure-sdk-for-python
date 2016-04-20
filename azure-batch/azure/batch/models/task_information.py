@@ -41,7 +41,7 @@ class TaskInformation(Model):
     :param execution_info: Gets or sets information about the execution of
      the task.
     :type execution_info: :class:`TaskExecutionInformation
-     <batchserviceclient.models.TaskExecutionInformation>`
+     <azure.batch.models.TaskExecutionInformation>`
     """ 
 
     _validation = {

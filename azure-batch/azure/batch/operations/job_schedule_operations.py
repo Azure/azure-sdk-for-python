@@ -53,7 +53,7 @@ class JobScheduleOperations(object):
         :param job_schedule_exists_options: Additional parameters for the
          operation
         :type job_schedule_exists_options: :class:`JobScheduleExistsOptions
-         <batchserviceclient.models.JobScheduleExistsOptions>`
+         <azure.batch.models.JobScheduleExistsOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -159,7 +159,7 @@ class JobScheduleOperations(object):
         :param job_schedule_delete_options: Additional parameters for the
          operation
         :type job_schedule_delete_options: :class:`JobScheduleDeleteOptions
-         <batchserviceclient.models.JobScheduleDeleteOptions>`
+         <azure.batch.models.JobScheduleDeleteOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -256,14 +256,14 @@ class JobScheduleOperations(object):
         :param job_schedule_get_options: Additional parameters for the
          operation
         :type job_schedule_get_options: :class:`JobScheduleGetOptions
-         <batchserviceclient.models.JobScheduleGetOptions>`
+         <azure.batch.models.JobScheduleGetOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudJobSchedule
-         <batchserviceclient.models.CloudJobSchedule>`
+         <azure.batch.models.CloudJobSchedule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -374,11 +374,11 @@ class JobScheduleOperations(object):
         :type job_schedule_id: str
         :param job_schedule_patch_parameter: The parameters for the request.
         :type job_schedule_patch_parameter: :class:`JobSchedulePatchParameter
-         <batchserviceclient.models.JobSchedulePatchParameter>`
+         <azure.batch.models.JobSchedulePatchParameter>`
         :param job_schedule_patch_options: Additional parameters for the
          operation
         :type job_schedule_patch_options: :class:`JobSchedulePatchOptions
-         <batchserviceclient.models.JobSchedulePatchOptions>`
+         <azure.batch.models.JobSchedulePatchOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -482,11 +482,11 @@ class JobScheduleOperations(object):
         :param job_schedule_update_parameter: The parameters for the request.
         :type job_schedule_update_parameter:
          :class:`JobScheduleUpdateParameter
-         <batchserviceclient.models.JobScheduleUpdateParameter>`
+         <azure.batch.models.JobScheduleUpdateParameter>`
         :param job_schedule_update_options: Additional parameters for the
          operation
         :type job_schedule_update_options: :class:`JobScheduleUpdateOptions
-         <batchserviceclient.models.JobScheduleUpdateOptions>`
+         <azure.batch.models.JobScheduleUpdateOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -590,7 +590,7 @@ class JobScheduleOperations(object):
         :param job_schedule_disable_options: Additional parameters for the
          operation
         :type job_schedule_disable_options: :class:`JobScheduleDisableOptions
-         <batchserviceclient.models.JobScheduleDisableOptions>`
+         <azure.batch.models.JobScheduleDisableOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -690,7 +690,7 @@ class JobScheduleOperations(object):
         :param job_schedule_enable_options: Additional parameters for the
          operation
         :type job_schedule_enable_options: :class:`JobScheduleEnableOptions
-         <batchserviceclient.models.JobScheduleEnableOptions>`
+         <azure.batch.models.JobScheduleEnableOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -791,7 +791,7 @@ class JobScheduleOperations(object):
          operation
         :type job_schedule_terminate_options:
          :class:`JobScheduleTerminateOptions
-         <batchserviceclient.models.JobScheduleTerminateOptions>`
+         <azure.batch.models.JobScheduleTerminateOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -888,11 +888,11 @@ class JobScheduleOperations(object):
 
         :param cloud_job_schedule: Specifies the job schedule to be added.
         :type cloud_job_schedule: :class:`JobScheduleAddParameter
-         <batchserviceclient.models.JobScheduleAddParameter>`
+         <azure.batch.models.JobScheduleAddParameter>`
         :param job_schedule_add_options: Additional parameters for the
          operation
         :type job_schedule_add_options: :class:`JobScheduleAddOptions
-         <batchserviceclient.models.JobScheduleAddOptions>`
+         <azure.batch.models.JobScheduleAddOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -970,14 +970,14 @@ class JobScheduleOperations(object):
         :param job_schedule_list_options: Additional parameters for the
          operation
         :type job_schedule_list_options: :class:`JobScheduleListOptions
-         <batchserviceclient.models.JobScheduleListOptions>`
+         <azure.batch.models.JobScheduleListOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudJobSchedulePaged
-         <batchserviceclient.models.CloudJobSchedulePaged>`
+         <azure.batch.models.CloudJobSchedulePaged>`
         """
         filter = None
         if job_schedule_list_options is not None:

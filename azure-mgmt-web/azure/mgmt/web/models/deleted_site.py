@@ -70,14 +70,13 @@ class DeletedSite(Resource):
     :param host_name_ssl_states: Hostname SSL states are  used to manage the
      SSL bindings for site's hostnames.
     :type host_name_ssl_states: list of :class:`HostNameSslState
-     <websitemanagementclient.models.HostNameSslState>`
+     <azure.mgmt.web.models.HostNameSslState>`
     :param server_farm_id:
     :type server_farm_id: str
     :param last_modified_time_utc: Last time web app was modified in UTC
     :type last_modified_time_utc: datetime
     :param site_config: Configuration of web app
-    :type site_config: :class:`SiteConfig
-     <websitemanagementclient.models.SiteConfig>`
+    :type site_config: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
     :param traffic_manager_host_names: Read-only list of Azure Traffic
      manager hostnames associated with web app
     :type traffic_manager_host_names: list of str
@@ -93,7 +92,7 @@ class DeletedSite(Resource):
     :param hosting_environment_profile: Specification for the hosting
      environment (App Service Environment) to use for the web app
     :type hosting_environment_profile: :class:`HostingEnvironmentProfile
-     <websitemanagementclient.models.HostingEnvironmentProfile>`
+     <azure.mgmt.web.models.HostingEnvironmentProfile>`
     :param micro_service:
     :type micro_service: str
     :param gateway_site_name: Name of gateway app associated with web app
@@ -123,7 +122,7 @@ class DeletedSite(Resource):
      specified, web app is cloned from
      a source web app
     :type cloning_info: :class:`CloningInfo
-     <websitemanagementclient.models.CloningInfo>`
+     <azure.mgmt.web.models.CloningInfo>`
     :param resource_group: Resource group web app belongs to
     :type resource_group: str
     :param is_default_container: Site is a default container

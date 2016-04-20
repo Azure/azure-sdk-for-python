@@ -39,7 +39,7 @@ class VirtualNetworkGateway(Resource):
     :param ip_configurations: IpConfigurations for Virtual network gateway.
     :type ip_configurations: list of
      :class:`VirtualNetworkGatewayIPConfiguration
-     <networkmanagementclient.models.VirtualNetworkGatewayIPConfiguration>`
+     <azure.mgmt.network.models.VirtualNetworkGatewayIPConfiguration>`
     :param gateway_type: The type of this virtual network gateway. Possible
      values include: 'Vpn', 'ExpressRoute'
     :type gateway_type: str
@@ -53,19 +53,19 @@ class VirtualNetworkGateway(Resource):
      default routes. Assign Null value in case of removing existing default
      site setting.
     :type gateway_default_site: :class:`SubResource
-     <networkmanagementclient.models.SubResource>`
+     <azure.mgmt.network.models.SubResource>`
     :param sku: Gets or sets the reference of the VirtualNetworkGatewaySku
      resource which represents the sku selected for Virtual network gateway.
     :type sku: :class:`VirtualNetworkGatewaySku
-     <networkmanagementclient.models.VirtualNetworkGatewaySku>`
+     <azure.mgmt.network.models.VirtualNetworkGatewaySku>`
     :param vpn_client_configuration: Gets or sets the reference of the
      VpnClientConfiguration resource which represents the P2S VpnClient
      configurations.
     :type vpn_client_configuration: :class:`VpnClientConfiguration
-     <networkmanagementclient.models.VpnClientConfiguration>`
+     <azure.mgmt.network.models.VpnClientConfiguration>`
     :param bgp_settings: Virtual network gateway's BGP speaker settings
     :type bgp_settings: :class:`BgpSettings
-     <networkmanagementclient.models.BgpSettings>`
+     <azure.mgmt.network.models.BgpSettings>`
     :param resource_guid: Gets or sets resource guid property of the
      VirtualNetworkGateway resource
     :type resource_guid: str

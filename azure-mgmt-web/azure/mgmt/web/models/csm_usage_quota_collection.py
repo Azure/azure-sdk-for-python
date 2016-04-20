@@ -28,7 +28,7 @@ class CsmUsageQuotaCollection(Model):
 
     :param value: Collection of resources
     :type value: list of :class:`CsmUsageQuota
-     <websitemanagementclient.models.CsmUsageQuota>`
+     <azure.mgmt.web.models.CsmUsageQuota>`
     :param next_link: Link to next page of resources
     :type next_link: str
     """ 

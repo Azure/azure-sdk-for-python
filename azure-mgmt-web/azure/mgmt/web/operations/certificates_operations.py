@@ -56,7 +56,7 @@ class CertificatesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CertificateCollection
-         <websitemanagementclient.models.CertificateCollection>`
+         <azure.mgmt.web.models.CertificateCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -117,8 +117,7 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Certificate
-         <websitemanagementclient.models.Certificate>`
+        :rtype: :class:`Certificate <azure.mgmt.web.models.Certificate>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -177,14 +176,13 @@ class CertificatesOperations(object):
         :param certificate_envelope: Details of certificate if it exists
          already.
         :type certificate_envelope: :class:`Certificate
-         <websitemanagementclient.models.Certificate>`
+         <azure.mgmt.web.models.Certificate>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Certificate
-         <websitemanagementclient.models.Certificate>`
+        :rtype: :class:`Certificate <azure.mgmt.web.models.Certificate>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -309,14 +307,13 @@ class CertificatesOperations(object):
         :param certificate_envelope: Details of certificate if it exists
          already.
         :type certificate_envelope: :class:`Certificate
-         <websitemanagementclient.models.Certificate>`
+         <azure.mgmt.web.models.Certificate>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Certificate
-         <websitemanagementclient.models.Certificate>`
+        :rtype: :class:`Certificate <azure.mgmt.web.models.Certificate>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -380,7 +377,7 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`Csr <websitemanagementclient.models.Csr>`
+        :rtype: list of :class:`Csr <azure.mgmt.web.models.Csr>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -441,7 +438,7 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Csr <websitemanagementclient.models.Csr>`
+        :rtype: :class:`Csr <azure.mgmt.web.models.Csr>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -499,13 +496,13 @@ class CertificatesOperations(object):
         :type name: str
         :param csr_envelope: Details of certificate signing request if it
          exists already.
-        :type csr_envelope: :class:`Csr <websitemanagementclient.models.Csr>`
+        :type csr_envelope: :class:`Csr <azure.mgmt.web.models.Csr>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Csr <websitemanagementclient.models.Csr>`
+        :rtype: :class:`Csr <azure.mgmt.web.models.Csr>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -628,13 +625,13 @@ class CertificatesOperations(object):
         :type name: str
         :param csr_envelope: Details of certificate signing request if it
          exists already.
-        :type csr_envelope: :class:`Csr <websitemanagementclient.models.Csr>`
+        :type csr_envelope: :class:`Csr <azure.mgmt.web.models.Csr>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Csr <websitemanagementclient.models.Csr>`
+        :rtype: :class:`Csr <azure.mgmt.web.models.Csr>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

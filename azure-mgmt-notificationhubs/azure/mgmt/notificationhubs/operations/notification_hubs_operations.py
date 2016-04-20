@@ -54,14 +54,14 @@ class NotificationHubsOperations(object):
         :type namespace_name: str
         :param parameters: The notificationHub name.
         :type parameters: :class:`CheckAvailabilityParameters
-         <notificationhubsmanagementclient.models.CheckAvailabilityParameters>`
+         <azure.mgmt.notificationhubs.models.CheckAvailabilityParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CheckAvailabilityResource
-         <notificationhubsmanagementclient.models.CheckAvailabilityResource>`
+         <azure.mgmt.notificationhubs.models.CheckAvailabilityResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -126,14 +126,14 @@ class NotificationHubsOperations(object):
         :param parameters: Parameters supplied to the create/update a
          NotificationHub Resource.
         :type parameters: :class:`NotificationHubCreateOrUpdateParameters
-         <notificationhubsmanagementclient.models.NotificationHubCreateOrUpdateParameters>`
+         <azure.mgmt.notificationhubs.models.NotificationHubCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NotificationHubResource
-         <notificationhubsmanagementclient.models.NotificationHubResource>`
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -261,7 +261,7 @@ class NotificationHubsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NotificationHubResource
-         <notificationhubsmanagementclient.models.NotificationHubResource>`
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -325,14 +325,14 @@ class NotificationHubsOperations(object):
         :param parameters: The shared access authorization rule.
         :type parameters:
          :class:`SharedAccessAuthorizationRuleCreateOrUpdateParameters
-         <notificationhubsmanagementclient.models.SharedAccessAuthorizationRuleCreateOrUpdateParameters>`
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SharedAccessAuthorizationRuleResource
-         <notificationhubsmanagementclient.models.SharedAccessAuthorizationRuleResource>`
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -464,7 +464,7 @@ class NotificationHubsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SharedAccessAuthorizationRuleResource
-         <notificationhubsmanagementclient.models.SharedAccessAuthorizationRuleResource>`
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -528,7 +528,7 @@ class NotificationHubsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NotificationHubResourcePaged
-         <notificationhubsmanagementclient.models.NotificationHubResourcePaged>`
+         <azure.mgmt.notificationhubs.models.NotificationHubResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -599,7 +599,7 @@ class NotificationHubsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
-         <notificationhubsmanagementclient.models.SharedAccessAuthorizationRuleResourcePaged>`
+         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -675,7 +675,7 @@ class NotificationHubsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceListKeys
-         <notificationhubsmanagementclient.models.ResourceListKeys>`
+         <azure.mgmt.notificationhubs.models.ResourceListKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -741,7 +741,7 @@ class NotificationHubsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NotificationHubResource
-         <notificationhubsmanagementclient.models.NotificationHubResource>`
+         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

@@ -31,7 +31,7 @@ class ResourceProviderOperationDefinition(Model):
     :param display: Gets or sets the display property of the provider
      operation.
     :type display: :class:`ResourceProviderOperationDisplayProperties
-     <resourcemanagementclient.models.ResourceProviderOperationDisplayProperties>`
+     <azure.mgmt.resource.resources.models.ResourceProviderOperationDisplayProperties>`
     """ 
 
     _attribute_map = {

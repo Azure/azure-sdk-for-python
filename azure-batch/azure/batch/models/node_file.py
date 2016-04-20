@@ -35,7 +35,7 @@ class NodeFile(Model):
     :type is_directory: bool
     :param properties: Gets or sets the file properties.
     :type properties: :class:`FileProperties
-     <batchserviceclient.models.FileProperties>`
+     <azure.batch.models.FileProperties>`
     """ 
 
     _attribute_map = {

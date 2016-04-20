@@ -38,7 +38,7 @@ class JobSchedulingError(Model):
     :param details: Gets or sets a list of additional error details related
      to the scheduling error.
     :type details: list of :class:`NameValuePair
-     <batchserviceclient.models.NameValuePair>`
+     <azure.batch.models.NameValuePair>`
     """ 
 
     _validation = {

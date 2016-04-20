@@ -54,7 +54,7 @@ class GlobalDomainRegistrationOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DomainCollection
-         <websitemanagementclient.models.DomainCollection>`
+         <azure.mgmt.web.models.DomainCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -110,7 +110,7 @@ class GlobalDomainRegistrationOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DomainControlCenterSsoRequest
-         <websitemanagementclient.models.DomainControlCenterSsoRequest>`
+         <azure.mgmt.web.models.DomainControlCenterSsoRequest>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -162,7 +162,7 @@ class GlobalDomainRegistrationOperations(object):
 
         :param domain_registration_input: Domain registration information
         :type domain_registration_input: :class:`DomainRegistrationInput
-         <websitemanagementclient.models.DomainRegistrationInput>`
+         <azure.mgmt.web.models.DomainRegistrationInput>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -230,7 +230,7 @@ class GlobalDomainRegistrationOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DomainAvailablilityCheckResult
-         <websitemanagementclient.models.DomainAvailablilityCheckResult>`
+         <azure.mgmt.web.models.DomainAvailablilityCheckResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -297,7 +297,7 @@ class GlobalDomainRegistrationOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NameIdentifierCollection
-         <websitemanagementclient.models.NameIdentifierCollection>`
+         <azure.mgmt.web.models.NameIdentifierCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

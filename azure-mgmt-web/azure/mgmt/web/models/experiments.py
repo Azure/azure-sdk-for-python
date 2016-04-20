@@ -29,7 +29,7 @@ class Experiments(Model):
     :param ramp_up_rules: List of
      {Microsoft.Web.Hosting.Administration.RampUpRule} objects.
     :type ramp_up_rules: list of :class:`RampUpRule
-     <websitemanagementclient.models.RampUpRule>`
+     <azure.mgmt.web.models.RampUpRule>`
     """ 
 
     _attribute_map = {

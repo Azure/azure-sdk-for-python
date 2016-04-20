@@ -68,16 +68,16 @@ class SiteConfig(Resource):
     :type publishing_password: str
     :param app_settings: Application Settings
     :type app_settings: list of :class:`NameValuePair
-     <websitemanagementclient.models.NameValuePair>`
+     <azure.mgmt.web.models.NameValuePair>`
     :param metadata: Site Metadata
     :type metadata: list of :class:`NameValuePair
-     <websitemanagementclient.models.NameValuePair>`
+     <azure.mgmt.web.models.NameValuePair>`
     :param connection_strings: Connection strings
     :type connection_strings: list of :class:`ConnStringInfo
-     <websitemanagementclient.models.ConnStringInfo>`
+     <azure.mgmt.web.models.ConnStringInfo>`
     :param handler_mappings: Handler mappings
     :type handler_mappings: list of :class:`HandlerMapping
-     <websitemanagementclient.models.HandlerMapping>`
+     <azure.mgmt.web.models.HandlerMapping>`
     :param document_root: Document root
     :type document_root: str
     :param scm_type: SCM type
@@ -99,40 +99,38 @@ class SiteConfig(Resource):
     :type managed_pipeline_mode: str
     :param virtual_applications: Virtual applications
     :type virtual_applications: list of :class:`VirtualApplication
-     <websitemanagementclient.models.VirtualApplication>`
+     <azure.mgmt.web.models.VirtualApplication>`
     :param load_balancing: Site load balancing. Possible values include:
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
      'WeightedTotalTraffic', 'RequestHash'
     :type load_balancing: str
     :param experiments: This is work around for polymophic types
     :type experiments: :class:`Experiments
-     <websitemanagementclient.models.Experiments>`
+     <azure.mgmt.web.models.Experiments>`
     :param limits: Site limits
-    :type limits: :class:`SiteLimits
-     <websitemanagementclient.models.SiteLimits>`
+    :type limits: :class:`SiteLimits <azure.mgmt.web.models.SiteLimits>`
     :param auto_heal_enabled: Auto heal enabled
     :type auto_heal_enabled: bool
     :param auto_heal_rules: Auto heal rules
     :type auto_heal_rules: :class:`AutoHealRules
-     <websitemanagementclient.models.AutoHealRules>`
+     <azure.mgmt.web.models.AutoHealRules>`
     :param tracing_options: Tracing options
     :type tracing_options: str
     :param vnet_name: Vnet name
     :type vnet_name: str
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
-    :type cors: :class:`CorsSettings
-     <websitemanagementclient.models.CorsSettings>`
+    :type cors: :class:`CorsSettings <azure.mgmt.web.models.CorsSettings>`
     :param api_definition: Information about the formal API definition for
      the web app.
     :type api_definition: :class:`ApiDefinitionInfo
-     <websitemanagementclient.models.ApiDefinitionInfo>`
+     <azure.mgmt.web.models.ApiDefinitionInfo>`
     :param auto_swap_slot_name: Auto swap slot name
     :type auto_swap_slot_name: str
     :param local_my_sql_enabled: Local mysql enabled
     :type local_my_sql_enabled: bool
     :param ip_security_restrictions: Ip Security restrictions
     :type ip_security_restrictions: list of :class:`IpSecurityRestriction
-     <websitemanagementclient.models.IpSecurityRestriction>`
+     <azure.mgmt.web.models.IpSecurityRestriction>`
     """ 
 
     _validation = {

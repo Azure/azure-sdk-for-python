@@ -44,10 +44,10 @@ class NetworkFeatures(Resource):
     :type virtual_network_name: str
     :param virtual_network_connection: The Vnet Summary view
     :type virtual_network_connection: :class:`VnetInfo
-     <websitemanagementclient.models.VnetInfo>`
+     <azure.mgmt.web.models.VnetInfo>`
     :param hybrid_connections: The Hybrid Connections Summary view
     :type hybrid_connections: list of :class:`RelayServiceConnectionEntity
-     <websitemanagementclient.models.RelayServiceConnectionEntity>`
+     <azure.mgmt.web.models.RelayServiceConnectionEntity>`
     """ 
 
     _validation = {

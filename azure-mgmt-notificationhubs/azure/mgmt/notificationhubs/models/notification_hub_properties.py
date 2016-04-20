@@ -35,26 +35,26 @@ class NotificationHubProperties(Model):
      NotificationHub
     :type authorization_rules: list of
      :class:`SharedAccessAuthorizationRuleProperties
-     <notificationhubsmanagementclient.models.SharedAccessAuthorizationRuleProperties>`
+     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
     :param apns_credential: The ApnsCredential of the created NotificationHub
     :type apns_credential: :class:`ApnsCredential
-     <notificationhubsmanagementclient.models.ApnsCredential>`
+     <azure.mgmt.notificationhubs.models.ApnsCredential>`
     :param wns_credential: The WnsCredential of the created NotificationHub
     :type wns_credential: :class:`WnsCredential
-     <notificationhubsmanagementclient.models.WnsCredential>`
+     <azure.mgmt.notificationhubs.models.WnsCredential>`
     :param gcm_credential: The GcmCredential of the created NotificationHub
     :type gcm_credential: :class:`GcmCredential
-     <notificationhubsmanagementclient.models.GcmCredential>`
+     <azure.mgmt.notificationhubs.models.GcmCredential>`
     :param mpns_credential: The MpnsCredential of the created NotificationHub
     :type mpns_credential: :class:`MpnsCredential
-     <notificationhubsmanagementclient.models.MpnsCredential>`
+     <azure.mgmt.notificationhubs.models.MpnsCredential>`
     :param adm_credential: The AdmCredential of the created NotificationHub
     :type adm_credential: :class:`AdmCredential
-     <notificationhubsmanagementclient.models.AdmCredential>`
+     <azure.mgmt.notificationhubs.models.AdmCredential>`
     :param baidu_credential: The BaiduCredential of the created
      NotificationHub
     :type baidu_credential: :class:`BaiduCredential
-     <notificationhubsmanagementclient.models.BaiduCredential>`
+     <azure.mgmt.notificationhubs.models.BaiduCredential>`
     """ 
 
     _attribute_map = {

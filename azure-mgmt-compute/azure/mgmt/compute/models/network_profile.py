@@ -28,7 +28,7 @@ class NetworkProfile(Model):
 
     :param network_interfaces: Gets or sets the network interfaces.
     :type network_interfaces: list of :class:`NetworkInterfaceReference
-     <computemanagementclient.models.NetworkInterfaceReference>`
+     <azure.mgmt.compute.models.NetworkInterfaceReference>`
     """ 
 
     _attribute_map = {

@@ -40,7 +40,7 @@ class Profile(TrackedResource):
     :param tags: Resource tags
     :type tags: dict
     :param sku: The SKU (pricing tier) of the CDN profile.
-    :type sku: :class:`Sku <cdnmanagementclient.models.Sku>`
+    :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
     :param resource_state: Resource status of the profile. Possible values
      include: 'Creating', 'Active', 'Deleting', 'Disabled'
     :type resource_state: str

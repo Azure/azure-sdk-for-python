@@ -54,11 +54,11 @@ class ComputeNodeOperations(object):
         :type node_id: str
         :param user: Specifies the user account to be created.
         :type user: :class:`ComputeNodeUser
-         <batchserviceclient.models.ComputeNodeUser>`
+         <azure.batch.models.ComputeNodeUser>`
         :param compute_node_add_user_options: Additional parameters for the
          operation
         :type compute_node_add_user_options:
-         :class:`ComputeNodeAddUserOptions <batchserviceclient.models.ComputeNodeAddUserOptions>`
+         :class:`ComputeNodeAddUserOptions <azure.batch.models.ComputeNodeAddUserOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -149,7 +149,7 @@ class ComputeNodeOperations(object):
          the operation
         :type compute_node_delete_user_options:
          :class:`ComputeNodeDeleteUserOptions
-         <batchserviceclient.models.ComputeNodeDeleteUserOptions>`
+         <azure.batch.models.ComputeNodeDeleteUserOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -233,12 +233,12 @@ class ComputeNodeOperations(object):
         :type user_name: str
         :param node_update_user_parameter: The parameters for the request.
         :type node_update_user_parameter: :class:`NodeUpdateUserParameter
-         <batchserviceclient.models.NodeUpdateUserParameter>`
+         <azure.batch.models.NodeUpdateUserParameter>`
         :param compute_node_update_user_options: Additional parameters for
          the operation
         :type compute_node_update_user_options:
          :class:`ComputeNodeUpdateUserOptions
-         <batchserviceclient.models.ComputeNodeUpdateUserOptions>`
+         <azure.batch.models.ComputeNodeUpdateUserOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -327,13 +327,13 @@ class ComputeNodeOperations(object):
         :param compute_node_get_options: Additional parameters for the
          operation
         :type compute_node_get_options: :class:`ComputeNodeGetOptions
-         <batchserviceclient.models.ComputeNodeGetOptions>`
+         <azure.batch.models.ComputeNodeGetOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ComputeNode <batchserviceclient.models.ComputeNode>`
+        :rtype: :class:`ComputeNode <azure.batch.models.ComputeNode>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -423,7 +423,7 @@ class ComputeNodeOperations(object):
         :param compute_node_reboot_options: Additional parameters for the
          operation
         :type compute_node_reboot_options: :class:`ComputeNodeRebootOptions
-         <batchserviceclient.models.ComputeNodeRebootOptions>`
+         <azure.batch.models.ComputeNodeRebootOptions>`
         :param node_reboot_option: Sets when to reboot the compute node and
          what to do with currently running tasks. The default value is
          requeue. Possible values include: 'requeue', 'terminate',
@@ -521,7 +521,7 @@ class ComputeNodeOperations(object):
         :param compute_node_reimage_options: Additional parameters for the
          operation
         :type compute_node_reimage_options: :class:`ComputeNodeReimageOptions
-         <batchserviceclient.models.ComputeNodeReimageOptions>`
+         <azure.batch.models.ComputeNodeReimageOptions>`
         :param node_reimage_option: Sets when to reimage the compute node and
          what to do with currently running tasks. The default value is
          requeue. Possible values include: 'requeue', 'terminate',
@@ -621,7 +621,7 @@ class ComputeNodeOperations(object):
          for the operation
         :type compute_node_disable_scheduling_options:
          :class:`ComputeNodeDisableSchedulingOptions
-         <batchserviceclient.models.ComputeNodeDisableSchedulingOptions>`
+         <azure.batch.models.ComputeNodeDisableSchedulingOptions>`
         :param node_disable_scheduling_option: Gets or sets what to do with
          currently running tasks when disable task scheduling on the compute
          node. The default value is requeue. Possible values include:
@@ -721,7 +721,7 @@ class ComputeNodeOperations(object):
          for the operation
         :type compute_node_enable_scheduling_options:
          :class:`ComputeNodeEnableSchedulingOptions
-         <batchserviceclient.models.ComputeNodeEnableSchedulingOptions>`
+         <azure.batch.models.ComputeNodeEnableSchedulingOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -806,14 +806,14 @@ class ComputeNodeOperations(object):
          parameters for the operation
         :type compute_node_get_remote_login_settings_options:
          :class:`ComputeNodeGetRemoteLoginSettingsOptions
-         <batchserviceclient.models.ComputeNodeGetRemoteLoginSettingsOptions>`
+         <azure.batch.models.ComputeNodeGetRemoteLoginSettingsOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ComputeNodeGetRemoteLoginSettingsResult
-         <batchserviceclient.models.ComputeNodeGetRemoteLoginSettingsResult>`
+         <azure.batch.models.ComputeNodeGetRemoteLoginSettingsResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -900,7 +900,7 @@ class ComputeNodeOperations(object):
          for the operation
         :type compute_node_get_remote_desktop_options:
          :class:`ComputeNodeGetRemoteDesktopOptions
-         <batchserviceclient.models.ComputeNodeGetRemoteDesktopOptions>`
+         <azure.batch.models.ComputeNodeGetRemoteDesktopOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -994,14 +994,14 @@ class ComputeNodeOperations(object):
         :param compute_node_list_options: Additional parameters for the
          operation
         :type compute_node_list_options: :class:`ComputeNodeListOptions
-         <batchserviceclient.models.ComputeNodeListOptions>`
+         <azure.batch.models.ComputeNodeListOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ComputeNodePaged
-         <batchserviceclient.models.ComputeNodePaged>`
+         <azure.batch.models.ComputeNodePaged>`
         """
         filter = None
         if compute_node_list_options is not None:

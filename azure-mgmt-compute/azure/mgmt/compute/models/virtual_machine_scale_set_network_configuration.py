@@ -38,7 +38,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
      Configuration.
     :type ip_configurations: list of
      :class:`VirtualMachineScaleSetIPConfiguration
-     <computemanagementclient.models.VirtualMachineScaleSetIPConfiguration>`
+     <azure.mgmt.compute.models.VirtualMachineScaleSetIPConfiguration>`
     """ 
 
     _validation = {

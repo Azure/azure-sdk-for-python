@@ -29,7 +29,7 @@ class SshConfiguration(Model):
     :param public_keys: Gets or sets the list of SSH public keys used to
      authenticate with linux based VMs
     :type public_keys: list of :class:`SshPublicKey
-     <computemanagementclient.models.SshPublicKey>`
+     <azure.mgmt.compute.models.SshPublicKey>`
     """ 
 
     _attribute_map = {

@@ -27,13 +27,13 @@ class SiteProperties(Model):
 
     :param metadata:
     :type metadata: list of :class:`NameValuePair
-     <websitemanagementclient.models.NameValuePair>`
+     <azure.mgmt.web.models.NameValuePair>`
     :param properties:
     :type properties: list of :class:`NameValuePair
-     <websitemanagementclient.models.NameValuePair>`
+     <azure.mgmt.web.models.NameValuePair>`
     :param app_settings:
     :type app_settings: list of :class:`NameValuePair
-     <websitemanagementclient.models.NameValuePair>`
+     <azure.mgmt.web.models.NameValuePair>`
     """ 
 
     _attribute_map = {

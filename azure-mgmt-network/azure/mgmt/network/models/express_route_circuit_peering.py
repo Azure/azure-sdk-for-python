@@ -54,10 +54,10 @@ class ExpressRouteCircuitPeering(SubResource):
     :type vlan_id: int
     :param microsoft_peering_config: Gets or sets the mircosoft peering config
     :type microsoft_peering_config: :class:`ExpressRouteCircuitPeeringConfig
-     <networkmanagementclient.models.ExpressRouteCircuitPeeringConfig>`
+     <azure.mgmt.network.models.ExpressRouteCircuitPeeringConfig>`
     :param stats: Gets or peering stats
     :type stats: :class:`ExpressRouteCircuitStats
-     <networkmanagementclient.models.ExpressRouteCircuitStats>`
+     <azure.mgmt.network.models.ExpressRouteCircuitStats>`
     :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
     :type provisioning_state: str

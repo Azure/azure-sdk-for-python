@@ -38,15 +38,15 @@ class JobManagerTask(Model):
     :param resource_files: Gets or sets a list of files that Batch will
      download to the compute node before running the command line.
     :type resource_files: list of :class:`ResourceFile
-     <batchserviceclient.models.ResourceFile>`
+     <azure.batch.models.ResourceFile>`
     :param environment_settings: Gets or sets a list of environment variable
      settings for the Job Manager task.
     :type environment_settings: list of :class:`EnvironmentSetting
-     <batchserviceclient.models.EnvironmentSetting>`
+     <azure.batch.models.EnvironmentSetting>`
     :param constraints: Gets or sets constraints that apply to the Job
      Manager task.
     :type constraints: :class:`TaskConstraints
-     <batchserviceclient.models.TaskConstraints>`
+     <azure.batch.models.TaskConstraints>`
     :param kill_job_on_completion: Gets or sets whether completion of the Job
      Manager task signifies completion of the entire job.
     :type kill_job_on_completion: bool

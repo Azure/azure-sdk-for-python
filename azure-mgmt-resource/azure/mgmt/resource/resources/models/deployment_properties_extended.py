@@ -38,30 +38,30 @@ class DeploymentPropertiesExtended(Model):
     :param providers: Gets the list of resource providers needed for the
      deployment.
     :type providers: list of :class:`Provider
-     <resourcemanagementclient.models.Provider>`
+     <azure.mgmt.resource.resources.models.Provider>`
     :param dependencies: Gets the list of deployment dependencies.
     :type dependencies: list of :class:`Dependency
-     <resourcemanagementclient.models.Dependency>`
+     <azure.mgmt.resource.resources.models.Dependency>`
     :param template: Gets or sets the template content. Use only one of
      Template or TemplateLink.
     :type template: object
     :param template_link: Gets or sets the URI referencing the template. Use
      only one of Template or TemplateLink.
     :type template_link: :class:`TemplateLink
-     <resourcemanagementclient.models.TemplateLink>`
+     <azure.mgmt.resource.resources.models.TemplateLink>`
     :param parameters: Deployment parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters: object
     :param parameters_link: Gets or sets the URI referencing the parameters.
      Use only one of Parameters or ParametersLink.
     :type parameters_link: :class:`ParametersLink
-     <resourcemanagementclient.models.ParametersLink>`
+     <azure.mgmt.resource.resources.models.ParametersLink>`
     :param mode: Gets or sets the deployment mode. Possible values include:
      'Incremental', 'Complete'
     :type mode: str
     :param debug_setting: Gets or sets the debug setting of the deployment.
     :type debug_setting: :class:`DebugSetting
-     <resourcemanagementclient.models.DebugSetting>`
+     <azure.mgmt.resource.resources.models.DebugSetting>`
     """ 
 
     _attribute_map = {

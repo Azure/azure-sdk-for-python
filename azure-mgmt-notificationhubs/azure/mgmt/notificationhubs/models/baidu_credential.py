@@ -29,7 +29,7 @@ class BaiduCredential(Model):
     :param properties: Gets or sets properties of NotificationHub
      BaiduCredential.
     :type properties: :class:`BaiduCredentialProperties
-     <notificationhubsmanagementclient.models.BaiduCredentialProperties>`
+     <azure.mgmt.notificationhubs.models.BaiduCredentialProperties>`
     """ 
 
     _attribute_map = {

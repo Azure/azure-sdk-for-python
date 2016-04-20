@@ -39,11 +39,11 @@ class ApplicationCreateParameters(Model):
     :type reply_urls: list of str
     :param key_credentials: Gets or sets the list of KeyCredential objects
     :type key_credentials: list of :class:`KeyCredential
-     <graphrbacmanagementclient.models.KeyCredential>`
+     <azure.graphrbac.models.KeyCredential>`
     :param password_credentials: Gets or sets the list of PasswordCredential
      objects
     :type password_credentials: list of :class:`PasswordCredential
-     <graphrbacmanagementclient.models.PasswordCredential>`
+     <azure.graphrbac.models.PasswordCredential>`
     """ 
 
     _validation = {

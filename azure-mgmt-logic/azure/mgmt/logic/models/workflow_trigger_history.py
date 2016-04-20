@@ -43,15 +43,15 @@ class WorkflowTriggerHistory(SubResource):
     :type tracking_id: str
     :param inputs_link: Gets the link to input parameters.
     :type inputs_link: :class:`ContentLink
-     <logicmanagementclient.models.ContentLink>`
+     <azure.mgmt.logic.models.ContentLink>`
     :param outputs_link: Gets the link to output parameters.
     :type outputs_link: :class:`ContentLink
-     <logicmanagementclient.models.ContentLink>`
+     <azure.mgmt.logic.models.ContentLink>`
     :param fired: Gets a value indicating whether trigger was fired.
     :type fired: bool
     :param run: Gets the reference to workflow run.
     :type run: :class:`ResourceReference
-     <logicmanagementclient.models.ResourceReference>`
+     <azure.mgmt.logic.models.ResourceReference>`
     :param name: Gets the workflow trigger history name.
     :type name: str
     :param type: Gets the workflow trigger history type.

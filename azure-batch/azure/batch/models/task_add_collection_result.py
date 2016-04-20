@@ -29,7 +29,7 @@ class TaskAddCollectionResult(Model):
     :param value: Gets or sets the results of the add task collection
      operation.
     :type value: list of :class:`TaskAddResult
-     <batchserviceclient.models.TaskAddResult>`
+     <azure.batch.models.TaskAddResult>`
     """ 
 
     _attribute_map = {

@@ -31,11 +31,11 @@ class StartTask(Model):
     :param resource_files: Gets or sets a list of files that Batch will
      download to the compute node before running the command line.
     :type resource_files: list of :class:`ResourceFile
-     <batchserviceclient.models.ResourceFile>`
+     <azure.batch.models.ResourceFile>`
     :param environment_settings: Gets or sets a list of environment variable
      settings for the start task.
     :type environment_settings: list of :class:`EnvironmentSetting
-     <batchserviceclient.models.EnvironmentSetting>`
+     <azure.batch.models.EnvironmentSetting>`
     :param run_elevated: Gets or sets whether to run the start task in
      elevated mode. The default value is false.
     :type run_elevated: bool

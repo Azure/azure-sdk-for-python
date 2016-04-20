@@ -29,10 +29,10 @@ class VirtualMachineScaleSetSku(Model):
     :param resource_type: Gets the type of resource the sku applies to.
     :type resource_type: str
     :param sku: Gets the Sku.
-    :type sku: :class:`Sku <computemanagementclient.models.Sku>`
+    :type sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
     :param capacity: Gets available scaling information.
     :type capacity: :class:`VirtualMachineScaleSetSkuCapacity
-     <computemanagementclient.models.VirtualMachineScaleSetSkuCapacity>`
+     <azure.mgmt.compute.models.VirtualMachineScaleSetSkuCapacity>`
     """ 
 
     _attribute_map = {

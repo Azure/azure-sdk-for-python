@@ -27,8 +27,7 @@ class GeoRegionCollection(Model):
     Collection of geo regions
 
     :param value: Collection of resources
-    :type value: list of :class:`GeoRegion
-     <websitemanagementclient.models.GeoRegion>`
+    :type value: list of :class:`GeoRegion <azure.mgmt.web.models.GeoRegion>`
     :param next_link: Link to next page of resources
     :type next_link: str
     """ 

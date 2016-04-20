@@ -137,8 +137,7 @@ class LoadBalancersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LoadBalancer
-         <networkmanagementclient.models.LoadBalancer>`
+        :rtype: :class:`LoadBalancer <azure.mgmt.network.models.LoadBalancer>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -199,14 +198,14 @@ class LoadBalancersOperations(object):
         :param parameters: Parameters supplied to the create/delete
          LoadBalancer operation
         :type parameters: :class:`LoadBalancer
-         <networkmanagementclient.models.LoadBalancer>`
+         <azure.mgmt.network.models.LoadBalancer>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`LoadBalancer
-         <networkmanagementclient.models.LoadBalancer>`
+         <azure.mgmt.network.models.LoadBalancer>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -293,7 +292,7 @@ class LoadBalancersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LoadBalancerPaged
-         <networkmanagementclient.models.LoadBalancerPaged>`
+         <azure.mgmt.network.models.LoadBalancerPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -359,7 +358,7 @@ class LoadBalancersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LoadBalancerPaged
-         <networkmanagementclient.models.LoadBalancerPaged>`
+         <azure.mgmt.network.models.LoadBalancerPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

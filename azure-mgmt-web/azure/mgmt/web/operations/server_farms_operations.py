@@ -58,7 +58,7 @@ class ServerFarmsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmCollection
-         <websitemanagementclient.models.ServerFarmCollection>`
+         <azure.mgmt.web.models.ServerFarmCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -119,7 +119,7 @@ class ServerFarmsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmWithRichSku
-         <websitemanagementclient.models.ServerFarmWithRichSku>`
+         <azure.mgmt.web.models.ServerFarmWithRichSku>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -177,7 +177,7 @@ class ServerFarmsOperations(object):
         :type name: str
         :param server_farm_envelope: Details of App Service Plan
         :type server_farm_envelope: :class:`ServerFarmWithRichSku
-         <websitemanagementclient.models.ServerFarmWithRichSku>`
+         <azure.mgmt.web.models.ServerFarmWithRichSku>`
         :param allow_pending_state: OBSOLETE: If true, allow pending state
          for App Service Plan
         :type allow_pending_state: bool
@@ -187,7 +187,7 @@ class ServerFarmsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ServerFarmWithRichSku
-         <websitemanagementclient.models.ServerFarmWithRichSku>`
+         <azure.mgmt.web.models.ServerFarmWithRichSku>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -349,7 +349,7 @@ class ServerFarmsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceMetricCollection
-         <websitemanagementclient.models.ResourceMetricCollection>`
+         <azure.mgmt.web.models.ResourceMetricCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -415,7 +415,7 @@ class ServerFarmsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`MetricDefinitionCollection
-         <websitemanagementclient.models.MetricDefinitionCollection>`
+         <azure.mgmt.web.models.MetricDefinitionCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -476,8 +476,7 @@ class ServerFarmsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`VnetInfo
-         <websitemanagementclient.models.VnetInfo>`
+        :rtype: list of :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -540,7 +539,7 @@ class ServerFarmsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetInfo <websitemanagementclient.models.VnetInfo>`
+        :rtype: :class:`VnetInfo <azure.mgmt.web.models.VnetInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -605,8 +604,7 @@ class ServerFarmsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`VnetRoute
-         <websitemanagementclient.models.VnetRoute>`
+        :rtype: list of :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -672,8 +670,7 @@ class ServerFarmsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`VnetRoute
-         <websitemanagementclient.models.VnetRoute>`
+        :rtype: list of :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -737,14 +734,13 @@ class ServerFarmsOperations(object):
         :param route_name: Name of the virtual network route
         :type route_name: str
         :param route: The route object
-        :type route: :class:`VnetRoute
-         <websitemanagementclient.models.VnetRoute>`
+        :type route: :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetRoute <websitemanagementclient.models.VnetRoute>`
+        :rtype: :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -879,14 +875,13 @@ class ServerFarmsOperations(object):
         :param route_name: Name of the virtual network route
         :type route_name: str
         :param route: The route object
-        :type route: :class:`VnetRoute
-         <websitemanagementclient.models.VnetRoute>`
+        :type route: :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetRoute <websitemanagementclient.models.VnetRoute>`
+        :rtype: :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -958,8 +953,7 @@ class ServerFarmsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1024,14 +1018,13 @@ class ServerFarmsOperations(object):
         :type gateway_name: str
         :param connection_envelope: The gateway entity.
         :type connection_envelope: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+         <azure.mgmt.web.models.VnetGateway>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetGateway
-         <websitemanagementclient.models.VnetGateway>`
+        :rtype: :class:`VnetGateway <azure.mgmt.web.models.VnetGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1108,7 +1101,7 @@ class ServerFarmsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SitePaged <websitemanagementclient.models.SitePaged>`
+        :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1317,7 +1310,7 @@ class ServerFarmsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmWithRichSku
-         <websitemanagementclient.models.ServerFarmWithRichSku>`
+         <azure.mgmt.web.models.ServerFarmWithRichSku>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

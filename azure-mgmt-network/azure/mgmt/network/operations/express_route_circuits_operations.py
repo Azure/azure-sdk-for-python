@@ -137,7 +137,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuit
-         <networkmanagementclient.models.ExpressRouteCircuit>`
+         <azure.mgmt.network.models.ExpressRouteCircuit>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -197,14 +197,14 @@ class ExpressRouteCircuitsOperations(object):
         :param parameters: Parameters supplied to the create/delete
          ExpressRouteCircuit operation
         :type parameters: :class:`ExpressRouteCircuit
-         <networkmanagementclient.models.ExpressRouteCircuit>`
+         <azure.mgmt.network.models.ExpressRouteCircuit>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ExpressRouteCircuit
-         <networkmanagementclient.models.ExpressRouteCircuit>`
+         <azure.mgmt.network.models.ExpressRouteCircuit>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -300,7 +300,7 @@ class ExpressRouteCircuitsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ExpressRouteCircuitsArpTableListResult
-         <networkmanagementclient.models.ExpressRouteCircuitsArpTableListResult>`
+         <azure.mgmt.network.models.ExpressRouteCircuitsArpTableListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -393,7 +393,7 @@ class ExpressRouteCircuitsOperations(object):
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns
          :class:`ExpressRouteCircuitsRoutesTableListResult
-         <networkmanagementclient.models.ExpressRouteCircuitsRoutesTableListResult>`
+         <azure.mgmt.network.models.ExpressRouteCircuitsRoutesTableListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -486,7 +486,7 @@ class ExpressRouteCircuitsOperations(object):
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns
          :class:`ExpressRouteCircuitsRoutesTableSummaryListResult
-         <networkmanagementclient.models.ExpressRouteCircuitsRoutesTableSummaryListResult>`
+         <azure.mgmt.network.models.ExpressRouteCircuitsRoutesTableSummaryListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -573,7 +573,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitStats
-         <networkmanagementclient.models.ExpressRouteCircuitStats>`
+         <azure.mgmt.network.models.ExpressRouteCircuitStats>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -638,7 +638,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitStats
-         <networkmanagementclient.models.ExpressRouteCircuitStats>`
+         <azure.mgmt.network.models.ExpressRouteCircuitStats>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -700,7 +700,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitPaged
-         <networkmanagementclient.models.ExpressRouteCircuitPaged>`
+         <azure.mgmt.network.models.ExpressRouteCircuitPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -765,7 +765,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitPaged
-         <networkmanagementclient.models.ExpressRouteCircuitPaged>`
+         <azure.mgmt.network.models.ExpressRouteCircuitPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

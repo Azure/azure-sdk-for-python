@@ -39,31 +39,31 @@ class JobAddParameter(Model):
     :type priority: int
     :param constraints: Gets or sets the execution constraints for the job.
     :type constraints: :class:`JobConstraints
-     <batchserviceclient.models.JobConstraints>`
+     <azure.batch.models.JobConstraints>`
     :param job_manager_task: Gets or sets details of a Job Manager task to be
      launched when the job is started.
     :type job_manager_task: :class:`JobManagerTask
-     <batchserviceclient.models.JobManagerTask>`
+     <azure.batch.models.JobManagerTask>`
     :param job_preparation_task: Gets or sets the Job Preparation task.
     :type job_preparation_task: :class:`JobPreparationTask
-     <batchserviceclient.models.JobPreparationTask>`
+     <azure.batch.models.JobPreparationTask>`
     :param job_release_task: Gets or sets the Job Release task.
     :type job_release_task: :class:`JobReleaseTask
-     <batchserviceclient.models.JobReleaseTask>`
+     <azure.batch.models.JobReleaseTask>`
     :param common_environment_settings: Gets or sets the list of common
      environment variable settings.  These environment variables are set for
      all tasks in the job (including the Job Manager, Job Preparation and Job
      Release tasks).
     :type common_environment_settings: list of :class:`EnvironmentSetting
-     <batchserviceclient.models.EnvironmentSetting>`
+     <azure.batch.models.EnvironmentSetting>`
     :param pool_info: Gets or sets the pool on which the Batch service runs
      the job’s tasks.
     :type pool_info: :class:`PoolInformation
-     <batchserviceclient.models.PoolInformation>`
+     <azure.batch.models.PoolInformation>`
     :param metadata: Gets or sets a list of name-value pairs associated with
      the job as metadata.
     :type metadata: list of :class:`MetadataItem
-     <batchserviceclient.models.MetadataItem>`
+     <azure.batch.models.MetadataItem>`
     :param uses_task_dependencies: Gets or sets the flag that determines if
      this job will use tasks with dependencies.
     :type uses_task_dependencies: bool

@@ -32,7 +32,7 @@ class ExternalTable(Model):
     :param data_source: Gets or sets the data source associated with this
      external table.
     :type data_source: :class:`EntityId
-     <datalakeanalyticscatalogmanagementclient.models.EntityId>`
+     <azure.mgmt.datalake.analytics.catalog.models.EntityId>`
     """ 
 
     _attribute_map = {

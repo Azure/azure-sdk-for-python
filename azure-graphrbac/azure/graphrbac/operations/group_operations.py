@@ -214,13 +214,13 @@ class GroupOperations(object):
 
         :param parameters: Parameters to create a group
         :type parameters: :class:`GroupCreateParameters
-         <graphrbacmanagementclient.models.GroupCreateParameters>`
+         <azure.graphrbac.models.GroupCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ADGroup <graphrbacmanagementclient.models.ADGroup>`
+        :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -281,8 +281,7 @@ class GroupOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ADGroupPaged
-         <graphrbacmanagementclient.models.ADGroupPaged>`
+        :rtype: :class:`ADGroupPaged <azure.graphrbac.models.ADGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -349,7 +348,7 @@ class GroupOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AADObjectPaged
-         <graphrbacmanagementclient.models.AADObjectPaged>`
+         <azure.graphrbac.models.AADObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -414,7 +413,7 @@ class GroupOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ADGroup <graphrbacmanagementclient.models.ADGroup>`
+        :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -477,7 +476,7 @@ class GroupOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`strPaged <graphrbacmanagementclient.models.strPaged>`
+        :rtype: :class:`strPaged <azure.graphrbac.models.strPaged>`
         """
         parameters = models.GroupGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
 
@@ -547,8 +546,7 @@ class GroupOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ADGroupPaged
-         <graphrbacmanagementclient.models.ADGroupPaged>`
+        :rtype: :class:`ADGroupPaged <azure.graphrbac.models.ADGroupPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -614,7 +612,7 @@ class GroupOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AADObjectPaged
-         <graphrbacmanagementclient.models.AADObjectPaged>`
+         <azure.graphrbac.models.AADObjectPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

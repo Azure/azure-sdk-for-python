@@ -53,7 +53,7 @@ class ServerFarmWithRichSku(Resource):
     :param hosting_environment_profile: Specification for the hosting
      environment (App Service Environment) to use for the App Service Plan
     :type hosting_environment_profile: :class:`HostingEnvironmentProfile
-     <websitemanagementclient.models.HostingEnvironmentProfile>`
+     <azure.mgmt.web.models.HostingEnvironmentProfile>`
     :param maximum_number_of_workers: Maximum number of instances that can be
      assigned to this App Service Plan
     :type maximum_number_of_workers: int
@@ -70,8 +70,7 @@ class ServerFarmWithRichSku(Resource):
     :param resource_group: Resource group of the serverfarm
     :type resource_group: str
     :param sku:
-    :type sku: :class:`SkuDescription
-     <websitemanagementclient.models.SkuDescription>`
+    :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
     """ 
 
     _validation = {

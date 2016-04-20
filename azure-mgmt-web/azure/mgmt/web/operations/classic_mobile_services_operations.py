@@ -56,7 +56,7 @@ class ClassicMobileServicesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ClassicMobileServiceCollection
-         <websitemanagementclient.models.ClassicMobileServiceCollection>`
+         <azure.mgmt.web.models.ClassicMobileServiceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -117,7 +117,7 @@ class ClassicMobileServicesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ClassicMobileService
-         <websitemanagementclient.models.ClassicMobileService>`
+         <azure.mgmt.web.models.ClassicMobileService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

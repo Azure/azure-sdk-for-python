@@ -27,7 +27,7 @@ class HttpRequest(Model):
 
     :param authentication: Gets or sets the http authentication.
     :type authentication: :class:`HttpAuthentication
-     <schedulermanagementclient.models.HttpAuthentication>`
+     <azure.mgmt.scheduler.models.HttpAuthentication>`
     :param uri: Gets or sets the Uri.
     :type uri: str
     :param method: Gets or sets the method of the request.

@@ -63,7 +63,7 @@ class RecommendationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: list of :class:`Recommendation
-         <websitemanagementclient.models.Recommendation>`
+         <azure.mgmt.web.models.Recommendation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -130,7 +130,7 @@ class RecommendationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RecommendationRule
-         <websitemanagementclient.models.RecommendationRule>`
+         <azure.mgmt.web.models.RecommendationRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -201,7 +201,7 @@ class RecommendationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: list of :class:`Recommendation
-         <websitemanagementclient.models.Recommendation>`
+         <azure.mgmt.web.models.Recommendation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -278,7 +278,7 @@ class RecommendationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: list of :class:`Recommendation
-         <websitemanagementclient.models.Recommendation>`
+         <azure.mgmt.web.models.Recommendation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

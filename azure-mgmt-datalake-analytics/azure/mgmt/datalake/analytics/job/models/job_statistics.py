@@ -30,7 +30,7 @@ class JobStatistics(Model):
     :type last_update_time_utc: datetime
     :param stages: Gets the list of stages for the job.
     :type stages: list of :class:`JobStatisticsVertexStage
-     <datalakeanalyticsjobmanagementclient.models.JobStatisticsVertexStage>`
+     <azure.mgmt.datalake.analytics.job.models.JobStatisticsVertexStage>`
     """ 
 
     _attribute_map = {

@@ -30,7 +30,7 @@ class DiskInstanceView(Model):
     :type name: str
     :param statuses: Gets or sets the resource status information.
     :type statuses: list of :class:`InstanceViewStatus
-     <computemanagementclient.models.InstanceViewStatus>`
+     <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 
 
     _attribute_map = {

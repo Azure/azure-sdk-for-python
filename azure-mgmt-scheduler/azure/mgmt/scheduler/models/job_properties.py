@@ -28,17 +28,15 @@ class JobProperties(Model):
     :param start_time: Gets or sets the job start time.
     :type start_time: datetime
     :param action: Gets or sets the job action.
-    :type action: :class:`JobAction
-     <schedulermanagementclient.models.JobAction>`
+    :type action: :class:`JobAction <azure.mgmt.scheduler.models.JobAction>`
     :param recurrence: Gets or sets the job recurrence.
     :type recurrence: :class:`JobRecurrence
-     <schedulermanagementclient.models.JobRecurrence>`
+     <azure.mgmt.scheduler.models.JobRecurrence>`
     :param state: Gets or set the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
     :type state: str
     :param status: Gets the job status.
-    :type status: :class:`JobStatus
-     <schedulermanagementclient.models.JobStatus>`
+    :type status: :class:`JobStatus <azure.mgmt.scheduler.models.JobStatus>`
     """ 
 
     _attribute_map = {

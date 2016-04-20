@@ -56,14 +56,14 @@ class RedisOperations(object):
         :param parameters: Parameters supplied to the CreateOrUpdate redis
          operation.
         :type parameters: :class:`RedisCreateOrUpdateParameters
-         <redismanagementclient.models.RedisCreateOrUpdateParameters>`
+         <azure.mgmt.redis.models.RedisCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RedisResourceWithAccessKey
-         <redismanagementclient.models.RedisResourceWithAccessKey>`
+         <azure.mgmt.redis.models.RedisResourceWithAccessKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -184,8 +184,7 @@ class RedisOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RedisResource
-         <redismanagementclient.models.RedisResource>`
+        :rtype: :class:`RedisResource <azure.mgmt.redis.models.RedisResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -245,7 +244,7 @@ class RedisOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RedisResourcePaged
-         <redismanagementclient.models.RedisResourcePaged>`
+         <azure.mgmt.redis.models.RedisResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -309,7 +308,7 @@ class RedisOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RedisResourcePaged
-         <redismanagementclient.models.RedisResourcePaged>`
+         <azure.mgmt.redis.models.RedisResourcePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -377,7 +376,7 @@ class RedisOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RedisListKeysResult
-         <redismanagementclient.models.RedisListKeysResult>`
+         <azure.mgmt.redis.models.RedisListKeysResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -443,7 +442,7 @@ class RedisOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RedisListKeysResult
-         <redismanagementclient.models.RedisListKeysResult>`
+         <azure.mgmt.redis.models.RedisListKeysResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

@@ -62,7 +62,7 @@ class CustomDomainsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CustomDomainPaged
-         <cdnmanagementclient.models.CustomDomainPaged>`
+         <azure.mgmt.cdn.models.CustomDomainPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -136,8 +136,7 @@ class CustomDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CustomDomain
-         <cdnmanagementclient.models.CustomDomain>`
+        :rtype: :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -209,7 +208,7 @@ class CustomDomainsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`CustomDomain
-         <cdnmanagementclient.models.CustomDomain>`
+         <azure.mgmt.cdn.models.CustomDomain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -310,8 +309,7 @@ class CustomDomainsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ErrorResponse
-         <cdnmanagementclient.models.ErrorResponse>`
+        :rtype: :class:`ErrorResponse <azure.mgmt.cdn.models.ErrorResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -379,7 +377,7 @@ class CustomDomainsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`CustomDomain
-         <cdnmanagementclient.models.CustomDomain>`
+         <azure.mgmt.cdn.models.CustomDomain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

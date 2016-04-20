@@ -57,7 +57,7 @@ class PermissionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PermissionPaged
-         <authorizationmanagementclient.models.PermissionPaged>`
+         <azure.mgmt.authorization.models.PermissionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -132,7 +132,7 @@ class PermissionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PermissionPaged
-         <authorizationmanagementclient.models.PermissionPaged>`
+         <azure.mgmt.authorization.models.PermissionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

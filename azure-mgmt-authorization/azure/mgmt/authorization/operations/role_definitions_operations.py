@@ -58,7 +58,7 @@ class RoleDefinitionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleDefinition
-         <authorizationmanagementclient.models.RoleDefinition>`
+         <azure.mgmt.authorization.models.RoleDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -119,7 +119,7 @@ class RoleDefinitionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleDefinition
-         <authorizationmanagementclient.models.RoleDefinition>`
+         <azure.mgmt.authorization.models.RoleDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -176,14 +176,14 @@ class RoleDefinitionsOperations(object):
         :type role_definition_id: str
         :param role_definition: Role definition.
         :type role_definition: :class:`RoleDefinition
-         <authorizationmanagementclient.models.RoleDefinition>`
+         <azure.mgmt.authorization.models.RoleDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleDefinition
-         <authorizationmanagementclient.models.RoleDefinition>`
+         <azure.mgmt.authorization.models.RoleDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -246,7 +246,7 @@ class RoleDefinitionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleDefinition
-         <authorizationmanagementclient.models.RoleDefinition>`
+         <azure.mgmt.authorization.models.RoleDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -307,7 +307,7 @@ class RoleDefinitionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleDefinitionPaged
-         <authorizationmanagementclient.models.RoleDefinitionPaged>`
+         <azure.mgmt.authorization.models.RoleDefinitionPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

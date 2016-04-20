@@ -53,8 +53,7 @@ class ProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ProfilePaged
-         <cdnmanagementclient.models.ProfilePaged>`
+        :rtype: :class:`ProfilePaged <azure.mgmt.cdn.models.ProfilePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -117,8 +116,7 @@ class ProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ProfilePaged
-         <cdnmanagementclient.models.ProfilePaged>`
+        :rtype: :class:`ProfilePaged <azure.mgmt.cdn.models.ProfilePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -185,7 +183,7 @@ class ProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Profile <cdnmanagementclient.models.Profile>`
+        :rtype: :class:`Profile <azure.mgmt.cdn.models.Profile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -240,7 +238,7 @@ class ProfilesOperations(object):
         :type profile_name: str
         :param profile_properties: Profile properties needed for creation.
         :type profile_properties: :class:`ProfileCreateParameters
-         <cdnmanagementclient.models.ProfileCreateParameters>`
+         <azure.mgmt.cdn.models.ProfileCreateParameters>`
         :param resource_group_name: Name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
@@ -250,7 +248,7 @@ class ProfilesOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Profile
-         <cdnmanagementclient.models.Profile>`
+         <azure.mgmt.cdn.models.Profile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -342,7 +340,7 @@ class ProfilesOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Profile
-         <cdnmanagementclient.models.Profile>`
+         <azure.mgmt.cdn.models.Profile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -514,7 +512,7 @@ class ProfilesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SsoUri <cdnmanagementclient.models.SsoUri>`
+        :rtype: :class:`SsoUri <azure.mgmt.cdn.models.SsoUri>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

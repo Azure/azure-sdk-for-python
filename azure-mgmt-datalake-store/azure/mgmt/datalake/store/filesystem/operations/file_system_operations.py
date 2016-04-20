@@ -211,7 +211,7 @@ class FileSystemOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FileOperationResult
-         <datalakestorefilesystemmanagementclient.models.FileOperationResult>`
+         <azure.mgmt.datalake.store.filesystem.models.FileOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -444,7 +444,7 @@ class FileSystemOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FileStatusesResult
-         <datalakestorefilesystemmanagementclient.models.FileStatusesResult>`
+         <azure.mgmt.datalake.store.filesystem.models.FileStatusesResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -517,7 +517,7 @@ class FileSystemOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ContentSummaryResult
-         <datalakestorefilesystemmanagementclient.models.ContentSummaryResult>`
+         <azure.mgmt.datalake.store.filesystem.models.ContentSummaryResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -584,7 +584,7 @@ class FileSystemOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FileStatusResult
-         <datalakestorefilesystemmanagementclient.models.FileStatusResult>`
+         <azure.mgmt.datalake.store.filesystem.models.FileStatusResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1151,7 +1151,7 @@ class FileSystemOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AclStatusResult
-         <datalakestorefilesystemmanagementclient.models.AclStatusResult>`
+         <azure.mgmt.datalake.store.filesystem.models.AclStatusResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1221,7 +1221,7 @@ class FileSystemOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FileOperationResult
-         <datalakestorefilesystemmanagementclient.models.FileOperationResult>`
+         <azure.mgmt.datalake.store.filesystem.models.FileOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -1292,7 +1292,7 @@ class FileSystemOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FileOperationResult
-         <datalakestorefilesystemmanagementclient.models.FileOperationResult>`
+         <azure.mgmt.datalake.store.filesystem.models.FileOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

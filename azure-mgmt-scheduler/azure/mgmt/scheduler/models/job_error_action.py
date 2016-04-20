@@ -31,21 +31,21 @@ class JobErrorAction(Model):
     :type type: str
     :param request: Gets or sets the http requests.
     :type request: :class:`HttpRequest
-     <schedulermanagementclient.models.HttpRequest>`
+     <azure.mgmt.scheduler.models.HttpRequest>`
     :param queue_message: Gets or sets the storage queue message.
     :type queue_message: :class:`StorageQueueMessage
-     <schedulermanagementclient.models.StorageQueueMessage>`
+     <azure.mgmt.scheduler.models.StorageQueueMessage>`
     :param service_bus_queue_message: Gets or sets the service bus queue
      message.
     :type service_bus_queue_message: :class:`ServiceBusQueueMessage
-     <schedulermanagementclient.models.ServiceBusQueueMessage>`
+     <azure.mgmt.scheduler.models.ServiceBusQueueMessage>`
     :param service_bus_topic_message: Gets or sets the service bus topic
      message.
     :type service_bus_topic_message: :class:`ServiceBusTopicMessage
-     <schedulermanagementclient.models.ServiceBusTopicMessage>`
+     <azure.mgmt.scheduler.models.ServiceBusTopicMessage>`
     :param retry_policy: Gets or sets the retry policy.
     :type retry_policy: :class:`RetryPolicy
-     <schedulermanagementclient.models.RetryPolicy>`
+     <azure.mgmt.scheduler.models.RetryPolicy>`
     """ 
 
     _attribute_map = {

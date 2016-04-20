@@ -50,7 +50,7 @@ class JobPreparationTaskExecutionInformation(Model):
     :param scheduling_error: Gets or sets any error starting the Job
      Preparation task.
     :type scheduling_error: :class:`TaskSchedulingError
-     <batchserviceclient.models.TaskSchedulingError>`
+     <azure.batch.models.TaskSchedulingError>`
     :param retry_count: Gets or sets the number of times the Job Preparation
      task has been retried by the Batch service.
     :type retry_count: int

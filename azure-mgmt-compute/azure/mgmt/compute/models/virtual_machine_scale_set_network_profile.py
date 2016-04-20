@@ -30,7 +30,7 @@ class VirtualMachineScaleSetNetworkProfile(Model):
      configurations.
     :type network_interface_configurations: list of
      :class:`VirtualMachineScaleSetNetworkConfiguration
-     <computemanagementclient.models.VirtualMachineScaleSetNetworkConfiguration>`
+     <azure.mgmt.compute.models.VirtualMachineScaleSetNetworkConfiguration>`
     """ 
 
     _attribute_map = {

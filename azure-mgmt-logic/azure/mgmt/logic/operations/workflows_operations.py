@@ -58,8 +58,7 @@ class WorkflowsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkflowPaged
-         <logicmanagementclient.models.WorkflowPaged>`
+        :rtype: :class:`WorkflowPaged <azure.mgmt.logic.models.WorkflowPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -131,8 +130,7 @@ class WorkflowsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkflowPaged
-         <logicmanagementclient.models.WorkflowPaged>`
+        :rtype: :class:`WorkflowPaged <azure.mgmt.logic.models.WorkflowPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -203,7 +201,7 @@ class WorkflowsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Workflow <logicmanagementclient.models.Workflow>`
+        :rtype: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -260,14 +258,13 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param workflow: The workflow.
-        :type workflow: :class:`Workflow
-         <logicmanagementclient.models.Workflow>`
+        :type workflow: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Workflow <logicmanagementclient.models.Workflow>`
+        :rtype: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -330,14 +327,13 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param workflow: The workflow.
-        :type workflow: :class:`Workflow
-         <logicmanagementclient.models.Workflow>`
+        :type workflow: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Workflow <logicmanagementclient.models.Workflow>`
+        :rtype: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -461,7 +457,7 @@ class WorkflowsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`WorkflowRun
-         <logicmanagementclient.models.WorkflowRun>`
+         <azure.mgmt.logic.models.WorkflowRun>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -654,8 +650,7 @@ class WorkflowsOperations(object):
         :param workflow_name: The workflow name.
         :type workflow_name: str
         :param workflow: The workflow.
-        :type workflow: :class:`Workflow
-         <logicmanagementclient.models.Workflow>`
+        :type workflow: :class:`Workflow <azure.mgmt.logic.models.Workflow>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

@@ -143,8 +143,7 @@ class SecurityRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecurityRule
-         <networkmanagementclient.models.SecurityRule>`
+        :rtype: :class:`SecurityRule <azure.mgmt.network.models.SecurityRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -208,14 +207,14 @@ class SecurityRulesOperations(object):
         :param security_rule_parameters: Parameters supplied to the
          create/update network security rule operation
         :type security_rule_parameters: :class:`SecurityRule
-         <networkmanagementclient.models.SecurityRule>`
+         <azure.mgmt.network.models.SecurityRule>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`SecurityRule
-         <networkmanagementclient.models.SecurityRule>`
+         <azure.mgmt.network.models.SecurityRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -308,7 +307,7 @@ class SecurityRulesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SecurityRulePaged
-         <networkmanagementclient.models.SecurityRulePaged>`
+         <azure.mgmt.network.models.SecurityRulePaged>`
         """
         def internal_paging(next_link=None, raw=False):
 

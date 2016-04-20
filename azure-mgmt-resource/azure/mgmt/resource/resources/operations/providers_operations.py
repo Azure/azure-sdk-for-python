@@ -56,7 +56,8 @@ class ProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Provider <resourcemanagementclient.models.Provider>`
+        :rtype: :class:`Provider
+         <azure.mgmt.resource.resources.models.Provider>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -115,7 +116,8 @@ class ProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Provider <resourcemanagementclient.models.Provider>`
+        :rtype: :class:`Provider
+         <azure.mgmt.resource.resources.models.Provider>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -175,7 +177,7 @@ class ProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProviderPaged
-         <resourcemanagementclient.models.ProviderPaged>`
+         <azure.mgmt.resource.resources.models.ProviderPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -242,7 +244,8 @@ class ProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Provider <resourcemanagementclient.models.Provider>`
+        :rtype: :class:`Provider
+         <azure.mgmt.resource.resources.models.Provider>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

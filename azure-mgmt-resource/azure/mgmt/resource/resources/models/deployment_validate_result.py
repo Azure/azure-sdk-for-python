@@ -28,10 +28,10 @@ class DeploymentValidateResult(Model):
 
     :param error: Gets or sets validation error.
     :type error: :class:`ResourceManagementErrorWithDetails
-     <resourcemanagementclient.models.ResourceManagementErrorWithDetails>`
+     <azure.mgmt.resource.resources.models.ResourceManagementErrorWithDetails>`
     :param properties: Gets or sets the template deployment properties.
     :type properties: :class:`DeploymentPropertiesExtended
-     <resourcemanagementclient.models.DeploymentPropertiesExtended>`
+     <azure.mgmt.resource.resources.models.DeploymentPropertiesExtended>`
     """ 
 
     _attribute_map = {

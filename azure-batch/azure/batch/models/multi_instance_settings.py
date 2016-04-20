@@ -35,7 +35,7 @@ class MultiInstanceSettings(Model):
     :param common_resource_files: Gets or sets a list of files that Batch
      will download on all subtasks.
     :type common_resource_files: list of :class:`ResourceFile
-     <batchserviceclient.models.ResourceFile>`
+     <azure.batch.models.ResourceFile>`
     """ 
 
     _validation = {
