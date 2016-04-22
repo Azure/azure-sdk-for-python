@@ -19,30 +19,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class SkuName(Enum):
+class RedisRebootParameters(Model):
+    """
+    Specifies which redis node(s) to reboot.
 
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
+    :param reboot_type: Which redis node(s) to reboot. Depending on this
+     value data loss is possible. Possible values include: 'PrimaryNode',
+     'SecondaryNode', 'AllNodes'
+    :type reboot_type: str
+    :param shard_id: In case of cluster cache, this specifies shard id which
+     should be rebooted.
+    :type shard_id: int
+    """ 
 
+    _validation = {
+        'reboot_type': {'required': True},
+    }
 
-class SkuFamily(Enum):
+    _attribute_map = {
+        'reboot_type': {'key': 'rebootType', 'type': 'RebootType'},
+        'shard_id': {'key': 'shardId', 'type': 'int'},
+    }
 
-    c = "C"
-    p = "P"
-
-
-class RedisKeyType(Enum):
-
-    primary = "Primary"
-    secondary = "Secondary"
-
-
-class RebootType(Enum):
-
-    primary_node = "PrimaryNode"
-    secondary_node = "SecondaryNode"
-    all_nodes = "AllNodes"
+    def __init__(self, reboot_type, shard_id=None):
+        self.reboot_type = reboot_type
+        self.shard_id = shard_id
