@@ -28,7 +28,6 @@ from .deployment_properties import DeploymentProperties
 from .debug_setting import DebugSetting
 from .deployment import Deployment
 from .deployment_export_result import DeploymentExportResult
-from .resource_management_error import ResourceManagementError
 from .resource_management_error_with_details import ResourceManagementErrorWithDetails
 from .provider_resource_type import ProviderResourceType
 from .provider import Provider
@@ -77,7 +76,6 @@ __all__ = [
     'DebugSetting',
     'Deployment',
     'DeploymentExportResult',
-    'ResourceManagementError',
     'ResourceManagementErrorWithDetails',
     'ProviderResourceType',
     'Provider',
