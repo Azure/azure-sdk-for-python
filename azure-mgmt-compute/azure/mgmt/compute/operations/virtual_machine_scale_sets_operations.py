@@ -47,7 +47,8 @@ class VirtualMachineScaleSetsOperations(object):
     def create_or_update(
             self, resource_group_name, name, parameters, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to create or update a virtual machine scale set.
+        Allows you to create or update a virtual machine scale set by
+        providing parameters or a path to pre-configured parameter file.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -142,8 +143,10 @@ class VirtualMachineScaleSetsOperations(object):
     def deallocate(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to deallocate virtual machines in a virtual machine
-        scale set.
+        Allows you to deallocate virtual machines in a virtual machine scale
+        set. Shuts down the virtual machines and releases the compute
+        resources. You are not billed for the compute resources that this
+        virtual machine scale set uses.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -233,7 +236,7 @@ class VirtualMachineScaleSetsOperations(object):
     def delete(
             self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to delete a virtual machine scale set.
+        Allows you to delete a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -309,7 +312,7 @@ class VirtualMachineScaleSetsOperations(object):
     def get(
             self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to get a virtual machine scale set.
+        Display information about a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -371,8 +374,7 @@ class VirtualMachineScaleSetsOperations(object):
     def delete_instances(
             self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to delete virtual machines in a virtual machine scale
-        set.
+        Allows you to delete virtual machines in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -457,7 +459,7 @@ class VirtualMachineScaleSetsOperations(object):
     def get_instance_view(
             self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to get a virtual machine scale set instance view.
+        Displays status of a virtual machine scale set instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -519,8 +521,7 @@ class VirtualMachineScaleSetsOperations(object):
     def list(
             self, resource_group_name, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to list virtual machine scale sets under a resource
-        group.
+        Lists all virtual machine scale sets under a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -586,10 +587,10 @@ class VirtualMachineScaleSetsOperations(object):
     def list_all(
             self, custom_headers={}, raw=False, **operation_config):
         """
-        Gets the list of Virtual Machine Scale Sets in the subscription. Use
-        nextLink property in the response to get the next page of Virtual
-        Machine Scale Sets. Do this till nextLink is not null to fetch all
-        the Virtual Machine Scale Sets.
+        Lists all Virtual Machine Scale Sets in the subscription. Use nextLink
+        property in the response to get the next page of Virtual Machine
+        Scale Sets. Do this till nextLink is not null to fetch all the
+        Virtual Machine Scale Sets.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -652,7 +653,8 @@ class VirtualMachineScaleSetsOperations(object):
     def list_skus(
             self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to list available skus for a virtual machine scale set.
+        Displays available skus for your virtual machine scale set including
+        the minimum and maximum vm instances allowed for a particular sku.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -721,8 +723,9 @@ class VirtualMachineScaleSetsOperations(object):
     def power_off(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to power off (stop) virtual machines in a virtual
-        machine scale set.
+        Allows you to power off (stop) virtual machines in a virtual machine
+        scale set. Note that resources are still attached and you are getting
+        charged for the resources. Use deallocate to release resources.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -812,8 +815,7 @@ class VirtualMachineScaleSetsOperations(object):
     def restart(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to restart virtual machines in a virtual machine scale
-        set.
+        Allows you to restart virtual machines in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -903,7 +905,7 @@ class VirtualMachineScaleSetsOperations(object):
     def start(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to start virtual machines in a virtual machine scale set.
+        Allows you to start virtual machines in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -993,8 +995,8 @@ class VirtualMachineScaleSetsOperations(object):
     def update_instances(
             self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to manually upgrade virtual machines in a virtual
-        machine scale set.
+        Allows you to manually upgrade virtual machines in a virtual machine
+        scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1079,8 +1081,8 @@ class VirtualMachineScaleSetsOperations(object):
     def reimage(
             self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
         """
-        The operation to re-image virtual machines in a virtual machine scale
-        set.
+        Allows you to re-image(update the version of the installed operating
+        system) virtual machines in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

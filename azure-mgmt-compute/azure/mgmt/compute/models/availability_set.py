@@ -41,7 +41,7 @@ class AvailabilitySet(Resource):
     :param platform_fault_domain_count: Gets or sets Fault Domain count.
     :type platform_fault_domain_count: int
     :param virtual_machines: Gets or sets a list containing reference to all
-     Virtual Machines  created under this Availability Set.
+     Virtual Machines created under this Availability Set.
     :type virtual_machines: list of :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
     :param statuses: Gets or sets the resource status information.
