@@ -8,7 +8,7 @@ Installation:
 
 - Use the ``--pre`` flag: ``pip install --pre azure``
 
-- Specify the version:  ``pip install azure==2.0.0rc2``
+- Specify the version:  ``pip install azure==2.0.0rc3``
 
 If you want to install ``azure`` from source::
 
@@ -68,7 +68,7 @@ Features:
 - Batch Runtime
 
    - Manage Batch pools, jobs, task and job schedules
-	  
+
 - Azure Active Directory Graph RBAC API
   
    - Users
