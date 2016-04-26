@@ -26,20 +26,28 @@ class DataLakeStoreAccount(Model):
     """
     Data Lake Store account information
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param location: Gets or sets the account regional location.
     :type location: str
     :param name: Gets or sets the account name.
     :type name: str
-    :param type: Gets the namespace and type of the account.
-    :type type: str
-    :param id: Gets the account subscription ID.
-    :type id: str
+    :ivar type: Gets the namespace and type of the account.
+    :vartype type: str
+    :ivar id: Gets the account subscription ID.
+    :vartype id: str
     :param tags: Gets or sets the value of custom properties.
     :type tags: dict
     :param properties: Gets or sets the Data Lake Store account properties.
     :type properties: :class:`DataLakeStoreAccountProperties
      <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountProperties>`
     """ 
+
+    _validation = {
+        'type': {'readonly': True},
+        'id': {'readonly': True},
+    }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
@@ -50,10 +58,10 @@ class DataLakeStoreAccount(Model):
         'properties': {'key': 'properties', 'type': 'DataLakeStoreAccountProperties'},
     }
 
-    def __init__(self, location=None, name=None, type=None, id=None, tags=None, properties=None):
+    def __init__(self, location=None, name=None, tags=None, properties=None):
         self.location = location
         self.name = name
-        self.type = type
-        self.id = id
+        self.type = None
+        self.id = None
         self.tags = tags
         self.properties = properties

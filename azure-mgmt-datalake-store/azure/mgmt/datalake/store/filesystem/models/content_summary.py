@@ -26,15 +26,25 @@ class ContentSummary(Model):
     """
     Data Lake Store content summary information
 
-    :param directory_count: Gets the number of directories.
-    :type directory_count: long
-    :param file_count: Gets the number of files.
-    :type file_count: long
-    :param length: Gets the number of bytes used by the contet.
-    :type length: long
-    :param space_consumed: Gets the disk space consumed by the content.
-    :type space_consumed: long
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar directory_count: Gets the number of directories.
+    :vartype directory_count: long
+    :ivar file_count: Gets the number of files.
+    :vartype file_count: long
+    :ivar length: Gets the number of bytes used by the contet.
+    :vartype length: long
+    :ivar space_consumed: Gets the disk space consumed by the content.
+    :vartype space_consumed: long
     """ 
+
+    _validation = {
+        'directory_count': {'readonly': True},
+        'file_count': {'readonly': True},
+        'length': {'readonly': True},
+        'space_consumed': {'readonly': True},
+    }
 
     _attribute_map = {
         'directory_count': {'key': 'directoryCount', 'type': 'long'},
@@ -43,8 +53,8 @@ class ContentSummary(Model):
         'space_consumed': {'key': 'spaceConsumed', 'type': 'long'},
     }
 
-    def __init__(self, directory_count=None, file_count=None, length=None, space_consumed=None):
-        self.directory_count = directory_count
-        self.file_count = file_count
-        self.length = length
-        self.space_consumed = space_consumed
+    def __init__(self):
+        self.directory_count = None
+        self.file_count = None
+        self.length = None
+        self.space_consumed = None

@@ -27,15 +27,25 @@ class JobStateAuditRecord(Model):
     The Data Lake Analytics U-SQL job state audit records for tracking the
     lifecycle of a job.
 
-    :param new_state: Gets the new state the job is in.
-    :type new_state: str
-    :param time_stamp: Gets the time stamp that the state change took place.
-    :type time_stamp: datetime
-    :param requested_by_user: Gets the user who requests the change.
-    :type requested_by_user: str
-    :param details: Gets  the details of the audit log.
-    :type details: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar new_state: Gets the new state the job is in.
+    :vartype new_state: str
+    :ivar time_stamp: Gets the time stamp that the state change took place.
+    :vartype time_stamp: datetime
+    :ivar requested_by_user: Gets the user who requests the change.
+    :vartype requested_by_user: str
+    :ivar details: Gets  the details of the audit log.
+    :vartype details: str
     """ 
+
+    _validation = {
+        'new_state': {'readonly': True},
+        'time_stamp': {'readonly': True},
+        'requested_by_user': {'readonly': True},
+        'details': {'readonly': True},
+    }
 
     _attribute_map = {
         'new_state': {'key': 'newState', 'type': 'str'},
@@ -44,8 +54,8 @@ class JobStateAuditRecord(Model):
         'details': {'key': 'details', 'type': 'str'},
     }
 
-    def __init__(self, new_state=None, time_stamp=None, requested_by_user=None, details=None):
-        self.new_state = new_state
-        self.time_stamp = time_stamp
-        self.requested_by_user = requested_by_user
-        self.details = details
+    def __init__(self):
+        self.new_state = None
+        self.time_stamp = None
+        self.requested_by_user = None
+        self.details = None

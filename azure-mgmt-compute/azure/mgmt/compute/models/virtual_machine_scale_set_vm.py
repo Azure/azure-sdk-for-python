@@ -26,25 +26,28 @@ class VirtualMachineScaleSetVM(Resource):
     """
     Describes a virtual machine scale set virtual machine.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param instance_id: Gets the virtual machine instance id.
-    :type instance_id: str
-    :param sku: Gets the virtual machine sku.
-    :type sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
-    :param latest_model_applied: Specifies whether the latest model has been
+    :ivar instance_id: Gets the virtual machine instance id.
+    :vartype instance_id: str
+    :ivar sku: Gets the virtual machine sku.
+    :vartype sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
+    :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
-    :type latest_model_applied: bool
-    :param instance_view: Gets the virtual machine instance view.
-    :type instance_view: :class:`VirtualMachineInstanceView
+    :vartype latest_model_applied: bool
+    :ivar instance_view: Gets the virtual machine instance view.
+    :vartype instance_view: :class:`VirtualMachineInstanceView
      <azure.mgmt.compute.models.VirtualMachineInstanceView>`
     :param hardware_profile: Gets or sets the hardware profile.
     :type hardware_profile: :class:`HardwareProfile
@@ -73,13 +76,21 @@ class VirtualMachineScaleSetVM(Resource):
     :param plan: Gets or sets the purchase plan when deploying virtual
      machine from VM Marketplace images.
     :type plan: :class:`Plan <azure.mgmt.compute.models.Plan>`
-    :param resources: Gets the virtual machine child extension resources.
-    :type resources: list of :class:`VirtualMachineExtension
+    :ivar resources: Gets the virtual machine child extension resources.
+    :vartype resources: list of :class:`VirtualMachineExtension
      <azure.mgmt.compute.models.VirtualMachineExtension>`
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
+        'instance_id': {'readonly': True},
+        'sku': {'readonly': True},
+        'latest_model_applied': {'readonly': True},
+        'instance_view': {'readonly': True},
+        'resources': {'readonly': True},
     }
 
     _attribute_map = {
@@ -104,12 +115,12 @@ class VirtualMachineScaleSetVM(Resource):
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, instance_id=None, sku=None, latest_model_applied=None, instance_view=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, license_type=None, plan=None, resources=None):
-        super(VirtualMachineScaleSetVM, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
-        self.instance_id = instance_id
-        self.sku = sku
-        self.latest_model_applied = latest_model_applied
-        self.instance_view = instance_view
+    def __init__(self, location, tags=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, license_type=None, plan=None):
+        super(VirtualMachineScaleSetVM, self).__init__(location=location, tags=tags)
+        self.instance_id = None
+        self.sku = None
+        self.latest_model_applied = None
+        self.instance_view = None
         self.hardware_profile = hardware_profile
         self.storage_profile = storage_profile
         self.os_profile = os_profile
@@ -119,4 +130,4 @@ class VirtualMachineScaleSetVM(Resource):
         self.provisioning_state = provisioning_state
         self.license_type = license_type
         self.plan = plan
-        self.resources = resources
+        self.resources = None

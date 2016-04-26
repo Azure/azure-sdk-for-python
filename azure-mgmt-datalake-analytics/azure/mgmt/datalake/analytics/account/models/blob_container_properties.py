@@ -26,14 +26,21 @@ class BlobContainerProperties(Model):
     """
     Azure Storage blob container properties information.
 
-    :param last_modified_time: Gets or sets the last modified time of the
-     blob container.
-    :type last_modified_time: datetime
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar last_modified_time: Gets or sets the last modified time of the blob
+     container.
+    :vartype last_modified_time: datetime
     """ 
+
+    _validation = {
+        'last_modified_time': {'readonly': True},
+    }
 
     _attribute_map = {
         'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, last_modified_time=None):
-        self.last_modified_time = last_modified_time
+    def __init__(self):
+        self.last_modified_time = None

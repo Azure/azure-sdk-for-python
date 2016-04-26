@@ -25,17 +25,25 @@ from msrest.serialization import Model
 class Resource(Model):
     """Resource
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource Id
     :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict
     """ 
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -45,9 +53,9 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None):
+    def __init__(self, id=None, location=None, tags=None):
         self.id = id
-        self.name = name
-        self.type = type
+        self.name = None
+        self.type = None
         self.location = location
         self.tags = tags

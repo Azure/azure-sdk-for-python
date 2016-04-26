@@ -25,6 +25,9 @@ from .job_properties import JobProperties
 class USqlJobProperties(JobProperties):
     """USqlJobProperties
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param runtime_version: Gets or sets the runtime version of the U-SQL
      engine to use
     :type runtime_version: str
@@ -42,34 +45,34 @@ class USqlJobProperties(JobProperties):
     :param debug_data: Gets or sets the job specific debug data locations.
     :type debug_data: :class:`JobDataPath
      <azure.mgmt.datalake.analytics.job.models.JobDataPath>`
-    :param algebra_file_path: Gets the U-SQL algebra file path after the job
+    :ivar algebra_file_path: Gets the U-SQL algebra file path after the job
      has completed
-    :type algebra_file_path: str
-    :param total_compilation_time: Gets the total time this job spent
+    :vartype algebra_file_path: str
+    :ivar total_compilation_time: Gets the total time this job spent
      compiling. This value should not be set by the user and will be ignored
      if it is.
-    :type total_compilation_time: str
-    :param total_pause_time: Gets the total time this job spent paused. This
+    :vartype total_compilation_time: str
+    :ivar total_pause_time: Gets the total time this job spent paused. This
      value should not be set by the user and will be ignored if it is.
-    :type total_pause_time: str
-    :param total_queued_time: Gets the total time this job spent queued. This
+    :vartype total_pause_time: str
+    :ivar total_queued_time: Gets the total time this job spent queued. This
      value should not be set by the user and will be ignored if it is.
-    :type total_queued_time: str
-    :param total_running_time: Gets the total time this job spent executing.
+    :vartype total_queued_time: str
+    :ivar total_running_time: Gets the total time this job spent executing.
      This value should not be set by the user and will be ignored if it is.
-    :type total_running_time: str
-    :param root_process_node_id: Gets the ID used to identify the job manager
+    :vartype total_running_time: str
+    :ivar root_process_node_id: Gets the ID used to identify the job manager
      coordinating job execution. This value should not be set by the user and
      will be ignored if it is.
-    :type root_process_node_id: str
-    :param yarn_application_id: Gets the ID used to identify the yarn
+    :vartype root_process_node_id: str
+    :ivar yarn_application_id: Gets the ID used to identify the yarn
      application executing the job. This value should not be set by the user
      and will be ignored if it is.
-    :type yarn_application_id: str
-    :param yarn_application_time_stamp: Gets the timestamp (in ticks) for the
+    :vartype yarn_application_id: str
+    :ivar yarn_application_time_stamp: Gets the timestamp (in ticks) for the
      yarn application executing the job. This value should not be set by the
      user and will be ignored if it is.
-    :type yarn_application_time_stamp: long
+    :vartype yarn_application_time_stamp: long
     :param compile_mode: Gets or sets the compile mode for the job. Possible
      values include: 'Semantic', 'Full', 'SingleBox'
     :type compile_mode: str
@@ -78,6 +81,14 @@ class USqlJobProperties(JobProperties):
     _validation = {
         'script': {'required': True},
         'type': {'required': True},
+        'algebra_file_path': {'readonly': True},
+        'total_compilation_time': {'readonly': True},
+        'total_pause_time': {'readonly': True},
+        'total_queued_time': {'readonly': True},
+        'total_running_time': {'readonly': True},
+        'root_process_node_id': {'readonly': True},
+        'yarn_application_id': {'readonly': True},
+        'yarn_application_time_stamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -98,18 +109,18 @@ class USqlJobProperties(JobProperties):
         'compile_mode': {'key': 'compileMode', 'type': 'CompileMode'},
     }
 
-    def __init__(self, script, runtime_version=None, resources=None, statistics=None, debug_data=None, algebra_file_path=None, total_compilation_time=None, total_pause_time=None, total_queued_time=None, total_running_time=None, root_process_node_id=None, yarn_application_id=None, yarn_application_time_stamp=None, compile_mode=None):
+    def __init__(self, script, runtime_version=None, resources=None, statistics=None, debug_data=None, compile_mode=None):
         super(USqlJobProperties, self).__init__(runtime_version=runtime_version, script=script)
         self.resources = resources
         self.statistics = statistics
         self.debug_data = debug_data
-        self.algebra_file_path = algebra_file_path
-        self.total_compilation_time = total_compilation_time
-        self.total_pause_time = total_pause_time
-        self.total_queued_time = total_queued_time
-        self.total_running_time = total_running_time
-        self.root_process_node_id = root_process_node_id
-        self.yarn_application_id = yarn_application_id
-        self.yarn_application_time_stamp = yarn_application_time_stamp
+        self.algebra_file_path = None
+        self.total_compilation_time = None
+        self.total_pause_time = None
+        self.total_queued_time = None
+        self.total_running_time = None
+        self.root_process_node_id = None
+        self.yarn_application_id = None
+        self.yarn_application_time_stamp = None
         self.compile_mode = compile_mode
         self.type = 'USql'

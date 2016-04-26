@@ -26,12 +26,15 @@ class VirtualMachineScaleSet(Resource):
     """
     Describes a Virtual Machine Scale Set.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -53,6 +56,9 @@ class VirtualMachineScaleSet(Resource):
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -69,8 +75,8 @@ class VirtualMachineScaleSet(Resource):
         'over_provision': {'key': 'properties.overProvision', 'type': 'bool'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, provisioning_state=None, over_provision=None):
-        super(VirtualMachineScaleSet, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, location, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, provisioning_state=None, over_provision=None):
+        super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.upgrade_policy = upgrade_policy
         self.virtual_machine_profile = virtual_machine_profile
