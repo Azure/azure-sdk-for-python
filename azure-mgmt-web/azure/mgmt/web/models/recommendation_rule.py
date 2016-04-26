@@ -51,15 +51,13 @@ class RecommendationRule(Model):
     :param channels: List of available channels that this rule applies.
      Possible values include: 'Notification', 'Api', 'Email', 'All'
     :type channels: str
-    :param category: The category that the rule belongs to. Possible values
-     include: 'Uncategorized', 'Test', 'UpSell', 'CrossSell', 'LiveSite'
-    :type category: str
+    :param tags: An array of category tags that the rule contains.
+    :type tags: list of str
     """ 
 
     _validation = {
         'level': {'required': True},
         'channels': {'required': True},
-        'category': {'required': True},
     }
 
     _attribute_map = {
@@ -72,10 +70,10 @@ class RecommendationRule(Model):
         'enabled': {'key': 'enabled', 'type': 'int'},
         'level': {'key': 'level', 'type': 'NotificationLevel'},
         'channels': {'key': 'channels', 'type': 'Channels'},
-        'category': {'key': 'category', 'type': 'Category'},
+        'tags': {'key': 'tags', 'type': '[str]'},
     }
 
-    def __init__(self, level, channels, category, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None, **kwargs):
+    def __init__(self, level, channels, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None, tags=None):
         self.name = name
         self.display_name = display_name
         self.message = message
@@ -85,4 +83,4 @@ class RecommendationRule(Model):
         self.enabled = enabled
         self.level = level
         self.channels = channels
-        self.category = category
+        self.tags = tags

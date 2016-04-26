@@ -24,19 +24,19 @@ from msrest.serialization import Model
 
 class NotificationHubResource(Model):
     """
-    Description of a NotificatioHub Resource.
+    Description of a NotificationHub Resource.
 
-    :param id: Gets or sets the id of the created NotificatioHub.
+    :param id: Gets or sets the id of the created NotificationHub.
     :type id: str
-    :param location: Gets or sets datacenter location of the NotificatioHub.
+    :param location: Gets or sets datacenter location of the NotificationHub.
     :type location: str
-    :param name: Gets or sets name of the NotificatioHub.
+    :param name: Gets or sets name of the NotificationHub.
     :type name: str
-    :param type: Gets or sets resource type of the NotificatioHub.
+    :param type: Gets or sets resource type of the NotificationHub.
     :type type: str
-    :param tags: Gets or sets tags of the NotificatioHub.
+    :param tags: Gets or sets tags of the NotificationHub.
     :type tags: dict
-    :param properties: Gets or sets properties of the NotificatioHub.
+    :param properties: Gets or sets properties of the NotificationHub.
     :type properties: :class:`NotificationHubProperties
      <azure.mgmt.notificationhubs.models.NotificationHubProperties>`
     """ 
@@ -50,7 +50,7 @@ class NotificationHubResource(Model):
         'properties': {'key': 'properties', 'type': 'NotificationHubProperties'},
     }
 
-    def __init__(self, id=None, location=None, name=None, type=None, tags=None, properties=None, **kwargs):
+    def __init__(self, id=None, location=None, name=None, type=None, tags=None, properties=None):
         self.id = id
         self.location = location
         self.name = name

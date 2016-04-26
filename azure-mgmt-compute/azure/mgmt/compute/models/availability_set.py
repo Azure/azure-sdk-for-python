@@ -26,12 +26,15 @@ class AvailabilitySet(Resource):
     """
     Create or update Availability Set parameters.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -41,7 +44,7 @@ class AvailabilitySet(Resource):
     :param platform_fault_domain_count: Gets or sets Fault Domain count.
     :type platform_fault_domain_count: int
     :param virtual_machines: Gets or sets a list containing reference to all
-     Virtual Machines  created under this Availability Set.
+     Virtual Machines created under this Availability Set.
     :type virtual_machines: list of :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
     :param statuses: Gets or sets the resource status information.
@@ -50,6 +53,9 @@ class AvailabilitySet(Resource):
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -65,8 +71,8 @@ class AvailabilitySet(Resource):
         'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None, statuses=None, **kwargs):
-        super(AvailabilitySet, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None, statuses=None):
+        super(AvailabilitySet, self).__init__(location=location, tags=tags)
         self.platform_update_domain_count = platform_update_domain_count
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines

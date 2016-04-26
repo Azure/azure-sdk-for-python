@@ -26,13 +26,16 @@ class VirtualMachineScaleSetInstanceView(Model):
     """
     The instance view of a virtual machine scale set.
 
-    :param virtual_machine: Gets the instance view status summary for the
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar virtual_machine: Gets the instance view status summary for the
      virtual machine scale set.
-    :type virtual_machine:
+    :vartype virtual_machine:
      :class:`VirtualMachineScaleSetInstanceViewStatusesSummary
      <azure.mgmt.compute.models.VirtualMachineScaleSetInstanceViewStatusesSummary>`
-    :param extensions: Gets the extensions information.
-    :type extensions: list of
+    :ivar extensions: Gets the extensions information.
+    :vartype extensions: list of
      :class:`VirtualMachineScaleSetVMExtensionsSummary
      <azure.mgmt.compute.models.VirtualMachineScaleSetVMExtensionsSummary>`
     :param statuses: Gets or sets the resource status information.
@@ -40,13 +43,18 @@ class VirtualMachineScaleSetInstanceView(Model):
      <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 
 
+    _validation = {
+        'virtual_machine': {'readonly': True},
+        'extensions': {'readonly': True},
+    }
+
     _attribute_map = {
         'virtual_machine': {'key': 'virtualMachine', 'type': 'VirtualMachineScaleSetInstanceViewStatusesSummary'},
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetVMExtensionsSummary]'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, virtual_machine=None, extensions=None, statuses=None, **kwargs):
-        self.virtual_machine = virtual_machine
-        self.extensions = extensions
+    def __init__(self, statuses=None):
+        self.virtual_machine = None
+        self.extensions = None
         self.statuses = statuses

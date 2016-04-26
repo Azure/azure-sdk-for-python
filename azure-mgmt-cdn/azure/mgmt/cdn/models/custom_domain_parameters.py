@@ -39,5 +39,5 @@ class CustomDomainParameters(Model):
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
     }
 
-    def __init__(self, host_name, **kwargs):
+    def __init__(self, host_name):
         self.host_name = host_name

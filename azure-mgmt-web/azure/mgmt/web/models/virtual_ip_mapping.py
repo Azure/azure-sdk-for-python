@@ -43,7 +43,7 @@ class VirtualIPMapping(Model):
         'in_use': {'key': 'inUse', 'type': 'bool'},
     }
 
-    def __init__(self, virtual_ip=None, internal_http_port=None, internal_https_port=None, in_use=None, **kwargs):
+    def __init__(self, virtual_ip=None, internal_http_port=None, internal_https_port=None, in_use=None):
         self.virtual_ip = virtual_ip
         self.internal_http_port = internal_http_port
         self.internal_https_port = internal_https_port

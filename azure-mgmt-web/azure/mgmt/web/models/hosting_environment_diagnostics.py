@@ -37,6 +37,6 @@ class HostingEnvironmentDiagnostics(Model):
         'diagnosics_output': {'key': 'diagnosicsOutput', 'type': 'str'},
     }
 
-    def __init__(self, name=None, diagnosics_output=None, **kwargs):
+    def __init__(self, name=None, diagnosics_output=None):
         self.name = name
         self.diagnosics_output = diagnosics_output

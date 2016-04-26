@@ -44,7 +44,7 @@ class ClassicAdministrator(Model):
         'properties': {'key': 'properties', 'type': 'ClassicAdministratorProperties'},
     }
 
-    def __init__(self, id=None, name=None, type=None, properties=None, **kwargs):
+    def __init__(self, id=None, name=None, type=None, properties=None):
         self.id = id
         self.name = name
         self.type = type

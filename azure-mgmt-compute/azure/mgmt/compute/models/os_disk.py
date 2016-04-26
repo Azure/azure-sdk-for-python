@@ -71,7 +71,7 @@ class OSDisk(Model):
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
     }
 
-    def __init__(self, name, vhd, create_option, os_type=None, encryption_settings=None, image=None, caching=None, disk_size_gb=None, **kwargs):
+    def __init__(self, name, vhd, create_option, os_type=None, encryption_settings=None, image=None, caching=None, disk_size_gb=None):
         self.os_type = os_type
         self.encryption_settings = encryption_settings
         self.name = name

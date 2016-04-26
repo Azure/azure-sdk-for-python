@@ -25,16 +25,25 @@ from msrest.serialization import Model
 class JobDefinition(Model):
     """JobDefinition
 
-    :param id: Gets the job resource identifier.
-    :type id: str
-    :param type: Gets the job resource type.
-    :type type: str
-    :param name: Gets the job resource name.
-    :type name: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Gets the job resource identifier.
+    :vartype id: str
+    :ivar type: Gets the job resource type.
+    :vartype type: str
+    :ivar name: Gets the job resource name.
+    :vartype name: str
     :param properties: Gets or sets the job properties.
     :type properties: :class:`JobProperties
      <azure.mgmt.scheduler.models.JobProperties>`
     """ 
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -43,8 +52,8 @@ class JobDefinition(Model):
         'properties': {'key': 'properties', 'type': 'JobProperties'},
     }
 
-    def __init__(self, id=None, type=None, name=None, properties=None, **kwargs):
-        self.id = id
-        self.type = type
-        self.name = name
+    def __init__(self, properties=None):
+        self.id = None
+        self.type = None
+        self.name = None
         self.properties = properties

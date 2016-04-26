@@ -60,7 +60,7 @@ class Contact(Model):
         'phone': {'key': 'phone', 'type': 'str'},
     }
 
-    def __init__(self, address_mailing=None, email=None, fax=None, job_title=None, name_first=None, name_last=None, name_middle=None, organization=None, phone=None, **kwargs):
+    def __init__(self, address_mailing=None, email=None, fax=None, job_title=None, name_first=None, name_last=None, name_middle=None, organization=None, phone=None):
         self.address_mailing = address_mailing
         self.email = email
         self.fax = fax

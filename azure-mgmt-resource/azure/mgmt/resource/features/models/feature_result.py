@@ -44,7 +44,7 @@ class FeatureResult(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name=None, properties=None, id=None, type=None, **kwargs):
+    def __init__(self, name=None, properties=None, id=None, type=None):
         self.name = name
         self.properties = properties
         self.id = id

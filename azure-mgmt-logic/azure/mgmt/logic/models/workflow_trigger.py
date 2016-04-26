@@ -25,37 +25,54 @@ from .sub_resource import SubResource
 class WorkflowTrigger(SubResource):
     """WorkflowTrigger
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Gets or sets the resource id.
     :type id: str
-    :param provisioning_state: Gets the provisioning state. Possible values
+    :ivar provisioning_state: Gets the provisioning state. Possible values
      include: 'NotSpecified', 'Creating', 'Succeeded', 'Updating'
-    :type provisioning_state: str
-    :param created_time: Gets the created time.
-    :type created_time: datetime
-    :param changed_time: Gets the changed time.
-    :type changed_time: datetime
-    :param state: Gets the state. Possible values include: 'NotSpecified',
+    :vartype provisioning_state: str
+    :ivar created_time: Gets the created time.
+    :vartype created_time: datetime
+    :ivar changed_time: Gets the changed time.
+    :vartype changed_time: datetime
+    :ivar state: Gets the state. Possible values include: 'NotSpecified',
      'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :type state: str
-    :param status: Gets the status. Possible values include: 'NotSpecified',
+    :vartype state: str
+    :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
-    :type status: str
-    :param last_execution_time: Gets the last execution time.
-    :type last_execution_time: datetime
-    :param next_execution_time: Gets the next execution time.
-    :type next_execution_time: datetime
-    :param recurrence: Gets the workflow trigger recurrence.
-    :type recurrence: :class:`WorkflowTriggerRecurrence
+    :vartype status: str
+    :ivar last_execution_time: Gets the last execution time.
+    :vartype last_execution_time: datetime
+    :ivar next_execution_time: Gets the next execution time.
+    :vartype next_execution_time: datetime
+    :ivar recurrence: Gets the workflow trigger recurrence.
+    :vartype recurrence: :class:`WorkflowTriggerRecurrence
      <azure.mgmt.logic.models.WorkflowTriggerRecurrence>`
-    :param workflow: Gets the reference to workflow.
-    :type workflow: :class:`ResourceReference
+    :ivar workflow: Gets the reference to workflow.
+    :vartype workflow: :class:`ResourceReference
      <azure.mgmt.logic.models.ResourceReference>`
-    :param name: Gets the workflow trigger name.
-    :type name: str
-    :param type: Gets the workflow trigger type.
-    :type type: str
+    :ivar name: Gets the workflow trigger name.
+    :vartype name: str
+    :ivar type: Gets the workflow trigger type.
+    :vartype type: str
     """ 
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'created_time': {'readonly': True},
+        'changed_time': {'readonly': True},
+        'state': {'readonly': True},
+        'status': {'readonly': True},
+        'last_execution_time': {'readonly': True},
+        'next_execution_time': {'readonly': True},
+        'recurrence': {'readonly': True},
+        'workflow': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -72,16 +89,16 @@ class WorkflowTrigger(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, provisioning_state=None, created_time=None, changed_time=None, state=None, status=None, last_execution_time=None, next_execution_time=None, recurrence=None, workflow=None, name=None, type=None, **kwargs):
-        super(WorkflowTrigger, self).__init__(id=id, **kwargs)
-        self.provisioning_state = provisioning_state
-        self.created_time = created_time
-        self.changed_time = changed_time
-        self.state = state
-        self.status = status
-        self.last_execution_time = last_execution_time
-        self.next_execution_time = next_execution_time
-        self.recurrence = recurrence
-        self.workflow = workflow
-        self.name = name
-        self.type = type
+    def __init__(self, id=None):
+        super(WorkflowTrigger, self).__init__(id=id)
+        self.provisioning_state = None
+        self.created_time = None
+        self.changed_time = None
+        self.state = None
+        self.status = None
+        self.last_execution_time = None
+        self.next_execution_time = None
+        self.recurrence = None
+        self.workflow = None
+        self.name = None
+        self.type = None

@@ -34,5 +34,5 @@ class RoleDefinitionFilter(Model):
         'role_name': {'key': 'roleName', 'type': 'str'},
     }
 
-    def __init__(self, role_name=None, **kwargs):
+    def __init__(self, role_name=None):
         self.role_name = role_name

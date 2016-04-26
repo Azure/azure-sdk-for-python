@@ -25,17 +25,25 @@ from msrest.serialization import Model
 class KeyValuePairStringString(Model):
     """KeyValuePairStringString
 
-    :param key:
-    :type key: str
-    :param value:
-    :type value: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar key:
+    :vartype key: str
+    :ivar value:
+    :vartype value: str
     """ 
+
+    _validation = {
+        'key': {'readonly': True},
+        'value': {'readonly': True},
+    }
 
     _attribute_map = {
         'key': {'key': 'key', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, key=None, value=None, **kwargs):
-        self.key = key
-        self.value = value
+    def __init__(self):
+        self.key = None
+        self.value = None

@@ -49,7 +49,7 @@ class ResourceMetricValue(Model):
         'count': {'key': 'count', 'type': 'float'},
     }
 
-    def __init__(self, time_stamp=None, average=None, minimum=None, maximum=None, total=None, count=None, **kwargs):
+    def __init__(self, time_stamp=None, average=None, minimum=None, maximum=None, total=None, count=None):
         self.time_stamp = time_stamp
         self.average = average
         self.minimum = minimum

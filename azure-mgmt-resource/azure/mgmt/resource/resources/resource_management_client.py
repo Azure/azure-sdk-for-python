@@ -30,8 +30,6 @@ from .operations.resources_operations import ResourcesOperations
 from .operations.tags_operations import TagsOperations
 from .operations.deployment_operations_operations import DeploymentOperationsOperations
 from .operations.resource_provider_operation_details_operations import ResourceProviderOperationDetailsOperations
-from .operations.policy_definitions_operations import PolicyDefinitionsOperations
-from .operations.policy_assignments_operations import PolicyAssignmentsOperations
 from . import models
 
 
@@ -67,9 +65,15 @@ class ResourceManagementClientConfiguration(AzureConfiguration):
             self, credentials, subscription_id, api_version='2016-02-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
-            raise ValueError('credentials must not be None.')
+            raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
-            raise ValueError('subscription_id must not be None.')
+            raise ValueError("Parameter 'subscription_id' must not be None.")
+        if not isinstance(subscription_id, str):
+            raise TypeError("Parameter 'subscription_id' must be str.")
+        if api_version is not None and not isinstance(api_version, str):
+            raise TypeError("Optional parameter 'api_version' must be str.")
+        if accept_language is not None and not isinstance(accept_language, str):
+            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -106,10 +110,6 @@ class ResourceManagementClient(object):
     :vartype deployment_operations: .operations.DeploymentOperationsOperations
     :ivar resource_provider_operation_details: ResourceProviderOperationDetails operations
     :vartype resource_provider_operation_details: .operations.ResourceProviderOperationDetailsOperations
-    :ivar policy_definitions: PolicyDefinitions operations
-    :vartype policy_definitions: .operations.PolicyDefinitionsOperations
-    :ivar policy_assignments: PolicyAssignments operations
-    :vartype policy_assignments: .operations.PolicyAssignmentsOperations
     """
 
     def __init__(self, config):
@@ -134,8 +134,4 @@ class ResourceManagementClient(object):
         self.deployment_operations = DeploymentOperationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.resource_provider_operation_details = ResourceProviderOperationDetailsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.policy_definitions = PolicyDefinitionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.policy_assignments = PolicyAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)

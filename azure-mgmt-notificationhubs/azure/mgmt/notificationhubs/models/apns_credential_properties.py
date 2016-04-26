@@ -43,7 +43,7 @@ class ApnsCredentialProperties(Model):
         'thumbprint': {'key': 'thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, apns_certificate=None, certificate_key=None, endpoint=None, thumbprint=None, **kwargs):
+    def __init__(self, apns_certificate=None, certificate_key=None, endpoint=None, thumbprint=None):
         self.apns_certificate = apns_certificate
         self.certificate_key = certificate_key
         self.endpoint = endpoint

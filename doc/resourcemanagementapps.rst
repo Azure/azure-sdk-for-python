@@ -107,12 +107,10 @@ The following code creates a logic app workflow under an existing app service pl
             sku = Sku(
                 name = 'Free',
                 plan = ResourceReference(
-                    name = app_service_plan.name,
-                    type = 'Microsoft.Web/ServerFarms',
                     id = app_service_plan.id
                 )
             ),
-			definition={ 
+            definition={ 
                 "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
                 "contentVersion": "1.0.0.0",
                 "parameters": {},

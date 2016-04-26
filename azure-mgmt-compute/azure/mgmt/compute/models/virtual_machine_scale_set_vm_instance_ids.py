@@ -35,5 +35,5 @@ class VirtualMachineScaleSetVMInstanceIDs(Model):
         'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
     }
 
-    def __init__(self, instance_ids=None, **kwargs):
+    def __init__(self, instance_ids=None):
         self.instance_ids = instance_ids

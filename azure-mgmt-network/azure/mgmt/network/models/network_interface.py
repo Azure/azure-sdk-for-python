@@ -26,12 +26,15 @@ class NetworkInterface(Resource):
     """
     A NetworkInterface in a resource group
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource Id
     :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -68,6 +71,11 @@ class NetworkInterface(Resource):
     :type etag: str
     """ 
 
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -86,8 +94,8 @@ class NetworkInterface(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None, **kwargs):
-        super(NetworkInterface, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(NetworkInterface, self).__init__(id=id, location=location, tags=tags)
         self.virtual_machine = virtual_machine
         self.network_security_group = network_security_group
         self.ip_configurations = ip_configurations

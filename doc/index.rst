@@ -8,7 +8,7 @@ Installation:
 
 - Use the ``--pre`` flag: ``pip install --pre azure``
 
-- Specify the version:  ``pip install azure==2.0.0rc2``
+- Specify the version:  ``pip install azure==2.0.0rc3``
 
 If you want to install ``azure`` from source::
 
@@ -29,6 +29,7 @@ Documentation:
 --------------
 * Azure Resource Management
    * :doc:`Authorization Resource Management<resourcemanagementauthorization>` -- (:doc:`API <ref/azure.mgmt.authorization>`)
+   * :doc:`Batch Management<resourcemanagementbatch>` -- (:doc:`API <ref/azure.mgmt.batch>`)
    * :doc:`CDN Resource Management<resourcemanagementcdn>` -- (:doc:`API <ref/azure.mgmt.cdn>`)
    * :doc:`Compute Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.compute>`)
    * Apps
@@ -40,6 +41,7 @@ Documentation:
    * :doc:`Resource Management<resourcemanagement>` -- (:doc:`API <ref/azure.mgmt.resource>`)   
    * :doc:`Scheduler Management<resourcemanagementscheduler>` -- (:doc:`API <ref/azure.mgmt.scheduler>`)
    * :doc:`Storage Resource Management<resourcemanagementstorage>` -- (:doc:`API <ref/azure.mgmt.storage>`)
+* :doc:`Batch<batch>` -- (:doc:`API <ref/azure.batch>`)
 * :doc:`Azure Active Directory Graph RBAC<graphrbac>` -- (:doc:`API <ref/azure.graphrbac>`)
 * :doc:`Service Management<servicemanagement>` -- (:doc:`API <ref/azure.servicemanagement>`)
 * :doc:`Service Bus<servicebus>` -- (:doc:`API <ref/azure.servicebus>`)
@@ -63,6 +65,10 @@ Features:
    -  Topics: create, list, and delete topics; create, list, and delete
       rules
 
+- Batch Runtime
+
+   - Manage Batch pools, jobs, task and job schedules
+
 - Azure Active Directory Graph RBAC API
   
    - Users
@@ -72,6 +78,7 @@ Features:
 -  Resource Management
 
    -  Authorization: permissions, subscriptions, roles and more
+   -  Batch: manage Batch accounts and applications
    -  CDN: profiles, endpoints creation and more
    -  Compute: create virtual machines and more
    -  Apps:

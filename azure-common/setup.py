@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-common',
-    version='1.1.2',
+    version='1.1.3',
     description='Microsoft Azure Client Library for Python (Common)',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -62,8 +62,8 @@ setup(
     ],
     extras_require={
         'autorest':[
-            'msrestazure>=0.2.0,<0.3.0',
-            'msrest>=0.2.0,<0.3.0'
+            'msrestazure>=0.3.0,<0.4.0',
+            'msrest>=0.3.0,<0.4.0'
         ]
     }
 )

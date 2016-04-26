@@ -40,7 +40,7 @@ class OperationDisplay(Model):
         'operation': {'key': 'operation', 'type': 'str'},
     }
 
-    def __init__(self, provider=None, resource=None, operation=None, **kwargs):
+    def __init__(self, provider=None, resource=None, operation=None):
         self.provider = provider
         self.resource = resource
         self.operation = operation

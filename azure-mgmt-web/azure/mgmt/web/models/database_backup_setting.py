@@ -51,7 +51,7 @@ class DatabaseBackupSetting(Model):
         'connection_string': {'key': 'connectionString', 'type': 'str'},
     }
 
-    def __init__(self, database_type=None, name=None, connection_string_name=None, connection_string=None, **kwargs):
+    def __init__(self, database_type=None, name=None, connection_string_name=None, connection_string=None):
         self.database_type = database_type
         self.name = name
         self.connection_string_name = connection_string_name

@@ -42,6 +42,6 @@ class ConnStringValueTypePair(Model):
         'type': {'key': 'type', 'type': 'DatabaseServerType'},
     }
 
-    def __init__(self, type, value=None, **kwargs):
+    def __init__(self, type, value=None):
         self.value = value
         self.type = type

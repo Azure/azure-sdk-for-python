@@ -25,33 +25,49 @@ from .sub_resource import SubResource
 class WorkflowRunAction(SubResource):
     """WorkflowRunAction
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Gets or sets the resource id.
     :type id: str
-    :param start_time: Gets the start time.
-    :type start_time: datetime
-    :param end_time: Gets the end time.
-    :type end_time: datetime
-    :param status: Gets the status. Possible values include: 'NotSpecified',
+    :ivar start_time: Gets the start time.
+    :vartype start_time: datetime
+    :ivar end_time: Gets the end time.
+    :vartype end_time: datetime
+    :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
-    :type status: str
-    :param code: Gets the code.
-    :type code: str
-    :param error: Gets the error.
-    :type error: object
-    :param tracking_id: Gets the trackingId.
-    :type tracking_id: str
-    :param inputs_link: Gets the link to inputs.
-    :type inputs_link: :class:`ContentLink
+    :vartype status: str
+    :ivar code: Gets the code.
+    :vartype code: str
+    :ivar error: Gets the error.
+    :vartype error: object
+    :ivar tracking_id: Gets the trackingId.
+    :vartype tracking_id: str
+    :ivar inputs_link: Gets the link to inputs.
+    :vartype inputs_link: :class:`ContentLink
      <azure.mgmt.logic.models.ContentLink>`
-    :param outputs_link: Gets the link to outputs.
-    :type outputs_link: :class:`ContentLink
+    :ivar outputs_link: Gets the link to outputs.
+    :vartype outputs_link: :class:`ContentLink
      <azure.mgmt.logic.models.ContentLink>`
-    :param name: Gets the workflow run action name.
-    :type name: str
-    :param type: Gets the workflow run action type.
-    :type type: str
+    :ivar name: Gets the workflow run action name.
+    :vartype name: str
+    :ivar type: Gets the workflow run action type.
+    :vartype type: str
     """ 
+
+    _validation = {
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'status': {'readonly': True},
+        'code': {'readonly': True},
+        'error': {'readonly': True},
+        'tracking_id': {'readonly': True},
+        'inputs_link': {'readonly': True},
+        'outputs_link': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -67,15 +83,15 @@ class WorkflowRunAction(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, start_time=None, end_time=None, status=None, code=None, error=None, tracking_id=None, inputs_link=None, outputs_link=None, name=None, type=None, **kwargs):
-        super(WorkflowRunAction, self).__init__(id=id, **kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.status = status
-        self.code = code
-        self.error = error
-        self.tracking_id = tracking_id
-        self.inputs_link = inputs_link
-        self.outputs_link = outputs_link
-        self.name = name
-        self.type = type
+    def __init__(self, id=None):
+        super(WorkflowRunAction, self).__init__(id=id)
+        self.start_time = None
+        self.end_time = None
+        self.status = None
+        self.code = None
+        self.error = None
+        self.tracking_id = None
+        self.inputs_link = None
+        self.outputs_link = None
+        self.name = None
+        self.type = None

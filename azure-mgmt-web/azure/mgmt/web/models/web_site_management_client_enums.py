@@ -164,6 +164,7 @@ class ComputeModeOptions(Enum):
 
     shared = "Shared"
     dedicated = "Dedicated"
+    dynamic = "Dynamic"
 
 
 class WorkerSizeOptions(Enum):
@@ -207,15 +208,6 @@ class Channels(Enum):
     api = "Api"
     email = "Email"
     all = "All"
-
-
-class Category(Enum):
-
-    uncategorized = "Uncategorized"
-    test = "Test"
-    up_sell = "UpSell"
-    cross_sell = "CrossSell"
-    live_site = "LiveSite"
 
 
 class CloneAbilityResult(Enum):

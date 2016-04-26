@@ -63,8 +63,8 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, provisioning_state=None, name=None, etag=None):
+        super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id)
         self.port = port
         self.protocol = protocol
         self.cookie_based_affinity = cookie_based_affinity

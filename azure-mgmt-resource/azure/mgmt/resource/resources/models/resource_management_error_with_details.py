@@ -19,10 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_error import ResourceManagementError
+from msrest.serialization import Model
 
 
-class ResourceManagementErrorWithDetails(ResourceManagementError):
+class ResourceManagementErrorWithDetails(Model):
     """ResourceManagementErrorWithDetails
 
     :param code: Gets or sets the error code returned from the server.
@@ -32,8 +32,8 @@ class ResourceManagementErrorWithDetails(ResourceManagementError):
     :param target: Gets or sets the target of the error.
     :type target: str
     :param details: Gets or sets validation error.
-    :type details: list of :class:`ResourceManagementError
-     <azure.mgmt.resource.resources.models.ResourceManagementError>`
+    :type details: list of :class:`ResourceManagementErrorWithDetails
+     <azure.mgmt.resource.resources.models.ResourceManagementErrorWithDetails>`
     """ 
 
     _validation = {
@@ -45,9 +45,11 @@ class ResourceManagementErrorWithDetails(ResourceManagementError):
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ResourceManagementError]'},
+        'details': {'key': 'details', 'type': '[ResourceManagementErrorWithDetails]'},
     }
 
-    def __init__(self, code, message, target=None, details=None, **kwargs):
-        super(ResourceManagementErrorWithDetails, self).__init__(code=code, message=message, target=target, **kwargs)
+    def __init__(self, code, message, target=None, details=None):
+        self.code = code
+        self.message = message
+        self.target = target
         self.details = details

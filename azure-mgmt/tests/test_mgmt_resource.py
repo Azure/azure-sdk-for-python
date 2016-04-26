@@ -247,7 +247,6 @@ class MgmtResourceTest(AzureMgmtTestCase):
     def test_providers(self):
         result_list = self.resource_client.providers.list()
         for provider in result_list:
-            print(provider.namespace)
             self.resource_client.providers.register(provider.namespace)
 
 

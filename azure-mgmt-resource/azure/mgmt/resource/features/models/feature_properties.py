@@ -34,5 +34,5 @@ class FeatureProperties(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, state=None, **kwargs):
+    def __init__(self, state=None):
         self.state = state

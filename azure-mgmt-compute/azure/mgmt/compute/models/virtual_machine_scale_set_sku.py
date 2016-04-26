@@ -26,14 +26,23 @@ class VirtualMachineScaleSetSku(Model):
     """
     Describes an available virtual machine scale set sku.
 
-    :param resource_type: Gets the type of resource the sku applies to.
-    :type resource_type: str
-    :param sku: Gets the Sku.
-    :type sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
-    :param capacity: Gets available scaling information.
-    :type capacity: :class:`VirtualMachineScaleSetSkuCapacity
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar resource_type: Gets the type of resource the sku applies to.
+    :vartype resource_type: str
+    :ivar sku: Gets the Sku.
+    :vartype sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
+    :ivar capacity: Gets available scaling information.
+    :vartype capacity: :class:`VirtualMachineScaleSetSkuCapacity
      <azure.mgmt.compute.models.VirtualMachineScaleSetSkuCapacity>`
     """ 
+
+    _validation = {
+        'resource_type': {'readonly': True},
+        'sku': {'readonly': True},
+        'capacity': {'readonly': True},
+    }
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
@@ -41,7 +50,7 @@ class VirtualMachineScaleSetSku(Model):
         'capacity': {'key': 'capacity', 'type': 'VirtualMachineScaleSetSkuCapacity'},
     }
 
-    def __init__(self, resource_type=None, sku=None, capacity=None, **kwargs):
-        self.resource_type = resource_type
-        self.sku = sku
-        self.capacity = capacity
+    def __init__(self):
+        self.resource_type = None
+        self.sku = None
+        self.capacity = None

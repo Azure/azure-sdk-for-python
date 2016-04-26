@@ -34,5 +34,5 @@ class RegenerateSecretKeyParameters(Model):
         'key_type': {'key': 'keyType', 'type': 'KeyType'},
     }
 
-    def __init__(self, key_type=None, **kwargs):
+    def __init__(self, key_type=None):
         self.key_type = key_type

@@ -39,6 +39,6 @@ class VirtualMachineScaleSetStorageProfile(Model):
         'os_disk': {'key': 'osDisk', 'type': 'VirtualMachineScaleSetOSDisk'},
     }
 
-    def __init__(self, image_reference=None, os_disk=None, **kwargs):
+    def __init__(self, image_reference=None, os_disk=None):
         self.image_reference = image_reference
         self.os_disk = os_disk

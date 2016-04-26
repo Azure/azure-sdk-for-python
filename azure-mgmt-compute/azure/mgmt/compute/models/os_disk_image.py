@@ -39,5 +39,5 @@ class OSDiskImage(Model):
         'operating_system': {'key': 'operatingSystem', 'type': 'OperatingSystemTypes'},
     }
 
-    def __init__(self, operating_system, **kwargs):
+    def __init__(self, operating_system):
         self.operating_system = operating_system

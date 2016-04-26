@@ -35,5 +35,5 @@ class TopLevelDomainAgreementOption(Model):
         'include_privacy': {'key': 'includePrivacy', 'type': 'bool'},
     }
 
-    def __init__(self, include_privacy=None, **kwargs):
+    def __init__(self, include_privacy=None):
         self.include_privacy = include_privacy

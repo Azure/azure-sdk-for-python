@@ -25,6 +25,9 @@ from .resource import Resource
 class WorkflowVersion(Resource):
     """WorkflowVersion
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Gets or sets the resource id.
     :type id: str
     :param name: Gets the resource name.
@@ -35,17 +38,17 @@ class WorkflowVersion(Resource):
     :type location: str
     :param tags: Gets or sets the resource tags.
     :type tags: dict
-    :param created_time: Gets the created time.
-    :type created_time: datetime
-    :param changed_time: Gets the changed time.
-    :type changed_time: datetime
+    :ivar created_time: Gets the created time.
+    :vartype created_time: datetime
+    :ivar changed_time: Gets the changed time.
+    :vartype changed_time: datetime
     :param state: Gets or sets the state. Possible values include:
      'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
     :type state: str
-    :param version: Gets the version.
-    :type version: str
-    :param access_endpoint: Gets the access endpoint.
-    :type access_endpoint: str
+    :ivar version: Gets the version.
+    :vartype version: str
+    :ivar access_endpoint: Gets the access endpoint.
+    :vartype access_endpoint: str
     :param sku: Gets or sets the sku.
     :type sku: :class:`Sku <azure.mgmt.logic.models.Sku>`
     :param definition_link: Gets or sets the link to definition.
@@ -59,6 +62,13 @@ class WorkflowVersion(Resource):
     :param parameters: Gets or sets the parameters.
     :type parameters: dict
     """ 
+
+    _validation = {
+        'created_time': {'readonly': True},
+        'changed_time': {'readonly': True},
+        'version': {'readonly': True},
+        'access_endpoint': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -78,13 +88,13 @@ class WorkflowVersion(Resource):
         'parameters': {'key': 'properties.parameters', 'type': '{WorkflowParameter}'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, created_time=None, changed_time=None, state=None, version=None, access_endpoint=None, sku=None, definition_link=None, definition=None, parameters_link=None, parameters=None, **kwargs):
-        super(WorkflowVersion, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
-        self.created_time = created_time
-        self.changed_time = changed_time
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, state=None, sku=None, definition_link=None, definition=None, parameters_link=None, parameters=None):
+        super(WorkflowVersion, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+        self.created_time = None
+        self.changed_time = None
         self.state = state
-        self.version = version
-        self.access_endpoint = access_endpoint
+        self.version = None
+        self.access_endpoint = None
         self.sku = sku
         self.definition_link = definition_link
         self.definition = definition

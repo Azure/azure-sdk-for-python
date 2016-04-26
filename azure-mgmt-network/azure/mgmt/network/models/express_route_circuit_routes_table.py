@@ -46,7 +46,7 @@ class ExpressRouteCircuitRoutesTable(Model):
         'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, network=None, next_hop=None, loc_prf=None, weight=None, path=None, **kwargs):
+    def __init__(self, network=None, next_hop=None, loc_prf=None, weight=None, path=None):
         self.network = network
         self.next_hop = next_hop
         self.loc_prf = loc_prf

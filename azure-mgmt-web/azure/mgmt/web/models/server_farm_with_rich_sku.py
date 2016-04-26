@@ -26,10 +26,15 @@ class ServerFarmWithRichSku(Resource):
     """
     App Service Plan Model
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource Id
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -41,11 +46,11 @@ class ServerFarmWithRichSku(Resource):
     :param worker_tier_name: Target worker tier assigned to the App Service
      Plan
     :type worker_tier_name: str
-    :param status: App Service Plan Status. Possible values include: 'Ready',
+    :ivar status: App Service Plan Status. Possible values include: 'Ready',
      'Pending'
-    :type status: str
-    :param subscription: App Service Plan Subscription
-    :type subscription: str
+    :vartype status: str
+    :ivar subscription: App Service Plan Subscription
+    :vartype subscription: str
     :param admin_site_name: App Service Plan administration site
     :type admin_site_name: str
     :param hosting_environment_profile: Specification for the hosting
@@ -55,29 +60,35 @@ class ServerFarmWithRichSku(Resource):
     :param maximum_number_of_workers: Maximum number of instances that can be
      assigned to this App Service Plan
     :type maximum_number_of_workers: int
-    :param geo_region: Geographical location for the App Service Plan
-    :type geo_region: str
+    :ivar geo_region: Geographical location for the App Service Plan
+    :vartype geo_region: str
     :param per_site_scaling: If True apps assigned to this App Service Plan
      can be scaled independently
      If False apps assigned to this App Service Plan will scale to
      all instances of the plan
     :type per_site_scaling: bool
-    :param number_of_sites: Number of web apps assigned to this App Service
+    :ivar number_of_sites: Number of web apps assigned to this App Service
      Plan
-    :type number_of_sites: int
-    :param resource_group: Resource group of the serverfarm
-    :type resource_group: str
+    :vartype number_of_sites: int
+    :ivar resource_group: Resource group of the serverfarm
+    :vartype resource_group: str
     :param sku:
     :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
     """ 
 
     _validation = {
         'location': {'required': True},
+        'status': {'readonly': True},
+        'subscription': {'readonly': True},
+        'geo_region': {'readonly': True},
+        'number_of_sites': {'readonly': True},
+        'resource_group': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -95,17 +106,17 @@ class ServerFarmWithRichSku(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, status=None, subscription=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, geo_region=None, per_site_scaling=None, number_of_sites=None, resource_group=None, sku=None, **kwargs):
-        super(ServerFarmWithRichSku, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, per_site_scaling=None, sku=None):
+        super(ServerFarmWithRichSku, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.server_farm_with_rich_sku_name = server_farm_with_rich_sku_name
         self.worker_tier_name = worker_tier_name
-        self.status = status
-        self.subscription = subscription
+        self.status = None
+        self.subscription = None
         self.admin_site_name = admin_site_name
         self.hosting_environment_profile = hosting_environment_profile
         self.maximum_number_of_workers = maximum_number_of_workers
-        self.geo_region = geo_region
+        self.geo_region = None
         self.per_site_scaling = per_site_scaling
-        self.number_of_sites = number_of_sites
-        self.resource_group = resource_group
+        self.number_of_sites = None
+        self.resource_group = None
         self.sku = sku

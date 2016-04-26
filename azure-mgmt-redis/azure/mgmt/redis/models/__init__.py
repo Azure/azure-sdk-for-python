@@ -20,33 +20,37 @@
 # --------------------------------------------------------------------------
 
 from .sku import Sku
+from .redis_properties import RedisProperties
+from .resource import Resource
 from .redis_create_or_update_parameters import RedisCreateOrUpdateParameters
 from .redis_access_keys import RedisAccessKeys
 from .redis_resource_with_access_key import RedisResourceWithAccessKey
 from .redis_resource import RedisResource
 from .redis_list_keys_result import RedisListKeysResult
 from .redis_regenerate_key_parameters import RedisRegenerateKeyParameters
-from .resource import Resource
-from .sub_resource import SubResource
+from .redis_reboot_parameters import RedisRebootParameters
 from .redis_resource_paged import RedisResourcePaged
 from .redis_management_client_enums import (
     SkuName,
     SkuFamily,
     RedisKeyType,
+    RebootType,
 )
 
 __all__ = [
     'Sku',
+    'RedisProperties',
+    'Resource',
     'RedisCreateOrUpdateParameters',
     'RedisAccessKeys',
     'RedisResourceWithAccessKey',
     'RedisResource',
     'RedisListKeysResult',
     'RedisRegenerateKeyParameters',
-    'Resource',
-    'SubResource',
+    'RedisRebootParameters',
     'RedisResourcePaged',
     'SkuName',
     'SkuFamily',
     'RedisKeyType',
+    'RebootType',
 ]

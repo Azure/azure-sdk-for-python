@@ -36,5 +36,5 @@ class AddressSpace(Model):
         'address_prefixes': {'key': 'addressPrefixes', 'type': '[str]'},
     }
 
-    def __init__(self, address_prefixes=None, **kwargs):
+    def __init__(self, address_prefixes=None):
         self.address_prefixes = address_prefixes

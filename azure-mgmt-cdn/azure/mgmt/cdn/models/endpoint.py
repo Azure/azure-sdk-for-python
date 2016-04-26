@@ -29,18 +29,21 @@ class Endpoint(TrackedResource):
     exposed using the URL format <endpointname>.azureedge.net by default, but
     custom domains can also be created.
 
-    :param id: Resource ID
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param host_name: The host name of the endpoint {endpointName}.{DNSZone}
-    :type host_name: str
+    :ivar host_name: The host name of the endpoint {endpointName}.{DNSZone}
+    :vartype host_name: str
     :param origin_host_header: The host header the CDN provider will send
      along with content requests to origins. The default value is the host
      name of the origin.
@@ -73,18 +76,23 @@ class Endpoint(TrackedResource):
      used as failover options.
     :type origins: list of :class:`DeepCreatedOrigin
      <azure.mgmt.cdn.models.DeepCreatedOrigin>`
-    :param resource_state: Resource status of the endpoint. Possible values
+    :ivar resource_state: Resource status of the endpoint. Possible values
      include: 'Creating', 'Deleting', 'Running', 'Starting', 'Stopped',
      'Stopping'
-    :type resource_state: str
+    :vartype resource_state: str
     :param provisioning_state: Provisioning status of the endpoint. Possible
      values include: 'Creating', 'Succeeded', 'Failed'
     :type provisioning_state: str
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
         'tags': {'required': True},
+        'host_name': {'readonly': True},
+        'resource_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -106,9 +114,9 @@ class Endpoint(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
 
-    def __init__(self, location, tags, id=None, name=None, type=None, host_name=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, origins=None, resource_state=None, provisioning_state=None, **kwargs):
-        super(Endpoint, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
-        self.host_name = host_name
+    def __init__(self, location, tags, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, origins=None, provisioning_state=None):
+        super(Endpoint, self).__init__(location=location, tags=tags)
+        self.host_name = None
         self.origin_host_header = origin_host_header
         self.origin_path = origin_path
         self.content_types_to_compress = content_types_to_compress
@@ -117,5 +125,5 @@ class Endpoint(TrackedResource):
         self.is_https_allowed = is_https_allowed
         self.query_string_caching_behavior = query_string_caching_behavior
         self.origins = origins
-        self.resource_state = resource_state
+        self.resource_state = None
         self.provisioning_state = provisioning_state

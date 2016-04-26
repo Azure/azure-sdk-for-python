@@ -39,3 +39,10 @@ class RedisKeyType(Enum):
 
     primary = "Primary"
     secondary = "Secondary"
+
+
+class RebootType(Enum):
+
+    primary_node = "PrimaryNode"
+    secondary_node = "SecondaryNode"
+    all_nodes = "AllNodes"

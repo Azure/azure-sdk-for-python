@@ -50,8 +50,8 @@ class VpnClientRevokedCertificate(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, thumbprint=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(VpnClientRevokedCertificate, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, thumbprint=None, provisioning_state=None, name=None, etag=None):
+        super(VpnClientRevokedCertificate, self).__init__(id=id)
         self.thumbprint = thumbprint
         self.provisioning_state = provisioning_state
         self.name = name

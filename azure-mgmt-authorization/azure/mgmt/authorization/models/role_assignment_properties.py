@@ -37,6 +37,6 @@ class RoleAssignmentProperties(Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
     }
 
-    def __init__(self, role_definition_id=None, principal_id=None, **kwargs):
+    def __init__(self, role_definition_id=None, principal_id=None):
         self.role_definition_id = role_definition_id
         self.principal_id = principal_id

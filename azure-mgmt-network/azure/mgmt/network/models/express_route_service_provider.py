@@ -26,12 +26,15 @@ class ExpressRouteServiceProvider(Resource):
     """
     ExpressRouteResourceProvider object
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource Id
     :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -47,6 +50,11 @@ class ExpressRouteServiceProvider(Resource):
     :type provisioning_state: str
     """ 
 
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -58,8 +66,8 @@ class ExpressRouteServiceProvider(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None, **kwargs):
-        super(ExpressRouteServiceProvider, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, location=None, tags=None, peering_locations=None, bandwidths_offered=None, provisioning_state=None):
+        super(ExpressRouteServiceProvider, self).__init__(id=id, location=location, tags=tags)
         self.peering_locations = peering_locations
         self.bandwidths_offered = bandwidths_offered
         self.provisioning_state = provisioning_state

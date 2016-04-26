@@ -50,7 +50,7 @@ class CheckAvailabilityResource(Model):
         'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, location=None, name=None, type=None, tags=None, is_availiable=None, **kwargs):
+    def __init__(self, id=None, location=None, name=None, type=None, tags=None, is_availiable=None):
         self.id = id
         self.location = location
         self.name = name

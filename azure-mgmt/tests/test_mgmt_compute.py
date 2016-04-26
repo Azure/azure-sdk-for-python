@@ -114,7 +114,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         config_name = 'pyarmconfig'
 
         params_create = azure.mgmt.network.models.NetworkInterface(
-            name=interface_name,
             location=self.region,
             ip_configurations=[
                 azure.mgmt.network.models.NetworkInterfaceIPConfiguration(
@@ -201,8 +200,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         params_create = azure.mgmt.compute.models.VirtualMachine(
             location=self.region,
-            name=names.vm,
-            type='Microsoft.Compute/virtualMachines', # don't know if needed
             os_profile=self.get_os_profile(),
             hardware_profile=self.get_hardware_profile(),
             network_profile=self.get_network_profile(nic_id),
@@ -415,7 +412,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         params_create = azure.mgmt.compute.models.AvailabilitySet(
             location=self.region,
-            name=availability_set_name,
             platform_fault_domain_count=2,
             platform_update_domain_count=4,
             statuses=[

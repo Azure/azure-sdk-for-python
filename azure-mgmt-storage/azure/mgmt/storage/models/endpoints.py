@@ -44,7 +44,7 @@ class Endpoints(Model):
         'file': {'key': 'file', 'type': 'str'},
     }
 
-    def __init__(self, blob=None, queue=None, table=None, file=None, **kwargs):
+    def __init__(self, blob=None, queue=None, table=None, file=None):
         self.blob = blob
         self.queue = queue
         self.table = table

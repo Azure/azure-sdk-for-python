@@ -36,5 +36,5 @@ class BaiduCredential(Model):
         'properties': {'key': 'properties', 'type': 'BaiduCredentialProperties'},
     }
 
-    def __init__(self, properties=None, **kwargs):
+    def __init__(self, properties=None):
         self.properties = properties

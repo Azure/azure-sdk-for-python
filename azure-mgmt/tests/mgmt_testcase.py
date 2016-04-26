@@ -90,17 +90,24 @@ class AzureMgmtTestCase(RecordingTestCase):
             self.delete_resource_group(wait_timeout=None)
         return super(AzureMgmtTestCase, self).tearDown()
 
-    def create_mgmt_client(self, configuration_class, client_class, **kwargs):
+    def create_basic_client(self, configuration_class, client_class, **kwargs):
         client = client_class(
             configuration_class(
                 credentials=self.settings.get_credentials(),
-                subscription_id=self.settings.SUBSCRIPTION_ID,
                 **kwargs
             )
         )
         if self.is_playback():
             client.config.long_running_operation_timeout = 0
         return client
+
+    def create_mgmt_client(self, configuration_class, client_class, **kwargs):
+        return self.create_basic_client(
+            configuration_class,
+            client_class,
+            subscription_id=self.settings.SUBSCRIPTION_ID,
+            **kwargs
+        )
 
     def _scrub(self, val):
         val = super(AzureMgmtTestCase, self)._scrub(val)

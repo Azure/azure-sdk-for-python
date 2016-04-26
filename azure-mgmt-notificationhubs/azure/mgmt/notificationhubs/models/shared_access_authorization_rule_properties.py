@@ -58,7 +58,7 @@ class SharedAccessAuthorizationRuleProperties(Model):
         'revision': {'key': 'revision', 'type': 'int'},
     }
 
-    def __init__(self, primary_key=None, secondary_key=None, key_name=None, claim_type=None, claim_value=None, rights=None, created_time=None, modified_time=None, revision=None, **kwargs):
+    def __init__(self, primary_key=None, secondary_key=None, key_name=None, claim_type=None, claim_value=None, rights=None, created_time=None, modified_time=None, revision=None):
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.key_name = key_name

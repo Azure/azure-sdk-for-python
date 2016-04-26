@@ -34,5 +34,5 @@ class DnsNameAvailabilityResult(Model):
         'available': {'key': 'available', 'type': 'bool'},
     }
 
-    def __init__(self, available=None, **kwargs):
+    def __init__(self, available=None):
         self.available = available

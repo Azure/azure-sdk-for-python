@@ -36,5 +36,5 @@ class WnsCredential(Model):
         'properties': {'key': 'properties', 'type': 'WnsCredentialProperties'},
     }
 
-    def __init__(self, properties=None, **kwargs):
+    def __init__(self, properties=None):
         self.properties = properties

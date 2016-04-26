@@ -58,7 +58,7 @@ class ResourceMetric(Model):
         'properties': {'key': 'properties', 'type': '[KeyValuePairStringString]'},
     }
 
-    def __init__(self, name=None, unit=None, time_grain=None, start_time=None, end_time=None, resource_id=None, metric_values=None, properties=None, **kwargs):
+    def __init__(self, name=None, unit=None, time_grain=None, start_time=None, end_time=None, resource_id=None, metric_values=None, properties=None):
         self.name = name
         self.unit = unit
         self.time_grain = time_grain

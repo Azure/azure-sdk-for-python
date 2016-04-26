@@ -101,8 +101,8 @@ class SecurityRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, source_address_prefix, destination_address_prefix, access, direction, id=None, description=None, source_port_range=None, destination_port_range=None, priority=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(SecurityRule, self).__init__(id=id, **kwargs)
+    def __init__(self, protocol, source_address_prefix, destination_address_prefix, access, direction, id=None, description=None, source_port_range=None, destination_port_range=None, priority=None, provisioning_state=None, name=None, etag=None):
+        super(SecurityRule, self).__init__(id=id)
         self.description = description
         self.protocol = protocol
         self.source_port_range = source_port_range

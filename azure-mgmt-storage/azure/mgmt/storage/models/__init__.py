@@ -38,7 +38,6 @@ from .storage_management_client_enums import (
     AccountType,
     ProvisioningState,
     AccountStatus,
-    KeyName,
     UsageUnit,
 )
 
@@ -61,6 +60,5 @@ __all__ = [
     'AccountType',
     'ProvisioningState',
     'AccountStatus',
-    'KeyName',
     'UsageUnit',
 ]
