@@ -26,12 +26,15 @@ class VirtualMachineExtension(Resource):
     """
     Describes a Virtual Machine Extension.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -67,6 +70,9 @@ class VirtualMachineExtension(Resource):
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -87,8 +93,8 @@ class VirtualMachineExtension(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, force_update_tag=None, publisher=None, virtual_machine_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None, instance_view=None):
-        super(VirtualMachineExtension, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, location, tags=None, force_update_tag=None, publisher=None, virtual_machine_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None, instance_view=None):
+        super(VirtualMachineExtension, self).__init__(location=location, tags=tags)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.virtual_machine_extension_type = virtual_machine_extension_type

@@ -26,10 +26,13 @@ class FirewallRule(Model):
     """
     Data Lake Store firewall rule information
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param name: Gets or sets the firewall rule's name.
     :type name: str
-    :param type: Gets the namespace and type of the firewall Rule.
-    :type type: str
+    :ivar type: Gets the namespace and type of the firewall Rule.
+    :vartype type: str
     :param id: Gets or sets the firewall rule's subscription ID.
     :type id: str
     :param location: Gets or sets the firewall rule's regional location.
@@ -39,6 +42,10 @@ class FirewallRule(Model):
      <azure.mgmt.datalake.store.account.models.FirewallRuleProperties>`
     """ 
 
+    _validation = {
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -47,9 +54,9 @@ class FirewallRule(Model):
         'properties': {'key': 'properties', 'type': 'FirewallRuleProperties'},
     }
 
-    def __init__(self, name=None, type=None, id=None, location=None, properties=None):
+    def __init__(self, name=None, id=None, location=None, properties=None):
         self.name = name
-        self.type = type
+        self.type = None
         self.id = id
         self.location = location
         self.properties = properties

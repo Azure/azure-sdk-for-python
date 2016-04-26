@@ -26,12 +26,15 @@ class RedisResourceWithAccessKey(Resource):
     """
     A redis item in CreateOrUpdate Operation response.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -78,6 +81,9 @@ class RedisResourceWithAccessKey(Resource):
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
     }
@@ -104,8 +110,8 @@ class RedisResourceWithAccessKey(Resource):
         'access_keys': {'key': 'properties.accessKeys', 'type': 'RedisAccessKeys'},
     }
 
-    def __init__(self, location, sku, id=None, name=None, type=None, tags=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None, provisioning_state=None, host_name=None, port=None, ssl_port=None, access_keys=None):
-        super(RedisResourceWithAccessKey, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, location, sku, tags=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None, provisioning_state=None, host_name=None, port=None, ssl_port=None, access_keys=None):
+        super(RedisResourceWithAccessKey, self).__init__(location=location, tags=tags)
         self.redis_version = redis_version
         self.sku = sku
         self.redis_configuration = redis_configuration

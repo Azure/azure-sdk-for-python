@@ -25,6 +25,9 @@ from msrest.serialization import Model
 class JobProperties(Model):
     """JobProperties
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param start_time: Gets or sets the job start time.
     :type start_time: datetime
     :param action: Gets or sets the job action.
@@ -35,9 +38,14 @@ class JobProperties(Model):
     :param state: Gets or set the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
     :type state: str
-    :param status: Gets the job status.
-    :type status: :class:`JobStatus <azure.mgmt.scheduler.models.JobStatus>`
+    :ivar status: Gets the job status.
+    :vartype status: :class:`JobStatus
+     <azure.mgmt.scheduler.models.JobStatus>`
     """ 
+
+    _validation = {
+        'status': {'readonly': True},
+    }
 
     _attribute_map = {
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
@@ -47,9 +55,9 @@ class JobProperties(Model):
         'status': {'key': 'status', 'type': 'JobStatus'},
     }
 
-    def __init__(self, start_time=None, action=None, recurrence=None, state=None, status=None):
+    def __init__(self, start_time=None, action=None, recurrence=None, state=None):
         self.start_time = start_time
         self.action = action
         self.recurrence = recurrence
         self.state = state
-        self.status = status
+        self.status = None

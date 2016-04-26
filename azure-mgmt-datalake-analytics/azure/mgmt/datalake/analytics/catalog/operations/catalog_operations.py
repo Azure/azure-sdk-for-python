@@ -413,7 +413,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -588,7 +588,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -769,7 +769,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -949,7 +949,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -1129,7 +1129,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -1316,7 +1316,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -1429,7 +1429,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -1616,7 +1616,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -1793,7 +1793,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -1967,7 +1967,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each
@@ -2136,7 +2136,7 @@ class CatalogOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each

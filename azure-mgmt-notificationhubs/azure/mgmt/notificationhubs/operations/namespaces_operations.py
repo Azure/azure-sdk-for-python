@@ -119,8 +119,7 @@ class NamespacesOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param parameters: Parameters supplied to the create a Namespace
-         Resource.
+        :param parameters: Parameters supplied to create a Namespace Resource.
         :type parameters: :class:`NamespaceCreateOrUpdateParameters
          <azure.mgmt.notificationhubs.models.NamespaceCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -324,15 +323,13 @@ class NamespacesOperations(object):
     def create_or_update_authorization_rule(
             self, resource_group_name, namespace_name, authorization_rule_name, parameters, custom_headers={}, raw=False, **operation_config):
         """
-        The create namespace authorization rule operation creates an
-        authorization rule for a namespace
+        Creates an authorization rule for a namespace
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param authorization_rule_name: The namespace authorizationRuleName
-         name.
+        :param authorization_rule_name: Aauthorization Rule Name.
         :type authorization_rule_name: str
         :param parameters: The shared access authorization rule.
         :type parameters:
@@ -399,14 +396,13 @@ class NamespacesOperations(object):
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
         """
-        The delete a namespace authorization rule operation
+        Deletes a namespace authorization rule
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param authorization_rule_name: The namespace authorizationRuleName
-         name.
+        :param authorization_rule_name: Authorization Rule Name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -457,16 +453,13 @@ class NamespacesOperations(object):
     def get_authorization_rule(
             self, resource_group_name, namespace_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
         """
-        The get authorization rule operation gets an authorization rule for a
-        namespace by name.
+        Gets an authorization rule for a namespace by name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The namespace to get the authorization rule
-         for.
+        :param namespace_name: The namespace name
         :type namespace_name: str
-        :param authorization_rule_name: The entity name to get the
-         authorization rule for.
+        :param authorization_rule_name: Authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -710,13 +703,11 @@ class NamespacesOperations(object):
     def list_authorization_rules(
             self, resource_group_name, namespace_name, custom_headers={}, raw=False, **operation_config):
         """
-        The get authorization rules operation gets the authorization rules for
-        a namespace.
+        Gets the authorization rules for a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The namespace to get the authorization rule
-         for.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -27,14 +27,17 @@ class DataLakeAnalyticsAccount(Model):
     A Data Lake Analytics account object, containing all information
     associated with the named Data Lake Analytics account.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param location: Gets or sets the account regional location.
     :type location: str
     :param name: Gets or sets the account name.
     :type name: str
-    :param type: Gets or sets the namespace and type of the account.
-    :type type: str
-    :param id: Gets or sets the account subscription ID.
-    :type id: str
+    :ivar type: Gets or sets the namespace and type of the account.
+    :vartype type: str
+    :ivar id: Gets or sets the account subscription ID.
+    :vartype id: str
     :param tags: Gets or sets the value of custom properties.
     :type tags: dict
     :param properties: Gets or sets the properties defined by Data Lake
@@ -42,6 +45,11 @@ class DataLakeAnalyticsAccount(Model):
     :type properties: :class:`DataLakeAnalyticsAccountProperties
      <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountProperties>`
     """ 
+
+    _validation = {
+        'type': {'readonly': True},
+        'id': {'readonly': True},
+    }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
@@ -52,10 +60,10 @@ class DataLakeAnalyticsAccount(Model):
         'properties': {'key': 'properties', 'type': 'DataLakeAnalyticsAccountProperties'},
     }
 
-    def __init__(self, location=None, name=None, type=None, id=None, tags=None, properties=None):
+    def __init__(self, location=None, name=None, tags=None, properties=None):
         self.location = location
         self.name = name
-        self.type = type
-        self.id = id
+        self.type = None
+        self.id = None
         self.tags = tags
         self.properties = properties

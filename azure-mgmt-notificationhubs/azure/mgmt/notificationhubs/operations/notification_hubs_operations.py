@@ -113,7 +113,7 @@ class NotificationHubsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, namespace_name, notification_hub_name, parameters, if_match=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, parameters, custom_headers={}, raw=False, **operation_config):
         """
         Creates/Update a NotificationHub in a namespace.
 
@@ -124,12 +124,9 @@ class NotificationHubsOperations(object):
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
         :param parameters: Parameters supplied to the create/update a
-         NotificatioHub Resource.
+         NotificationHub Resource.
         :type parameters: :class:`NotificationHubCreateOrUpdateParameters
          <azure.mgmt.notificationhubs.models.NotificationHubCreateOrUpdateParameters>`
-        :param if_match: A notificationHub can be updated if this header is
-         set to *.
-        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -161,8 +158,6 @@ class NotificationHubsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -317,8 +312,7 @@ class NotificationHubsOperations(object):
     def create_or_update_authorization_rule(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, parameters, custom_headers={}, raw=False, **operation_config):
         """
-        The create NotificationHub authorization rule operation creates an
-        authorization rule for a NotificationHub
+        Creates/Updates an authorization rule for a NotificationHub
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -326,8 +320,7 @@ class NotificationHubsOperations(object):
         :type namespace_name: str
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
-        :param authorization_rule_name: The namespace authorizationRuleName
-         name.
+        :param authorization_rule_name: Authorization Rule Name.
         :type authorization_rule_name: str
         :param parameters: The shared access authorization rule.
         :type parameters:
@@ -395,7 +388,7 @@ class NotificationHubsOperations(object):
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
         """
-        The delete a notificationHub authorization rule operation
+        Deletes a notificationHub authorization rule
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -403,8 +396,7 @@ class NotificationHubsOperations(object):
         :type namespace_name: str
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
-        :param authorization_rule_name: The namespace authorizationRuleName
-         name.
+        :param authorization_rule_name: Authorization Rule Name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -456,18 +448,15 @@ class NotificationHubsOperations(object):
     def get_authorization_rule(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
         """
-        The get authorization rule operation gets an authorization rule for a
-        NotificationHub by name.
+        Gets an authorization rule for a NotificationHub by name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The namespace to get the authorization rule
-         for.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
-        :param authorization_rule_name: The entity name to get the
-         authorization rule for.
+        :param authorization_rule_name: authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -596,13 +585,11 @@ class NotificationHubsOperations(object):
     def list_authorization_rules(
             self, resource_group_name, namespace_name, notification_hub_name, custom_headers={}, raw=False, **operation_config):
         """
-        The get authorization rules operation gets the authorization rules for
-        a NotificationHub.
+        Gets the authorization rules for a NotificationHub.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The NotificationHub to get the authorization
-         rule for.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str

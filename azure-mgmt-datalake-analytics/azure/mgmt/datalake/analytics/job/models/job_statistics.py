@@ -26,18 +26,26 @@ class JobStatistics(Model):
     """
     The Data Lake Analytics U-SQL job execution statistics.
 
-    :param last_update_time_utc: Gets the last update time for the statistics.
-    :type last_update_time_utc: datetime
-    :param stages: Gets the list of stages for the job.
-    :type stages: list of :class:`JobStatisticsVertexStage
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar last_update_time_utc: Gets the last update time for the statistics.
+    :vartype last_update_time_utc: datetime
+    :ivar stages: Gets the list of stages for the job.
+    :vartype stages: list of :class:`JobStatisticsVertexStage
      <azure.mgmt.datalake.analytics.job.models.JobStatisticsVertexStage>`
     """ 
+
+    _validation = {
+        'last_update_time_utc': {'readonly': True},
+        'stages': {'readonly': True},
+    }
 
     _attribute_map = {
         'last_update_time_utc': {'key': 'lastUpdateTimeUtc', 'type': 'iso-8601'},
         'stages': {'key': 'stages', 'type': '[JobStatisticsVertexStage]'},
     }
 
-    def __init__(self, last_update_time_utc=None, stages=None):
-        self.last_update_time_utc = last_update_time_utc
-        self.stages = stages
+    def __init__(self):
+        self.last_update_time_utc = None
+        self.stages = None

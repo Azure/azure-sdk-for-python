@@ -26,17 +26,25 @@ class InnerError(Model):
     """
     Generic resource inner error information.
 
-    :param trace: Gets or sets the stack trace for the error
-    :type trace: str
-    :param context: Gets or sets the context for the error message
-    :type context: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar trace: Gets or sets the stack trace for the error
+    :vartype trace: str
+    :ivar context: Gets or sets the context for the error message
+    :vartype context: str
     """ 
+
+    _validation = {
+        'trace': {'readonly': True},
+        'context': {'readonly': True},
+    }
 
     _attribute_map = {
         'trace': {'key': 'trace', 'type': 'str'},
         'context': {'key': 'context', 'type': 'str'},
     }
 
-    def __init__(self, trace=None, context=None):
-        self.trace = trace
-        self.context = context
+    def __init__(self):
+        self.trace = None
+        self.context = None

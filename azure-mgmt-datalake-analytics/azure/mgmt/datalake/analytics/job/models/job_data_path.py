@@ -26,13 +26,22 @@ class JobDataPath(Model):
     """
     A Data Lake Analytics U-SQL job data path item.
 
-    :param job_id: Gets the id of the job this data is for.
-    :type job_id: str
-    :param command: Gets the command that this job data relates to.
-    :type command: str
-    :param paths: Gets the list of paths to all of the job data.
-    :type paths: list of str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar job_id: Gets the id of the job this data is for.
+    :vartype job_id: str
+    :ivar command: Gets the command that this job data relates to.
+    :vartype command: str
+    :ivar paths: Gets the list of paths to all of the job data.
+    :vartype paths: list of str
     """ 
+
+    _validation = {
+        'job_id': {'readonly': True},
+        'command': {'readonly': True},
+        'paths': {'readonly': True},
+    }
 
     _attribute_map = {
         'job_id': {'key': 'jobId', 'type': 'str'},
@@ -40,7 +49,7 @@ class JobDataPath(Model):
         'paths': {'key': 'paths', 'type': '[str]'},
     }
 
-    def __init__(self, job_id=None, command=None, paths=None):
-        self.job_id = job_id
-        self.command = command
-        self.paths = paths
+    def __init__(self):
+        self.job_id = None
+        self.command = None
+        self.paths = None

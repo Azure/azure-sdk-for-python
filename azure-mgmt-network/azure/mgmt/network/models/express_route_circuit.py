@@ -26,12 +26,15 @@ class ExpressRouteCircuit(Resource):
     """
     ExpressRouteCircuit resource
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource Id
     :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -71,6 +74,11 @@ class ExpressRouteCircuit(Resource):
     :type etag: str
     """ 
 
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -90,8 +98,8 @@ class ExpressRouteCircuit(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, etag=None):
-        super(ExpressRouteCircuit, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, etag=None):
+        super(ExpressRouteCircuit, self).__init__(id=id, location=location, tags=tags)
         self.sku = sku
         self.allow_classic_operations = allow_classic_operations
         self.circuit_provisioning_state = circuit_provisioning_state

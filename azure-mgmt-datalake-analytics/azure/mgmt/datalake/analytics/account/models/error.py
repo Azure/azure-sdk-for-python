@@ -26,20 +26,31 @@ class Error(Model):
     """
     Generic resource error information.
 
-    :param code: Gets or sets the HTTP status code or error code associated
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Gets or sets the HTTP status code or error code associated
      with this error
-    :type code: str
-    :param message: Gets or sets the error message to display.
-    :type message: str
-    :param target: Gets or sets the target of the error.
-    :type target: str
-    :param details: Gets or sets the list of error details
-    :type details: list of :class:`ErrorDetails
+    :vartype code: str
+    :ivar message: Gets or sets the error message to display.
+    :vartype message: str
+    :ivar target: Gets or sets the target of the error.
+    :vartype target: str
+    :ivar details: Gets or sets the list of error details
+    :vartype details: list of :class:`ErrorDetails
      <azure.mgmt.datalake.analytics.account.models.ErrorDetails>`
-    :param inner_error: Gets or sets the inner exceptions or errors, if any
-    :type inner_error: :class:`InnerError
+    :ivar inner_error: Gets or sets the inner exceptions or errors, if any
+    :vartype inner_error: :class:`InnerError
      <azure.mgmt.datalake.analytics.account.models.InnerError>`
     """ 
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'inner_error': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -49,9 +60,9 @@ class Error(Model):
         'inner_error': {'key': 'innerError', 'type': 'InnerError'},
     }
 
-    def __init__(self, code=None, message=None, target=None, details=None, inner_error=None):
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
-        self.inner_error = inner_error
+    def __init__(self):
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.inner_error = None

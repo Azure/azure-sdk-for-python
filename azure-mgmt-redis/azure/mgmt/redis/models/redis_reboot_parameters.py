@@ -22,29 +22,28 @@
 from msrest.serialization import Model
 
 
-class ResourceManagementError(Model):
-    """ResourceManagementError
+class RedisRebootParameters(Model):
+    """
+    Specifies which redis node(s) to reboot.
 
-    :param code: Gets or sets the error code returned from the server.
-    :type code: str
-    :param message: Gets or sets the error message returned from the server.
-    :type message: str
-    :param target: Gets or sets the target of the error.
-    :type target: str
+    :param reboot_type: Which redis node(s) to reboot. Depending on this
+     value data loss is possible. Possible values include: 'PrimaryNode',
+     'SecondaryNode', 'AllNodes'
+    :type reboot_type: str
+    :param shard_id: In case of cluster cache, this specifies shard id which
+     should be rebooted.
+    :type shard_id: int
     """ 
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        'reboot_type': {'required': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        'reboot_type': {'key': 'rebootType', 'type': 'RebootType'},
+        'shard_id': {'key': 'shardId', 'type': 'int'},
     }
 
-    def __init__(self, code, message, target=None):
-        self.code = code
-        self.message = message
-        self.target = target
+    def __init__(self, reboot_type, shard_id=None):
+        self.reboot_type = reboot_type
+        self.shard_id = shard_id

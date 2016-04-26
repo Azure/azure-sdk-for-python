@@ -26,12 +26,15 @@ class AccountResource(Resource):
     """
     The Batch account information.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -56,6 +59,12 @@ class AccountResource(Resource):
     :type active_job_and_job_schedule_quota: int
     """ 
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -70,8 +79,8 @@ class AccountResource(Resource):
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, account_endpoint=None, provisioning_state=None, auto_storage=None, core_quota=None, pool_quota=None, active_job_and_job_schedule_quota=None):
-        super(AccountResource, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, account_endpoint=None, provisioning_state=None, auto_storage=None, core_quota=None, pool_quota=None, active_job_and_job_schedule_quota=None):
+        super(AccountResource, self).__init__(location=location, tags=tags)
         self.account_endpoint = account_endpoint
         self.provisioning_state = provisioning_state
         self.auto_storage = auto_storage

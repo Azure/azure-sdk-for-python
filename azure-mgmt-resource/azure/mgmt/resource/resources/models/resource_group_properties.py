@@ -26,13 +26,20 @@ class ResourceGroupProperties(Model):
     """
     The resource group properties.
 
-    :param provisioning_state: Gets resource group provisioning state.
-    :type provisioning_state: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provisioning_state: Gets resource group provisioning state.
+    :vartype provisioning_state: str
     """ 
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+    }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, provisioning_state=None):
-        self.provisioning_state = provisioning_state
+    def __init__(self):
+        self.provisioning_state = None
