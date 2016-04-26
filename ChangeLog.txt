@@ -2,7 +2,7 @@
 
 Disclaimer:
 There is no known breaking changes between 2.0.0RC2 and 2.0.0RC3.
-However, we removed several useless parameters for model __init__ methods. If you get an error message like this after migrating to RC3:
+However, we removed several useless parameters for __init__ methods on model classes. If you get an error message like this after migrating to RC3:
  
 	TypeError: __init__() got an unexpected keyword argument 'type'
 	
@@ -10,15 +10,15 @@ or
 
 	TypeError: __init__() takes exactly 1 positional argument (2 given)
 	
-You can remove the involved parameter safely, as it should not have been there in a first place.
+You can remove the involved parameter safely, as it should not have been there in the first place.
 
 New:
 * Batch / Batch Management are installed with the azure meta-package
-* Type checking improvment in Client
+* Type checking improvement in Client
 * Latest Swagger update for Compute (Hardware profile update)
 * Latest Swagger update for Redis (force-reboot)
-* ´azure´ installs now azure-servicemanagement-legacy 0.20.3
-* ´azure´ installs now azure-storage 0.31.0
+* ´azure´ now installs azure-servicemanagement-legacy 0.20.3
+* ´azure´ now installs azure-storage 0.31.0
 
 Dependencies:
 * msrest must be >= 0.3.0 (see their ChangeLog for details)
