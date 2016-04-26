@@ -1,3 +1,7 @@
+## Changes in 1.7.0 : ##
+
+- Added the support for Time To Live(TTL) feature for documents.
+
 ## Changes in 1.6.1 : ##
 
 - Bug fixes related to server side partitioning to allow special characters in partitionkey path.
