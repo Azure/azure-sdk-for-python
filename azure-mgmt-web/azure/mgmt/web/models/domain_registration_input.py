@@ -81,6 +81,8 @@ class DomainRegistrationInput(Resource):
     :param consent: Legal agreement consent
     :type consent: :class:`DomainPurchaseConsent
      <azure.mgmt.web.models.DomainPurchaseConsent>`
+    :param domain_not_renewable_reasons: Reasons why domain is not renewable
+    :type domain_not_renewable_reasons: list of str
     """ 
 
     _validation = {
@@ -110,9 +112,10 @@ class DomainRegistrationInput(Resource):
         'ready_for_dns_record_management': {'key': 'properties.readyForDnsRecordManagement', 'type': 'bool'},
         'managed_host_names': {'key': 'properties.managedHostNames', 'type': '[HostName]'},
         'consent': {'key': 'properties.consent', 'type': 'DomainPurchaseConsent'},
+        'domain_not_renewable_reasons': {'key': 'properties.domainNotRenewableReasons', 'type': '[str]'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, domain_registration_input_name=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None):
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, domain_registration_input_name=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None, domain_not_renewable_reasons=None):
         super(DomainRegistrationInput, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.domain_registration_input_name = domain_registration_input_name
         self.contact_admin = contact_admin
@@ -130,3 +133,4 @@ class DomainRegistrationInput(Resource):
         self.ready_for_dns_record_management = ready_for_dns_record_management
         self.managed_host_names = managed_host_names
         self.consent = consent
+        self.domain_not_renewable_reasons = domain_not_renewable_reasons
