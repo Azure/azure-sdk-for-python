@@ -19,11 +19,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .arm_plan import ArmPlan
+from .certificate_order_certificate import CertificateOrderCertificate
+from .sku_description import SkuDescription
+from .certificate_order import CertificateOrder
+from .certificate_details import CertificateDetails
+from .certificate_order_collection import CertificateOrderCollection
+from .certificate_order_certificate_collection import CertificateOrderCertificateCollection
+from .reissue_certificate_order_request import ReissueCertificateOrderRequest
+from .renew_certificate_order_request import RenewCertificateOrderRequest
+from .certificate_order_action import CertificateOrderAction
+from .certificate_email import CertificateEmail
 from .certificate_collection import CertificateCollection
 from .certificate import Certificate
 from .hosting_environment_profile import HostingEnvironmentProfile
-from .arm_plan import ArmPlan
-from .sku_description import SkuDescription
 from .csr import Csr
 from .classic_mobile_service_collection import ClassicMobileServiceCollection
 from .classic_mobile_service import ClassicMobileService
@@ -157,8 +166,12 @@ from .tld_legal_agreement import TldLegalAgreement
 from .resource import Resource
 from .site_paged import SitePaged
 from .web_site_management_client_enums import (
-    DomainStatus,
+    KeyVaultSecretStatus,
+    CertificateProductType,
     ProvisioningState,
+    CertificateOrderStatus,
+    CertificateOrderActionType,
+    DomainStatus,
     AzureResourceType,
     CustomHostNameDnsRecordType,
     HostNameType,
@@ -189,11 +202,20 @@ from .web_site_management_client_enums import (
 )
 
 __all__ = [
+    'ArmPlan',
+    'CertificateOrderCertificate',
+    'SkuDescription',
+    'CertificateOrder',
+    'CertificateDetails',
+    'CertificateOrderCollection',
+    'CertificateOrderCertificateCollection',
+    'ReissueCertificateOrderRequest',
+    'RenewCertificateOrderRequest',
+    'CertificateOrderAction',
+    'CertificateEmail',
     'CertificateCollection',
     'Certificate',
     'HostingEnvironmentProfile',
-    'ArmPlan',
-    'SkuDescription',
     'Csr',
     'ClassicMobileServiceCollection',
     'ClassicMobileService',
@@ -326,8 +348,12 @@ __all__ = [
     'TldLegalAgreement',
     'Resource',
     'SitePaged',
-    'DomainStatus',
+    'KeyVaultSecretStatus',
+    'CertificateProductType',
     'ProvisioningState',
+    'CertificateOrderStatus',
+    'CertificateOrderActionType',
+    'DomainStatus',
     'AzureResourceType',
     'CustomHostNameDnsRecordType',
     'HostNameType',
