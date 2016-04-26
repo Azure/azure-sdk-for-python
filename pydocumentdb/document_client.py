@@ -136,7 +136,7 @@ class DocumentClient(object):
         return self.partition_resolvers.get(base.TrimBeginningAndEndingSlashes(database_link))
 
         
-    def CreateDatabase(self, database, options={}):
+    def CreateDatabase(self, database, options=None):
         """Creates a database.
 
         :Parameters:
@@ -147,11 +147,14 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         DocumentClient.__ValidateResource(database)
         path = '/dbs'
         return self.Create(database, path, 'dbs', None, None, options)
 
-    def ReadDatabase(self, database_link, options={}):
+    def ReadDatabase(self, database_link, options=None):
         """Reads a database.
 
         :Parameters:
@@ -162,11 +165,14 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return self.Read(path, 'dbs', database_id, None, options)
 
-    def ReadDatabases(self, options={}):
+    def ReadDatabases(self, options=None):
         """Reads all databases.
 
         :Parameters:
@@ -176,9 +182,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         return self.QueryDatabases(None, options)
 
-    def QueryDatabases(self, query, options={}):
+    def QueryDatabases(self, query, options=None):
         """Queries databases.
 
         :Parameters:
@@ -189,6 +198,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         def fetch_fn(options):
             return self.__QueryFeed('/dbs',
                                     'dbs',
@@ -199,7 +211,7 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def ReadCollections(self, database_link, options={}):
+    def ReadCollections(self, database_link, options=None):
         """Reads all collections in a database.
 
         :Parameters:
@@ -210,9 +222,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         return self.QueryCollections(database_link, None, options)
 
-    def QueryCollections(self, database_link, query, options={}):
+    def QueryCollections(self, database_link, query, options=None):
         """Queries collections in a database.
 
         :Parameters:
@@ -224,6 +239,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(database_link, 'colls')
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         def fetch_fn(options):
@@ -236,7 +254,7 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def CreateCollection(self, database_link, collection, options={}):
+    def CreateCollection(self, database_link, collection, options=None):
         """Creates a collection in a database.
 
         :Parameters:
@@ -248,6 +266,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         DocumentClient.__ValidateResource(collection)
         path = base.GetPathFromLink(database_link, 'colls')
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
@@ -258,7 +279,7 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def ReplaceCollection(self, collection_link, collection, options={}):
+    def ReplaceCollection(self, collection_link, collection, options=None):
         """Replaces a collection and return it.
 
         :Parameters:
@@ -270,6 +291,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         DocumentClient.__ValidateResource(collection)
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
@@ -280,7 +304,7 @@ class DocumentClient(object):
                             None,
                             options)
 
-    def ReadCollection(self, collection_link, options={}):
+    def ReadCollection(self, collection_link, options=None):
         """Reads a collection.
 
         :Parameters:
@@ -291,6 +315,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return self.Read(path,
@@ -299,7 +326,7 @@ class DocumentClient(object):
                          None,
                          options)
 
-    def CreateUser(self, database_link, user, options={}):
+    def CreateUser(self, database_link, user, options=None):
         """Creates a user.
 
         :Parameters:
@@ -311,6 +338,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
         return self.Create(user,
                            path,
@@ -319,7 +349,7 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def UpsertUser(self, database_link, user, options={}):
+    def UpsertUser(self, database_link, user, options=None):
         """Upserts a user.
 
         :Parameters:
@@ -331,6 +361,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
         return self.Upsert(user,
                            path,
@@ -346,7 +379,7 @@ class DocumentClient(object):
         return database_id, path
     
 
-    def ReadUser(self, user_link, options={}):
+    def ReadUser(self, user_link, options=None):
         """Reads a user.
 
         :Parameters:
@@ -357,11 +390,14 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return self.Read(path, 'users', user_id, None, options)
 
-    def ReadUsers(self, database_link, options={}):
+    def ReadUsers(self, database_link, options=None):
         """Reads all users in a database.
 
         :Parameters:
@@ -371,9 +407,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         return self.QueryUsers(database_link, None, options)
 
-    def QueryUsers(self, database_link, query, options={}):
+    def QueryUsers(self, database_link, query, options=None):
         """Queries users in a database.
 
         :Parameters:
@@ -385,6 +424,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(database_link, 'users')
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         def fetch_fn(options):
@@ -397,7 +439,7 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def DeleteDatabase(self, database_link, options={}):
+    def DeleteDatabase(self, database_link, options=None):
         """Deletes a database.
 
         :Parameters:
@@ -408,6 +450,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return self.DeleteResource(path,
@@ -416,7 +461,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def CreatePermission(self, user_link, permission, options={}):
+    def CreatePermission(self, user_link, permission, options=None):
         """Creates a permission for a user.
 
         :Parameters:
@@ -428,6 +473,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
         return self.Create(permission,
                            path,
@@ -436,7 +484,7 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def UpsertPermission(self, user_link, permission, options={}):
+    def UpsertPermission(self, user_link, permission, options=None):
         """Upserts a permission for a user.
 
         :Parameters:
@@ -448,6 +496,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
         return self.Upsert(permission,
                             path,
@@ -463,7 +514,7 @@ class DocumentClient(object):
         return path, user_id
 
 
-    def ReadPermission(self, permission_link, options={}):
+    def ReadPermission(self, permission_link, options=None):
         """Reads a permission.
 
         :Parameters:
@@ -474,6 +525,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return self.Read(path,
@@ -482,7 +536,7 @@ class DocumentClient(object):
                           None,
                           options)
 
-    def ReadPermissions(self, user_link, options={}):
+    def ReadPermissions(self, user_link, options=None):
         """Reads all permissions for a user.
 
         :Parameters:
@@ -493,9 +547,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         return self.QueryPermissions(user_link, None, options)
 
-    def QueryPermissions(self, user_link, query, options={}):
+    def QueryPermissions(self, user_link, query, options=None):
         """Queries permissions for a user.
 
         :Parameters:
@@ -507,6 +564,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(user_link, 'permissions')
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         def fetch_fn(options):
@@ -519,7 +579,7 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def ReplaceUser(self, user_link, user, options={}):
+    def ReplaceUser(self, user_link, user, options=None):
         """Replaces a user and return it.
 
         :Parameters:
@@ -531,6 +591,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         DocumentClient.__ValidateResource(user)
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
@@ -541,7 +604,7 @@ class DocumentClient(object):
                             None,
                             options)
 
-    def DeleteUser(self, user_link, options={}):
+    def DeleteUser(self, user_link, options=None):
         """Deletes a user.
 
         :Parameters:
@@ -552,6 +615,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return self.DeleteResource(path,
@@ -560,7 +626,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def ReplacePermission(self, permission_link, permission, options={}):
+    def ReplacePermission(self, permission_link, permission, options=None):
         """Replaces a permission and return it.
 
         :Parameters:
@@ -572,6 +638,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         DocumentClient.__ValidateResource(permission)
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
@@ -582,7 +651,7 @@ class DocumentClient(object):
                             None,
                             options)
 
-    def DeletePermission(self, permission_link, options={}):
+    def DeletePermission(self, permission_link, options=None):
         """Deletes a permission.
 
         :Parameters:
@@ -593,6 +662,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return self.DeleteResource(path,
@@ -601,7 +673,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def ReadDocuments(self, collection_link, feed_options={}):
+    def ReadDocuments(self, collection_link, feed_options=None):
         """Reads all documents in a collection.
 
         :Parameters:
@@ -612,9 +684,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if feed_options is None:
+            feed_options = {}
+
         return self.QueryDocuments(collection_link, None, feed_options)
 
-    def QueryDocuments(self, database_or_collection_link, query, options={}, partition_key=None):
+    def QueryDocuments(self, database_or_collection_link, query, options=None, partition_key=None):
         """Queries documents in a collection.
 
         :Parameters:
@@ -627,6 +702,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         if(base.IsDatabaseLink(database_or_collection_link)):
             # Python doesn't have a good way of specifying an overloaded constructor, and this is how it's generally overloaded constructors are specified(by calling a @classmethod) and returning the 'self' instance
             return query_iterable.QueryIterable.PartitioningQueryIterable(self, options, self.retry_policy, database_or_collection_link, query, partition_key)
@@ -643,7 +721,7 @@ class DocumentClient(object):
                                         options), self.last_response_headers
             return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def CreateDocument(self, database_or_collection_link, document, options={}):
+    def CreateDocument(self, database_or_collection_link, document, options=None):
         """Creates a document in a collection.
 
         :Parameters:
@@ -658,6 +736,13 @@ class DocumentClient(object):
             dict
 
         """
+        # Python’s default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby). 
+        # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
+        # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the method
+        # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        if options is None:
+            options = {}
+        
         # We check the link to be document collection link since it can be database link in case of client side partitioning
         if(base.IsDocumentCollectionLink(database_or_collection_link)):
             options = self._AddPartitionKey(database_or_collection_link, document, options)
@@ -670,7 +755,7 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def UpsertDocument(self, database_or_collection_link, document, options={}):
+    def UpsertDocument(self, database_or_collection_link, document, options=None):
         """Upserts a document in a collection.
 
         :Parameters:
@@ -685,6 +770,13 @@ class DocumentClient(object):
             dict
 
         """
+        # Python’s default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby). 
+        # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
+        # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the method
+        # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        if options is None:
+            options = {}
+
         # We check the link to be document collection link since it can be database link in case of client side partitioning
         if(base.IsDocumentCollectionLink(database_or_collection_link)):
             options = self._AddPartitionKey(database_or_collection_link, document, options)
@@ -728,7 +820,7 @@ class DocumentClient(object):
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, document, path
     
-    def ReadDocument(self, document_link, options={}):
+    def ReadDocument(self, document_link, options=None):
         """Reads a document.
 
         :Parameters:
@@ -739,6 +831,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.Read(path,
@@ -747,7 +842,7 @@ class DocumentClient(object):
                          None,
                          options)
 
-    def ReadTriggers(self, collection_link, options={}):
+    def ReadTriggers(self, collection_link, options=None):
         """Reads all triggers in a collection.
 
         :Parameters:
@@ -758,9 +853,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         return self.QueryTriggers(collection_link, None, options)
 
-    def QueryTriggers(self, collection_link, query, options={}):
+    def QueryTriggers(self, collection_link, query, options=None):
         """Queries triggers in a collection.
 
         :Parameters:
@@ -772,6 +870,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(collection_link, 'triggers')
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         def fetch_fn(options):
@@ -784,7 +885,7 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def CreateTrigger(self, collection_link, trigger, options={}):
+    def CreateTrigger(self, collection_link, trigger, options=None):
         """Creates a trigger in a collection.
 
         :Parameters:
@@ -796,6 +897,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         collection_id, path, trigger = self._GetCollectionIdWithPathForTrigger(collection_link, trigger)
         return self.Create(trigger,
                            path,
@@ -804,7 +908,7 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def UpsertTrigger(self, collection_link, trigger, options={}):
+    def UpsertTrigger(self, collection_link, trigger, options=None):
         """Upserts a trigger in a collection.
 
         :Parameters:
@@ -816,6 +920,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         collection_id, path, trigger = self._GetCollectionIdWithPathForTrigger(collection_link, trigger)
         return self.Upsert(trigger,
                            path,
@@ -837,7 +944,7 @@ class DocumentClient(object):
         return collection_id, path, trigger
     
 
-    def ReadTrigger(self, trigger_link, options={}):
+    def ReadTrigger(self, trigger_link, options=None):
         """Reads a trigger.
 
         :Parameters:
@@ -848,11 +955,14 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
         return self.Read(path, 'triggers', trigger_id, None, options)
 
-    def ReadUserDefinedFunctions(self, collection_link, options={}):
+    def ReadUserDefinedFunctions(self, collection_link, options=None):
         """Reads all user defined functions in a collection.
 
         :Parameters:
@@ -863,9 +973,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         return self.QueryUserDefinedFunctions(collection_link, None, options)
 
-    def QueryUserDefinedFunctions(self, collection_link, query, options={}):
+    def QueryUserDefinedFunctions(self, collection_link, query, options=None):
         """Queries user defined functions in a collection.
 
         :Parameters:
@@ -877,6 +990,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(collection_link, 'udfs')
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         def fetch_fn(options):
@@ -889,7 +1005,7 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def CreateUserDefinedFunction(self, collection_link, udf, options={}):
+    def CreateUserDefinedFunction(self, collection_link, udf, options=None):
         """Creates a user defined function in a collection.
 
         :Parameters:
@@ -901,6 +1017,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         collection_id, path, udf = self._GetCollectionIdWithPathForUDF(collection_link, udf)
         return self.Create(udf,
                            path,
@@ -909,7 +1028,7 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def UpsertUserDefinedFunction(self, collection_link, udf, options={}):
+    def UpsertUserDefinedFunction(self, collection_link, udf, options=None):
         """Upserts a user defined function in a collection.
 
         :Parameters:
@@ -921,6 +1040,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         collection_id, path, udf = self._GetCollectionIdWithPathForUDF(collection_link, udf)
         return self.Upsert(udf,
                            path,
@@ -942,7 +1064,7 @@ class DocumentClient(object):
         return collection_id, path, udf
     
 
-    def ReadUserDefinedFunction(self, udf_link, options={}):
+    def ReadUserDefinedFunction(self, udf_link, options=None):
         """Reads a user defined function.
 
         :Parameters:
@@ -953,11 +1075,14 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
         return self.Read(path, 'udfs', udf_id, None, options)
 
-    def ReadStoredProcedures(self, collection_link, options={}):
+    def ReadStoredProcedures(self, collection_link, options=None):
         """Reads all store procedures in a collection.
 
         :Parameters:
@@ -968,9 +1093,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         return self.QueryStoredProcedures(collection_link, None, options)
 
-    def QueryStoredProcedures(self, collection_link, query, options={}):
+    def QueryStoredProcedures(self, collection_link, query, options=None):
         """Queries stored procedures in a collection.
 
         :Parameters:
@@ -982,6 +1110,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(collection_link, 'sprocs')
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         def fetch_fn(options):
@@ -994,7 +1125,7 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def CreateStoredProcedure(self, collection_link, sproc, options={}):
+    def CreateStoredProcedure(self, collection_link, sproc, options=None):
         """Creates a stored procedure in a collection.
 
         :Parameters:
@@ -1006,6 +1137,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         collection_id, path, sproc = self._GetCollectionIdWithPathForSproc(collection_link, sproc)
         return self.Create(sproc,
                            path,
@@ -1014,7 +1148,7 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def UpsertStoredProcedure(self, collection_link, sproc, options={}):
+    def UpsertStoredProcedure(self, collection_link, sproc, options=None):
         """Upserts a stored procedure in a collection.
 
         :Parameters:
@@ -1026,6 +1160,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         collection_id, path, sproc = self._GetCollectionIdWithPathForSproc(collection_link, sproc)
         return self.Upsert(sproc,
                            path,
@@ -1046,7 +1183,7 @@ class DocumentClient(object):
         return collection_id, path, sproc
     
 
-    def ReadStoredProcedure(self, sproc_link, options={}):
+    def ReadStoredProcedure(self, sproc_link, options=None):
         """Reads a stored procedure.
 
         :Parameters:
@@ -1057,11 +1194,14 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
         return self.Read(path, 'sprocs', sproc_id, None, options)
 
-    def ReadConflicts(self, collection_link, feed_options={}):
+    def ReadConflicts(self, collection_link, feed_options=None):
         """Reads conflicts.
 
         :Parameters:
@@ -1072,9 +1212,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if feed_options is None:
+            feed_options = {}
+
         return self.QueryConflicts(collection_link, None, feed_options)
 
-    def QueryConflicts(self, collection_link, query, options={}):
+    def QueryConflicts(self, collection_link, query, options=None):
         """Queries conflicts in a collection.
 
         :Parameters:
@@ -1086,6 +1229,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(collection_link, 'conflicts')
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         def fetch_fn(options):
@@ -1098,7 +1244,7 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def ReadConflict(self, conflict_link, options={}):
+    def ReadConflict(self, conflict_link, options=None):
         """Reads a conflict.
 
         :Parameters:
@@ -1109,6 +1255,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(conflict_link)
         conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
         return self.Read(path,
@@ -1117,7 +1266,7 @@ class DocumentClient(object):
                          None,
                          options)
 
-    def DeleteCollection(self, collection_link, options={}):
+    def DeleteCollection(self, collection_link, options=None):
         """Deletes a collection.
 
         :Parameters:
@@ -1128,6 +1277,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return self.DeleteResource(path,
@@ -1136,7 +1288,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def ReplaceDocument(self, document_link, new_document, options={}):
+    def ReplaceDocument(self, document_link, new_document, options=None):
         """Replaces a document and returns it.
 
         :Parameters:
@@ -1152,6 +1304,13 @@ class DocumentClient(object):
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         
+        # Python’s default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby). 
+        # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
+        # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the function so that it remains local
+        # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        if options is None:
+            options = {}
+
         # Extract the document collection link and add the partition key to options
         collection_link = base.GetDocumentCollectionLink(document_link)
         options = self._AddPartitionKey(collection_link, new_document, options)
@@ -1163,7 +1322,7 @@ class DocumentClient(object):
                             None,
                             options)
 
-    def DeleteDocument(self, document_link, options={}):
+    def DeleteDocument(self, document_link, options=None):
         """Deletes a document.
 
         :Parameters:
@@ -1174,6 +1333,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.DeleteResource(path,
@@ -1182,7 +1344,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def CreateAttachment(self, document_link, attachment, options={}):
+    def CreateAttachment(self, document_link, attachment, options=None):
         """Creates an attachment in a document.
 
         :Parameters:
@@ -1194,6 +1356,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         document_id, path = self._GetDocumentIdWithPathForAttachment(attachment, document_link)
         return self.Create(attachment,
                            path,
@@ -1202,7 +1367,7 @@ class DocumentClient(object):
                            None,
                            options)
 
-    def UpsertAttachment(self, document_link, attachment, options={}):
+    def UpsertAttachment(self, document_link, attachment, options=None):
         """Upserts an attachment in a document.
 
         :Parameters:
@@ -1214,6 +1379,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         document_id, path = self._GetDocumentIdWithPathForAttachment(attachment, document_link)
         return self.Upsert(attachment,
                            path,
@@ -1231,7 +1399,7 @@ class DocumentClient(object):
     def CreateAttachmentAndUploadMedia(self,
                                        document_link,
                                        readable_stream,
-                                       options={}):
+                                       options=None):
         """Creates an attachment and upload media.
 
         :Parameters:
@@ -1243,6 +1411,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         document_id, initial_headers, path = self._GetDocumentIdWithPathForAttachmentMedia(document_link, options)
         return self.Create(readable_stream,
                            path,
@@ -1254,7 +1425,7 @@ class DocumentClient(object):
     def UpsertAttachmentAndUploadMedia(self,
                                        document_link,
                                        readable_stream,
-                                       options={}):
+                                       options=None):
         """Upserts an attachment and upload media.
 
         :Parameters:
@@ -1266,6 +1437,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         document_id, initial_headers, path = self._GetDocumentIdWithPathForAttachmentMedia(document_link, options)
         return self.Upsert(readable_stream,
                            path,
@@ -1293,7 +1467,7 @@ class DocumentClient(object):
         return document_id, initial_headers, path
 
 
-    def ReadAttachment(self, attachment_link, options={}):
+    def ReadAttachment(self, attachment_link, options=None):
         """Reads an attachment.
 
         :Parameters:
@@ -1304,6 +1478,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(attachment_link)
         attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
         return self.Read(path,
@@ -1312,7 +1489,7 @@ class DocumentClient(object):
                          None,
                          options)
 
-    def ReadAttachments(self, document_link, options={}):
+    def ReadAttachments(self, document_link, options=None):
         """Reads all attachments in a document.
 
         :Parameters:
@@ -1323,9 +1500,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         return self.QueryAttachments(document_link, None, options)
 
-    def QueryAttachments(self, document_link, query, options={}):
+    def QueryAttachments(self, document_link, query, options=None):
         """Queries attachments in a document.
 
         :Parameters:
@@ -1337,6 +1517,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(document_link, 'attachments')
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
 
@@ -1383,7 +1566,7 @@ class DocumentClient(object):
                                                         headers)
         return result
 
-    def UpdateMedia(self, media_link, readable_stream, options={}):
+    def UpdateMedia(self, media_link, readable_stream, options=None):
         """Updates a media and returns it.
 
         :Parameters:
@@ -1395,6 +1578,9 @@ class DocumentClient(object):
             str or file-like stream object
 
         """
+        if options is None:
+            options = {}
+
         initial_headers = dict(self.default_headers)
 
         # Add required headers slug and content-type in case the body is a stream
@@ -1426,7 +1612,7 @@ class DocumentClient(object):
                                                         headers)
         return result
 
-    def ReplaceAttachment(self, attachment_link, attachment, options={}):
+    def ReplaceAttachment(self, attachment_link, attachment, options=None):
         """Replaces an attachment and returns it.
 
         :Parameters:
@@ -1438,6 +1624,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         DocumentClient.__ValidateResource(attachment)
         path = base.GetPathFromLink(attachment_link)
         attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
@@ -1448,7 +1637,7 @@ class DocumentClient(object):
                             None,
                             options)
 
-    def DeleteAttachment(self, attachment_link, options={}):
+    def DeleteAttachment(self, attachment_link, options=None):
         """Deletes an attachment.
 
         :Parameters:
@@ -1459,6 +1648,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(attachment_link)
         attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
         return self.DeleteResource(path,
@@ -1467,7 +1659,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def ReplaceTrigger(self, trigger_link, trigger, options={}):
+    def ReplaceTrigger(self, trigger_link, trigger, options=None):
         """Replaces a trigger and returns it.
 
         :Parameters:
@@ -1479,6 +1671,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         DocumentClient.__ValidateResource(trigger)
         trigger = trigger.copy()
         if trigger.get('serverScript'):
@@ -1495,7 +1690,7 @@ class DocumentClient(object):
                             None,
                             options)
 
-    def DeleteTrigger(self, trigger_link, options={}):
+    def DeleteTrigger(self, trigger_link, options=None):
         """Deletes a trigger.
 
         :Parameters:
@@ -1506,6 +1701,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
         return self.DeleteResource(path,
@@ -1514,7 +1712,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def ReplaceUserDefinedFunction(self, udf_link, udf, options={}):
+    def ReplaceUserDefinedFunction(self, udf_link, udf, options=None):
         """Replaces a user defined function and returns it.
 
         :Parameters:
@@ -1526,6 +1724,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         DocumentClient.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get('serverScript'):
@@ -1542,7 +1743,7 @@ class DocumentClient(object):
                             None,
                             options)
 
-    def DeleteUserDefinedFunction(self, udf_link, options={}):
+    def DeleteUserDefinedFunction(self, udf_link, options=None):
         """Deletes a user defined function.
 
         :Parameters:
@@ -1553,6 +1754,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
         return self.DeleteResource(path,
@@ -1561,7 +1765,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def ExecuteStoredProcedure(self, sproc_link, params, options={}):
+    def ExecuteStoredProcedure(self, sproc_link, params, options=None):
         """Executes a store procedure.
 
         :Parameters:
@@ -1573,6 +1777,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         initial_headers = dict(self.default_headers)
         initial_headers.update({
             http_constants.HttpHeaders.Accept: (
@@ -1599,7 +1806,7 @@ class DocumentClient(object):
                                                          headers)
         return result
 
-    def ReplaceStoredProcedure(self, sproc_link, sproc, options={}):
+    def ReplaceStoredProcedure(self, sproc_link, sproc, options=None):
         """Replaces a stored procedure and returns it.
 
         :Parameters:
@@ -1611,6 +1818,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         DocumentClient.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get('serverScript'):
@@ -1627,7 +1837,7 @@ class DocumentClient(object):
                             None,
                             options)
 
-    def DeleteStoredProcedure(self, sproc_link, options={}):
+    def DeleteStoredProcedure(self, sproc_link, options=None):
         """Deletes a stored procedure.
 
         :Parameters:
@@ -1638,6 +1848,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
         return self.DeleteResource(path,
@@ -1646,7 +1859,7 @@ class DocumentClient(object):
                                    None,
                                    options)
 
-    def DeleteConflict(self, conflict_link, options={}):
+    def DeleteConflict(self, conflict_link, options=None):
         """Deletes a conflict.
 
         :Parameters:
@@ -1657,6 +1870,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         path = base.GetPathFromLink(conflict_link)
         conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
         return self.DeleteResource(path,
@@ -1695,7 +1911,7 @@ class DocumentClient(object):
         offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
         return self.Read(path, 'offers', offer_id, None, {})
 
-    def ReadOffers(self, options={}):
+    def ReadOffers(self, options=None):
         """Reads all offers.
 
         :Parameters:
@@ -1705,9 +1921,12 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         return self.QueryOffers(None, options)
 
-    def QueryOffers(self, query, options={}):
+    def QueryOffers(self, query, options=None):
         """Query for all offers.
 
         :Parameters:
@@ -1718,6 +1937,9 @@ class DocumentClient(object):
             query_iterable.QueryIterable
 
         """
+        if options is None:
+            options = {}
+
         def fetch_fn(options):
             return self.__QueryFeed('/offers',
                                     'offers',
@@ -1762,7 +1984,7 @@ class DocumentClient(object):
         database_account.ConsistencyPolicy = result['userConsistencyPolicy']
         return database_account
 
-    def Create(self, body, path, type, id, initial_headers, options={}):
+    def Create(self, body, path, type, id, initial_headers, options=None):
         """Creates a DocumentDB resource and returns it.
 
         :Parameters:
@@ -1777,6 +1999,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self,
                                   initial_headers,
@@ -1791,7 +2016,7 @@ class DocumentClient(object):
                                                          headers)
         return result
 
-    def Upsert(self, body, path, type, id, initial_headers, options={}):
+    def Upsert(self, body, path, type, id, initial_headers, options=None):
         """Upserts a DocumentDB resource and returns it.
 
         :Parameters:
@@ -1806,6 +2031,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self,
                                   initial_headers,
@@ -1823,7 +2051,7 @@ class DocumentClient(object):
                                                          headers)
         return result
 
-    def Replace(self, resource, path, type, id, initial_headers, options={}):
+    def Replace(self, resource, path, type, id, initial_headers, options=None):
         """Replaces a DocumentDB resource and returns it.
 
         :Parameters:
@@ -1838,6 +2066,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self,
                                   initial_headers,
@@ -1852,7 +2083,7 @@ class DocumentClient(object):
                                                         headers)
         return result
 
-    def Read(self, path, type, id, initial_headers, options={}):
+    def Read(self, path, type, id, initial_headers, options=None):
         """Reads a DocumentDB resource and returns it.
 
         :Parameters:
@@ -1866,6 +2097,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self,
                                   initial_headers,
@@ -1879,7 +2113,7 @@ class DocumentClient(object):
                                                         headers)
         return result
 
-    def DeleteResource(self, path, type, id, initial_headers, options={}):
+    def DeleteResource(self, path, type, id, initial_headers, options=None):
         """Deletes a DocumentDB resource and returns it.
 
         :Parameters:
@@ -1893,6 +2127,9 @@ class DocumentClient(object):
             dict
 
         """
+        if options is None:
+            options = {}
+
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self,
                                   initial_headers,
@@ -2020,7 +2257,7 @@ class DocumentClient(object):
                     result_fn,
                     create_fn,
                     query,
-                    options={}):
+                    options=None):
         """Query for more than one DocumentDB resources.
 
         Raises :exc:`SystemError` is the query compatibility mode is undefined.
@@ -2038,6 +2275,9 @@ class DocumentClient(object):
             list
 
         """
+        if options is None:
+            options = {}
+
         if query:
             __GetBodiesFromQueryResult = result_fn
         else:

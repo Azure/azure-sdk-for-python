@@ -26,6 +26,13 @@ from __builtin__ import *
 masterKey = '[YOUR_KEY_HERE]'
 host = '[YOUR_ENDPOINT_HERE]'
 
+#IMPORTANT NOTES: 
+  
+#  	Most test cases in this file create collections in your DocumentDB account.
+#  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
+  
+#  	To Run the test, replace the two member fields (masterKey and host) with values 
+#   associated with your DocumentDB account.
 
 class CRUDTests(unittest.TestCase):
     """Python CRUD Tests.
@@ -885,7 +892,7 @@ class CRUDTests(unittest.TestCase):
         # create document with partitionKey set as Undefined here
         created_document = client.CreateDocument(
             self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition, {})
+            document_definition)
 
         document_definition = {'id': 'document1',
                                'key' : True,
@@ -894,7 +901,7 @@ class CRUDTests(unittest.TestCase):
         # create document with bool partitionKey
         created_document = client.CreateDocument(
             self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition, {})
+            document_definition)
 
         document_definition = {'id': 'document1',
                                'key' : 'value',
@@ -903,7 +910,7 @@ class CRUDTests(unittest.TestCase):
         # create document with string partitionKey
         created_document = client.CreateDocument(
             self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition, {})
+            document_definition)
 
         document_definition = {'id': 'document1',
                                'key' : 100,
@@ -912,7 +919,7 @@ class CRUDTests(unittest.TestCase):
         # create document with int partitionKey
         created_document = client.CreateDocument(
             self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition, {})
+            document_definition)
 
         document_definition = {'id': 'document1',
                                'key' : 10.50,
@@ -921,7 +928,7 @@ class CRUDTests(unittest.TestCase):
         # create document with float partitionKey
         created_document = client.CreateDocument(
             self.GetDocumentCollectionLink(created_db, created_collection),
-            document_definition, {})
+            document_definition)
 
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
 
@@ -3435,7 +3442,7 @@ class CRUDTests(unittest.TestCase):
         db = client.CreateDatabase({ 'id': 'sample database' })
         # Create collection.
         collection = client.CreateCollection(db['_self'], { 'id': 'sample collection' })
-        offers = list(client.ReadOffers({}))
+        offers = list(client.ReadOffers())
         self.assertEqual(1, len(offers))
         expected_offer = offers[0]
         self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), None)
@@ -3455,7 +3462,7 @@ class CRUDTests(unittest.TestCase):
                 'parameters': [
                     { 'name': '@id', 'value': expected_offer['id']}
                 ]
-            }, {}))
+            }))
         self.assertEqual(1, len(offers))
         query_one_offer = offers[0]
         self.__ValidateOfferResponseBody(query_one_offer, collection.get('_self'), expected_offer.get('offerType'))

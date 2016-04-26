@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
 
 """PyDocumentDB Exceptions.
 """
@@ -12,13 +12,16 @@ class DocumentDBError(Exception):
 class HTTPFailure(DocumentDBError):
     """Raised when a HTTP request to the DocumentDB has failed.
     """
-    def __init__(self, status_code, message='', headers={}):
+    def __init__(self, status_code, message='', headers=None):
         """
         :Parameters:
             status_code: int
             message: str
 
         """
+        if headers is None:
+            headers = {}
+
         self.status_code = status_code
         self.headers = headers
         DocumentDBError.__init__(self,
