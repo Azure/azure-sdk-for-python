@@ -26,12 +26,15 @@ class VirtualNetworkGatewayConnection(Resource):
     """
     A common class for general resource information
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource Id
     :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -80,6 +83,11 @@ class VirtualNetworkGatewayConnection(Resource):
     :type etag: str
     """ 
 
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -103,8 +111,8 @@ class VirtualNetworkGatewayConnection(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, authorization_key=None, virtual_network_gateway1=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_type=None, routing_weight=None, shared_key=None, connection_status=None, egress_bytes_transferred=None, ingress_bytes_transferred=None, peer=None, enable_bgp=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(VirtualNetworkGatewayConnection, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, authorization_key=None, virtual_network_gateway1=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_type=None, routing_weight=None, shared_key=None, connection_status=None, egress_bytes_transferred=None, ingress_bytes_transferred=None, peer=None, enable_bgp=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(VirtualNetworkGatewayConnection, self).__init__(id=id, location=location, tags=tags)
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
         self.virtual_network_gateway2 = virtual_network_gateway2

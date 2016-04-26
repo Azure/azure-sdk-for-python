@@ -26,62 +26,88 @@ class JobStatisticsVertexStage(Model):
     """
     The Data Lake Analytics U-SQL job statistics vertex stage information.
 
-    :param data_read: Gets the amount of data read, in bytes.
-    :type data_read: long
-    :param data_read_cross_pod: Gets the amount of data read across multiple
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar data_read: Gets the amount of data read, in bytes.
+    :vartype data_read: long
+    :ivar data_read_cross_pod: Gets the amount of data read across multiple
      pods, in bytes.
-    :type data_read_cross_pod: long
-    :param data_read_intra_pod: Gets the amount of data read in one pod, in
+    :vartype data_read_cross_pod: long
+    :ivar data_read_intra_pod: Gets the amount of data read in one pod, in
      bytes.
-    :type data_read_intra_pod: long
-    :param data_to_read: Gets the amount of data remaining to be read, in
+    :vartype data_read_intra_pod: long
+    :ivar data_to_read: Gets the amount of data remaining to be read, in
      bytes.
-    :type data_to_read: long
-    :param data_written: Gets the amount of data written, in bytes.
-    :type data_written: long
-    :param duplicate_discard_count: Gets the number of duplicates that were
+    :vartype data_to_read: long
+    :ivar data_written: Gets the amount of data written, in bytes.
+    :vartype data_written: long
+    :ivar duplicate_discard_count: Gets the number of duplicates that were
      discarded.
-    :type duplicate_discard_count: int
-    :param failed_count: Gets the number of failures that occured in this
+    :vartype duplicate_discard_count: int
+    :ivar failed_count: Gets the number of failures that occured in this
      stage.
-    :type failed_count: int
-    :param max_vertex_data_read: Gets the maximum amount of data read in a
+    :vartype failed_count: int
+    :ivar max_vertex_data_read: Gets the maximum amount of data read in a
      single vertex, in bytes.
-    :type max_vertex_data_read: long
-    :param min_vertex_data_read: Gets the minimum amount of data read in a
+    :vartype max_vertex_data_read: long
+    :ivar min_vertex_data_read: Gets the minimum amount of data read in a
      single vertex, in bytes.
-    :type min_vertex_data_read: long
-    :param read_failure_count: Gets the number of read failures in this stage.
-    :type read_failure_count: int
-    :param revocation_count: Gets the number of vertices that were revoked
+    :vartype min_vertex_data_read: long
+    :ivar read_failure_count: Gets the number of read failures in this stage.
+    :vartype read_failure_count: int
+    :ivar revocation_count: Gets the number of vertices that were revoked
      during this stage.
-    :type revocation_count: int
-    :param running_count: Gets the number of currently running vertices in
+    :vartype revocation_count: int
+    :ivar running_count: Gets the number of currently running vertices in
      this stage.
-    :type running_count: int
-    :param scheduled_count: Gets the number of currently scheduled vertices
-     in this stage
-    :type scheduled_count: int
-    :param stage_name: Gets the name of this stage in job execution.
-    :type stage_name: str
-    :param succeeded_count: Gets the number of vertices that succeeded in
-     this stage.
-    :type succeeded_count: int
-    :param temp_data_written: Gets the amount of temporary data written, in
+    :vartype running_count: int
+    :ivar scheduled_count: Gets the number of currently scheduled vertices in
+     this stage
+    :vartype scheduled_count: int
+    :ivar stage_name: Gets the name of this stage in job execution.
+    :vartype stage_name: str
+    :ivar succeeded_count: Gets the number of vertices that succeeded in this
+     stage.
+    :vartype succeeded_count: int
+    :ivar temp_data_written: Gets the amount of temporary data written, in
      bytes.
-    :type temp_data_written: long
-    :param total_count: Gets the total vertex count for this stage.
-    :type total_count: int
-    :param total_failed_time: Gets the amount of time that failed vertices
+    :vartype temp_data_written: long
+    :ivar total_count: Gets the total vertex count for this stage.
+    :vartype total_count: int
+    :ivar total_failed_time: Gets the amount of time that failed vertices
      took up in this stage.
-    :type total_failed_time: str
-    :param total_progress: Gets the current progress of this stage, as a
+    :vartype total_failed_time: str
+    :ivar total_progress: Gets the current progress of this stage, as a
      percentage.
-    :type total_progress: int
-    :param total_succeeded_time: Gets the amount of time all successful
+    :vartype total_progress: int
+    :ivar total_succeeded_time: Gets the amount of time all successful
      vertices took in this stage.
-    :type total_succeeded_time: str
+    :vartype total_succeeded_time: str
     """ 
+
+    _validation = {
+        'data_read': {'readonly': True},
+        'data_read_cross_pod': {'readonly': True},
+        'data_read_intra_pod': {'readonly': True},
+        'data_to_read': {'readonly': True},
+        'data_written': {'readonly': True},
+        'duplicate_discard_count': {'readonly': True},
+        'failed_count': {'readonly': True},
+        'max_vertex_data_read': {'readonly': True},
+        'min_vertex_data_read': {'readonly': True},
+        'read_failure_count': {'readonly': True},
+        'revocation_count': {'readonly': True},
+        'running_count': {'readonly': True},
+        'scheduled_count': {'readonly': True},
+        'stage_name': {'readonly': True},
+        'succeeded_count': {'readonly': True},
+        'temp_data_written': {'readonly': True},
+        'total_count': {'readonly': True},
+        'total_failed_time': {'readonly': True},
+        'total_progress': {'readonly': True},
+        'total_succeeded_time': {'readonly': True},
+    }
 
     _attribute_map = {
         'data_read': {'key': 'dataRead', 'type': 'long'},
@@ -106,24 +132,24 @@ class JobStatisticsVertexStage(Model):
         'total_succeeded_time': {'key': 'totalSucceededTime', 'type': 'str'},
     }
 
-    def __init__(self, data_read=None, data_read_cross_pod=None, data_read_intra_pod=None, data_to_read=None, data_written=None, duplicate_discard_count=None, failed_count=None, max_vertex_data_read=None, min_vertex_data_read=None, read_failure_count=None, revocation_count=None, running_count=None, scheduled_count=None, stage_name=None, succeeded_count=None, temp_data_written=None, total_count=None, total_failed_time=None, total_progress=None, total_succeeded_time=None):
-        self.data_read = data_read
-        self.data_read_cross_pod = data_read_cross_pod
-        self.data_read_intra_pod = data_read_intra_pod
-        self.data_to_read = data_to_read
-        self.data_written = data_written
-        self.duplicate_discard_count = duplicate_discard_count
-        self.failed_count = failed_count
-        self.max_vertex_data_read = max_vertex_data_read
-        self.min_vertex_data_read = min_vertex_data_read
-        self.read_failure_count = read_failure_count
-        self.revocation_count = revocation_count
-        self.running_count = running_count
-        self.scheduled_count = scheduled_count
-        self.stage_name = stage_name
-        self.succeeded_count = succeeded_count
-        self.temp_data_written = temp_data_written
-        self.total_count = total_count
-        self.total_failed_time = total_failed_time
-        self.total_progress = total_progress
-        self.total_succeeded_time = total_succeeded_time
+    def __init__(self):
+        self.data_read = None
+        self.data_read_cross_pod = None
+        self.data_read_intra_pod = None
+        self.data_to_read = None
+        self.data_written = None
+        self.duplicate_discard_count = None
+        self.failed_count = None
+        self.max_vertex_data_read = None
+        self.min_vertex_data_read = None
+        self.read_failure_count = None
+        self.revocation_count = None
+        self.running_count = None
+        self.scheduled_count = None
+        self.stage_name = None
+        self.succeeded_count = None
+        self.temp_data_written = None
+        self.total_count = None
+        self.total_failed_time = None
+        self.total_progress = None
+        self.total_succeeded_time = None

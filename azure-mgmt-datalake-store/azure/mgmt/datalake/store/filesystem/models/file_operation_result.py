@@ -26,13 +26,20 @@ class FileOperationResult(Model):
     """
     The result of the request or operation.
 
-    :param operation_result: Gets the result of the operation or request.
-    :type operation_result: bool
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar operation_result: Gets the result of the operation or request.
+    :vartype operation_result: bool
     """ 
+
+    _validation = {
+        'operation_result': {'readonly': True},
+    }
 
     _attribute_map = {
         'operation_result': {'key': 'boolean', 'type': 'bool'},
     }
 
-    def __init__(self, operation_result=None):
-        self.operation_result = operation_result
+    def __init__(self):
+        self.operation_result = None

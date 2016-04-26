@@ -26,47 +26,66 @@ class JobErrorDetails(Model):
     """
     The Data Lake Analytics job error details.
 
-    :param description: Gets the error message description
-    :type description: str
-    :param details: Gets the details of the error message.
-    :type details: str
-    :param end_offset: Gets the end offset in the job where the error was
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar description: Gets the error message description
+    :vartype description: str
+    :ivar details: Gets the details of the error message.
+    :vartype details: str
+    :ivar end_offset: Gets the end offset in the job where the error was
      found.
-    :type end_offset: int
-    :param error_id: Gets the specific identifier for the type of error
+    :vartype end_offset: int
+    :ivar error_id: Gets the specific identifier for the type of error
      encountered in the job.
-    :type error_id: str
-    :param file_path: Gets the path to any supplemental error files, if any.
-    :type file_path: str
-    :param help_link: Gets the link to MSDN or Azure help for this type of
+    :vartype error_id: str
+    :ivar file_path: Gets the path to any supplemental error files, if any.
+    :vartype file_path: str
+    :ivar help_link: Gets the link to MSDN or Azure help for this type of
      error, if any.
-    :type help_link: str
-    :param internal_diagnostics: Gets the internal diagnostic stack trace if
+    :vartype help_link: str
+    :ivar internal_diagnostics: Gets the internal diagnostic stack trace if
      the user requesting the job error details has sufficient permissions it
      will be retrieved, otherwise it will be empty.
-    :type internal_diagnostics: str
-    :param line_number: Gets the specific line number in the job where the
+    :vartype internal_diagnostics: str
+    :ivar line_number: Gets the specific line number in the job where the
      error occured.
-    :type line_number: int
-    :param message: Gets the user friendly error message for the failure.
-    :type message: str
-    :param resolution: Gets the recommended resolution for the failure, if
-     any.
-    :type resolution: str
-    :param inner_error: Gets the inner error of this specific job error
+    :vartype line_number: int
+    :ivar message: Gets the user friendly error message for the failure.
+    :vartype message: str
+    :ivar resolution: Gets the recommended resolution for the failure, if any.
+    :vartype resolution: str
+    :ivar inner_error: Gets the inner error of this specific job error
      message, if any.
-    :type inner_error: :class:`JobInnerError
+    :vartype inner_error: :class:`JobInnerError
      <azure.mgmt.datalake.analytics.job.models.JobInnerError>`
-    :param severity: Gets the severity level of the failure. Possible values
+    :ivar severity: Gets the severity level of the failure. Possible values
      include: 'Warning', 'Error'
-    :type severity: str
-    :param source: Gets the ultimate source of the failure (usually either
+    :vartype severity: str
+    :ivar source: Gets the ultimate source of the failure (usually either
      SYSTEM or USER).
-    :type source: str
-    :param start_offset: Gets the start offset in the job where the error was
+    :vartype source: str
+    :ivar start_offset: Gets the start offset in the job where the error was
      found
-    :type start_offset: int
+    :vartype start_offset: int
     """ 
+
+    _validation = {
+        'description': {'readonly': True},
+        'details': {'readonly': True},
+        'end_offset': {'readonly': True},
+        'error_id': {'readonly': True},
+        'file_path': {'readonly': True},
+        'help_link': {'readonly': True},
+        'internal_diagnostics': {'readonly': True},
+        'line_number': {'readonly': True},
+        'message': {'readonly': True},
+        'resolution': {'readonly': True},
+        'inner_error': {'readonly': True},
+        'severity': {'readonly': True},
+        'source': {'readonly': True},
+        'start_offset': {'readonly': True},
+    }
 
     _attribute_map = {
         'description': {'key': 'description', 'type': 'str'},
@@ -85,18 +104,18 @@ class JobErrorDetails(Model):
         'start_offset': {'key': 'startOffset', 'type': 'int'},
     }
 
-    def __init__(self, description=None, details=None, end_offset=None, error_id=None, file_path=None, help_link=None, internal_diagnostics=None, line_number=None, message=None, resolution=None, inner_error=None, severity=None, source=None, start_offset=None):
-        self.description = description
-        self.details = details
-        self.end_offset = end_offset
-        self.error_id = error_id
-        self.file_path = file_path
-        self.help_link = help_link
-        self.internal_diagnostics = internal_diagnostics
-        self.line_number = line_number
-        self.message = message
-        self.resolution = resolution
-        self.inner_error = inner_error
-        self.severity = severity
-        self.source = source
-        self.start_offset = start_offset
+    def __init__(self):
+        self.description = None
+        self.details = None
+        self.end_offset = None
+        self.error_id = None
+        self.file_path = None
+        self.help_link = None
+        self.internal_diagnostics = None
+        self.line_number = None
+        self.message = None
+        self.resolution = None
+        self.inner_error = None
+        self.severity = None
+        self.source = None
+        self.start_offset = None

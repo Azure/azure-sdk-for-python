@@ -26,15 +26,24 @@ class ErrorDetails(Model):
     """
     Data Lake Store error details information
 
-    :param code: Gets the HTTP status code or error code associated with this
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Gets the HTTP status code or error code associated with this
      error
-    :type code: str
-    :param message: Gets the error message localized based on Accept-Language
-    :type message: str
-    :param target: Gets the target of the particular error (for example, the
+    :vartype code: str
+    :ivar message: Gets the error message localized based on Accept-Language
+    :vartype message: str
+    :ivar target: Gets the target of the particular error (for example, the
      name of the property in error).
-    :type target: str
+    :vartype target: str
     """ 
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -42,7 +51,7 @@ class ErrorDetails(Model):
         'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None, target=None):
-        self.code = code
-        self.message = message
-        self.target = target
+    def __init__(self):
+        self.code = None
+        self.message = None
+        self.target = None

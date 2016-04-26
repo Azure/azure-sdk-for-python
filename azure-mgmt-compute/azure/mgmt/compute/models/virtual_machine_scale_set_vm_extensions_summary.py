@@ -26,18 +26,26 @@ class VirtualMachineScaleSetVMExtensionsSummary(Model):
     """
     Extensions summary for virtual machines of a virtual machine scale set.
 
-    :param name: Gets the extension name.
-    :type name: str
-    :param statuses_summary: Gets the extensions information.
-    :type statuses_summary: list of :class:`VirtualMachineStatusCodeCount
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Gets the extension name.
+    :vartype name: str
+    :ivar statuses_summary: Gets the extensions information.
+    :vartype statuses_summary: list of :class:`VirtualMachineStatusCodeCount
      <azure.mgmt.compute.models.VirtualMachineStatusCodeCount>`
     """ 
+
+    _validation = {
+        'name': {'readonly': True},
+        'statuses_summary': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
     }
 
-    def __init__(self, name=None, statuses_summary=None):
-        self.name = name
-        self.statuses_summary = statuses_summary
+    def __init__(self):
+        self.name = None
+        self.statuses_summary = None

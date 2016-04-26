@@ -26,16 +26,26 @@ class BlobContainer(Model):
     """
     Azure Storage blob container information.
 
-    :param name: Gets or sets the name of the blob container.
-    :type name: str
-    :param id: Gets or sets the unique identifier of the blob container.
-    :type id: str
-    :param type: Gets or sets the type of the blob container.
-    :type type: str
-    :param properties: Gets or sets the properties of the blob container.
-    :type properties: :class:`BlobContainerProperties
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Gets or sets the name of the blob container.
+    :vartype name: str
+    :ivar id: Gets or sets the unique identifier of the blob container.
+    :vartype id: str
+    :ivar type: Gets or sets the type of the blob container.
+    :vartype type: str
+    :ivar properties: Gets or sets the properties of the blob container.
+    :vartype properties: :class:`BlobContainerProperties
      <azure.mgmt.datalake.analytics.account.models.BlobContainerProperties>`
     """ 
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'properties': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -44,8 +54,8 @@ class BlobContainer(Model):
         'properties': {'key': 'properties', 'type': 'BlobContainerProperties'},
     }
 
-    def __init__(self, name=None, id=None, type=None, properties=None):
-        self.name = name
-        self.id = id
-        self.type = type
-        self.properties = properties
+    def __init__(self):
+        self.name = None
+        self.id = None
+        self.type = None
+        self.properties = None

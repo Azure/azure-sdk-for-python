@@ -26,8 +26,11 @@ class ResourceGroup(Model):
     """
     Resource group information.
 
-    :param id: Gets the ID of the resource group.
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Gets the ID of the resource group.
+    :vartype id: str
     :param name: Gets or sets the Name of the resource group.
     :type name: str
     :param properties:
@@ -43,6 +46,7 @@ class ResourceGroup(Model):
     """ 
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -54,8 +58,8 @@ class ResourceGroup(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, id=None, name=None, properties=None, tags=None):
-        self.id = id
+    def __init__(self, location, name=None, properties=None, tags=None):
+        self.id = None
         self.name = name
         self.properties = properties
         self.location = location

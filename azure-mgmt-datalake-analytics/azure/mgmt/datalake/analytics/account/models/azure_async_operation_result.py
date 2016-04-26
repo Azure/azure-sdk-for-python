@@ -33,19 +33,27 @@ class AzureAsyncOperationResult(Model):
     failed, the response body includes the HTTP status code for the failed
     request and error information regarding the failure.
 
-    :param status: Gets or sets the status of the AzureAsuncOperation.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar status: Gets or sets the status of the AzureAsuncOperation.
      Possible values include: 'InProgress', 'Succeeded', 'Failed'
-    :type status: str
-    :param error:
-    :type error: :class:`Error
+    :vartype status: str
+    :ivar error:
+    :vartype error: :class:`Error
      <azure.mgmt.datalake.analytics.account.models.Error>`
     """ 
+
+    _validation = {
+        'status': {'readonly': True},
+        'error': {'readonly': True},
+    }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'OperationStatus'},
         'error': {'key': 'error', 'type': 'Error'},
     }
 
-    def __init__(self, status=None, error=None):
-        self.status = status
-        self.error = error
+    def __init__(self):
+        self.status = None
+        self.error = None

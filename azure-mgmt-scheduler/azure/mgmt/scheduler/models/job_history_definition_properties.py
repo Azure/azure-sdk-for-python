@@ -25,26 +25,40 @@ from msrest.serialization import Model
 class JobHistoryDefinitionProperties(Model):
     """JobHistoryDefinitionProperties
 
-    :param start_time: Gets the start time for this job.
-    :type start_time: datetime
-    :param end_time: Gets the end time for this job.
-    :type end_time: datetime
-    :param expected_execution_time: Gets the expected execution time for this
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar start_time: Gets the start time for this job.
+    :vartype start_time: datetime
+    :ivar end_time: Gets the end time for this job.
+    :vartype end_time: datetime
+    :ivar expected_execution_time: Gets the expected execution time for this
      job.
-    :type expected_execution_time: datetime
-    :param action_name: Gets the job history action name. Possible values
+    :vartype expected_execution_time: datetime
+    :ivar action_name: Gets the job history action name. Possible values
      include: 'MainAction', 'ErrorAction'
-    :type action_name: str
-    :param status: Gets the job history status. Possible values include:
+    :vartype action_name: str
+    :ivar status: Gets the job history status. Possible values include:
      'Completed', 'Failed', 'Postponed'
-    :type status: str
-    :param message: Gets the message for the job history.
-    :type message: str
-    :param retry_count: Gets the retry count for job.
-    :type retry_count: int
-    :param repeat_count: Gets the repeat count for the job.
-    :type repeat_count: int
+    :vartype status: str
+    :ivar message: Gets the message for the job history.
+    :vartype message: str
+    :ivar retry_count: Gets the retry count for job.
+    :vartype retry_count: int
+    :ivar repeat_count: Gets the repeat count for the job.
+    :vartype repeat_count: int
     """ 
+
+    _validation = {
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'expected_execution_time': {'readonly': True},
+        'action_name': {'readonly': True},
+        'status': {'readonly': True},
+        'message': {'readonly': True},
+        'retry_count': {'readonly': True},
+        'repeat_count': {'readonly': True},
+    }
 
     _attribute_map = {
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
@@ -57,12 +71,12 @@ class JobHistoryDefinitionProperties(Model):
         'repeat_count': {'key': 'repeatCount', 'type': 'int'},
     }
 
-    def __init__(self, start_time=None, end_time=None, expected_execution_time=None, action_name=None, status=None, message=None, retry_count=None, repeat_count=None):
-        self.start_time = start_time
-        self.end_time = end_time
-        self.expected_execution_time = expected_execution_time
-        self.action_name = action_name
-        self.status = status
-        self.message = message
-        self.retry_count = retry_count
-        self.repeat_count = repeat_count
+    def __init__(self):
+        self.start_time = None
+        self.end_time = None
+        self.expected_execution_time = None
+        self.action_name = None
+        self.status = None
+        self.message = None
+        self.retry_count = None
+        self.repeat_count = None

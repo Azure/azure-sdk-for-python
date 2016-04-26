@@ -27,18 +27,25 @@ class VirtualMachineStatusCodeCount(Model):
     The status code and count of the virtual machine scale set instance view
     status summary.
 
-    :param code: Gets the instance view status code.
-    :type code: str
-    :param count: Gets the number of instances having a particular status
-     code.
-    :type count: int
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Gets the instance view status code.
+    :vartype code: str
+    :ivar count: Gets the number of instances having a particular status code.
+    :vartype count: int
     """ 
+
+    _validation = {
+        'code': {'readonly': True},
+        'count': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'count': {'key': 'count', 'type': 'int'},
     }
 
-    def __init__(self, code=None, count=None):
-        self.code = code
-        self.count = count
+    def __init__(self):
+        self.code = None
+        self.count = None
