@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-resource',
-    version='0.30.0rc2',
+    version='0.30.0rc3',
     description='Microsoft Azure Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -72,6 +72,6 @@ setup(
     ],
     install_requires=[
         'azure-mgmt-nspkg',
-        'azure-common[autorest]==1.1.2',
+        'azure-common[autorest]==1.1.3',
     ],
 )

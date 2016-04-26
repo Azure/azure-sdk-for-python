@@ -25,7 +25,7 @@ INSTALLATION
 
 - Use the ``--pre`` flag: ``pip install --pre azure``
 
-- Specify the version:  ``pip install azure==2.0.0rc2``
+- Specify the version:  ``pip install azure==2.0.0rc3``
 
 If you want to install ``azure`` from source::
 
@@ -51,9 +51,12 @@ Features
 
 -  `Azure Active Directory Graph RBAC </azure-graphrbac>`__
 
+-  `Batch </azure-batch>`__
+
 -  `Resource Management </azure-mgmt>`__
 
    -  `Authorization </azure-mgmt-authorization>`__
+   -  `Batch </azure-mgmt-batch>`__
    -  `CDN </azure-mgmt-cdn>`__
    -  `Compute </azure-mgmt-compute>`__
    -  Apps
