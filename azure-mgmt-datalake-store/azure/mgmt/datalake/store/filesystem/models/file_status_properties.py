@@ -26,29 +26,45 @@ class FileStatusProperties(Model):
     """
     Data Lake Store file or directory information.
 
-    :param access_time: Gets the last access time as ticks since the epoch.
-    :type access_time: long
-    :param block_size: Gets the block size for the file.
-    :type block_size: long
-    :param children_num: Gets the number of children in the directory.
-    :type children_num: long
-    :param group: Gets the group owner.
-    :type group: str
-    :param length: Gets the number of bytes in a file.
-    :type length: long
-    :param modification_time: Gets the modification time as ticks since the
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar access_time: Gets the last access time as ticks since the epoch.
+    :vartype access_time: long
+    :ivar block_size: Gets the block size for the file.
+    :vartype block_size: long
+    :ivar children_num: Gets the number of children in the directory.
+    :vartype children_num: long
+    :ivar group: Gets the group owner.
+    :vartype group: str
+    :ivar length: Gets the number of bytes in a file.
+    :vartype length: long
+    :ivar modification_time: Gets the modification time as ticks since the
      epoch.
-    :type modification_time: long
-    :param owner: Gets the user who is the owner.
-    :type owner: str
-    :param path_suffix: Gets the path suffix.
-    :type path_suffix: str
-    :param permission: Gets the permission represented as an string.
-    :type permission: str
-    :param type: Gets the type of the path object. Possible values include:
+    :vartype modification_time: long
+    :ivar owner: Gets the user who is the owner.
+    :vartype owner: str
+    :ivar path_suffix: Gets the path suffix.
+    :vartype path_suffix: str
+    :ivar permission: Gets the permission represented as an string.
+    :vartype permission: str
+    :ivar type: Gets the type of the path object. Possible values include:
      'FILE', 'DIRECTORY'
-    :type type: str
+    :vartype type: str
     """ 
+
+    _validation = {
+        'access_time': {'readonly': True},
+        'block_size': {'readonly': True},
+        'children_num': {'readonly': True},
+        'group': {'readonly': True},
+        'length': {'readonly': True},
+        'modification_time': {'readonly': True},
+        'owner': {'readonly': True},
+        'path_suffix': {'readonly': True},
+        'permission': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'access_time': {'key': 'accessTime', 'type': 'long'},
@@ -63,14 +79,14 @@ class FileStatusProperties(Model):
         'type': {'key': 'type', 'type': 'FileType'},
     }
 
-    def __init__(self, access_time=None, block_size=None, children_num=None, group=None, length=None, modification_time=None, owner=None, path_suffix=None, permission=None, type=None):
-        self.access_time = access_time
-        self.block_size = block_size
-        self.children_num = children_num
-        self.group = group
-        self.length = length
-        self.modification_time = modification_time
-        self.owner = owner
-        self.path_suffix = path_suffix
-        self.permission = permission
-        self.type = type
+    def __init__(self):
+        self.access_time = None
+        self.block_size = None
+        self.children_num = None
+        self.group = None
+        self.length = None
+        self.modification_time = None
+        self.owner = None
+        self.path_suffix = None
+        self.permission = None
+        self.type = None

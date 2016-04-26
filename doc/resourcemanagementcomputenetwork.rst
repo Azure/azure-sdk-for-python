@@ -186,9 +186,9 @@ To create or manage storage accounts, see :doc:`Storage Resource Management<reso
     # 4. Create the virtual machine
     result = compute_client.virtual_machines.create_or_update(
         GROUP_NAME,
+        VM_NAME,
         azure.mgmt.compute.models.VirtualMachine(
             location=REGION,
-            name=VM_NAME,
             os_profile=azure.mgmt.compute.models.OSProfile(
                 admin_username=ADMIN_USERNAME,
                 admin_password=ADMIN_PASSWORD,
@@ -278,7 +278,6 @@ virtual network, public ip and network interface.
             group_name,
             interface_name,
             azure.mgmt.network.models.NetworkInterface(
-                name=interface_name,
                 location=region,
                 ip_configurations=[
                     azure.mgmt.network.models.NetworkInterfaceIPConfiguration(

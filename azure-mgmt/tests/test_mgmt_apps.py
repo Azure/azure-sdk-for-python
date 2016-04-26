@@ -65,8 +65,6 @@ class MgmtAppsTest(AzureMgmtTestCase):
                 sku=azure.mgmt.logic.models.Sku(
                     name='Free',
                     plan=azure.mgmt.logic.models.ResourceReference(
-                        name=app_service_plan_name,
-                        type='Microsoft.Web/ServerFarms',
                         id=app_service_plan.id
                     )
                 ),

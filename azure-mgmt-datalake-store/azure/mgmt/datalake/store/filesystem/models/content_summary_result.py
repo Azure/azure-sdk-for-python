@@ -26,14 +26,21 @@ class ContentSummaryResult(Model):
     """
     Data Lake Store filesystem content summary information response.
 
-    :param content_summary: Gets the content summary for the specified path
-    :type content_summary: :class:`ContentSummary
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar content_summary: Gets the content summary for the specified path
+    :vartype content_summary: :class:`ContentSummary
      <azure.mgmt.datalake.store.filesystem.models.ContentSummary>`
     """ 
+
+    _validation = {
+        'content_summary': {'readonly': True},
+    }
 
     _attribute_map = {
         'content_summary': {'key': 'ContentSummary', 'type': 'ContentSummary'},
     }
 
-    def __init__(self, content_summary=None):
-        self.content_summary = content_summary
+    def __init__(self):
+        self.content_summary = None

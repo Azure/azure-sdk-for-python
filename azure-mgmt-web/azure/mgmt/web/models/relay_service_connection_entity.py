@@ -30,6 +30,8 @@ class RelayServiceConnectionEntity(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -59,6 +61,7 @@ class RelayServiceConnectionEntity(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -71,8 +74,8 @@ class RelayServiceConnectionEntity(Resource):
         'biztalk_uri': {'key': 'properties.biztalkUri', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None):
-        super(RelayServiceConnectionEntity, self).__init__(id=id, name=name, location=location, type=type, tags=tags)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None):
+        super(RelayServiceConnectionEntity, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.entity_name = entity_name
         self.entity_connection_string = entity_connection_string
         self.resource_type = resource_type

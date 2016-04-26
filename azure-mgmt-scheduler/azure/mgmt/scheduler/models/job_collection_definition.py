@@ -25,10 +25,13 @@ from msrest.serialization import Model
 class JobCollectionDefinition(Model):
     """JobCollectionDefinition
 
-    :param id: Gets the job collection resource identifier.
-    :type id: str
-    :param type: Gets the job collection resource type.
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Gets the job collection resource identifier.
+    :vartype id: str
+    :ivar type: Gets the job collection resource type.
+    :vartype type: str
     :param name: Gets or sets the job collection resource name.
     :type name: str
     :param location: Gets or sets the storage account location.
@@ -40,6 +43,11 @@ class JobCollectionDefinition(Model):
      <azure.mgmt.scheduler.models.JobCollectionProperties>`
     """ 
 
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -49,9 +57,9 @@ class JobCollectionDefinition(Model):
         'properties': {'key': 'properties', 'type': 'JobCollectionProperties'},
     }
 
-    def __init__(self, id=None, type=None, name=None, location=None, tags=None, properties=None):
-        self.id = id
-        self.type = type
+    def __init__(self, name=None, location=None, tags=None, properties=None):
+        self.id = None
+        self.type = None
         self.name = name
         self.location = location
         self.tags = tags

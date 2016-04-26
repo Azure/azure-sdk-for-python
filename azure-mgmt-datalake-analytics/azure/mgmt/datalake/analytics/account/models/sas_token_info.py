@@ -26,14 +26,21 @@ class SasTokenInfo(Model):
     """
     SAS token information.
 
-    :param access_token: Gets or sets the access token for the associated
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar access_token: Gets or sets the access token for the associated
      Azure Storage Container.
-    :type access_token: str
+    :vartype access_token: str
     """ 
+
+    _validation = {
+        'access_token': {'readonly': True},
+    }
 
     _attribute_map = {
         'access_token': {'key': 'accessToken', 'type': 'str'},
     }
 
-    def __init__(self, access_token=None):
-        self.access_token = access_token
+    def __init__(self):
+        self.access_token = None

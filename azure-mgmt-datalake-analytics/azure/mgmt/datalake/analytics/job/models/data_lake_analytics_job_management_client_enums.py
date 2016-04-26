@@ -39,7 +39,6 @@ class SeverityTypes(Enum):
 
     warning = "Warning"
     error = "Error"
-    info = "Info"
 
 
 class JobType(Enum):

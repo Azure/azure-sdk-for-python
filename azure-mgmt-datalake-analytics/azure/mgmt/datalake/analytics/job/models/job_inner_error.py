@@ -26,36 +26,52 @@ class JobInnerError(Model):
     """
     The Data Lake Analytics job error details.
 
-    :param diagnostic_code: Gets the diagnostic error code.
-    :type diagnostic_code: int
-    :param severity: Gets the severity level of the failure. Possible values
-     include: 'Warning', 'Error', 'Info'
-    :type severity: str
-    :param details: Gets the details of the error message.
-    :type details: str
-    :param component: Gets the component that failed.
-    :type component: str
-    :param error_id: Gets the specific identifier for the type of error
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar diagnostic_code: Gets the diagnostic error code.
+    :vartype diagnostic_code: int
+    :ivar severity: Gets the severity level of the failure. Possible values
+     include: 'Warning', 'Error'
+    :vartype severity: str
+    :ivar details: Gets the details of the error message.
+    :vartype details: str
+    :ivar component: Gets the component that failed.
+    :vartype component: str
+    :ivar error_id: Gets the specific identifier for the type of error
      encountered in the job.
-    :type error_id: str
-    :param help_link: Gets the link to MSDN or Azure help for this type of
+    :vartype error_id: str
+    :ivar help_link: Gets the link to MSDN or Azure help for this type of
      error, if any.
-    :type help_link: str
-    :param internal_diagnostics: Gets the internal diagnostic stack trace if
+    :vartype help_link: str
+    :ivar internal_diagnostics: Gets the internal diagnostic stack trace if
      the user requesting the job error details has sufficient permissions it
      will be retrieved, otherwise it will be empty.
-    :type internal_diagnostics: str
-    :param message: Gets the user friendly error message for the failure.
-    :type message: str
-    :param resolution: Gets the recommended resolution for the failure, if
-     any.
-    :type resolution: str
-    :param source: Gets the ultimate source of the failure (usually either
+    :vartype internal_diagnostics: str
+    :ivar message: Gets the user friendly error message for the failure.
+    :vartype message: str
+    :ivar resolution: Gets the recommended resolution for the failure, if any.
+    :vartype resolution: str
+    :ivar source: Gets the ultimate source of the failure (usually either
      SYSTEM or USER).
-    :type source: str
-    :param description: Gets the error message description
-    :type description: str
+    :vartype source: str
+    :ivar description: Gets the error message description
+    :vartype description: str
     """ 
+
+    _validation = {
+        'diagnostic_code': {'readonly': True},
+        'severity': {'readonly': True},
+        'details': {'readonly': True},
+        'component': {'readonly': True},
+        'error_id': {'readonly': True},
+        'help_link': {'readonly': True},
+        'internal_diagnostics': {'readonly': True},
+        'message': {'readonly': True},
+        'resolution': {'readonly': True},
+        'source': {'readonly': True},
+        'description': {'readonly': True},
+    }
 
     _attribute_map = {
         'diagnostic_code': {'key': 'diagnosticCode', 'type': 'int'},
@@ -71,15 +87,15 @@ class JobInnerError(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, diagnostic_code=None, severity=None, details=None, component=None, error_id=None, help_link=None, internal_diagnostics=None, message=None, resolution=None, source=None, description=None):
-        self.diagnostic_code = diagnostic_code
-        self.severity = severity
-        self.details = details
-        self.component = component
-        self.error_id = error_id
-        self.help_link = help_link
-        self.internal_diagnostics = internal_diagnostics
-        self.message = message
-        self.resolution = resolution
-        self.source = source
-        self.description = description
+    def __init__(self):
+        self.diagnostic_code = None
+        self.severity = None
+        self.details = None
+        self.component = None
+        self.error_id = None
+        self.help_link = None
+        self.internal_diagnostics = None
+        self.message = None
+        self.resolution = None
+        self.source = None
+        self.description = None

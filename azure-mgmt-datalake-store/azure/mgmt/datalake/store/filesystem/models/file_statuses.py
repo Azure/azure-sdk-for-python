@@ -26,15 +26,22 @@ class FileStatuses(Model):
     """
     Data Lake Store file status list information.
 
-    :param file_status: Gets the object containing the list of properties of
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar file_status: Gets the object containing the list of properties of
      the files.
-    :type file_status: list of :class:`FileStatusProperties
+    :vartype file_status: list of :class:`FileStatusProperties
      <azure.mgmt.datalake.store.filesystem.models.FileStatusProperties>`
     """ 
+
+    _validation = {
+        'file_status': {'readonly': True},
+    }
 
     _attribute_map = {
         'file_status': {'key': 'FileStatus', 'type': '[FileStatusProperties]'},
     }
 
-    def __init__(self, file_status=None):
-        self.file_status = file_status
+    def __init__(self):
+        self.file_status = None

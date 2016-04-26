@@ -54,12 +54,18 @@ class DataLakeAnalyticsJobManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, adla_job_dns_suffix, api_version='2016-03-20-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
+            self, credentials, adla_job_dns_suffix, api_version='2015-11-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
 
         if credentials is None:
-            raise ValueError('credentials must not be None.')
+            raise ValueError("Parameter 'credentials' must not be None.")
+        if api_version is not None and not isinstance(api_version, str):
+            raise TypeError("Optional parameter 'api_version' must be str.")
         if adla_job_dns_suffix is None:
-            raise ValueError('adla_job_dns_suffix must not be None.')
+            raise ValueError("Parameter 'adla_job_dns_suffix' must not be None.")
+        if not isinstance(adla_job_dns_suffix, str):
+            raise TypeError("Parameter 'adla_job_dns_suffix' must be str.")
+        if accept_language is not None and not isinstance(accept_language, str):
+            raise TypeError("Optional parameter 'accept_language' must be str.")
         base_url = 'https://{accountName}.{adlaJobDnsSuffix}'
 
         super(DataLakeAnalyticsJobManagementClientConfiguration, self).__init__(base_url, filepath)

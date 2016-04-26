@@ -26,12 +26,15 @@ class ApplicationGateway(Resource):
     """
     ApplicationGateways resource
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource Id
     :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -39,10 +42,10 @@ class ApplicationGateway(Resource):
     :param sku: Gets or sets sku of application gateway resource
     :type sku: :class:`ApplicationGatewaySku
      <azure.mgmt.network.models.ApplicationGatewaySku>`
-    :param operational_state: Gets operational state of application gateway
+    :ivar operational_state: Gets operational state of application gateway
      resource. Possible values include: 'Stopped', 'Starting', 'Running',
      'Stopping'
-    :type operational_state: str
+    :vartype operational_state: str
     :param gateway_ip_configurations: Gets or sets subnets of application
      gateway resource
     :type gateway_ip_configurations: list of
@@ -98,6 +101,12 @@ class ApplicationGateway(Resource):
     :type etag: str
     """ 
 
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'operational_state': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -121,10 +130,10 @@ class ApplicationGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, sku=None, operational_state=None, gateway_ip_configurations=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(ApplicationGateway, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, id=None, location=None, tags=None, sku=None, gateway_ip_configurations=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, resource_guid=None, provisioning_state=None, etag=None):
+        super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags)
         self.sku = sku
-        self.operational_state = operational_state
+        self.operational_state = None
         self.gateway_ip_configurations = gateway_ip_configurations
         self.ssl_certificates = ssl_certificates
         self.frontend_ip_configurations = frontend_ip_configurations

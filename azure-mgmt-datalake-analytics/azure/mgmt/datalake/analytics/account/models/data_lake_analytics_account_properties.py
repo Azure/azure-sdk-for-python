@@ -27,14 +27,17 @@ class DataLakeAnalyticsAccountProperties(Model):
     The account specific properties that are associated with an underlying
     Data Lake Analytics account.
 
-    :param provisioning_state: Gets the provisioning status of the Data Lake
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provisioning_state: Gets the provisioning status of the Data Lake
      Analytics account. Possible values include: 'Failed', 'Creating',
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming',
      'Deleting', 'Deleted'
-    :type provisioning_state: str
-    :param state: Gets the state of the Data Lake Analytics account. Possible
+    :vartype provisioning_state: str
+    :ivar state: Gets the state of the Data Lake Analytics account. Possible
      values include: 'active', 'suspended'
-    :type state: str
+    :vartype state: str
     :param default_data_lake_store_account: Gets or sets the default data
      lake storage account associated with this Data Lake Analytics account.
     :type default_data_lake_store_account: str
@@ -52,13 +55,21 @@ class DataLakeAnalyticsAccountProperties(Model):
      accounts associated with this account.
     :type storage_accounts: list of :class:`StorageAccountInfo
      <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
-    :param creation_time: Gets or sets the account creation time.
-    :type creation_time: datetime
-    :param last_modified_time: Gets or sets the account last modified time.
-    :type last_modified_time: datetime
-    :param endpoint: Gets or sets the full CName endpoint for this account.
-    :type endpoint: str
+    :ivar creation_time: Gets or sets the account creation time.
+    :vartype creation_time: datetime
+    :ivar last_modified_time: Gets or sets the account last modified time.
+    :vartype last_modified_time: datetime
+    :ivar endpoint: Gets or sets the full CName endpoint for this account.
+    :vartype endpoint: str
     """ 
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'state': {'readonly': True},
+        'creation_time': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'endpoint': {'readonly': True},
+    }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'DataLakeAnalyticsAccountStatus'},
@@ -73,14 +84,14 @@ class DataLakeAnalyticsAccountProperties(Model):
         'endpoint': {'key': 'endpoint', 'type': 'str'},
     }
 
-    def __init__(self, provisioning_state=None, state=None, default_data_lake_store_account=None, max_degree_of_parallelism=None, max_job_count=None, data_lake_store_accounts=None, storage_accounts=None, creation_time=None, last_modified_time=None, endpoint=None):
-        self.provisioning_state = provisioning_state
-        self.state = state
+    def __init__(self, default_data_lake_store_account=None, max_degree_of_parallelism=None, max_job_count=None, data_lake_store_accounts=None, storage_accounts=None):
+        self.provisioning_state = None
+        self.state = None
         self.default_data_lake_store_account = default_data_lake_store_account
         self.max_degree_of_parallelism = max_degree_of_parallelism
         self.max_job_count = max_job_count
         self.data_lake_store_accounts = data_lake_store_accounts
         self.storage_accounts = storage_accounts
-        self.creation_time = creation_time
-        self.last_modified_time = last_modified_time
-        self.endpoint = endpoint
+        self.creation_time = None
+        self.last_modified_time = None
+        self.endpoint = None

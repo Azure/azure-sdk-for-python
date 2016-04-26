@@ -26,6 +26,9 @@ class JobInformation(Model):
     """
     The common Data Lake Analytics job information properties.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param job_id: Gets or sets the job's unique identifier (a GUID).
     :type job_id: str
     :param name: Gets or sets the friendly name of the job.
@@ -35,9 +38,9 @@ class JobInformation(Model):
     :type type: str
     :param submitter: Gets or sets the user or account that submitted the job.
     :type submitter: str
-    :param error_message: Gets the error message details for the job, if the
+    :ivar error_message: Gets the error message details for the job, if the
      job failed.
-    :type error_message: list of :class:`JobErrorDetails
+    :vartype error_message: list of :class:`JobErrorDetails
      <azure.mgmt.datalake.analytics.job.models.JobErrorDetails>`
     :param degree_of_parallelism: Gets or sets the degree of parallelism used
      for this job. This must be greater than 0.
@@ -46,24 +49,24 @@ class JobInformation(Model):
      Lower numbers have a higher priority. By default, a job has a priority
      of 1000. This must be greater than 0.
     :type priority: int
-    :param submit_time: Gets the time the job was submitted to the service.
-    :type submit_time: datetime
-    :param start_time: Gets the start time of the job.
-    :type start_time: datetime
-    :param end_time: Gets the completion time of the job.
-    :type end_time: datetime
-    :param state: Gets the job state. When the job is in the Ended state,
+    :ivar submit_time: Gets the time the job was submitted to the service.
+    :vartype submit_time: datetime
+    :ivar start_time: Gets the start time of the job.
+    :vartype start_time: datetime
+    :ivar end_time: Gets the completion time of the job.
+    :vartype end_time: datetime
+    :ivar state: Gets the job state. When the job is in the Ended state,
      refer to Result and ErrorMessage for details. Possible values include:
      'Accepted', 'Compiling', 'Ended', 'New', 'Queued', 'Running',
      'Scheduling', 'Starting', 'Paused', 'WaitingForCapacity'
-    :type state: str
-    :param result: Gets the result of job execution or the current result of
+    :vartype state: str
+    :ivar result: Gets the result of job execution or the current result of
      the running job. Possible values include: 'None', 'Succeeded',
      'Cancelled', 'Failed'
-    :type result: str
-    :param state_audit_records: Gets the job state audit records, indicating
+    :vartype result: str
+    :ivar state_audit_records: Gets the job state audit records, indicating
      when various operations have been performed on this job.
-    :type state_audit_records: list of :class:`JobStateAuditRecord
+    :vartype state_audit_records: list of :class:`JobStateAuditRecord
      <azure.mgmt.datalake.analytics.job.models.JobStateAuditRecord>`
     :param properties: Gets or sets the job specific properties.
     :type properties: :class:`JobProperties
@@ -73,6 +76,13 @@ class JobInformation(Model):
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'error_message': {'readonly': True},
+        'submit_time': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'state': {'readonly': True},
+        'result': {'readonly': True},
+        'state_audit_records': {'readonly': True},
         'properties': {'required': True},
     }
 
@@ -93,18 +103,18 @@ class JobInformation(Model):
         'properties': {'key': 'properties', 'type': 'JobProperties'},
     }
 
-    def __init__(self, name, type, properties, job_id=None, submitter=None, error_message=None, degree_of_parallelism=None, priority=None, submit_time=None, start_time=None, end_time=None, state=None, result=None, state_audit_records=None):
+    def __init__(self, name, type, properties, job_id=None, submitter=None, degree_of_parallelism=None, priority=None):
         self.job_id = job_id
         self.name = name
         self.type = type
         self.submitter = submitter
-        self.error_message = error_message
+        self.error_message = None
         self.degree_of_parallelism = degree_of_parallelism
         self.priority = priority
-        self.submit_time = submit_time
-        self.start_time = start_time
-        self.end_time = end_time
-        self.state = state
-        self.result = result
-        self.state_audit_records = state_audit_records
+        self.submit_time = None
+        self.start_time = None
+        self.end_time = None
+        self.state = None
+        self.result = None
+        self.state_audit_records = None
         self.properties = properties

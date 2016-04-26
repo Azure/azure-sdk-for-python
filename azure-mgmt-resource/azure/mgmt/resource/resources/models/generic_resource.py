@@ -26,12 +26,15 @@ class GenericResource(ResourceModel):
     """
     Resource information.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -43,6 +46,9 @@ class GenericResource(ResourceModel):
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -56,7 +62,7 @@ class GenericResource(ResourceModel):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, plan=None, properties=None):
-        super(GenericResource, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, location, tags=None, plan=None, properties=None):
+        super(GenericResource, self).__init__(location=location, tags=tags)
         self.plan = plan
         self.properties = properties
