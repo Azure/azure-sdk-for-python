@@ -37,6 +37,6 @@ class ResourceGroupExportResult(Model):
         'error': {'key': 'error', 'type': 'ResourceManagementErrorWithDetails'},
     }
 
-    def __init__(self, template=None, error=None, **kwargs):
+    def __init__(self, template=None, error=None):
         self.template = template
         self.error = error

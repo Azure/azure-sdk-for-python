@@ -41,7 +41,7 @@ class JobCollectionProperties(Model):
         'quota': {'key': 'quota', 'type': 'JobCollectionQuota'},
     }
 
-    def __init__(self, sku=None, state=None, quota=None, **kwargs):
+    def __init__(self, sku=None, state=None, quota=None):
         self.sku = sku
         self.state = state
         self.quota = quota

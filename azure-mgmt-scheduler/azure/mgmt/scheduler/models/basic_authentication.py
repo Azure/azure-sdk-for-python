@@ -41,7 +41,7 @@ class BasicAuthentication(HttpAuthentication):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, type=None, username=None, password=None, **kwargs):
-        super(BasicAuthentication, self).__init__(type=type, **kwargs)
+    def __init__(self, type=None, username=None, password=None):
+        super(BasicAuthentication, self).__init__(type=type)
         self.username = username
         self.password = password

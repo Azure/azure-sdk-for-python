@@ -42,7 +42,7 @@ class StorageQueueMessage(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, storage_account=None, queue_name=None, sas_token=None, message=None, **kwargs):
+    def __init__(self, storage_account=None, queue_name=None, sas_token=None, message=None):
         self.storage_account = storage_account
         self.queue_name = queue_name
         self.sas_token = sas_token

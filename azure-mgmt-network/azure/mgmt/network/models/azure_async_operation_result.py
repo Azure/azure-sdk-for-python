@@ -45,6 +45,6 @@ class AzureAsyncOperationResult(Model):
         'error': {'key': 'error', 'type': 'Error'},
     }
 
-    def __init__(self, status=None, error=None, **kwargs):
+    def __init__(self, status=None, error=None):
         self.status = status
         self.error = error

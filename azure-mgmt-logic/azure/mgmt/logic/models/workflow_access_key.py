@@ -25,17 +25,25 @@ from .sub_resource import SubResource
 class WorkflowAccessKey(SubResource):
     """WorkflowAccessKey
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Gets or sets the resource id.
     :type id: str
     :param not_before: Gets or sets the not-before time.
     :type not_before: datetime
     :param not_after: Gets or sets the not-after time.
     :type not_after: datetime
-    :param name: Gets the workflow access key name.
-    :type name: str
-    :param type: Gets the workflow access key type.
-    :type type: str
+    :ivar name: Gets the workflow access key name.
+    :vartype name: str
+    :ivar type: Gets the workflow access key type.
+    :vartype type: str
     """ 
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -45,9 +53,9 @@ class WorkflowAccessKey(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, not_before=None, not_after=None, name=None, type=None, **kwargs):
-        super(WorkflowAccessKey, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, not_before=None, not_after=None):
+        super(WorkflowAccessKey, self).__init__(id=id)
         self.not_before = not_before
         self.not_after = not_after
-        self.name = name
-        self.type = type
+        self.name = None
+        self.type = None

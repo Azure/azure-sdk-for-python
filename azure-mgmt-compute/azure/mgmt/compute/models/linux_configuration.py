@@ -39,6 +39,6 @@ class LinuxConfiguration(Model):
         'ssh': {'key': 'ssh', 'type': 'SshConfiguration'},
     }
 
-    def __init__(self, disable_password_authentication=None, ssh=None, **kwargs):
+    def __init__(self, disable_password_authentication=None, ssh=None):
         self.disable_password_authentication = disable_password_authentication
         self.ssh = ssh

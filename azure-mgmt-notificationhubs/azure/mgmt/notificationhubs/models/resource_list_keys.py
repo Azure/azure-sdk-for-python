@@ -39,6 +39,6 @@ class ResourceListKeys(Model):
         'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
     }
 
-    def __init__(self, primary_connection_string=None, secondary_connection_string=None, **kwargs):
+    def __init__(self, primary_connection_string=None, secondary_connection_string=None):
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string

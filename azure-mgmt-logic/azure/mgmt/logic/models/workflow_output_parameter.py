@@ -25,6 +25,9 @@ from .workflow_parameter import WorkflowParameter
 class WorkflowOutputParameter(WorkflowParameter):
     """WorkflowOutputParameter
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param type: Gets or sets the type. Possible values include:
      'NotSpecified', 'String', 'SecureString', 'Int', 'Float', 'Bool',
      'Array', 'Object', 'SecureObject'
@@ -33,9 +36,13 @@ class WorkflowOutputParameter(WorkflowParameter):
     :type value: object
     :param metadata: Gets or sets the metadata.
     :type metadata: object
-    :param error: Gets the error.
-    :type error: object
+    :ivar error: Gets the error.
+    :vartype error: object
     """ 
+
+    _validation = {
+        'error': {'readonly': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'ParameterType'},
@@ -44,6 +51,6 @@ class WorkflowOutputParameter(WorkflowParameter):
         'error': {'key': 'error', 'type': 'object'},
     }
 
-    def __init__(self, type=None, value=None, metadata=None, error=None, **kwargs):
-        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata, **kwargs)
-        self.error = error
+    def __init__(self, type=None, value=None, metadata=None):
+        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata)
+        self.error = None

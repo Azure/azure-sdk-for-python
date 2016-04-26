@@ -35,5 +35,5 @@ class HttpAuthentication(Model):
         'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
     }
 
-    def __init__(self, type=None, **kwargs):
+    def __init__(self, type=None):
         self.type = type

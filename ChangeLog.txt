@@ -1,6 +1,30 @@
-2016-04-08
+2016-04-26 Version 2.0.0rc3 / 0.30.0rc3
 
-azure-storage 0.31.0
+Disclaimer:
+There is no known breaking changes between 2.0.0RC2 and 2.0.0RC3.
+However, we removed several useless parameters for __init__ methods on model classes. If you get an error message like this after migrating to RC3:
+ 
+	TypeError: __init__() got an unexpected keyword argument 'type'
+	
+or
+
+	TypeError: __init__() takes exactly 1 positional argument (2 given)
+	
+You can remove the involved parameter safely, as it should not have been there in the first place.
+
+New:
+* Batch / Batch Management are installed with the azure meta-package
+* Type checking improvement in Client
+* Latest Swagger update for Compute (Hardware profile update)
+* Latest Swagger update for Redis (force-reboot)
+* ´azure´ now installs azure-servicemanagement-legacy 0.20.3
+* ´azure´ now installs azure-storage 0.31.0
+
+Dependencies:
+* msrest must be >= 0.3.0 (see their ChangeLog for details)
+* msrestazure must be >= 0.3.0 (see their ChangeLog for details)
+* azure-common[autorest] == 1.1.3, provides automatic autorest right dependencies
+* azure-storage 0.31.0
   * `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
 
 2016-03-31

@@ -51,7 +51,7 @@ class ProviderOperationsMetadata(Model):
         'operations': {'key': 'operations', 'type': '[ProviderOperation]'},
     }
 
-    def __init__(self, id=None, name=None, type=None, display_name=None, resource_types=None, operations=None, **kwargs):
+    def __init__(self, id=None, name=None, type=None, display_name=None, resource_types=None, operations=None):
         self.id = id
         self.name = name
         self.type = type

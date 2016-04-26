@@ -48,7 +48,7 @@ class AutoHealTriggers(Model):
         'slow_requests': {'key': 'slowRequests', 'type': 'SlowRequestsBasedTrigger'},
     }
 
-    def __init__(self, requests=None, private_bytes_in_kb=None, status_codes=None, slow_requests=None, **kwargs):
+    def __init__(self, requests=None, private_bytes_in_kb=None, status_codes=None, slow_requests=None):
         self.requests = requests
         self.private_bytes_in_kb = private_bytes_in_kb
         self.status_codes = status_codes

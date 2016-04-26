@@ -52,7 +52,7 @@ class HostNameSslState(Model):
         'to_update': {'key': 'toUpdate', 'type': 'bool'},
     }
 
-    def __init__(self, ssl_state, name=None, virtual_ip=None, thumbprint=None, to_update=None, **kwargs):
+    def __init__(self, ssl_state, name=None, virtual_ip=None, thumbprint=None, to_update=None):
         self.name = name
         self.ssl_state = ssl_state
         self.virtual_ip = virtual_ip

@@ -33,10 +33,11 @@ class NetworkInterfaceDnsSettings(Model):
     :type applied_dns_servers: list of str
     :param internal_dns_name_label: Gets or sets the Internal DNS name
     :type internal_dns_name_label: str
-    :param internal_fqdn: Gets or sets full IDNS name in the form,
-     DnsName.VnetId.ZoneId.TopleveSuffix. This is set when the NIC is
-     associated to a VM
+    :param internal_fqdn: Gets or sets the internal fqdn.
     :type internal_fqdn: str
+    :param internal_domain_name_suffix: Gets or sets internal domain name
+     suffix of the NIC.
+    :type internal_domain_name_suffix: str
     """ 
 
     _attribute_map = {
@@ -44,10 +45,12 @@ class NetworkInterfaceDnsSettings(Model):
         'applied_dns_servers': {'key': 'appliedDnsServers', 'type': '[str]'},
         'internal_dns_name_label': {'key': 'internalDnsNameLabel', 'type': 'str'},
         'internal_fqdn': {'key': 'internalFqdn', 'type': 'str'},
+        'internal_domain_name_suffix': {'key': 'internalDomainNameSuffix', 'type': 'str'},
     }
 
-    def __init__(self, dns_servers=None, applied_dns_servers=None, internal_dns_name_label=None, internal_fqdn=None, **kwargs):
+    def __init__(self, dns_servers=None, applied_dns_servers=None, internal_dns_name_label=None, internal_fqdn=None, internal_domain_name_suffix=None):
         self.dns_servers = dns_servers
         self.applied_dns_servers = applied_dns_servers
         self.internal_dns_name_label = internal_dns_name_label
         self.internal_fqdn = internal_fqdn
+        self.internal_domain_name_suffix = internal_domain_name_suffix

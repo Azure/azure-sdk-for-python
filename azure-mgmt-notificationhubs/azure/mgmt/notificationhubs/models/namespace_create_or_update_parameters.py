@@ -46,7 +46,7 @@ class NamespaceCreateOrUpdateParameters(Model):
         'properties': {'key': 'properties', 'type': 'NamespaceProperties'},
     }
 
-    def __init__(self, location, properties, tags=None, **kwargs):
+    def __init__(self, location, properties, tags=None):
         self.location = location
         self.tags = tags
         self.properties = properties

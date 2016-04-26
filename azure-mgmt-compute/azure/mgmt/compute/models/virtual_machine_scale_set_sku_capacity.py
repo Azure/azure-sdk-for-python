@@ -26,16 +26,26 @@ class VirtualMachineScaleSetSkuCapacity(Model):
     """
     Describes scaling information of a sku.
 
-    :param minimum: Gets the minimum capacity.
-    :type minimum: long
-    :param maximum: Gets the maximum capacity that can be set.
-    :type maximum: long
-    :param default_capacity: Gets the default capacity.
-    :type default_capacity: long
-    :param scale_type: Gets the scale type applicable to the sku. Possible
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar minimum: Gets the minimum capacity.
+    :vartype minimum: long
+    :ivar maximum: Gets the maximum capacity that can be set.
+    :vartype maximum: long
+    :ivar default_capacity: Gets the default capacity.
+    :vartype default_capacity: long
+    :ivar scale_type: Gets the scale type applicable to the sku. Possible
      values include: 'Automatic', 'None'
-    :type scale_type: str
+    :vartype scale_type: str
     """ 
+
+    _validation = {
+        'minimum': {'readonly': True},
+        'maximum': {'readonly': True},
+        'default_capacity': {'readonly': True},
+        'scale_type': {'readonly': True},
+    }
 
     _attribute_map = {
         'minimum': {'key': 'minimum', 'type': 'long'},
@@ -44,8 +54,8 @@ class VirtualMachineScaleSetSkuCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'VirtualMachineScaleSetSkuScaleType'},
     }
 
-    def __init__(self, minimum=None, maximum=None, default_capacity=None, scale_type=None, **kwargs):
-        self.minimum = minimum
-        self.maximum = maximum
-        self.default_capacity = default_capacity
-        self.scale_type = scale_type
+    def __init__(self):
+        self.minimum = None
+        self.maximum = None
+        self.default_capacity = None
+        self.scale_type = None

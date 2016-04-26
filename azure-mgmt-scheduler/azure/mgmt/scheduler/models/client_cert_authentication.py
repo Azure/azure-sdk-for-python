@@ -52,8 +52,8 @@ class ClientCertAuthentication(HttpAuthentication):
         'certificate_subject_name': {'key': 'certificateSubjectName', 'type': 'str'},
     }
 
-    def __init__(self, type=None, password=None, pfx=None, certificate_thumbprint=None, certificate_expiration_date=None, certificate_subject_name=None, **kwargs):
-        super(ClientCertAuthentication, self).__init__(type=type, **kwargs)
+    def __init__(self, type=None, password=None, pfx=None, certificate_thumbprint=None, certificate_expiration_date=None, certificate_subject_name=None):
+        super(ClientCertAuthentication, self).__init__(type=type)
         self.password = password
         self.pfx = pfx
         self.certificate_thumbprint = certificate_thumbprint

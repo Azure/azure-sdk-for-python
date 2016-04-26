@@ -43,7 +43,7 @@ class ExpressRouteCircuitStats(Model):
         'secondarybytes_out': {'key': 'secondarybytesOut', 'type': 'int'},
     }
 
-    def __init__(self, primarybytes_in=None, primarybytes_out=None, secondarybytes_in=None, secondarybytes_out=None, **kwargs):
+    def __init__(self, primarybytes_in=None, primarybytes_out=None, secondarybytes_in=None, secondarybytes_out=None):
         self.primarybytes_in = primarybytes_in
         self.primarybytes_out = primarybytes_out
         self.secondarybytes_in = secondarybytes_in

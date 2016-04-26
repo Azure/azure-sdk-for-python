@@ -41,7 +41,7 @@ class DomainControlCenterSsoRequest(Model):
         'post_parameter_value': {'key': 'postParameterValue', 'type': 'str'},
     }
 
-    def __init__(self, url=None, post_parameter_key=None, post_parameter_value=None, **kwargs):
+    def __init__(self, url=None, post_parameter_key=None, post_parameter_value=None):
         self.url = url
         self.post_parameter_key = post_parameter_key
         self.post_parameter_value = post_parameter_value

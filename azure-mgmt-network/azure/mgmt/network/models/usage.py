@@ -26,9 +26,12 @@ class Usage(Model):
     """
     Describes Network Resource Usage.
 
-    :param unit: Gets or sets an enum describing the unit of measurement.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar unit: Gets or sets an enum describing the unit of measurement.
      Default value: "Count" .
-    :type unit: str
+    :vartype unit: str
     :param current_value: Gets or sets the current value of the usage.
     :type current_value: long
     :param limit: Gets or sets the limit of usage.
@@ -38,7 +41,7 @@ class Usage(Model):
     """ 
 
     _validation = {
-        'unit': {'required': True},
+        'unit': {'required': True, 'constant': True},
         'current_value': {'required': True},
         'limit': {'required': True},
         'name': {'required': True},
@@ -51,8 +54,9 @@ class Usage(Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    def __init__(self, current_value, limit, name, **kwargs):
-        self.unit = "Count"
+    unit = "Count"
+
+    def __init__(self, current_value, limit, name):
         self.current_value = current_value
         self.limit = limit
         self.name = name

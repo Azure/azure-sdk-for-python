@@ -25,16 +25,26 @@ from msrest.serialization import Model
 class JobHistoryDefinition(Model):
     """JobHistoryDefinition
 
-    :param id: Gets the job history identifier.
-    :type id: str
-    :param type: Gets the job history resource type.
-    :type type: str
-    :param name: Gets the job history name.
-    :type name: str
-    :param properties: Gets or sets the job history properties.
-    :type properties: :class:`JobHistoryDefinitionProperties
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Gets the job history identifier.
+    :vartype id: str
+    :ivar type: Gets the job history resource type.
+    :vartype type: str
+    :ivar name: Gets the job history name.
+    :vartype name: str
+    :ivar properties: Gets or sets the job history properties.
+    :vartype properties: :class:`JobHistoryDefinitionProperties
      <azure.mgmt.scheduler.models.JobHistoryDefinitionProperties>`
     """ 
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+        'properties': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -43,8 +53,8 @@ class JobHistoryDefinition(Model):
         'properties': {'key': 'properties', 'type': 'JobHistoryDefinitionProperties'},
     }
 
-    def __init__(self, id=None, type=None, name=None, properties=None, **kwargs):
-        self.id = id
-        self.type = type
-        self.name = name
-        self.properties = properties
+    def __init__(self):
+        self.id = None
+        self.type = None
+        self.name = None
+        self.properties = None

@@ -26,7 +26,20 @@ from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificat
 from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
 from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
 from .application_gateway_backend_address import ApplicationGatewayBackendAddress
+from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
 from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
+from .backend_address_pool import BackendAddressPool
+from .inbound_nat_rule import InboundNatRule
+from .subnet import Subnet
+from .network_security_group import NetworkSecurityGroup
+from .security_rule import SecurityRule
+from .network_interface import NetworkInterface
+from .network_interface_dns_settings import NetworkInterfaceDnsSettings
+from .route_table import RouteTable
+from .route import Route
+from .ip_configuration import IPConfiguration
+from .public_ip_address import PublicIPAddress
+from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
 from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
 from .application_gateway_http_listener import ApplicationGatewayHttpListener
 from .application_gateway_path_rule import ApplicationGatewayPathRule
@@ -49,19 +62,6 @@ from .express_route_circuit_routes_table_summary import ExpressRouteCircuitRoute
 from .express_route_circuits_routes_table_summary_list_result import ExpressRouteCircuitsRoutesTableSummaryListResult
 from .express_route_service_provider_bandwidths_offered import ExpressRouteServiceProviderBandwidthsOffered
 from .express_route_service_provider import ExpressRouteServiceProvider
-from .subnet import Subnet
-from .network_security_group import NetworkSecurityGroup
-from .security_rule import SecurityRule
-from .network_interface import NetworkInterface
-from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
-from .backend_address_pool import BackendAddressPool
-from .inbound_nat_rule import InboundNatRule
-from .public_ip_address import PublicIPAddress
-from .ip_configuration import IPConfiguration
-from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
-from .network_interface_dns_settings import NetworkInterfaceDnsSettings
-from .route_table import RouteTable
-from .route import Route
 from .frontend_ip_configuration import FrontendIPConfiguration
 from .load_balancing_rule import LoadBalancingRule
 from .probe import Probe
@@ -113,6 +113,12 @@ from .network_management_client_enums import (
     ApplicationGatewaySkuName,
     ApplicationGatewayTier,
     IPAllocationMethod,
+    TransportProtocol,
+    IPVersion,
+    SecurityRuleProtocol,
+    SecurityRuleAccess,
+    SecurityRuleDirection,
+    RouteNextHopType,
     ApplicationGatewayProtocol,
     ApplicationGatewayCookieBasedAffinity,
     ApplicationGatewayRequestRoutingRuleType,
@@ -124,11 +130,6 @@ from .network_management_client_enums import (
     ExpressRouteCircuitSkuTier,
     ExpressRouteCircuitSkuFamily,
     ServiceProviderProvisioningState,
-    SecurityRuleProtocol,
-    SecurityRuleAccess,
-    SecurityRuleDirection,
-    TransportProtocol,
-    RouteNextHopType,
     LoadDistribution,
     ProbeProtocol,
     VirtualNetworkGatewayType,
@@ -149,7 +150,20 @@ __all__ = [
     'ApplicationGatewayFrontendIPConfiguration',
     'ApplicationGatewayFrontendPort',
     'ApplicationGatewayBackendAddress',
+    'NetworkInterfaceIPConfiguration',
     'ApplicationGatewayBackendAddressPool',
+    'BackendAddressPool',
+    'InboundNatRule',
+    'Subnet',
+    'NetworkSecurityGroup',
+    'SecurityRule',
+    'NetworkInterface',
+    'NetworkInterfaceDnsSettings',
+    'RouteTable',
+    'Route',
+    'IPConfiguration',
+    'PublicIPAddress',
+    'PublicIPAddressDnsSettings',
     'ApplicationGatewayBackendHttpSettings',
     'ApplicationGatewayHttpListener',
     'ApplicationGatewayPathRule',
@@ -172,19 +186,6 @@ __all__ = [
     'ExpressRouteCircuitsRoutesTableSummaryListResult',
     'ExpressRouteServiceProviderBandwidthsOffered',
     'ExpressRouteServiceProvider',
-    'Subnet',
-    'NetworkSecurityGroup',
-    'SecurityRule',
-    'NetworkInterface',
-    'NetworkInterfaceIPConfiguration',
-    'BackendAddressPool',
-    'InboundNatRule',
-    'PublicIPAddress',
-    'IPConfiguration',
-    'PublicIPAddressDnsSettings',
-    'NetworkInterfaceDnsSettings',
-    'RouteTable',
-    'Route',
     'FrontendIPConfiguration',
     'LoadBalancingRule',
     'Probe',
@@ -235,6 +236,12 @@ __all__ = [
     'ApplicationGatewaySkuName',
     'ApplicationGatewayTier',
     'IPAllocationMethod',
+    'TransportProtocol',
+    'IPVersion',
+    'SecurityRuleProtocol',
+    'SecurityRuleAccess',
+    'SecurityRuleDirection',
+    'RouteNextHopType',
     'ApplicationGatewayProtocol',
     'ApplicationGatewayCookieBasedAffinity',
     'ApplicationGatewayRequestRoutingRuleType',
@@ -246,11 +253,6 @@ __all__ = [
     'ExpressRouteCircuitSkuTier',
     'ExpressRouteCircuitSkuFamily',
     'ServiceProviderProvisioningState',
-    'SecurityRuleProtocol',
-    'SecurityRuleAccess',
-    'SecurityRuleDirection',
-    'TransportProtocol',
-    'RouteNextHopType',
     'LoadDistribution',
     'ProbeProtocol',
     'VirtualNetworkGatewayType',

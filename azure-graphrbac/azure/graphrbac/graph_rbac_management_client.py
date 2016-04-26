@@ -39,10 +39,6 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
-    :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
     :param tenant_id: Gets or sets the tenant Id.
@@ -62,14 +58,18 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, tenant_id, api_version='1.42-previewInternal', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, tenant_id, api_version='1.42-previewInternal', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
-            raise ValueError('credentials must not be None.')
-        if subscription_id is None:
-            raise ValueError('subscription_id must not be None.')
+            raise ValueError("Parameter 'credentials' must not be None.")
+        if api_version is not None and not isinstance(api_version, str):
+            raise TypeError("Optional parameter 'api_version' must be str.")
         if tenant_id is None:
-            raise ValueError('tenant_id must not be None.')
+            raise ValueError("Parameter 'tenant_id' must not be None.")
+        if not isinstance(tenant_id, str):
+            raise TypeError("Parameter 'tenant_id' must be str.")
+        if accept_language is not None and not isinstance(accept_language, str):
+            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://graph.windows.net'
 
@@ -79,7 +79,6 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.subscription_id = subscription_id
         self.api_version = api_version
         self.tenant_id = tenant_id
         self.accept_language = accept_language

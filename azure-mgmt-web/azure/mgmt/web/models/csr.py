@@ -30,6 +30,8 @@ class Csr(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -59,6 +61,7 @@ class Csr(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -71,8 +74,8 @@ class Csr(Resource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, csr_name=None, distinguished_name=None, csr_string=None, pfx_blob=None, password=None, public_key_hash=None, hosting_environment=None, **kwargs):
-        super(Csr, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, csr_name=None, distinguished_name=None, csr_string=None, pfx_blob=None, password=None, public_key_hash=None, hosting_environment=None):
+        super(Csr, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.csr_name = csr_name
         self.distinguished_name = distinguished_name
         self.csr_string = csr_string

@@ -4,5 +4,5 @@ requests
 vcrpy
 coverage
 pyopenssl
-msrest
-msrestazure
+msrest>=0.3.0,<0.4.0
+msrestazure>=0.3.0,<0.4.0

@@ -37,6 +37,6 @@ class ExpressRouteServiceProviderBandwidthsOffered(Model):
         'value_in_mbps': {'key': 'valueInMbps', 'type': 'int'},
     }
 
-    def __init__(self, offer_name=None, value_in_mbps=None, **kwargs):
+    def __init__(self, offer_name=None, value_in_mbps=None):
         self.offer_name = offer_name
         self.value_in_mbps = value_in_mbps

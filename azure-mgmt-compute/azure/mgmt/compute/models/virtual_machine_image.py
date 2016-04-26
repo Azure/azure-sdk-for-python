@@ -59,8 +59,8 @@ class VirtualMachineImage(VirtualMachineImageResource):
         'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
     }
 
-    def __init__(self, name, location, id=None, tags=None, plan=None, os_disk_image=None, data_disk_images=None, **kwargs):
-        super(VirtualMachineImage, self).__init__(id=id, name=name, location=location, tags=tags, **kwargs)
+    def __init__(self, name, location, id=None, tags=None, plan=None, os_disk_image=None, data_disk_images=None):
+        super(VirtualMachineImage, self).__init__(id=id, name=name, location=location, tags=tags)
         self.plan = plan
         self.os_disk_image = os_disk_image
         self.data_disk_images = data_disk_images

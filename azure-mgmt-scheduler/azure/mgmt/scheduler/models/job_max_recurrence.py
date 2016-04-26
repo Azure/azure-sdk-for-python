@@ -38,6 +38,6 @@ class JobMaxRecurrence(Model):
         'interval': {'key': 'interval', 'type': 'int'},
     }
 
-    def __init__(self, frequency=None, interval=None, **kwargs):
+    def __init__(self, frequency=None, interval=None):
         self.frequency = frequency
         self.interval = interval

@@ -33,5 +33,5 @@ class DebugSetting(Model):
         'detail_level': {'key': 'detailLevel', 'type': 'str'},
     }
 
-    def __init__(self, detail_level=None, **kwargs):
+    def __init__(self, detail_level=None):
         self.detail_level = detail_level

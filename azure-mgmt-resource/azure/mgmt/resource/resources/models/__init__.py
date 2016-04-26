@@ -19,10 +19,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_assignment_properties import PolicyAssignmentProperties
-from .policy_assignment import PolicyAssignment
-from .policy_definition_properties import PolicyDefinitionProperties
-from .policy_definition import PolicyDefinition
 from .deployment_extended_filter import DeploymentExtendedFilter
 from .generic_resource_filter import GenericResourceFilter
 from .resource_group_filter import ResourceGroupFilter
@@ -32,7 +28,6 @@ from .deployment_properties import DeploymentProperties
 from .debug_setting import DebugSetting
 from .deployment import Deployment
 from .deployment_export_result import DeploymentExportResult
-from .resource_management_error import ResourceManagementError
 from .resource_management_error_with_details import ResourceManagementErrorWithDetails
 from .provider_resource_type import ProviderResourceType
 from .provider import Provider
@@ -67,16 +62,11 @@ from .resource_group_paged import ResourceGroupPaged
 from .tag_details_paged import TagDetailsPaged
 from .deployment_operation_paged import DeploymentOperationPaged
 from .resource_provider_operation_definition_paged import ResourceProviderOperationDefinitionPaged
-from .policy_assignment_paged import PolicyAssignmentPaged
 from .resource_management_client_enums import (
     DeploymentMode,
 )
 
 __all__ = [
-    'PolicyAssignmentProperties',
-    'PolicyAssignment',
-    'PolicyDefinitionProperties',
-    'PolicyDefinition',
     'DeploymentExtendedFilter',
     'GenericResourceFilter',
     'ResourceGroupFilter',
@@ -86,7 +76,6 @@ __all__ = [
     'DebugSetting',
     'Deployment',
     'DeploymentExportResult',
-    'ResourceManagementError',
     'ResourceManagementErrorWithDetails',
     'ProviderResourceType',
     'Provider',
@@ -121,6 +110,5 @@ __all__ = [
     'TagDetailsPaged',
     'DeploymentOperationPaged',
     'ResourceProviderOperationDefinitionPaged',
-    'PolicyAssignmentPaged',
     'DeploymentMode',
 ]

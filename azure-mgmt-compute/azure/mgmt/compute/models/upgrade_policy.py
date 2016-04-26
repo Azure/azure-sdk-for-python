@@ -35,5 +35,5 @@ class UpgradePolicy(Model):
         'mode': {'key': 'mode', 'type': 'UpgradeMode'},
     }
 
-    def __init__(self, mode=None, **kwargs):
+    def __init__(self, mode=None):
         self.mode = mode

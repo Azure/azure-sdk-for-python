@@ -37,6 +37,6 @@ class VirtualMachineCaptureResult(SubResource):
         'output': {'key': 'properties.output', 'type': 'object'},
     }
 
-    def __init__(self, id=None, output=None, **kwargs):
-        super(VirtualMachineCaptureResult, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, output=None):
+        super(VirtualMachineCaptureResult, self).__init__(id=id)
         self.output = output

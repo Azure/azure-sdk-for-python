@@ -44,7 +44,7 @@ class ProviderResourceType(Model):
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, resource_type=None, locations=None, api_versions=None, properties=None, **kwargs):
+    def __init__(self, resource_type=None, locations=None, api_versions=None, properties=None):
         self.resource_type = resource_type
         self.locations = locations
         self.api_versions = api_versions

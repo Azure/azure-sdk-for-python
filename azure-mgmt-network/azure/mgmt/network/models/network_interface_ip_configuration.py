@@ -28,6 +28,11 @@ class NetworkInterfaceIPConfiguration(SubResource):
 
     :param id: Resource Id
     :type id: str
+    :param application_gateway_backend_address_pools: Gets or sets the
+     reference of ApplicationGatewayBackendAddressPool resource
+    :type application_gateway_backend_address_pools: list of
+     :class:`ApplicationGatewayBackendAddressPool
+     <azure.mgmt.network.models.ApplicationGatewayBackendAddressPool>`
     :param load_balancer_backend_address_pools: Gets or sets the reference of
      LoadBalancerBackendAddressPool resource
     :type load_balancer_backend_address_pools: list of
@@ -42,6 +47,9 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str
+    :param private_ip_address_version: Gets or sets PrivateIP address version
+     (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
+    :type private_ip_address_version: str
     :param subnet:
     :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
     :param public_ip_address:
@@ -59,10 +67,12 @@ class NetworkInterfaceIPConfiguration(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'application_gateway_backend_address_pools': {'key': 'properties.applicationGatewayBackendAddressPools', 'type': '[ApplicationGatewayBackendAddressPool]'},
         'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[BackendAddressPool]'},
         'load_balancer_inbound_nat_rules': {'key': 'properties.loadBalancerInboundNatRules', 'type': '[InboundNatRule]'},
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
         'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'IPAllocationMethod'},
+        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'IPVersion'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -70,12 +80,14 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(NetworkInterfaceIPConfiguration, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, private_ip_address_version=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
+        super(NetworkInterfaceIPConfiguration, self).__init__(id=id)
+        self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
         self.load_balancer_inbound_nat_rules = load_balancer_inbound_nat_rules
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
+        self.private_ip_address_version = private_ip_address_version
         self.subnet = subnet
         self.public_ip_address = public_ip_address
         self.provisioning_state = provisioning_state

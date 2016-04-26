@@ -36,6 +36,6 @@ class VirtualDirectory(Model):
         'physical_path': {'key': 'physicalPath', 'type': 'str'},
     }
 
-    def __init__(self, virtual_path=None, physical_path=None, **kwargs):
+    def __init__(self, virtual_path=None, physical_path=None):
         self.virtual_path = virtual_path
         self.physical_path = physical_path

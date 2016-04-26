@@ -59,8 +59,8 @@ class ApplicationGatewayPathRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, paths=None, backend_address_pool=None, backend_http_settings=None, provisioning_state=None, name=None, etag=None, **kwargs):
-        super(ApplicationGatewayPathRule, self).__init__(id=id, **kwargs)
+    def __init__(self, id=None, paths=None, backend_address_pool=None, backend_http_settings=None, provisioning_state=None, name=None, etag=None):
+        super(ApplicationGatewayPathRule, self).__init__(id=id)
         self.paths = paths
         self.backend_address_pool = backend_address_pool
         self.backend_http_settings = backend_http_settings

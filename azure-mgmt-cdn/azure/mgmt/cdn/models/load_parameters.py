@@ -39,5 +39,5 @@ class LoadParameters(Model):
         'content_paths': {'key': 'contentPaths', 'type': '[str]'},
     }
 
-    def __init__(self, content_paths, **kwargs):
+    def __init__(self, content_paths):
         self.content_paths = content_paths

@@ -25,33 +25,50 @@ from msrest.serialization import Model
 class WorkflowRunTrigger(Model):
     """WorkflowRunTrigger
 
-    :param name: Gets the name.
-    :type name: str
-    :param inputs: Gets the inputs.
-    :type inputs: object
-    :param inputs_link: Gets the link to inputs.
-    :type inputs_link: :class:`ContentLink
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Gets the name.
+    :vartype name: str
+    :ivar inputs: Gets the inputs.
+    :vartype inputs: object
+    :ivar inputs_link: Gets the link to inputs.
+    :vartype inputs_link: :class:`ContentLink
      <azure.mgmt.logic.models.ContentLink>`
-    :param outputs: Gets the outputs.
-    :type outputs: object
-    :param outputs_link: Gets the link to outputs.
-    :type outputs_link: :class:`ContentLink
+    :ivar outputs: Gets the outputs.
+    :vartype outputs: object
+    :ivar outputs_link: Gets the link to outputs.
+    :vartype outputs_link: :class:`ContentLink
      <azure.mgmt.logic.models.ContentLink>`
-    :param start_time: Gets the start time.
-    :type start_time: datetime
-    :param end_time: Gets the end time.
-    :type end_time: datetime
-    :param tracking_id: Gets the trackingId.
-    :type tracking_id: str
-    :param code: Gets the code.
-    :type code: str
-    :param status: Gets the status. Possible values include: 'NotSpecified',
+    :ivar start_time: Gets the start time.
+    :vartype start_time: datetime
+    :ivar end_time: Gets the end time.
+    :vartype end_time: datetime
+    :ivar tracking_id: Gets the trackingId.
+    :vartype tracking_id: str
+    :ivar code: Gets the code.
+    :vartype code: str
+    :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
-    :type status: str
-    :param error: Gets the error.
-    :type error: object
+    :vartype status: str
+    :ivar error: Gets the error.
+    :vartype error: object
     """ 
+
+    _validation = {
+        'name': {'readonly': True},
+        'inputs': {'readonly': True},
+        'inputs_link': {'readonly': True},
+        'outputs': {'readonly': True},
+        'outputs_link': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'tracking_id': {'readonly': True},
+        'code': {'readonly': True},
+        'status': {'readonly': True},
+        'error': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -67,15 +84,15 @@ class WorkflowRunTrigger(Model):
         'error': {'key': 'error', 'type': 'object'},
     }
 
-    def __init__(self, name=None, inputs=None, inputs_link=None, outputs=None, outputs_link=None, start_time=None, end_time=None, tracking_id=None, code=None, status=None, error=None, **kwargs):
-        self.name = name
-        self.inputs = inputs
-        self.inputs_link = inputs_link
-        self.outputs = outputs
-        self.outputs_link = outputs_link
-        self.start_time = start_time
-        self.end_time = end_time
-        self.tracking_id = tracking_id
-        self.code = code
-        self.status = status
-        self.error = error
+    def __init__(self):
+        self.name = None
+        self.inputs = None
+        self.inputs_link = None
+        self.outputs = None
+        self.outputs_link = None
+        self.start_time = None
+        self.end_time = None
+        self.tracking_id = None
+        self.code = None
+        self.status = None
+        self.error = None

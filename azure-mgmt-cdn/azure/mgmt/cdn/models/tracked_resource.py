@@ -26,12 +26,15 @@ class TrackedResource(Resource):
     """
     ARM tracked resource
 
-    :param id: Resource ID
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -39,6 +42,9 @@ class TrackedResource(Resource):
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
         'tags': {'required': True},
     }
@@ -51,7 +57,7 @@ class TrackedResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags, id=None, name=None, type=None, **kwargs):
-        super(TrackedResource, self).__init__(id=id, name=name, type=type, **kwargs)
+    def __init__(self, location, tags):
+        super(TrackedResource, self).__init__()
         self.location = location
         self.tags = tags

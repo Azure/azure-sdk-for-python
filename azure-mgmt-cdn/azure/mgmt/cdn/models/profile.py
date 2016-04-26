@@ -29,29 +29,36 @@ class Profile(TrackedResource):
     addition to creating shared configuration settings and selecting pricing
     tiers and providers.
 
-    :param id: Resource ID
-    :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict
     :param sku: The SKU (pricing tier) of the CDN profile.
     :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
-    :param resource_state: Resource status of the profile. Possible values
+    :ivar resource_state: Resource status of the profile. Possible values
      include: 'Creating', 'Active', 'Deleting', 'Disabled'
-    :type resource_state: str
+    :vartype resource_state: str
     :param provisioning_state: Provisioning status of the profile. Possible
      values include: 'Creating', 'Succeeded', 'Failed'
     :type provisioning_state: str
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'location': {'required': True},
         'tags': {'required': True},
+        'resource_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -65,8 +72,8 @@ class Profile(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
 
-    def __init__(self, location, tags, id=None, name=None, type=None, sku=None, resource_state=None, provisioning_state=None, **kwargs):
-        super(Profile, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, location, tags, sku=None, provisioning_state=None):
+        super(Profile, self).__init__(location=location, tags=tags)
         self.sku = sku
-        self.resource_state = resource_state
+        self.resource_state = None
         self.provisioning_state = provisioning_state

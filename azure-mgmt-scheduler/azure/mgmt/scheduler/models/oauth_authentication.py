@@ -47,8 +47,8 @@ class OAuthAuthentication(HttpAuthentication):
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, type=None, secret=None, tenant=None, audience=None, client_id=None, **kwargs):
-        super(OAuthAuthentication, self).__init__(type=type, **kwargs)
+    def __init__(self, type=None, secret=None, tenant=None, audience=None, client_id=None):
+        super(OAuthAuthentication, self).__init__(type=type)
         self.secret = secret
         self.tenant = tenant
         self.audience = audience

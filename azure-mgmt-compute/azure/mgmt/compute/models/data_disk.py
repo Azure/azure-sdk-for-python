@@ -67,7 +67,7 @@ class DataDisk(Model):
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
     }
 
-    def __init__(self, lun, name, vhd, create_option, image=None, caching=None, disk_size_gb=None, **kwargs):
+    def __init__(self, lun, name, vhd, create_option, image=None, caching=None, disk_size_gb=None):
         self.lun = lun
         self.name = name
         self.vhd = vhd

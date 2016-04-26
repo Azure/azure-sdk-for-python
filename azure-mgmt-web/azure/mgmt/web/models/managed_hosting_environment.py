@@ -30,6 +30,8 @@ class ManagedHostingEnvironment(Resource):
     :type id: str
     :param name: Resource Name
     :type name: str
+    :param kind: Kind of resource
+    :type kind: str
     :param location: Resource Location
     :type location: str
     :param type: Resource type
@@ -83,6 +85,7 @@ class ManagedHostingEnvironment(Resource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
@@ -100,8 +103,8 @@ class ManagedHostingEnvironment(Resource):
         'api_management_account': {'key': 'properties.apiManagementAccount', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, type=None, tags=None, managed_hosting_environment_name=None, managed_hosting_environment_location=None, status=None, virtual_network=None, ipssl_address_count=None, dns_suffix=None, subscription_id=None, resource_group=None, environment_is_healthy=None, environment_status=None, suspended=None, api_management_account=None, **kwargs):
-        super(ManagedHostingEnvironment, self).__init__(id=id, name=name, location=location, type=type, tags=tags, **kwargs)
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, managed_hosting_environment_name=None, managed_hosting_environment_location=None, status=None, virtual_network=None, ipssl_address_count=None, dns_suffix=None, subscription_id=None, resource_group=None, environment_is_healthy=None, environment_status=None, suspended=None, api_management_account=None):
+        super(ManagedHostingEnvironment, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.managed_hosting_environment_name = managed_hosting_environment_name
         self.managed_hosting_environment_location = managed_hosting_environment_location
         self.status = status

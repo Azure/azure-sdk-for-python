@@ -46,7 +46,7 @@ class PremierAddOnRequest(Model):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location=None, tags=None, plan=None, properties=None, sku=None, **kwargs):
+    def __init__(self, location=None, tags=None, plan=None, properties=None, sku=None):
         self.location = location
         self.tags = tags
         self.plan = plan

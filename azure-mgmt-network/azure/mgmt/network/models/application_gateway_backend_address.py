@@ -37,6 +37,6 @@ class ApplicationGatewayBackendAddress(Model):
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
     }
 
-    def __init__(self, fqdn=None, ip_address=None, **kwargs):
+    def __init__(self, fqdn=None, ip_address=None):
         self.fqdn = fqdn
         self.ip_address = ip_address

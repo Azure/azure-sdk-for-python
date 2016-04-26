@@ -42,6 +42,6 @@ class SshPublicKey(Model):
         'key_data': {'key': 'keyData', 'type': 'str'},
     }
 
-    def __init__(self, path=None, key_data=None, **kwargs):
+    def __init__(self, path=None, key_data=None):
         self.path = path
         self.key_data = key_data

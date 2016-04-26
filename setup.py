@@ -29,6 +29,7 @@ packages = [
     'azure-common',
     'azure-mgmt-nspkg',
     'azure-mgmt-authorization',
+    'azure-mgmt-batch',
     'azure-mgmt-cdn',
     'azure-mgmt-compute',
     'azure-mgmt-logic',
@@ -41,6 +42,7 @@ packages = [
     'azure-mgmt-storage',
     'azure-mgmt-web',
     'azure-graphrbac',
+    'azure-batch',
     'azure-servicebus',
     'azure-servicemanagement-legacy',
 ]

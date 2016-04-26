@@ -26,12 +26,15 @@ class RouteTable(Resource):
     """
     RouteTable resource
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource Id
     :type id: str
-    :param name: Resource name
-    :type name: str
-    :param type: Resource type
-    :type type: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -48,6 +51,11 @@ class RouteTable(Resource):
     :type etag: str
     """ 
 
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -60,8 +68,8 @@ class RouteTable(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, routes=None, subnets=None, provisioning_state=None, etag=None, **kwargs):
-        super(RouteTable, self).__init__(id=id, name=name, type=type, location=location, tags=tags, **kwargs)
+    def __init__(self, id=None, location=None, tags=None, routes=None, subnets=None, provisioning_state=None, etag=None):
+        super(RouteTable, self).__init__(id=id, location=location, tags=tags)
         self.routes = routes
         self.subnets = subnets
         self.provisioning_state = provisioning_state

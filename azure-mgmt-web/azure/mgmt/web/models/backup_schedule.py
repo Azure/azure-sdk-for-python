@@ -61,7 +61,7 @@ class BackupSchedule(Model):
         'last_execution_time': {'key': 'lastExecutionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, frequency_unit, frequency_interval=None, keep_at_least_one_backup=None, retention_period_in_days=None, start_time=None, last_execution_time=None, **kwargs):
+    def __init__(self, frequency_unit, frequency_interval=None, keep_at_least_one_backup=None, retention_period_in_days=None, start_time=None, last_execution_time=None):
         self.frequency_interval = frequency_interval
         self.frequency_unit = frequency_unit
         self.keep_at_least_one_backup = keep_at_least_one_backup

@@ -46,7 +46,7 @@ class ProviderOperation(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, name=None, display_name=None, description=None, origin=None, properties=None, **kwargs):
+    def __init__(self, name=None, display_name=None, description=None, origin=None, properties=None):
         self.name = name
         self.display_name = display_name
         self.description = description
