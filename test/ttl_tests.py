@@ -6,6 +6,8 @@ import time
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
 
+masterKey = '[YOUR_KEY_HERE]'
+host = '[YOUR_ENDPOINT_HERE]'
 
 #IMPORTANT NOTES: 
   
