@@ -27,20 +27,20 @@ class ExpressRouteCircuitStats(Model):
     Contains Stats associated with the peering
 
     :param primarybytes_in: Gets BytesIn of the peering.
-    :type primarybytes_in: int
+    :type primarybytes_in: long
     :param primarybytes_out: Gets BytesOut of the peering.
-    :type primarybytes_out: int
+    :type primarybytes_out: long
     :param secondarybytes_in: Gets BytesIn of the peering.
-    :type secondarybytes_in: int
+    :type secondarybytes_in: long
     :param secondarybytes_out: Gets BytesOut of the peering.
-    :type secondarybytes_out: int
+    :type secondarybytes_out: long
     """ 
 
     _attribute_map = {
-        'primarybytes_in': {'key': 'primarybytesIn', 'type': 'int'},
-        'primarybytes_out': {'key': 'primarybytesOut', 'type': 'int'},
-        'secondarybytes_in': {'key': 'secondarybytesIn', 'type': 'int'},
-        'secondarybytes_out': {'key': 'secondarybytesOut', 'type': 'int'},
+        'primarybytes_in': {'key': 'primarybytesIn', 'type': 'long'},
+        'primarybytes_out': {'key': 'primarybytesOut', 'type': 'long'},
+        'secondarybytes_in': {'key': 'secondarybytesIn', 'type': 'long'},
+        'secondarybytes_out': {'key': 'secondarybytesOut', 'type': 'long'},
     }
 
     def __init__(self, primarybytes_in=None, primarybytes_out=None, secondarybytes_in=None, secondarybytes_out=None):
