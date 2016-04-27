@@ -6,9 +6,6 @@ Create the client
 
 The following code creates an instance of the client.
 
-You will need to provide your ``subscription_id`` which can be retrieved
-from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
-
 See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
 for details on getting a ``Credentials`` instance.
 
@@ -19,8 +16,6 @@ You will also need the tenant id of the AD you want to manage. Could be the AD U
 
     from azure.graphrbac import GraphRbacManagementClient, GraphRbacManagementClientConfiguration
 
-    # TODO: Replace this with your subscription id
-    subscription_id = '33333333-3333-3333-3333-333333333333'
     # TODO: See above how to get a Credentials instance
     credentials = ...
     tenant_id = "myad.onmicrosoft.com"
@@ -28,7 +23,6 @@ You will also need the tenant id of the AD you want to manage. Could be the AD U
     graphrbac_client = GraphRbacManagementClient(
         GraphRbacManagementClientConfiguration(
             credentials,
-            subscription_id,
             tenant_id
         )
     )
