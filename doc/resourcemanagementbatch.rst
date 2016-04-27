@@ -53,6 +53,7 @@ credentials you created in the previous section.
             credentials,
             subscription_id
         )
+    )
     resource_client.providers.register('Microsoft.Batch')
 
 
