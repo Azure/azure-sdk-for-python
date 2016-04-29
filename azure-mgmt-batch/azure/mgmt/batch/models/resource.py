@@ -28,15 +28,15 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: The id of the resource
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource
     :vartype type: str
-    :param location: Resource location
+    :param location: The location of the resource
     :type location: str
-    :param tags: Resource tags
+    :param tags: The tags of the resource
     :type tags: dict
     """ 
 

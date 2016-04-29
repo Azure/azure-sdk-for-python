@@ -37,9 +37,9 @@ class BatchManagementClientConfiguration(AzureConfiguration):
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify a Microsoft Azure subscription. The subscription id forms part
-     of the URI for every service call.
+    :param subscription_id: A unique identifier of a Microsoft Azure
+     subscription. The subscription id forms part of the URI for every
+     service call.
     :type subscription_id: str
     :param api_version: Client API Version.
     :type api_version: str
