@@ -26,8 +26,8 @@ class SubscriptionQuotasGetResult(Model):
     """
     Values returned by the Get Subscription Quotas operation.
 
-    :param account_quota: The number of accounts the subscription is allowed
-     to create in the Batch Service at the specified region.
+    :param account_quota: The number of Batch accounts that may be created
+     under the subscription in the specified region.
     :type account_quota: int
     """ 
 

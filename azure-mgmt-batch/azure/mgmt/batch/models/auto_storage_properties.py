@@ -30,8 +30,8 @@ class AutoStorageProperties(Model):
     :param storage_account_id: The resource id of the storage account to be
      used for auto storage.
     :type storage_account_id: str
-    :param last_key_sync: The UTC time at which storage keys were last synced
-     to the Batch account.
+    :param last_key_sync: The UTC time at which storage keys were last
+     synchronized with the Batch account.
     :type last_key_sync: datetime
     """ 
 
