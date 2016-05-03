@@ -47,7 +47,7 @@ class AccountResource(Resource):
      'Failed', 'Cancelled'
     :type provisioning_state: str
     :param auto_storage: The properties and status of any auto storage
-     associated with the account.
+     account associated with the account.
     :type auto_storage: :class:`AutoStorageProperties
      <azure.mgmt.batch.models.AutoStorageProperties>`
     :param core_quota: The core quota for this Batch account.

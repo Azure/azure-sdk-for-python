@@ -24,11 +24,11 @@ from msrest.serialization import Model
 
 class AutoStorageProperties(Model):
     """
-    Contains information about the auto storage associated with a Batch
-    account.
+    Contains information about the auto storage account associated with a
+    Batch account.
 
     :param storage_account_id: The resource id of the storage account to be
-     used for auto storage.
+     used for auto storage account.
     :type storage_account_id: str
     :param last_key_sync: The UTC time at which storage keys were last
      synchronized with the Batch account.
