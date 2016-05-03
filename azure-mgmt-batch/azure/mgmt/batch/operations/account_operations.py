@@ -155,7 +155,7 @@ class AccountOperations(object):
         :type account_name: str
         :param tags: The user specified tags associated with the account.
         :type tags: dict
-        :param auto_storage: The properties related to auto storage.
+        :param auto_storage: The properties related to auto storage account.
         :type auto_storage: :class:`AutoStorageBaseProperties
          <azure.mgmt.batch.models.AutoStorageBaseProperties>`
         :param dict custom_headers: headers that will be added to the request
