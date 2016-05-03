@@ -7,7 +7,13 @@
       "Header": "MICROSOFT_APACHE_NO_VERSION",
       "AddCredentials": true,
       "ft": 2
-    }
+    },
+    "wrapper_filesOrDirs": [],
+    "delete_filesOrDirs": [
+      "credentials.py",
+      "exceptions.py"
+    ],
+    "generated_relative_base_directory": "*client"
   },
   "data": {
     "arm-authorization/2015-07-01/swagger/authorization.json": {
@@ -110,7 +116,10 @@
       "autorest_options": {
         "Namespace ": "azure.batch"
       },
-      "output_dir": "azure-batch/azure/batch/"
+      "output_dir": "azure-batch/azure/batch/",
+      "wrapper_filesOrDirs": [
+        "batch_auth.py"
+      ]
     },
     "arm-datalake-analytics/account/2015-10-01-preview/swagger/account.json": {
       "autorest_options": {
