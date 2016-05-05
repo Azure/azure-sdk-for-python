@@ -1,0 +1,108 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://login.windows.net/<AZURE_TENANT_ID>/oauth2/token
+    body:
+      encoding: UTF-8
+      string: resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=<AZURE_CLIENT_ID>&client_secret=<AZURE_CLIENT_SECRET>&grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      content-type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache, no-store
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      server:
+      - Microsoft-IIS/8.5
+      x-ms-request-id:
+      - 5e0cd8a8-cb79-41c3-81e0-466c4634ec8c
+      client-request-id:
+      - fd3bf2c3-281a-43c7-bf3a-cd520e15cd4a
+      x-ms-gateway-service-instanceid:
+      - ESTSFE_IN_169
+      x-content-type-options:
+      - nosniff
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      set-cookie:
+      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+        path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
+      x-powered-by:
+      - ASP.NET
+      date:
+      - Wed, 13 Apr 2016 23:40:13 GMT
+      connection:
+      - close
+      content-length:
+      - '1234'
+    body:
+      encoding: UTF-8
+      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1460594413","not_before":"1460590513","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+    http_version: 
+  recorded_at: Wed, 13 Apr 2016 23:40:13 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Compute/locations/westus/publishers/Microsoft.WindowsAzure.Compute/artifacttypes/vmextension/types?api-version=2015-06-15
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - f7c63636-25f6-45f4-bbd9-b9bc71748723
+      accept-language:
+      - en-US
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-ms-request-id:
+      - f42b45e0-603a-47be-a74e-3bf742e2657e
+      server:
+      - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14999'
+      x-ms-correlation-request-id:
+      - dc9883a1-79d8-4b97-8c7b-4f45c669033a
+      x-ms-routing-request-id:
+      - NORTHCENTRALUS:20160413T234015Z:dc9883a1-79d8-4b97-8c7b-4f45c669033a
+      date:
+      - Wed, 13 Apr 2016 23:40:14 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: "[\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"AzureLogCollector\",\r\n
+        \   \"id\": \"/Subscriptions/<AZURE_SUBSCRIPTION_ID>/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.WindowsAzure.Compute/ArtifactTypes/VMExtension/Types/AzureLogCollector\"\r\n
+        \ }\r\n]"
+    http_version: 
+  recorded_at: Wed, 13 Apr 2016 23:40:14 GMT
+recorded_with: VCR 3.0.1

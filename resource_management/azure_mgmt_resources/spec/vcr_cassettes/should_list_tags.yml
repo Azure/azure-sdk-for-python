@@ -1,0 +1,198 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://login.windows.net/<AZURE_TENANT_ID>/oauth2/token
+    body:
+      encoding: UTF-8
+      string: resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=<AZURE_CLIENT_ID>&client_secret=<AZURE_CLIENT_SECRET>&grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      content-type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache, no-store
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      server:
+      - Microsoft-IIS/8.5
+      x-ms-request-id:
+      - 29375526-11fe-463b-aede-27138c67ecad
+      client-request-id:
+      - 88f07bba-f37f-48ef-b9b4-e8927daccae0
+      x-ms-gateway-service-instanceid:
+      - ESTSFE_IN_86
+      x-content-type-options:
+      - nosniff
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      set-cookie:
+      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+        path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
+      x-powered-by:
+      - ASP.NET
+      date:
+      - Fri, 22 Apr 2016 18:19:06 GMT
+      connection:
+      - close
+      content-length:
+      - '1234'
+    body:
+      encoding: UTF-8
+      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1461352747","not_before":"1461348847","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+    http_version: 
+  recorded_at: Fri, 22 Apr 2016 18:19:10 GMT
+- request:
+    method: put
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/tagNames/testtagname?api-version=2015-11-01
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 2e671afb-4828-4dd5-ba0e-d02ae8a2b909
+      accept-language:
+      - en-US
+  response:
+    status:
+      code: 201
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+      x-ms-request-id:
+      - fd1ed72b-b1d3-4c56-9988-486ffa52f758
+      x-ms-correlation-request-id:
+      - fd1ed72b-b1d3-4c56-9988-486ffa52f758
+      x-ms-routing-request-id:
+      - CENTRALUS:20160422T181907Z:fd1ed72b-b1d3-4c56-9988-486ffa52f758
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Fri, 22 Apr 2016 18:19:07 GMT
+      connection:
+      - close
+      content-length:
+      - '152'
+    body:
+      encoding: UTF-8
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/tagNames/testtagname","tagName":"testtagname","count":{"type":"Total","value":0},"values":[]}'
+    http_version: 
+  recorded_at: Fri, 22 Apr 2016 18:19:11 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/tagNames?api-version=2015-11-01
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 761936d7-e165-44bb-8c9f-33558b58d396
+      accept-language:
+      - en-US
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14976'
+      x-ms-request-id:
+      - 9c6f526e-6c0f-4172-a93e-60525d7fad2d
+      x-ms-correlation-request-id:
+      - 9c6f526e-6c0f-4172-a93e-60525d7fad2d
+      x-ms-routing-request-id:
+      - CENTRALUS:20160422T181908Z:9c6f526e-6c0f-4172-a93e-60525d7fad2d
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Fri, 22 Apr 2016 18:19:08 GMT
+      connection:
+      - close
+      content-length:
+      - '244'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"value":[{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/tagNames/testtagname","tagName":"testtagname","count":{"type":"Total","value":0},"values":[]}]}'
+    http_version: 
+  recorded_at: Fri, 22 Apr 2016 18:19:11 GMT
+- request:
+    method: delete
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/tagNames/testtagname?api-version=2015-11-01
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 1c42a83b-181d-4b8c-828a-f26a79bf4dd5
+      accept-language:
+      - en-US
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      expires:
+      - "-1"
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+      x-ms-request-id:
+      - 660e76ed-e65d-4a1e-ace6-30098c1e1761
+      x-ms-correlation-request-id:
+      - 660e76ed-e65d-4a1e-ace6-30098c1e1761
+      x-ms-routing-request-id:
+      - CENTRALUS:20160422T181909Z:660e76ed-e65d-4a1e-ace6-30098c1e1761
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Fri, 22 Apr 2016 18:19:09 GMT
+      connection:
+      - close
+      content-length:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Fri, 22 Apr 2016 18:19:12 GMT
+recorded_with: VCR 3.0.1

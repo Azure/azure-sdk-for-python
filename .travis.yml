@@ -1,0 +1,11 @@
+sudo: false
+language: ruby
+rvm:
+- 2.0.0
+- 2.1.5
+- 2.2.0
+- 2.3.0
+script:
+- cd resource_management && bundle install
+- if [ "$INTEG_RECORDED" == "true" ] ; then rake arm:spec ; fi
+

@@ -1,0 +1,142 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://login.windows.net/<AZURE_TENANT_ID>/oauth2/token
+    body:
+      encoding: UTF-8
+      string: resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=<AZURE_CLIENT_ID>&client_secret=<AZURE_CLIENT_SECRET>&grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      content-type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache, no-store
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      server:
+      - Microsoft-IIS/8.5
+      x-ms-request-id:
+      - 8644d75c-7404-44bc-a4f0-b24ce1e2a346
+      client-request-id:
+      - bb42dfba-0957-42f8-a2c9-253c8ceee806
+      x-ms-gateway-service-instanceid:
+      - ESTSFE_IN_217
+      x-content-type-options:
+      - nosniff
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      set-cookie:
+      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+        path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
+      x-powered-by:
+      - ASP.NET
+      date:
+      - Sun, 24 Apr 2016 17:25:58 GMT
+      connection:
+      - close
+      content-length:
+      - '1234'
+    body:
+      encoding: UTF-8
+      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1461522358","not_before":"1461518458","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+    http_version: 
+  recorded_at: Sun, 24 Apr 2016 17:25:58 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages?api-version=2015-06-15
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 950b9294-47bb-42fd-88bc-98c4edab61dc
+      accept-language:
+      - en-US
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 149b4cfe-0b1c-4ecd-bc79-721d0031824e
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      server:
+      - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14995'
+      x-ms-correlation-request-id:
+      - c1e95ecb-1555-44a5-96ca-79485c1772e5
+      x-ms-routing-request-id:
+      - WESTUS:20160424T172559Z:c1e95ecb-1555-44a5-96ca-79485c1772e5
+      date:
+      - Sun, 24 Apr 2016 17:25:58 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 0.0,\r\n      \"id\":
+        \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages/VirtualNetworks\",\r\n
+        \     \"limit\": 50.0,\r\n      \"name\": {\r\n        \"localizedValue\":
+        \"Virtual Networks\",\r\n        \"value\": \"VirtualNetworks\"\r\n      },\r\n
+        \     \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n
+        \     \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages/NetworkWatchers\",\r\n
+        \     \"limit\": 1.0,\r\n      \"name\": {\r\n        \"localizedValue\":
+        \"Network Watchers\",\r\n        \"value\": \"NetworkWatchers\"\r\n      },\r\n
+        \     \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n
+        \     \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages/StaticPublicIPAddresses\",\r\n
+        \     \"limit\": 20.0,\r\n      \"name\": {\r\n        \"localizedValue\":
+        \"Static Public IP Addresses\",\r\n        \"value\": \"StaticPublicIPAddresses\"\r\n
+        \     },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\":
+        0.0,\r\n      \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages/NetworkSecurityGroups\",\r\n
+        \     \"limit\": 100.0,\r\n      \"name\": {\r\n        \"localizedValue\":
+        \"Network Security Groups\",\r\n        \"value\": \"NetworkSecurityGroups\"\r\n
+        \     },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\":
+        0.0,\r\n      \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages/PublicIPAddresses\",\r\n
+        \     \"limit\": 60.0,\r\n      \"name\": {\r\n        \"localizedValue\":
+        \"Public IP Addresses\",\r\n        \"value\": \"PublicIPAddresses\"\r\n      },\r\n
+        \     \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n
+        \     \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages/NetworkInterfaces\",\r\n
+        \     \"limit\": 300.0,\r\n      \"name\": {\r\n        \"localizedValue\":
+        \"Network Interfaces\",\r\n        \"value\": \"NetworkInterfaces\"\r\n      },\r\n
+        \     \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n
+        \     \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages/LoadBalancers\",\r\n
+        \     \"limit\": 100.0,\r\n      \"name\": {\r\n        \"localizedValue\":
+        \"Load Balancers\",\r\n        \"value\": \"LoadBalancers\"\r\n      },\r\n
+        \     \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\": 0.0,\r\n
+        \     \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages/ApplicationGateways\",\r\n
+        \     \"limit\": 50.0,\r\n      \"name\": {\r\n        \"localizedValue\":
+        \"Application Gateways\",\r\n        \"value\": \"ApplicationGateways\"\r\n
+        \     },\r\n      \"unit\": \"Count\"\r\n    },\r\n    {\r\n      \"currentValue\":
+        0.0,\r\n      \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/usages/RouteTables\",\r\n
+        \     \"limit\": 100.0,\r\n      \"name\": {\r\n        \"localizedValue\":
+        \"Route Tables\",\r\n        \"value\": \"RouteTables\"\r\n      },\r\n      \"unit\":
+        \"Count\"\r\n    }\r\n  ]\r\n}"
+    http_version: 
+  recorded_at: Sun, 24 Apr 2016 17:25:58 GMT
+recorded_with: VCR 3.0.1

@@ -1,0 +1,108 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://login.windows.net/<AZURE_TENANT_ID>/oauth2/token
+    body:
+      encoding: UTF-8
+      string: resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=<AZURE_CLIENT_ID>&client_secret=<AZURE_CLIENT_SECRET>&grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      content-type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache, no-store
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      server:
+      - Microsoft-IIS/8.5
+      x-ms-request-id:
+      - db2a56b0-8668-4874-a046-c10f0cb1dde2
+      client-request-id:
+      - 2492ac5f-6f02-40c3-9802-d51ac0251366
+      x-ms-gateway-service-instanceid:
+      - ESTSFE_IN_354
+      x-content-type-options:
+      - nosniff
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      set-cookie:
+      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+        path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
+      x-powered-by:
+      - ASP.NET
+      date:
+      - Fri, 22 Apr 2016 20:43:59 GMT
+      connection:
+      - close
+      content-length:
+      - '1234'
+    body:
+      encoding: UTF-8
+      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1461361439","not_before":"1461357539","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+    http_version: 
+  recorded_at: Fri, 22 Apr 2016 20:44:02 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/%7E%60123?api-version=2015-11-01
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 8e63b84b-4581-45d2-a163-15c7a3ca7661
+      accept-language:
+      - en-US
+  response:
+    status:
+      code: 400
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      x-ms-failure-cause:
+      - gateway
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14999'
+      x-ms-request-id:
+      - 30089b5d-6b08-4bc5-9b4c-ed93e4f133d8
+      x-ms-correlation-request-id:
+      - 30089b5d-6b08-4bc5-9b4c-ed93e4f133d8
+      x-ms-routing-request-id:
+      - WESTUS:20160422T204359Z:30089b5d-6b08-4bc5-9b4c-ed93e4f133d8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Fri, 22 Apr 2016 20:43:58 GMT
+      connection:
+      - close
+      content-length:
+      - '195'
+    body:
+      encoding: UTF-8
+      string: '{"error":{"code":"InvalidResourceGroup","message":"The provided resource
+        group name ''~`123'' has these invalid characters: ''~`''. The name can only
+        be a letter, digit, ''-'', ''.'', ''('', '')'' or ''_''."}}'
+    http_version: 
+  recorded_at: Fri, 22 Apr 2016 20:44:02 GMT
+recorded_with: VCR 3.0.1
