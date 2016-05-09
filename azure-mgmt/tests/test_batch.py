@@ -301,7 +301,7 @@ class BatchMgmtTestCase(RecordingTestCase):
 
         _m = "Test Sync AutoStorage Keys"
         LOG.debug(_m)
-        response = self.assertRuns(_e, _m, self.batch_mgmt_client.account.sync_auto_storage_keys,
+        response = self.assertRuns(_e, _m, self.batch_mgmt_client.account.synchronize_auto_storage_keys,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
         self.assertIsNone(_e, _m, response)
 
@@ -322,10 +322,14 @@ class BatchMgmtTestCase(RecordingTestCase):
         _e = {}
         _m = "Test Add Application"
         LOG.debug(_m)
-        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application,
+        application = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id',
                                    allow_updated=True, display_name='my_application_name')
-        self.assertIsNone(_e, _m, response)
+        self.assertIsInstance(application, azure.mgmt.batch.models.Application)
+        if application:
+            self.assertEqual(_e, _m, application.id, 'my_application_id')
+            self.assertEqual(_e, _m, application.display_name, 'my_application_name')
+            self.assertEqual(_e, _m, application.allow_updates, True)
 
         _m = "Test Mgmt Get Application"
         LOG.debug(_m)
