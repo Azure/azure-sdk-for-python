@@ -1,0 +1,10 @@
+/.bundle/
+/.yardoc
+/Gemfile.lock
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/resource_management/azure_mgmt_resources/spec/reports/
+/tmp/
+/.idea/
