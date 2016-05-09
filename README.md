@@ -132,7 +132,7 @@ Running the command ``yard`` will generate the API documentation in the `./doc` 
 
 ## Provide Feedback
 
-If you encounter any bugs with the library please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-ruby/issues) section of the project.
+If you encounter any bugs with the library please file an issue in the [Issues](https://github.com/Azure/azure-sdk-ruby/issues) section of the project.
 
 # Maintainers
 
