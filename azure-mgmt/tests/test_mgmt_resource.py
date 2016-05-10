@@ -17,6 +17,7 @@
 import unittest
 
 import azure.mgmt.resource.resources
+import azure.common.exceptions
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -235,6 +236,36 @@ class MgmtResourceTest(AzureMgmtTestCase):
             deployment_name,
         )
         self.assertEqual(deployment_name, deployment_get_result.name)
+
+    @record
+    def test_deployments_linked_template_error(self):
+        self.create_resource_group()
+
+        # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
+        deployment_name = self.get_resource_name("pytestlinked")
+        template = azure.mgmt.resource.resources.models.TemplateLink(
+            uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json',
+        )
+        parameters = azure.mgmt.resource.resources.models.ParametersLink(
+            uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.parameters.json',
+        )
+
+        deployment_params = azure.mgmt.resource.resources.models.DeploymentProperties(
+            mode = azure.mgmt.resource.resources.models.DeploymentMode.incremental,
+            template_link=template,
+            parameters_link=parameters,
+        )
+
+        deployment_create_result = self.resource_client.deployments.create_or_update(
+            self.group_name,
+            deployment_name,
+            deployment_params,
+        )   
+        with self.assertRaises(azure.common.exceptions.CloudError) as err:
+            deployment_create_result = deployment_create_result.result()
+        cloud_error = err.exception
+        self.assertTrue(cloud_error.message)        
+
 
     @record
     def test_provider_locations(self):
