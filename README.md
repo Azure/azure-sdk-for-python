@@ -1,6 +1,6 @@
 
 # Microsoft Azure SDK for Ruby - Resource Management
-[![Build Status](https://travis-ci.org/Azure/azure-sdk-ruby.png?branch=dev)](https://travis-ci.org/Azure/azure-sdk-ruby) [![Code Climate](https://codeclimate.com/github/Azure/azure-sdk-ruby/badges/gpa.svg)](https://codeclimate.com/github/Azure/azure-sdk-ruby)
+[![Build Status](https://travis-ci.org/Azure/azure-sdk-ruby.png?branch=master)](https://travis-ci.org/Azure/azure-sdk-ruby) [![Code Climate](https://codeclimate.com/github/Azure/azure-sdk-ruby/badges/gpa.svg)](https://codeclimate.com/github/Azure/azure-sdk-ruby)
 
 This project provides a Ruby package for Azure Resource Management (ARM).
 If you're looking for Azure Service Management (ASM) please refer to this [repo](https://github.com/Azure/azure-sdk-for-ruby/tree/master/service_management)
