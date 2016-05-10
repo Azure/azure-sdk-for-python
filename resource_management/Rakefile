@@ -23,6 +23,7 @@ namespace :arm do
     each_gem do
       execute_and_stream('rm -rf ./pkg')
     end
+    execute_and_stream('rm -rf *.gem')
   end
 
   desc 'Build gems for each of the Azure Resource Manager projects'
@@ -30,6 +31,7 @@ namespace :arm do
     each_gem do
       execute_and_stream('rake build')
     end
+    execute_and_stream('gem build azure_arm.gemspec')
   end
 
   desc 'Push gem and tag repo for each of the Azure Resource Manager projects'
@@ -40,6 +42,10 @@ namespace :arm do
       execute_and_stream("gem push ./pkg/#{dir}-#{md[:version]}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
       execute_and_stream("git tag #{tag} && git push upstream #{tag}")
     end
+    md = REGEN_METADATA[:azure_arm]
+    tag = "#{md[:tag]}-v#{md[:version]}"
+    execute_and_stream("gem push ./azure_arm-#{md[:version]}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
+    execute_and_stream("git tag #{tag} && git push upstream #{tag}")
   end
 
   desc 'Regen code for each of the Azure Resource Manager projects'
@@ -63,9 +69,9 @@ namespace :arm do
     end
   end
 
-  desc 'run recorded specs for each of the Azure Resource Manager projects'
+  desc 'run specs for each of the Azure Resource Manager projects'
   task :spec => :dotenv do
-    each_gem ('spec/vcr_cassettes') do
+    each_gem do
       execute_and_stream('bundle install')
       execute_and_stream('bundle exec rspec')
     end
@@ -88,129 +94,125 @@ def execute_and_stream(cmd)
   end
 end
 
-def each_child (dir_filter = nil)
+def each_child
   dirs = Dir.entries('./').select { |f| File.directory?(f) and !(f =='.' || f == '..') }
   dirs.each do |dir|
     Dir.chdir(dir) do
-      # consider the dir if the dir contains dir_filter
-      if !dir_filter.nil?
-        if  Dir.exist?(dir_filter)
-          puts "./#{dir}"
-          yield(dir)
-        end
-      else
-        puts "./#{dir}"
-        yield(dir)
-      end
+      puts "./#{dir}"
+      yield(dir)
     end
   end
 end
 
-def each_gem (dir_filter = nil)
-  each_child (dir_filter) do |dir|
+def each_gem
+  each_child do |dir|
     if REGEN_METADATA.has_key?(dir.to_sym)
       yield dir
     end
   end
 end
 
+version = File.read(File.expand_path('../ARM_VERSION', __FILE__)).strip
 REGEN_METADATA = {
     autorest_loc: '../../../autorest/binaries/net45/AutoRest.exe',
+    azure_arm: {
+        version: version,
+        tag: 'azure_arm'
+    },
     azure_mgmt_authorization: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-authorization/2015-07-01/swagger/authorization.json',
         ns: 'Azure::ARM::Authorization',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_auth'
     },
     azure_mgmt_cdn: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-cdn/2015-06-01/swagger/cdn.json',
         ns: 'Azure::ARM::CDN',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_cdn'
     },
     azure_mgmt_compute: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/2015-06-15/swagger/compute.json',
         ns: 'Azure::ARM::Compute',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_comp'
     },
     azure_mgmt_features: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/features/2015-12-01/swagger/features.json',
         ns: 'Azure::ARM::Features',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_feat'
     },
     azure_mgmt_graph: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-graphrbac/1.6-internal/swagger/graphrbac.json',
         ns: 'Azure::ARM::Graph',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_grap'
     },
     azure_mgmt_locks: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/locks/2015-01-01/swagger/locks.json',
         ns: 'Azure::ARM::Locks',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_lock'
     },
     azure_mgmt_network: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-network/2015-06-15/swagger/network.json',
         ns: 'Azure::ARM::Network',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_netw'
     },
     azure_mgmt_notification_hubs: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-notificationhubs/2014-09-01/swagger/notificationhubs.json',
         ns: 'Azure::ARM::NotificationHubs',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_noti'
     },
     azure_mgmt_redis: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-redis/2015-08-01/swagger/redis.json',
         ns: 'Azure::ARM::Redis',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_redi'
     },
     azure_mgmt_resources: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/resources/2015-11-01/swagger/resources.json',
         ns: 'Azure::ARM::Resources',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_reso'
     },
     azure_mgmt_scheduler: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-scheduler/2016-01-01/swagger/scheduler.json',
         ns: 'Azure::ARM::Scheduler',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_sche'
     },
     azure_mgmt_search: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-search/2015-02-28/swagger/search.json',
         ns: 'Azure::ARM::Search',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_sear'
     },
     azure_mgmt_sql: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-sql/2015-05-01/swagger/sql.json',
         ns: 'Azure::ARM::SQL',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_sql'
     },
     azure_mgmt_storage: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-storage/2015-06-15/swagger/storage.json',
         ns: 'Azure::ARM::Storage',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_stor'
     },
     azure_mgmt_subscriptions: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/subscriptions/2015-11-01/swagger/subscriptions.json',
         ns: 'Azure::ARM::Subscriptions',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_subs'
     },
     azure_mgmt_web: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-web/2015-08-01/swagger/service.json',
         ns: 'Azure::ARM::Web',
-        version: '0.2.1',
+        version: version,
         tag: 'arm_web'
     }
 }
-
