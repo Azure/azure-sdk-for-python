@@ -26,11 +26,11 @@ class ComputeNodeGetRemoteLoginSettingsResult(Model):
     """
     Response to a ComputeNodeOperation.GetRemoteLoginSettings request.
 
-    :param remote_login_ip_address: Gets or sets the IP address used for
-     remote login to the compute node.
-    :type remote_login_ip_address: str
-    :param remote_login_port: Gets or sets the port used for remote login to
+    :param remote_login_ip_address: The IP address used for remote login to
      the compute node.
+    :type remote_login_ip_address: str
+    :param remote_login_port: The port used for remote login to the compute
+     node.
     :type remote_login_port: int
     """ 
 

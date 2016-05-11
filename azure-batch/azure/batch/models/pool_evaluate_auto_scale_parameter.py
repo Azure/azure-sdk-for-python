@@ -26,8 +26,8 @@ class PoolEvaluateAutoScaleParameter(Model):
     """
     Parameters for a CloudJobOperations.EvaluateAutoScale request.
 
-    :param auto_scale_formula: Sets a formula for the desired number of
-     compute nodes in the pool.
+    :param auto_scale_formula: A formula for the desired number of compute
+     nodes in the pool.
     :type auto_scale_formula: str
     """ 
 

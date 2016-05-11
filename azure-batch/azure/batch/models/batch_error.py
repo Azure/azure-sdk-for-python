@@ -27,14 +27,14 @@ class BatchError(Model):
     """
     An error response received from the Azure Batch service.
 
-    :param code: Gets or sets an identifier for the error. Codes are
-     invariant and are intended to be consumed programmatically.
+    :param code: An identifier for the error. Codes are invariant and are
+     intended to be consumed programmatically.
     :type code: str
-    :param message: Gets or sets a message describing the error, intended to
-     be suitable for display in a user interface.
+    :param message: A message describing the error, intended to be suitable
+     for display in a user interface.
     :type message: :class:`ErrorMessage <azure.batch.models.ErrorMessage>`
-    :param values: Gets or sets a collection of key-value pairs containing
-     additional details about the error.
+    :param values: A collection of key-value pairs containing additional
+     details about the error.
     :type values: list of :class:`BatchErrorDetail
      <azure.batch.models.BatchErrorDetail>`
     """ 

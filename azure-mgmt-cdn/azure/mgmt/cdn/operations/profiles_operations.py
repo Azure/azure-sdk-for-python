@@ -294,11 +294,13 @@ class ProfilesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 202]:
+            if response.status_code not in [200, 201, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             deserialized = None
 
+            if response.status_code == 200:
+                deserialized = self._deserialize('Profile', response)
             if response.status_code == 201:
                 deserialized = self._deserialize('Profile', response)
             if response.status_code == 202:

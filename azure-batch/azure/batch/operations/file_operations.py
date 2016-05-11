@@ -54,11 +54,11 @@ class FileOperations(object):
         :type task_id: str
         :param file_name: The path to the task file that you want to delete.
         :type file_name: str
-        :param recursive: Sets whether to delete children of a directory. If
-         the fileName parameter represents a directory instead of a file, you
-         can set Recursive to true to delete the directory and all of the
-         files and subdirectories in it. If Recursive is false then the
-         directory must be empty or deletion will fail.
+        :param recursive: Whether to delete children of a directory. If the
+         fileName parameter represents a directory instead of a file, you can
+         set Recursive to true to delete the directory and all of the files
+         and subdirectories in it. If Recursive is false then the directory
+         must be empty or deletion will fail.
         :type recursive: bool
         :param file_delete_from_task_options: Additional parameters for the
          operation
@@ -371,11 +371,11 @@ class FileOperations(object):
         :type node_id: str
         :param file_name: The path to the file that you want to delete.
         :type file_name: str
-        :param recursive: Sets whether to delete children of a directory. If
-         the fileName parameter represents a directory instead of a file, you
-         can set Recursive to true to delete the directory and all of the
-         files and subdirectories in it. If Recursive is false then the
-         directory must be empty or deletion will fail.
+        :param recursive: Whether to delete children of a directory. If the
+         fileName parameter represents a directory instead of a file, you can
+         set Recursive to true to delete the directory and all of the files
+         and subdirectories in it. If Recursive is false then the directory
+         must be empty or deletion will fail.
         :type recursive: bool
         :param file_delete_from_compute_node_options: Additional parameters
          for the operation
@@ -686,7 +686,7 @@ class FileOperations(object):
         :type job_id: str
         :param task_id: The id of the task whose files you want to list.
         :type task_id: str
-        :param recursive: Sets whether to list children of a directory.
+        :param recursive: Whether to list children of a directory.
         :type recursive: bool
         :param file_list_from_task_options: Additional parameters for the
          operation
@@ -792,7 +792,7 @@ class FileOperations(object):
         :param node_id: The id of the compute node whose files you want to
          list.
         :type node_id: str
-        :param recursive: Sets whether to list children of a directory.
+        :param recursive: Whether to list children of a directory.
         :type recursive: bool
         :param file_list_from_compute_node_options: Additional parameters for
          the operation

@@ -26,14 +26,13 @@ class NodeFile(Model):
     """
     Information about a file or directory on a compute node.
 
-    :param name: Gets or sets the file path.
+    :param name: The file path.
     :type name: str
-    :param url: Gets or sets the URL of the file.
+    :param url: The URL of the file.
     :type url: str
-    :param is_directory: Gets or sets whether the object represents a
-     directory.
+    :param is_directory: Whether the object represents a directory.
     :type is_directory: bool
-    :param properties: Gets or sets the file properties.
+    :param properties: The file properties.
     :type properties: :class:`FileProperties
      <azure.batch.models.FileProperties>`
     """ 

@@ -26,16 +26,15 @@ class AutoScaleRun(Model):
     """
     The results and errors from an execution of a pool autoscale formula.
 
-    :param timestamp: Gets or sets the time at which the autoscale formula
-     was last evaluated.
+    :param timestamp: The time at which the autoscale formula was last
+     evaluated.
     :type timestamp: datetime
-    :param results: Gets or sets the final values of all variables used in
-     the evaluation of the autoscale formula.  Each variable value is
-     returned in the form $variable=value, and variables are separated by
-     semicolons.
+    :param results: The final values of all variables used in the evaluation
+     of the autoscale formula. Each variable value is returned in the form
+     $variable=value, and variables are separated by semicolons.
     :type results: str
-    :param error: Gets or sets details of the error encountered evaluating
-     the autoscale formula on the pool, if the evaluation was unsuccessful.
+    :param error: Details of the error encountered evaluating the autoscale
+     formula on the pool, if the evaluation was unsuccessful.
     :type error: :class:`AutoScaleRunError
      <azure.batch.models.AutoScaleRunError>`
     """ 

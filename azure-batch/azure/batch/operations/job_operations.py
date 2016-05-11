@@ -540,8 +540,8 @@ class JobOperations(object):
 
         :param job_id: The id of the job to disable.
         :type job_id: str
-        :param disable_tasks: Sets what to do with active tasks associated
-         with the job. Possible values include: 'requeue', 'terminate', 'wait'
+        :param disable_tasks: What to do with active tasks associated with
+         the job. Possible values include: 'requeue', 'terminate', 'wait'
         :type disable_tasks: str
         :param job_disable_options: Additional parameters for the operation
         :type job_disable_options: :class:`JobDisableOptions
@@ -749,8 +749,8 @@ class JobOperations(object):
         :param job_terminate_options: Additional parameters for the operation
         :type job_terminate_options: :class:`JobTerminateOptions
          <azure.batch.models.JobTerminateOptions>`
-        :param terminate_reason: Sets the text you want to appear as the
-         job's TerminateReason. The default is 'UserTerminate'.
+        :param terminate_reason: The text you want to appear as the job's
+         TerminateReason. The default is 'UserTerminate'.
         :type terminate_reason: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -856,7 +856,7 @@ class JobOperations(object):
         """
         Adds a job to the specified account.
 
-        :param job: Specifies the job to be added.
+        :param job: The job to be added.
         :type job: :class:`JobAddParameter
          <azure.batch.models.JobAddParameter>`
         :param job_add_options: Additional parameters for the operation

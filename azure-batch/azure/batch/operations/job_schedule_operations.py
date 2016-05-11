@@ -63,9 +63,6 @@ class JobScheduleOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        select = None
-        if job_schedule_exists_options is not None:
-            select = job_schedule_exists_options.select
         timeout = None
         if job_schedule_exists_options is not None:
             timeout = job_schedule_exists_options.timeout
@@ -101,8 +98,6 @@ class JobScheduleOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -886,7 +881,7 @@ class JobScheduleOperations(object):
         """
         Adds a job schedule to the specified account.
 
-        :param cloud_job_schedule: Specifies the job schedule to be added.
+        :param cloud_job_schedule: The job schedule to be added.
         :type cloud_job_schedule: :class:`JobScheduleAddParameter
          <azure.batch.models.JobScheduleAddParameter>`
         :param job_schedule_add_options: Additional parameters for the

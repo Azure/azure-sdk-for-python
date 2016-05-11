@@ -26,13 +26,13 @@ class NodeUpdateUserParameter(Model):
     """
     Parameters for a ComputeNodeOperations.UpdateUser request.
 
-    :param password: Sets the password of the account.
+    :param password: The password of the account.
     :type password: str
-    :param expiry_time: Sets the time at which the account should expire. If
+    :param expiry_time: The time at which the account should expire. If
      omitted, the default is 1 day from the current time.
     :type expiry_time: datetime
-    :param ssh_public_key: Gets or sets the SSH public key that can be used
-     for remote login to the compute node.
+    :param ssh_public_key: The SSH public key that can be used for remote
+     login to the compute node.
     :type ssh_public_key: str
     """ 
 

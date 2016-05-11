@@ -24,16 +24,20 @@ from msrest.serialization import Model
 
 class ImageReference(Model):
     """
-    The information about the platform or marketplace image.
+    A reference to an Azure Virtual Machines Marketplace image.
 
-    :param publisher: Gets or sets the publisher of the image.
+    :param publisher: The publisher of the Azure Virtual Machines Marketplace
+     image. For example, Canonical or MicrosoftWindowsServer.
     :type publisher: str
-    :param offer: Gets or sets the offer of the image.
+    :param offer: The offer type of the Azure Virtual Machines Marketplace
+     image. For example, UbuntuServer or WindowsServer.
     :type offer: str
-    :param sku: Gets or sets the SKU of the image.
+    :param sku: The SKU of the Azure Virtual Machines Marketplace image. For
+     example, 14.04.0-LTS or 2012-R2-Datacenter.
     :type sku: str
-    :param version: Gets or sets the version of the image. A value of
-     'latest' can be specified to select the latest version of an image.
+    :param version: The version of the Azure Virtual Machines Marketplace
+     image. A value of 'latest' can be specified to select the latest version
+     of an image. If omitted, the default is 'latest'.
     :type version: str
     """ 
 
@@ -41,7 +45,6 @@ class ImageReference(Model):
         'publisher': {'required': True},
         'offer': {'required': True},
         'sku': {'required': True},
-        'version': {'required': True},
     }
 
     _attribute_map = {
@@ -51,7 +54,7 @@ class ImageReference(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, publisher, offer, sku, version):
+    def __init__(self, publisher, offer, sku, version=None):
         self.publisher = publisher
         self.offer = offer
         self.sku = sku

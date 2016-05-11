@@ -27,34 +27,33 @@ class JobReleaseTask(Model):
     A Job Release task to run on job completion on any compute node where the
     job has run.
 
-    :param id: Gets or sets a string that uniquely identifies the Job Release
-     task within the job. The id can contain any combination of alphanumeric
-     characters including hyphens and underscores and cannot contain more
-     than 64 characters.
+    :param id: A string that uniquely identifies the Job Release task within
+     the job. The id can contain any combination of alphanumeric characters
+     including hyphens and underscores and cannot contain more than 64
+     characters.
     :type id: str
-    :param command_line: Gets or sets the command line of the Job Release
-     task.
+    :param command_line: The command line of the Job Release task.
     :type command_line: str
-    :param resource_files: Gets or sets a list of files that Batch will
+    :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line.
     :type resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
-    :param environment_settings: Gets or sets a list of environment variable
-     settings for the Job Release task.
+    :param environment_settings: A list of environment variable settings for
+     the Job Release task.
     :type environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param max_wall_clock_time: Gets or sets the maximum elapsed time that
-     the Job Release task may run on a given compute node, measured from the
-     time the task starts. If the task does not complete within the time
-     limit, the Batch service terminates it. The default value is 15 minutes.
+    :param max_wall_clock_time: The maximum elapsed time that the Job Release
+     task may run on a given compute node, measured from the time the task
+     starts. If the task does not complete within the time limit, the Batch
+     service terminates it. The default value is 15 minutes.
     :type max_wall_clock_time: timedelta
-    :param retention_time: Gets or sets the minimum time to retain the
-     working directory for the Job Release task on the compute node.  After
-     this time, the Batch service may delete the working directory and all
-     its contents. The default is infinite.
+    :param retention_time: The minimum time to retain the working directory
+     for the Job Release task on the compute node. After this time, the Batch
+     service may delete the working directory and all its contents. The
+     default is infinite.
     :type retention_time: timedelta
-    :param run_elevated: Gets or sets whether to run the Job Release task in
-     elevated mode. The default value is false.
+    :param run_elevated: Whether to run the Job Release task in elevated
+     mode. The default value is false.
     :type run_elevated: bool
     """ 
 

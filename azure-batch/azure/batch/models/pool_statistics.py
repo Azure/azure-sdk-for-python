@@ -27,21 +27,21 @@ class PoolStatistics(Model):
     Contains utilization and resource usage statistics for the lifetime of a
     pool.
 
-    :param url: Gets or sets the URL for the statistics.
+    :param url: The URL for the statistics.
     :type url: str
-    :param start_time: Gets or sets the start time of the time range covered
-     by the statistics.
+    :param start_time: The start time of the time range covered by the
+     statistics.
     :type start_time: datetime
-    :param last_update_time: Gets or sets the time at which the statistics
-     were last updated. All statistics are limited to the range between
-     startTime and lastUpdateTime.
+    :param last_update_time: The time at which the statistics were last
+     updated. All statistics are limited to the range between startTime and
+     lastUpdateTime.
     :type last_update_time: datetime
-    :param usage_stats: Gets or sets statistics related to pool usage
-     information, such as the amount of core-time used.
+    :param usage_stats: Statistics related to pool usage, such as the amount
+     of core-time used.
     :type usage_stats: :class:`UsageStatistics
      <azure.batch.models.UsageStatistics>`
-    :param resource_stats: Gets or sets statistics related to resource
-     consumption by compute nodes in the pool.
+    :param resource_stats: Statistics related to resource consumption by
+     compute nodes in the pool.
     :type resource_stats: :class:`ResourceStatistics
      <azure.batch.models.ResourceStatistics>`
     """ 
