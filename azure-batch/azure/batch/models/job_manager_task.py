@@ -26,35 +26,37 @@ class JobManagerTask(Model):
     """
     Specifies details of a Job Manager task.
 
-    :param id: Gets or sets a string that uniquely identifies the Job Manager
-     task. A GUID is recommended.
+    :param id: A string that uniquely identifies the Job Manager task. A GUID
+     is recommended.
     :type id: str
-    :param display_name: Gets or sets the display name of the Job Manager
-     task.
+    :param display_name: The display name of the Job Manager task.
     :type display_name: str
-    :param command_line: Gets or sets the command line of the Job Manager
-     task.
+    :param command_line: The command line of the Job Manager task.
     :type command_line: str
-    :param resource_files: Gets or sets a list of files that Batch will
+    :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line.
     :type resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
-    :param environment_settings: Gets or sets a list of environment variable
-     settings for the Job Manager task.
+    :param environment_settings: A list of environment variable settings for
+     the Job Manager task.
     :type environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param constraints: Gets or sets constraints that apply to the Job
-     Manager task.
+    :param constraints: Constraints that apply to the Job Manager task.
     :type constraints: :class:`TaskConstraints
      <azure.batch.models.TaskConstraints>`
-    :param kill_job_on_completion: Gets or sets whether completion of the Job
-     Manager task signifies completion of the entire job.
+    :param kill_job_on_completion: Whether completion of the Job Manager task
+     signifies completion of the entire job.
     :type kill_job_on_completion: bool
-    :param run_elevated: Gets or sets whether to run the Job Manager task in
-     elevated mode. The default value is false.
+    :param run_elevated: Whether to run the Job Manager task in elevated
+     mode. The default value is false.
     :type run_elevated: bool
-    :param run_exclusive: Gets or sets whether the Job Manager task requires
-     exclusive use of the compute node where it runs.
+    :param run_exclusive: Whether the Job Manager task requires exclusive use
+     of the compute node where it runs. If true, no other tasks will run on
+     the same compute node for as long as the Job Manager is running. If
+     false, other tasks can run simultaneously with the Job Manager on a
+     compute node. (The Job Manager task counts normally against the node’s
+     concurrent task limit, so this is only relevant if the node allows
+     multiple concurrent tasks.)
     :type run_exclusive: bool
     """ 
 

@@ -26,45 +26,45 @@ class ResourceStatistics(Model):
     """
     Statistics related to resource consumption by compute nodes in a pool.
 
-    :param start_time: Gets or sets the start time of the time range covered
-     by the statistics.
+    :param start_time: The start time of the time range covered by the
+     statistics.
     :type start_time: datetime
-    :param last_update_time: Gets or sets the time at which the statistics
-     were last updated. All statistics are limited to the range between
-     startTime and lastUpdateTime.
+    :param last_update_time: The time at which the statistics were last
+     updated. All statistics are limited to the range between startTime and
+     lastUpdateTime.
     :type last_update_time: datetime
-    :param avg_cpu_percentage: Gets or sets the average CPU usage across all
-     nodes in the pool (percentage per node).
+    :param avg_cpu_percentage: The average CPU usage across all nodes in the
+     pool (percentage per node).
     :type avg_cpu_percentage: float
-    :param avg_memory_gi_b: Gets or sets the average memory usage in GiB
-     across all nodes in the pool.
+    :param avg_memory_gi_b: The average memory usage in GiB across all nodes
+     in the pool.
     :type avg_memory_gi_b: float
-    :param peak_memory_gi_b: Gets or sets the peak memory usage in GiB across
-     all nodes in the pool.
+    :param peak_memory_gi_b: The peak memory usage in GiB across all nodes in
+     the pool.
     :type peak_memory_gi_b: float
-    :param avg_disk_gi_b: Gets or sets the average used disk space in GiB
-     across all nodes in the pool.
+    :param avg_disk_gi_b: The average used disk space in GiB across all nodes
+     in the pool.
     :type avg_disk_gi_b: float
-    :param peak_disk_gi_b: Gets or sets the peak used disk space in GiB
-     across all nodes in the pool.
+    :param peak_disk_gi_b: The peak used disk space in GiB across all nodes
+     in the pool.
     :type peak_disk_gi_b: float
-    :param disk_read_iops: Gets or sets the total number of disk read
-     operations across all nodes in the pool.
+    :param disk_read_iops: The total number of disk read operations across
+     all nodes in the pool.
     :type disk_read_iops: long
-    :param disk_write_iops: Gets or sets the total number of disk write
-     operations across all nodes in the pool.
+    :param disk_write_iops: The total number of disk write operations across
+     all nodes in the pool.
     :type disk_write_iops: long
-    :param disk_read_gi_b: Gets or sets the total amount of data in GiB of
-     disk reads across all nodes in the pool.
+    :param disk_read_gi_b: The total amount of data in GiB of disk reads
+     across all nodes in the pool.
     :type disk_read_gi_b: float
-    :param disk_write_gi_b: Gets or sets the total amount of data in GiB of
-     disk writes across all nodes in the pool.
+    :param disk_write_gi_b: The total amount of data in GiB of disk writes
+     across all nodes in the pool.
     :type disk_write_gi_b: float
-    :param network_read_gi_b: Gets or sets the total amount of data in GiB of
-     network reads across all nodes in the pool.
+    :param network_read_gi_b: The total amount of data in GiB of network
+     reads across all nodes in the pool.
     :type network_read_gi_b: float
-    :param network_write_gi_b: Gets or sets the total amount of data in GiB
-     of network writes across all nodes in the pool.
+    :param network_write_gi_b: The total amount of data in GiB of network
+     writes across all nodes in the pool.
     :type network_write_gi_b: float
     """ 
 

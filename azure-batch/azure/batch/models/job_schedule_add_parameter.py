@@ -27,20 +27,19 @@ class JobScheduleAddParameter(Model):
     A job schedule that allows recurring jobs by specifying when to run jobs
     and a specification used to create each job.
 
-    :param id: Gets or sets a string that uniquely identifies the schedule
-     within the account. A GUID is recommended.
+    :param id: A string that uniquely identifies the schedule within the
+     account. A GUID is recommended.
     :type id: str
-    :param display_name: Gets or sets the display name for the schedule.
+    :param display_name: The display name for the schedule.
     :type display_name: str
-    :param schedule: Gets or sets the schedule according to which jobs will
-     be created.
+    :param schedule: The schedule according to which jobs will be created.
     :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
-    :param job_specification: Gets or sets the details of the jobs to be
-     created on this schedule.
+    :param job_specification: The details of the jobs to be created on this
+     schedule.
     :type job_specification: :class:`JobSpecification
      <azure.batch.models.JobSpecification>`
-    :param metadata: Gets or sets a list of name-value pairs associated with
-     the schedule as metadata.
+    :param metadata: A list of name-value pairs associated with the schedule
+     as metadata.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
     """ 

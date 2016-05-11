@@ -26,16 +26,16 @@ class ResourceFile(Model):
     """
     A file to be downloaded from Azure blob storage to a compute node.
 
-    :param blob_source: Gets or sets the URL of a blob in Azure storage. The
-     Batch service downloads the blob to the specified file path. The URL
-     must be readable using anonymous access.
+    :param blob_source: The URL of the file within Azure Blob Storage. This
+     URL should include a shared access signature if the blob is not publicly
+     readable.
     :type blob_source: str
-    :param file_path: Gets or sets the location on the compute node to which
-     the file should be downloaded.
+    :param file_path: The location to which to download the file, relative to
+     the task's working directory.
     :type file_path: str
-    :param file_mode: Gets or sets the file mode attribute in octal format.
-     This property will be ignored if it is specified for a resourceFile
-     which will be downloaded to a Windows compute node.
+    :param file_mode: The file mode attribute in octal format. This property
+     will be ignored if it is specified for a resourceFile which will be
+     downloaded to a Windows compute node.
     :type file_mode: str
     """ 
 

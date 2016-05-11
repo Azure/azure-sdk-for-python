@@ -24,27 +24,23 @@ from msrest.serialization import Model
 
 class JobPreparationAndReleaseTaskExecutionInformation(Model):
     """
-    The status of the Job Preparation and Job Release tasks on a particular
-    compute node.
+    The status of the Job Preparation and Job Release tasks on a compute node.
 
-    :param pool_id: Gets or sets the id of the pool containing the compute
-     node to which this entry refers.
+    :param pool_id: The id of the pool containing the compute node to which
+     this entry refers.
     :type pool_id: str
-    :param node_id: Gets or sets the id of the compute node to which this
-     entry refers.
+    :param node_id: The id of the compute node to which this entry refers.
     :type node_id: str
-    :param node_url: Gets or sets the URL of the compute node to which this
-     entry refers.
+    :param node_url: The URL of the compute node to which this entry refers.
     :type node_url: str
-    :param job_preparation_task_execution_info: Gets or sets information
-     about the execution status of the Job Preparation task on this compute
-     node.
+    :param job_preparation_task_execution_info: Information about the
+     execution status of the Job Preparation task on this compute node.
     :type job_preparation_task_execution_info:
      :class:`JobPreparationTaskExecutionInformation
      <azure.batch.models.JobPreparationTaskExecutionInformation>`
-    :param job_release_task_execution_info: Gets or sets information about
-     the execution status of the Job Release task on this compute node. This
-     property is set only if the Job Release task has run on the node.
+    :param job_release_task_execution_info: Information about the execution
+     status of the Job Release task on this compute node. This property is
+     set only if the Job Release task has run on the node.
     :type job_release_task_execution_info:
      :class:`JobReleaseTaskExecutionInformation
      <azure.batch.models.JobReleaseTaskExecutionInformation>`

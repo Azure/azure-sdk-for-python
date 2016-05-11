@@ -26,16 +26,15 @@ class PoolResizeParameter(Model):
     """
     Parameters for a CloudPoolOperations.Resize request.
 
-    :param target_dedicated: Sets the desired number of compute nodes in the
-     pool.
+    :param target_dedicated: The desired number of compute nodes in the pool.
     :type target_dedicated: int
-    :param resize_timeout: Sets the timeout for allocation of compute nodes
-     to the pool or removal of compute nodes from the pool. The default value
-     is 10 minutes.
+    :param resize_timeout: The timeout for allocation of compute nodes to the
+     pool or removal of compute nodes from the pool. The default value is 10
+     minutes.
     :type resize_timeout: timedelta
-    :param node_deallocation_option: Sets when nodes may be removed from the
-     pool, if the pool size is decreasing. Possible values include:
-     'requeue', 'terminate', 'taskcompletion', 'retaineddata'
+    :param node_deallocation_option: When nodes may be removed from the pool,
+     if the pool size is decreasing. Possible values include: 'requeue',
+     'terminate', 'taskcompletion', 'retaineddata'
     :type node_deallocation_option: str
     """ 
 

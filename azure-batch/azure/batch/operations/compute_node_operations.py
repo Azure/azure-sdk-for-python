@@ -52,7 +52,7 @@ class ComputeNodeOperations(object):
         :param node_id: The id of the machine on which you want to create a
          user account.
         :type node_id: str
-        :param user: Specifies the user account to be created.
+        :param user: The user account to be created.
         :type user: :class:`ComputeNodeUser
          <azure.batch.models.ComputeNodeUser>`
         :param compute_node_add_user_options: Additional parameters for the
@@ -424,10 +424,10 @@ class ComputeNodeOperations(object):
          operation
         :type compute_node_reboot_options: :class:`ComputeNodeRebootOptions
          <azure.batch.models.ComputeNodeRebootOptions>`
-        :param node_reboot_option: Sets when to reboot the compute node and
-         what to do with currently running tasks. The default value is
-         requeue. Possible values include: 'requeue', 'terminate',
-         'taskcompletion', 'retaineddata'
+        :param node_reboot_option: When to reboot the compute node and what
+         to do with currently running tasks. The default value is requeue.
+         Possible values include: 'requeue', 'terminate', 'taskcompletion',
+         'retaineddata'
         :type node_reboot_option: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -522,10 +522,10 @@ class ComputeNodeOperations(object):
          operation
         :type compute_node_reimage_options: :class:`ComputeNodeReimageOptions
          <azure.batch.models.ComputeNodeReimageOptions>`
-        :param node_reimage_option: Sets when to reimage the compute node and
-         what to do with currently running tasks. The default value is
-         requeue. Possible values include: 'requeue', 'terminate',
-         'taskcompletion', 'retaineddata'
+        :param node_reimage_option: When to reimage the compute node and what
+         to do with currently running tasks. The default value is requeue.
+         Possible values include: 'requeue', 'terminate', 'taskcompletion',
+         'retaineddata'
         :type node_reimage_option: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -622,10 +622,10 @@ class ComputeNodeOperations(object):
         :type compute_node_disable_scheduling_options:
          :class:`ComputeNodeDisableSchedulingOptions
          <azure.batch.models.ComputeNodeDisableSchedulingOptions>`
-        :param node_disable_scheduling_option: Gets or sets what to do with
-         currently running tasks when disable task scheduling on the compute
-         node. The default value is requeue. Possible values include:
-         'requeue', 'terminate', 'taskcompletion'
+        :param node_disable_scheduling_option: What to do with currently
+         running tasks when disable task scheduling on the compute node. The
+         default value is requeue. Possible values include: 'requeue',
+         'terminate', 'taskcompletion'
         :type node_disable_scheduling_option: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -26,7 +26,7 @@ class JobTerminateParameter(Model):
     """
     Parameters for a CloudJobOperations.Terminate request.
 
-    :param terminate_reason: Sets the text you want to appear as the job's
+    :param terminate_reason: The text you want to appear as the job's
      TerminateReason. The default is 'UserTerminate'.
     :type terminate_reason: str
     """ 

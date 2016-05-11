@@ -27,51 +27,47 @@ class CloudJobSchedule(Model):
     A job schedule that allows recurring jobs by specifying when to run jobs
     and a specification used to create each job.
 
-    :param id: Gets or sets a string that uniquely identifies the schedule
-     within the account. A GUID is recommended.
+    :param id: A string that uniquely identifies the schedule within the
+     account. A GUID is recommended.
     :type id: str
-    :param display_name: Gets or sets the display name for the schedule.
+    :param display_name: The display name for the schedule.
     :type display_name: str
-    :param url: Gets or sets the URL of the job schedule.
+    :param url: The URL of the job schedule.
     :type url: str
-    :param e_tag: Gets or sets the ETag of the job schedule.
+    :param e_tag: The ETag of the job schedule.
     :type e_tag: str
-    :param last_modified: Gets or sets the last modified time of the job
-     schedule.
+    :param last_modified: The last modified time of the job schedule.
     :type last_modified: datetime
-    :param creation_time: Gets or sets the creation time of the job schedule.
+    :param creation_time: The creation time of the job schedule.
     :type creation_time: datetime
-    :param state: Gets or sets the current state of the job schedule.
-     Possible values include: 'active', 'completed', 'disabled',
-     'terminating', 'deleting'
+    :param state: The current state of the job schedule. Possible values
+     include: 'active', 'completed', 'disabled', 'terminating', 'deleting'
     :type state: str
-    :param state_transition_time: Gets or sets the time at which the job
-     schedule entered the current state.
+    :param state_transition_time: The time at which the job schedule entered
+     the current state.
     :type state_transition_time: datetime
-    :param previous_state: Gets or sets the previous state of the job
-     schedule. Possible values include: 'active', 'completed', 'disabled',
-     'terminating', 'deleting'
+    :param previous_state: The previous state of the job schedule. Possible
+     values include: 'active', 'completed', 'disabled', 'terminating',
+     'deleting'
     :type previous_state: str
-    :param previous_state_transition_time: Gets or sets the time at which the
-     job schedule entered its previous state.
+    :param previous_state_transition_time: The time at which the job schedule
+     entered its previous state.
     :type previous_state_transition_time: datetime
-    :param schedule: Gets or sets the schedule according to which jobs will
-     be created.
+    :param schedule: The schedule according to which jobs will be created.
     :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
-    :param job_specification: Gets or sets the details of the jobs to be
-     created on this schedule.
+    :param job_specification: The details of the jobs to be created on this
+     schedule.
     :type job_specification: :class:`JobSpecification
      <azure.batch.models.JobSpecification>`
-    :param execution_info: Gets or sets information about jobs that have been
-     and will be run under this schedule.
+    :param execution_info: Information about jobs that have been and will be
+     run under this schedule.
     :type execution_info: :class:`JobScheduleExecutionInformation
      <azure.batch.models.JobScheduleExecutionInformation>`
-    :param metadata: Gets or sets a list of name-value pairs associated with
-     the schedule as metadata.
+    :param metadata: A list of name-value pairs associated with the schedule
+     as metadata.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    :param stats: Gets or sets the lifetime resource usage statistics for the
-     job schedule.
+    :param stats: The lifetime resource usage statistics for the job schedule.
     :type stats: :class:`JobScheduleStatistics
      <azure.batch.models.JobScheduleStatistics>`
     """ 

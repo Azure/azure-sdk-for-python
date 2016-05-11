@@ -27,14 +27,14 @@ class AutoScaleRunError(Model):
     An error that occurred when executing or evaluating a pool autoscale
     formula.
 
-    :param code: Gets or sets an identifier for the autoscale error.  Codes
-     are invariant and are intended to be consumed programmatically.
+    :param code: An identifier for the autoscale error. Codes are invariant
+     and are intended to be consumed programmatically.
     :type code: str
-    :param message: Gets or sets a message describing the autoscale error,
-     intended to be suitable for display in a user interface.
+    :param message: A message describing the autoscale error, intended to be
+     suitable for display in a user interface.
     :type message: str
-    :param values: Gets or sets a list of additional error details related to
-     the autoscale error.
+    :param values: A list of additional error details related to the
+     autoscale error.
     :type values: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
     """ 

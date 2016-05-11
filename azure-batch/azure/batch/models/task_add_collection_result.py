@@ -26,8 +26,7 @@ class TaskAddCollectionResult(Model):
     """
     Response to a TaskOperations.AddCollection request.
 
-    :param value: Gets or sets the results of the add task collection
-     operation.
+    :param value: The results of the add task collection operation.
     :type value: list of :class:`TaskAddResult
      <azure.batch.models.TaskAddResult>`
     """ 

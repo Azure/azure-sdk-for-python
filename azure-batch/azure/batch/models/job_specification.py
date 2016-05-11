@@ -26,46 +26,46 @@ class JobSpecification(Model):
     """
     Specifies details of the jobs to be created on a schedule.
 
-    :param priority: Gets or sets the priority of jobs created under this
-     schedule. Priority values can range from -1000 to 1000, with -1000 being
-     the lowest priority and 1000 being the highest priority. The default
-     value is 0.
+    :param priority: The priority of jobs created under this schedule.
+     Priority values can range from -1000 to 1000, with -1000 being the
+     lowest priority and 1000 being the highest priority. The default value
+     is 0.
     :type priority: int
-    :param display_name: Gets or sets the display name for jobs created under
-     this schedule. It need not be unique and can contain any Unicode
-     characters up to a maximum length of 1024.
+    :param display_name: The display name for jobs created under this
+     schedule. It need not be unique and can contain any Unicode characters
+     up to a maximum length of 1024.
     :type display_name: str
-    :param uses_task_dependencies: Gets or sets the flag that determines if
-     this job will use tasks with dependencies.
+    :param uses_task_dependencies: The flag that determines if this job will
+     use tasks with dependencies.
     :type uses_task_dependencies: bool
-    :param constraints: Gets or sets the execution constraints for jobs
-     created under this schedule.
+    :param constraints: The execution constraints for jobs created under this
+     schedule.
     :type constraints: :class:`JobConstraints
      <azure.batch.models.JobConstraints>`
-    :param job_manager_task: Gets or sets the details of a Job Manager task
-     to be launched when a job is started under this schedule.
+    :param job_manager_task: The details of a Job Manager task to be launched
+     when a job is started under this schedule.
     :type job_manager_task: :class:`JobManagerTask
      <azure.batch.models.JobManagerTask>`
-    :param job_preparation_task: Gets or sets the Job Preparation task for
-     jobs created under this schedule.
+    :param job_preparation_task: The Job Preparation task for jobs created
+     under this schedule.
     :type job_preparation_task: :class:`JobPreparationTask
      <azure.batch.models.JobPreparationTask>`
-    :param job_release_task: Gets or sets the Job Release task for jobs
-     created under this schedule.
+    :param job_release_task: The Job Release task for jobs created under this
+     schedule.
     :type job_release_task: :class:`JobReleaseTask
      <azure.batch.models.JobReleaseTask>`
-    :param common_environment_settings: Gets or sets a list of common
-     environment variable settings.  These environment variables are set for
-     all tasks in jobs created under this schedule (including the Job
-     Manager, Job Preparation and Job Release tasks).
+    :param common_environment_settings: A list of common environment variable
+     settings. These environment variables are set for all tasks in jobs
+     created under this schedule (including the Job Manager, Job Preparation
+     and Job Release tasks).
     :type common_environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param pool_info: Gets or sets the pool on which the Batch service runs
-     the tasks of jobs created under this schedule.
+    :param pool_info: The pool on which the Batch service runs the tasks of
+     jobs created under this schedule.
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
-    :param metadata: Gets or sets a list of name-value pairs associated with
-     each job created under this schedule as metadata.
+    :param metadata: A list of name-value pairs associated with each job
+     created under this schedule as metadata.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
     """ 
