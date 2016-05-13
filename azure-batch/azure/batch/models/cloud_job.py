@@ -83,7 +83,7 @@ class CloudJob(Model):
      tasks).
     :type common_environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param pool_info: The pool on which the Batch service runs the job’s
+    :param pool_info: The pool on which the Batch service runs the job's
      tasks.
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
