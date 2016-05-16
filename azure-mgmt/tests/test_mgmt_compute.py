@@ -35,15 +35,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtComputeTest, self).setUp()
         self.compute_client = self.create_mgmt_client(
-            azure.mgmt.compute.ComputeManagementClientConfiguration,
             azure.mgmt.compute.ComputeManagementClient
         )
         self.storage_client = self.create_mgmt_client(
-            azure.mgmt.storage.StorageManagementClientConfiguration,
             azure.mgmt.storage.StorageManagementClient
         )
         self.network_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClientConfiguration,
             azure.mgmt.network.NetworkManagementClient
         )
 
@@ -308,7 +305,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
             self.region,
         )
-        #self.assertEqual(result_list_pub.status_code, HttpStatusCode.OK)
 
         for res in result_list_pub:
             publisher_name = res.name
@@ -317,7 +313,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 self.region,
                 publisher_name,
             )
-            #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
 
             for res in result_list:
                 type_name = res.name
@@ -327,7 +322,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
                     publisher_name,
                     type_name,
                 )
-                #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
 
                 for res in result_list_versions:
                     version = res.name
@@ -338,13 +332,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
                         type_name,
                         version,
                     )
-                    #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
-
-                    print('PUBLISHER: {0}, TYPE: {1}, VERSION: {2}'.format(
-                        publisher_name,
-                        type_name,
-                        version,
-                    ))
 
     @record
     def test_vm_images(self):

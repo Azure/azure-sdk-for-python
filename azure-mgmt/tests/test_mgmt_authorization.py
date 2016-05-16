@@ -26,7 +26,6 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtAuthorizationTest, self).setUp()
         self.authorization_client = self.create_mgmt_client(
-            azure.mgmt.authorization.AuthorizationManagementClientConfiguration,
             azure.mgmt.authorization.AuthorizationManagementClient
         )
 

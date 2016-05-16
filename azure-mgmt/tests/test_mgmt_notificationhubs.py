@@ -26,7 +26,6 @@ class MgmtNotificationHubsTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtNotificationHubsTest, self).setUp()
         self.notificationhubs_client = self.create_mgmt_client(
-            azure.mgmt.notificationhubs.NotificationHubsManagementClientConfiguration,
             azure.mgmt.notificationhubs.NotificationHubsManagementClient
         )
 
