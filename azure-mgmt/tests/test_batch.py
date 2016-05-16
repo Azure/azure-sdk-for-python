@@ -58,13 +58,11 @@ def init_test_mode(working_folder):
         return TestMode.playback
 
 
-def create_mgmt_client(settings, configuration_class, client_class, **kwargs):
+def create_mgmt_client(settings, client_class, **kwargs):
     client = client_class(
-        configuration_class(
-            credentials=settings.get_credentials(),
-            subscription_id=settings.SUBSCRIPTION_ID,
-            **kwargs
-        )
+        credentials=settings.get_credentials(),
+        subscription_id=settings.SUBSCRIPTION_ID,
+        **kwargs
     )
     return client
 
@@ -112,8 +110,7 @@ def create_batch_account(client, settings, live):
     else:
         batch_creds = SharedKeyCredentials(AZURE_BATCH_ACCOUNT, 'ZmFrZV9hY29jdW50X2tleQ==')
     url = "https://{}.{}.batch.azure.com/".format(AZURE_BATCH_ACCOUNT, AZURE_LOCATION)
-    batch_config = azure.batch.BatchServiceClientConfiguration(batch_creds, base_url=url)
-    return azure.batch.BatchServiceClient(batch_config)
+    return azure.batch.BatchServiceClient(batch_creds, base_url=url)
 
 
 class BatchMgmtTestCase(RecordingTestCase):
@@ -137,17 +134,14 @@ class BatchMgmtTestCase(RecordingTestCase):
                 cls.live = True
             LOG.debug('    creating resource client')
             cls.resource_client = create_mgmt_client(cls.settings,
-                azure.mgmt.resource.resources.ResourceManagementClientConfiguration,
                 azure.mgmt.resource.resources.ResourceManagementClient
             )
             LOG.debug('    creating storage client')
             cls.storage_client = create_mgmt_client(cls.settings,
-                azure.mgmt.storage.StorageManagementClientConfiguration,
                 azure.mgmt.storage.StorageManagementClient
             )
             LOG.debug('    creating batch client')
             cls.batch_mgmt_client = create_mgmt_client(cls.settings,
-                azure.mgmt.batch.BatchManagementClientConfiguration,
                 azure.mgmt.batch.BatchManagementClient
             )
             if cls.live:

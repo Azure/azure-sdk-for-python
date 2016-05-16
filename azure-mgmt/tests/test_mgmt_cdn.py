@@ -26,7 +26,6 @@ class MgmtCdnTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtCdnTest, self).setUp()
         self.cdn_client = self.create_mgmt_client(
-            azure.mgmt.cdn.CdnManagementClientConfiguration,
             azure.mgmt.cdn.CdnManagementClient
         )
 

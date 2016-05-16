@@ -26,7 +26,6 @@ class MgmtRedisTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtRedisTest, self).setUp()
         self.redis_client = self.create_mgmt_client(
-            azure.mgmt.redis.RedisManagementClientConfiguration,
             azure.mgmt.redis.RedisManagementClient
         )
 
