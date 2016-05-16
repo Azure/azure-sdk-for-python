@@ -26,76 +26,76 @@ class CloudJob(Model):
     """
     An Azure Batch job.
 
-    :param id: Gets or sets a string that uniquely identifies the job within
-     the account. The id can contain any combination of alphanumeric
-     characters including hyphens and underscores, and cannot contain more
-     than 64 characters. It is common to use a GUID for the id.
+    :param id: A string that uniquely identifies the job within the account.
+     The id can contain any combination of alphanumeric characters including
+     hyphens and underscores, and cannot contain more than 64 characters. It
+     is common to use a GUID for the id.
     :type id: str
-    :param display_name: Gets or sets the display name for the job.
+    :param display_name: The display name for the job.
     :type display_name: str
-    :param uses_task_dependencies: Gets or sets the flag that determines if
-     this job will use tasks with dependencies.
+    :param uses_task_dependencies: The flag that determines if this job will
+     use tasks with dependencies.
     :type uses_task_dependencies: bool
-    :param url: Gets or sets the URL of the job.
+    :param url: The URL of the job.
     :type url: str
-    :param e_tag: Gets or sets the ETag of the job.
+    :param e_tag: The ETag of the job.
     :type e_tag: str
-    :param last_modified: Gets or sets the last modified time of the job.
+    :param last_modified: The last modified time of the job.
     :type last_modified: datetime
-    :param creation_time: Gets or sets the creation time of the job.
+    :param creation_time: The creation time of the job.
     :type creation_time: datetime
-    :param state: Gets or sets the current state of the job. Possible values
-     include: 'active', 'disabling', 'disabled', 'enabling', 'terminating',
+    :param state: The current state of the job. Possible values include:
+     'active', 'disabling', 'disabled', 'enabling', 'terminating',
      'completed', 'deleting'
     :type state: str
-    :param state_transition_time: Gets or sets the time at which the job
-     entered its current state.
+    :param state_transition_time: The time at which the job entered its
+     current state.
     :type state_transition_time: datetime
-    :param previous_state: Gets or sets the previous state of the job. This
-     property is not set if the job is in its initial Active state. Possible
-     values include: 'active', 'disabling', 'disabled', 'enabling',
-     'terminating', 'completed', 'deleting'
+    :param previous_state: The previous state of the job. This property is
+     not set if the job is in its initial Active state. Possible values
+     include: 'active', 'disabling', 'disabled', 'enabling', 'terminating',
+     'completed', 'deleting'
     :type previous_state: str
-    :param previous_state_transition_time: Gets or sets the time at which the
-     job entered its previous state. This property is not set if the job is
-     in its initial Active state.
+    :param previous_state_transition_time: The time at which the job entered
+     its previous state. This property is not set if the job is in its
+     initial Active state.
     :type previous_state_transition_time: datetime
-    :param priority: Gets or sets the priority of the job. Priority values
-     can range from -1000 to 1000, with -1000 being the lowest priority and
-     1000 being the highest priority. The default value is 0.
+    :param priority: The priority of the job. Priority values can range from
+     -1000 to 1000, with -1000 being the lowest priority and 1000 being the
+     highest priority. The default value is 0.
     :type priority: int
-    :param constraints: Gets or sets the execution constraints for the job.
+    :param constraints: The execution constraints for the job.
     :type constraints: :class:`JobConstraints
      <azure.batch.models.JobConstraints>`
-    :param job_manager_task: Gets or sets details of a Job Manager task to be
-     launched when the job is started.
+    :param job_manager_task: Details of a Job Manager task to be launched
+     when the job is started.
     :type job_manager_task: :class:`JobManagerTask
      <azure.batch.models.JobManagerTask>`
-    :param job_preparation_task: Gets or sets the Job Preparation task.
+    :param job_preparation_task: The Job Preparation task.
     :type job_preparation_task: :class:`JobPreparationTask
      <azure.batch.models.JobPreparationTask>`
-    :param job_release_task: Gets or sets the Job Release task.
+    :param job_release_task: The Job Release task.
     :type job_release_task: :class:`JobReleaseTask
      <azure.batch.models.JobReleaseTask>`
-    :param common_environment_settings: Gets or sets the list of common
-     environment variable settings.  These environment variables are set for
-     all tasks in the job (including the Job Manager, Job Preparation and Job
-     Release tasks).
+    :param common_environment_settings: The list of common environment
+     variable settings. These environment variables are set for all tasks in
+     the job (including the Job Manager, Job Preparation and Job Release
+     tasks).
     :type common_environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param pool_info: Gets or sets the pool on which the Batch service runs
-     the job’s tasks.
+    :param pool_info: The pool on which the Batch service runs the job's
+     tasks.
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
-    :param metadata: Gets or sets a list of name-value pairs associated with
-     the job as metadata.
+    :param metadata: A list of name-value pairs associated with the job as
+     metadata.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    :param execution_info: Gets or sets the execution information for the job.
+    :param execution_info: The execution information for the job.
     :type execution_info: :class:`JobExecutionInformation
      <azure.batch.models.JobExecutionInformation>`
-    :param stats: Gets or sets resource usage statistics for the entire
-     lifetime of the job.
+    :param stats: Resource usage statistics for the entire lifetime of the
+     job.
     :type stats: :class:`JobStatistics <azure.batch.models.JobStatistics>`
     """ 
 

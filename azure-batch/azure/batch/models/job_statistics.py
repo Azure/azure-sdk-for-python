@@ -26,52 +26,48 @@ class JobStatistics(Model):
     """
     Resource usage statistics for a job.
 
-    :param url: Gets or sets the URL for the statistics.
+    :param url: The URL of the statistics.
     :type url: str
-    :param start_time: Gets or sets the start time of the time range covered
-     by the statistics.
+    :param start_time: The start time of the time range covered by the
+     statistics.
     :type start_time: datetime
-    :param last_update_time: Gets or sets the time at which the statistics
-     were last updated. All statistics are limited to the range between
-     StartTime and LastUpdateTime.
+    :param last_update_time: The time at which the statistics were last
+     updated. All statistics are limited to the range between startTime and
+     lastUpdateTime.
     :type last_update_time: datetime
-    :param user_cpu_time: Gets or sets the total user mode CPU time (summed
-     across all cores and all compute nodes) consumed by all the tasks in the
-     job.
+    :param user_cpu_time: The total user mode CPU time (summed across all
+     cores and all compute nodes) consumed by all tasks in the job.
     :type user_cpu_time: timedelta
-    :param kernel_cpu_time: Gets or sets the total kernel mode CPU time
-     (summed across all cores and all compute nodes) consumed by all the
-     tasks in the job.
+    :param kernel_cpu_time: The total kernel mode CPU time (summed across all
+     cores and all compute nodes) consumed by all tasks in the job.
     :type kernel_cpu_time: timedelta
-    :param wall_clock_time: Gets or sets the total wall clock time of all the
-     tasks in the job.
+    :param wall_clock_time: The total wall clock time of all tasks in the job.
     :type wall_clock_time: timedelta
-    :param read_iops: Gets or sets the total number of I/O read operations
-     performed by all the tasks in the job.
+    :param read_iops: The total number of disk read operations made by all
+     tasks in the job.
     :type read_iops: long
-    :param write_iops: Gets or sets the total number of I/O write operations
-     performed by all the tasks in the job.
+    :param write_iops: The total number of disk write operations made by all
+     tasks in the job.
     :type write_iops: long
-    :param read_io_gi_b: Gets or sets the total amount of data in GiB of I/O
-     read by all the tasks in the job.
+    :param read_io_gi_b: The total gibibytes read from disk by all tasks in
+     the job.
     :type read_io_gi_b: float
-    :param write_io_gi_b: Gets or sets the total amount of data in GiB of I/O
-     written by all the tasks in the job.
+    :param write_io_gi_b: The total gibibytes written to disk by all tasks in
+     the job.
     :type write_io_gi_b: float
-    :param num_succeeded_tasks: Gets or sets the total number of tasks
-     successfully completed in the job during the given time range.
+    :param num_succeeded_tasks: The total number of tasks successfully
+     completed in the job during the given time range.
     :type num_succeeded_tasks: long
-    :param num_failed_tasks: Gets or sets the total number of tasks in the
-     job that failed during the given time range.
+    :param num_failed_tasks: The total number of tasks in the job that failed
+     during the given time range.
     :type num_failed_tasks: long
-    :param num_task_retries: Gets or sets the total number of retries on all
-     the tasks in the job during the given time range.
+    :param num_task_retries: The total number of retries on all the tasks in
+     the job during the given time range.
     :type num_task_retries: long
-    :param wait_time: Gets or sets the total wait time of all the tasks in
-     the job.  The wait time for a task is defined as the elapsed time
-     between the creation of the task creation and the start of task
-     execution.  This value is reported only in the account lifetime
-     statistics; it is not included in individual job statistics.
+    :param wait_time: The total wait time of all tasks in the job. The wait
+     time for a task is defined as the elapsed time between the creation of
+     the task and the start of task execution. (If the task is retried due to
+     failures, the wait time is the time to the most recent task execution.)
     :type wait_time: timedelta
     """ 
 

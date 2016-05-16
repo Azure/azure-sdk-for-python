@@ -24,27 +24,28 @@ from msrest.serialization import Model
 
 class StartTask(Model):
     """
-    A task defined on a pool and run by compute nodes when they join the pool.
+    A task which is run when a compute node joins a pool in the Azure Batch
+    service, or when the compute node is rebooted or reimaged.
 
-    :param command_line: Gets or sets the command line of the start task.
+    :param command_line: The command line of the start task.
     :type command_line: str
-    :param resource_files: Gets or sets a list of files that Batch will
+    :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line.
     :type resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
-    :param environment_settings: Gets or sets a list of environment variable
-     settings for the start task.
+    :param environment_settings: A list of environment variable settings for
+     the start task.
     :type environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param run_elevated: Gets or sets whether to run the start task in
-     elevated mode. The default value is false.
+    :param run_elevated: Whether to run the start task in elevated mode. The
+     default value is false.
     :type run_elevated: bool
-    :param max_task_retry_count: Gets or sets the maximum number of times the
-     task may be retried.
+    :param max_task_retry_count: The maximum number of times the task may be
+     retried.
     :type max_task_retry_count: int
-    :param wait_for_success: Gets or sets whether the Batch Service should
-     wait for the start task to complete successfully (that is, to exit with
-     exit code 0) before scheduling any tasks on the compute node.
+    :param wait_for_success: Whether the Batch service should wait for the
+     start task to complete successfully (that is, to exit with exit code 0)
+     before scheduling any tasks on the compute node.
     :type wait_for_success: bool
     """ 
 

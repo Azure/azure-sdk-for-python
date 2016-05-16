@@ -237,7 +237,7 @@ class PoolOperations(object):
         """
         Adds a pool to the specified account.
 
-        :param pool: Specifies the pool to be added.
+        :param pool: The pool to be added.
         :type pool: :class:`PoolAddParameter
          <azure.batch.models.PoolAddParameter>`
         :param pool_add_options: Additional parameters for the operation
@@ -527,9 +527,6 @@ class PoolOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        select = None
-        if pool_exists_options is not None:
-            select = pool_exists_options.select
         timeout = None
         if pool_exists_options is not None:
             timeout = pool_exists_options.timeout
@@ -565,8 +562,6 @@ class PoolOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -931,11 +926,11 @@ class PoolOperations(object):
         :type pool_enable_auto_scale_options:
          :class:`PoolEnableAutoScaleOptions
          <azure.batch.models.PoolEnableAutoScaleOptions>`
-        :param auto_scale_formula: Sets the formula for the desired number of
+        :param auto_scale_formula: The formula for the desired number of
          compute nodes in the pool.
         :type auto_scale_formula: str
-        :param auto_scale_evaluation_interval: Gets or sets a time interval
-         for the desired autoscale evaluation period in the pool.
+        :param auto_scale_evaluation_interval: A time interval for the
+         desired autoscale evaluation period in the pool.
         :type auto_scale_evaluation_interval: timedelta
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1039,7 +1034,7 @@ class PoolOperations(object):
         :param pool_id: The id of the pool on which to evaluate the automatic
          scaling formula.
         :type pool_id: str
-        :param auto_scale_formula: Sets a formula for the desired number of
+        :param auto_scale_formula: A formula for the desired number of
          compute nodes in the pool.
         :type auto_scale_formula: str
         :param pool_evaluate_auto_scale_options: Additional parameters for
@@ -1436,8 +1431,8 @@ class PoolOperations(object):
 
         :param pool_id: The id of the pool to upgrade.
         :type pool_id: str
-        :param target_os_version: Sets the Azure Guest OS version to be
-         installed on the virtual machines in the pool.
+        :param target_os_version: The Azure Guest OS version to be installed
+         on the virtual machines in the pool.
         :type target_os_version: str
         :param pool_upgrade_os_options: Additional parameters for the
          operation

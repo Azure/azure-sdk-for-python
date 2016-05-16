@@ -27,27 +27,27 @@ class JobReleaseTaskExecutionInformation(Model):
     Contains information about the execution of a Job Release task on a
     compute node.
 
-    :param start_time: Gets or sets the time at which the Job Release task
-     started running.
+    :param start_time: The time at which the task started running. Note that
+     every time the task is restarted, this value is updated.
     :type start_time: datetime
-    :param end_time: Gets or sets the time at which the Job Release task
-     completed. This property is set only if the task is in the Completed
-     state.
+    :param end_time: The time at which the Job Release task completed. This
+     property is set only if the task is in the Completed state.
     :type end_time: datetime
-    :param state: Gets or sets the current running state of the Job Release
-     task on the compute node. Possible values include: 'running', 'completed'
+    :param state: The current state of the Job Release task. Possible values
+     include: 'running', 'completed'
     :type state: str
-    :param task_root_directory: Gets or sets the root directory of the Job
-     Release task on the compute node.
+    :param task_root_directory: The root directory of the Job Release task on
+     the compute node. You can use this path to retrieve files created by the
+     task, such as log files.
     :type task_root_directory: str
-    :param task_root_directory_url: Gets or sets the URL to the root
-     directory of the Job Release task on the compute node.
+    :param task_root_directory_url: The URL to the root directory of the Job
+     Release task on the compute node.
     :type task_root_directory_url: str
-    :param exit_code: Gets or sets the exit code of the Job Release task.
-     This property is set only if the task is in the Completed state.
+    :param exit_code: The exit code of the Job Release task. This property is
+     set only if the task is in the Completed state.
     :type exit_code: int
-    :param scheduling_error: Gets or sets any error starting the Job Release
-     task.
+    :param scheduling_error: The scheduling error encountered by the Batch
+     service when starting the task.
     :type scheduling_error: :class:`TaskSchedulingError
      <azure.batch.models.TaskSchedulingError>`
     """ 

@@ -30,7 +30,7 @@ class BatchAccountCreateParameters(Model):
     :type location: str
     :param tags: The user specified tags associated with the account.
     :type tags: dict
-    :param auto_storage: The properties related to auto storage.
+    :param auto_storage: The properties related to auto storage account.
     :type auto_storage: :class:`AutoStorageBaseProperties
      <azure.mgmt.batch.models.AutoStorageBaseProperties>`
     """ 

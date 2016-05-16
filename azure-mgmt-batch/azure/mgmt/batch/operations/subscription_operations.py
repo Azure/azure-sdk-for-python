@@ -46,10 +46,9 @@ class SubscriptionOperations(object):
     def get_subscription_quotas(
             self, location_name, custom_headers={}, raw=False, **operation_config):
         """
-        The Get Subscription Quotas operation returns the quotas of the
-        subscription in the Batch service.
+        Gets the Batch service quotas for the specified suscription.
 
-        :param location_name: The desired region for the quota.
+        :param location_name: The desired region for the quotas.
         :type location_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

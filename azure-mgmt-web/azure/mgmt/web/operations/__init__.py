@@ -19,10 +19,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .certificate_orders_operations import CertificateOrdersOperations
 from .certificates_operations import CertificatesOperations
 from .classic_mobile_services_operations import ClassicMobileServicesOperations
 from .domains_operations import DomainsOperations
 from .global_model_operations import GlobalModelOperations
+from .global_certificate_order_operations import GlobalCertificateOrderOperations
 from .global_domain_registration_operations import GlobalDomainRegistrationOperations
 from .global_resource_groups_operations import GlobalResourceGroupsOperations
 from .hosting_environments_operations import HostingEnvironmentsOperations
@@ -35,10 +37,12 @@ from .top_level_domains_operations import TopLevelDomainsOperations
 from .usage_operations import UsageOperations
 
 __all__ = [
+    'CertificateOrdersOperations',
     'CertificatesOperations',
     'ClassicMobileServicesOperations',
     'DomainsOperations',
     'GlobalModelOperations',
+    'GlobalCertificateOrderOperations',
     'GlobalDomainRegistrationOperations',
     'GlobalResourceGroupsOperations',
     'HostingEnvironmentsOperations',

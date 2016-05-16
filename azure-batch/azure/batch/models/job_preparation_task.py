@@ -27,36 +27,36 @@ class JobPreparationTask(Model):
     A Job Preparation task to run before any tasks of the job on any given
     compute node.
 
-    :param id: Gets or sets a string that uniquely identifies the job
-     preparation task within the job. The id can contain any combination of
-     alphanumeric characters including hyphens and underscores and cannot
-     contain more than 64 characters.
+    :param id: A string that uniquely identifies the job preparation task
+     within the job. The id can contain any combination of alphanumeric
+     characters including hyphens and underscores and cannot contain more
+     than 64 characters.
     :type id: str
-    :param command_line: Gets or sets the command line of the Job Preparation
-     task.
+    :param command_line: The command line of the Job Preparation task.
     :type command_line: str
-    :param resource_files: Gets or sets a list of files that Batch will
+    :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line.
     :type resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
-    :param environment_settings: Gets or sets a list of environment variable
-     settings for the Job Preparation task.
+    :param environment_settings: A list of environment variable settings for
+     the Job Preparation task.
     :type environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param constraints: Gets or sets constraints that apply to the Job
-     Preparation task..
+    :param constraints: Constraints that apply to the Job Preparation task.
     :type constraints: :class:`TaskConstraints
      <azure.batch.models.TaskConstraints>`
-    :param wait_for_success: Gets or sets whether the Batch Service should
-     wait for the Job Preparation task to complete successfully before
-     scheduling any other tasks of the job on the compute node.
+    :param wait_for_success: Whether the Batch service should wait for the
+     Job Preparation task to complete successfully before scheduling any
+     other tasks of the job on the compute node.
     :type wait_for_success: bool
-    :param run_elevated: Gets or sets whether to run the Job Preparation task
-     in elevated mode. The default value is false.
+    :param run_elevated: Whether to run the Job Preparation task in elevated
+     mode. The default value is false.
     :type run_elevated: bool
-    :param rerun_on_node_reboot_after_success: Gets or sets whether the Batch
-     service should rerun the Job Preparation task after a compute node
-     reboots. The default value is true.
+    :param rerun_on_node_reboot_after_success: Whether the Batch service
+     should rerun the Job Preparation task after a compute node reboots. Note
+     that the Job Preparation task should still be written to be idempotent
+     because it can be rerun if the compute node is rebooted while Job
+     Preparation task is still running. The default value is true.
     :type rerun_on_node_reboot_after_success: bool
     """ 
 

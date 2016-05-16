@@ -22,18 +22,22 @@
 from msrest.serialization import Model
 
 
-class AccountBaseProperties(Model):
+class CertificateOrderCollection(Model):
     """
-    The properties of a Batch account.
+    Collection of ceritificate orders
 
-    :param auto_storage: The properties related to auto storage.
-    :type auto_storage: :class:`AutoStorageBaseProperties
-     <azure.mgmt.batch.models.AutoStorageBaseProperties>`
+    :param value: Collection of resources
+    :type value: list of :class:`CertificateOrder
+     <azure.mgmt.web.models.CertificateOrder>`
+    :param next_link: Link to next page of resources
+    :type next_link: str
     """ 
 
     _attribute_map = {
-        'auto_storage': {'key': 'autoStorage', 'type': 'AutoStorageBaseProperties'},
+        'value': {'key': 'value', 'type': '[CertificateOrder]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, auto_storage=None):
-        self.auto_storage = auto_storage
+    def __init__(self, value=None, next_link=None):
+        self.value = value
+        self.next_link = next_link

@@ -23,10 +23,12 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.certificate_orders_operations import CertificateOrdersOperations
 from .operations.certificates_operations import CertificatesOperations
 from .operations.classic_mobile_services_operations import ClassicMobileServicesOperations
 from .operations.domains_operations import DomainsOperations
 from .operations.global_model_operations import GlobalModelOperations
+from .operations.global_certificate_order_operations import GlobalCertificateOrderOperations
 from .operations.global_domain_registration_operations import GlobalDomainRegistrationOperations
 from .operations.global_resource_groups_operations import GlobalResourceGroupsOperations
 from .operations.hosting_environments_operations import HostingEnvironmentsOperations
@@ -101,6 +103,8 @@ class WebSiteManagementClient(object):
     :param config: Configuration for client.
     :type config: WebSiteManagementClientConfiguration
 
+    :ivar certificate_orders: CertificateOrders operations
+    :vartype certificate_orders: .operations.CertificateOrdersOperations
     :ivar certificates: Certificates operations
     :vartype certificates: .operations.CertificatesOperations
     :ivar classic_mobile_services: ClassicMobileServices operations
@@ -109,6 +113,8 @@ class WebSiteManagementClient(object):
     :vartype domains: .operations.DomainsOperations
     :ivar global_model: GlobalModel operations
     :vartype global_model: .operations.GlobalModelOperations
+    :ivar global_certificate_order: GlobalCertificateOrder operations
+    :vartype global_certificate_order: .operations.GlobalCertificateOrderOperations
     :ivar global_domain_registration: GlobalDomainRegistration operations
     :vartype global_domain_registration: .operations.GlobalDomainRegistrationOperations
     :ivar global_resource_groups: GlobalResourceGroups operations
@@ -140,6 +146,8 @@ class WebSiteManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.config = config
+        self.certificate_orders = CertificateOrdersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.classic_mobile_services = ClassicMobileServicesOperations(
@@ -147,6 +155,8 @@ class WebSiteManagementClient(object):
         self.domains = DomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.global_model = GlobalModelOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.global_certificate_order = GlobalCertificateOrderOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.global_domain_registration = GlobalDomainRegistrationOperations(
             self._client, self.config, self._serialize, self._deserialize)

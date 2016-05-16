@@ -28,16 +28,16 @@ class BatchAccountUpdateParameters(Model):
 
     :param tags: The user specified tags associated with the account.
     :type tags: dict
-    :param properties: The properties of the account.
-    :type properties: :class:`AccountBaseProperties
-     <azure.mgmt.batch.models.AccountBaseProperties>`
+    :param auto_storage: The properties related to auto storage account.
+    :type auto_storage: :class:`AutoStorageBaseProperties
+     <azure.mgmt.batch.models.AutoStorageBaseProperties>`
     """ 
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'AccountBaseProperties'},
+        'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
     }
 
-    def __init__(self, tags=None, properties=None):
+    def __init__(self, tags=None, auto_storage=None):
         self.tags = tags
-        self.properties = properties
+        self.auto_storage = auto_storage

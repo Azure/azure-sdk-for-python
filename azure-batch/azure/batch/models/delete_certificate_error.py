@@ -26,15 +26,14 @@ class DeleteCertificateError(Model):
     """
     An error encountered by the Batch service when deleting a certificate.
 
-    :param code: Gets or sets an identifier for the certificate deletion
-     error.  Codes are invariant and are intended to be consumed
-     programmatically.
+    :param code: An identifier for the certificate deletion error. Codes are
+     invariant and are intended to be consumed programmatically.
     :type code: str
-    :param message: Gets or sets a message describing the certificate
-     deletion error, intended to be suitable for display in a user interface.
+    :param message: A message describing the certificate deletion error,
+     intended to be suitable for display in a user interface.
     :type message: str
-    :param values: Gets or sets a list of additional error details related to
-     the certificate deletion error.
+    :param values: A list of additional error details related to the
+     certificate deletion error.
     :type values: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
     """ 

@@ -26,9 +26,9 @@ class NameValuePair(Model):
     """
     Represents a name-value pair.
 
-    :param name: Gets or sets the name in the name-value pair.
+    :param name: The name in the name-value pair.
     :type name: str
-    :param value: Gets or sets the value in the name-value pair.
+    :param value: The value in the name-value pair.
     :type value: str
     """ 
 

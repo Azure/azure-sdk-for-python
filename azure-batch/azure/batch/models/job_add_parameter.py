@@ -26,46 +26,46 @@ class JobAddParameter(Model):
     """
     An Azure Batch job to add.
 
-    :param id: Gets or sets a string that uniquely identifies the job within
-     the account. The id can contain any combination of alphanumeric
-     characters including hyphens and underscores, and cannot contain more
-     than 64 characters. It is common to use a GUID for the id.
+    :param id: A string that uniquely identifies the job within the account.
+     The id can contain any combination of alphanumeric characters including
+     hyphens and underscores, and cannot contain more than 64 characters. It
+     is common to use a GUID for the id.
     :type id: str
-    :param display_name: Gets or sets the display name for the job.
+    :param display_name: The display name for the job.
     :type display_name: str
-    :param priority: Gets or sets the priority of the job. Priority values
-     can range from -1000 to 1000, with -1000 being the lowest priority and
-     1000 being the highest priority. The default value is 0.
+    :param priority: The priority of the job. Priority values can range from
+     -1000 to 1000, with -1000 being the lowest priority and 1000 being the
+     highest priority. The default value is 0.
     :type priority: int
-    :param constraints: Gets or sets the execution constraints for the job.
+    :param constraints: The execution constraints for the job.
     :type constraints: :class:`JobConstraints
      <azure.batch.models.JobConstraints>`
-    :param job_manager_task: Gets or sets details of a Job Manager task to be
-     launched when the job is started.
+    :param job_manager_task: Details of a Job Manager task to be launched
+     when the job is started.
     :type job_manager_task: :class:`JobManagerTask
      <azure.batch.models.JobManagerTask>`
-    :param job_preparation_task: Gets or sets the Job Preparation task.
+    :param job_preparation_task: The Job Preparation task.
     :type job_preparation_task: :class:`JobPreparationTask
      <azure.batch.models.JobPreparationTask>`
-    :param job_release_task: Gets or sets the Job Release task.
+    :param job_release_task: The Job Release task.
     :type job_release_task: :class:`JobReleaseTask
      <azure.batch.models.JobReleaseTask>`
-    :param common_environment_settings: Gets or sets the list of common
-     environment variable settings.  These environment variables are set for
-     all tasks in the job (including the Job Manager, Job Preparation and Job
-     Release tasks).
+    :param common_environment_settings: The list of common environment
+     variable settings. These environment variables are set for all tasks in
+     the job (including the Job Manager, Job Preparation and Job Release
+     tasks).
     :type common_environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param pool_info: Gets or sets the pool on which the Batch service runs
-     the job’s tasks.
+    :param pool_info: The pool on which the Batch service runs the job's
+     tasks.
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
-    :param metadata: Gets or sets a list of name-value pairs associated with
-     the job as metadata.
+    :param metadata: A list of name-value pairs associated with the job as
+     metadata.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    :param uses_task_dependencies: Gets or sets the flag that determines if
-     this job will use tasks with dependencies.
+    :param uses_task_dependencies: The flag that determines if this job will
+     use tasks with dependencies.
     :type uses_task_dependencies: bool
     """ 
 

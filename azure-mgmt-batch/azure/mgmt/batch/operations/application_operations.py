@@ -134,7 +134,7 @@ class ApplicationOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
+        :rtype: :class:`Application <azure.mgmt.batch.models.Application>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -182,9 +182,16 @@ class ApplicationOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('Application', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
 
     def delete_application(
             self, resource_group_name, account_name, application_id, custom_headers={}, raw=False, **operation_config):
@@ -446,7 +453,7 @@ class ApplicationOperations(object):
     def delete_application_package(
             self, resource_group_name, account_name, application_id, version, custom_headers={}, raw=False, **operation_config):
         """
-        Deletes an application package record and the binary file.
+        Deletes an application package record and its associated binary file.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.

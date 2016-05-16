@@ -26,14 +26,13 @@ class JobConstraints(Model):
     """
     Specifies the execution constraints for jobs created on a schedule.
 
-    :param max_wall_clock_time: Gets or sets the maximum elapsed time that
-     the job may run, measured from the time the job starts. If the job does
-     not complete within the time limit, the Batch service terminates it and
-     any tasks that are still running.
+    :param max_wall_clock_time: The maximum elapsed time that the job may
+     run, measured from the time the job starts. If the job does not complete
+     within the time limit, the Batch service terminates it and any tasks
+     that are still running.
     :type max_wall_clock_time: timedelta
-    :param max_task_retry_count: Gets or sets the maximum number of times
-     each task may be retried. The Batch service retries a task if its exit
-     code is nonzero.
+    :param max_task_retry_count: The maximum number of times each task may be
+     retried. The Batch service retries a task if its exit code is nonzero.
     :type max_task_retry_count: int
     """ 
 

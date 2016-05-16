@@ -26,59 +26,64 @@ class ComputeNode(Model):
     """
     A compute node in the Batch service.
 
-    :param id: Gets or sets the id of the compute node.
+    :param id: The id of the compute node.
     :type id: str
-    :param url: Gets or sets the URL of the compute node.
+    :param url: The URL of the compute node.
     :type url: str
-    :param state: Gets or sets the current state of the compute node.
-     Possible values include: 'idle', 'rebooting', 'reimaging', 'running',
-     'unusable', 'creating', 'starting', 'waitingforstarttask',
-     'starttaskfailed', 'unknown', 'leavingpool', 'offline'
+    :param state: The current state of the compute node. Possible values
+     include: 'idle', 'rebooting', 'reimaging', 'running', 'unusable',
+     'creating', 'starting', 'waitingforstarttask', 'starttaskfailed',
+     'unknown', 'leavingpool', 'offline'
     :type state: str
-    :param scheduling_state: Gets or sets whether the compute node should be
-     available for task scheduling. Possible values include: 'enabled',
-     'disabled'
+    :param scheduling_state: Whether the compute node should be available for
+     task scheduling. Possible values include: 'enabled', 'disabled'
     :type scheduling_state: str
-    :param state_transition_time: Gets or sets the time at which the compute
-     node entered its current state.
+    :param state_transition_time: The time at which the compute node entered
+     its current state.
     :type state_transition_time: datetime
-    :param last_boot_time: Gets or sets the time at which the compute node
-     was started.
+    :param last_boot_time: The time at which the compute node was started.
     :type last_boot_time: datetime
-    :param allocation_time: Gets or sets the time at which this compute node
-     was allocated to the pool.
+    :param allocation_time: The time at which this compute node was allocated
+     to the pool.
     :type allocation_time: datetime
-    :param ip_address: Gets or sets the IP address that other compute nodes
-     can use to communicate with this compute node.
+    :param ip_address: The IP address that other compute nodes can use to
+     communicate with this compute node.
     :type ip_address: str
-    :param affinity_id: Gets or sets an identifier which can be passed in the
-     Add Task API to request that the task be scheduled close to this compute
-     node.
+    :param affinity_id: An identifier which can be passed in the Add Task API
+     to request that the task be scheduled close to this compute node.
     :type affinity_id: str
-    :param vm_size: Gets or sets the size of the virtual machine hosting the
-     compute node.
+    :param vm_size: The size of the virtual machine hosting the compute node.
     :type vm_size: str
-    :param total_tasks_run: Gets or sets the total number of job tasks
-     completed on the compute node. This includes Job Preparation, Job
-     Release and Job Manager tasks, but not the pool start task.
+    :param total_tasks_run: The total number of job tasks completed on the
+     compute node. This includes Job Preparation, Job Release and Job Manager
+     tasks, but not the pool start task.
     :type total_tasks_run: int
-    :param recent_tasks: Gets or sets the list of tasks that are currently
-     running on the compute node.
+    :param running_tasks_count: The total number of currently running job
+     tasks on the compute node. This includes Job Preparation, Job Release,
+     and Job Manager tasks, but not the pool start task.
+    :type running_tasks_count: int
+    :param total_tasks_succeeded: The total number of job tasks which
+     completed successfully (with exitCode 0) on the compute node. This
+     includes Job Preparation, Job Release, and Job Manager tasks, but not
+     the pool start task.
+    :type total_tasks_succeeded: int
+    :param recent_tasks: The list of tasks that are currently running on the
+     compute node.
     :type recent_tasks: list of :class:`TaskInformation
      <azure.batch.models.TaskInformation>`
-    :param start_task: Gets or sets the task specified to run on the compute
-     node as it joins the pool.
+    :param start_task: The task specified to run on the compute node as it
+     joins the pool.
     :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
-    :param start_task_info: Gets or sets runtime information about the
-     execution of the start task on the compute node.
+    :param start_task_info: Runtime information about the execution of the
+     start task on the compute node.
     :type start_task_info: :class:`StartTaskInformation
      <azure.batch.models.StartTaskInformation>`
-    :param certificate_references: Gets or sets the list of certificates
-     installed on the compute node.
+    :param certificate_references: The list of certificates installed on the
+     compute node.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
-    :param errors: Gets or sets the list of errors that are currently being
-     encountered by the compute node.
+    :param errors: The list of errors that are currently being encountered by
+     the compute node.
     :type errors: list of :class:`ComputeNodeError
      <azure.batch.models.ComputeNodeError>`
     """ 
@@ -95,6 +100,8 @@ class ComputeNode(Model):
         'affinity_id': {'key': 'affinityId', 'type': 'str'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'total_tasks_run': {'key': 'totalTasksRun', 'type': 'int'},
+        'running_tasks_count': {'key': 'runningTasksCount', 'type': 'int'},
+        'total_tasks_succeeded': {'key': 'totalTasksSucceeded', 'type': 'int'},
         'recent_tasks': {'key': 'recentTasks', 'type': '[TaskInformation]'},
         'start_task': {'key': 'startTask', 'type': 'StartTask'},
         'start_task_info': {'key': 'startTaskInfo', 'type': 'StartTaskInformation'},
@@ -102,7 +109,7 @@ class ComputeNode(Model):
         'errors': {'key': 'errors', 'type': '[ComputeNodeError]'},
     }
 
-    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None):
+    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, running_tasks_count=None, total_tasks_succeeded=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None):
         self.id = id
         self.url = url
         self.state = state
@@ -114,6 +121,8 @@ class ComputeNode(Model):
         self.affinity_id = affinity_id
         self.vm_size = vm_size
         self.total_tasks_run = total_tasks_run
+        self.running_tasks_count = running_tasks_count
+        self.total_tasks_succeeded = total_tasks_succeeded
         self.recent_tasks = recent_tasks
         self.start_task = start_task
         self.start_task_info = start_task_info

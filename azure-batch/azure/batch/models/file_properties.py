@@ -26,17 +26,16 @@ class FileProperties(Model):
     """
     The properties of a file on a compute node.
 
-    :param creation_time: Gets or sets the file creation time.
+    :param creation_time: The file creation time.
     :type creation_time: datetime
-    :param last_modified: Gets or sets the time at which the file was last
-     modified.
+    :param last_modified: The time at which the file was last modified.
     :type last_modified: datetime
-    :param content_length: Gets or sets the length of the file.
+    :param content_length: The length of the file.
     :type content_length: long
-    :param content_type: Gets or sets the content type of the file.
+    :param content_type: The content type of the file.
     :type content_type: str
-    :param file_mode: Gets or sets the file mode attribute in octal format.
-     This property will be returned only from a Linux compute node.
+    :param file_mode: The file mode attribute in octal format. This property
+     will be returned only from a Linux compute node.
     :type file_mode: str
     """ 
 

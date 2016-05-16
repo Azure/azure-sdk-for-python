@@ -49,7 +49,7 @@ class TaskOperations(object):
 
         :param job_id: The id of the job to which the task is to be added.
         :type job_id: str
-        :param task: Specifies the task to be added.
+        :param task: The task to be added.
         :type task: :class:`TaskAddParameter
          <azure.batch.models.TaskAddParameter>`
         :param task_add_options: Additional parameters for the operation
@@ -562,8 +562,8 @@ class TaskOperations(object):
         :param task_update_options: Additional parameters for the operation
         :type task_update_options: :class:`TaskUpdateOptions
          <azure.batch.models.TaskUpdateOptions>`
-        :param constraints: Sets constraints that apply to this task. If
-         omitted, the task is given the default constraints.
+        :param constraints: Constraints that apply to this task. If omitted,
+         the task is given the default constraints.
         :type constraints: :class:`TaskConstraints
          <azure.batch.models.TaskConstraints>`
         :param dict custom_headers: headers that will be added to the request
