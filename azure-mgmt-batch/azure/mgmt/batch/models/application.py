@@ -37,8 +37,8 @@ class Application(Model):
     :param allow_updates: A value indicating whether packages within the
      application may be overwritten using the same version string.
     :type allow_updates: bool
-    :param default_version: Gets or sets which package to use if a client
-     requests the application but does not specify a version.
+    :param default_version: The package to use if a client requests the
+     application but does not specify a version.
     :type default_version: str
     """ 
 

@@ -27,20 +27,18 @@ class JobExecutionInformation(Model):
     Contains information about the execution of a job in the Azure Batch
     service.
 
-    :param start_time: Gets or sets the start time of the job.
+    :param start_time: The start time of the job.
     :type start_time: datetime
-    :param end_time: Gets or sets the completion time of the job. This
-     property is set only if the job is in the completed state.
+    :param end_time: The completion time of the job. This property is set
+     only if the job is in the completed state.
     :type end_time: datetime
-    :param pool_id: Gets or sets the id of the pool to which this job is
-     assigned.
+    :param pool_id: The id of the pool to which this job is assigned.
     :type pool_id: str
-    :param scheduling_error: Gets or sets details of any error encountered by
-     the service in starting the job.
+    :param scheduling_error: Details of any error encountered by the service
+     in starting the job.
     :type scheduling_error: :class:`JobSchedulingError
      <azure.batch.models.JobSchedulingError>`
-    :param terminate_reason: Gets or sets a string describing the reason the
-     job ended.
+    :param terminate_reason: A string describing the reason the job ended.
     :type terminate_reason: str
     """ 
 

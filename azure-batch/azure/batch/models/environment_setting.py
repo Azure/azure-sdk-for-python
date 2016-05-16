@@ -26,9 +26,9 @@ class EnvironmentSetting(Model):
     """
     An environment variable to be set on a task process.
 
-    :param name: Gets or sets the name of the environment variable.
+    :param name: The name of the environment variable.
     :type name: str
-    :param value: Gets or sets the value of the environment variable.
+    :param value: The value of the environment variable.
     :type value: str
     """ 
 

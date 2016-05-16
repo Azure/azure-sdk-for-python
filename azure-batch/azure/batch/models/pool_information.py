@@ -26,15 +26,15 @@ class PoolInformation(Model):
     """
     Specifies how a job should be assigned to a pool.
 
-    :param pool_id: Gets or sets the id of an existing pool. All the tasks of
-     the job will run on the specified pool. You must specify either PoolId
-     or AutoPoolSpecification, but not both.
-    :type pool_id: str
-    :param auto_pool_specification: Gets or sets characteristics for a
-     temporary 'auto pool'. The Batch service will create this auto pool and
-     run all of the tasks of the job on it, and will delete the pool once the
-     job has completed. You must specify either PoolId or
+    :param pool_id: The id of an existing pool. All the tasks of the job will
+     run on the specified pool. You must specify either PoolId or
      AutoPoolSpecification, but not both.
+    :type pool_id: str
+    :param auto_pool_specification: Characteristics for a temporary 'auto
+     pool'. The Batch service will create this auto pool and run all of the
+     tasks of the job on it, and will delete the pool once the job has
+     completed. You must specify either PoolId or AutoPoolSpecification, but
+     not both.
     :type auto_pool_specification: :class:`AutoPoolSpecification
      <azure.batch.models.AutoPoolSpecification>`
     """ 

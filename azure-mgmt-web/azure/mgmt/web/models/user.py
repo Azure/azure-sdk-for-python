@@ -44,6 +44,9 @@ class User(Resource):
     :type publishing_user_name: str
     :param publishing_password: Password used for publishing
     :type publishing_password: str
+    :param scm_uri: Service Control Manager URI, including username and
+     password
+    :type scm_uri: str
     """ 
 
     _validation = {
@@ -60,10 +63,12 @@ class User(Resource):
         'user_name': {'key': 'properties.name', 'type': 'str'},
         'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
         'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
+        'scm_uri': {'key': 'properties.scmUri', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None):
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None, scm_uri=None):
         super(User, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.user_name = user_name
         self.publishing_user_name = publishing_user_name
         self.publishing_password = publishing_password
+        self.scm_uri = scm_uri

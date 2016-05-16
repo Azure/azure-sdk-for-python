@@ -26,10 +26,10 @@ class ApplicationSummary(Model):
     """
     Contains information about an application in an Azure Batch account.
 
-    :param id: Gets or sets a string that uniquely identifies the application
-     within the account.
+    :param id: A string that uniquely identifies the application within the
+     account.
     :type id: str
-    :param display_name: Gets or sets the display name for the application.
+    :param display_name: The display name for the application.
     :type display_name: str
     :param versions:
     :type versions: list of str

@@ -26,38 +26,37 @@ class TaskStatistics(Model):
     """
     Resource usage statistics for a task.
 
-    :param url: Gets or sets the URL for the statistics.
+    :param url: The URL of the statistics.
     :type url: str
-    :param start_time: Gets or sets the start time of the time range covered
-     by the statistics.
+    :param start_time: The start time of the time range covered by the
+     statistics.
     :type start_time: datetime
-    :param last_update_time: Gets or sets the time at which the statistics
-     were last updated. All statistics are limited to the range between
-     startTime and lastUpdateTime.
+    :param last_update_time: The time at which the statistics were last
+     updated. All statistics are limited to the range between startTime and
+     lastUpdateTime.
     :type last_update_time: datetime
-    :param user_cpu_time: Gets or sets the total user mode CPU time (summed
-     across all cores and all compute nodes) consumed by the task.
+    :param user_cpu_time: The total user mode CPU time (summed across all
+     cores and all compute nodes) consumed by the task.
     :type user_cpu_time: timedelta
-    :param kernel_cpu_time: Gets or sets the total kernel mode CPU time
-     (summed across all cores and all compute nodes) consumed by the task.
+    :param kernel_cpu_time: The total kernel mode CPU time (summed across all
+     cores and all compute nodes) consumed by the task.
     :type kernel_cpu_time: timedelta
-    :param wall_clock_time: Gets or sets the total wall clock time of the
-     task.
+    :param wall_clock_time: The total wall clock time of the task.
     :type wall_clock_time: timedelta
-    :param read_iops: Gets or sets the total number of I/O read operations
-     performed by the task.
+    :param read_iops: The total number of disk read operations made by the
+     task.
     :type read_iops: long
-    :param write_iops: Gets or sets the total number of I/O write operations
-     performed by the task.
+    :param write_iops: The total number of disk write operations made by the
+     task.
     :type write_iops: long
-    :param read_io_gi_b: Gets or sets the total amount of data in GiB of I/O
-     read by the task.
+    :param read_io_gi_b: The total gibibytes read from disk by the task.
     :type read_io_gi_b: float
-    :param write_io_gi_b: Gets or sets the total amount of data in GiB of I/O
-     written by the task.
+    :param write_io_gi_b: The total gibibytes written to disk by the task.
     :type write_io_gi_b: float
-    :param wait_time: Gets or sets the elapsed time between the creation of
-     the task and the start of task execution.
+    :param wait_time: The total wait time of the task. The wait time for a
+     task is defined as the elapsed time between the creation of the task and
+     the start of task execution. (If the task is retried due to failures,
+     the wait time is the time to the most recent task execution.)
     :type wait_time: timedelta
     """ 
 

@@ -26,8 +26,8 @@ class PoolUpgradeOSParameter(Model):
     """
     Parameters for a CloudPoolOperations.UpgradeOS request.
 
-    :param target_os_version: Sets the Azure Guest OS version to be installed
-     on the virtual machines in the pool.
+    :param target_os_version: The Azure Guest OS version to be installed on
+     the virtual machines in the pool.
     :type target_os_version: str
     """ 
 

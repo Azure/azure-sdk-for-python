@@ -47,7 +47,7 @@ class CertificateOperations(object):
         """
         Adds a certificate to the specified account.
 
-        :param certificate: Specifies the certificate to be added.
+        :param certificate: The certificate to be added.
         :type certificate: :class:`CertificateAddParameter
          <azure.batch.models.CertificateAddParameter>`
         :param certificate_add_options: Additional parameters for the

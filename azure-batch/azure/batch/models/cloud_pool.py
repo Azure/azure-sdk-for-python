@@ -26,105 +26,103 @@ class CloudPool(Model):
     """
     A pool in the Azure Batch service.
 
-    :param id: Gets or sets a string that uniquely identifies the pool within
-     the account. The id can contain any combination of alphanumeric
-     characters including hyphens and underscores, and cannot contain more
-     than 64 characters.
+    :param id: A string that uniquely identifies the pool within the account.
+     The id can contain any combination of alphanumeric characters including
+     hyphens and underscores, and cannot contain more than 64 characters.
     :type id: str
-    :param display_name: Gets or sets the display name for the pool.
+    :param display_name: The display name for the pool.
     :type display_name: str
-    :param url: Gets or sets the URL of the pool.
+    :param url: The URL of the pool.
     :type url: str
-    :param e_tag: Gets or sets the ETag of the pool.
+    :param e_tag: The ETag of the pool.
     :type e_tag: str
-    :param last_modified: Gets or sets the last modified time of the pool.
+    :param last_modified: The last modified time of the pool.
     :type last_modified: datetime
-    :param creation_time: Gets or sets the creation time of the pool.
+    :param creation_time: The creation time of the pool.
     :type creation_time: datetime
-    :param state: Gets or sets the current state of the pool. Possible values
-     include: 'active', 'deleting', 'upgrading'
+    :param state: The current state of the pool. Possible values include:
+     'active', 'deleting', 'upgrading'
     :type state: str
-    :param state_transition_time: Gets or sets the time at which the pool
-     entered its current state.
+    :param state_transition_time: The time at which the pool entered its
+     current state.
     :type state_transition_time: datetime
-    :param allocation_state: Gets or sets whether the pool is resizing.
-     Possible values include: 'steady', 'resizing', 'stopping'
+    :param allocation_state: Whether the pool is resizing. Possible values
+     include: 'steady', 'resizing', 'stopping'
     :type allocation_state: str
-    :param allocation_state_transition_time: Gets or sets the time at which
-     the pool entered its current allocation state.
+    :param allocation_state_transition_time: The time at which the pool
+     entered its current allocation state.
     :type allocation_state_transition_time: datetime
-    :param vm_size: Gets or sets the size of virtual machines in the pool.
-     All VMs in a pool are the same size.
+    :param vm_size: The size of virtual machines in the pool. All virtual
+     machines in a pool are the same size.
     :type vm_size: str
-    :param cloud_service_configuration: Gets or sets the cloud service
-     configuration for the pool. This property and
-     VirtualMachineConfiguration are mutually exclusive and one of the
-     properties must be specified.
+    :param cloud_service_configuration: The cloud service configuration for
+     the pool. This property and VirtualMachineConfiguration are mutually
+     exclusive and one of the properties must be specified.
     :type cloud_service_configuration: :class:`CloudServiceConfiguration
      <azure.batch.models.CloudServiceConfiguration>`
-    :param virtual_machine_configuration: Gets or sets the virtual machine
-     configuration for the pool. This property and CloudServiceConfiguration
-     are mutually exclusive and one of the properties must be specified.
+    :param virtual_machine_configuration: The virtual machine configuration
+     for the pool. This property and CloudServiceConfiguration are mutually
+     exclusive and one of the properties must be specified.
     :type virtual_machine_configuration: :class:`VirtualMachineConfiguration
      <azure.batch.models.VirtualMachineConfiguration>`
-    :param resize_timeout: Gets or sets the timeout for allocation of compute
-     nodes to the pool. In a Get Pool operation, this is the timeout for the
-     most recent resize operation. The default value is 10 minutes.
+    :param resize_timeout: The timeout for allocation of compute nodes to the
+     pool. In a Get Pool operation, this is the timeout for the most recent
+     resize operation. The default value is 10 minutes.
     :type resize_timeout: timedelta
-    :param resize_error: Gets or sets details of any error encountered while
-     performing the last resize on the pool. This property is set only if an
-     error occurred during the last pool resize, and only when the pool
+    :param resize_error: Details of any error encountered while performing
+     the last resize on the pool. This property is set only if an error
+     occurred during the last pool resize, and only when the pool
      AllocationState is Steady.
     :type resize_error: :class:`ResizeError <azure.batch.models.ResizeError>`
-    :param current_dedicated: Gets or sets the number of compute nodes
-     currently in the pool.
+    :param current_dedicated: The number of compute nodes currently in the
+     pool.
     :type current_dedicated: int
-    :param target_dedicated: Gets or sets the desired number of compute nodes
-     in the pool. This property must have the default value if
-     EnableAutoScale is true. It is required if EnableAutoScale is false.
+    :param target_dedicated: The desired number of compute nodes in the pool.
+     This property must have the default value if EnableAutoScale is true. It
+     is required if EnableAutoScale is false.
     :type target_dedicated: int
-    :param enable_auto_scale: Gets or sets whether the pool size should
-     automatically adjust over time. If true, the AutoScaleFormula property
-     must be set. If false, the TargetDedicated property must be set.
+    :param enable_auto_scale: Whether the pool size should automatically
+     adjust over time. If true, the AutoScaleFormula property must be set. If
+     false, the TargetDedicated property must be set.
     :type enable_auto_scale: bool
-    :param auto_scale_formula: Gets or sets a formula for the desired number
-     of compute nodes in the pool.
+    :param auto_scale_formula: A formula for the desired number of compute
+     nodes in the pool.
     :type auto_scale_formula: str
-    :param auto_scale_evaluation_interval: Gets or sets a time interval for
-     the desired AutoScale evaluation period in the pool.
+    :param auto_scale_evaluation_interval: A time interval for the desired
+     AutoScale evaluation period in the pool.
     :type auto_scale_evaluation_interval: timedelta
-    :param auto_scale_run: Gets or sets the results and errors from the last
-     execution of the autoscale formula.
+    :param auto_scale_run: The results and errors from the last execution of
+     the autoscale formula.
     :type auto_scale_run: :class:`AutoScaleRun
      <azure.batch.models.AutoScaleRun>`
-    :param enable_inter_node_communication: Gets or sets whether the pool
-     permits direct communication between nodes.
+    :param enable_inter_node_communication: Whether the pool permits direct
+     communication between nodes.
     :type enable_inter_node_communication: bool
-    :param start_task: Gets or sets a task specified to run on each compute
-     node as it joins the pool.
+    :param start_task: A task specified to run on each compute node as it
+     joins the pool.
     :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
-    :param certificate_references: Gets or sets the list of certificates to
-     be installed on each compute node in the pool.
+    :param certificate_references: The list of certificates to be installed
+     on each compute node in the pool.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
-    :param application_package_references: Gets or sets the list of
-     application packages to be installed on each compute node in the pool.
+    :param application_package_references: The list of application packages
+     to be installed on each compute node in the pool.
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`
-    :param max_tasks_per_node: Gets or sets the maximum number of tasks that
-     can run concurrently on a single compute node in the pool.
+    :param max_tasks_per_node: The maximum number of tasks that can run
+     concurrently on a single compute node in the pool.
     :type max_tasks_per_node: int
-    :param task_scheduling_policy: Gets or sets how the Batch service
-     distributes tasks between compute nodes in the pool.
+    :param task_scheduling_policy: How the Batch service distributes tasks
+     between compute nodes in the pool.
     :type task_scheduling_policy: :class:`TaskSchedulingPolicy
      <azure.batch.models.TaskSchedulingPolicy>`
-    :param metadata: Gets or sets a list of name-value pairs associated with
-     the pool as metadata.
+    :param metadata: A list of name-value pairs associated with the pool as
+     metadata.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    :param stats: Gets or sets utilization and resource usage statistics for
-     the entire lifetime of the pool.
+    :param stats: Utilization and resource usage statistics for the entire
+     lifetime of the pool.
     :type stats: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
     """ 
 

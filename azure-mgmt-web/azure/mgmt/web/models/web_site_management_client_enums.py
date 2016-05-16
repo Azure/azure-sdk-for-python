@@ -22,6 +22,62 @@
 from enum import Enum
 
 
+class KeyVaultSecretStatus(Enum):
+
+    initialized = "Initialized"
+    waiting_on_certificate_order = "WaitingOnCertificateOrder"
+    succeeded = "Succeeded"
+    certificate_order_failed = "CertificateOrderFailed"
+    operation_not_permitted_on_key_vault = "OperationNotPermittedOnKeyVault"
+    azure_service_unauthorized_to_access_key_vault = "AzureServiceUnauthorizedToAccessKeyVault"
+    key_vault_does_not_exist = "KeyVaultDoesNotExist"
+    key_vault_secret_does_not_exist = "KeyVaultSecretDoesNotExist"
+    unknown_error = "UnknownError"
+    unknown = "Unknown"
+
+
+class CertificateProductType(Enum):
+
+    standard_domain_validated_ssl = "StandardDomainValidatedSsl"
+    standard_domain_validated_wild_card_ssl = "StandardDomainValidatedWildCardSsl"
+
+
+class ProvisioningState(Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+    in_progress = "InProgress"
+    deleting = "Deleting"
+
+
+class CertificateOrderStatus(Enum):
+
+    pendingissuance = "Pendingissuance"
+    issued = "Issued"
+    revoked = "Revoked"
+    canceled = "Canceled"
+    denied = "Denied"
+    pendingrevocation = "Pendingrevocation"
+    pending_rekey = "PendingRekey"
+    unused = "Unused"
+    expired = "Expired"
+    not_submitted = "NotSubmitted"
+
+
+class CertificateOrderActionType(Enum):
+
+    certificate_issued = "CertificateIssued"
+    certificate_order_canceled = "CertificateOrderCanceled"
+    certificate_order_created = "CertificateOrderCreated"
+    certificate_revoked = "CertificateRevoked"
+    domain_validation_complete = "DomainValidationComplete"
+    fraud_detected = "FraudDetected"
+    org_name_change = "OrgNameChange"
+    org_validation_complete = "OrgValidationComplete"
+    san_drop = "SanDrop"
+
+
 class DomainStatus(Enum):
 
     active = "Active"
@@ -45,15 +101,6 @@ class DomainStatus(Enum):
     unparked = "Unparked"
     updated = "Updated"
     json_converter_failed = "JsonConverterFailed"
-
-
-class ProvisioningState(Enum):
-
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
-    in_progress = "InProgress"
-    deleting = "Deleting"
 
 
 class AzureResourceType(Enum):

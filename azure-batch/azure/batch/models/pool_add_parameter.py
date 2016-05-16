@@ -26,69 +26,67 @@ class PoolAddParameter(Model):
     """
     A pool in the Azure Batch service to add.
 
-    :param id: Gets or sets a string that uniquely identifies the pool within
-     the account. The id can contain any combination of alphanumeric
-     characters including hyphens and underscores, and cannot contain more
-     than 64 characters.
+    :param id: A string that uniquely identifies the pool within the account.
+     The id can contain any combination of alphanumeric characters including
+     hyphens and underscores, and cannot contain more than 64 characters.
     :type id: str
-    :param display_name: Gets or sets the display name for the pool.
+    :param display_name: The display name for the pool.
     :type display_name: str
-    :param vm_size: Gets or sets the size of virtual machines in the pool.
-     All VMs in a pool are the same size.
+    :param vm_size: The size of virtual machines in the pool. All virtual
+     machines in a pool are the same size.
     :type vm_size: str
-    :param cloud_service_configuration: Gets or sets the cloud service
-     configuration for the pool. This property and
-     VirtualMachineConfiguration are mutually exclusive and one of the
-     properties must be specified.
+    :param cloud_service_configuration: The cloud service configuration for
+     the pool. This property and VirtualMachineConfiguration are mutually
+     exclusive and one of the properties must be specified.
     :type cloud_service_configuration: :class:`CloudServiceConfiguration
      <azure.batch.models.CloudServiceConfiguration>`
-    :param virtual_machine_configuration: Gets or sets the virtual machine
-     configuration for the pool. This property and CloudServiceConfiguration
-     are mutually exclusive and one of the properties must be specified.
+    :param virtual_machine_configuration: The virtual machine configuration
+     for the pool. This property and CloudServiceConfiguration are mutually
+     exclusive and one of the properties must be specified.
     :type virtual_machine_configuration: :class:`VirtualMachineConfiguration
      <azure.batch.models.VirtualMachineConfiguration>`
-    :param resize_timeout: Gets or sets the timeout for allocation of compute
-     nodes to the pool. In a Get Pool operation, this is the timeout for the
-     most recent resize operation. The default value is 10 minutes.
+    :param resize_timeout: The timeout for allocation of compute nodes to the
+     pool. In a Get Pool operation, this is the timeout for the most recent
+     resize operation. The default value is 10 minutes.
     :type resize_timeout: timedelta
-    :param target_dedicated: Gets or sets the desired number of compute nodes
-     in the pool. This property must have the default value if
-     EnableAutoScale is true. It is required if EnableAutoScale is false.
+    :param target_dedicated: The desired number of compute nodes in the pool.
+     This property must have the default value if EnableAutoScale is true. It
+     is required if EnableAutoScale is false.
     :type target_dedicated: int
-    :param enable_auto_scale: Gets or sets whether the pool size should
-     automatically adjust over time. If true, the AutoScaleFormula property
-     must be set. If false, the TargetDedicated property must be set.
+    :param enable_auto_scale: Whether the pool size should automatically
+     adjust over time. If true, the AutoScaleFormula property must be set. If
+     false, the TargetDedicated property must be set.
     :type enable_auto_scale: bool
-    :param auto_scale_formula: Gets or sets a formula for the desired number
-     of compute nodes in the pool.
+    :param auto_scale_formula: A formula for the desired number of compute
+     nodes in the pool.
     :type auto_scale_formula: str
-    :param auto_scale_evaluation_interval: Gets or sets a time interval for
-     the desired autoscale evaluation period in the pool.
+    :param auto_scale_evaluation_interval: A time interval for the desired
+     autoscale evaluation period in the pool.
     :type auto_scale_evaluation_interval: timedelta
-    :param enable_inter_node_communication: Gets or sets whether the pool
-     permits direct communication between nodes.
+    :param enable_inter_node_communication: Whether the pool permits direct
+     communication between nodes.
     :type enable_inter_node_communication: bool
-    :param start_task: Gets or sets a task specified to run on each compute
-     node as it joins the pool.
+    :param start_task: A task specified to run on each compute node as it
+     joins the pool.
     :type start_task: :class:`StartTask <azure.batch.models.StartTask>`
-    :param certificate_references: Gets or sets the list of certificates to
-     be installed on each compute node in the pool.
+    :param certificate_references: The list of certificates to be installed
+     on each compute node in the pool.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
-    :param application_package_references: Gets or sets the list of
-     application packages to be installed on each compute node in the pool.
+    :param application_package_references: The list of application packages
+     to be installed on each compute node in the pool.
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`
-    :param max_tasks_per_node: Gets or sets the maximum number of tasks that
-     can run concurrently on a single compute node in the pool.
+    :param max_tasks_per_node: The maximum number of tasks that can run
+     concurrently on a single compute node in the pool.
     :type max_tasks_per_node: int
-    :param task_scheduling_policy: Gets or sets how the Batch service
-     distributes tasks between compute nodes in the pool.
+    :param task_scheduling_policy: How the Batch service distributes tasks
+     between compute nodes in the pool.
     :type task_scheduling_policy: :class:`TaskSchedulingPolicy
      <azure.batch.models.TaskSchedulingPolicy>`
-    :param metadata: Gets or sets a list of name-value pairs associated with
-     the pool as metadata.
+    :param metadata: A list of name-value pairs associated with the pool as
+     metadata.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
     """ 

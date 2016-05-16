@@ -27,23 +27,20 @@ class CertificateAddParameter(Model):
     A certificate that can be installed on compute nodes and can be used to
     authenticate operations on the machine.
 
-    :param thumbprint: Get or sets the X.509 thumbprint of the certificate.
-     This is a sequence of up to 40 hex digits (it may include spaces but
-     these are removed).
+    :param thumbprint: The X.509 thumbprint of the certificate. This is a
+     sequence of up to 40 hex digits (it may include spaces but these are
+     removed).
     :type thumbprint: str
-    :param thumbprint_algorithm: Gets or sets the algorithm used to derive
-     the thumbprint. This must be sha1.
+    :param thumbprint_algorithm: The algorithm used to derive the thumbprint.
+     This must be sha1.
     :type thumbprint_algorithm: str
-    :param data: Gets or sets the base64-encoded contents of the certificate.
-     The maximum size is 10KB. This property is not populated by the Get
-     Certificate operation.
+    :param data: The base64-encoded contents of the certificate. The maximum
+     size is 10KB.
     :type data: str
-    :param certificate_format: Gets or sets the format of the certificate
-     data. Possible values include: 'pfx', 'cer', 'unmapped'
+    :param certificate_format: The format of the certificate data. Possible
+     values include: 'pfx', 'cer', 'unmapped'
     :type certificate_format: str
-    :param password: Gets or sets the password to access the certificate's
-     private key. This property is not populated by the Get Certificate
-     operation.
+    :param password: The password to access the certificate's private key.
     :type password: str
     """ 
 
