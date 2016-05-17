@@ -24,7 +24,7 @@ from msrest.serialization import Model
 
 class FileListFromTaskOptions(Model):
     """
-    Additional parameters for one or more operations
+    Additional parameters for the File_ListFromTask operation.
 
     :param filter: An OData $filter clause.
     :type filter: str
