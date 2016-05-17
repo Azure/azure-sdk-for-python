@@ -24,7 +24,7 @@ from msrest.serialization import Model
 
 class AccountListNodeAgentSkusOptions(Model):
     """
-    Additional parameters for one or more operations
+    Additional parameters for the Account_ListNodeAgentSkus operation.
 
     :param filter: An OData $filter clause.
     :type filter: str

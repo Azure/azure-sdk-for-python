@@ -24,7 +24,7 @@ from msrest.serialization import Model
 
 class ComputeNodeReimageOptions(Model):
     """
-    Additional parameters for one or more operations
+    Additional parameters for the ComputeNode_Reimage operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
