@@ -73,7 +73,7 @@
       "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs"
     },
     "redis": {
-      "swagger": "arm-redis/2015-08-01/swagger/redis.json",
+      "swagger": "arm-redis/2016-04-01/swagger/redis.json",
       "autorest_options": {
         "Namespace ": "azure.mgmt.redis"
       },
