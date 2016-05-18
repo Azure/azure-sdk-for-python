@@ -1,135 +1,145 @@
+====================
 Azure SDK for Python
 ====================
 
-INSTALLATION
-============
+The Azure SDK for Python is a set of libraries which allow you to work on Azure for your management, runtime or data needs.
 
-**The latest recommended release is currently a release candidate, tell this to pip to install it!**
+This documentation does *not* cover:
 
-The `azure` bundle meta-package will install all Azure SDKs at once:
+* `How to write an Azure WebApp in Python <https://azure.microsoft.com/en-us/documentation/articles/web-sites-python-create-deploy-django-app/>`_
+* `Azure IoT device SDK for Python <https://github.com/Azure/azure-iot-sdks/tree/master/python/device>`_
+* `Queries over SQL Azure <https://azure.microsoft.com/en-us/documentation/articles/sql-database-develop-python-simple/>`_
+* `DocumentDB <https://azure.microsoft.com/en-us/documentation/articles/documentdb-sdk-python/>`_
+* `Application Insight <https://github.com/Microsoft/ApplicationInsights-Python>`_
+* `Storage Runtime <http://azure-storage.readthedocs.org>`_
 
-- Use the ``--pre`` flag: ``pip install --pre azure``
+For a more general view of Azure and Python, you can go on the `Python Developer Center for Azure <https://azure.microsoft.com/en-us/develop/python/>`_
 
-- Specify the version:  ``pip install azure==2.0.0rc6``
+Example Usage
+-------------
 
-You can also install only what you exactly need:
+This example authenticates on Azure using an AD in your subscription, creates a Resource Group and a Storage account,
+uploads a simple "Hello world" HTML page and gives you the URL to get it.
 
-- Use the ``--pre`` flag: ``pip install --pre azure-mgmt-compute``
+.. code:: python
 
-- Specify the version:  ``pip install azure-mgmt-compute==0.30.0rc6``
+    from azure.common.credentials import UserPassCredentials
+    from azure.mgmt.resource import ResourceManagementClient
+    from azure.mgmt.storage import StorageManagementClient
+    from azure.storage import CloudStorageAccount
+    from azure.storage.blob.models import ContentSettings
 
-If you want to install ``azure`` from source::
+    credentials = UserPassCredentials('user@domain.com', 'my_smart_password')
+    subscription_id = '33333333-3333-3333-3333-333333333333'
 
-    git clone git://github.com/Azure/azure-sdk-for-python.git
-    cd azure-sdk-for-python
-    python setup.py install
+    resource_client = ResourceManagementClient(credentials, subscription_id)
+    storage_client = StorageManagementClient(credentials, subscription_id)
 
-DISCLAIMER
-==========
+    resource_client.resource_groups.create_or_update(
+        'my_resource_group',
+        {
+            'location':'westus'
+        }
+    )
 
-This is a release candidate. However, the core packages, from code quality/completeness perspectives can at this time be considered "stable" - 
-it will be officially labeled as such in September (in sync with other languages).
+    async_create = storage_client.storage_accounts.create(
+        'my_resource_group',
+        'my_storage_account',
+        {
+            'location':'westus',
+            'account_type':'Standard_LRS'
+        }
+    )
+    async_create.wait()
+    
+    storage_keys = storage_client.storage_accounts.list_keys('my_resource_group', 'my_storage_account')
 
-We are not planning on any further major changes until then.
+    storage_client = CloudStorageAccount('my_storage_account', storage_keys.key1)
+    blob_service = storage_client.create_block_blob_service()
 
-The following packages are still labeled "preview" but can be considered "stable":
+    blob_service.create_container('my_container_name')
 
-- azure-mgmt-resource 0.30.0rc6
-- azure-mgmt-compute 0.30.0rc6
-- azure-mgmt-network 0.30.0rc6
-- azure-mgmt-storage 0.30.0rc6
+    blob_service.create_blob_from_bytes(
+        'my_container_name',
+        'my_blob_name',
+        b'<center><h1>Hello World!</h1></center>',
+        content_settings=ContentSettings('text/html')
+    )
 
-The following packages are already released as "stable" and are officially production ready:
-
-- azure-batch 1.0.0
-- azure-mgmt-batch 1.0.0
-- azure-servicebus 0.20.3
-- azure-servicemanagement-legacy 0.20.4
-
-All other packages are real "preview" packages. Please send us your feedback!
-
-Documentation:
---------------
-* Azure Resource Management
-   * :doc:`Authorization Resource Management<resourcemanagementauthorization>` -- (:doc:`API <ref/azure.mgmt.authorization>`)
-   * :doc:`Batch Management<resourcemanagementbatch>` -- (:doc:`API <ref/azure.mgmt.batch>`)
-   * :doc:`CDN Resource Management<resourcemanagementcdn>` -- (:doc:`API <ref/azure.mgmt.cdn>`)
-   * :doc:`Commerce - Billing API<resourcemanagementcommerce>` -- (:doc:`API <ref/azure.mgmt.commerce>`)
-   * :doc:`Cognitive Services Management<resourcemanagementcognitiveservices>` -- (:doc:`API <ref/azure.mgmt.cognitiveservices>`)
-   * :doc:`Compute Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.compute>`)
-   * Apps
-      * :doc:`Logic Apps Resource Management<resourcemanagementapps>` -- (:doc:`API <ref/azure.mgmt.logic>`)
-      * :doc:`Web Apps Management<resourcemanagementapps>` -- (:doc:`API <ref/azure.mgmt.web>`)
-   * :doc:`KeyVault Management<resourcemanagementkeyvault>` -- (:doc:`API <ref/azure.mgmt.keyvault>`)
-   * :doc:`Network Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.network>`)
-   * :doc:`Notification Hubs Resource Management<resourcemanagementnotificationhubs>` -- (:doc:`API <ref/azure.mgmt.notificationhubs>`)
-   * :doc:`PowerBI Embedded Management<resourcemanagementpowerbiembedded>` -- (:doc:`API <ref/azure.mgmt.powerbiembedded>`)
-   * :doc:`Redis Cache Resource Management<resourcemanagementredis>` -- (:doc:`API <ref/azure.mgmt.redis>`)
-   * :doc:`Resource Management<resourcemanagement>` -- (:doc:`API <ref/azure.mgmt.resource>`)   
-   * :doc:`Scheduler Management<resourcemanagementscheduler>` -- (:doc:`API <ref/azure.mgmt.scheduler>`)
-   * :doc:`Storage Resource Management<resourcemanagementstorage>` -- (:doc:`API <ref/azure.mgmt.storage>`)
-* :doc:`Batch<batch>` -- (:doc:`API <ref/azure.batch>`)
-* :doc:`Azure Active Directory Graph RBAC<graphrbac>` -- (:doc:`API <ref/azure.graphrbac>`)
-* :doc:`Service Management<servicemanagement>` -- (:doc:`API <ref/azure.servicemanagement>`)
-* :doc:`Service Bus<servicebus>` -- (:doc:`API <ref/azure.servicebus>`)
-* `Storage <http://azure-storage.readthedocs.org>`__
-* :ref:`All Documentation <modindex>`
+    print(blob_service.make_blob_url('my_container_name', 'my_blob_name'))
 
 
-Features:
----------
 
--  Storage Blob, File, Table, Queue
+Installation
+------------
 
-   -  see the Azure storage `Git repository <https://github.com/Azure/azure-storage-python>`__
-      or `readthedocs <http://azure-storage.readthedocs.org>`__ for a
-      complete list of supported features.
+You can install the whole set of stable Azure libraries in a single line using the ``azure`` meta-package:
 
--  Service Bus
+.. code-block:: console
 
+   $ pip install azure
+
+You can also install individually each library if you don't need everything
+and want to save installation space/time.
+
+.. code-block:: console
+
+   $ pip install azure-batch         # Install the latest Batch runtime library
+   $ pip install azure-mgmt-storage  # Install the latest Storage management library
+   $ pip install azure-mgmt-resource # Install only the latest Resource Management library
+
+Preview packages are not included in the ``azure`` meta-package and can be installed using the ``--pre`` flag:
+
+.. code-block:: console
+
+   $ pip install --pre azure-mgmt-web # will install only the latest Web App Management library
+
+More details and information about the available libraries and their status can be found 
+in the :doc:`Installation Page<installation>`
+
+
+Features
+--------
+
+Azure Resource Management
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* :doc:`Authorization <resourcemanagementauthorization>` : Permissions, roles and more
+* :doc:`Batch<resourcemanagementbatch>` : Manage Batch accounts and applications
+* :doc:`Content Delivery Network<resourcemanagementcdn>` : Profiles, endpoints creation and more
+* :doc:`Commerce - Billing API<resourcemanagementcommerce>` : RateCard and Usage Billing API
+* :doc:`Compute<resourcemanagementcomputenetwork>` : Create virtual machines and more
+* :doc:`App Service<resourcemanagementapps>` : Manage App plan, Web Apps, Logic Apps and more
+* :doc:`Network<resourcemanagementcomputenetwork>` : Create virtual networks, network interfaces, public IPs and more
+* :doc:`Notification Hubs<resourcemanagementnotificationhubs>` : Namespaces, hub creation/deletion and more
+* :doc:`Redis Cache<resourcemanagementredis>` : Create cache and more
+* :doc:`Resource Management<resourcemanagement>`:
+
+  * resources :  create resource groups, register providers and more
+  * features : manage features of provider and more
+  * locks : manage resource group lock and more
+  * subscriptions : manage subscriptions and more
+  
+* :doc:`Scheduler<resourcemanagementscheduler>` : Create job collections, create job and more
+* :doc:`Storage<resourcemanagementstorage>` : Create storage accounts, list keys, and more
+
+Azure Runtime
+^^^^^^^^^^^^^
+
+* :doc:`Batch<batch>` : Manage Batch pools, jobs, task and job schedules
+* :doc:`Azure Active Directory Graph RBAC<graphrbac>` : Users, applications and more
+* :doc:`Service Bus<servicebus>`:
    -  Queues: create, list and delete queues; create, list, and delete
       subscriptions; send, receive, unlock and delete messages
    -  Topics: create, list, and delete topics; create, list, and delete
       rules
 
-- Batch Runtime
+Azure Service Management
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-   - Manage Batch pools, jobs, task and job schedules
+.. note:: The Service Management SDK is deprecated and no more features will be added.
 
-- Azure Active Directory Graph RBAC API
-  
-   - Users
-   - Applications
-   - and more
-      
--  Resource Management
-
-   -  Authorization: permissions, subscriptions, roles and more
-   -  Batch: manage Batch accounts and applications
-   -  CDN: profiles, endpoints creation and more
-   -  Commerce: RateCard and Usage Billing API
-   -  Cognitive Services: Manage your accounts
-   -  Compute: create virtual machines and more
-   -  Apps:
-
-      - Logic Apps: Workflow and job management
-      - Web Apps: App Service Plan, web sites, certificate, domains and more
-
-   -  Network: create virtual networks, network interfaces, public ips and more
-   -  Notification Hubs: Namespaces, hub creation/deletion and more
-   -  PowerBI Embedded: Manage your workspaces
-   -  Redis: create cache and more
-   -  Resource:
-   
-        - resources :  create resource groups, register providers and more
-        - features : manage features of provider and more
-        - locks : manage resource group lock and more
-        - subscriptions : manage subscriptions and more
-
-   -  Scheduler: create job collections, create job and more
-   -  Storage: create storage accounts, list keys, and more
-
--  Service Management
+This page describes the :doc:`usage and detailed features of Azure Service Management SDK<servicemanagement>`. At a glance:
 
    -  storage accounts: create, update, delete, list, regenerate keys
    -  affinity groups: create, update, delete, list, get properties
@@ -163,10 +173,8 @@ Be sure to check out the Microsoft Azure `Developer Forums on Stack
 Overflow <http://go.microsoft.com/fwlink/?LinkId=234489>`__ if you have
 trouble with the provided code.
 
-Contributing:
--------------
 Contribute Code or Provide Feedback:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 If you would like to become an active contributor to this project please
 follow the instructions provided in `Microsoft Azure Projects
@@ -177,39 +185,55 @@ If you encounter any bugs with the library please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
 section of the project.
 
-Learn More
-==========
-
-`Microsoft Azure Python Developer
-Center <http://azure.microsoft.com/en-us/develop/python/>`__
-
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 
 .. toctree::
-  :hidden:
-
-.. toctree::
-  :hidden:
   :glob:
+  :caption: User Documentation
 
-  servicebus
+  installation
+  quickstart_authentication
+  
+.. toctree::
+  :glob:
+  :caption: Management Documentation
+
+  resourcemanagement*
+  Service Management (Legacy) <servicemanagement>
+  
+.. toctree::
+  :glob:
+  :caption: Runtime Documentation
+
+  batch
   graphrbac
-  resourcemanagement
-  resourcemanagementauthentication
-  resourcemanagamentauthorization
-  resourcemanagementcommerce
-  resourcemanagementcdn
-  resourcemanagementapps
-  resourcemanagementstorage
-  resourcemanagementcomputenetwork
-  resourcemanagementscheduler
-  resourcemanagementredis
-  resourcemanagementnotificationhubs
-  servicemanagement
-  ref/*  
+  servicebus
+  
+.. toctree::
+  :glob:
+  :caption: Developer Documentation
+
+  ref/azure.common
+  ref/azure.batch
+  ref/azure.graphrbac
+  ref/azure.mgmt.batch
+  ref/azure.mgmt.cdn
+  ref/azure.mgmt.commerce
+  ref/azure.mgmt.compute
+  ref/azure.mgmt.logic
+  ref/azure.mgmt.network
+  ref/azure.mgmt.notificationhubs
+  ref/azure.mgmt.redis
+  ref/azure.mgmt.resource
+  ref/azure.mgmt.authorization
+  ref/azure.mgmt.scheduler
+  ref/azure.mgmt.storage
+  ref/azure.mgmt.web
+  ref/azure.servicebus
+  ref/azure.servicemanagement

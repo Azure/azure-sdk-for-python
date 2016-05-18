@@ -4,6 +4,8 @@ Batch Management
 For more information on the Azure Batch service, check out the `Batch Documentation <https://azure.microsoft.com/en-us/documentation/services/batch/>`__.
 For working samples, see the `Batch samples repo <https://github.com/Azure/azure-batch-samples/tree/master/Python>`__.
 
+The API documentation: :doc:`API <ref/azure.mgmt.batch>`
+
 Create the Batch Management client
 ----------------------------------
 
@@ -11,7 +13,7 @@ The following code creates an instance of the management client.
 You will need to provide your ``subscription_id`` which can be retrieved
 from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
-See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
+See :doc:`Resource Management Authentication <quickstart_authentication>`
 for details on handling Azure Active Directory authentication with the Python SDK, and creating a ``Credentials`` instance.
 
 .. code:: python
