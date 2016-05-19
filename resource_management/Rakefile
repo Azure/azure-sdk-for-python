@@ -114,7 +114,7 @@ end
 
 version = File.read(File.expand_path('../ARM_VERSION', __FILE__)).strip
 REGEN_METADATA = {
-    autorest_loc: '../../../autorest/binaries/net45/AutoRest.exe',
+    autorest_loc: ENV.fetch('AUTOREST-LOC', '../../../autorest/binaries/net45/AutoRest.exe'),
     azure_arm: {
         version: version,
         tag: 'azure_arm'
