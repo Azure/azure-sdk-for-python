@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 
 group :development, :test do
   gem 'dotenv'
+  gem 'os'
   gem 'rake'
   gem 'rspec'
   gem 'vcr'

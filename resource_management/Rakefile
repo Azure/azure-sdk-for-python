@@ -12,18 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
-require 'rspec/core/rake_task'
+require 'bundler/gem_tasks'
 require 'dotenv/tasks'
+require 'rspec/core/rake_task'
 require 'open3'
+require 'os'
 
 desc 'Azure Resource Manager related tasks which often traverse each of the arm gems'
 namespace :arm do
   desc 'Delete ./pkg for each of the Azure Resource Manager projects'
   task :clean do
     each_gem do
-      execute_and_stream('rm -rf ./pkg')
+      execute_and_stream(OS.windows? ? 'del /S /Q pkg 2>nul' : 'rm -rf ./pkg')
     end
-    execute_and_stream('rm -rf *.gem')
+    execute_and_stream(OS.windows? ? 'del /S /Q pkg 2>nul' : 'rm -rf ./pkg')
   end
 
   desc 'Build gems for each of the Azure Resource Manager projects'
@@ -31,7 +33,7 @@ namespace :arm do
     each_gem do
       execute_and_stream('rake build')
     end
-    execute_and_stream('gem build azure_arm.gemspec')
+    execute_and_stream('rake build')
   end
 
   desc 'Push gem and tag repo for each of the Azure Resource Manager projects'
@@ -44,18 +46,18 @@ namespace :arm do
     end
     md = REGEN_METADATA[:azure_arm]
     tag = "#{md[:tag]}-v#{md[:version]}"
-    execute_and_stream("gem push ./azure_arm-#{md[:version]}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
+    execute_and_stream("gem push ./pkg/azure_arm-#{md[:version]}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
     execute_and_stream("git tag #{tag} && git push upstream #{tag}")
   end
 
   desc 'Regen code for each of the Azure Resource Manager projects'
   task :regen do
     each_gem do |dir|
-      execute_and_stream('rm -rf lib')
+      execute_and_stream(OS.windows? ? 'del /S /Q lib 2>nul' : 'rm -rf lib')
       puts "\nGenerating #{dir}\n"
       md = REGEN_METADATA[dir.to_sym]
-      ar_loc = REGEN_METADATA[:autorest_loc]
-      execute_and_stream("mono #{ar_loc} -i #{md[:spec_uri]} -pv #{md[:version]} -n #{md[:ns]} -pn #{dir} -g Azure.Ruby -o lib")
+      ar_base_command = "#{OS.windows? ? '' : 'mono '} #{REGEN_METADATA[:autorest_loc]}"
+      execute_and_stream("#{ar_base_command} -i #{md[:spec_uri]} -pv #{md[:version]} -n #{md[:ns]} -pn #{dir} -g Azure.Ruby -o lib")
     end
   end
 
