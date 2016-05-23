@@ -24,7 +24,7 @@ from msrest.serialization import Model
 
 class ComputeNodeListOptions(Model):
     """
-    Additional parameters for one or more operations
+    Additional parameters for the ComputeNode_List operation.
 
     :param filter: An OData $filter clause.
     :type filter: str

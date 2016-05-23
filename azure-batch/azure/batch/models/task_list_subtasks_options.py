@@ -24,7 +24,7 @@ from msrest.serialization import Model
 
 class TaskListSubtasksOptions(Model):
     """
-    Additional parameters for one or more operations
+    Additional parameters for the Task_ListSubtasks operation.
 
     :param select: An OData $select clause.
     :type select: str

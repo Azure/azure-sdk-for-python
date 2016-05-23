@@ -46,6 +46,7 @@ class VirtualMachineConfiguration(Model):
 
     _validation = {
         'image_reference': {'required': True},
+        'node_agent_sku_id': {'required': True},
     }
 
     _attribute_map = {
@@ -54,7 +55,7 @@ class VirtualMachineConfiguration(Model):
         'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
     }
 
-    def __init__(self, image_reference, node_agent_sku_id=None, windows_configuration=None):
+    def __init__(self, image_reference, node_agent_sku_id, windows_configuration=None):
         self.image_reference = image_reference
         self.node_agent_sku_id = node_agent_sku_id
         self.windows_configuration = windows_configuration
