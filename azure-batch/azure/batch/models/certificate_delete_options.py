@@ -24,7 +24,7 @@ from msrest.serialization import Model
 
 class CertificateDeleteOptions(Model):
     """
-    Additional parameters for one or more operations
+    Additional parameters for the Certificate_Delete operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
