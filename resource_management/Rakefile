@@ -38,11 +38,10 @@ namespace :arm do
 
   desc 'Push gem for each of the Azure Resource Manager projects'
   task :release, [:key] => :build do |_, args|
-    key = args[:key].nil? ? ENV.fetch('KEY', nil) : args[:key]
     each_gem do |dir|
       md = REGEN_METADATA[dir.to_sym]
       # Using execute method so that keys are not logged onto console
-      execute("gem push ./pkg/#{dir}-#{md[:version]}.gem" + (key.nil? ? '' : " -k #{key}"))
+      execute("gem push ./pkg/#{dir}-#{md[:version]}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
     end
     # TODO: Uncomment this when we decide to publish azure_arm gem
     # md = REGEN_METADATA[:azure_arm]
