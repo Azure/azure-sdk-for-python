@@ -36,18 +36,18 @@ namespace :arm do
     execute_and_stream('rake build')
   end
 
-  desc 'Push gem and tag repo for each of the Azure Resource Manager projects'
+  desc 'Push gem for each of the Azure Resource Manager projects'
   task :release, [:key] => :build do |_, args|
+    key = args[:key].nil? ? ENV.fetch('KEY', nil) : args[:key]
     each_gem do |dir|
       md = REGEN_METADATA[dir.to_sym]
-      tag = "#{md[:tag]}-v#{md[:version]}"
-      execute_and_stream("gem push ./pkg/#{dir}-#{md[:version]}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
-      execute_and_stream("git tag #{tag} && git push upstream #{tag}")
+      # Using execute method so that keys are not logged onto console
+      execute("gem push ./pkg/#{dir}-#{md[:version]}.gem" + (key.nil? ? '' : " -k #{key}"))
     end
-    md = REGEN_METADATA[:azure_arm]
-    tag = "#{md[:tag]}-v#{md[:version]}"
-    execute_and_stream("gem push ./pkg/azure_arm-#{md[:version]}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
-    execute_and_stream("git tag #{tag} && git push upstream #{tag}")
+    # TODO: Uncomment this when we decide to publish azure_arm gem
+    # md = REGEN_METADATA[:azure_arm]
+    # Using execute method so that keys are not logged onto console
+    # execute("gem push ./pkg/azure_arm-#{md[:version]}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
   end
 
   desc 'Regen code for each of the Azure Resource Manager projects'
@@ -84,6 +84,10 @@ task :default => :spec
 
 def execute_and_stream(cmd)
   puts "running: #{cmd}"
+  execute(cmd)
+end
+
+def execute(cmd)
   Open3.popen2e(cmd) do |_, stdout_err, wait_thr|
     while line = stdout_err.gets
       puts line
@@ -91,7 +95,7 @@ def execute_and_stream(cmd)
 
     exit_status = wait_thr.value
     unless exit_status.success?
-      abort "FAILED !!! #{cmd}"
+      abort "FAILED !!!"
     end
   end
 end

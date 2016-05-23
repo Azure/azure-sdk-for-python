@@ -8,4 +8,8 @@ rvm:
 script:
 - cd resource_management && bundle install
 - if [ "$INTEG_RECORDED" == "true" ] ; then rake arm:spec ; fi
-
+deploy:
+  provider: script
+  script: ./scripts/release.sh
+  on:
+    tags: true
