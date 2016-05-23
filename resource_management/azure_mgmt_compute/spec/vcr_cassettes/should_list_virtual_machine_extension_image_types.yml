@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - 5e0cd8a8-cb79-41c3-81e0-466c4634ec8c
+      - 37b173fb-cf99-49c1-bf5d-677e12db17a0
       client-request-id:
-      - fd3bf2c3-281a-43c7-bf3a-cd520e15cd4a
+      - 07667f08-a10e-40fd-92e8-da1e1bce31c8
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_169
+      - ESTSFE_IN_125
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLcGE-6wkspq2wKYT5jK0AFwKYr5LMAE_RJw-lo3cZGTL5wu8r7mldkht0CddjodXept5B07p9dWyJi1DUNovKp1-i2hAEV4FmYKIV1_yUdHuyYGILYuSy2cwTyoOSsbTuIMypY1GXaBkn_PL1QJi-U5vYzEzjjzzR6XWv8VHqXu6IAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Wed, 13 Apr 2016 23:40:13 GMT
+      - Wed, 18 May 2016 21:02:03 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1460594413","not_before":"1460590513","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1463608923","not_before":"1463605023","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Wed, 13 Apr 2016 23:40:13 GMT
+  recorded_at: Wed, 18 May 2016 21:02:07 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Compute/locations/westus/publishers/Microsoft.WindowsAzure.Compute/artifacttypes/vmextension/types?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Compute/locations/westus/publishers/Microsoft.WindowsAzure.Compute/artifacttypes/vmextension/types?api-version=2016-03-30
     body:
       encoding: US-ASCII
       string: ''
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - f7c63636-25f6-45f4-bbd9-b9bc71748723
+      - dd6dad62-91a3-4852-8615-a240cae6fbfc
       accept-language:
       - en-US
   response:
@@ -85,17 +86,17 @@ http_interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-ms-request-id:
-      - f42b45e0-603a-47be-a74e-3bf742e2657e
+      - cd7eb712-80a0-4727-b8fd-0aa92a73fff9
       server:
       - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14999'
+      - '14997'
       x-ms-correlation-request-id:
-      - dc9883a1-79d8-4b97-8c7b-4f45c669033a
+      - 10d4c075-dda2-4ae7-889f-07dd115d962c
       x-ms-routing-request-id:
-      - NORTHCENTRALUS:20160413T234015Z:dc9883a1-79d8-4b97-8c7b-4f45c669033a
+      - WESTUS:20160518T210204Z:10d4c075-dda2-4ae7-889f-07dd115d962c
       date:
-      - Wed, 13 Apr 2016 23:40:14 GMT
+      - Wed, 18 May 2016 21:02:03 GMT
       connection:
       - close
     body:
@@ -104,5 +105,5 @@ http_interactions:
         \   \"id\": \"/Subscriptions/<AZURE_SUBSCRIPTION_ID>/Providers/Microsoft.Compute/Locations/westus/Publishers/Microsoft.WindowsAzure.Compute/ArtifactTypes/VMExtension/Types/AzureLogCollector\"\r\n
         \ }\r\n]"
     http_version: 
-  recorded_at: Wed, 13 Apr 2016 23:40:14 GMT
+  recorded_at: Wed, 18 May 2016 21:02:07 GMT
 recorded_with: VCR 3.0.1

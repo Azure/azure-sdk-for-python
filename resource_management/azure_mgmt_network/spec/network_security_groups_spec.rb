@@ -31,7 +31,7 @@ describe 'Network Security Groups' do
 
   it 'should get security group' do
     security_group = @resource_helper.create_network_security_group(@resource_group, @location)
-    result = @client.get(@resource_group.name, security_group.name).value!
+    result = @client.get_async(@resource_group.name, security_group.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(security_group.name)
@@ -45,7 +45,7 @@ describe 'Network Security Groups' do
 
   it 'should list all network security groups in a subscription' do
     #constants in security role protocol are 'Constant' when server returns them like 'CONSTANT '
-    result = @client.list_all.value!
+    result = @client.list_all_async.value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)
@@ -57,7 +57,7 @@ describe 'Network Security Groups' do
   end
 
   it 'should list all network security groups in a resource group' do
-    result = @client.list(@resource_group.name).value!
+    result = @client.list_async(@resource_group.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)

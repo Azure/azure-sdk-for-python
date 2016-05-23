@@ -20,7 +20,7 @@ describe 'Usage Operations' do
   end
 
   it 'list usage operations' do
-    result = @client.list.value!
+    result = @client.list_async.value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
   end

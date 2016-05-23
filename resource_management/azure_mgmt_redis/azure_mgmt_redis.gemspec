@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10'
   spec.add_development_dependency 'rspec', '~> 3'
   spec.add_development_dependency 'dotenv', '~> 2'
-  spec.add_development_dependency 'azure_mgmt_resources', '~> 0.2'
+  spec.add_development_dependency 'azure_mgmt_resources', '~> 0.3'
 
-  spec.add_runtime_dependency 'ms_rest_azure', '~> 0.2.0'
+  spec.add_runtime_dependency 'ms_rest_azure', '~> 0.2.3'
 end

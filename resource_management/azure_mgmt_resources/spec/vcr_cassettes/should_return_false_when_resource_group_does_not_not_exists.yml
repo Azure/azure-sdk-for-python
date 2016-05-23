@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - 50fe48e4-71fa-4602-a4d4-9491a23a48a5
+      - 30557d9d-9dae-49ff-b6a7-107f7c42b407
       client-request-id:
-      - db3306a0-6d3e-4d42-b00e-d9034ae861e4
+      - ef68f44c-96a5-4429-a684-77117c453b72
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_156
+      - ESTSFE_IN_541
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLTgWl6BkiS1Flrp0KIuzlenL173h9diupGnAIf2Il8ddYG1wSVQPxLP-GByep7OI8O4Xse2Z151I9tOrZJ7MOyYxNjYFOEH0e5if_H3MJjSxntF7FqkCK6pqLRTUVuTNCtWXD5SBxp1WAc-PnBAAKf4x7Czr8KiLOTlSc2W7XV7DIAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Fri, 22 Apr 2016 20:43:58 GMT
+      - Thu, 19 May 2016 03:28:12 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1461361439","not_before":"1461357539","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1463632092","not_before":"1463628192","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 20:44:02 GMT
+  recorded_at: Thu, 19 May 2016 03:28:14 GMT
 - request:
     method: head
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/non-existence?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/non-existence?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - dbd7d1fb-a69e-4eec-a618-a2f89f8e1a22
+      - a4cb99d9-5fee-46c7-b10c-ef0441bf737b
       accept-language:
       - en-US
   response:
@@ -85,22 +86,22 @@ http_interactions:
       x-ms-failure-cause:
       - gateway
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14999'
+      - '14940'
       x-ms-request-id:
-      - 38213273-96cf-4da5-96af-a88d3066a330
+      - b44b3023-e826-4c52-a7a1-91446769db34
       x-ms-correlation-request-id:
-      - 38213273-96cf-4da5-96af-a88d3066a330
+      - b44b3023-e826-4c52-a7a1-91446769db34
       x-ms-routing-request-id:
-      - WESTUS:20160422T204359Z:38213273-96cf-4da5-96af-a88d3066a330
+      - WESTUS:20160519T032812Z:b44b3023-e826-4c52-a7a1-91446769db34
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 20:43:59 GMT
+      - Thu, 19 May 2016 03:28:12 GMT
       connection:
       - close
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 20:44:02 GMT
+  recorded_at: Thu, 19 May 2016 03:28:15 GMT
 recorded_with: VCR 3.0.1

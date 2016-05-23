@@ -17,12 +17,12 @@ describe 'Resource Provider Operation Details' do
   end
 
   it 'should list provider operation details' do
-    providers = @providers_client.list.value!.body.value
+    providers = @providers_client.list_async.value!.body.value
 
     # Selecting specific provider since not all providers might be registered for current subscription.
     target_provider = providers.detect {|item| item.registration_state == 'Registered' && item.namespace == 'Microsoft.Compute' }
 
-    result = @details_client.list(target_provider.namespace, @resource_api_version).value!
+    result = @details_client.list_async(target_provider.namespace, @resource_api_version).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
   end

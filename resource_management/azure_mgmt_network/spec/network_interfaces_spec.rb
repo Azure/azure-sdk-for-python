@@ -32,7 +32,7 @@ describe 'Network Interfaces' do
 
   it 'should get network interface' do
     network_interface = create_network_interface
-    result = @client.get(@resource_group.name, network_interface.name).value!
+    result = @client.get_async(@resource_group.name, network_interface.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(network_interface.name)
@@ -45,7 +45,7 @@ describe 'Network Interfaces' do
   end
 
   it 'should list all the network interfaces in a subscription' do
-    result = @client.list_all.value!
+    result = @client.list_all_async.value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)
@@ -57,7 +57,7 @@ describe 'Network Interfaces' do
   end
 
   it 'should list all the network interfaces in a resource group' do
-    result = @client.list(@resource_group.name).value!
+    result = @client.list_async(@resource_group.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)

@@ -62,13 +62,13 @@ describe 'Virtual machine and vm extension api' do
   end
 
   it 'should get vm extension' do
-    result = @extensions_client.get(@resource_group.name, @vm_name, @ext_name, nil).value!
+    result = @extensions_client.get_async(@resource_group.name, @vm_name, @ext_name, nil).value!
     expect(result.response.status).to eq(200)
     expect(result.body.name).to eq(@ext_name)
   end
 
   it 'should get vm extension with expand parameter' do
-    result = @extensions_client.get(@resource_group.name, @vm_name, @ext_name, 'instanceView').value!
+    result = @extensions_client.get_async(@resource_group.name, @vm_name, @ext_name, 'instanceView').value!
     expect(result.response.status).to eq(200)
     expect(result.body.name).to eq(@ext_name)
   end
@@ -94,33 +94,33 @@ describe 'Virtual machine api' do
   end
 
   it 'should get virtual machine' do
-    result = @client.get(@resource_group.name, @vm_name).value!
+    result = @client.get_async(@resource_group.name, @vm_name).value!
     expect(result.response.status).to eq(200)
     expect(result.body.name).to eq(@vm_name)
   end
 
   it 'should get virtual machine with expand parameter' do
-    result = @client.get(@resource_group.name, @vm_name, 'instanceView').value!
+    result = @client.get_async(@resource_group.name, @vm_name, 'instanceView').value!
     expect(result.response.status).to eq(200)
     expect(result.body.name).to eq(@vm_name)
   end
 
   it 'should list virtual machines' do
-    result = @client.list(@resource_group.name).value!
+    result = @client.list_async(@resource_group.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
   end
 
   it 'should list all virtual machines' do
-    result = @client.list_all.value!
+    result = @client.list_all_async.value!
     expect(result.response.status).to eq(200)
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
   end
 
   it 'should list available sizes' do
-    result = @client.list_available_sizes(@resource_group.name, @vm_name).value!
+    result = @client.list_available_sizes_async(@resource_group.name, @vm_name).value!
     expect(result.response.status).to eq(200)
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
@@ -152,7 +152,7 @@ describe 'Virtual machine api' do
     # such info.
     sleep ENV.fetch('RETRY_TIMEOUT', 300).to_i
 
-    result = @client.generalize(@resource_group.name, @vm_name).value!
+    result = @client.generalize_async(@resource_group.name, @vm_name).value!
     expect(result.response.status).to eq(200)
 
     #capturing VM requires VM to be generalized
@@ -245,7 +245,10 @@ def build_storage_account_create_parameters(name)
   params.location = @location
   props = Azure::ARM::Storage::Models::StorageAccountPropertiesCreateParameters.new
   params.properties = props
-  props.account_type = 'Standard_GRS'
+  sku = Azure::ARM::Storage::Models::Sku.new
+  sku.name = 'Standard_GRS'
+  params.sku = sku
+  params.kind = Azure::ARM::Storage::Models::Kind::Storage
   params
 end
 

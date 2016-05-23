@@ -14,11 +14,11 @@ describe 'Tags' do
   before(:each) do
     @resource_help = ResourceHelper.new()
     @client = @resource_help.resource_client.tags
-    @tag = @client.create_or_update(tag_name).value!
+    @tag = @client.create_or_update_async(tag_name).value!
   end
 
   after(:each) do
-    result = @client.delete(tag_name).value!
+    result = @client.delete_async(tag_name).value!
     expect(result.response.status).to eq(200)
   end
 
@@ -34,19 +34,19 @@ describe 'Tags' do
 
   it 'should create and delete tag with value' do
     tag = @tag.body
-    result = @client.create_or_update_value(tag.tag_name, tag_value).value!
+    result = @client.create_or_update_value_async(tag.tag_name, tag_value).value!
 
     expect(result.body).not_to be_nil
     expect(result.body.id).not_to be_nil
     expect(result.body.tag_value).to eq(tag_value)
     expect(result.body.count).to be_a(Models::TagCount)
 
-    result = @client.delete_value(tag.tag_name, tag_value).value!
+    result = @client.delete_value_async(tag.tag_name, tag_value).value!
     expect(result.response.status).to eq(200)
   end
 
   it 'should list tags' do
-    result = @client.list().value!
+    result = @client.list_async().value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 

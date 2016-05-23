@@ -23,7 +23,7 @@ describe ComputeManagementClient do
   it 'should create availability set' do
     availabilitySetName = 'test-availability-set'
     params = @resource_helper.build_availability_set_parameters
-    result = @client.create_or_update(@resource_group.name, availabilitySetName, params).value!
+    result = @client.create_or_update_async(@resource_group.name, availabilitySetName, params).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.location).to eq(params.location)
@@ -34,7 +34,7 @@ describe ComputeManagementClient do
   it 'should get availability set' do
     resource = @resource_helper.create_availability_set(@client, @resource_group)
 
-    result = @client.get(
+    result = @client.get_async(
         @resource_group.name,
         resource.name,
     ).value!
@@ -45,7 +45,7 @@ describe ComputeManagementClient do
   end
 
   it 'should list availability sets' do
-    result = @client.list(@resource_group.name).value!
+    result = @client.list_async(@resource_group.name).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
   end
@@ -53,7 +53,7 @@ describe ComputeManagementClient do
   it 'should delete availability set' do
     resource = @resource_helper.create_availability_set(@client, @resource_group)
 
-    result = @client.delete(
+    result = @client.delete_async(
         @resource_group.name,
         resource.name
     ).value!
@@ -62,7 +62,7 @@ describe ComputeManagementClient do
 
   it 'should list available sizes of availability sets' do
     resource = @resource_helper.create_availability_set(@client, @resource_group)
-    result = @client.list_available_sizes(@resource_group.name, resource.name).value!
+    result = @client.list_available_sizes_async(@resource_group.name, resource.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a Array

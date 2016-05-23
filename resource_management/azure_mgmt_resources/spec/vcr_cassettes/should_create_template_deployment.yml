@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - b99a220b-0dd9-446e-a52d-8e9267d7baa9
+      - aa34fc2e-56b9-4956-a737-ecc931f5e79f
       client-request-id:
-      - ea08413d-6414-48a0-84bc-849f8390865e
+      - 2119fe0f-e684-46ab-a32a-e86c1d9e54a6
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_282
+      - ESTSFE_IN_72
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLa6ezAjNpVfyoY1WO1m4zaUX4XFOw7cfdpO909eILXN3zH-UAN5Gh03xvgJxWFwKFR-ntiqs9GFqURkUeKJB1vPNSysUbGyfGpw9ZTcg0I08HYKoqexcy-f5fOoAtqbQXCOfFaoXUmenoKcz935ijd6-X_ddAN-wK_I93TAQlewKIAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Fri, 22 Apr 2016 18:27:29 GMT
+      - Thu, 19 May 2016 03:11:37 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1461353250","not_before":"1461349350","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1463631097","not_before":"1463627197","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:27:33 GMT
+  recorded_at: Thu, 19 May 2016 03:11:40 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources?api-version=2016-02-01
     body:
       encoding: UTF-8
       string: '{"location":"westus"}'
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - d8345924-6665-47e6-8e29-f6187845bc9a
+      - fed9e53f-118e-48b8-89e7-a466a091ba67
       accept-language:
       - en-US
       Content-Type:
@@ -85,27 +86,27 @@ http_interactions:
       expires:
       - "-1"
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1196'
       x-ms-request-id:
-      - c8ca93e6-50b7-48b8-8030-d36a85b77179
+      - e123a383-c006-44a0-ba0c-3c4bd15144f2
       x-ms-correlation-request-id:
-      - c8ca93e6-50b7-48b8-8030-d36a85b77179
+      - e123a383-c006-44a0-ba0c-3c4bd15144f2
       x-ms-routing-request-id:
-      - CENTRALUS:20160422T182731Z:c8ca93e6-50b7-48b8-8030-d36a85b77179
+      - WESTUS:20160519T031138Z:e123a383-c006-44a0-ba0c-3c4bd15144f2
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 18:27:31 GMT
+      - Thu, 19 May 2016 03:11:37 GMT
       connection:
       - close
     body:
       encoding: UTF-8
       string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_resources","name":"RubySDKTest_azure_mgmt_resources","location":"westus","properties":{"provisioningState":"Succeeded"}}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:27:34 GMT
+  recorded_at: Thu, 19 May 2016 03:11:40 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test?api-version=2016-02-01
     body:
       encoding: UTF-8
       string: '{"properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-documentdb-account-create/azuredeploy.json"},"parameters":{"databaseAccountName":{"value":"mydocs-test"}},"mode":"Incremental"}}'
@@ -113,7 +114,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - ed3ea3cc-33cc-4e22-8fb0-888b5bb6fca0
+      - 9a1ef41c-94ff-47a2-be18-4d4f6b3fe88c
       accept-language:
       - en-US
       Content-Type:
@@ -132,31 +133,31 @@ http_interactions:
       expires:
       - "-1"
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test/operationStatuses/08587402572330649483?api-version=2015-11-01
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test/operationStatuses/08587379793861394411?api-version=2016-02-01
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1195'
       x-ms-request-id:
-      - 852199ed-5aa9-4a08-bb8e-48e2e73f806e
+      - 0e135c96-1f84-4e39-82b8-9090ceda4006
       x-ms-correlation-request-id:
-      - 852199ed-5aa9-4a08-bb8e-48e2e73f806e
+      - 0e135c96-1f84-4e39-82b8-9090ceda4006
       x-ms-routing-request-id:
-      - CENTRALUS:20160422T182733Z:852199ed-5aa9-4a08-bb8e-48e2e73f806e
+      - WESTUS:20160519T031139Z:0e135c96-1f84-4e39-82b8-9090ceda4006
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 18:27:33 GMT
+      - Thu, 19 May 2016 03:11:39 GMT
       connection:
       - close
       content-length:
       - '778'
     body:
       encoding: UTF-8
-      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test","name":"Deployment_test","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-documentdb-account-create/azuredeploy.json","contentVersion":"1.0.0.0"},"parameters":{"databaseAccountName":{"type":"String","value":"mydocs-test"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2016-04-22T18:27:33.3841769Z","duration":"PT0.9714694S","correlationId":"852199ed-5aa9-4a08-bb8e-48e2e73f806e","providers":[{"namespace":"Microsoft.DocumentDB","resourceTypes":[{"resourceType":"databaseAccounts","locations":["westus"]}]}],"dependencies":[]}}'
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test","name":"Deployment_test","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-documentdb-account-create/azuredeploy.json","contentVersion":"1.0.0.0"},"parameters":{"databaseAccountName":{"type":"String","value":"mydocs-test"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2016-05-19T03:11:39.7515429Z","duration":"PT0.4133147S","correlationId":"0e135c96-1f84-4e39-82b8-9090ceda4006","providers":[{"namespace":"Microsoft.DocumentDB","resourceTypes":[{"resourceType":"databaseAccounts","locations":["westus"]}]}],"dependencies":[]}}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:27:37 GMT
+  recorded_at: Thu, 19 May 2016 03:11:42 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test/operationStatuses/08587402572330649483?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test/operationStatuses/08587379793861394411?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -164,7 +165,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - f806e93d-e683-4270-8511-0b1dc3704368
+      - 21f0049d-03b7-413f-889c-fbc87fc6da24
       accept-language:
       - en-US
       Content-Type:
@@ -185,17 +186,17 @@ http_interactions:
       vary:
       - Accept-Encoding
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14998'
+      - '14982'
       x-ms-request-id:
-      - 5b06382d-2be2-4802-a015-209fb50a6b8d
+      - 7e2c5a66-24d7-4d46-9960-3210d9b413ca
       x-ms-correlation-request-id:
-      - 5b06382d-2be2-4802-a015-209fb50a6b8d
+      - 7e2c5a66-24d7-4d46-9960-3210d9b413ca
       x-ms-routing-request-id:
-      - WESTUS:20160422T182804Z:5b06382d-2be2-4802-a015-209fb50a6b8d
+      - WESTUS:20160519T031210Z:7e2c5a66-24d7-4d46-9960-3210d9b413ca
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 18:28:03 GMT
+      - Thu, 19 May 2016 03:12:09 GMT
       connection:
       - close
       content-length:
@@ -204,10 +205,10 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"status":"Running"}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:28:07 GMT
+  recorded_at: Thu, 19 May 2016 03:12:12 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test/operationStatuses/08587402572330649483?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test/operationStatuses/08587379793861394411?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -215,7 +216,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 7fd766de-16b6-4d29-b15e-62da5f5eab3c
+      - acb7c15b-a732-427c-917d-13e3c5311216
       accept-language:
       - en-US
       Content-Type:
@@ -236,17 +237,17 @@ http_interactions:
       vary:
       - Accept-Encoding
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14998'
+      - '14990'
       x-ms-request-id:
-      - 8caa6be7-3284-4837-88b1-65563a7dbc10
+      - 543c0b9d-709f-4e71-ab0d-160926911dc7
       x-ms-correlation-request-id:
-      - 8caa6be7-3284-4837-88b1-65563a7dbc10
+      - 543c0b9d-709f-4e71-ab0d-160926911dc7
       x-ms-routing-request-id:
-      - WESTUS:20160422T182834Z:8caa6be7-3284-4837-88b1-65563a7dbc10
+      - WESTUS:20160519T031240Z:543c0b9d-709f-4e71-ab0d-160926911dc7
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 18:28:34 GMT
+      - Thu, 19 May 2016 03:12:39 GMT
       connection:
       - close
       content-length:
@@ -255,10 +256,10 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"status":"Succeeded"}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:28:38 GMT
+  recorded_at: Thu, 19 May 2016 03:12:42 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -266,7 +267,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - c5ac0631-002d-42d3-9c52-269409187210
+      - 5d403b94-1afc-4b97-91e4-44c3fa07b13d
       Content-Type:
       - application/json
   response:
@@ -285,29 +286,29 @@ http_interactions:
       vary:
       - Accept-Encoding
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14997'
+      - '14971'
       x-ms-request-id:
-      - b12faa71-414b-4be0-b244-7615a445e86b
+      - 0d639685-6b4f-4467-a3e5-a90d9ff815d8
       x-ms-correlation-request-id:
-      - b12faa71-414b-4be0-b244-7615a445e86b
+      - 0d639685-6b4f-4467-a3e5-a90d9ff815d8
       x-ms-routing-request-id:
-      - WESTUS:20160422T182835Z:b12faa71-414b-4be0-b244-7615a445e86b
+      - WESTUS:20160519T031240Z:0d639685-6b4f-4467-a3e5-a90d9ff815d8
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 18:28:35 GMT
+      - Thu, 19 May 2016 03:12:39 GMT
       connection:
       - close
       content-length:
-      - '682'
+      - '683'
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test","name":"Deployment_test","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-documentdb-account-create/azuredeploy.json","contentVersion":"1.0.0.0"},"parameters":{"databaseAccountName":{"type":"String","value":"mydocs-test"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2016-04-22T18:28:31.6931204Z","duration":"PT59.2804129S","correlationId":"852199ed-5aa9-4a08-bb8e-48e2e73f806e","providers":[{"namespace":"Microsoft.DocumentDB","resourceTypes":[{"resourceType":"databaseAccounts","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"Microsoft.DocumentDB/databaseAccounts/mydocs-test"}]}}'
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_resources/providers/Microsoft.Resources/deployments/Deployment_test","name":"Deployment_test","properties":{"templateLink":{"uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-documentdb-account-create/azuredeploy.json","contentVersion":"1.0.0.0"},"parameters":{"databaseAccountName":{"type":"String","value":"mydocs-test"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2016-05-19T03:12:39.5487618Z","duration":"PT1M0.2105336S","correlationId":"0e135c96-1f84-4e39-82b8-9090ceda4006","providers":[{"namespace":"Microsoft.DocumentDB","resourceTypes":[{"resourceType":"databaseAccounts","locations":["westus"]}]}],"dependencies":[],"outputResources":[{"id":"Microsoft.DocumentDB/databaseAccounts/mydocs-test"}]}}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:28:38 GMT
+  recorded_at: Thu, 19 May 2016 03:12:42 GMT
 - request:
     method: delete
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_resources?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -315,7 +316,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - c3a294b3-1c61-4c4d-81b6-c334b8d30063
+      - c1f27fa3-7de4-4282-b2ec-f94bdfde1210
       accept-language:
       - en-US
   response:
@@ -330,20 +331,20 @@ http_interactions:
       expires:
       - "-1"
       location:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RlJFU09VUkNFUy1XRVNUVVMiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2015-11-01
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RlJFU09VUkNFUy1XRVNUVVMiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2016-02-01
       retry-after: '1'
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
       x-ms-request-id:
-      - 9f24fa08-07cf-4ba4-ba9b-6844f9fbd160
+      - a5a2b26a-c56c-4efb-b6d7-afe2991e41de
       x-ms-correlation-request-id:
-      - 9f24fa08-07cf-4ba4-ba9b-6844f9fbd160
+      - a5a2b26a-c56c-4efb-b6d7-afe2991e41de
       x-ms-routing-request-id:
-      - WESTUS:20160422T182835Z:9f24fa08-07cf-4ba4-ba9b-6844f9fbd160
+      - WESTUS:20160519T031241Z:a5a2b26a-c56c-4efb-b6d7-afe2991e41de
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 18:28:34 GMT
+      - Thu, 19 May 2016 03:12:40 GMT
       connection:
       - close
       content-length:
@@ -352,10 +353,10 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:28:38 GMT
+  recorded_at: Thu, 19 May 2016 03:12:43 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RlJFU09VUkNFUy1XRVNUVVMiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RlJFU09VUkNFUy1XRVNUVVMiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -363,7 +364,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - e9715d99-0abe-4ca8-887f-79175eec4aa6
+      - ed9100f1-5805-4a58-bc63-401d032d11be
       accept-language:
       - en-US
       Content-Type:
@@ -380,17 +381,17 @@ http_interactions:
       expires:
       - "-1"
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14976'
+      - '14949'
       x-ms-request-id:
-      - 1608648d-cd7f-4301-bafa-28c5911ce368
+      - b79c8dbe-bb9d-4227-a644-62a32c353e9e
       x-ms-correlation-request-id:
-      - 1608648d-cd7f-4301-bafa-28c5911ce368
+      - b79c8dbe-bb9d-4227-a644-62a32c353e9e
       x-ms-routing-request-id:
-      - CENTRALUS:20160422T183139Z:1608648d-cd7f-4301-bafa-28c5911ce368
+      - WESTUS:20160519T031412Z:b79c8dbe-bb9d-4227-a644-62a32c353e9e
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 18:31:39 GMT
+      - Thu, 19 May 2016 03:14:11 GMT
       connection:
       - close
       content-length:
@@ -399,5 +400,5 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:31:43 GMT
+  recorded_at: Thu, 19 May 2016 03:14:14 GMT
 recorded_with: VCR 3.0.1

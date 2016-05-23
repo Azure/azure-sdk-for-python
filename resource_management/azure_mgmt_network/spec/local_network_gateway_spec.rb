@@ -30,7 +30,7 @@ describe 'Local Network Gateways' do
 
   it 'should get local network gateway' do
     local_network_gateway = @resource_helper.create_local_network_gateway(@resource_group, @location)
-    result = @client.get(@resource_group.name, local_network_gateway.name).value!
+    result = @client.get_async(@resource_group.name, local_network_gateway.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(local_network_gateway.name)
@@ -43,7 +43,7 @@ describe 'Local Network Gateways' do
   end
 
   it 'should list all the local network gateways' do
-    result = @client.list(@resource_group.name).value!
+    result = @client.list_async(@resource_group.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)

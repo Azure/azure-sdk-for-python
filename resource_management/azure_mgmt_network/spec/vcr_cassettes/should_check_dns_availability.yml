@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - e1538583-ab43-480b-be29-b93fafbee6ba
+      - f14d3569-9334-4a5a-a99d-45aa9ac1a2d6
       client-request-id:
-      - e6eb3aa7-e36e-4f36-beb8-898cc954bc11
+      - 36a2d6cb-d457-4f07-a7d6-1fc4151af171
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_593
+      - ESTSFE_IN_276
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLWZoFjn9V9e6Pmxmgeqd8qCPAEXlyBlFKcMljcSCokfbwIZEw97NJ0woAW2mwWMudgBR8_xK2o04yMw2D1M_H9C9lu0dUf1eeGBg4Gj3KmdaJ_DlfsjY-vnh3UWy3Z1nHHOiSRykCY72xLVEVExLaIS2g1drftpiMeYqfcSrKCsPIAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Sat, 23 Apr 2016 07:22:31 GMT
+      - Thu, 19 May 2016 07:04:43 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1461399752","not_before":"1461395852","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1463645083","not_before":"1463641183","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Sat, 23 Apr 2016 07:22:32 GMT
+  recorded_at: Thu, 19 May 2016 07:04:43 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?api-version=2015-06-15&domainNameLabel=domainnamelabel4706
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?api-version=2016-03-30&domainNameLabel=domainnamelabel4706
     body:
       encoding: US-ASCII
       string: ''
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - a60dffd9-5457-4b1d-ab49-5e30b3e53a72
+      - 1da066f1-a2a1-4dbb-9983-8439acf924e3
       accept-language:
       - en-US
   response:
@@ -83,24 +84,24 @@ http_interactions:
       vary:
       - Accept-Encoding
       x-ms-request-id:
-      - 532d521f-5a08-4f98-87c7-eb343e7ecdb6
+      - 9b703a06-131c-4b5f-a984-1b6ab1916441
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
       - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14985'
+      - '14941'
       x-ms-correlation-request-id:
-      - d259b53b-ac6a-472d-a802-c2442a3eeb9a
+      - a4697f4c-da4b-4964-b955-bee15e5e4744
       x-ms-routing-request-id:
-      - WESTUS:20160423T072233Z:d259b53b-ac6a-472d-a802-c2442a3eeb9a
+      - WESTUS:20160519T070444Z:a4697f4c-da4b-4964-b955-bee15e5e4744
       date:
-      - Sat, 23 Apr 2016 07:22:33 GMT
+      - Thu, 19 May 2016 07:04:44 GMT
       connection:
       - close
     body:
       encoding: ASCII-8BIT
       string: "{\r\n  \"available\": true\r\n}"
     http_version: 
-  recorded_at: Sat, 23 Apr 2016 07:22:33 GMT
+  recorded_at: Thu, 19 May 2016 07:04:43 GMT
 recorded_with: VCR 3.0.1

@@ -26,7 +26,7 @@ describe 'Resources' do
   it 'should create resource' do
     params = build_resource_params(@resource_name)
 
-    result = @client.create_or_update(
+    result = @client.create_or_update_async(
         @resource_group.name,
         @resource_provider,
         '',
@@ -44,7 +44,7 @@ describe 'Resources' do
   it 'should get resource' do
     resource = create_resource
 
-    result = @client.get(
+    result = @client.get_async(
         @resource_group.name,
         @resource_provider,
         '',
@@ -117,7 +117,7 @@ describe 'Resources' do
   end
 
   it 'should list resources' do
-    result = @client.list.value!
+    result = @client.list_async.value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
@@ -131,7 +131,7 @@ describe 'Resources' do
   it 'should filter resources and work with top parameter' do
     filter = "tagName eq 'tagName' and tagValue eq 'tagValue'"
 
-    result = @client.list(filter, 1).value!
+    result = @client.list_async(filter, 1).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
@@ -147,7 +147,7 @@ describe 'Resources' do
     params = Azure::ARM::Resources::Models::ResourceGroup.new()
     params.location = 'westus'
 
-    target_rg = @resource_helper.resource_client.resource_groups.create_or_update(target_resource_group_name, params).value!.body
+    target_rg = @resource_helper.resource_client.resource_groups.create_or_update_async(target_resource_group_name, params).value!.body
     resource = create_resource
 
     params = Models::ResourcesMoveInfo.new
@@ -164,7 +164,7 @@ describe 'Resources' do
   it 'should delete resource' do
     resource = create_resource
 
-    result = @client.delete(
+    result = @client.delete_async(
         @resource_group.name,
         @resource_provider,
         '',
@@ -176,7 +176,7 @@ describe 'Resources' do
   end
 
   def create_resource
-    @client.create_or_update(
+    @client.create_or_update_async(
         @resource_group.name,
         @resource_provider,
         '',
@@ -203,7 +203,7 @@ describe 'Resources' do
 
   def wait_resource_move
     count = 30
-    while @resource_helper.resource_client.resource_groups.get(@resource_group.name).value!.body.properties.provisioning_state == 'MovingResources'
+    while @resource_helper.resource_client.resource_groups.get_async(@resource_group.name).value!.body.properties.provisioning_state == 'MovingResources'
       sleep(1)
       fail 'Waiting for resources to move took more than 30 requests. This seems broken' if count <= 0
       count -= 1

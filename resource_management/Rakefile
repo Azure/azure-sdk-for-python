@@ -120,7 +120,7 @@ end
 
 version = File.read(File.expand_path('../ARM_VERSION', __FILE__)).strip
 REGEN_METADATA = {
-    autorest_loc: ENV.fetch('AUTOREST-LOC', '../../../autorest/binaries/net45/AutoRest.exe'),
+    autorest_loc: ENV.fetch('AUTOREST_LOC', '../../../autorest/binaries/net45/AutoRest.exe'),
     azure_arm: {
         version: version,
         tag: 'azure_arm'
@@ -132,13 +132,13 @@ REGEN_METADATA = {
         tag: 'arm_auth'
     },
     azure_mgmt_cdn: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-cdn/2015-06-01/swagger/cdn.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-cdn/2016-04-02/swagger/cdn.json',
         ns: 'Azure::ARM::CDN',
         version: version,
         tag: 'arm_cdn'
     },
     azure_mgmt_compute: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/2015-06-15/swagger/compute.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/2016-03-30/swagger/compute.json',
         ns: 'Azure::ARM::Compute',
         version: version,
         tag: 'arm_comp'
@@ -162,7 +162,7 @@ REGEN_METADATA = {
         tag: 'arm_lock'
     },
     azure_mgmt_network: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-network/2015-06-15/swagger/network.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-network/2016-03-30/swagger/network.json',
         ns: 'Azure::ARM::Network',
         version: version,
         tag: 'arm_netw'
@@ -180,13 +180,13 @@ REGEN_METADATA = {
         tag: 'arm_redi'
     },
     azure_mgmt_resources: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/resources/2015-11-01/swagger/resources.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/resources/2016-02-01/swagger/resources.json',
         ns: 'Azure::ARM::Resources',
         version: version,
         tag: 'arm_reso'
     },
     azure_mgmt_scheduler: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-scheduler/2016-01-01/swagger/scheduler.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-scheduler/2016-03-01/swagger/scheduler.json',
         ns: 'Azure::ARM::Scheduler',
         version: version,
         tag: 'arm_sche'
@@ -204,7 +204,7 @@ REGEN_METADATA = {
         tag: 'arm_sql'
     },
     azure_mgmt_storage: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-storage/2015-06-15/swagger/storage.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-storage/2016-01-01/swagger/storage.json',
         ns: 'Azure::ARM::Storage',
         version: version,
         tag: 'arm_stor'

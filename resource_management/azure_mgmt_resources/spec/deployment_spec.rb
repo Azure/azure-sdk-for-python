@@ -36,7 +36,7 @@ describe 'Template Deployments' do
 
   it 'should cancel running template deployment' do
     deployment = @resource_helper.begin_create_deployment(@resource_group.name)
-    result = @client.cancel(@resource_group.name, deployment.name).value!
+    result = @client.cancel_async(@resource_group.name, deployment.name).value!
 
     expect(result.body).to be_nil
     expect(result.response.status).to eq(204)
@@ -50,7 +50,7 @@ describe 'Template Deployments' do
   it 'should get a deployment' do
     deployment = @resource_helper.create_deployment(@resource_group.name)
 
-    result = @client.get(@resource_group.name, deployment.name).value!
+    result = @client.get_async(@resource_group.name, deployment.name).value!
 
     expect(result.body.name).to eq(deployment.name)
   end
@@ -65,18 +65,18 @@ describe 'Template Deployments' do
     deployment = @resource_helper.create_deployment(@resource_group.name)
     @resource_helper.wait_for_deployment(@resource_group.name, deployment.name, @resource_helper.build_deployment_params)
 
-    result = @client.validate(@resource_group.name, deployment.name, @resource_helper.build_deployment_params).value!
+    result = @client.validate_async(@resource_group.name, deployment.name, @resource_helper.build_deployment_params).value!
     expect(result.response.status).to eq(200)
   end
 
   it 'should raise error when attempting validate with invalid parameters' do
     expect{@client.validate(nil, 'bar', @resource_helper.build_deployment_params)}.to raise_error(ArgumentError)
     expect{@client.validate('foo', 'bar', nil)}.to raise_error(ArgumentError)
-    expect(@client.validate('~`123', 'bar', @resource_helper.build_deployment_params).value!.response.status).to eq(400)
+    expect(@client.validate_async('~`123', 'bar', @resource_helper.build_deployment_params).value!.response.status).to eq(400)
   end
 
   it 'should get a list of deployments' do
-    result = @client.list(@resource_group.name).value!
+    result = @client.list_async(@resource_group.name).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
@@ -89,7 +89,7 @@ describe 'Template Deployments' do
 
   it 'should list filtered results restricted with top parameter' do
     filter = "provisioningState eq 'Running'"
-    result = @client.list(@resource_group.name, filter, 1).value!
+    result = @client.list_async(@resource_group.name, filter, 1).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 

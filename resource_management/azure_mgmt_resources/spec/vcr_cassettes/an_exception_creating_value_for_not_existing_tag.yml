@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - a2c8afec-f294-4c10-9af4-2b775b545888
+      - fb92d777-e484-4bb1-a908-da6b5601f31b
       client-request-id:
-      - 9dfb1765-160a-4d07-97f0-22347fe3913d
+      - 04ba4f54-9127-4d0e-8845-592a85ce27d2
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_531
+      - ESTSFE_IN_99
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLcmwhYn-GGwZohAwy-1luFf0Tr7qvbmUeARwMF816xoQKghUVf7otMS_kjcbl9ykA-ZEHmUWkLFN9nNX0Uar0UPbEOQH5EPxiFUTE7L1kyXjaFK2MV7HjhadL68P3K3NtTPtONOZs1fjivIroGvV7VSHbc_8t-OtR7A4enyNN7CHIAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Fri, 22 Apr 2016 18:19:09 GMT
+      - Thu, 19 May 2016 04:48:05 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1461352749","not_before":"1461348849","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1463636886","not_before":"1463632986","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:19:12 GMT
+  recorded_at: Thu, 19 May 2016 04:48:06 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/tagNames/unknown_tag_name/tagValues/unknown_tag_value?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/tagNames/unknown_tag_name/tagValues/unknown_tag_value?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 6412d195-25f2-474f-90a0-19c44f5a052a
+      - 47bf19e7-f212-4f8e-9725-48b470010f61
       accept-language:
       - en-US
   response:
@@ -85,15 +86,15 @@ http_interactions:
       x-ms-ratelimit-remaining-subscription-writes:
       - '1198'
       x-ms-request-id:
-      - b898ac09-f02b-4a04-a911-9af252876279
+      - a39edc66-9b79-4d81-8a50-232d711b2852
       x-ms-correlation-request-id:
-      - b898ac09-f02b-4a04-a911-9af252876279
+      - a39edc66-9b79-4d81-8a50-232d711b2852
       x-ms-routing-request-id:
-      - CENTRALUS:20160422T181910Z:b898ac09-f02b-4a04-a911-9af252876279
+      - WESTUS:20160519T044808Z:a39edc66-9b79-4d81-8a50-232d711b2852
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 18:19:10 GMT
+      - Thu, 19 May 2016 04:48:07 GMT
       connection:
       - close
       content-length:
@@ -103,5 +104,5 @@ http_interactions:
       string: '{"error":{"code":"SubscriptionTagNameNotFound","message":"Subscription
         tag name ''unknown_tag_name'' could not be found."}}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 18:19:13 GMT
+  recorded_at: Thu, 19 May 2016 04:48:07 GMT
 recorded_with: VCR 3.0.1

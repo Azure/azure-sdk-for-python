@@ -20,7 +20,7 @@ describe 'Resource Groups' do
     params.location = 'westus'
     params.tags = { 'tag1' => 'val1', 'tag2' => 'val2' }
 
-    result = @client.create_or_update(name, params).value!
+    result = @client.create_or_update_async(name, params).value!
 
     expect(result.body).not_to be_nil
     expect(result.body.id).not_to be_nil
@@ -37,8 +37,8 @@ describe 'Resource Groups' do
 
   it 'should throw exception when create or update with nil parameters' do
     params = Models::ResourceGroup.new
-    expect{@client.create_or_update(nil, params)}.to raise_error(ArgumentError)
-    expect{@client.create_or_update('foo', nil)}.to raise_error(ArgumentError)
+    expect{@client.create_or_update_async(nil, params)}.to raise_error(ArgumentError)
+    expect{@client.create_or_update_async('foo', nil)}.to raise_error(ArgumentError)
   end
 
   it 'should raise exception when attempt to update without required parameters' do
@@ -49,12 +49,12 @@ describe 'Resource Groups' do
   end
 
   it 'should raise errors when attempting get resource group' do
-    expect{@client.get(nil)}.to raise_error(ArgumentError)
-    expect{@client.get('~`123').value!}.to raise_error(MsRestAzure::AzureOperationError)
+    expect{@client.get_async(nil)}.to raise_error(ArgumentError)
+    expect{@client.get_async('~`123').value!}.to raise_error(MsRestAzure::AzureOperationError)
   end
 
   it 'should return false when resource group does not not exists' do
-    result = @client.check_existence('non-existence').value!
+    result = @client.check_existence_async('non-existence').value!
     expect(result.response.status).to eq(404)
     expect(result.body).to eq(false)
   end
@@ -66,7 +66,7 @@ describe 'Resource Groups' do
 
   it 'should return false when check existence for not existing resource group' do
     resource_group_name = 'unknown_resource_group'
-    expect(@client.check_existence(resource_group_name).value!.body).to eq(false)
+    expect(@client.check_existence_async(resource_group_name).value!.body).to eq(false)
   end
 end
 
@@ -82,7 +82,7 @@ describe 'Resource Groups' do
   end
 
   it 'should get resource group' do
-    result = @client.get(@resource_group.name).value!
+    result = @client.get_async(@resource_group.name).value!
 
     expect(result.body).not_to be_nil
     expect(result.body.id).not_to be_nil
@@ -92,19 +92,19 @@ describe 'Resource Groups' do
   end
 
   it 'should list resource groups' do
-    result = @client.list.value!
+    result = @client.list_async.value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
     while !result.body.next_link.nil? && !result.body.next_link.empty?  do
-      result = @client.list_next(result.body.next_link).value!
+      result = @client.list_async(result.body.next_link).value!
       expect(result.body.value).not_to be_nil
       expect(result.body.value).to be_a(Array)
     end
   end
 
   it 'should list resources of resource group' do
-    result = @client.list_resources(@resource_group.name).value!
+    result = @client.list_resources_async(@resource_group.name).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
@@ -116,13 +116,13 @@ describe 'Resource Groups' do
   end
 
   it 'should check resource group exists' do
-    result = @client.check_existence(@resource_group.name).value!.body
+    result = @client.check_existence_async(@resource_group.name).value!.body
     expect(result).to be_truthy
   end
 
   it 'should list list resources in resource group with tag_name and value filter and top parameter' do
     filter = "tagName eq 'tagName' and tagValue eq 'tagValue'"
-    result = @client.list_resources(@resource_group.name, filter, 1).value!
+    result = @client.list_resources_async(@resource_group.name, filter, 1).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
@@ -135,12 +135,12 @@ describe 'Resource Groups' do
 
   it 'should list resource groups with tag_name and value filter and top parameter' do
     filter = "tagName eq 'tagName' and tagValue eq 'tagValue'"
-    result = @client.list(filter, 1).value!
+    result = @client.list_async(filter, 1).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
     while !result.body.next_link.nil? && !result.body.next_link.empty? do
-      result = @client.list_next(result.body.next_link).value!
+      result = @client.list_next_async(result.body.next_link).value!
       expect(result.body.value).not_to be_nil
       expect(result.body.value).to be_a(Array)
     end
@@ -148,12 +148,12 @@ describe 'Resource Groups' do
 
   it 'should resource groups with tag_name and value filter and top parameter' do
     filter = "tagName eq 'tagName' and tagValue eq 'tagValue'"
-    result = @client.list(filter, 1).value!
+    result = @client.list_async(filter, 1).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
     while !result.body.next_link.nil? && !result.body.next_link.empty? do
-      result = @client.list_next(result.body.next_link).value!
+      result = @client.list_next_async(result.body.next_link).value!
       expect(result.body.value).not_to be_nil
       expect(result.body.value).to be_a(Array)
     end

@@ -33,14 +33,14 @@ describe 'Virtual Networks' do
 
   it 'should get virtual network' do
     vnet = @resource_helper.create_virtual_network(@resource_group.name)
-    result = @client.get(@resource_group.name, vnet.name).value!
+    result = @client.get_async(@resource_group.name, vnet.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(vnet.name)
   end
 
   it 'should list all virtual networks' do
-    result = @client.list_all.value!
+    result = @client.list_all_async.value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
@@ -52,7 +52,7 @@ describe 'Virtual Networks' do
   end
 
   it 'should list all virtual networks in resource group' do
-    result = @client.list(@resource_group.name).value!
+    result = @client.list_async(@resource_group.name).value!
     expect(result.body.value).not_to be_nil
     expect(result.body.value).to be_a(Array)
 
@@ -64,7 +64,7 @@ describe 'Virtual Networks' do
   end
 
   it 'should list all Virtual Networks in a subscription' do
-    result = @client.list_all.value!
+    result = @client.list_all_async.value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)

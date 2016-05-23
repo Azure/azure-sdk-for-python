@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - 06dd6a22-8cbc-4f63-be13-b8f5455652bd
+      - 35ae79c4-b3ea-4280-9783-a33871d8b3ef
       client-request-id:
-      - ca679d96-ddc8-458b-b9c4-0636480d597f
+      - dbe938c3-bd27-4587-8fe4-e23e1ffcfae2
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_26
+      - ESTSFE_IN_538
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLZZqf-xnnZBc6UBVFVHvVmx7PjpFypx0xw4S9s82BKvbXO7ntt4nVDtThEiftLABnw0rFU3KFlFGh3LkKbEMv4HBsZa6TdmzWexLaXM4-N91PWla4EKfZp-SdQjgyXUC567ayVnfawH0-xjBeBUIKuWr4EO4gtGoLZV1pIiI9XiPIAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Sat, 16 Apr 2016 23:36:27 GMT
+      - Wed, 18 May 2016 21:02:09 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1460853386","not_before":"1460849486","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1463608928","not_before":"1463605028","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Sat, 16 Apr 2016 23:36:26 GMT
+  recorded_at: Wed, 18 May 2016 21:02:12 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Compute/locations/westus/publishers/canonical/artifacttypes/vmimage/offers/UbuntuServer/skus/14.04.4-LTS/versions?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Compute/locations/westus/publishers/canonical/artifacttypes/vmimage/offers/UbuntuServer/skus/14.04.4-LTS/versions?api-version=2016-03-30
     body:
       encoding: US-ASCII
       string: ''
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 366bb1df-d08a-41e0-be81-71ab563e8787
+      - a3ba5d9d-1741-4664-8615-177c3b684851
       accept-language:
       - en-US
   response:
@@ -85,17 +86,17 @@ http_interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-ms-request-id:
-      - 45cf6b29-645b-4b65-a792-6ba1f19afbb6
+      - 3b60599f-85f8-4db4-ade1-c5aa08896923
       server:
       - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14971'
+      - '14998'
       x-ms-correlation-request-id:
-      - 79626780-47f4-4947-bef5-869c2071ee8c
+      - 28e4d120-f5bf-44b7-826b-3336ff0c04e7
       x-ms-routing-request-id:
-      - WESTUS:20160416T233627Z:79626780-47f4-4947-bef5-869c2071ee8c
+      - WESTUS:20160518T210209Z:28e4d120-f5bf-44b7-826b-3336ff0c04e7
       date:
-      - Sat, 16 Apr 2016 23:36:26 GMT
+      - Wed, 18 May 2016 21:02:08 GMT
       connection:
       - close
     body:
@@ -106,7 +107,11 @@ http_interactions:
         \   \"id\": \"/Subscriptions/<AZURE_SUBSCRIPTION_ID>/Providers/Microsoft.Compute/Locations/westus/Publishers/canonical/ArtifactTypes/VMImage/Offers/UbuntuServer/Skus/14.04.4-LTS/Versions/14.04.201603140\"\r\n
         \ },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"14.04.201604060\",\r\n
         \   \"id\": \"/Subscriptions/<AZURE_SUBSCRIPTION_ID>/Providers/Microsoft.Compute/Locations/westus/Publishers/canonical/ArtifactTypes/VMImage/Offers/UbuntuServer/Skus/14.04.4-LTS/Versions/14.04.201604060\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"14.04.201605091\",\r\n
+        \   \"id\": \"/Subscriptions/<AZURE_SUBSCRIPTION_ID>/Providers/Microsoft.Compute/Locations/westus/Publishers/canonical/ArtifactTypes/VMImage/Offers/UbuntuServer/Skus/14.04.4-LTS/Versions/14.04.201605091\"\r\n
+        \ },\r\n  {\r\n    \"location\": \"westus\",\r\n    \"name\": \"14.04.201605160\",\r\n
+        \   \"id\": \"/Subscriptions/<AZURE_SUBSCRIPTION_ID>/Providers/Microsoft.Compute/Locations/westus/Publishers/canonical/ArtifactTypes/VMImage/Offers/UbuntuServer/Skus/14.04.4-LTS/Versions/14.04.201605160\"\r\n
         \ }\r\n]"
     http_version: 
-  recorded_at: Sat, 16 Apr 2016 23:36:26 GMT
+  recorded_at: Wed, 18 May 2016 21:02:12 GMT
 recorded_with: VCR 3.0.1

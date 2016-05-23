@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - 4e1c31fe-71be-4c2b-a23a-5d48cd7193bd
+      - bc4d1bf9-32ef-4013-8962-37253d217d02
       client-request-id:
-      - 12b37b3b-751a-4baa-9304-3494b571d93f
+      - 2e4c1c3c-e648-40ba-9776-e5a5076cf884
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_34
+      - ESTSFE_IN_44
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLZVJF_20Hgfcw1ltnGB80RquSYzEOvyUYQe2jf2EOgOh1XP4BgmuI_j6t-bMkVsLRFxDTqPd8DA3DiyMhX6NDoC8iQhZnl533KGhHTJGKAP5cwbVmAc7ZToupM6CwY8iyo5-UWGhG-N2LVz6TVWs8FoTQPtHj5DehnAouGnk62U9IAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Fri, 08 Apr 2016 00:53:26 GMT
+      - Thu, 19 May 2016 18:12:27 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1460080407","not_before":"1460076507","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1463685147","not_before":"1463681247","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Fri, 08 Apr 2016 00:53:27 GMT
+  recorded_at: Thu, 19 May 2016 18:12:31 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_storage?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_storage?api-version=2016-02-01
     body:
       encoding: UTF-8
       string: '{"location":"westus"}'
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - b746fb27-3a24-46f1-908a-b4e2a92273fa
+      - 2f81f7a2-e0a6-415e-ac91-bb0bc359e8ab
       accept-language:
       - en-US
       Content-Type:
@@ -87,33 +88,33 @@ http_interactions:
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
       x-ms-request-id:
-      - ecb7bb63-8e82-475f-97d6-d4cf7099da4c
+      - fea5d20a-5c0b-4baa-8c95-14d85f5b8f71
       x-ms-correlation-request-id:
-      - ecb7bb63-8e82-475f-97d6-d4cf7099da4c
+      - fea5d20a-5c0b-4baa-8c95-14d85f5b8f71
       x-ms-routing-request-id:
-      - WESTUS:20160408T005328Z:ecb7bb63-8e82-475f-97d6-d4cf7099da4c
+      - CENTRALUS:20160519T181229Z:fea5d20a-5c0b-4baa-8c95-14d85f5b8f71
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 08 Apr 2016 00:53:28 GMT
+      - Thu, 19 May 2016 18:12:28 GMT
       connection:
       - close
     body:
       encoding: UTF-8
       string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_storage","name":"RubySDKTest_azure_mgmt_storage","location":"westus","properties":{"provisioningState":"Succeeded"}}'
     http_version: 
-  recorded_at: Fri, 08 Apr 2016 00:53:28 GMT
+  recorded_at: Thu, 19 May 2016 18:12:32 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968?api-version=2016-01-01
     body:
       encoding: UTF-8
-      string: '{"location":"westus","properties":{"accountType":"Standard_LRS"}}'
+      string: '{"sku":{"name":"Standard_LRS"},"kind":"Storage","location":"westus","properties":{}}'
     headers:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 9379628c-add1-440a-9cfa-bff13da34550
+      - 125d1826-8575-48a0-9a68-55bcdfe9c668
       accept-language:
       - en-US
       Content-Type:
@@ -132,32 +133,32 @@ http_interactions:
       expires:
       - "-1"
       location:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/ec8563ed-459e-4232-a431-ab9b26a6db68?monitor=true&api-version=2015-06-15
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?monitor=true&api-version=2016-01-01
       retry-after: '1'
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1198'
       x-ms-request-id:
-      - e917c2c4-e368-42a5-acb6-87b6a38dc869
+      - ff1257e3-2109-4c92-a8d1-9da36694b084
       server:
       - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
       x-ms-correlation-request-id:
-      - e917c2c4-e368-42a5-acb6-87b6a38dc869
+      - ff1257e3-2109-4c92-a8d1-9da36694b084
       x-ms-routing-request-id:
-      - WESTUS:20160408T005329Z:e917c2c4-e368-42a5-acb6-87b6a38dc869
+      - CENTRALUS:20160519T181230Z:ff1257e3-2109-4c92-a8d1-9da36694b084
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 08 Apr 2016 00:53:29 GMT
+      - Thu, 19 May 2016 18:12:30 GMT
       connection:
       - close
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 08 Apr 2016 00:53:29 GMT
+  recorded_at: Thu, 19 May 2016 18:12:33 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/ec8563ed-459e-4232-a431-ab9b26a6db68?api-version=2015-06-15&monitor=true
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
     body:
       encoding: US-ASCII
       string: ''
@@ -165,7 +166,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 6aa7833b-f408-47d7-95b2-5f0b8c859b48
+      - 642c0ea0-b756-453a-b919-12fe544a15bd
       accept-language:
       - en-US
       Content-Type:
@@ -186,29 +187,31 @@ http_interactions:
       vary:
       - Accept-Encoding
       x-ms-request-id:
-      - 8618d5bd-bf51-464c-846f-4bf0a011823e
+      - 3163a2f8-af1e-4b54-b927-defaadc6bf46
       server:
       - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14952'
+      - '14969'
       x-ms-correlation-request-id:
-      - 8618d5bd-bf51-464c-846f-4bf0a011823e
+      - 3163a2f8-af1e-4b54-b927-defaadc6bf46
       x-ms-routing-request-id:
-      - WESTUS:20160408T005354Z:8618d5bd-bf51-464c-846f-4bf0a011823e
+      - CENTRALUS:20160519T181254Z:3163a2f8-af1e-4b54-b927-defaadc6bf46
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 08 Apr 2016 00:53:53 GMT
+      - Thu, 19 May 2016 18:12:54 GMT
       connection:
       - close
     body:
       encoding: ASCII-8BIT
-      string: '{"location":"westus","properties":{"accountType":"Standard_LRS"}}'
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
     http_version: 
-  recorded_at: Fri, 08 Apr 2016 00:53:54 GMT
+  recorded_at: Thu, 19 May 2016 18:12:57 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968?api-version=2016-01-01
     body:
       encoding: US-ASCII
       string: ''
@@ -216,7 +219,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - ae4f4144-00e0-4aea-abce-fc22af270d00
+      - e9bd1422-44e4-47ab-ada4-03d7986fd086
       accept-language:
       - en-US
   response:
@@ -235,30 +238,31 @@ http_interactions:
       vary:
       - Accept-Encoding
       x-ms-request-id:
-      - 001be2b4-8e7d-4adc-bd35-b340dabe563c
+      - 5a37f034-04ec-4648-a8f6-8683b984695f
       server:
       - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14951'
+      - '14970'
       x-ms-correlation-request-id:
-      - 001be2b4-8e7d-4adc-bd35-b340dabe563c
+      - 5a37f034-04ec-4648-a8f6-8683b984695f
       x-ms-routing-request-id:
-      - WESTUS:20160408T005355Z:001be2b4-8e7d-4adc-bd35-b340dabe563c
+      - CENTRALUS:20160519T181255Z:5a37f034-04ec-4648-a8f6-8683b984695f
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 08 Apr 2016 00:53:54 GMT
+      - Thu, 19 May 2016 18:12:54 GMT
       connection:
       - close
     body:
       encoding: ASCII-8BIT
-      string: |
-        {"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","location":"westus","name":"storage8acbcd443ca040968","properties":{"accountType":"Standard_LRS","creationTime":"2016-04-08T00:53:29.2640809Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
     http_version: 
-  recorded_at: Fri, 08 Apr 2016 00:53:54 GMT
+  recorded_at: Thu, 19 May 2016 18:12:58 GMT
 - request:
-    method: delete
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_storage?api-version=2015-11-01
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
     body:
       encoding: US-ASCII
       string: ''
@@ -266,7 +270,113 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - e9ee5ced-7338-47e9-813a-9cee2bf23446
+      - c96d7396-caed-4e9f-9fc9-4cb629309b80
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 7bebe75a-aace-4ecf-abcb-4721d87dd7d5
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14969'
+      x-ms-correlation-request-id:
+      - 7bebe75a-aace-4ecf-abcb-4721d87dd7d5
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181255Z:7bebe75a-aace-4ecf-abcb-4721d87dd7d5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:54 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:12:58 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 7e026027-c2c4-48ef-b098-f1be9c03249e
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 4ecb95c8-7eef-4e25-aac1-db089409e25f
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14963'
+      x-ms-correlation-request-id:
+      - 4ecb95c8-7eef-4e25-aac1-db089409e25f
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181255Z:4ecb95c8-7eef-4e25-aac1-db089409e25f
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:55 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:12:58 GMT
+- request:
+    method: delete
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_storage?api-version=2016-02-01
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 85fa352d-bd02-4f72-b374-8faa05b9bd25
       accept-language:
       - en-US
   response:
@@ -281,20 +391,20 @@ http_interactions:
       expires:
       - "-1"
       location:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RlNUT1JBR0UtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2015-11-01
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RlNUT1JBR0UtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01
       retry-after: '1'
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
       x-ms-request-id:
-      - ab5e688e-05fc-409f-a7ba-28776601883f
+      - 7cf2e786-ec23-40cf-aa5c-5704d091527b
       x-ms-correlation-request-id:
-      - ab5e688e-05fc-409f-a7ba-28776601883f
+      - 7cf2e786-ec23-40cf-aa5c-5704d091527b
       x-ms-routing-request-id:
-      - WESTUS:20160408T005355Z:ab5e688e-05fc-409f-a7ba-28776601883f
+      - CENTRALUS:20160519T181256Z:7cf2e786-ec23-40cf-aa5c-5704d091527b
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 08 Apr 2016 00:53:55 GMT
+      - Thu, 19 May 2016 18:12:55 GMT
       connection:
       - close
       content-length:
@@ -303,10 +413,10 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 08 Apr 2016 00:53:55 GMT
+  recorded_at: Thu, 19 May 2016 18:12:59 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RlNUT1JBR0UtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
     body:
       encoding: US-ASCII
       string: ''
@@ -314,7 +424,3664 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 0a0cbca4-3533-4899-8e2d-b432fd9b15c3
+      - b70386ef-4a80-46ad-b371-376b32178070
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 3328da62-fe43-49ef-8c35-f64c5bd9888b
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14889'
+      x-ms-correlation-request-id:
+      - 3328da62-fe43-49ef-8c35-f64c5bd9888b
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181256Z:3328da62-fe43-49ef-8c35-f64c5bd9888b
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:55 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:12:59 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 46224e20-0e8d-4501-b628-4738144f340d
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 11d13d25-d603-4c15-96fb-438d8ac70565
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14971'
+      x-ms-correlation-request-id:
+      - 11d13d25-d603-4c15-96fb-438d8ac70565
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181256Z:11d13d25-d603-4c15-96fb-438d8ac70565
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:56 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:12:59 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 7e593161-804a-4e17-8280-68347a3a72a8
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - fb9d7499-3073-4269-8811-2580575fd464
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14970'
+      x-ms-correlation-request-id:
+      - fb9d7499-3073-4269-8811-2580575fd464
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181257Z:fb9d7499-3073-4269-8811-2580575fd464
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:57 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:12:59 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 1dd95d20-70fc-4075-b314-08525e7d9cf2
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 14117d6c-2be8-45c7-af5f-bb4b1b62e866
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14968'
+      x-ms-correlation-request-id:
+      - 14117d6c-2be8-45c7-af5f-bb4b1b62e866
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181257Z:14117d6c-2be8-45c7-af5f-bb4b1b62e866
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:57 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:00 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 9081cc61-6b1c-4b53-a40f-8bed97661a41
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - cf01fce2-5f5a-4a71-b4a0-80f49bd4d032
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14958'
+      x-ms-correlation-request-id:
+      - cf01fce2-5f5a-4a71-b4a0-80f49bd4d032
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181258Z:cf01fce2-5f5a-4a71-b4a0-80f49bd4d032
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:57 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:00 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - d2bf8314-81b1-4b87-b06b-f751f68addd5
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 3dfb5e8c-50be-4cfb-93ce-b0e82c121f80
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14932'
+      x-ms-correlation-request-id:
+      - 3dfb5e8c-50be-4cfb-93ce-b0e82c121f80
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181258Z:3dfb5e8c-50be-4cfb-93ce-b0e82c121f80
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:57 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:01 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 079a52f9-3896-4132-829b-ad627ef0de0e
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - abd86897-34de-4011-8922-e64a4aac2c69
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14970'
+      x-ms-correlation-request-id:
+      - abd86897-34de-4011-8922-e64a4aac2c69
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181259Z:abd86897-34de-4011-8922-e64a4aac2c69
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:58 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:01 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - e28df69c-b652-4038-8262-3107d88732de
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - dd3601a4-747b-424b-9361-ea8983e03cd4
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14968'
+      x-ms-correlation-request-id:
+      - dd3601a4-747b-424b-9361-ea8983e03cd4
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181259Z:dd3601a4-747b-424b-9361-ea8983e03cd4
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:59 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:02 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 6d3d2855-4e20-49b4-b51c-d608680e81d7
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - cdd29c28-02d1-4d71-8c08-504be7bea329
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14969'
+      x-ms-correlation-request-id:
+      - cdd29c28-02d1-4d71-8c08-504be7bea329
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181259Z:cdd29c28-02d1-4d71-8c08-504be7bea329
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:12:59 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:02 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 05cfd043-242c-4598-932c-d20be79396b6
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 3ee608db-3e98-4047-995b-d3cb0a8ccc65
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14969'
+      x-ms-correlation-request-id:
+      - 3ee608db-3e98-4047-995b-d3cb0a8ccc65
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181300Z:3ee608db-3e98-4047-995b-d3cb0a8ccc65
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:00 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:03 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - de885667-0756-4dd2-959b-566e4a08d470
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 8a69409d-77f6-4a01-92eb-44cfa3f4dcfe
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14970'
+      x-ms-correlation-request-id:
+      - 8a69409d-77f6-4a01-92eb-44cfa3f4dcfe
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181300Z:8a69409d-77f6-4a01-92eb-44cfa3f4dcfe
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:00 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:03 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 6ffb02f2-74a7-4dee-8b1d-9a540504bfd1
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 4c83716f-877f-4fb3-a828-489444d6ff1e
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14970'
+      x-ms-correlation-request-id:
+      - 4c83716f-877f-4fb3-a828-489444d6ff1e
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181301Z:4c83716f-877f-4fb3-a828-489444d6ff1e
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:00 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:04 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 05df6500-213a-4308-b6fa-6460ad46b32e
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - eb050b74-474d-4b77-a8bc-00f5fb66fe82
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14969'
+      x-ms-correlation-request-id:
+      - eb050b74-474d-4b77-a8bc-00f5fb66fe82
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181301Z:eb050b74-474d-4b77-a8bc-00f5fb66fe82
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:01 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:04 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - fffb13c4-8991-4b88-ba69-bba0d7713d18
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 45b11ee9-c8bd-416e-8697-5b6d24f95520
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14967'
+      x-ms-correlation-request-id:
+      - 45b11ee9-c8bd-416e-8697-5b6d24f95520
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181302Z:45b11ee9-c8bd-416e-8697-5b6d24f95520
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:02 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:05 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 3ae793e1-c84c-4f4e-99e5-2e5109beb231
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 1265f57d-7f2d-4982-93bc-a465803f711d
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14957'
+      x-ms-correlation-request-id:
+      - 1265f57d-7f2d-4982-93bc-a465803f711d
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181302Z:1265f57d-7f2d-4982-93bc-a465803f711d
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:02 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:05 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 8ad972d6-baa1-4e6e-b7da-f2844f0d88fd
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 63694b28-ae19-4a93-8086-94a3fa0290d0
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14931'
+      x-ms-correlation-request-id:
+      - 63694b28-ae19-4a93-8086-94a3fa0290d0
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181303Z:63694b28-ae19-4a93-8086-94a3fa0290d0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:03 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:05 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 2140aa6c-86a5-4de2-be2b-c753d5df31a0
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 027367de-12f4-4fab-a529-fbaa529ecf98
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14970'
+      x-ms-correlation-request-id:
+      - 027367de-12f4-4fab-a529-fbaa529ecf98
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181303Z:027367de-12f4-4fab-a529-fbaa529ecf98
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:03 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:06 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 71f0520d-a8ab-4462-8793-5b1a7475d493
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 63fbc514-84b3-490e-86f0-f7403ec9d6dd
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14938'
+      x-ms-correlation-request-id:
+      - 63fbc514-84b3-490e-86f0-f7403ec9d6dd
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181304Z:63fbc514-84b3-490e-86f0-f7403ec9d6dd
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:03 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:06 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 82201e0b-f820-4da9-b7d1-dd650dca22ed
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - fab68f49-59fd-4e19-9e1d-228f08f06e24
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14968'
+      x-ms-correlation-request-id:
+      - fab68f49-59fd-4e19-9e1d-228f08f06e24
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181304Z:fab68f49-59fd-4e19-9e1d-228f08f06e24
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:03 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:07 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - ff712292-2161-4ac2-bac5-c319a049afc2
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 3e0647ed-a190-4625-ba77-191b94abf697
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14967'
+      x-ms-correlation-request-id:
+      - 3e0647ed-a190-4625-ba77-191b94abf697
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181305Z:3e0647ed-a190-4625-ba77-191b94abf697
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:04 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:07 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 8a9b01f2-bb4f-4732-9117-f0d38f5e03c1
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 5044864f-2b8d-4954-9618-5ea9ec3fb942
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14961'
+      x-ms-correlation-request-id:
+      - 5044864f-2b8d-4954-9618-5ea9ec3fb942
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181305Z:5044864f-2b8d-4954-9618-5ea9ec3fb942
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:04 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:08 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - bf63d824-a5c5-4394-95c7-26f04ff929bb
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 7c8aa80f-d731-4400-ae60-6d53a5c21352
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14969'
+      x-ms-correlation-request-id:
+      - 7c8aa80f-d731-4400-ae60-6d53a5c21352
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181305Z:7c8aa80f-d731-4400-ae60-6d53a5c21352
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:05 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:08 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 10222e48-836d-49b2-add6-1caefcefb3e9
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 74eed881-df11-4e67-8e4d-b62f00307eb5
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14969'
+      x-ms-correlation-request-id:
+      - 74eed881-df11-4e67-8e4d-b62f00307eb5
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181306Z:74eed881-df11-4e67-8e4d-b62f00307eb5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:05 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:09 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 4dd2cb71-b620-48da-a669-83b166397349
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 34199920-f078-4a19-8673-e5cfa677059d
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - 34199920-f078-4a19-8673-e5cfa677059d
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181306Z:34199920-f078-4a19-8673-e5cfa677059d
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:06 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:09 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 2b9abfbb-e805-4668-838f-b1065525ad70
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 0e1b5260-033b-4e45-91c7-f89fab9dc20f
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14963'
+      x-ms-correlation-request-id:
+      - 0e1b5260-033b-4e45-91c7-f89fab9dc20f
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181307Z:0e1b5260-033b-4e45-91c7-f89fab9dc20f
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:06 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:10 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - c4471995-87da-4b60-85a4-c0270f447401
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - e3651089-78aa-46e8-a1e1-5c430f283421
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14930'
+      x-ms-correlation-request-id:
+      - e3651089-78aa-46e8-a1e1-5c430f283421
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181307Z:e3651089-78aa-46e8-a1e1-5c430f283421
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:07 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:10 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - d8786c91-8779-4904-8f4d-b7b3f8bfdeb1
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 58a98102-b23c-4003-a7fb-5d96063fc401
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - 58a98102-b23c-4003-a7fb-5d96063fc401
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181308Z:58a98102-b23c-4003-a7fb-5d96063fc401
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:07 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:10 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 3da165fd-21c7-47fb-a3e7-525ef6ba6ef9
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 07fc3528-11e0-4c39-9c60-9f0182881caf
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - 07fc3528-11e0-4c39-9c60-9f0182881caf
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181308Z:07fc3528-11e0-4c39-9c60-9f0182881caf
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:08 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:11 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 587786c2-8b1f-4d24-894d-9c8dcf48e3a4
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - c8f425f0-a263-410b-90ab-68f504e424f5
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14967'
+      x-ms-correlation-request-id:
+      - c8f425f0-a263-410b-90ab-68f504e424f5
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181309Z:c8f425f0-a263-410b-90ab-68f504e424f5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:09 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:11 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 189d45a8-653d-433d-b52a-c9e34d3ba2c9
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 18978065-54e9-4b6f-92c6-24dd0656a7d7
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - 18978065-54e9-4b6f-92c6-24dd0656a7d7
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181309Z:18978065-54e9-4b6f-92c6-24dd0656a7d7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:09 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:12 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - ca12831a-8614-4e1c-a404-2b9fd2c87cea
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 7c843636-0d34-4ced-a7bf-e747c23af180
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14968'
+      x-ms-correlation-request-id:
+      - 7c843636-0d34-4ced-a7bf-e747c23af180
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181310Z:7c843636-0d34-4ced-a7bf-e747c23af180
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:09 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:12 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 674c5609-889b-45c3-b1c0-8985f3ebf892
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 7472aa6b-d9d7-4eb6-8a9e-3b188f728c79
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14968'
+      x-ms-correlation-request-id:
+      - 7472aa6b-d9d7-4eb6-8a9e-3b188f728c79
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181310Z:7472aa6b-d9d7-4eb6-8a9e-3b188f728c79
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:09 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:13 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 36d2ff3e-feec-4957-9a2f-54595bd6551f
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 25b33e51-4027-446b-8ce9-0bc74ca97cc5
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14968'
+      x-ms-correlation-request-id:
+      - 25b33e51-4027-446b-8ce9-0bc74ca97cc5
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181311Z:25b33e51-4027-446b-8ce9-0bc74ca97cc5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:10 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:13 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 0a626da0-ae84-456c-98b1-ee511ed754c6
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 28e9633a-9f0c-43fb-a345-369858d808c0
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14965'
+      x-ms-correlation-request-id:
+      - 28e9633a-9f0c-43fb-a345-369858d808c0
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181311Z:28e9633a-9f0c-43fb-a345-369858d808c0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:10 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:14 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - fe2e69bd-a712-4a47-bd05-5aeec3279c33
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 279b557a-f5b2-421a-84ed-8ec6486b3e10
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14962'
+      x-ms-correlation-request-id:
+      - 279b557a-f5b2-421a-84ed-8ec6486b3e10
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181311Z:279b557a-f5b2-421a-84ed-8ec6486b3e10
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:11 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:14 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - e5121e60-36aa-4876-820f-9dcf9ff812e4
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 4fe98399-3241-4d0a-9106-7335b471caec
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14892'
+      x-ms-correlation-request-id:
+      - 4fe98399-3241-4d0a-9106-7335b471caec
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181312Z:4fe98399-3241-4d0a-9106-7335b471caec
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:11 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:15 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 710dd48a-2c63-476d-8af8-ee3b48393f53
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 6792fb4f-5fbb-46e8-954c-f2764ce0b218
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14965'
+      x-ms-correlation-request-id:
+      - 6792fb4f-5fbb-46e8-954c-f2764ce0b218
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181313Z:6792fb4f-5fbb-46e8-954c-f2764ce0b218
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:13 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:16 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 45b8d54b-12f6-401b-a8f2-ac1ad6c4026a
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - cdb946e2-ad3f-480e-b4d9-94d53f6f65cd
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14965'
+      x-ms-correlation-request-id:
+      - cdb946e2-ad3f-480e-b4d9-94d53f6f65cd
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181314Z:cdb946e2-ad3f-480e-b4d9-94d53f6f65cd
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:14 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:17 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 81c05a5f-a2b6-4d1b-bcca-2c2af5b4dc8f
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - b81e1c08-747b-44b3-af94-cbd5db45173c
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14965'
+      x-ms-correlation-request-id:
+      - b81e1c08-747b-44b3-af94-cbd5db45173c
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181314Z:b81e1c08-747b-44b3-af94-cbd5db45173c
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:14 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:17 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 600b48c2-3376-485f-be41-f7c8c420d77a
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 6a2623be-ae43-44d2-b165-7117f12f2071
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14959'
+      x-ms-correlation-request-id:
+      - 6a2623be-ae43-44d2-b165-7117f12f2071
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181315Z:6a2623be-ae43-44d2-b165-7117f12f2071
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:14 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:17 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 2fc8cf86-9350-432a-b81c-e135ad66840d
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - a899c427-80af-47ae-bce2-7e3aadbfaf5a
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14967'
+      x-ms-correlation-request-id:
+      - a899c427-80af-47ae-bce2-7e3aadbfaf5a
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181315Z:a899c427-80af-47ae-bce2-7e3aadbfaf5a
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:15 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:18 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 9585cbc7-0fd0-4f4e-8db7-da3f42813e3b
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - e9d0758b-d3d7-4a09-ab18-17e94f251e12
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - e9d0758b-d3d7-4a09-ab18-17e94f251e12
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181315Z:e9d0758b-d3d7-4a09-ab18-17e94f251e12
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:15 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:18 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 01197ad2-8f42-4048-b2af-65ec45d261af
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 41462fd8-6524-4825-8bfb-4630023730aa
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - 41462fd8-6524-4825-8bfb-4630023730aa
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181316Z:41462fd8-6524-4825-8bfb-4630023730aa
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:15 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:19 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - f8519eaa-4125-49ba-adce-5a0b80da3a7a
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 1f2bef37-7fd6-4af4-8eb0-b638dc84c419
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14954'
+      x-ms-correlation-request-id:
+      - 1f2bef37-7fd6-4af4-8eb0-b638dc84c419
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181316Z:1f2bef37-7fd6-4af4-8eb0-b638dc84c419
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:16 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:19 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 697233a6-c294-4dd0-902e-f09827a7fd07
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 9f715ac0-8d68-4cbf-a360-e5fcc7c676a5
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - 9f715ac0-8d68-4cbf-a360-e5fcc7c676a5
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181317Z:9f715ac0-8d68-4cbf-a360-e5fcc7c676a5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:16 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:20 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 4c888aec-b4a7-44bf-91cd-0346e9986ade
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 819187a0-dd3b-4595-93fa-bc3528e36b20
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14967'
+      x-ms-correlation-request-id:
+      - 819187a0-dd3b-4595-93fa-bc3528e36b20
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181317Z:819187a0-dd3b-4595-93fa-bc3528e36b20
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:16 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:20 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 89d546ac-5855-4873-b295-c9ceeb39dab8
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 41646410-65e2-44f9-9ca3-5271183ae522
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14935'
+      x-ms-correlation-request-id:
+      - 41646410-65e2-44f9-9ca3-5271183ae522
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181317Z:41646410-65e2-44f9-9ca3-5271183ae522
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:16 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:20 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 85331453-242d-4e09-9acf-1d72aa4a8796
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 7677341e-74e2-4a74-88b3-05301beaced0
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14965'
+      x-ms-correlation-request-id:
+      - 7677341e-74e2-4a74-88b3-05301beaced0
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181318Z:7677341e-74e2-4a74-88b3-05301beaced0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:18 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:21 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 0e73f804-0d68-40ba-b2f3-141a326ae16f
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - f5367c9b-1f8c-4616-ad39-89326c22fdb5
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14964'
+      x-ms-correlation-request-id:
+      - f5367c9b-1f8c-4616-ad39-89326c22fdb5
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181318Z:f5367c9b-1f8c-4616-ad39-89326c22fdb5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:18 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:21 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - d4f48645-84c5-4c04-bf56-1d92429e42e4
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - db29aa8c-4ba0-40ab-86a8-a8b19d901239
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - db29aa8c-4ba0-40ab-86a8-a8b19d901239
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181319Z:db29aa8c-4ba0-40ab-86a8-a8b19d901239
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:18 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:22 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 430769a4-ceee-48b9-a0cd-75ed57571ecc
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 840ecc67-e2e0-4194-8057-22607e64d115
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - 840ecc67-e2e0-4194-8057-22607e64d115
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181319Z:840ecc67-e2e0-4194-8057-22607e64d115
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:19 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:22 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - bd149b08-24ed-4e61-a0c2-c6a8764798b1
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - f4a05496-3d7c-4d40-abca-aa9121a15973
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14966'
+      x-ms-correlation-request-id:
+      - f4a05496-3d7c-4d40-abca-aa9121a15973
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181320Z:f4a05496-3d7c-4d40-abca-aa9121a15973
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:20 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:22 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 7a0a5a66-2051-4db2-917d-8b0ddd1482dc
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 49f75714-9c01-48d3-8b16-8f2b9986f345
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14943'
+      x-ms-correlation-request-id:
+      - 49f75714-9c01-48d3-8b16-8f2b9986f345
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181320Z:49f75714-9c01-48d3-8b16-8f2b9986f345
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:20 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:23 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - e6a6b9e0-704a-48c2-a754-1f980f9bc91b
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - c7b2ac62-6e5a-49ea-ac66-23649e12e532
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14960'
+      x-ms-correlation-request-id:
+      - c7b2ac62-6e5a-49ea-ac66-23649e12e532
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181321Z:c7b2ac62-6e5a-49ea-ac66-23649e12e532
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:20 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:23 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 60013838-eddd-4e78-b7c9-ffd33f94f51c
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - a2328599-94b2-4aea-9c56-411c5952a309
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14890'
+      x-ms-correlation-request-id:
+      - a2328599-94b2-4aea-9c56-411c5952a309
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181321Z:a2328599-94b2-4aea-9c56-411c5952a309
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:20 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:24 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - f6399659-ed09-4dc2-a006-fcf2add8d67b
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 0be63a2b-b6ee-401c-af78-a8599492eaaf
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14963'
+      x-ms-correlation-request-id:
+      - 0be63a2b-b6ee-401c-af78-a8599492eaaf
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181321Z:0be63a2b-b6ee-401c-af78-a8599492eaaf
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:21 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:24 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 093bd6a3-5641-43b3-a0e1-93c2e6c2e165
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 19d6da3b-f84e-41af-9ba6-43f38e471e5c
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14963'
+      x-ms-correlation-request-id:
+      - 19d6da3b-f84e-41af-9ba6-43f38e471e5c
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181322Z:19d6da3b-f84e-41af-9ba6-43f38e471e5c
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:21 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:25 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 2e32dcf1-9f1a-4c79-80ed-a2d1b50dc789
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 01ca3187-e219-4474-8711-e8db0d188036
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14964'
+      x-ms-correlation-request-id:
+      - 01ca3187-e219-4474-8711-e8db0d188036
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181322Z:01ca3187-e219-4474-8711-e8db0d188036
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:22 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:25 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - b2424de7-6865-41fb-a9ff-8ff850dda0d9
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 88964150-fe8d-4903-b087-c8e52c239911
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14964'
+      x-ms-correlation-request-id:
+      - 88964150-fe8d-4903-b087-c8e52c239911
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181323Z:88964150-fe8d-4903-b087-c8e52c239911
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:22 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:26 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 3c9fd276-a3b8-4d44-bd87-ffa8d4d9acdf
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - d374ce8c-4c7f-4d7b-accb-28e393e27ecf
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14963'
+      x-ms-correlation-request-id:
+      - d374ce8c-4c7f-4d7b-accb-28e393e27ecf
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181323Z:d374ce8c-4c7f-4d7b-accb-28e393e27ecf
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:22 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:26 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 50f43de6-c9a0-4adf-9048-4a517ad28cd0
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 394627e7-8501-46aa-b7a8-000600206405
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14965'
+      x-ms-correlation-request-id:
+      - 394627e7-8501-46aa-b7a8-000600206405
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181324Z:394627e7-8501-46aa-b7a8-000600206405
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:23 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:26 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 012d18ed-7fab-4849-9dcd-c08db64e20bc
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 7cf20131-287c-4efc-9166-071388868d44
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14965'
+      x-ms-correlation-request-id:
+      - 7cf20131-287c-4efc-9166-071388868d44
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181324Z:7cf20131-287c-4efc-9166-071388868d44
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:24 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:27 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - b28d428e-f417-4e6b-a1ce-0821871a84e7
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 304c4f46-e11f-4f02-b921-3323d6e39992
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14965'
+      x-ms-correlation-request-id:
+      - 304c4f46-e11f-4f02-b921-3323d6e39992
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181325Z:304c4f46-e11f-4f02-b921-3323d6e39992
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:24 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:27 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - c7a37b29-4447-4f49-83ea-f3ea223ac6f8
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 4c5a2557-dbd5-4834-ac08-661572b4930b
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14942'
+      x-ms-correlation-request-id:
+      - 4c5a2557-dbd5-4834-ac08-661572b4930b
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181325Z:4c5a2557-dbd5-4834-ac08-661572b4930b
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:25 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:28 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - b09fd767-169e-4c30-a9cc-35085ad74021
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - e268dee1-6e79-4198-987b-13a7edf23e90
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14959'
+      x-ms-correlation-request-id:
+      - e268dee1-6e79-4198-987b-13a7edf23e90
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181325Z:e268dee1-6e79-4198-987b-13a7edf23e90
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:25 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:28 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 5ad07bcf-8ca5-49cc-b417-4618974c3993
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 9fbb60ae-a31c-4b0e-8147-98c7cedc3074
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14889'
+      x-ms-correlation-request-id:
+      - 9fbb60ae-a31c-4b0e-8147-98c7cedc3074
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181326Z:9fbb60ae-a31c-4b0e-8147-98c7cedc3074
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:25 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:29 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 0600f51b-0a38-4920-a705-db12e2fa40a9
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - bf31d79c-e07b-4ce5-8504-7531279e6572
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14962'
+      x-ms-correlation-request-id:
+      - bf31d79c-e07b-4ce5-8504-7531279e6572
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181326Z:bf31d79c-e07b-4ce5-8504-7531279e6572
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:26 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:29 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 839c66a6-211e-4eb9-878d-80b3ac080e69
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 34572dd4-aa59-45e0-9355-a15b57d35aea
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14962'
+      x-ms-correlation-request-id:
+      - 34572dd4-aa59-45e0-9355-a15b57d35aea
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181327Z:34572dd4-aa59-45e0-9355-a15b57d35aea
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:26 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:30 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Storage/operations/4a731c70-9dd6-4981-82a9-00a1c4ee5273?api-version=2016-01-01&monitor=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - f1776828-3346-4ad3-ba3d-1f98e4107645
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 44bc6802-f725-4729-af70-b10ab6bc125e
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14962'
+      x-ms-correlation-request-id:
+      - 44bc6802-f725-4729-af70-b10ab6bc125e
+      x-ms-routing-request-id:
+      - CENTRALUS:20160519T181327Z:44bc6802-f725-4729-af70-b10ab6bc125e
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Thu, 19 May 2016 18:13:27 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/rubysdktest_azure_mgmt_storage/providers/Microsoft.Storage/storageAccounts/storage8acbcd443ca040968","kind":"Storage","location":"westus","name":"storage8acbcd443ca040968","properties":{"creationTime":"2016-05-19T18:12:30.8044876Z","primaryEndpoints":{"blob":"https://storage8acbcd443ca040968.blob.core.windows.net/","file":"https://storage8acbcd443ca040968.file.core.windows.net/","queue":"https://storage8acbcd443ca040968.queue.core.windows.net/","table":"https://storage8acbcd443ca040968.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
+
+'
+    http_version: 
+  recorded_at: Thu, 19 May 2016 18:13:30 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RlNUT1JBR0UtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - b27094ab-a8c0-4093-8a25-670b0bb3878f
       accept-language:
       - en-US
       Content-Type:
@@ -331,17 +4098,17 @@ http_interactions:
       expires:
       - "-1"
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14950'
+      - '14955'
       x-ms-request-id:
-      - cb381654-bec5-42ed-86f9-c04696d261aa
+      - 21067279-8cb7-42af-8a08-64dcf2e8e5e5
       x-ms-correlation-request-id:
-      - cb381654-bec5-42ed-86f9-c04696d261aa
+      - 21067279-8cb7-42af-8a08-64dcf2e8e5e5
       x-ms-routing-request-id:
-      - WESTUS:20160408T005528Z:cb381654-bec5-42ed-86f9-c04696d261aa
+      - CENTRALUS:20160519T181427Z:21067279-8cb7-42af-8a08-64dcf2e8e5e5
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 08 Apr 2016 00:55:28 GMT
+      - Thu, 19 May 2016 18:14:27 GMT
       connection:
       - close
       content-length:
@@ -350,5 +4117,5 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Fri, 08 Apr 2016 00:55:29 GMT
+  recorded_at: Thu, 19 May 2016 18:14:30 GMT
 recorded_with: VCR 3.0.1

@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - 21f56d85-8c10-4d86-be80-f4477d4d5b0b
+      - 262349ea-3646-4520-97ea-fbd1fd1d0357
       client-request-id:
-      - 2dfb1432-f750-4a3b-8422-bde64f34464e
+      - 10d27eae-65c2-46ee-9f9f-1f85b8165471
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_68
+      - ESTSFE_IN_149
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLaDyM6ZLiJoqNy6J-h8dQNbt0gN_JACsc1ht3qQgp-D3GeykURkw7_n1eo6EnTwrJ0yo0EpotNqXoMz50ECWuZBjoAMCHCZTXJrTvICSGWyVHQtLakgJmWFYGnKjfTg8y-phioGXOndUzr4YpQinbcQAbeE-fhKY4JApnu28GFx1IAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Sun, 24 Apr 2016 16:16:46 GMT
+      - Thu, 19 May 2016 07:04:43 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1461518207","not_before":"1461514307","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1463645084","not_before":"1463641184","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Sun, 24 Apr 2016 16:16:46 GMT
+  recorded_at: Thu, 19 May 2016 07:04:43 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_network?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_network?api-version=2016-02-01
     body:
       encoding: UTF-8
       string: '{"location":"westus"}'
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - b98e4310-426d-41e5-924d-4fecd88585ab
+      - fbbd8030-36d0-4179-b900-044b1caaada6
       accept-language:
       - en-US
       Content-Type:
@@ -85,27 +86,27 @@ http_interactions:
       expires:
       - "-1"
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1190'
       x-ms-request-id:
-      - 2741216a-4158-4e35-ba07-58399dbb7307
+      - f9f9d967-afd3-46f0-861b-9bd05e762f64
       x-ms-correlation-request-id:
-      - 2741216a-4158-4e35-ba07-58399dbb7307
+      - f9f9d967-afd3-46f0-861b-9bd05e762f64
       x-ms-routing-request-id:
-      - WESTUS:20160424T161648Z:2741216a-4158-4e35-ba07-58399dbb7307
+      - WESTUS:20160519T070444Z:f9f9d967-afd3-46f0-861b-9bd05e762f64
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Sun, 24 Apr 2016 16:16:48 GMT
+      - Thu, 19 May 2016 07:04:44 GMT
       connection:
       - close
     body:
       encoding: UTF-8
       string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network","name":"RubySDKTest_azure_mgmt_network","location":"westus","properties":{"provisioningState":"Succeeded"}}'
     http_version: 
-  recorded_at: Sun, 24 Apr 2016 16:16:47 GMT
+  recorded_at: Thu, 19 May 2016 07:04:44 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-03-30
     body:
       encoding: UTF-8
       string: '{"name":"sec73484","location":"westus"}'
@@ -113,7 +114,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 0550c520-0d8d-44dc-8486-c39975f38696
+      - ecb45d5b-1bb9-489a-b30f-37a7ab2248ff
       accept-language:
       - en-US
       Content-Type:
@@ -135,33 +136,33 @@ http_interactions:
       - "-1"
       retry-after: '1'
       x-ms-request-id:
-      - b2e0c588-bd08-4f46-89a4-3b179554072d
+      - 9956f45f-dd98-4878-b7d1-02f776df44cc
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/b2e0c588-bd08-4f46-89a4-3b179554072d?api-version=2015-06-15
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/9956f45f-dd98-4878-b7d1-02f776df44cc?api-version=2016-03-30
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
       - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1194'
       x-ms-correlation-request-id:
-      - 75413d55-8957-4558-8800-d52a88fba128
+      - 879a675e-b2f0-4cef-9230-d449b230d221
       x-ms-routing-request-id:
-      - WESTUS:20160424T161649Z:75413d55-8957-4558-8800-d52a88fba128
+      - WESTUS:20160519T070445Z:879a675e-b2f0-4cef-9230-d449b230d221
       date:
-      - Sun, 24 Apr 2016 16:16:48 GMT
+      - Thu, 19 May 2016 07:04:45 GMT
       connection:
       - close
     body:
       encoding: UTF-8
       string: "{\r\n  \"name\": \"sec73484\",\r\n  \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484\",\r\n
-        \ \"etag\": \"W/\\\"3f8aab1a-5fd3-45d4-989e-b97f577d32cf\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"afad521f-3557-4155-96e2-6ad08a925cd6\\\"\",\r\n  \"type\":
         \"Microsoft.Network/networkSecurityGroups\",\r\n  \"location\": \"westus\",\r\n
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
-        \"88708602-98ca-4ee3-bdc0-78d21e6e00cb\",\r\n    \"securityRules\": [],\r\n
+        \"847707a9-47df-4213-ad99-c7a2083cb291\",\r\n    \"securityRules\": [],\r\n
         \   \"defaultSecurityRules\": [\r\n      {\r\n        \"name\": \"AllowVnetInBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/AllowVnetInBound\",\r\n
-        \       \"etag\": \"W/\\\"3f8aab1a-5fd3-45d4-989e-b97f577d32cf\\\"\",\r\n
+        \       \"etag\": \"W/\\\"afad521f-3557-4155-96e2-6ad08a925cd6\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Allow inbound traffic from all VMs in VNET\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -170,7 +171,7 @@ http_interactions:
         \         \"access\": \"Allow\",\r\n          \"priority\": 65000,\r\n          \"direction\":
         \"Inbound\"\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowAzureLoadBalancerInBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/AllowAzureLoadBalancerInBound\",\r\n
-        \       \"etag\": \"W/\\\"3f8aab1a-5fd3-45d4-989e-b97f577d32cf\\\"\",\r\n
+        \       \"etag\": \"W/\\\"afad521f-3557-4155-96e2-6ad08a925cd6\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Allow inbound traffic from azure load balancer\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -179,7 +180,7 @@ http_interactions:
         \         \"access\": \"Allow\",\r\n          \"priority\": 65001,\r\n          \"direction\":
         \"Inbound\"\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllInBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/DenyAllInBound\",\r\n
-        \       \"etag\": \"W/\\\"3f8aab1a-5fd3-45d4-989e-b97f577d32cf\\\"\",\r\n
+        \       \"etag\": \"W/\\\"afad521f-3557-4155-96e2-6ad08a925cd6\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Deny all inbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -187,7 +188,7 @@ http_interactions:
         \"*\",\r\n          \"access\": \"Deny\",\r\n          \"priority\": 65500,\r\n
         \         \"direction\": \"Inbound\"\r\n        }\r\n      },\r\n      {\r\n
         \       \"name\": \"AllowVnetOutBound\",\r\n        \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/AllowVnetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"3f8aab1a-5fd3-45d4-989e-b97f577d32cf\\\"\",\r\n
+        \       \"etag\": \"W/\\\"afad521f-3557-4155-96e2-6ad08a925cd6\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to all VMs
         in VNET\",\r\n          \"protocol\": \"*\",\r\n          \"sourcePortRange\":
@@ -196,7 +197,7 @@ http_interactions:
         \         \"access\": \"Allow\",\r\n          \"priority\": 65000,\r\n          \"direction\":
         \"Outbound\"\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowInternetOutBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/AllowInternetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"3f8aab1a-5fd3-45d4-989e-b97f577d32cf\\\"\",\r\n
+        \       \"etag\": \"W/\\\"afad521f-3557-4155-96e2-6ad08a925cd6\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to Internet\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -205,7 +206,7 @@ http_interactions:
         \"Allow\",\r\n          \"priority\": 65001,\r\n          \"direction\": \"Outbound\"\r\n
         \       }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllOutBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/DenyAllOutBound\",\r\n
-        \       \"etag\": \"W/\\\"3f8aab1a-5fd3-45d4-989e-b97f577d32cf\\\"\",\r\n
+        \       \"etag\": \"W/\\\"afad521f-3557-4155-96e2-6ad08a925cd6\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Updating\",\r\n
         \         \"description\": \"Deny all outbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -214,10 +215,10 @@ http_interactions:
         \         \"direction\": \"Outbound\"\r\n        }\r\n      }\r\n    ]\r\n
         \ }\r\n}"
     http_version: 
-  recorded_at: Sun, 24 Apr 2016 16:16:49 GMT
+  recorded_at: Thu, 19 May 2016 07:04:45 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/b2e0c588-bd08-4f46-89a4-3b179554072d?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/9956f45f-dd98-4878-b7d1-02f776df44cc?api-version=2016-03-30
     body:
       encoding: US-ASCII
       string: ''
@@ -225,7 +226,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - feaf6f09-de66-4fd6-8825-07921a3d37e2
+      - d9ca0364-2a50-4cfb-90c5-7972891eb7e6
       accept-language:
       - en-US
       Content-Type:
@@ -246,29 +247,29 @@ http_interactions:
       vary:
       - Accept-Encoding
       x-ms-request-id:
-      - d9843024-eb10-4d2e-b236-42c097bd78bf
+      - cf70fee7-b8c5-43d7-9756-14bd22c1713a
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
       - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14999'
+      - '14941'
       x-ms-correlation-request-id:
-      - ecf46770-f583-4101-a4ed-bb7c9084edda
+      - c4aa80af-f001-4735-9622-cab7de62b103
       x-ms-routing-request-id:
-      - WESTUS:20160424T161719Z:ecf46770-f583-4101-a4ed-bb7c9084edda
+      - WESTUS:20160519T070516Z:c4aa80af-f001-4735-9622-cab7de62b103
       date:
-      - Sun, 24 Apr 2016 16:17:19 GMT
+      - Thu, 19 May 2016 07:05:15 GMT
       connection:
       - close
     body:
       encoding: ASCII-8BIT
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
     http_version: 
-  recorded_at: Sun, 24 Apr 2016 16:17:19 GMT
+  recorded_at: Thu, 19 May 2016 07:05:15 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-03-30
     body:
       encoding: US-ASCII
       string: ''
@@ -276,7 +277,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 914dba00-5f35-486c-a5ad-1d1a84228b6b
+      - d54c7676-21bc-43e0-a254-6a523eb04b29
       Content-Type:
       - application/json
   response:
@@ -293,35 +294,35 @@ http_interactions:
       expires:
       - "-1"
       etag:
-      - W/"cf8861f9-508c-46dd-816e-36aac56fde59"
+      - W/"c7283a1f-d903-48b5-bb2c-f7ddc5b9db80"
       vary:
       - Accept-Encoding
       x-ms-request-id:
-      - 55df5a61-0a94-45bf-b41a-8e72e22be1db
+      - 85b2b714-983e-400a-9d58-7b4b61f74d7d
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
       - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14994'
+      - '14844'
       x-ms-correlation-request-id:
-      - 55586334-d960-4db7-9ec0-78e1b1bc49cf
+      - 9d3c1416-ef9d-4a84-8ca1-7643d4769437
       x-ms-routing-request-id:
-      - WESTUS:20160424T161720Z:55586334-d960-4db7-9ec0-78e1b1bc49cf
+      - WESTUS:20160519T070516Z:9d3c1416-ef9d-4a84-8ca1-7643d4769437
       date:
-      - Sun, 24 Apr 2016 16:17:19 GMT
+      - Thu, 19 May 2016 07:05:16 GMT
       connection:
       - close
     body:
       encoding: ASCII-8BIT
       string: "{\r\n  \"name\": \"sec73484\",\r\n  \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484\",\r\n
-        \ \"etag\": \"W/\\\"cf8861f9-508c-46dd-816e-36aac56fde59\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"c7283a1f-d903-48b5-bb2c-f7ddc5b9db80\\\"\",\r\n  \"type\":
         \"Microsoft.Network/networkSecurityGroups\",\r\n  \"location\": \"westus\",\r\n
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
-        \"88708602-98ca-4ee3-bdc0-78d21e6e00cb\",\r\n    \"securityRules\": [],\r\n
+        \"847707a9-47df-4213-ad99-c7a2083cb291\",\r\n    \"securityRules\": [],\r\n
         \   \"defaultSecurityRules\": [\r\n      {\r\n        \"name\": \"AllowVnetInBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/AllowVnetInBound\",\r\n
-        \       \"etag\": \"W/\\\"cf8861f9-508c-46dd-816e-36aac56fde59\\\"\",\r\n
+        \       \"etag\": \"W/\\\"c7283a1f-d903-48b5-bb2c-f7ddc5b9db80\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow inbound traffic from all VMs in VNET\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -330,7 +331,7 @@ http_interactions:
         \         \"access\": \"Allow\",\r\n          \"priority\": 65000,\r\n          \"direction\":
         \"Inbound\"\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowAzureLoadBalancerInBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/AllowAzureLoadBalancerInBound\",\r\n
-        \       \"etag\": \"W/\\\"cf8861f9-508c-46dd-816e-36aac56fde59\\\"\",\r\n
+        \       \"etag\": \"W/\\\"c7283a1f-d903-48b5-bb2c-f7ddc5b9db80\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow inbound traffic from azure load balancer\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -339,7 +340,7 @@ http_interactions:
         \         \"access\": \"Allow\",\r\n          \"priority\": 65001,\r\n          \"direction\":
         \"Inbound\"\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllInBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/DenyAllInBound\",\r\n
-        \       \"etag\": \"W/\\\"cf8861f9-508c-46dd-816e-36aac56fde59\\\"\",\r\n
+        \       \"etag\": \"W/\\\"c7283a1f-d903-48b5-bb2c-f7ddc5b9db80\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Deny all inbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -347,7 +348,7 @@ http_interactions:
         \"*\",\r\n          \"access\": \"Deny\",\r\n          \"priority\": 65500,\r\n
         \         \"direction\": \"Inbound\"\r\n        }\r\n      },\r\n      {\r\n
         \       \"name\": \"AllowVnetOutBound\",\r\n        \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/AllowVnetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"cf8861f9-508c-46dd-816e-36aac56fde59\\\"\",\r\n
+        \       \"etag\": \"W/\\\"c7283a1f-d903-48b5-bb2c-f7ddc5b9db80\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to all VMs
         in VNET\",\r\n          \"protocol\": \"*\",\r\n          \"sourcePortRange\":
@@ -356,7 +357,7 @@ http_interactions:
         \         \"access\": \"Allow\",\r\n          \"priority\": 65000,\r\n          \"direction\":
         \"Outbound\"\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"AllowInternetOutBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/AllowInternetOutBound\",\r\n
-        \       \"etag\": \"W/\\\"cf8861f9-508c-46dd-816e-36aac56fde59\\\"\",\r\n
+        \       \"etag\": \"W/\\\"c7283a1f-d903-48b5-bb2c-f7ddc5b9db80\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Allow outbound traffic from all VMs to Internet\",\r\n
         \         \"protocol\": \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n
@@ -365,7 +366,7 @@ http_interactions:
         \"Allow\",\r\n          \"priority\": 65001,\r\n          \"direction\": \"Outbound\"\r\n
         \       }\r\n      },\r\n      {\r\n        \"name\": \"DenyAllOutBound\",\r\n
         \       \"id\": \"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/defaultSecurityRules/DenyAllOutBound\",\r\n
-        \       \"etag\": \"W/\\\"cf8861f9-508c-46dd-816e-36aac56fde59\\\"\",\r\n
+        \       \"etag\": \"W/\\\"c7283a1f-d903-48b5-bb2c-f7ddc5b9db80\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"description\": \"Deny all outbound traffic\",\r\n          \"protocol\":
         \"*\",\r\n          \"sourcePortRange\": \"*\",\r\n          \"destinationPortRange\":
@@ -374,10 +375,10 @@ http_interactions:
         \         \"direction\": \"Outbound\"\r\n        }\r\n      }\r\n    ]\r\n
         \ }\r\n}"
     http_version: 
-  recorded_at: Sun, 24 Apr 2016 16:17:19 GMT
+  recorded_at: Thu, 19 May 2016 07:05:15 GMT
 - request:
     method: delete
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_network?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_network?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -385,7 +386,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 883a68a5-1578-4460-b489-527c93d5b724
+      - fdbb47b1-45d5-4ec8-8f76-e2ebc60117e7
       accept-language:
       - en-US
   response:
@@ -400,20 +401,20 @@ http_interactions:
       expires:
       - "-1"
       location:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1Rk5FVFdPUkstV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2015-11-01
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1Rk5FVFdPUkstV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01
       retry-after: '1'
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
       x-ms-request-id:
-      - 0bd328f2-ab45-45d8-95d3-dee52324ff83
+      - bd0fe6cd-f0c5-44f3-a26f-ebc41f92f304
       x-ms-correlation-request-id:
-      - 0bd328f2-ab45-45d8-95d3-dee52324ff83
+      - bd0fe6cd-f0c5-44f3-a26f-ebc41f92f304
       x-ms-routing-request-id:
-      - WESTUS:20160424T161720Z:0bd328f2-ab45-45d8-95d3-dee52324ff83
+      - WESTUS:20160519T070516Z:bd0fe6cd-f0c5-44f3-a26f-ebc41f92f304
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Sun, 24 Apr 2016 16:17:20 GMT
+      - Thu, 19 May 2016 07:05:15 GMT
       connection:
       - close
       content-length:
@@ -422,10 +423,10 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Sun, 24 Apr 2016 16:17:20 GMT
+  recorded_at: Thu, 19 May 2016 07:05:16 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1Rk5FVFdPUkstV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1Rk5FVFdPUkstV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -433,7 +434,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 14a05c50-8aab-40ef-b727-72d0dc72c7c5
+      - a0854081-f9b8-44d6-be4c-df0a3384b43e
       accept-language:
       - en-US
       Content-Type:
@@ -450,17 +451,17 @@ http_interactions:
       expires:
       - "-1"
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14999'
+      - '14965'
       x-ms-request-id:
-      - 94302071-e6d4-460b-bba2-712b5133f627
+      - 4533995f-3e2a-4871-9f44-1d3d9d8b0076
       x-ms-correlation-request-id:
-      - 94302071-e6d4-460b-bba2-712b5133f627
+      - 4533995f-3e2a-4871-9f44-1d3d9d8b0076
       x-ms-routing-request-id:
-      - WESTUS:20160424T161922Z:94302071-e6d4-460b-bba2-712b5133f627
+      - WESTUS:20160519T070718Z:4533995f-3e2a-4871-9f44-1d3d9d8b0076
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Sun, 24 Apr 2016 16:19:21 GMT
+      - Thu, 19 May 2016 07:07:18 GMT
       connection:
       - close
       content-length:
@@ -469,5 +470,5 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Sun, 24 Apr 2016 16:19:21 GMT
+  recorded_at: Thu, 19 May 2016 07:07:17 GMT
 recorded_with: VCR 3.0.1

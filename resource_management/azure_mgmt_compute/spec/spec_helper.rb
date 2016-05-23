@@ -71,7 +71,7 @@ class ResourceHelper
     params = Azure::ARM::Resources::Models::ResourceGroup.new()
     params.location = 'westus'
 
-    resource_client.resource_groups.create_or_update(resource_group_name, params).value!.body
+    resource_client.resource_groups.create_or_update_async(resource_group_name, params).value!.body
   end
 
   def delete_resource_group(name)
@@ -81,7 +81,7 @@ class ResourceHelper
   def create_availability_set(client, resource_group)
     availabilitySetName = 'test-availability-set'
     params = build_availability_set_parameters
-    client.create_or_update(resource_group.name, availabilitySetName, params).value!.body
+    client.create_or_update_async(resource_group.name, availabilitySetName, params).value!.body
   end
 
   def build_availability_set_parameters

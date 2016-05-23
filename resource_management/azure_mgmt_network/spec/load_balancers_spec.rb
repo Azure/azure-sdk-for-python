@@ -22,7 +22,7 @@ describe 'Load balancers' do
 
   it 'should create load balancer' do
     params = build_load_balancer_params
-    result = @client.create_or_update(@resource_group.name, params.name, params).value!
+    result = @client.create_or_update(@resource_group.name, params.name, params).execute.value!
     expect(result.response.status).to eq(201)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(params.name)
@@ -182,13 +182,13 @@ describe 'Load balancers' do
     inbound_udp_props.backend_port = 32900
     inbound_tcp_props.backend_port = 32900
     @client.create_or_update(@resource_group.name, params.name, params).value!
-    result = @client.list_all.value!
+    result = @client.list_all_async.value!
     expect(result.response.status).to eq(200)
   end
 
   it 'should get load balancer' do
     load_balancer = create_load_balancer
-    result = @client.get(@resource_group.name, load_balancer.name).value!
+    result = @client.get_async(@resource_group.name, load_balancer.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(load_balancer.name)
@@ -201,7 +201,7 @@ describe 'Load balancers' do
   end
 
   it 'should list loadbalancers in a subscription' do
-    result = @client.list_all.value!
+    result = @client.list_all_async.value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)
@@ -213,7 +213,7 @@ describe 'Load balancers' do
   end
 
   it 'should list loadbalancers in a resource group' do
-    result = @client.list(@resource_group.name).value!
+    result = @client.list_async(@resource_group.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)

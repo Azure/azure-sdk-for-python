@@ -18,14 +18,14 @@ describe VirtualMachineExtensionImages do
   end
 
   it 'should list virtual machine extension image types' do
-    result = @client.list_types(@location, @publisher_name).value!
+    result = @client.list_types_async(@location, @publisher_name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body).to be_a Array
   end
 
   it 'should list virtual machine extension image versions' do
-    result = @client.list_versions(@location, @publisher_name, @type).value!
+    result = @client.list_versions_async(@location, @publisher_name, @type).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body).to be_a Array
@@ -34,14 +34,14 @@ describe VirtualMachineExtensionImages do
   it 'should list virtual machine extension image versions with filters and top' do
     filter = "startswith(name,'1.1')"
     orderby = 'name'
-    result = @client.list_versions(@location, @publisher_name, @type, filter, 1, orderby).value!
+    result = @client.list_versions_async(@location, @publisher_name, @type, filter, 1, orderby).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body).to be_a Array
   end
 
   it 'should get virtual machine extension image' do
-    result = @client.get(@location, @publisher_name, @type, @version).value!
+    result = @client.get_async(@location, @publisher_name, @type, @version).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
   end

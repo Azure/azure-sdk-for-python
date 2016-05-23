@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - 5b7fbb6b-4c4d-4121-9378-16623f4b18ab
+      - af704ef9-9679-462d-9eed-a397c092b3a4
       client-request-id:
-      - 9e1d678f-c0fd-4e3f-a899-4f54820253a8
+      - e02db4cb-e464-49db-8460-90da490199e7
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_102
+      - ESTSFE_IN_484
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLUACo7KyPhoaQv9ZebMVXukgrs9N8gnZAGLDBX12pdr3LTv18F0U4oKdVWAzfpf6bVlFgdgxD43XRJNRPZJFZBYzmUzBGBkQQvLp_6Xd05qS7cNlVOZ-hmGdAmtd_SZ39RKFNiDdsjP7g_NocLDNjVTzKNKK7rjmA4kvUyOuUIsVIAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Fri, 22 Apr 2016 20:43:59 GMT
+      - Thu, 19 May 2016 03:28:12 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1461361440","not_before":"1461357540","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1463632091","not_before":"1463628191","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 20:44:03 GMT
+  recorded_at: Thu, 19 May 2016 03:28:15 GMT
 - request:
     method: delete
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/%7E%60123?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/%7E%60123?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 3902dbac-0a47-4925-b9db-4d8872b0dec2
+      - 8b210738-05c2-450c-82cd-a64e823ab8a8
       accept-language:
       - en-US
   response:
@@ -85,15 +86,15 @@ http_interactions:
       x-ms-ratelimit-remaining-subscription-writes:
       - '1198'
       x-ms-request-id:
-      - c18a1238-da06-46b3-9a8f-15e322728bdd
+      - ed17ae6d-d75e-490a-a41b-e95357aaf966
       x-ms-correlation-request-id:
-      - c18a1238-da06-46b3-9a8f-15e322728bdd
+      - ed17ae6d-d75e-490a-a41b-e95357aaf966
       x-ms-routing-request-id:
-      - WESTUS:20160422T204400Z:c18a1238-da06-46b3-9a8f-15e322728bdd
+      - WESTUS:20160519T032813Z:ed17ae6d-d75e-490a-a41b-e95357aaf966
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Fri, 22 Apr 2016 20:44:00 GMT
+      - Thu, 19 May 2016 03:28:12 GMT
       connection:
       - close
       content-length:
@@ -104,5 +105,5 @@ http_interactions:
         group name ''~`123'' has these invalid characters: ''~`''. The name can only
         be a letter, digit, ''-'', ''.'', ''('', '')'' or ''_''."}}'
     http_version: 
-  recorded_at: Fri, 22 Apr 2016 20:44:03 GMT
+  recorded_at: Thu, 19 May 2016 03:28:15 GMT
 recorded_with: VCR 3.0.1

@@ -31,7 +31,7 @@ describe 'Security Rules' do
 
   it 'should get security rule' do
     security_rule = create_security_rule
-    result = @client.get(@resource_group.name, @security_group.name, security_rule.name).value!
+    result = @client.get_async(@resource_group.name, @security_group.name, security_rule.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(security_rule.name)
@@ -44,7 +44,7 @@ describe 'Security Rules' do
   end
 
   it 'should list all the security rules in a network security group' do
-    result = @client.list(@resource_group.name, @security_group.name).value!
+    result = @client.list_async(@resource_group.name, @security_group.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)

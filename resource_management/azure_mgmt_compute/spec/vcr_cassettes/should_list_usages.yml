@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - 7f0bdd52-577a-493f-8bc7-8b261676c641
+      - 34a98310-20d8-4dec-a9a0-f0d95e1e8fe8
       client-request-id:
-      - 633cea09-78c6-4049-9e1b-d97d6fd11c64
+      - f38f2fe0-6f02-46f2-a2a4-92d383b5241f
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_389
+      - ESTSFE_IN_299
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLVzigTyrf1MfoYgPgEQjHWvRDIv97NZ9uenhdpQUelEJMergdlPQp0QeKGhv0IrjQTFwImnPoGoQFWqKTHAayOgc9fniHPxolU-V61owaQr65aZUYN94MzdO4RD5T63_XkXXfBlXDx7LQPNxjXdiTR3Zt-Ht0U27lcFSl_NBGIREIAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Wed, 13 Apr 2016 23:37:24 GMT
+      - Wed, 18 May 2016 21:02:03 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1460594244","not_before":"1460590344","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1463608923","not_before":"1463605023","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Wed, 13 Apr 2016 23:37:24 GMT
+  recorded_at: Wed, 18 May 2016 21:02:07 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Compute/locations/westus/usages?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Compute/locations/westus/usages?api-version=2016-03-30
     body:
       encoding: US-ASCII
       string: ''
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - b93146a0-d5eb-4b33-8af0-62c8f5b58db6
+      - 8cd1fb44-da1c-486e-90b2-3db2858866a0
       accept-language:
       - en-US
   response:
@@ -85,19 +86,19 @@ http_interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-ms-served-by:
-      - 50c963eb-7d77-4c4e-ab86-9dc675b00637_131044949653369986
+      - 50c963eb-7d77-4c4e-ab86-9dc675b00637_131075311778962152
       x-ms-request-id:
-      - 273717f5-d3cd-4498-965c-339ea52331b4
+      - ff71400e-6450-4562-8839-5e1bfc50f386
       server:
       - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-reads:
       - '14999'
       x-ms-correlation-request-id:
-      - 5d0844af-5a75-449a-914c-dde148d5bfeb
+      - b27c9cfb-bdfb-4605-aeef-aea480b9481a
       x-ms-routing-request-id:
-      - NORTHCENTRALUS:20160413T233726Z:5d0844af-5a75-449a-914c-dde148d5bfeb
+      - WESTUS:20160518T210203Z:b27c9cfb-bdfb-4605-aeef-aea480b9481a
       date:
-      - Wed, 13 Apr 2016 23:37:26 GMT
+      - Wed, 18 May 2016 21:02:03 GMT
       connection:
       - close
     body:
@@ -115,5 +116,5 @@ http_interactions:
         \       \"value\": \"virtualMachineScaleSets\",\r\n        \"localizedValue\":
         \"Virtual Machine Scale Sets\"\r\n      }\r\n    }\r\n  ]\r\n}"
     http_version: 
-  recorded_at: Wed, 13 Apr 2016 23:37:26 GMT
+  recorded_at: Wed, 18 May 2016 21:02:07 GMT
 recorded_with: VCR 3.0.1

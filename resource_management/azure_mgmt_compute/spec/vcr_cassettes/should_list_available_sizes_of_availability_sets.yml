@@ -27,11 +27,11 @@ http_interactions:
       server:
       - Microsoft-IIS/8.5
       x-ms-request-id:
-      - d79d2f10-a65f-4e12-ad3d-837abb566c73
+      - 13093a6a-3338-4a9f-a7b8-716f357c213a
       client-request-id:
-      - e89b6a3e-c4eb-4ca9-919f-b8886f499286
+      - a5311f5f-625e-479a-bb63-7a670290e6aa
       x-ms-gateway-service-instanceid:
-      - ESTSFE_IN_318
+      - ESTSFE_IN_389
       x-content-type-options:
       - nosniff
       strict-transport-security:
@@ -39,24 +39,25 @@ http_interactions:
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - flight-uxoptin=true; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+      - flight-uxoptin=true; path=/; secure; HttpOnly, esctx=AAABAAAAiL9Kn2Z27UubvWFPbm0gLXKNb1vFvTaNK_ZlCGOxArJKp2M2bmMzo-zVPy5I2yCIVHiO68ZMiPbcoK7JuWYOGRt_KWbGFliteR84yIYGTpFGnemRwXek9nDEsOAl9JykaoJl2CSve-O23keIYl4c3EUW1mausjQtTMk4CJZgWM6AUTJ0rq4Bvg8zBSNpU2nhIAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
         path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
       x-powered-by:
       - ASP.NET
       date:
-      - Sat, 16 Apr 2016 23:26:12 GMT
+      - Thu, 19 May 2016 18:58:44 GMT
       connection:
       - close
       content-length:
       - '1234'
     body:
       encoding: UTF-8
-      string: '{"token_type":"Bearer","expires_in":"3599","expires_on":"1460852772","not_before":"1460848872","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+      string: '{"token_type":"Bearer","expires_in":"3600","expires_on":"1463687923","not_before":"1463684023","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
     http_version: 
-  recorded_at: Sat, 16 Apr 2016 23:26:11 GMT
+  recorded_at: Thu, 19 May 2016 18:58:47 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_compute?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_compute?api-version=2016-02-01
     body:
       encoding: UTF-8
       string: '{"location":"westus"}'
@@ -64,7 +65,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 69626a23-0db5-414d-b4ad-10045502cc3e
+      - 59a66654-abd1-4d9e-b3ec-2a279eb1c3c2
       accept-language:
       - en-US
       Content-Type:
@@ -85,27 +86,27 @@ http_interactions:
       expires:
       - "-1"
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1197'
       x-ms-request-id:
-      - 6149abd4-68c4-4871-be54-2a82c5e80d7f
+      - d5a3850e-4f22-4093-86ea-4c07f314c0fa
       x-ms-correlation-request-id:
-      - 6149abd4-68c4-4871-be54-2a82c5e80d7f
+      - d5a3850e-4f22-4093-86ea-4c07f314c0fa
       x-ms-routing-request-id:
-      - WESTUS:20160416T232614Z:6149abd4-68c4-4871-be54-2a82c5e80d7f
+      - WESTUS:20160519T185844Z:d5a3850e-4f22-4093-86ea-4c07f314c0fa
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Sat, 16 Apr 2016 23:26:13 GMT
+      - Thu, 19 May 2016 18:58:44 GMT
       connection:
       - close
     body:
       encoding: UTF-8
       string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_compute","name":"RubySDKTest_azure_mgmt_compute","location":"westus","properties":{"provisioningState":"Succeeded"}}'
     http_version: 
-  recorded_at: Sat, 16 Apr 2016 23:26:13 GMT
+  recorded_at: Thu, 19 May 2016 18:58:47 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_compute/providers/Microsoft.Compute/availabilitySets/test-availability-set?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_compute/providers/Microsoft.Compute/availabilitySets/test-availability-set?api-version=2016-03-30
     body:
       encoding: UTF-8
       string: '{"location":"westus","properties":{}}'
@@ -113,7 +114,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - acf89411-caf9-4a77-8568-99b05c6467f8
+      - 9f5fdf4c-bca6-4148-b044-228ae8c3c9c8
       accept-language:
       - en-US
       Content-Type:
@@ -136,19 +137,19 @@ http_interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-ms-served-by:
-      - 50c963eb-7d77-4c4e-ab86-9dc675b00637_131052281672431610
+      - 50c963eb-7d77-4c4e-ab86-9dc675b00637_131081035695597912
       x-ms-request-id:
-      - 6ba8fefa-72e3-44ee-b569-a0bd94e895d9
+      - 0bbc978a-5419-4443-b417-51dcffd27120
       server:
       - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
       x-ms-correlation-request-id:
-      - c1c57e69-1fad-40ce-9310-fe62998c2d94
+      - b9cc037e-a5b3-43a0-9381-465e8608d9bc
       x-ms-routing-request-id:
-      - WESTUS:20160416T232615Z:c1c57e69-1fad-40ce-9310-fe62998c2d94
+      - WESTUS:20160519T185845Z:b9cc037e-a5b3-43a0-9381-465e8608d9bc
       date:
-      - Sat, 16 Apr 2016 23:26:14 GMT
+      - Thu, 19 May 2016 18:58:44 GMT
       connection:
       - close
     body:
@@ -158,10 +159,10 @@ http_interactions:
         \ \"name\": \"test-availability-set\",\r\n  \"type\": \"Microsoft.Compute/availabilitySets\",\r\n
         \ \"location\": \"westus\"\r\n}"
     http_version: 
-  recorded_at: Sat, 16 Apr 2016 23:26:14 GMT
+  recorded_at: Thu, 19 May 2016 18:58:48 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_compute/providers/Microsoft.Compute/availabilitySets/test-availability-set/vmSizes?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_compute/providers/Microsoft.Compute/availabilitySets/test-availability-set/vmSizes?api-version=2016-03-30
     body:
       encoding: US-ASCII
       string: ''
@@ -169,7 +170,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 03ecad76-026b-4569-b209-e0e7134061f8
+      - a1b03597-c5c8-476c-a7c1-b7f19cbd78e6
       accept-language:
       - en-US
   response:
@@ -190,19 +191,19 @@ http_interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-ms-served-by:
-      - 50c963eb-7d77-4c4e-ab86-9dc675b00637_131052281672431610
+      - 50c963eb-7d77-4c4e-ab86-9dc675b00637_131081035695597912
       x-ms-request-id:
-      - 67a5af06-7bd5-4cd6-a1ae-96bec5741424
+      - df181776-3ab7-4be9-8e7c-521277bb0f86
       server:
       - Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14996'
+      - '14845'
       x-ms-correlation-request-id:
-      - d49c66a2-1422-457e-8f2f-994389c81e86
+      - 7db56dc6-f57a-4484-bc93-a04b337e5cd9
       x-ms-routing-request-id:
-      - WESTUS:20160416T232615Z:d49c66a2-1422-457e-8f2f-994389c81e86
+      - WESTUS:20160519T185845Z:7db56dc6-f57a-4484-bc93-a04b337e5cd9
       date:
-      - Sat, 16 Apr 2016 23:26:14 GMT
+      - Thu, 19 May 2016 18:58:45 GMT
       connection:
       - close
     body:
@@ -275,19 +276,19 @@ http_interactions:
         819200,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 32\r\n
         \   },\r\n    {\r\n      \"name\": \"Standard_D15_v2\",\r\n      \"numberOfCores\":
         20,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
-        1024000,\r\n      \"memoryInMB\": 143360,\r\n      \"maxDataDiskCount\": 40\r\n
+        286720,\r\n      \"memoryInMB\": 143360,\r\n      \"maxDataDiskCount\": 40\r\n
         \   },\r\n    {\r\n      \"name\": \"Standard_DS1\",\r\n      \"numberOfCores\":
         1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
         7168,\r\n      \"memoryInMB\": 3584,\r\n      \"maxDataDiskCount\": 2\r\n
         \   },\r\n    {\r\n      \"name\": \"Standard_DS2\",\r\n      \"numberOfCores\":
         2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
-        28762,\r\n      \"memoryInMB\": 7168,\r\n      \"maxDataDiskCount\": 4\r\n
+        14336,\r\n      \"memoryInMB\": 7168,\r\n      \"maxDataDiskCount\": 4\r\n
         \   },\r\n    {\r\n      \"name\": \"Standard_DS3\",\r\n      \"numberOfCores\":
         4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
-        28762,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 8\r\n
+        28672,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 8\r\n
         \   },\r\n    {\r\n      \"name\": \"Standard_DS4\",\r\n      \"numberOfCores\":
         8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
-        57244,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 16\r\n
+        57344,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 16\r\n
         \   },\r\n    {\r\n      \"name\": \"Standard_DS11\",\r\n      \"numberOfCores\":
         2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
         28672,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 4\r\n
@@ -366,12 +367,42 @@ http_interactions:
         \   },\r\n    {\r\n      \"name\": \"Standard_A11\",\r\n      \"numberOfCores\":
         16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
         391168,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS1_v2\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        7168,\r\n      \"memoryInMB\": 3584,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS2_v2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        14336,\r\n      \"memoryInMB\": 7168,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS3_v2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        28672,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS4_v2\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        57344,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS5_v2\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        114688,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS11_v2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        28672,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS12_v2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        57344,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS13_v2\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        114688,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS14_v2\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        229376,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS15_v2\",\r\n      \"numberOfCores\":
+        20,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        286720,\r\n      \"memoryInMB\": 143360,\r\n      \"maxDataDiskCount\": 40\r\n
         \   }\r\n  ]\r\n}"
     http_version: 
-  recorded_at: Sat, 16 Apr 2016 23:26:14 GMT
+  recorded_at: Thu, 19 May 2016 18:58:48 GMT
 - request:
     method: delete
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_compute?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_compute?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -379,7 +410,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 08f749bd-c72c-457f-a270-f7e2787e349a
+      - aa54a5c8-add4-4fea-aa1e-a58aafc63cf7
       accept-language:
       - en-US
   response:
@@ -394,20 +425,20 @@ http_interactions:
       expires:
       - "-1"
       location:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RkNPTVBVVEUtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2015-11-01
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RkNPTVBVVEUtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01
       retry-after: '1'
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
       x-ms-request-id:
-      - 7c5a7774-c5c5-454c-91cd-9d1bc4ba6991
+      - 6602738b-65a4-4e36-8026-f2be9dc43945
       x-ms-correlation-request-id:
-      - 7c5a7774-c5c5-454c-91cd-9d1bc4ba6991
+      - 6602738b-65a4-4e36-8026-f2be9dc43945
       x-ms-routing-request-id:
-      - WESTUS:20160416T232616Z:7c5a7774-c5c5-454c-91cd-9d1bc4ba6991
+      - WESTUS:20160519T185846Z:6602738b-65a4-4e36-8026-f2be9dc43945
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Sat, 16 Apr 2016 23:26:16 GMT
+      - Thu, 19 May 2016 18:58:45 GMT
       connection:
       - close
       content-length:
@@ -416,10 +447,10 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Sat, 16 Apr 2016 23:26:15 GMT
+  recorded_at: Thu, 19 May 2016 18:58:49 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RkNPTVBVVEUtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2015-11-01
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RkNPTVBVVEUtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01
     body:
       encoding: US-ASCII
       string: ''
@@ -427,7 +458,7 @@ http_interactions:
       User-Agent:
       - Azure-SDK-For-Ruby/0.2.1/
       x-ms-client-request-id:
-      - 07147fc5-323a-48d0-a247-8f13afad259a
+      - d7a3507f-2d62-4af8-9ee9-5793ddd8c8e3
       accept-language:
       - en-US
       Content-Type:
@@ -444,17 +475,17 @@ http_interactions:
       expires:
       - "-1"
       x-ms-ratelimit-remaining-subscription-reads:
-      - '14969'
+      - '14934'
       x-ms-request-id:
-      - cb806092-dc81-4622-92bf-3798df128d6b
+      - fe1f4c59-1d0e-479c-a9bd-380686f363ff
       x-ms-correlation-request-id:
-      - cb806092-dc81-4622-92bf-3798df128d6b
+      - fe1f4c59-1d0e-479c-a9bd-380686f363ff
       x-ms-routing-request-id:
-      - WESTUS:20160416T232748Z:cb806092-dc81-4622-92bf-3798df128d6b
+      - CENTRALUS:20160519T190048Z:fe1f4c59-1d0e-479c-a9bd-380686f363ff
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       date:
-      - Sat, 16 Apr 2016 23:27:48 GMT
+      - Thu, 19 May 2016 19:00:47 GMT
       connection:
       - close
       content-length:
@@ -463,5 +494,5 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Sat, 16 Apr 2016 23:27:47 GMT
+  recorded_at: Thu, 19 May 2016 19:00:51 GMT
 recorded_with: VCR 3.0.1

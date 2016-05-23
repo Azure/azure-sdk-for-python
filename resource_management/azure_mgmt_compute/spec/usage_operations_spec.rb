@@ -14,7 +14,7 @@ describe UsageOperations do
   end
 
   it 'should list usages' do
-    result = @client.list('westus').value!
+    result = @client.list_async('westus').value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a Array

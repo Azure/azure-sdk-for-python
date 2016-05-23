@@ -15,7 +15,7 @@ describe VirtualMachineSizes do
   end
 
   it 'should list available virtual machine sizes' do
-    result = @client.list(@location).value!
+    result = @client.list_async(@location).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a Array

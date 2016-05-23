@@ -32,7 +32,7 @@ describe 'Subnets' do
   it 'should get subnet' do
     virtual_network = @resource_helper.create_virtual_network(@resource_group.name)
     subnet = @resource_helper.create_subnet(virtual_network, @resource_group, @client)
-    result = @client.get(@resource_group.name, virtual_network.name, subnet.name).value!
+    result = @client.get_async(@resource_group.name, virtual_network.name, subnet.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(subnet.name)
@@ -40,7 +40,7 @@ describe 'Subnets' do
 
   it 'should list subnets in virtual network' do
     virtual_network = @resource_helper.create_virtual_network(@resource_group.name)
-    result = @client.list(@resource_group.name, virtual_network.name).value!
+    result = @client.list_async(@resource_group.name, virtual_network.name).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)

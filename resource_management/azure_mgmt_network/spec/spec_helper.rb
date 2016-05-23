@@ -49,7 +49,7 @@ class ResourceHelper
     params = Azure::ARM::Resources::Models::ResourceGroup.new()
     params.location = 'westus'
 
-    resource_client.resource_groups.create_or_update(resource_group_name, params).value!.body
+    resource_client.resource_groups.create_or_update(resource_group_name, params)
   end
 
   def delete_resource_group(name)
