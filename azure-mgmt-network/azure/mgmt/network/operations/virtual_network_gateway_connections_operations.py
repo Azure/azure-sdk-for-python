@@ -45,7 +45,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, virtual_network_gateway_connection_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_connection_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put VirtualNetworkGatewayConnection operation creates/updates a
         virtual network gateway connection in the specified resource group
@@ -104,10 +104,11 @@ class VirtualNetworkGatewayConnectionsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -143,7 +144,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, virtual_network_gateway_connection_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_connection_name, custom_headers=None, raw=False, **operation_config):
         """
         The Get VirtualNetworkGatewayConnection operation retrieves
         information about the specified virtual network gateway connection
@@ -208,7 +209,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, virtual_network_gateway_connection_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_connection_name, custom_headers=None, raw=False, **operation_config):
         """
         The Delete VirtualNetworkGatewayConnection operation deletes the
         specifed virtual network Gateway connection through Network resource
@@ -257,10 +258,11 @@ class VirtualNetworkGatewayConnectionsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -287,7 +289,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get_shared_key(
-            self, resource_group_name, connection_shared_key_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, connection_shared_key_name, custom_headers=None, raw=False, **operation_config):
         """
         The Get VirtualNetworkGatewayConnectionSharedKey operation retrieves
         information about the specified virtual network gateway connection
@@ -352,7 +354,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The List VirtualNetworkGatewayConnections operation retrieves all the
         virtual network gateways connections created.
@@ -419,7 +421,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         return deserialized
 
     def reset_shared_key(
-            self, resource_group_name, virtual_network_gateway_connection_name, key_length=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_connection_name, key_length=None, custom_headers=None, raw=False, **operation_config):
         """
         The VirtualNetworkGatewayConnectionResetSharedKey operation resets the
         virtual network gateway connection shared key for passed virtual
@@ -479,10 +481,11 @@ class VirtualNetworkGatewayConnectionsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -516,7 +519,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def set_shared_key(
-            self, resource_group_name, virtual_network_gateway_connection_name, value=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_connection_name, value=None, custom_headers=None, raw=False, **operation_config):
         """
         The Put VirtualNetworkGatewayConnectionSharedKey operation sets the
         virtual network gateway connection shared key for passed virtual
@@ -575,10 +578,11 @@ class VirtualNetworkGatewayConnectionsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 

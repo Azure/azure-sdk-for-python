@@ -44,7 +44,7 @@ class WorkflowVersionsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, workflow_name, version_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, version_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets a workflow version.
 

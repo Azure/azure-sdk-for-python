@@ -45,7 +45,7 @@ class AccountOperations(object):
         self.config = config
 
     def delete_firewall_rule(
-            self, resource_group_name, account_name, firewall_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes the specified firewall rule from the specified Data Lake Store
         account
@@ -105,7 +105,7 @@ class AccountOperations(object):
             return client_raw_response
 
     def get_firewall_rule(
-            self, resource_group_name, account_name, firewall_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the specified Data Lake Store firewall rule.
 
@@ -172,7 +172,7 @@ class AccountOperations(object):
         return deserialized
 
     def list_firewall_rules(
-            self, resource_group_name, account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists the Data Lake Store firewall rules within the specified Data
         Lake Store account.
@@ -244,7 +244,7 @@ class AccountOperations(object):
         return deserialized
 
     def firewall_rules_list_next(
-            self, next_link, custom_headers={}, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """
         Gets the next page of Data Lake Store firewall rules, if any, for the
         specified account. The response includes a link to the next page of
@@ -311,7 +311,7 @@ class AccountOperations(object):
         return deserialized
 
     def create_or_update_firewall_rule(
-            self, resource_group_name, account_name, name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Creates or updates the specified firewall rule.
 
@@ -386,7 +386,7 @@ class AccountOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Creates the specified Data Lake Store account.
 
@@ -442,10 +442,11 @@ class AccountOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -481,7 +482,7 @@ class AccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, resource_group_name, name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Updates the specified Data Lake Store account information.
 
@@ -537,10 +538,11 @@ class AccountOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -576,7 +578,7 @@ class AccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, resource_group_name, account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes the specified Data Lake Store account.
 
@@ -624,10 +626,11 @@ class AccountOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -654,7 +657,7 @@ class AccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the specified Data Lake Store account.
 
@@ -718,7 +721,7 @@ class AccountOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists the Data Lake Store accounts within a specific resource group.
         The response includes a link to the next page of results, if any.
@@ -836,7 +839,7 @@ class AccountOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists the Data Lake Store accounts within the subscription. The
         response includes a link to the next page of results, if any.

@@ -29,7 +29,8 @@ class Usage(Model):
     :param unit: Gets the unit of measurement. Possible values include:
      'Count', 'Bytes', 'Seconds', 'Percent', 'CountsPerSecond',
      'BytesPerSecond'
-    :type unit: str
+    :type unit: str or :class:`UsageUnit
+     <storagemanagementclient.models.UsageUnit>`
     :param current_value: Gets the current count of the allocated resources
      in the subscription.
     :type current_value: int

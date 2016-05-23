@@ -28,7 +28,8 @@ class BatchAccountRegenerateKeyParameters(Model):
 
     :param key_name: The type of account key to regenerate. Possible values
      include: 'Primary', 'Secondary'
-    :type key_name: str
+    :type key_name: str or :class:`AccountKeyType
+     <batchmanagementclient.models.AccountKeyType>`
     """ 
 
     _validation = {

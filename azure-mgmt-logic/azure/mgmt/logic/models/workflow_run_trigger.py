@@ -51,7 +51,8 @@ class WorkflowRunTrigger(Model):
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
-    :vartype status: str
+    :vartype status: str or :class:`WorkflowStatus
+     <logicmanagementclient.models.WorkflowStatus>`
     :ivar error: Gets the error.
     :vartype error: object
     """ 

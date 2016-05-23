@@ -44,7 +44,7 @@ class TopLevelDomainsOperations(object):
         self.config = config
 
     def get_get_top_level_domains(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Lists all top level domains supported for registration
 
@@ -100,7 +100,7 @@ class TopLevelDomainsOperations(object):
         return deserialized
 
     def get_top_level_domain(
-            self, name, custom_headers={}, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets details of a top level domain
 
@@ -158,7 +158,7 @@ class TopLevelDomainsOperations(object):
         return deserialized
 
     def list_top_level_domain_agreements(
-            self, name, include_privacy=None, custom_headers={}, raw=False, **operation_config):
+            self, name, include_privacy=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists legal agreements that user needs to accept before purchasing
         domain

@@ -44,7 +44,7 @@ class WorkflowAccessKeysOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, workflow_name, top=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, top=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of workflow access keys.
 
@@ -117,7 +117,7 @@ class WorkflowAccessKeysOperations(object):
         return deserialized
 
     def get(
-            self, resource_group_name, workflow_name, access_key_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, access_key_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a workflow access key.
 
@@ -182,7 +182,7 @@ class WorkflowAccessKeysOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, workflow_name, access_key_name, workflow_accesskey, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, access_key_name, workflow_accesskey, custom_headers=None, raw=False, **operation_config):
         """
         Creates or updates a workflow access key.
 
@@ -256,7 +256,7 @@ class WorkflowAccessKeysOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, workflow_name, access_key_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, access_key_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a workflow access key.
 
@@ -313,7 +313,7 @@ class WorkflowAccessKeysOperations(object):
             return client_raw_response
 
     def list_secret_keys(
-            self, resource_group_name, workflow_name, access_key_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, access_key_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists secret keys.
 
@@ -378,7 +378,7 @@ class WorkflowAccessKeysOperations(object):
         return deserialized
 
     def regenerate_secret_key(
-            self, resource_group_name, workflow_name, access_key_name, key_type=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, access_key_name, key_type=None, custom_headers=None, raw=False, **operation_config):
         """
         Regenerates secret key.
 
@@ -390,7 +390,8 @@ class WorkflowAccessKeysOperations(object):
         :type access_key_name: str
         :param key_type: Gets or sets the key type. Possible values include:
          'NotSpecified', 'Primary', 'Secondary'
-        :type key_type: str
+        :type key_type: str or :class:`KeyType
+         <logicmanagementclient.models.KeyType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

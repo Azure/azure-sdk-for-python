@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_lake_analytics_catalog_management_client import DataLakeAnalyticsCatalogManagementClient, DataLakeAnalyticsCatalogManagementClientConfiguration
+from .data_lake_analytics_catalog_management_client import DataLakeAnalyticsCatalogManagementClient
 from .version import VERSION
 
-__all__ = [
-    'DataLakeAnalyticsCatalogManagementClient',
-    'DataLakeAnalyticsCatalogManagementClientConfiguration'
-]
+__all__ = ['DataLakeAnalyticsCatalogManagementClient']
 
 __version__ = VERSION
 

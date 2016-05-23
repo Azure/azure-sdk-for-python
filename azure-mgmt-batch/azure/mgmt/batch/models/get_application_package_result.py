@@ -32,7 +32,8 @@ class GetApplicationPackageResult(Model):
     :type version: str
     :param state: The current state of the application package. Possible
      values include: 'pending', 'active', 'unmapped'
-    :type state: str
+    :type state: str or :class:`PackageState
+     <batchmanagementclient.models.PackageState>`
     :param format: The format of the application package, if the package is
      active.
     :type format: str

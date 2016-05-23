@@ -26,7 +26,8 @@ class NetworkAccessControlEntry(Model):
     """NetworkAccessControlEntry
 
     :param action: Possible values include: 'Permit', 'Deny'
-    :type action: str
+    :type action: str or :class:`AccessControlEntryAction
+     <websitemanagementclient.models.AccessControlEntryAction>`
     :param description:
     :type description: str
     :param order:

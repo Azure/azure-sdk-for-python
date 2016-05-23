@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .batch_management_client import BatchManagementClient, BatchManagementClientConfiguration
+from .batch_management_client import BatchManagementClient
 from .version import VERSION
 
-__all__ = [
-    'BatchManagementClient',
-    'BatchManagementClientConfiguration'
-]
+__all__ = ['BatchManagementClient']
 
 __version__ = VERSION
 

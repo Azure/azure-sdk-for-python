@@ -28,17 +28,19 @@ class VirtualNetworkGatewaySku(Model):
 
     :param name: Gateway sku name -Basic/HighPerformance/Standard. Possible
      values include: 'Basic', 'HighPerformance', 'Standard'
-    :type name: str
+    :type name: str or :class:`VirtualNetworkGatewaySkuName
+     <networkmanagementclient.models.VirtualNetworkGatewaySkuName>`
     :param tier: Gateway sku tier -Basic/HighPerformance/Standard. Possible
      values include: 'Basic', 'HighPerformance', 'Standard'
-    :type tier: str
+    :type tier: str or :class:`VirtualNetworkGatewaySkuTier
+     <networkmanagementclient.models.VirtualNetworkGatewaySkuTier>`
     :param capacity: The capacity
     :type capacity: int
     """ 
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'VirtualNetworkGatewaySkuName'},
-        'tier': {'key': 'tier', 'type': 'VirtualNetworkGatewaySkuTier'},
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 

@@ -38,14 +38,16 @@ class Certificate(Model):
     :type url: str
     :param state: The current state of the certificate. Possible values
      include: 'active', 'deleting', 'deletefailed'
-    :type state: str
+    :type state: str or :class:`CertificateState
+     <batchserviceclient.models.CertificateState>`
     :param state_transition_time: The time at which the certificate entered
      its current state.
     :type state_transition_time: datetime
     :param previous_state: The previous state of the certificate. This
      property is not set if the certificate is in its initial Active state.
      Possible values include: 'active', 'deleting', 'deletefailed'
-    :type previous_state: str
+    :type previous_state: str or :class:`CertificateState
+     <batchserviceclient.models.CertificateState>`
     :param previous_state_transition_time: The time at which the certificate
      entered its previous state. This property is not set if the certificate
      is in its initial Active state.

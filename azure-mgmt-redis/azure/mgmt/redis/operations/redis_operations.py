@@ -44,7 +44,7 @@ class RedisOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create a redis cache, or replace (overwrite/recreate, with potential
         downtime) an existing cache
@@ -117,7 +117,7 @@ class RedisOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a redis cache. This operation takes a while to complete.
 
@@ -171,7 +171,7 @@ class RedisOperations(object):
             return client_raw_response
 
     def get(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a redis cache (resource description).
 
@@ -232,7 +232,7 @@ class RedisOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets all redis caches in a resource group.
 
@@ -298,7 +298,7 @@ class RedisOperations(object):
         return deserialized
 
     def list(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets all redis caches in the specified subscription.
 
@@ -361,7 +361,7 @@ class RedisOperations(object):
         return deserialized
 
     def list_keys(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Retrieve a redis cache's access keys. This operation requires write
         permission to the cache resource.
@@ -424,7 +424,7 @@ class RedisOperations(object):
         return deserialized
 
     def regenerate_key(
-            self, resource_group_name, name, key_type, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, key_type, custom_headers=None, raw=False, **operation_config):
         """
         Regenerate redis cache's access keys. This operation requires write
         permission to the cache resource.
@@ -435,7 +435,8 @@ class RedisOperations(object):
         :type name: str
         :param key_type: Which redis access key to reset. Possible values
          include: 'Primary', 'Secondary'
-        :type key_type: str
+        :type key_type: str or :class:`RedisKeyType
+         <redismanagementclient.models.RedisKeyType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -496,7 +497,7 @@ class RedisOperations(object):
         return deserialized
 
     def force_reboot(
-            self, resource_group_name, name, reboot_type, shard_id=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, reboot_type, shard_id=None, custom_headers=None, raw=False, **operation_config):
         """
         Reboot specified redis node(s). This operation requires write
         permission to the cache resource. There can be potential data loss.
@@ -508,7 +509,8 @@ class RedisOperations(object):
         :param reboot_type: Which redis node(s) to reboot. Depending on this
          value data loss is possible. Possible values include: 'PrimaryNode',
          'SecondaryNode', 'AllNodes'
-        :type reboot_type: str
+        :type reboot_type: str or :class:`RebootType
+         <redismanagementclient.models.RebootType>`
         :param shard_id: In case of cluster cache, this specifies shard id
          which should be rebooted.
         :type shard_id: int

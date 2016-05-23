@@ -38,13 +38,17 @@ class HostName(Model):
     :type azure_resource_name: str
     :param azure_resource_type: Type of the Azure resource the hostname is
      assigned to. Possible values include: 'Website', 'TrafficManager'
-    :type azure_resource_type: str
+    :type azure_resource_type: str or :class:`AzureResourceType
+     <websitemanagementclient.models.AzureResourceType>`
     :param custom_host_name_dns_record_type: Type of the Dns record. Possible
      values include: 'CName', 'A'
-    :type custom_host_name_dns_record_type: str
+    :type custom_host_name_dns_record_type: str or
+     :class:`CustomHostNameDnsRecordType
+     <websitemanagementclient.models.CustomHostNameDnsRecordType>`
     :param host_name_type: Type of the hostname. Possible values include:
      'Verified', 'Managed'
-    :type host_name_type: str
+    :type host_name_type: str or :class:`HostNameType
+     <websitemanagementclient.models.HostNameType>`
     """ 
 
     _attribute_map = {

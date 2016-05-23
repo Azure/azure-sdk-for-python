@@ -44,7 +44,8 @@ class WorkflowVersion(Resource):
     :vartype changed_time: datetime
     :param state: Gets or sets the state. Possible values include:
      'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :type state: str
+    :type state: str or :class:`WorkflowState
+     <logicmanagementclient.models.WorkflowState>`
     :ivar version: Gets the version.
     :vartype version: str
     :ivar access_endpoint: Gets the access endpoint.

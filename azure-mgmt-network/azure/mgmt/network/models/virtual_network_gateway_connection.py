@@ -53,7 +53,8 @@ class VirtualNetworkGatewayConnection(Resource):
     :param connection_type: Gateway connection type
      -Ipsec/Dedicated/VpnClient/Vnet2Vnet. Possible values include: 'IPsec',
      'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
-    :type connection_type: str
+    :type connection_type: str or :class:`VirtualNetworkGatewayConnectionType
+     <networkmanagementclient.models.VirtualNetworkGatewayConnectionType>`
     :param routing_weight: The Routing weight.
     :type routing_weight: int
     :param shared_key: The Ipsec share key.
@@ -61,7 +62,9 @@ class VirtualNetworkGatewayConnection(Resource):
     :param connection_status: Virtual network Gateway connection status.
      Possible values include: 'Unknown', 'Connecting', 'Connected',
      'NotConnected'
-    :type connection_status: str
+    :type connection_status: str or
+     :class:`VirtualNetworkGatewayConnectionStatus
+     <networkmanagementclient.models.VirtualNetworkGatewayConnectionStatus>`
     :param egress_bytes_transferred: The Egress Bytes Transferred in this
      connection
     :type egress_bytes_transferred: long
@@ -98,10 +101,10 @@ class VirtualNetworkGatewayConnection(Resource):
         'virtual_network_gateway1': {'key': 'properties.virtualNetworkGateway1', 'type': 'VirtualNetworkGateway'},
         'virtual_network_gateway2': {'key': 'properties.virtualNetworkGateway2', 'type': 'VirtualNetworkGateway'},
         'local_network_gateway2': {'key': 'properties.localNetworkGateway2', 'type': 'LocalNetworkGateway'},
-        'connection_type': {'key': 'properties.connectionType', 'type': 'VirtualNetworkGatewayConnectionType'},
+        'connection_type': {'key': 'properties.connectionType', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
-        'connection_status': {'key': 'properties.connectionStatus', 'type': 'VirtualNetworkGatewayConnectionStatus'},
+        'connection_status': {'key': 'properties.connectionStatus', 'type': 'str'},
         'egress_bytes_transferred': {'key': 'properties.egressBytesTransferred', 'type': 'long'},
         'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
         'peer': {'key': 'properties.peer', 'type': 'SubResource'},

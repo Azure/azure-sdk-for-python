@@ -32,7 +32,9 @@ class ExpressRouteCircuitPeeringConfig(Model):
     :param advertised_public_prefixes_state: Gets or sets
      AdvertisedPublicPrefixState of the Peering resource . Possible values
      include: 'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
-    :type advertised_public_prefixes_state: str
+    :type advertised_public_prefixes_state: str or
+     :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
+     <networkmanagementclient.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
     :param customer_asn: Gets or Sets CustomerAsn of the peering.
     :type customer_asn: int
     :param routing_registry_name: Gets or Sets RoutingRegistryName of the
@@ -42,7 +44,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
 
     _attribute_map = {
         'advertised_public_prefixes': {'key': 'advertisedPublicPrefixes', 'type': '[str]'},
-        'advertised_public_prefixes_state': {'key': 'advertisedPublicPrefixesState', 'type': 'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState'},
+        'advertised_public_prefixes_state': {'key': 'advertisedPublicPrefixesState', 'type': 'str'},
         'customer_asn': {'key': 'customerASN', 'type': 'int'},
         'routing_registry_name': {'key': 'routingRegistryName', 'type': 'str'},
     }

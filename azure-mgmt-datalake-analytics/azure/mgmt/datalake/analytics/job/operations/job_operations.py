@@ -44,7 +44,7 @@ class JobOperations(object):
         self.config = config
 
     def get_statistics(
-            self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers={}, raw=False, **operation_config):
+            self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
         """
         Gets statistics of the specified job.
 
@@ -107,7 +107,7 @@ class JobOperations(object):
         return deserialized
 
     def get_debug_data_path(
-            self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers={}, raw=False, **operation_config):
+            self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
         """
         Gets the U-SQL job debug data information specified by the job ID.
 
@@ -170,7 +170,7 @@ class JobOperations(object):
         return deserialized
 
     def build(
-            self, parameters, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers={}, raw=False, **operation_config):
+            self, parameters, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
         """
         Builds (compiles) the specified job in the specified Data Lake
         Analytics account for job correctness and validation.
@@ -238,7 +238,7 @@ class JobOperations(object):
         return deserialized
 
     def cancel(
-            self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers={}, raw=False, **operation_config):
+            self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
         """
         Cancels the running job specified by the job ID.
 
@@ -293,7 +293,7 @@ class JobOperations(object):
             return client_raw_response
 
     def get(
-            self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers={}, raw=False, **operation_config):
+            self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
         """
         Gets the job information for the specified job ID.
 
@@ -356,7 +356,7 @@ class JobOperations(object):
         return deserialized
 
     def create(
-            self, job_identity, parameters, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers={}, raw=False, **operation_config):
+            self, job_identity, parameters, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
         """
         Submits a job to the specified Data Lake Analytics account.
 
@@ -426,7 +426,7 @@ class JobOperations(object):
         return deserialized
 
     def list(
-            self, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers={}, raw=False, **operation_config):
+            self, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists the jobs, if any, associated with the specified Data Lake
         Analytics account. The response includes a link to the next page of

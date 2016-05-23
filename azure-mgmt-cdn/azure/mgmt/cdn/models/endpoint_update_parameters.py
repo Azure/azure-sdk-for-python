@@ -54,7 +54,9 @@ class EndpointUpdateParameters(Model):
     :param query_string_caching_behavior: Defines the query string caching
      behavior. Possible values include: 'IgnoreQueryString', 'BypassCaching',
      'UseQueryString', 'NotSet'
-    :type query_string_caching_behavior: str
+    :type query_string_caching_behavior: str or
+     :class:`QueryStringCachingBehavior
+     <cdnmanagementclient.models.QueryStringCachingBehavior>`
     """ 
 
     _attribute_map = {

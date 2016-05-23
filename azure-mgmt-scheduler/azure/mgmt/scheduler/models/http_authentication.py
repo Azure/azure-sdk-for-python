@@ -28,7 +28,8 @@ class HttpAuthentication(Model):
     :param type: Gets or sets the http authentication type. Possible values
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
-    :type type: str
+    :type type: str or :class:`HttpAuthenticationType
+     <schedulermanagementclient.models.HttpAuthenticationType>`
     """ 
 
     _attribute_map = {

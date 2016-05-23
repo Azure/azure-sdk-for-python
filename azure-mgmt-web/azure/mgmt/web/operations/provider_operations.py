@@ -44,7 +44,7 @@ class ProviderOperations(object):
         self.config = config
 
     def get_source_controls(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets the source controls available for Azure websites
 
@@ -96,7 +96,7 @@ class ProviderOperations(object):
         return deserialized
 
     def get_source_control(
-            self, source_control_type, custom_headers={}, raw=False, **operation_config):
+            self, source_control_type, custom_headers=None, raw=False, **operation_config):
         """
         Gets source control token
 
@@ -153,7 +153,7 @@ class ProviderOperations(object):
         return deserialized
 
     def update_source_control(
-            self, source_control_type, request_message, custom_headers={}, raw=False, **operation_config):
+            self, source_control_type, request_message, custom_headers=None, raw=False, **operation_config):
         """
         Updates source control token
 
@@ -217,7 +217,7 @@ class ProviderOperations(object):
         return deserialized
 
     def get_publishing_user(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets publishing user
 
@@ -268,7 +268,7 @@ class ProviderOperations(object):
         return deserialized
 
     def update_publishing_user(
-            self, request_message, custom_headers={}, raw=False, **operation_config):
+            self, request_message, custom_headers=None, raw=False, **operation_config):
         """
         Updates publishing user
 

@@ -44,7 +44,7 @@ class TenantsOperations(object):
         self.config = config
 
     def list(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of the tenantIds.
 

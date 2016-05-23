@@ -44,7 +44,7 @@ class VirtualMachineSizesOperations(object):
         self.config = config
 
     def list(
-            self, location, custom_headers={}, raw=False, **operation_config):
+            self, location, custom_headers=None, raw=False, **operation_config):
         """
         Lists all available virtual machine sizes for a subscription in a
         location.

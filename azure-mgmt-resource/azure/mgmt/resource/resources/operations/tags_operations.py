@@ -44,7 +44,7 @@ class TagsOperations(object):
         self.config = config
 
     def delete_value(
-            self, tag_name, tag_value, custom_headers={}, raw=False, **operation_config):
+            self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
         """
         Delete a subscription resource tag value.
 
@@ -98,7 +98,7 @@ class TagsOperations(object):
             return client_raw_response
 
     def create_or_update_value(
-            self, tag_name, tag_value, custom_headers={}, raw=False, **operation_config):
+            self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
         """
         Create a subscription resource tag value.
 
@@ -162,7 +162,7 @@ class TagsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, tag_name, custom_headers={}, raw=False, **operation_config):
+            self, tag_name, custom_headers=None, raw=False, **operation_config):
         """
         Create a subscription resource tag.
 
@@ -223,7 +223,7 @@ class TagsOperations(object):
         return deserialized
 
     def delete(
-            self, tag_name, custom_headers={}, raw=False, **operation_config):
+            self, tag_name, custom_headers=None, raw=False, **operation_config):
         """
         Delete a subscription resource tag.
 
@@ -274,7 +274,7 @@ class TagsOperations(object):
             return client_raw_response
 
     def list(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Get a list of subscription resource tags.
 

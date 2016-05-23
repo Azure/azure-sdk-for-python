@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .feature_client import FeatureClient, FeatureClientConfiguration
+from .feature_client import FeatureClient
 from .version import VERSION
 
-__all__ = [
-    'FeatureClient',
-    'FeatureClientConfiguration'
-]
+__all__ = ['FeatureClient']
 
 __version__ = VERSION
 

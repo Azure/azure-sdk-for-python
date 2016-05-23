@@ -30,7 +30,8 @@ class ApplicationGatewayProbe(SubResource):
     :type id: str
     :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
-    :type protocol: str
+    :type protocol: str or :class:`ApplicationGatewayProtocol
+     <networkmanagementclient.models.ApplicationGatewayProtocol>`
     :param host: Gets or sets the host to send probe to
     :type host: str
     :param path: Gets or sets the relative path of probe
@@ -54,7 +55,7 @@ class ApplicationGatewayProbe(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'ApplicationGatewayProtocol'},
+        'protocol': {'key': 'properties.protocol', 'type': 'str'},
         'host': {'key': 'properties.host', 'type': 'str'},
         'path': {'key': 'properties.path', 'type': 'str'},
         'interval': {'key': 'properties.interval', 'type': 'int'},

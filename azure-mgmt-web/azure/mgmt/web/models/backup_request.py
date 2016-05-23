@@ -54,7 +54,8 @@ class BackupRequest(Resource):
      <azure.mgmt.web.models.DatabaseBackupSetting>`
     :param backup_request_type: Type of the backup. Possible values include:
      'Default', 'Clone', 'Relocation'
-    :type backup_request_type: str
+    :type backup_request_type: str or :class:`BackupRestoreOperationType
+     <websitemanagementclient.models.BackupRestoreOperationType>`
     """ 
 
     _validation = {

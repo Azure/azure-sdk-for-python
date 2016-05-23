@@ -43,7 +43,7 @@ class AccountOperations(object):
         self.config = config
 
     def list_node_agent_skus(
-            self, account_list_node_agent_skus_options=None, custom_headers={}, raw=False, **operation_config):
+            self, account_list_node_agent_skus_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists all node agent SKUs supported by the Azure Batch service.
 

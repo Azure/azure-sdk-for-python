@@ -45,7 +45,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, circuit_name, peering_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
         """
         The delete peering operation deletes the specified peering from the
         ExpressRouteCircuit.
@@ -95,10 +95,11 @@ class ExpressRouteCircuitPeeringsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -125,7 +126,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, circuit_name, peering_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
         """
         The GET peering operation retrieves the specified authorization from
         the ExpressRouteCircuit.
@@ -191,7 +192,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, circuit_name, peering_name, peering_parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, peering_name, peering_parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put Pering operation creates/updates an peering in the specified
         ExpressRouteCircuits
@@ -250,10 +251,11 @@ class ExpressRouteCircuitPeeringsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -289,7 +291,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, resource_group_name, circuit_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
         """
         The List peering operation retrieves all the peerings in an
         ExpressRouteCircuit.

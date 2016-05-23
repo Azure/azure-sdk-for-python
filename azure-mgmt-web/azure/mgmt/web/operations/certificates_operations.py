@@ -44,7 +44,7 @@ class CertificatesOperations(object):
         self.config = config
 
     def get_certificates(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Get certificates for a subscription in the specified resource group.
 
@@ -103,7 +103,7 @@ class CertificatesOperations(object):
         return deserialized
 
     def get_certificate(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Get a certificate by certificate name for a subscription in the
         specified resource group.
@@ -165,7 +165,7 @@ class CertificatesOperations(object):
         return deserialized
 
     def create_or_update_certificate(
-            self, resource_group_name, name, certificate_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, certificate_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Creates or modifies an existing certificate.
 
@@ -234,7 +234,7 @@ class CertificatesOperations(object):
         return deserialized
 
     def delete_certificate(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Delete a certificate by name in a specificed subscription and
         resourcegroup.
@@ -296,7 +296,7 @@ class CertificatesOperations(object):
         return deserialized
 
     def update_certificate(
-            self, resource_group_name, name, certificate_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, certificate_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Creates or modifies an existing certificate.
 
@@ -365,7 +365,7 @@ class CertificatesOperations(object):
         return deserialized
 
     def get_csrs(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the certificate signing requests for a subscription in the
         specified resource group
@@ -424,7 +424,7 @@ class CertificatesOperations(object):
         return deserialized
 
     def get_csr(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a certificate signing request by certificate name for a
         subscription in the specified resource group
@@ -486,7 +486,7 @@ class CertificatesOperations(object):
         return deserialized
 
     def create_or_update_csr(
-            self, resource_group_name, name, csr_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, csr_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Creates or modifies an existing certificate signing request.
 
@@ -554,7 +554,7 @@ class CertificatesOperations(object):
         return deserialized
 
     def delete_csr(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Delete the certificate signing request.
 
@@ -615,7 +615,7 @@ class CertificatesOperations(object):
         return deserialized
 
     def update_csr(
-            self, resource_group_name, name, csr_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, csr_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Creates or modifies an existing certificate signing request.
 

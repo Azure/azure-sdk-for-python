@@ -45,7 +45,7 @@ class DeploymentsOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, deployment_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         """
         Delete deployment.
 
@@ -92,10 +92,11 @@ class DeploymentsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -122,7 +123,7 @@ class DeploymentsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def check_existence(
-            self, resource_group_name, deployment_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         """
         Checks whether deployment exists.
 
@@ -179,7 +180,7 @@ class DeploymentsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, deployment_name, properties=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
         """
         Create a named template deployment using a template.
 
@@ -236,10 +237,11 @@ class DeploymentsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -275,7 +277,7 @@ class DeploymentsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, deployment_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         """
         Get a deployment.
 
@@ -338,7 +340,7 @@ class DeploymentsOperations(object):
         return deserialized
 
     def cancel(
-            self, resource_group_name, deployment_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         """
         Cancel a currently running template deployment.
 
@@ -393,7 +395,7 @@ class DeploymentsOperations(object):
             return client_raw_response
 
     def validate(
-            self, resource_group_name, deployment_name, properties=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
         """
         Validate a deployment template.
 
@@ -467,7 +469,7 @@ class DeploymentsOperations(object):
         return deserialized
 
     def export_template(
-            self, resource_group_name, deployment_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         """
         Exports a deployment template.
 
@@ -530,7 +532,7 @@ class DeploymentsOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, filter=None, top=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """
         Get a list of deployments.
 

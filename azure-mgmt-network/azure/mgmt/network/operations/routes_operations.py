@@ -45,7 +45,7 @@ class RoutesOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, route_table_name, route_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, route_table_name, route_name, custom_headers=None, raw=False, **operation_config):
         """
         The delete route operation deletes the specified route from a route
         table.
@@ -95,10 +95,11 @@ class RoutesOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -125,7 +126,7 @@ class RoutesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, route_table_name, route_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, route_table_name, route_name, custom_headers=None, raw=False, **operation_config):
         """
         The Get route operation retreives information about the specified
         route from the route table.
@@ -190,7 +191,7 @@ class RoutesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, route_table_name, route_name, route_parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, route_table_name, route_name, route_parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put route operation creates/updates a route in the specified route
         table
@@ -249,10 +250,11 @@ class RoutesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -288,7 +290,7 @@ class RoutesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, resource_group_name, route_table_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, route_table_name, custom_headers=None, raw=False, **operation_config):
         """
         The List network security rule opertion retrieves all the routes in a
         route table.

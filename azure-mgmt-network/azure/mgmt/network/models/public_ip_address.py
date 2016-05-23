@@ -41,10 +41,12 @@ class PublicIPAddress(Resource):
     :type tags: dict
     :param public_ip_allocation_method: Gets or sets PublicIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
-    :type public_ip_allocation_method: str
+    :type public_ip_allocation_method: str or :class:`IPAllocationMethod
+     <networkmanagementclient.models.IPAllocationMethod>`
     :param public_ip_address_version: Gets or sets PublicIP address version
      (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
-    :type public_ip_address_version: str
+    :type public_ip_address_version: str or :class:`IPVersion
+     <networkmanagementclient.models.IPVersion>`
     :param ip_configuration:
     :type ip_configuration: :class:`IPConfiguration
      <azure.mgmt.network.models.IPConfiguration>`
@@ -79,8 +81,8 @@ class PublicIPAddress(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'IPAllocationMethod'},
-        'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'IPVersion'},
+        'public_ip_allocation_method': {'key': 'properties.publicIPAllocationMethod', 'type': 'str'},
+        'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
         'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
