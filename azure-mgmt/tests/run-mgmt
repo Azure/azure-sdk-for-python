@@ -25,4 +25,4 @@ then
 else
         LAUNCHER='python'
 fi
-$LAUNCHER -m unittest discover -p "test_*.py"
+$LAUNCHER -m unittest discover -v -p "test_*.py"
