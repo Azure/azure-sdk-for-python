@@ -38,9 +38,10 @@
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
     "compute": {
-      "swagger": "arm-compute/2016-03-30/swagger/compute.json",
+      "swagger": "arm-compute/compositeComputeClient.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.compute"
+        "Namespace": "azure.mgmt.compute",
+        "Modeler": "CompositeSwagger"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
