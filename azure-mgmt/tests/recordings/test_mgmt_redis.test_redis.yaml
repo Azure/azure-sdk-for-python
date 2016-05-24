@@ -282,4 +282,112 @@ interactions:
       x-ms-routing-request-id: ['WESTUS:20160325T192557Z:75b15738-ffad-460a-94ac-9be9ecca47b2']
       x-rp-server-mvid: [67bae1ea-63ee-4e2f-a77b-146f75bfa225]
     status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      eyJuYW1lIjogInRlc3RfbWdtdF9yZWRpc190ZXN0X3JlZGlzOTEzMDBhYWYiLCAibG9jYXRpb24i
+      OiAid2VzdHVzIn0=
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['68']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.7.0 msrest/0.4.0
+          msrest_azure/0.4.0 resourcemanagementclient/2016-02-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [03e84a26-2145-11e6-9727-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_redis_test_redis91300aaf?api-version=2016-02-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf","name":"test_mgmt_redis_test_redis91300aaf","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['221']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 24 May 2016 00:18:18 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [011de827-38cb-414b-ab8a-83b9d7319874]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [011de827-38cb-414b-ab8a-83b9d7319874]
+      x-ms-routing-request-id: ['WESTUS:20160524T001818Z:011de827-38cb-414b-ab8a-83b9d7319874']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      eyJwcm9wZXJ0aWVzIjogeyJza3UiOiB7ImNhcGFjaXR5IjogMSwgImZhbWlseSI6ICJDIiwgIm5h
+      bWUiOiAiQmFzaWMifX0sICJsb2NhdGlvbiI6ICJXZXN0IFVTIn0=
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.7.0 msrest/0.4.0
+          msrest_azure/0.4.0 redismanagementclient/2016-04-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [04524518-2145-11e6-89ac-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename?api-version=2016-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename","location":"West
+        US","name":"mycachename","type":"Microsoft.Cache/Redis","tags":{},"properties":{"provisioningState":"Creating","redisVersion":"3.0","sku":{"name":"Basic","family":"C","capacity":1},"enableNonSslPort":false,"redisConfiguration":{"maxclients":"1000","maxmemory-reserved":"50","maxmemory-delta":"50"},"accessKeys":{"primaryKey":"2cO2MLIjqTElyVquI0gqxaYPTtZTYOFAga57GQgUJcM=","secondaryKey":"qwXXjpSTKf9yW/zNznUOpYVQsgGYFzJ2aGgUfRiHJrk="},"hostName":"mycachename.redis.cache.windows.net","port":6379,"sslPort":6380}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['683']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 24 May 2016 00:18:20 GMT']
+      Expires: ['-1']
+      Location: ['https://prod-rp-wus.cacheinfra.windows.net:10225/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [da564093-e7fa-4f4e-8e27-b82679a70608]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [8d964bae-8823-4b79-a93c-3ec101cf87a7]
+      x-ms-routing-request-id: ['WESTUS:20160524T001820Z:da564093-e7fa-4f4e-8e27-b82679a70608']
+      x-rp-server-mvid: [0efde996-c8d1-4dec-b71e-394eba9ff135]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.7.0 msrest/0.4.0
+          msrest_azure/0.4.0 redismanagementclient/2016-04-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [055476a2-2145-11e6-938e-54ee7574ca37]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_redis_test_redis91300aaf/providers/Microsoft.Cache/Redis/mycachename?api-version=2016-04-01
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
+        nuaf19V61dxt86b9/RcXi/b3r/NZ0fz+/Df/+nD33s5Olp3fXdXVZTHL6+buF8W0rprqvB2fZNN5
+        fvcV2t1dXE/x1zJb5B+NPiqraQZ0CL3vEqz0q9f0IX/36KOwZXu9wodRoPg6u2g+evSLf8noI0Jg
+        lddtkeNv/HVZNNRDsbx43WYtYJzUOXW6vKDXGPefJGypBX1zb7xDHzZv13iVO3700ZOsKab06Xm2
+        KMpr+uCE/phmq2xatPTnLnVJOE7K/EW1fN2UL6u6/ejReVY2uYI/qZbnxcW6pj7RyS/+aJG9m5ZF
+        vmwJw492d3bQJ322yBdVfb1NJM/ryxwzdj/8ZpaXbSYfU6fZdJo3ze+VXxOU5bosRx/Nq6Z9IUh7
+        tBszEmP+e3xVLGfVVTNe5i2BXjGun9578JAGbVD/9N7Bzi/5Jf8PryAe+TQCAAA=
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 24 May 2016 00:18:21 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [07ebcb3e-b5d4-46f2-b6d6-703c26a08eda]
+      x-ms-ratelimit-remaining-subscription-reads: ['14945']
+      x-ms-request-id: [9b99a2bf-a8c1-4840-ba09-cd8226b65132]
+      x-ms-routing-request-id: ['WESTUS:20160524T001822Z:07ebcb3e-b5d4-46f2-b6d6-703c26a08eda']
+      x-rp-server-mvid: [0efde996-c8d1-4dec-b71e-394eba9ff135]
+    status: {code: 200, message: OK}
 version: 1
