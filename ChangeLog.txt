@@ -53,6 +53,7 @@ you will receive a SerializationError *without* a call to the REST API. Before, 
 a `CloudError` if the server refused the request.
 
 * Latest Swagger update for Redis (API-version 2016-04-01)
+* Latest Swagger update for GraphRbac (API-version 1.6)
 
 Dependencies:
 * msrest must be >= 0.4.0 (see their ChangeLog for details)
