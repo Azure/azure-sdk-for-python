@@ -30,7 +30,7 @@ class ProfileCreateParameters(Model):
     :type location: str
     :param tags: Profile tags
     :type tags: dict
-    :param sku: Profile SKU
+    :param sku: The SKU (pricing tier) of the CDN profile.
     :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
     """ 
 
@@ -42,7 +42,7 @@ class ProfileCreateParameters(Model):
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
     def __init__(self, location, sku, tags=None):

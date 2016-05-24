@@ -24,8 +24,10 @@ from enum import Enum
 
 class SkuName(Enum):
 
-    standard = "Standard"
-    premium = "Premium"
+    standard_verizon = "Standard_Verizon"
+    premium_verizon = "Premium_Verizon"
+    custom_verizon = "Custom_Verizon"
+    standard_akamai = "Standard_Akamai"
 
 
 class ProfileResourceState(Enum):
