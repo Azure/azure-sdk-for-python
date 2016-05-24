@@ -16,7 +16,7 @@ for details on getting a ``Credentials`` instance.
 
 .. code:: python
 
-    from azure.mgmt.redis import RedisManagementClient, RedisManagementClientConfiguration
+    from azure.mgmt.redis import RedisManagementClient
 
     # TODO: Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
@@ -24,10 +24,8 @@ for details on getting a ``Credentials`` instance.
     credentials = ...
 
     redis_client = RedisManagementClient(
-        RedisManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
 
 Registration
@@ -41,13 +39,11 @@ credentials you created in the previous section.
 
 .. code:: python
 
-    from azure.mgmt.resource.resources import ResourceManagementClient, ResourceManagementClientConfiguration
+    from azure.mgmt.resource.resources import ResourceManagementClient
 
     resource_client = ResourceManagementClient(
-        ResourceManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
     resource_client.providers.register('Microsoft.Cache')
 

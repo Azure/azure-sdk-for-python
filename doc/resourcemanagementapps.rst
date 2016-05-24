@@ -16,8 +16,8 @@ for details on getting a ``Credentials`` instance.
 
 .. code:: python
 
-    from azure.mgmt.logic import LogicManagementClient, LogicManagementClientConfiguration
-    from azure.mgmt.web import WebSiteManagementClient, WebSiteManagementClientConfiguration
+    from azure.mgmt.logic import LogicManagementClient
+    from azure.mgmt.web import WebSiteManagementClient
 
     # TODO: Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
@@ -25,16 +25,12 @@ for details on getting a ``Credentials`` instance.
     credentials = ...
 
     logic_client = LogicManagementClient(
-        LogicManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
     web_client = WebSiteManagementClient(
-        WebSiteManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
 
 Registration
@@ -48,13 +44,11 @@ credentials you created in the previous section.
 
 .. code:: python
 
-    from azure.mgmt.resource.resources import ResourceManagementClient, ResourceManagementClientConfiguration
+    from azure.mgmt.resource.resources import ResourceManagementClient
 
     resource_client = ResourceManagementClient(
-        ResourceManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
     resource_client.providers.register('Microsoft.Web')
     resource_client.providers.register('Microsoft.Logic')

@@ -52,7 +52,7 @@ See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
 
 .. code:: python
 
-    from azure.mgmt.resource.resources import ResourceManagementClient, ResourceManagementClientConfiguration
+    from azure.mgmt.resource.resources import ResourceManagementClient
 
     # TODO: Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
@@ -60,10 +60,8 @@ See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
     credentials = ...
 
     resource_client = ResourceManagementClient(
-        ResourceManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
     
 

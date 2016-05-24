@@ -14,17 +14,15 @@ You will also need the tenant id of the AD you want to manage. Could be the AD U
 
 .. code:: python
 
-    from azure.graphrbac import GraphRbacManagementClient, GraphRbacManagementClientConfiguration
+    from azure.graphrbac import GraphRbacManagementClient
 
     # TODO: See above how to get a Credentials instance
     credentials = ...
     tenant_id = "myad.onmicrosoft.com"
 
     graphrbac_client = GraphRbacManagementClient(
-        GraphRbacManagementClientConfiguration(
-            credentials,
-            tenant_id
-        )
+        credentials,
+        tenant_id
     )
 
 Manage users
