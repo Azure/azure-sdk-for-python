@@ -19,5 +19,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.serialization import Model
 
+
+class ContainerServiceLinuxProfile(Model):
+    """
+    Profile for Linux VMs
+
+    :param admin_username: The administrator username to use for all Linux VMs
+    :type admin_username: str
+    :param ssh: Specifies the ssh key configuration for Linux VMs
+    :type ssh: :class:`ContainerServiceSshConfiguration
+     <azure.mgmt.compute.models.ContainerServiceSshConfiguration>`
+    """ 
+
+    _validation = {
+        'admin_username': {'required': True},
+        'ssh': {'required': True},
+    }
+
+    _attribute_map = {
+        'admin_username': {'key': 'adminUsername', 'type': 'str'},
+        'ssh': {'key': 'ssh', 'type': 'ContainerServiceSshConfiguration'},
+    }
+
+    def __init__(self, admin_username, ssh):
+        self.admin_username = admin_username
+        self.ssh = ssh

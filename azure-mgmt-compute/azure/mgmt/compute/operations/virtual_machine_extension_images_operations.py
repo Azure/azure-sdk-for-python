@@ -44,7 +44,7 @@ class VirtualMachineExtensionImagesOperations(object):
         self.config = config
 
     def get(
-            self, location, publisher_name, type, version, custom_headers=None, raw=False, **operation_config):
+            self, location, publisher_name, type, version, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
         """
         Gets a virtual machine extension image.
 
@@ -56,6 +56,8 @@ class VirtualMachineExtensionImagesOperations(object):
         :type type: str
         :param version:
         :type version: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -79,7 +81,7 @@ class VirtualMachineExtensionImagesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -112,7 +114,7 @@ class VirtualMachineExtensionImagesOperations(object):
         return deserialized
 
     def list_types(
-            self, location, publisher_name, custom_headers=None, raw=False, **operation_config):
+            self, location, publisher_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of virtual machine extension image types.
 
@@ -120,6 +122,8 @@ class VirtualMachineExtensionImagesOperations(object):
         :type location: str
         :param publisher_name:
         :type publisher_name: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -141,7 +145,7 @@ class VirtualMachineExtensionImagesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -174,7 +178,7 @@ class VirtualMachineExtensionImagesOperations(object):
         return deserialized
 
     def list_versions(
-            self, location, publisher_name, type, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
+            self, location, publisher_name, type, api_version="2016-03-30", filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of virtual machine extension image versions.
 
@@ -184,6 +188,8 @@ class VirtualMachineExtensionImagesOperations(object):
         :type publisher_name: str
         :param type:
         :type type: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param top:
@@ -218,7 +224,7 @@ class VirtualMachineExtensionImagesOperations(object):
             query_parameters['$top'] = self._serialize.query("top", top, 'int')
         if orderby is not None:
             query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
