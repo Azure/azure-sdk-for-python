@@ -19,5 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.serialization import Model
 
+
+class ContainerServiceOrchestratorProfile(Model):
+    """
+    Profile for Orchestrator
+
+    :param orchestrator_type: Specifies what orchestrator will be used to
+     manage container cluster resources. Possible values include: 'Swarm',
+     'DCOS'
+    :type orchestrator_type: str or :class:`ContainerServiceOchestratorTypes
+     <azure.mgmt.compute.models.ContainerServiceOchestratorTypes>`
+    """ 
+
+    _attribute_map = {
+        'orchestrator_type': {'key': 'orchestratorType', 'type': 'ContainerServiceOchestratorTypes'},
+    }
+
+    def __init__(self, orchestrator_type=None):
+        self.orchestrator_type = orchestrator_type

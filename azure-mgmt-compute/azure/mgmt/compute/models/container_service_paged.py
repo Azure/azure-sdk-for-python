@@ -19,5 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.paging import Paged
 
+
+class ContainerServicePaged(Paged):
+    """
+    A paging container for iterating over a list of ContainerService object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ContainerService]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ContainerServicePaged, self).__init__(*args, **kwargs)
