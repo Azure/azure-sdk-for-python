@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-scheduler',
-    version='0.30.0rc3',
+    version='0.30.0rc4',
     description='Microsoft Azure Scheduler Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -61,7 +61,7 @@ setup(
         'azure.mgmt.scheduler.operations',
     ],
     install_requires=[
-        'azure-common[autorest]==1.1.3',
+        'azure-common[autorest]==1.1.4',
         'azure-mgmt-nspkg',
     ],
 )
