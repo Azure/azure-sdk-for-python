@@ -45,7 +45,7 @@
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
     "graphrbac": {
-      "swagger": "arm-graphrbac/1.42-previewInternal/swagger/graphrbac.json",
+      "swagger": "arm-graphrbac/1.6-internal/swagger/graphrbac.json",
       "autorest_options": {
         "Namespace": "azure.graphrbac"
       },

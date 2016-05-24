@@ -26,8 +26,8 @@ import uuid
 from .. import models
 
 
-class ApplicationOperations(object):
-    """ApplicationOperations operations.
+class ApplicationOperationsOperations(object):
+    """ApplicationOperationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -46,7 +46,8 @@ class ApplicationOperations(object):
     def create(
             self, parameters, custom_headers=None, raw=False, **operation_config):
         """
-        Create a new application.
+        Create a new application. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx
 
         :param parameters: Parameters to create an application.
         :type parameters: :class:`ApplicationCreateParameters
@@ -108,59 +109,67 @@ class ApplicationOperations(object):
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
         """
-        Lists applications by filter parameters.
+        Lists applications by filter parameters. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx
 
-        :param filter: The filters to apply on the operarion
+        :param filter: The filters to apply on the operation
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ApplicationListResult
-         <azure.graphrbac.models.ApplicationListResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`ApplicationPaged
+         <azure.graphrbac.models.ApplicationPaged>`
         """
-        # Construct URL
-        url = '/{tenantID}/applications'
-        path_format_arguments = {
-            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/{tenantID}/applications'
+                path_format_arguments = {
+                    'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationListResult', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ApplicationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.ApplicationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -168,7 +177,8 @@ class ApplicationOperations(object):
     def delete(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
         """
-        Delete an application.
+        Delete an application. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx
 
         :param application_object_id: Application object id
         :type application_object_id: str
@@ -219,7 +229,8 @@ class ApplicationOperations(object):
     def get(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
         """
-        Get an application by object Id.
+        Get an application by object Id. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx
 
         :param application_object_id: Application object id
         :type application_object_id: str
@@ -274,10 +285,11 @@ class ApplicationOperations(object):
 
         return deserialized
 
-    def update(
+    def patch(
             self, application_object_id, parameters, custom_headers=None, raw=False, **operation_config):
         """
-        Update existing application.
+        Update existing application. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx
 
         :param application_object_id: Application object id
         :type application_object_id: str

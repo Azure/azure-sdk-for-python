@@ -26,8 +26,8 @@ import uuid
 from .. import models
 
 
-class ObjectsOperations(object):
-    """ObjectsOperations operations.
+class ObjectOperationsOperations(object):
+    """ObjectOperationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
