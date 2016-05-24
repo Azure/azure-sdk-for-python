@@ -24,7 +24,6 @@ from .password_credential import PasswordCredential
 from .application_create_parameters import ApplicationCreateParameters
 from .application_filter import ApplicationFilter
 from .application import Application
-from .application_list_result import ApplicationListResult
 from .get_objects_parameters import GetObjectsParameters
 from .aad_object import AADObject
 from .group_add_member_parameters import GroupAddMemberParameters
@@ -37,6 +36,7 @@ from .user_create_parameters_password_profile import UserCreateParametersPasswor
 from .user_create_parameters import UserCreateParameters
 from .user import User
 from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
+from .application_paged import ApplicationPaged
 from .aad_object_paged import AADObjectPaged
 from .ad_group_paged import ADGroupPaged
 from .str_paged import strPaged
@@ -49,7 +49,6 @@ __all__ = [
     'ApplicationCreateParameters',
     'ApplicationFilter',
     'Application',
-    'ApplicationListResult',
     'GetObjectsParameters',
     'AADObject',
     'GroupAddMemberParameters',
@@ -62,6 +61,7 @@ __all__ = [
     'UserCreateParameters',
     'User',
     'UserGetMemberGroupsParameters',
+    'ApplicationPaged',
     'AADObjectPaged',
     'ADGroupPaged',
     'strPaged',

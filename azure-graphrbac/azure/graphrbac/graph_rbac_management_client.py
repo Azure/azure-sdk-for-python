@@ -23,11 +23,11 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.application_operations import ApplicationOperations
-from .operations.objects_operations import ObjectsOperations
-from .operations.group_operations import GroupOperations
-from .operations.service_principal_operations import ServicePrincipalOperations
-from .operations.user_operations import UserOperations
+from .operations.application_operations_operations import ApplicationOperationsOperations
+from .operations.object_operations_operations import ObjectOperationsOperations
+from .operations.group_operations_operations import GroupOperationsOperations
+from .operations.service_principal_operations_operations import ServicePrincipalOperationsOperations
+from .operations.user_operations_operations import UserOperationsOperations
 from . import models
 
 
@@ -58,7 +58,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, tenant_id, api_version='1.42-previewInternal', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, tenant_id, api_version='1.6-internal', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -92,16 +92,16 @@ class GraphRbacManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: GraphRbacManagementClientConfiguration
 
-    :ivar application: Application operations
-    :vartype application: .operations.ApplicationOperations
-    :ivar objects: Objects operations
-    :vartype objects: .operations.ObjectsOperations
-    :ivar group: Group operations
-    :vartype group: .operations.GroupOperations
-    :ivar service_principal: ServicePrincipal operations
-    :vartype service_principal: .operations.ServicePrincipalOperations
-    :ivar user: User operations
-    :vartype user: .operations.UserOperations
+    :ivar application_operations: ApplicationOperations operations
+    :vartype application_operations: .operations.ApplicationOperationsOperations
+    :ivar object_operations: ObjectOperations operations
+    :vartype object_operations: .operations.ObjectOperationsOperations
+    :ivar group_operations: GroupOperations operations
+    :vartype group_operations: .operations.GroupOperationsOperations
+    :ivar service_principal_operations: ServicePrincipalOperations operations
+    :vartype service_principal_operations: .operations.ServicePrincipalOperationsOperations
+    :ivar user_operations: UserOperations operations
+    :vartype user_operations: .operations.UserOperationsOperations
 
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
@@ -125,7 +125,7 @@ class GraphRbacManagementClient(object):
     """
 
     def __init__(
-            self, credentials, tenant_id, api_version='1.42-previewInternal', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, tenant_id, api_version='1.6-internal', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         self.config = GraphRbacManagementClientConfiguration(credentials, api_version, tenant_id, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)
@@ -134,13 +134,13 @@ class GraphRbacManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.application = ApplicationOperations(
+        self.application_operations = ApplicationOperationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.objects = ObjectsOperations(
+        self.object_operations = ObjectOperationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.group = GroupOperations(
+        self.group_operations = GroupOperationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.service_principal = ServicePrincipalOperations(
+        self.service_principal_operations = ServicePrincipalOperationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.user = UserOperations(
+        self.user_operations = UserOperationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
