@@ -19,10 +19,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_client import PolicyClient
-from .version import VERSION
-
-__all__ = ['PolicyClient']
-
-__version__ = VERSION
+VERSION = "2016-04-01"
 

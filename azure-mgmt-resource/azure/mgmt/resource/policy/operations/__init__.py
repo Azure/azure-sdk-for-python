@@ -19,10 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_client import PolicyClient
-from .version import VERSION
+from .policy_assignments_operations import PolicyAssignmentsOperations
+from .policy_definitions_operations import PolicyDefinitionsOperations
 
-__all__ = ['PolicyClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'PolicyAssignmentsOperations',
+    'PolicyDefinitionsOperations',
+]
