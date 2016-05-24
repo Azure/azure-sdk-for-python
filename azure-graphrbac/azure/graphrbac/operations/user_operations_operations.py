@@ -26,8 +26,8 @@ import uuid
 from .. import models
 
 
-class UserOperations(object):
-    """UserOperations operations.
+class UserOperationsOperations(object):
+    """UserOperationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -46,7 +46,8 @@ class UserOperations(object):
     def delete(
             self, user, custom_headers=None, raw=False, **operation_config):
         """
-        Delete a user.
+        Delete a user. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx
 
         :param user: user object id or user principal name
         :type user: str
@@ -97,7 +98,8 @@ class UserOperations(object):
     def create(
             self, parameters, custom_headers=None, raw=False, **operation_config):
         """
-        Create a new user.
+        Create a new user. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx
 
         :param parameters: Parameters to create a user.
         :type parameters: :class:`UserCreateParameters
@@ -225,7 +227,8 @@ class UserOperations(object):
     def get(
             self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
         """
-        Gets user information from the directory.
+        Gets user information from the directory. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx
 
         :param upn_or_object_id: User object Id or user principal name to get
          user information.
