@@ -43,7 +43,7 @@ class CdnManagementClientConfiguration(AzureConfiguration):
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param api_version: Version of the API to be used with the client
-     request. Current version is 2015-06-01
+     request. Current version is 2016-04-02
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -60,7 +60,7 @@ class CdnManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-06-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-04-02', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -113,7 +113,7 @@ class CdnManagementClient(object):
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param api_version: Version of the API to be used with the client
-     request. Current version is 2015-06-01
+     request. Current version is 2016-04-02
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -130,7 +130,7 @@ class CdnManagementClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-06-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-04-02', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         self.config = CdnManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)
