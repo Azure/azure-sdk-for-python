@@ -34,7 +34,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-batch',
-    version='0.30.0rc3',
+    version='0.30.0rc4',
     description='Microsoft Azure Batch Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -55,13 +55,13 @@ setup(
     zip_safe=False,
     packages=[
         'azure',
-		'azure.mgmt',
+        'azure.mgmt',
         'azure.mgmt.batch',
         'azure.mgmt.batch.models',
         'azure.mgmt.batch.operations',
     ],
     install_requires=[
         'azure-mgmt-nspkg',
-        'azure-common[autorest]==1.1.3',
+        'azure-common[autorest]==1.1.4',
     ],
 )

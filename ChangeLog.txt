@@ -1,15 +1,79 @@
+2016-05-24 Version 2.0.0rc4 / 0.30.0rc4
+
+Disclaimer:
+* There is a breaking change in all Client __init__ methods. Configuration classes have disappeared.
+Update this:
+
+    resource_client = ResourceManagementClient(
+        ResourceManagementClientConfiguration(
+            credentials,
+            subscription_id
+        )
+    )
+    
+to this:
+
+    resource_client = ResourceManagementClient(
+        credentials,
+        subscription_id
+    )
+
+If you were using the Configuration class, it is still available using the `config` attribute after Client creation:
+
+    resource_client.config.long_running_operation_timeout = 5
+    
+New:
+* you can now simplify your call by passing a dict directly and not an instance. This removes the needs to import each model:
+
+    from azure.mgmt.resource.resources.models import ResourceGroup
+
+    resource_client.resource_groups.create_or_update(
+        group_name,
+        ResourceGroup(
+            location='westus',
+        )
+    )
+
+    can now be written directly:
+    
+    resource_client.resource_groups.create_or_update(
+        group_name,
+        {
+            'location':'westus',
+        }
+    )
+
+* Enum refactoring. There are now two kinds of enum: "strict" and "soft".
+A "soft" enum can be substituted by any random string without risking a client-side exception. This is useful for
+services which might add new enum types frequently (e.g. VirtualMachine size). The server might decide to refuse our string and
+you might receive a CloudError exception.
+
+A "strict" enum must follow one of the authorized enum values. Strings are still accepted, but if your value is not valid
+you will receive a SerializationError *without* a call to the REST API. Before, the call was made to the REST API and you received a `CloudError`
+if the server refused the request.
+
+* Latest Swagger update for Redis (API-version 2016-04-01)
+
+Dependencies:
+* msrest must be >= 0.4.0 (see their ChangeLog for details)
+* msrestazure must be >= 0.4.0 (see their ChangeLog for details)
+* azure-common[autorest] == 1.1.4, provides automatic autorest right dependencies
+* azure-storage 0.32.0
+  * `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
+    
+    
 2016-04-26 Version 2.0.0rc3 / 0.30.0rc3
 
 Disclaimer:
 There is no known breaking changes between 2.0.0RC2 and 2.0.0RC3.
 However, we removed several useless parameters for __init__ methods on model classes. If you get an error message like this after migrating to RC3:
  
-	TypeError: __init__() got an unexpected keyword argument 'type'
-	
+    TypeError: __init__() got an unexpected keyword argument 'type'
+    
 or
 
-	TypeError: __init__() takes exactly 1 positional argument (2 given)
-	
+    TypeError: __init__() takes exactly 1 positional argument (2 given)
+    
 You can remove the involved parameter safely, as it should not have been there in the first place.
 
 New:
