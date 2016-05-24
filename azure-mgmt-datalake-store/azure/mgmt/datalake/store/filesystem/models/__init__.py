@@ -28,6 +28,15 @@ from .file_status_properties import FileStatusProperties
 from .file_statuses import FileStatuses
 from .file_statuses_result import FileStatusesResult
 from .file_status_result import FileStatusResult
+from .adls_illegal_argument_exception import AdlsIllegalArgumentException
+from .adls_unsupported_operation_exception import AdlsUnsupportedOperationException
+from .adls_security_exception import AdlsSecurityException
+from .adls_io_exception import AdlsIOException
+from .adls_file_not_found_exception import AdlsFileNotFoundException
+from .adls_runtime_exception import AdlsRuntimeException
+from .adls_access_control_exception import AdlsAccessControlException
+from .adls_remote_exception import AdlsRemoteException
+from .adls_error import AdlsError, AdlsErrorException
 from .data_lake_store_file_system_management_client_enums import (
     FileType,
     AppendModeType,
@@ -43,6 +52,15 @@ __all__ = [
     'FileStatuses',
     'FileStatusesResult',
     'FileStatusResult',
+    'AdlsIllegalArgumentException',
+    'AdlsUnsupportedOperationException',
+    'AdlsSecurityException',
+    'AdlsIOException',
+    'AdlsFileNotFoundException',
+    'AdlsRuntimeException',
+    'AdlsAccessControlException',
+    'AdlsRemoteException',
+    'AdlsError', 'AdlsErrorException',
     'FileType',
     'AppendModeType',
 ]
