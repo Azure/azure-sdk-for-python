@@ -44,7 +44,7 @@ class UserOperations(object):
         self.config = config
 
     def delete(
-            self, user, custom_headers={}, raw=False, **operation_config):
+            self, user, custom_headers=None, raw=False, **operation_config):
         """
         Delete a user.
 
@@ -95,7 +95,7 @@ class UserOperations(object):
             return client_raw_response
 
     def create(
-            self, parameters, custom_headers={}, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create a new user.
 
@@ -157,7 +157,7 @@ class UserOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets list of users for the current tenant.
 
@@ -223,7 +223,7 @@ class UserOperations(object):
         return deserialized
 
     def get(
-            self, upn_or_object_id, custom_headers={}, raw=False, **operation_config):
+            self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets user information from the directory.
 
@@ -282,7 +282,7 @@ class UserOperations(object):
         return deserialized
 
     def get_member_groups(
-            self, object_id, security_enabled_only, custom_headers={}, raw=False, **operation_config):
+            self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
         """
         Gets a collection that contains the Object IDs of the groups of which
         the user is a member.
@@ -357,7 +357,7 @@ class UserOperations(object):
         return deserialized
 
     def list_next(
-            self, next_link, custom_headers={}, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """
         Gets list of users for the current tenant.
 

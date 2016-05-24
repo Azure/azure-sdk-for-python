@@ -44,7 +44,7 @@ class NotificationHubsOperations(object):
         self.config = config
 
     def check_availability(
-            self, resource_group_name, namespace_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Checks the availability of the given notificationHub in a namespace.
 
@@ -113,7 +113,7 @@ class NotificationHubsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, namespace_name, notification_hub_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Creates/Update a NotificationHub in a namespace.
 
@@ -188,7 +188,7 @@ class NotificationHubsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, namespace_name, notification_hub_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a notification hub associated with a namespace.
 
@@ -245,7 +245,7 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
     def get(
-            self, resource_group_name, namespace_name, notification_hub_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists the notification hubs associated with a namespace.
 
@@ -310,7 +310,7 @@ class NotificationHubsOperations(object):
         return deserialized
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Creates/Updates an authorization rule for a NotificationHub
 
@@ -386,7 +386,7 @@ class NotificationHubsOperations(object):
         return deserialized
 
     def delete_authorization_rule(
-            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a notificationHub authorization rule
 
@@ -446,7 +446,7 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
     def get_authorization_rule(
-            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets an authorization rule for a NotificationHub by name.
 
@@ -514,7 +514,7 @@ class NotificationHubsOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, namespace_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists the notification hubs associated with a namespace.
 
@@ -583,7 +583,7 @@ class NotificationHubsOperations(object):
         return deserialized
 
     def list_authorization_rules(
-            self, resource_group_name, namespace_name, notification_hub_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the authorization rules for a NotificationHub.
 
@@ -655,7 +655,7 @@ class NotificationHubsOperations(object):
         return deserialized
 
     def list_keys(
-            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the Primary and Secondary ConnectionStrings to the
         NotificationHub
@@ -725,7 +725,7 @@ class NotificationHubsOperations(object):
         return deserialized
 
     def get_pns_credentials(
-            self, resource_group_name, namespace_name, notification_hub_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists the PNS Credentials associated with a notification hub .
 

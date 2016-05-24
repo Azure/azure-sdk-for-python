@@ -42,7 +42,8 @@ class ServiceBusQueueMessage(ServiceBusMessage):
     :type namespace: str
     :param transport_type: Gets or sets the transport type. Possible values
      include: 'NotSpecified', 'NetMessaging', 'AMQP'
-    :type transport_type: str
+    :type transport_type: str or :class:`ServiceBusTransportType
+     <azure.mgmt.scheduler.models.ServiceBusTransportType>`
     :param queue_name: Gets or sets the queue name.
     :type queue_name: str
     """ 

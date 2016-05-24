@@ -45,7 +45,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, circuit_name, authorization_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, authorization_name, custom_headers=None, raw=False, **operation_config):
         """
         The delete authorization operation deletes the specified authorization
         from the specified ExpressRouteCircuit.
@@ -95,10 +95,11 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -125,7 +126,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, circuit_name, authorization_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, authorization_name, custom_headers=None, raw=False, **operation_config):
         """
         The GET authorization operation retrieves the specified authorization
         from the specified ExpressRouteCircuit.
@@ -191,7 +192,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, circuit_name, authorization_name, authorization_parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, authorization_name, authorization_parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put Authorization operation creates/updates an authorization in
         thespecified ExpressRouteCircuits
@@ -251,10 +252,11 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -290,7 +292,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, resource_group_name, circuit_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
         """
         The List authorization operation retrieves all the authorizations in
         an ExpressRouteCircuit.

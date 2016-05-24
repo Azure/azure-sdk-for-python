@@ -45,7 +45,9 @@ class ApplicationGateway(Resource):
     :ivar operational_state: Gets operational state of application gateway
      resource. Possible values include: 'Stopped', 'Starting', 'Running',
      'Stopping'
-    :vartype operational_state: str
+    :vartype operational_state: str or
+     :class:`ApplicationGatewayOperationalState
+     <azure.mgmt.network.models.ApplicationGatewayOperationalState>`
     :param gateway_ip_configurations: Gets or sets subnets of application
      gateway resource
     :type gateway_ip_configurations: list of
@@ -114,7 +116,7 @@ class ApplicationGateway(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'properties.sku', 'type': 'ApplicationGatewaySku'},
-        'operational_state': {'key': 'properties.operationalState', 'type': 'ApplicationGatewayOperationalState'},
+        'operational_state': {'key': 'properties.operationalState', 'type': 'str'},
         'gateway_ip_configurations': {'key': 'properties.gatewayIPConfigurations', 'type': '[ApplicationGatewayIPConfiguration]'},
         'ssl_certificates': {'key': 'properties.sslCertificates', 'type': '[ApplicationGatewaySslCertificate]'},
         'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[ApplicationGatewayFrontendIPConfiguration]'},

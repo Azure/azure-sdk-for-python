@@ -37,7 +37,7 @@ class TaskInformation(Model):
     :type subtask_id: int
     :param task_state: The current state of the task. Possible values
      include: 'active', 'preparing', 'running', 'completed'
-    :type task_state: str
+    :type task_state: str or :class:`TaskState <azure.batch.models.TaskState>`
     :param execution_info: Information about the execution of the task.
     :type execution_info: :class:`TaskExecutionInformation
      <azure.batch.models.TaskExecutionInformation>`

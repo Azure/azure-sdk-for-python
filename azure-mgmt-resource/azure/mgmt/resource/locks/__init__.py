@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_lock_client import ManagementLockClient, ManagementLockClientConfiguration
+from .management_lock_client import ManagementLockClient
 from .version import VERSION
 
-__all__ = [
-    'ManagementLockClient',
-    'ManagementLockClientConfiguration'
-]
+__all__ = ['ManagementLockClient']
 
 __version__ = VERSION
 

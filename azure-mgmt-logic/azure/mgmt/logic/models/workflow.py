@@ -40,14 +40,16 @@ class Workflow(Resource):
     :type tags: dict
     :ivar provisioning_state: Gets the provisioning state. Possible values
      include: 'NotSpecified', 'Moving', 'Succeeded'
-    :vartype provisioning_state: str
+    :vartype provisioning_state: str or :class:`WorkflowProvisioningState
+     <azure.mgmt.logic.models.WorkflowProvisioningState>`
     :ivar created_time: Gets the created time.
     :vartype created_time: datetime
     :ivar changed_time: Gets the changed time.
     :vartype changed_time: datetime
     :param state: Gets or sets the state. Possible values include:
      'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :type state: str
+    :type state: str or :class:`WorkflowState
+     <azure.mgmt.logic.models.WorkflowState>`
     :ivar version: Gets the version.
     :vartype version: str
     :ivar access_endpoint: Gets the access endpoint.

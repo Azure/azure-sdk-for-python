@@ -25,7 +25,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtNetworkTest, self).setUp()
         self.network_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClientConfiguration,
             azure.mgmt.network.NetworkManagementClient
         )
 

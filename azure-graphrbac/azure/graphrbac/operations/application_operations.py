@@ -44,7 +44,7 @@ class ApplicationOperations(object):
         self.config = config
 
     def create(
-            self, parameters, custom_headers={}, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create a new application.
 
@@ -106,7 +106,7 @@ class ApplicationOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists applications by filter parameters.
 
@@ -166,7 +166,7 @@ class ApplicationOperations(object):
         return deserialized
 
     def delete(
-            self, application_object_id, custom_headers={}, raw=False, **operation_config):
+            self, application_object_id, custom_headers=None, raw=False, **operation_config):
         """
         Delete an application.
 
@@ -217,7 +217,7 @@ class ApplicationOperations(object):
             return client_raw_response
 
     def get(
-            self, application_object_id, custom_headers={}, raw=False, **operation_config):
+            self, application_object_id, custom_headers=None, raw=False, **operation_config):
         """
         Get an application by object Id.
 
@@ -275,7 +275,7 @@ class ApplicationOperations(object):
         return deserialized
 
     def update(
-            self, application_object_id, parameters, custom_headers={}, raw=False, **operation_config):
+            self, application_object_id, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Update existing application.
 

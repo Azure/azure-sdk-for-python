@@ -26,11 +26,11 @@ class GraphRbacTest(AzureMgmtTestCase):
     def setUp(self):
         super(GraphRbacTest, self).setUp()
         self.graphrbac_client = self.create_basic_client(
-            azure.graphrbac.GraphRbacManagementClientConfiguration,
             azure.graphrbac.GraphRbacManagementClient,
             tenant_id=self.settings.AD_DOMAIN
         )
 
+    @unittest.skip("1.42 API Version does not exists anymore, to be migrated to 1.6")
     @record
     def test_graphrbac_users(self):
 

@@ -44,7 +44,7 @@ class ExpressRouteServiceProvidersOperations(object):
         self.config = config
 
     def list(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         The List ExpressRouteServiceProvider opertion retrieves all the
         available ExpressRouteServiceProviders.

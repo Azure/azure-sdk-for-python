@@ -44,7 +44,7 @@ class AvailabilitySetsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The operation to create or update the availability set.
 
@@ -115,7 +115,7 @@ class AvailabilitySetsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, availability_set_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, availability_set_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to delete the availability set.
 
@@ -169,7 +169,7 @@ class AvailabilitySetsOperations(object):
             return client_raw_response
 
     def get(
-            self, resource_group_name, availability_set_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, availability_set_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to get the availability set.
 
@@ -231,7 +231,7 @@ class AvailabilitySetsOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to list the availability sets.
 
@@ -297,7 +297,7 @@ class AvailabilitySetsOperations(object):
         return deserialized
 
     def list_available_sizes(
-            self, resource_group_name, availability_set_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, availability_set_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists all available virtual machine sizes that can be used to create a
         new virtual machine in an existing availability set.

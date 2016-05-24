@@ -35,7 +35,8 @@ class CertificateReference(Model):
      compute node into which to install the certificate. The default value is
      CurrentUser. Possible values include: 'currentuser', 'localmachine',
      'unmapped'
-    :type store_location: str
+    :type store_location: str or :class:`CertificateStoreLocation
+     <azure.batch.models.CertificateStoreLocation>`
     :param store_name: The name of the certificate store on the compute node
      into which to install the certificate. The default value is My.
     :type store_name: str
@@ -44,7 +45,8 @@ class CertificateReference(Model):
      the values 'starttask', 'task' and 'remoteuser', separated by commas.
      The default is all accounts, corresponding to the string
      'starttask,task,remoteuser'.
-    :type visibility: list of str
+    :type visibility: list of str or :class:`CertificateVisibility
+     <azure.batch.models.CertificateVisibility>`
     """ 
 
     _validation = {

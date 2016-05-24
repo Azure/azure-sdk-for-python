@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .scheduler_management_client import SchedulerManagementClient, SchedulerManagementClientConfiguration
+from .scheduler_management_client import SchedulerManagementClient
 from .version import VERSION
 
-__all__ = [
-    'SchedulerManagementClient',
-    'SchedulerManagementClientConfiguration'
-]
+__all__ = ['SchedulerManagementClient']
 
 __version__ = VERSION
 

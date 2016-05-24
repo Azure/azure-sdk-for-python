@@ -45,7 +45,7 @@ class VirtualMachinesOperations(object):
         self.config = config
 
     def capture(
-            self, resource_group_name, vm_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Captures the VM by copying virtual hard disks of the VM and outputs a
         template that can be used to create similar VMs.
@@ -101,10 +101,11 @@ class VirtualMachinesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -138,7 +139,7 @@ class VirtualMachinesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def create_or_update(
-            self, resource_group_name, vm_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The operation to create or update a virtual machine.
 
@@ -193,10 +194,11 @@ class VirtualMachinesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -232,7 +234,7 @@ class VirtualMachinesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, resource_group_name, vm_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to delete a virtual machine.
 
@@ -278,10 +280,11 @@ class VirtualMachinesOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -308,7 +311,7 @@ class VirtualMachinesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, vm_name, expand=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """
         The operation to get a virtual machine.
 
@@ -318,7 +321,8 @@ class VirtualMachinesOperations(object):
         :type vm_name: str
         :param expand: The expand expression to apply on the operation.
          Possible values include: 'instanceView'
-        :type expand: str
+        :type expand: str or :class:`InstanceViewTypes
+         <azure.mgmt.compute.models.InstanceViewTypes>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -375,7 +379,7 @@ class VirtualMachinesOperations(object):
         return deserialized
 
     def deallocate(
-            self, resource_group_name, vm_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         """
         Shuts down the Virtual Machine and releases the compute resources. You
         are not billed for the compute resources that this Virtual Machine
@@ -423,10 +427,11 @@ class VirtualMachinesOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -453,7 +458,7 @@ class VirtualMachinesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def generalize(
-            self, resource_group_name, vm_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         """
         Sets the state of the VM as Generalized.
 
@@ -507,7 +512,7 @@ class VirtualMachinesOperations(object):
             return client_raw_response
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to list virtual machines under a resource group.
 
@@ -573,7 +578,7 @@ class VirtualMachinesOperations(object):
         return deserialized
 
     def list_all(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets the list of Virtual Machines in the subscription. Use nextLink
         property in the response to get the next page of Virtual Machines. Do
@@ -638,7 +643,7 @@ class VirtualMachinesOperations(object):
         return deserialized
 
     def list_available_sizes(
-            self, resource_group_name, vm_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists all available virtual machine sizes it can be resized to for a
         virtual machine.
@@ -708,7 +713,7 @@ class VirtualMachinesOperations(object):
         return deserialized
 
     def power_off(
-            self, resource_group_name, vm_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to power off (stop) a virtual machine.
 
@@ -754,10 +759,11 @@ class VirtualMachinesOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -784,7 +790,7 @@ class VirtualMachinesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def restart(
-            self, resource_group_name, vm_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to restart a virtual machine.
 
@@ -830,10 +836,11 @@ class VirtualMachinesOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -860,7 +867,7 @@ class VirtualMachinesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def start(
-            self, resource_group_name, vm_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to start a virtual machine.
 
@@ -906,10 +913,11 @@ class VirtualMachinesOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -936,7 +944,7 @@ class VirtualMachinesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def redeploy(
-            self, resource_group_name, vm_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to redeploy a virtual machine.
 
@@ -982,10 +990,11 @@ class VirtualMachinesOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 

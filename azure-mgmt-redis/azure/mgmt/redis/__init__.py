@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .redis_management_client import RedisManagementClient, RedisManagementClientConfiguration
+from .redis_management_client import RedisManagementClient
 from .version import VERSION
 
-__all__ = [
-    'RedisManagementClient',
-    'RedisManagementClientConfiguration'
-]
+__all__ = ['RedisManagementClient']
 
 __version__ = VERSION
 

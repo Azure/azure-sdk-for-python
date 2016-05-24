@@ -96,14 +96,16 @@ class SiteConfig(Resource):
     :type java_container_version: str
     :param managed_pipeline_mode: Managed pipeline mode. Possible values
      include: 'Integrated', 'Classic'
-    :type managed_pipeline_mode: str
+    :type managed_pipeline_mode: str or :class:`ManagedPipelineMode
+     <azure.mgmt.web.models.ManagedPipelineMode>`
     :param virtual_applications: Virtual applications
     :type virtual_applications: list of :class:`VirtualApplication
      <azure.mgmt.web.models.VirtualApplication>`
     :param load_balancing: Site load balancing. Possible values include:
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
      'WeightedTotalTraffic', 'RequestHash'
-    :type load_balancing: str
+    :type load_balancing: str or :class:`SiteLoadBalancing
+     <azure.mgmt.web.models.SiteLoadBalancing>`
     :param experiments: This is work around for polymophic types
     :type experiments: :class:`Experiments
      <azure.mgmt.web.models.Experiments>`

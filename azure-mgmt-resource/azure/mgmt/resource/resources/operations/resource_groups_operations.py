@@ -45,7 +45,7 @@ class ResourceGroupsOperations(object):
         self.config = config
 
     def list_resources(
-            self, resource_group_name, filter=None, top=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """
         Get all of the resources under a subscription.
 
@@ -121,7 +121,7 @@ class ResourceGroupsOperations(object):
         return deserialized
 
     def check_existence(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Checks whether resource group exists.
 
@@ -175,7 +175,7 @@ class ResourceGroupsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create a resource group.
 
@@ -245,7 +245,7 @@ class ResourceGroupsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Delete resource group.
 
@@ -289,10 +289,11 @@ class ResourceGroupsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -319,7 +320,7 @@ class ResourceGroupsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Get a resource group.
 
@@ -379,7 +380,7 @@ class ResourceGroupsOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Resource groups can be updated through a simple PATCH operation to a
         group address. The format of the request is the same as that for
@@ -450,7 +451,7 @@ class ResourceGroupsOperations(object):
         return deserialized
 
     def export_template(
-            self, resource_group_name, resources=None, options=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resources=None, options=None, custom_headers=None, raw=False, **operation_config):
         """
         Captures the specified resource group as a template.
 
@@ -524,7 +525,7 @@ class ResourceGroupsOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, top=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a collection of resource groups.
 

@@ -45,7 +45,7 @@ class LocalNetworkGatewaysOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, local_network_gateway_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, local_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put LocalNetworkGateway operation creates/updates a local network
         gateway in the specified resource group through Network resource
@@ -103,10 +103,11 @@ class LocalNetworkGatewaysOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -142,7 +143,7 @@ class LocalNetworkGatewaysOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, local_network_gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, local_network_gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         The Get LocalNetworkGateway operation retrieves information about the
         specified local network gateway through Network resource provider.
@@ -206,7 +207,7 @@ class LocalNetworkGatewaysOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, local_network_gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, local_network_gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         The Delete LocalNetworkGateway operation deletes the specifed local
         network Gateway through Network resource provider.
@@ -254,10 +255,11 @@ class LocalNetworkGatewaysOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -284,7 +286,7 @@ class LocalNetworkGatewaysOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The List LocalNetworkGateways opertion retrieves all the local network
         gateways stored.

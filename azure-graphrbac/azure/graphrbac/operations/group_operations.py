@@ -44,7 +44,7 @@ class GroupOperations(object):
         self.config = config
 
     def remove_member(
-            self, group_object_id, member_object_id, custom_headers={}, raw=False, **operation_config):
+            self, group_object_id, member_object_id, custom_headers=None, raw=False, **operation_config):
         """
         Remove a memeber from a group
 
@@ -98,7 +98,7 @@ class GroupOperations(object):
             return client_raw_response
 
     def add_member(
-            self, group_object_id, url, custom_headers={}, raw=False, **operation_config):
+            self, group_object_id, url, custom_headers=None, raw=False, **operation_config):
         """
         Add a memeber to a group.
 
@@ -157,7 +157,7 @@ class GroupOperations(object):
             return client_raw_response
 
     def delete(
-            self, group_object_id, custom_headers={}, raw=False, **operation_config):
+            self, group_object_id, custom_headers=None, raw=False, **operation_config):
         """
         Delete a group in the directory.
 
@@ -208,7 +208,7 @@ class GroupOperations(object):
             return client_raw_response
 
     def create(
-            self, parameters, custom_headers={}, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create a group in the directory.
 
@@ -270,7 +270,7 @@ class GroupOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets list of groups for the current tenant.
 
@@ -336,7 +336,7 @@ class GroupOperations(object):
         return deserialized
 
     def get_group_members(
-            self, object_id, custom_headers={}, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets the members of a group.
 
@@ -402,7 +402,7 @@ class GroupOperations(object):
         return deserialized
 
     def get(
-            self, object_id, custom_headers={}, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets group information from the directory.
 
@@ -460,7 +460,7 @@ class GroupOperations(object):
         return deserialized
 
     def get_member_groups(
-            self, object_id, security_enabled_only, custom_headers={}, raw=False, **operation_config):
+            self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
         """
         Gets a collection that contains the Object IDs of the groups of which
         the group is a member.
@@ -535,7 +535,7 @@ class GroupOperations(object):
         return deserialized
 
     def list_next(
-            self, next_link, custom_headers={}, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """
         Gets list of groups for the current tenant.
 
@@ -600,7 +600,7 @@ class GroupOperations(object):
         return deserialized
 
     def get_group_members_next(
-            self, next_link, custom_headers={}, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """
         Gets the members of a group.
 

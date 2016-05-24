@@ -30,7 +30,9 @@ class NodeDisableSchedulingParameter(Model):
      tasks when disable task scheduling on the compute node. The default
      value is requeue. Possible values include: 'requeue', 'terminate',
      'taskcompletion'
-    :type node_disable_scheduling_option: str
+    :type node_disable_scheduling_option: str or
+     :class:`DisableComputeNodeSchedulingOption
+     <azure.batch.models.DisableComputeNodeSchedulingOption>`
     """ 
 
     _attribute_map = {

@@ -33,7 +33,8 @@ class SecurityRule(SubResource):
     :type description: str
     :param protocol: Gets or sets Network protocol this rule applies to. Can
      be Tcp, Udp or All(*). Possible values include: 'Tcp', 'Udp', '*'
-    :type protocol: str
+    :type protocol: str or :class:`SecurityRuleProtocol
+     <azure.mgmt.network.models.SecurityRuleProtocol>`
     :param source_port_range: Gets or sets Source Port or Range. Integer or
      range between 0 and 65535. Asterix '*' can also be used to match all
      ports.
@@ -56,7 +57,8 @@ class SecurityRule(SubResource):
     :param access: Gets or sets network traffic is allowed or denied.
      Possible values are 'Allow' and 'Deny'. Possible values include:
      'Allow', 'Deny'
-    :type access: str
+    :type access: str or :class:`SecurityRuleAccess
+     <azure.mgmt.network.models.SecurityRuleAccess>`
     :param priority: Gets or sets the priority of the rule. The value can be
      between 100 and 4096. The priority number must be unique for each rule
      in the collection. The lower the priority number, the higher the
@@ -65,7 +67,8 @@ class SecurityRule(SubResource):
     :param direction: Gets or sets the direction of the rule.InBound or
      Outbound. The direction specifies if rule will be evaluated on incoming
      or outcoming traffic. Possible values include: 'Inbound', 'Outbound'
-    :type direction: str
+    :type direction: str or :class:`SecurityRuleDirection
+     <azure.mgmt.network.models.SecurityRuleDirection>`
     :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
     :type provisioning_state: str
@@ -88,14 +91,14 @@ class SecurityRule(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'protocol': {'key': 'properties.protocol', 'type': 'SecurityRuleProtocol'},
+        'protocol': {'key': 'properties.protocol', 'type': 'str'},
         'source_port_range': {'key': 'properties.sourcePortRange', 'type': 'str'},
         'destination_port_range': {'key': 'properties.destinationPortRange', 'type': 'str'},
         'source_address_prefix': {'key': 'properties.sourceAddressPrefix', 'type': 'str'},
         'destination_address_prefix': {'key': 'properties.destinationAddressPrefix', 'type': 'str'},
-        'access': {'key': 'properties.access', 'type': 'SecurityRuleAccess'},
+        'access': {'key': 'properties.access', 'type': 'str'},
         'priority': {'key': 'properties.priority', 'type': 'int'},
-        'direction': {'key': 'properties.direction', 'type': 'SecurityRuleDirection'},
+        'direction': {'key': 'properties.direction', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
