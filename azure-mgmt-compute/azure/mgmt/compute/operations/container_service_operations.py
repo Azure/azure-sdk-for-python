@@ -27,8 +27,8 @@ import uuid
 from .. import models
 
 
-class VirtualMachineExtensionsOperations(object):
-    """VirtualMachineExtensionsOperations operations.
+class ContainerServiceOperations(object):
+    """ContainerServiceOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -45,21 +45,19 @@ class VirtualMachineExtensionsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, vm_name, vm_extension_name, extension_parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, container_service_name, parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
         """
-        The operation to create or update the extension.
+        The operation to create or update a container service.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_name: The name of the virtual machine where the extension
-         should be create or updated.
-        :type vm_name: str
-        :param vm_extension_name: The name of the virtual machine extension.
-        :type vm_extension_name: str
-        :param extension_parameters: Parameters supplied to the Create
-         Virtual Machine Extension operation.
-        :type extension_parameters: :class:`VirtualMachineExtension
-         <azure.mgmt.compute.models.VirtualMachineExtension>`
+        :param container_service_name: The name of the container service
+         within the given subscription and resource group.
+        :type container_service_name: str
+        :param parameters: Parameters supplied to the Create Container
+         Service operation.
+        :type parameters: :class:`ContainerService
+         <azure.mgmt.compute.models.ContainerService>`
         :param api_version: Client Api Version.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
@@ -67,17 +65,16 @@ class VirtualMachineExtensionsOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualMachineExtension
-         <azure.mgmt.compute.models.VirtualMachineExtension>`
+         instance that returns :class:`ContainerService
+         <azure.mgmt.compute.models.ContainerService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/containerServices/{containerServiceName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'vmName': self._serialize.url("vm_name", vm_name, 'str'),
-            'vmExtensionName': self._serialize.url("vm_extension_name", vm_extension_name, 'str'),
+            'containerServiceName': self._serialize.url("container_service_name", container_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -97,7 +94,7 @@ class VirtualMachineExtensionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(extension_parameters, 'VirtualMachineExtension')
+        body_content = self._serialize.body(parameters, 'ContainerService')
 
         # Construct and send request
         def long_running_send():
@@ -116,7 +113,7 @@ class VirtualMachineExtensionsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 201]:
+            if response.status_code not in [200, 201, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -124,9 +121,11 @@ class VirtualMachineExtensionsOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('VirtualMachineExtension', response)
+                deserialized = self._deserialize('ContainerService', response)
             if response.status_code == 201:
-                deserialized = self._deserialize('VirtualMachineExtension', response)
+                deserialized = self._deserialize('ContainerService', response)
+            if response.status_code == 202:
+                deserialized = self._deserialize('ContainerService', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -145,18 +144,81 @@ class VirtualMachineExtensionsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def delete(
-            self, resource_group_name, vm_name, vm_extension_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+    def get(
+            self, resource_group_name, container_service_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
         """
-        The operation to delete the extension.
+        The operation to get a container service.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_name: The name of the virtual machine where the extension
-         should be deleted.
-        :type vm_name: str
-        :param vm_extension_name: The name of the virtual machine extension.
-        :type vm_extension_name: str
+        :param container_service_name: The name of the container service
+         within the given subscription and resource group.
+        :type container_service_name: str
+        :param api_version: Client Api Version.
+        :type api_version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ContainerService
+         <azure.mgmt.compute.models.ContainerService>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/containerServices/{containerServiceName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'containerServiceName': self._serialize.url("container_service_name", container_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ContainerService', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete(
+            self, resource_group_name, container_service_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+        """
+        The operation to delete a container service.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param container_service_name: The name of the container service
+         within the given subscription and resource group.
+        :type container_service_name: str
         :param api_version: Client Api Version.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
@@ -169,11 +231,10 @@ class VirtualMachineExtensionsOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/containerServices/{containerServiceName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'vmName': self._serialize.url("vm_name", vm_name, 'str'),
-            'vmExtensionName': self._serialize.url("vm_extension_name", vm_extension_name, 'str'),
+            'containerServiceName': self._serialize.url("container_service_name", container_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -228,74 +289,70 @@ class VirtualMachineExtensionsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def get(
-            self, resource_group_name, vm_name, vm_extension_name, api_version="2016-03-30", expand=None, custom_headers=None, raw=False, **operation_config):
+    def list(
+            self, resource_group_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
         """
-        The operation to get the extension.
+        The operation to list container services.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_name: The name of the virtual machine containing the
-         extension.
-        :type vm_name: str
-        :param vm_extension_name: The name of the virtual machine extension.
-        :type vm_extension_name: str
         :param api_version: Client Api Version.
         :type api_version: str
-        :param expand: The expand expression to apply on the operation.
-        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VirtualMachineExtension
-         <azure.mgmt.compute.models.VirtualMachineExtension>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`ContainerServicePaged
+         <azure.mgmt.compute.models.ContainerServicePaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'vmName': self._serialize.url("vm_name", vm_name, 'str'),
-            'vmExtensionName': self._serialize.url("vm_extension_name", vm_extension_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/containerServices'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('VirtualMachineExtension', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ContainerServicePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.ContainerServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

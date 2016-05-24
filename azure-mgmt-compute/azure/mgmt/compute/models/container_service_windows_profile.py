@@ -19,5 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.serialization import Model
 
+
+class ContainerServiceWindowsProfile(Model):
+    """
+    Profile for Windows VMs
+
+    :param admin_username: The administrator username to use for Windows VMs
+    :type admin_username: str
+    :param admin_password: The administrator password to use for Windows VMs
+    :type admin_password: str
+    """ 
+
+    _validation = {
+        'admin_username': {'required': True},
+        'admin_password': {'required': True},
+    }
+
+    _attribute_map = {
+        'admin_username': {'key': 'adminUsername', 'type': 'str'},
+        'admin_password': {'key': 'adminPassword', 'type': 'str'},
+    }
+
+    def __init__(self, admin_username, admin_password):
+        self.admin_username = admin_username
+        self.admin_password = admin_password

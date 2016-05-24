@@ -44,12 +44,14 @@ class UsageOperations(object):
         self.config = config
 
     def list(
-            self, location, custom_headers=None, raw=False, **operation_config):
+            self, location, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
         """
         Lists compute usages for a subscription.
 
         :param location: The location upon which resource usage is queried.
         :type location: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -70,7 +72,7 @@ class UsageOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
