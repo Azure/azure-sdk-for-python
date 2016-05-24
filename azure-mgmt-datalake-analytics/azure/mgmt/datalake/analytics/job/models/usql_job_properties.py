@@ -75,7 +75,8 @@ class USqlJobProperties(JobProperties):
     :vartype yarn_application_time_stamp: long
     :param compile_mode: Gets or sets the compile mode for the job. Possible
      values include: 'Semantic', 'Full', 'SingleBox'
-    :type compile_mode: str
+    :type compile_mode: str or :class:`CompileMode
+     <datalakeanalyticsjobmanagementclient.models.CompileMode>`
     """ 
 
     _validation = {

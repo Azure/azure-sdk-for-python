@@ -27,7 +27,8 @@ class WorkflowFilter(Model):
 
     :param state: Gets or sets the state of workflows. Possible values
      include: 'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :type state: str
+    :type state: str or :class:`WorkflowState
+     <logicmanagementclient.models.WorkflowState>`
     """ 
 
     _attribute_map = {

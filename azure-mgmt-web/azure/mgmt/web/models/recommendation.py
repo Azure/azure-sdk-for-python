@@ -46,10 +46,12 @@ class Recommendation(Model):
     :param level: Level indicating how critical this recommendation can
      impact. Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
-    :type level: str
+    :type level: str or :class:`NotificationLevel
+     <websitemanagementclient.models.NotificationLevel>`
     :param channels: List of channels that this recommendation can apply.
      Possible values include: 'Notification', 'Api', 'Email', 'All'
-    :type channels: str
+    :type channels: str or :class:`Channels
+     <websitemanagementclient.models.Channels>`
     :param tags: The list of category tags that this recommendation belongs
      to.
     :type tags: list of str

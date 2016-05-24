@@ -30,7 +30,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :type id: str
     :param rule_type: Gets or sets the rule type. Possible values include:
      'Basic', 'PathBasedRouting'
-    :type rule_type: str
+    :type rule_type: str or :class:`ApplicationGatewayRequestRoutingRuleType
+     <networkmanagementclient.models.ApplicationGatewayRequestRoutingRuleType>`
     :param backend_address_pool: Gets or sets backend address pool resource
      of application gateway
     :type backend_address_pool: :class:`SubResource
@@ -60,7 +61,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'rule_type': {'key': 'properties.ruleType', 'type': 'ApplicationGatewayRequestRoutingRuleType'},
+        'rule_type': {'key': 'properties.ruleType', 'type': 'str'},
         'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
         'backend_http_settings': {'key': 'properties.backendHttpSettings', 'type': 'SubResource'},
         'http_listener': {'key': 'properties.httpListener', 'type': 'SubResource'},

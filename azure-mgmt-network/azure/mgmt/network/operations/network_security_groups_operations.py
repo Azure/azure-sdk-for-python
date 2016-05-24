@@ -45,7 +45,7 @@ class NetworkSecurityGroupsOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, network_security_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_security_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The Delete NetworkSecurityGroup operation deletes the specifed network
         security group
@@ -93,10 +93,11 @@ class NetworkSecurityGroupsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -123,7 +124,7 @@ class NetworkSecurityGroupsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, network_security_group_name, expand=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_security_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """
         The Get NetworkSecurityGroups operation retrieves information about
         the specified network security group.
@@ -191,7 +192,7 @@ class NetworkSecurityGroupsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, network_security_group_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_security_group_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put NetworkSecurityGroup operation creates/updates a network
         security groupin the specified resource group.
@@ -248,10 +249,11 @@ class NetworkSecurityGroupsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -287,7 +289,7 @@ class NetworkSecurityGroupsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list_all(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         The list NetworkSecurityGroups returns all network security groups in
         a subscription
@@ -351,7 +353,7 @@ class NetworkSecurityGroupsOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The list NetworkSecurityGroups returns all network security groups in
         a resource group

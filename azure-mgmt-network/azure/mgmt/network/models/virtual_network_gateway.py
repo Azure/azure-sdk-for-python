@@ -45,10 +45,12 @@ class VirtualNetworkGateway(Resource):
      <azure.mgmt.network.models.VirtualNetworkGatewayIPConfiguration>`
     :param gateway_type: The type of this virtual network gateway. Possible
      values include: 'Vpn', 'ExpressRoute'
-    :type gateway_type: str
+    :type gateway_type: str or :class:`VirtualNetworkGatewayType
+     <networkmanagementclient.models.VirtualNetworkGatewayType>`
     :param vpn_type: The type of this virtual network gateway. Possible
      values include: 'PolicyBased', 'RouteBased'
-    :type vpn_type: str
+    :type vpn_type: str or :class:`VpnType
+     <networkmanagementclient.models.VpnType>`
     :param enable_bgp: EnableBgp Flag
     :type enable_bgp: bool
     :param gateway_default_site: Gets or sets the reference of the
@@ -92,8 +94,8 @@ class VirtualNetworkGateway(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualNetworkGatewayIPConfiguration]'},
-        'gateway_type': {'key': 'properties.gatewayType', 'type': 'VirtualNetworkGatewayType'},
-        'vpn_type': {'key': 'properties.vpnType', 'type': 'VpnType'},
+        'gateway_type': {'key': 'properties.gatewayType', 'type': 'str'},
+        'vpn_type': {'key': 'properties.vpnType', 'type': 'str'},
         'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
         'gateway_default_site': {'key': 'properties.gatewayDefaultSite', 'type': 'SubResource'},
         'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},

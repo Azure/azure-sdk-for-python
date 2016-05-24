@@ -28,7 +28,8 @@ class BasicAuthentication(HttpAuthentication):
     :param type: Gets or sets the http authentication type. Possible values
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
-    :type type: str
+    :type type: str or :class:`HttpAuthenticationType
+     <schedulermanagementclient.models.HttpAuthenticationType>`
     :param username: Gets or sets the username.
     :type username: str
     :param password: Gets or sets the password.

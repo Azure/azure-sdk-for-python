@@ -28,7 +28,8 @@ class TaskSchedulingError(Model):
 
     :param category: The category of the task scheduling error. Possible
      values include: 'usererror', 'servererror', 'unmapped'
-    :type category: str
+    :type category: str or :class:`SchedulingErrorCategory
+     <batchserviceclient.models.SchedulingErrorCategory>`
     :param code: An identifier for the task scheduling error. Codes are
      invariant and are intended to be consumed programmatically.
     :type code: str

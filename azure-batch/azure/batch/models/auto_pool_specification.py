@@ -35,7 +35,8 @@ class AutoPoolSpecification(Model):
     :param pool_lifetime_option: The minimum lifetime of created auto pools,
      and how multiple jobs on a schedule are assigned to pools. Possible
      values include: 'jobschedule', 'job', 'unmapped'
-    :type pool_lifetime_option: str
+    :type pool_lifetime_option: str or :class:`PoolLifetimeOption
+     <batchserviceclient.models.PoolLifetimeOption>`
     :param keep_alive: Whether to keep an auto pool alive after its lifetime
      expires.
     :type keep_alive: bool

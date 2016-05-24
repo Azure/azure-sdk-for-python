@@ -27,7 +27,8 @@ class RetryPolicy(Model):
 
     :param retry_type: Gets or sets the retry strategy to be used. Possible
      values include: 'None', 'Fixed'
-    :type retry_type: str
+    :type retry_type: str or :class:`RetryType
+     <schedulermanagementclient.models.RetryType>`
     :param retry_interval: Gets or sets the retry interval between retries.
     :type retry_interval: timedelta
     :param retry_count: Gets or sets the number of times a retry should be

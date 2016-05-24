@@ -46,10 +46,12 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :type private_ip_address: str
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
-    :type private_ip_allocation_method: str
+    :type private_ip_allocation_method: str or :class:`IPAllocationMethod
+     <networkmanagementclient.models.IPAllocationMethod>`
     :param private_ip_address_version: Gets or sets PrivateIP address version
      (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
-    :type private_ip_address_version: str
+    :type private_ip_address_version: str or :class:`IPVersion
+     <networkmanagementclient.models.IPVersion>`
     :param subnet:
     :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
     :param public_ip_address:
@@ -71,8 +73,8 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'load_balancer_backend_address_pools': {'key': 'properties.loadBalancerBackendAddressPools', 'type': '[BackendAddressPool]'},
         'load_balancer_inbound_nat_rules': {'key': 'properties.loadBalancerInboundNatRules', 'type': '[InboundNatRule]'},
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'IPAllocationMethod'},
-        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'IPVersion'},
+        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
+        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},

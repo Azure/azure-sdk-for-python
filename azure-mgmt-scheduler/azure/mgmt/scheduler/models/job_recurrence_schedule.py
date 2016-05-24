@@ -27,7 +27,8 @@ class JobRecurrenceSchedule(Model):
 
     :param week_days: Gets or sets the days of the week that the job should
      execute on.
-    :type week_days: list of str
+    :type week_days: list of str or :class:`DayOfWeek
+     <schedulermanagementclient.models.DayOfWeek>`
     :param hours: Gets or sets the hours of the day that the job should
      execute at.
     :type hours: list of int

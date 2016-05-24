@@ -35,7 +35,8 @@ class JobPreparationTaskExecutionInformation(Model):
     :type end_time: datetime
     :param state: The current state of the Job Preparation task. Possible
      values include: 'running', 'completed'
-    :type state: str
+    :type state: str or :class:`JobPreparationTaskState
+     <batchserviceclient.models.JobPreparationTaskState>`
     :param task_root_directory: The root directory of the Job Preparation
      task on the compute node. You can use this path to retrieve files
      created by the task, such as log files.

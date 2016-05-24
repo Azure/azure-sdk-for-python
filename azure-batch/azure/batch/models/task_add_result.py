@@ -28,7 +28,8 @@ class TaskAddResult(Model):
 
     :param status: The status of the add task request. Possible values
      include: 'success', 'clienterror', 'servererror', 'unmapped'
-    :type status: str
+    :type status: str or :class:`TaskAddStatus
+     <batchserviceclient.models.TaskAddStatus>`
     :param task_id: The id of the task for which this is the result.
     :type task_id: str
     :param e_tag: The ETag of the task, if the task was successfully added.

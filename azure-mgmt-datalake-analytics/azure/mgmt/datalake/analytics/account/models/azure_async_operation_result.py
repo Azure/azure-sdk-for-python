@@ -38,7 +38,8 @@ class AzureAsyncOperationResult(Model):
 
     :ivar status: Gets or sets the status of the AzureAsuncOperation.
      Possible values include: 'InProgress', 'Succeeded', 'Failed'
-    :vartype status: str
+    :vartype status: str or :class:`OperationStatus
+     <datalakeanalyticsaccountmanagementclient.models.OperationStatus>`
     :ivar error:
     :vartype error: :class:`Error
      <azure.mgmt.datalake.analytics.account.models.Error>`

@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_lake_store_file_system_management_client import DataLakeStoreFileSystemManagementClient, DataLakeStoreFileSystemManagementClientConfiguration
+from .data_lake_store_file_system_management_client import DataLakeStoreFileSystemManagementClient
 from .version import VERSION
 
-__all__ = [
-    'DataLakeStoreFileSystemManagementClient',
-    'DataLakeStoreFileSystemManagementClientConfiguration'
-]
+__all__ = ['DataLakeStoreFileSystemManagementClient']
 
 __version__ = VERSION
 

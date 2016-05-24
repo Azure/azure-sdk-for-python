@@ -45,7 +45,7 @@ class VirtualMachineExtensionsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers=None, raw=False, **operation_config):
         """
         The operation to create or update the extension.
 
@@ -104,10 +104,11 @@ class VirtualMachineExtensionsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -143,7 +144,7 @@ class VirtualMachineExtensionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, resource_group_name, vm_name, vm_extension_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, vm_extension_name, custom_headers=None, raw=False, **operation_config):
         """
         The operation to delete the extension.
 
@@ -193,10 +194,11 @@ class VirtualMachineExtensionsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -223,7 +225,7 @@ class VirtualMachineExtensionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, vm_name, vm_extension_name, expand=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, vm_extension_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """
         The operation to get the extension.
 

@@ -44,7 +44,7 @@ class RoleAssignmentsOperations(object):
         self.config = config
 
     def list_for_resource(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets role assignments of the resource.
 
@@ -126,7 +126,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def list_for_resource_group(
-            self, resource_group_name, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets role assignments of the resource group.
 
@@ -196,7 +196,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def delete(
-            self, scope, role_assignment_name, custom_headers={}, raw=False, **operation_config):
+            self, scope, role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """
         Delete role assignment.
 
@@ -257,7 +257,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def create(
-            self, scope, role_assignment_name, properties=None, custom_headers={}, raw=False, **operation_config):
+            self, scope, role_assignment_name, properties=None, custom_headers=None, raw=False, **operation_config):
         """
         Create role assignment.
 
@@ -327,7 +327,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def get(
-            self, scope, role_assignment_name, custom_headers={}, raw=False, **operation_config):
+            self, scope, role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """
         Get single role assignment.
 
@@ -388,7 +388,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def delete_by_id(
-            self, role_assignment_id, custom_headers={}, raw=False, **operation_config):
+            self, role_assignment_id, custom_headers=None, raw=False, **operation_config):
         """
         Delete role assignment.
 
@@ -446,7 +446,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def create_by_id(
-            self, role_assignment_id, properties=None, custom_headers={}, raw=False, **operation_config):
+            self, role_assignment_id, properties=None, custom_headers=None, raw=False, **operation_config):
         """
         Create role assignment by Id.
 
@@ -513,7 +513,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def get_by_id(
-            self, role_assignment_id, custom_headers={}, raw=False, **operation_config):
+            self, role_assignment_id, custom_headers=None, raw=False, **operation_config):
         """
         Get single role assignment.
 
@@ -571,7 +571,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets role assignments of the subscription.
 
@@ -638,7 +638,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def list_for_scope(
-            self, scope, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets role assignments of the scope.
 

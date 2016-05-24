@@ -44,7 +44,7 @@ class ManagementLocksOperations(object):
         self.config = config
 
     def create_or_update_at_resource_group_level(
-            self, resource_group_name, lock_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create or update a management lock at the resource group level.
 
@@ -115,7 +115,7 @@ class ManagementLocksOperations(object):
         return deserialized
 
     def create_or_update_at_resource_level(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create or update a management lock at the resource level or any level
         below resource.
@@ -199,7 +199,7 @@ class ManagementLocksOperations(object):
         return deserialized
 
     def delete_at_resource_level(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes the management lock of a resource or any level below resource.
 
@@ -265,7 +265,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
     def create_or_update_at_subscription_level(
-            self, lock_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create or update a management lock at the subscription level.
 
@@ -333,7 +333,7 @@ class ManagementLocksOperations(object):
         return deserialized
 
     def delete_at_subscription_level(
-            self, lock_name, custom_headers={}, raw=False, **operation_config):
+            self, lock_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes the management lock of a subscription.
 
@@ -384,7 +384,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
     def get(
-            self, lock_name, custom_headers={}, raw=False, **operation_config):
+            self, lock_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the management lock of a scope.
 
@@ -445,7 +445,7 @@ class ManagementLocksOperations(object):
         return deserialized
 
     def delete_at_resource_group_level(
-            self, resource_group, lock_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group, lock_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes the management lock of a resource group.
 
@@ -499,7 +499,7 @@ class ManagementLocksOperations(object):
             return client_raw_response
 
     def list_at_resource_group_level(
-            self, resource_group_name, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets all the management locks of a resource group.
 
@@ -569,7 +569,7 @@ class ManagementLocksOperations(object):
         return deserialized
 
     def list_at_resource_level(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets all the management locks of a resource or any level below
         resource.
@@ -653,7 +653,7 @@ class ManagementLocksOperations(object):
         return deserialized
 
     def list_next(
-            self, next_link, custom_headers={}, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """
         Get a list of management locks at resource level or below.
 
@@ -719,7 +719,7 @@ class ManagementLocksOperations(object):
         return deserialized
 
     def list_at_subscription_level(
-            self, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets all the management locks of a subscription.
 

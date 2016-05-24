@@ -28,7 +28,8 @@ class OSDiskImage(Model):
 
     :param operating_system: Gets or sets the operating system of the
      osDiskImage. Possible values include: 'Windows', 'Linux'
-    :type operating_system: str
+    :type operating_system: str or :class:`OperatingSystemTypes
+     <computemanagementclient.models.OperatingSystemTypes>`
     """ 
 
     _validation = {

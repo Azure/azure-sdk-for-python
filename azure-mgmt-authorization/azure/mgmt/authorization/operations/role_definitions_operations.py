@@ -44,7 +44,7 @@ class RoleDefinitionsOperations(object):
         self.config = config
 
     def delete(
-            self, scope, role_definition_id, custom_headers={}, raw=False, **operation_config):
+            self, scope, role_definition_id, custom_headers=None, raw=False, **operation_config):
         """
         Deletes the role definition.
 
@@ -105,7 +105,7 @@ class RoleDefinitionsOperations(object):
         return deserialized
 
     def get(
-            self, scope, role_definition_id, custom_headers={}, raw=False, **operation_config):
+            self, scope, role_definition_id, custom_headers=None, raw=False, **operation_config):
         """
         Get role definition by name (GUID).
 
@@ -166,7 +166,7 @@ class RoleDefinitionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, scope, role_definition_id, role_definition, custom_headers={}, raw=False, **operation_config):
+            self, scope, role_definition_id, role_definition, custom_headers=None, raw=False, **operation_config):
         """
         Creates or updates a role definition.
 
@@ -234,7 +234,7 @@ class RoleDefinitionsOperations(object):
         return deserialized
 
     def get_by_id(
-            self, role_definition_id, custom_headers={}, raw=False, **operation_config):
+            self, role_definition_id, custom_headers=None, raw=False, **operation_config):
         """
         Get role definition by name (GUID).
 
@@ -292,7 +292,7 @@ class RoleDefinitionsOperations(object):
         return deserialized
 
     def list(
-            self, scope, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Get all role definitions that are applicable at scope and above. Use
         atScopeAndBelow filter to search below the given scope as well

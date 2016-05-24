@@ -45,7 +45,7 @@ class NamespacesOperations(object):
         self.config = config
 
     def check_availability(
-            self, parameters, custom_headers={}, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Checks the availability of the given service namespace across all
         Windows Azure subscriptions. This is useful because the domain name
@@ -110,7 +110,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, namespace_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Creates/Updates a service namespace. Once created, this namespace's
         resource manifest is immutable. This operation is idempotent.
@@ -182,7 +182,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, namespace_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes an existing namespace. This operation also removes all
         associated notificationHubs under the namespace.
@@ -229,10 +229,11 @@ class NamespacesOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -259,7 +260,7 @@ class NamespacesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, namespace_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         """
         Returns the description for the specified namespace.
 
@@ -321,7 +322,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, authorization_rule_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Creates an authorization rule for a namespace
 
@@ -394,7 +395,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def delete_authorization_rule(
-            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a namespace authorization rule
 
@@ -451,7 +452,7 @@ class NamespacesOperations(object):
             return client_raw_response
 
     def get_authorization_rule(
-            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets an authorization rule for a namespace by name.
 
@@ -516,7 +517,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def get_long_running_operation_status(
-            self, operation_status_link, custom_headers={}, raw=False, **operation_config):
+            self, operation_status_link, custom_headers=None, raw=False, **operation_config):
         """
         The Get Operation Status operation returns the status of the specified
         operation. After calling an asynchronous operation, you can call Get
@@ -569,7 +570,7 @@ class NamespacesOperations(object):
             return client_raw_response
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists the available namespaces within a resourceGroup.
 
@@ -637,7 +638,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def list_all(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Lists all the available namespaces within the subscription
         irrespective of the resourceGroups.
@@ -701,7 +702,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def list_authorization_rules(
-            self, resource_group_name, namespace_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the authorization rules for a namespace.
 
@@ -770,7 +771,7 @@ class NamespacesOperations(object):
         return deserialized
 
     def list_keys(
-            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the Primary and Secondary ConnectionStrings to the namespace
 

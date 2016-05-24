@@ -38,7 +38,8 @@ class ApplicationGatewayHttpListener(SubResource):
      <azure.mgmt.network.models.SubResource>`
     :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
-    :type protocol: str
+    :type protocol: str or :class:`ApplicationGatewayProtocol
+     <networkmanagementclient.models.ApplicationGatewayProtocol>`
     :param host_name: Gets or sets the host name of http listener
     :type host_name: str
     :param ssl_certificate: Gets or sets ssl certificate resource of
@@ -63,7 +64,7 @@ class ApplicationGatewayHttpListener(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
         'frontend_port': {'key': 'properties.frontendPort', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'ApplicationGatewayProtocol'},
+        'protocol': {'key': 'properties.protocol', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'ssl_certificate': {'key': 'properties.sslCertificate', 'type': 'SubResource'},
         'require_server_name_indication': {'key': 'properties.requireServerNameIndication', 'type': 'bool'},

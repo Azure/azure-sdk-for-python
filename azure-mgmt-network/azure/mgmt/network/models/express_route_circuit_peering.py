@@ -30,10 +30,12 @@ class ExpressRouteCircuitPeering(SubResource):
     :type id: str
     :param peering_type: Gets or sets PeeringType. Possible values include:
      'AzurePublicPeering', 'AzurePrivatePeering', 'MicrosoftPeering'
-    :type peering_type: str
+    :type peering_type: str or :class:`ExpressRouteCircuitPeeringType
+     <networkmanagementclient.models.ExpressRouteCircuitPeeringType>`
     :param state: Gets or sets state of Peering. Possible values include:
      'Disabled', 'Enabled'
-    :type state: str
+    :type state: str or :class:`ExpressRouteCircuitPeeringState
+     <networkmanagementclient.models.ExpressRouteCircuitPeeringState>`
     :param azure_asn: Gets or sets the azure ASN
     :type azure_asn: int
     :param peer_asn: Gets or sets the peer ASN
@@ -71,8 +73,8 @@ class ExpressRouteCircuitPeering(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'peering_type': {'key': 'properties.peeringType', 'type': 'ExpressRouteCircuitPeeringType'},
-        'state': {'key': 'properties.state', 'type': 'ExpressRouteCircuitPeeringState'},
+        'peering_type': {'key': 'properties.peeringType', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'azure_asn': {'key': 'properties.azureASN', 'type': 'int'},
         'peer_asn': {'key': 'properties.peerASN', 'type': 'int'},
         'primary_peer_address_prefix': {'key': 'properties.primaryPeerAddressPrefix', 'type': 'str'},

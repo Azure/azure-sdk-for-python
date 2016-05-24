@@ -39,7 +39,7 @@ class NodeAgentSku(Model):
      <azure.batch.models.ImageReference>`
     :param os_type: The type of operating system compatible with the node
      agent SKU. Possible values include: 'linux', 'windows', 'unmapped'
-    :type os_type: str
+    :type os_type: str or :class:`OSType <batchserviceclient.models.OSType>`
     """ 
 
     _attribute_map = {

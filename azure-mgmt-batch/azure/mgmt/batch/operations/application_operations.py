@@ -44,7 +44,7 @@ class ApplicationOperations(object):
         self.config = config
 
     def activate_application_package(
-            self, resource_group_name, account_name, id, version, format, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, id, version, format, custom_headers=None, raw=False, **operation_config):
         """
         Activates the specified application package.
 
@@ -113,7 +113,7 @@ class ApplicationOperations(object):
             return client_raw_response
 
     def add_application(
-            self, resource_group_name, account_name, application_id, allow_updates=None, display_name=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, application_id, allow_updates=None, display_name=None, custom_headers=None, raw=False, **operation_config):
         """
         Adds an application to the specified Batch account.
 
@@ -194,7 +194,7 @@ class ApplicationOperations(object):
         return deserialized
 
     def delete_application(
-            self, resource_group_name, account_name, application_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, application_id, custom_headers=None, raw=False, **operation_config):
         """
         Deletes an application.
 
@@ -252,7 +252,7 @@ class ApplicationOperations(object):
             return client_raw_response
 
     def get_application(
-            self, resource_group_name, account_name, application_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, application_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the specified application.
 
@@ -317,7 +317,7 @@ class ApplicationOperations(object):
         return deserialized
 
     def update_application(
-            self, resource_group_name, account_name, application_id, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, application_id, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Updates settings for the specified application.
 
@@ -382,7 +382,7 @@ class ApplicationOperations(object):
             return client_raw_response
 
     def add_application_package(
-            self, resource_group_name, account_name, application_id, version, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, application_id, version, custom_headers=None, raw=False, **operation_config):
         """
         Creates an application package record.
 
@@ -451,7 +451,7 @@ class ApplicationOperations(object):
         return deserialized
 
     def delete_application_package(
-            self, resource_group_name, account_name, application_id, version, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, application_id, version, custom_headers=None, raw=False, **operation_config):
         """
         Deletes an application package record and its associated binary file.
 
@@ -512,7 +512,7 @@ class ApplicationOperations(object):
             return client_raw_response
 
     def get_application_package(
-            self, resource_group_name, account_name, application_id, version, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, application_id, version, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the specified application package.
 
@@ -581,7 +581,7 @@ class ApplicationOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, account_name, maxresults=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists all of the applications in the specified account.
 

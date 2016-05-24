@@ -45,7 +45,7 @@ class SecurityRulesOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, network_security_group_name, security_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_security_group_name, security_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         The delete network security rule operation deletes the specified
         network security rule.
@@ -96,10 +96,11 @@ class SecurityRulesOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -126,7 +127,7 @@ class SecurityRulesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, network_security_group_name, security_rule_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_security_group_name, security_rule_name, custom_headers=None, raw=False, **operation_config):
         """
         The Get NetworkSecurityRule operation retreives information about the
         specified network security rule.
@@ -192,7 +193,7 @@ class SecurityRulesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, network_security_group_name, security_rule_name, security_rule_parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_security_group_name, security_rule_name, security_rule_parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put network security rule operation creates/updates a security
         rule in the specified network security group
@@ -252,10 +253,11 @@ class SecurityRulesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -291,7 +293,7 @@ class SecurityRulesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, resource_group_name, network_security_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_security_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The List network security rule opertion retrieves all the security
         rules in a network security group.

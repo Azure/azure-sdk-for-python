@@ -70,7 +70,9 @@ class Endpoint(TrackedResource):
     :param query_string_caching_behavior: Defines the query string caching
      behavior. Possible values include: 'IgnoreQueryString', 'BypassCaching',
      'UseQueryString', 'NotSet'
-    :type query_string_caching_behavior: str
+    :type query_string_caching_behavior: str or
+     :class:`QueryStringCachingBehavior
+     <cdnmanagementclient.models.QueryStringCachingBehavior>`
     :param origins: The set of origins for the CDN endpoint. When multiple
      origins exist, the first origin will be used as primary and rest will be
      used as failover options.
@@ -79,10 +81,12 @@ class Endpoint(TrackedResource):
     :ivar resource_state: Resource status of the endpoint. Possible values
      include: 'Creating', 'Deleting', 'Running', 'Starting', 'Stopped',
      'Stopping'
-    :vartype resource_state: str
+    :vartype resource_state: str or :class:`EndpointResourceState
+     <cdnmanagementclient.models.EndpointResourceState>`
     :param provisioning_state: Provisioning status of the endpoint. Possible
      values include: 'Creating', 'Succeeded', 'Failed'
-    :type provisioning_state: str
+    :type provisioning_state: str or :class:`ProvisioningState
+     <cdnmanagementclient.models.ProvisioningState>`
     """ 
 
     _validation = {

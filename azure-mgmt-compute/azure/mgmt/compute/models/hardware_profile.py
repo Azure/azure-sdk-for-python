@@ -44,11 +44,12 @@ class HardwareProfile(Model):
      'Standard_G1', 'Standard_G2', 'Standard_G3', 'Standard_G4',
      'Standard_G5', 'Standard_GS1', 'Standard_GS2', 'Standard_GS3',
      'Standard_GS4', 'Standard_GS5'
-    :type vm_size: str
+    :type vm_size: str or :class:`VirtualMachineSizeTypes
+     <computemanagementclient.models.VirtualMachineSizeTypes>`
     """ 
 
     _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'VirtualMachineSizeTypes'},
+        'vm_size': {'key': 'vmSize', 'type': 'str'},
     }
 
     def __init__(self, vm_size=None):

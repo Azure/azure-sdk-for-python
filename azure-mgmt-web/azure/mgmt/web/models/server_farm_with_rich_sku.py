@@ -48,7 +48,8 @@ class ServerFarmWithRichSku(Resource):
     :type worker_tier_name: str
     :ivar status: App Service Plan Status. Possible values include: 'Ready',
      'Pending'
-    :vartype status: str
+    :vartype status: str or :class:`StatusOptions
+     <websitemanagementclient.models.StatusOptions>`
     :ivar subscription: App Service Plan Subscription
     :vartype subscription: str
     :param admin_site_name: App Service Plan administration site

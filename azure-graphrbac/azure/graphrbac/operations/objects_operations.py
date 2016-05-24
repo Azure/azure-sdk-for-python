@@ -44,7 +44,7 @@ class ObjectsOperations(object):
         self.config = config
 
     def get_current_user(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets the details for current logged in user
 
@@ -99,7 +99,7 @@ class ObjectsOperations(object):
         return deserialized
 
     def get_objects_by_object_ids(
-            self, parameters, custom_headers={}, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Gets AD group membership by provided AD object Ids
 
@@ -168,7 +168,7 @@ class ObjectsOperations(object):
         return deserialized
 
     def get_objects_by_object_ids_next(
-            self, next_link, custom_headers={}, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """
         Gets AD group membership by provided AD object Ids
 

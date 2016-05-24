@@ -34,10 +34,12 @@ class ComputeNode(Model):
      include: 'idle', 'rebooting', 'reimaging', 'running', 'unusable',
      'creating', 'starting', 'waitingforstarttask', 'starttaskfailed',
      'unknown', 'leavingpool', 'offline'
-    :type state: str
+    :type state: str or :class:`ComputeNodeState
+     <batchserviceclient.models.ComputeNodeState>`
     :param scheduling_state: Whether the compute node should be available for
      task scheduling. Possible values include: 'enabled', 'disabled'
-    :type scheduling_state: str
+    :type scheduling_state: str or :class:`SchedulingState
+     <batchserviceclient.models.SchedulingState>`
     :param state_transition_time: The time at which the compute node entered
      its current state.
     :type state_transition_time: datetime

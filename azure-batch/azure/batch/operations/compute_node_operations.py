@@ -43,7 +43,7 @@ class ComputeNodeOperations(object):
         self.config = config
 
     def add_user(
-            self, pool_id, node_id, user, compute_node_add_user_options=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, node_id, user, compute_node_add_user_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Adds a user account to the specified compute node.
 
@@ -134,7 +134,7 @@ class ComputeNodeOperations(object):
             return client_raw_response
 
     def delete_user(
-            self, pool_id, node_id, user_name, compute_node_delete_user_options=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, node_id, user_name, compute_node_delete_user_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a user account from the specified compute node.
 
@@ -219,7 +219,7 @@ class ComputeNodeOperations(object):
             return client_raw_response
 
     def update_user(
-            self, pool_id, node_id, user_name, node_update_user_parameter, compute_node_update_user_options=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, node_id, user_name, node_update_user_parameter, compute_node_update_user_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Updates the password or expiration time of a user account on the
         specified compute node.
@@ -315,7 +315,7 @@ class ComputeNodeOperations(object):
             return client_raw_response
 
     def get(
-            self, pool_id, node_id, compute_node_get_options=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, node_id, compute_node_get_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the specified compute node.
 
@@ -412,7 +412,7 @@ class ComputeNodeOperations(object):
         return deserialized
 
     def reboot(
-            self, pool_id, node_id, compute_node_reboot_options=None, node_reboot_option=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, node_id, compute_node_reboot_options=None, node_reboot_option=None, custom_headers=None, raw=False, **operation_config):
         """
         Restarts the specified compute node.
 
@@ -428,7 +428,8 @@ class ComputeNodeOperations(object):
          to do with currently running tasks. The default value is requeue.
          Possible values include: 'requeue', 'terminate', 'taskcompletion',
          'retaineddata'
-        :type node_reboot_option: str
+        :type node_reboot_option: str or :class:`ComputeNodeRebootOption
+         <batchserviceclient.models.ComputeNodeRebootOption>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -510,7 +511,7 @@ class ComputeNodeOperations(object):
             return client_raw_response
 
     def reimage(
-            self, pool_id, node_id, compute_node_reimage_options=None, node_reimage_option=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, node_id, compute_node_reimage_options=None, node_reimage_option=None, custom_headers=None, raw=False, **operation_config):
         """
         Reinstalls the operating system on the specified compute node.
 
@@ -526,7 +527,8 @@ class ComputeNodeOperations(object):
          to do with currently running tasks. The default value is requeue.
          Possible values include: 'requeue', 'terminate', 'taskcompletion',
          'retaineddata'
-        :type node_reimage_option: str
+        :type node_reimage_option: str or :class:`ComputeNodeReimageOption
+         <batchserviceclient.models.ComputeNodeReimageOption>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -608,7 +610,7 @@ class ComputeNodeOperations(object):
             return client_raw_response
 
     def disable_scheduling(
-            self, pool_id, node_id, compute_node_disable_scheduling_options=None, node_disable_scheduling_option=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, node_id, compute_node_disable_scheduling_options=None, node_disable_scheduling_option=None, custom_headers=None, raw=False, **operation_config):
         """
         Disable task scheduling of the specified compute node.
 
@@ -626,7 +628,9 @@ class ComputeNodeOperations(object):
          running tasks when disable task scheduling on the compute node. The
          default value is requeue. Possible values include: 'requeue',
          'terminate', 'taskcompletion'
-        :type node_disable_scheduling_option: str
+        :type node_disable_scheduling_option: str or
+         :class:`DisableComputeNodeSchedulingOption
+         <batchserviceclient.models.DisableComputeNodeSchedulingOption>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -708,7 +712,7 @@ class ComputeNodeOperations(object):
             return client_raw_response
 
     def enable_scheduling(
-            self, pool_id, node_id, compute_node_enable_scheduling_options=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, node_id, compute_node_enable_scheduling_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Enable task scheduling of the specified compute node.
 
@@ -793,7 +797,7 @@ class ComputeNodeOperations(object):
             return client_raw_response
 
     def get_remote_login_settings(
-            self, pool_id, node_id, compute_node_get_remote_login_settings_options=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, node_id, compute_node_get_remote_login_settings_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets the settings required for remote login to a compute node.
 
@@ -887,7 +891,7 @@ class ComputeNodeOperations(object):
         return deserialized
 
     def get_remote_desktop(
-            self, pool_id, node_id, compute_node_get_remote_desktop_options=None, custom_headers={}, raw=False, callback=None, **operation_config):
+            self, pool_id, node_id, compute_node_get_remote_desktop_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """
         Gets the Remote Desktop Protocol file for the specified compute node.
 
@@ -985,7 +989,7 @@ class ComputeNodeOperations(object):
         return deserialized
 
     def list(
-            self, pool_id, compute_node_list_options=None, custom_headers={}, raw=False, **operation_config):
+            self, pool_id, compute_node_list_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists the compute nodes in the specified pool.
 

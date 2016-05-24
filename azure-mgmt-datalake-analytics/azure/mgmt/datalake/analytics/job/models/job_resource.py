@@ -32,7 +32,8 @@ class JobResource(Model):
     :type resource_path: str
     :param type: Gets or sets the job resource type. Possible values include:
      'VertexResource', 'StatisticsResource'
-    :type type: str
+    :type type: str or :class:`JobResourceType
+     <datalakeanalyticsjobmanagementclient.models.JobResourceType>`
     """ 
 
     _attribute_map = {

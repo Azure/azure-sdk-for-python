@@ -56,7 +56,9 @@ class EndpointCreateParameters(Model):
     :param query_string_caching_behavior: Defines the query string caching
      behavior. Possible values include: 'IgnoreQueryString', 'BypassCaching',
      'UseQueryString', 'NotSet'
-    :type query_string_caching_behavior: str
+    :type query_string_caching_behavior: str or
+     :class:`QueryStringCachingBehavior
+     <cdnmanagementclient.models.QueryStringCachingBehavior>`
     :param origins: The set of origins for the CDN endpoint. When multiple
      origins exist, the first origin will be used as primary and rest will be
      used as failover options.

@@ -48,14 +48,16 @@ class SubtaskInformation(Model):
      <azure.batch.models.TaskSchedulingError>`
     :param state: The current state of the subtask. Possible values include:
      'active', 'preparing', 'running', 'completed'
-    :type state: str
+    :type state: str or :class:`TaskState
+     <batchserviceclient.models.TaskState>`
     :param state_transition_time: The time at which the subtask entered its
      current state.
     :type state_transition_time: datetime
     :param previous_state: The previous state of the subtask. This property
      is not set if the subtask is in its initial Active state. Possible
      values include: 'active', 'preparing', 'running', 'completed'
-    :type previous_state: str
+    :type previous_state: str or :class:`TaskState
+     <batchserviceclient.models.TaskState>`
     :param previous_state_transition_time: The time at which the subtask
      entered its previous state. This property is not set if the subtask is
      in its initial Active state.

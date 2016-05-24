@@ -41,7 +41,8 @@ class InboundNatRule(SubResource):
     :param protocol: Gets or sets the transport potocol for the external
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'
-    :type protocol: str
+    :type protocol: str or :class:`TransportProtocol
+     <networkmanagementclient.models.TransportProtocol>`
     :param frontend_port: Gets or sets the port for the external endpoint.
      You can spcify any port number you choose, but the port numbers
      specified for each role in the service must be unique. Possible values
@@ -82,7 +83,7 @@ class InboundNatRule(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
         'backend_ip_configuration': {'key': 'properties.backendIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
-        'protocol': {'key': 'properties.protocol', 'type': 'TransportProtocol'},
+        'protocol': {'key': 'properties.protocol', 'type': 'str'},
         'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
         'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},

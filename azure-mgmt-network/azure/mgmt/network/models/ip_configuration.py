@@ -33,7 +33,8 @@ class IPConfiguration(SubResource):
     :type private_ip_address: str
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
-    :type private_ip_allocation_method: str
+    :type private_ip_allocation_method: str or :class:`IPAllocationMethod
+     <networkmanagementclient.models.IPAllocationMethod>`
     :param subnet: Gets or sets the reference of the subnet resource
     :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
     :param public_ip_address: Gets or sets the reference of the PublicIP
@@ -54,7 +55,7 @@ class IPConfiguration(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
-        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'IPAllocationMethod'},
+        'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},

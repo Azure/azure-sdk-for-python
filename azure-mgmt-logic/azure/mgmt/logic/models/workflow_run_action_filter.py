@@ -29,7 +29,8 @@ class WorkflowRunActionFilter(Model):
      values include: 'NotSpecified', 'Paused', 'Running', 'Waiting',
      'Succeeded', 'Skipped', 'Suspended', 'Cancelled', 'Failed', 'Faulted',
      'TimedOut', 'Aborted'
-    :type status: str
+    :type status: str or :class:`WorkflowStatus
+     <logicmanagementclient.models.WorkflowStatus>`
     """ 
 
     _attribute_map = {

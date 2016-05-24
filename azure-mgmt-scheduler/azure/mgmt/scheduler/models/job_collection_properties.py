@@ -29,7 +29,8 @@ class JobCollectionProperties(Model):
     :type sku: :class:`Sku <azure.mgmt.scheduler.models.Sku>`
     :param state: Gets or sets the state. Possible values include: 'Enabled',
      'Disabled', 'Suspended', 'Deleted'
-    :type state: str
+    :type state: str or :class:`JobCollectionState
+     <schedulermanagementclient.models.JobCollectionState>`
     :param quota: Gets or sets the job collection quota.
     :type quota: :class:`JobCollectionQuota
      <azure.mgmt.scheduler.models.JobCollectionQuota>`

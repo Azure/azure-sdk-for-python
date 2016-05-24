@@ -32,10 +32,13 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :type port: int
     :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
-    :type protocol: str
+    :type protocol: str or :class:`ApplicationGatewayProtocol
+     <networkmanagementclient.models.ApplicationGatewayProtocol>`
     :param cookie_based_affinity: Gets or sets the cookie affinity. Possible
      values include: 'Enabled', 'Disabled'
-    :type cookie_based_affinity: str
+    :type cookie_based_affinity: str or
+     :class:`ApplicationGatewayCookieBasedAffinity
+     <networkmanagementclient.models.ApplicationGatewayCookieBasedAffinity>`
     :param request_timeout: Gets or sets request timeout
     :type request_timeout: int
     :param probe: Gets or sets probe resource of application gateway
@@ -54,8 +57,8 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'port': {'key': 'properties.port', 'type': 'int'},
-        'protocol': {'key': 'properties.protocol', 'type': 'ApplicationGatewayProtocol'},
-        'cookie_based_affinity': {'key': 'properties.cookieBasedAffinity', 'type': 'ApplicationGatewayCookieBasedAffinity'},
+        'protocol': {'key': 'properties.protocol', 'type': 'str'},
+        'cookie_based_affinity': {'key': 'properties.cookieBasedAffinity', 'type': 'str'},
         'request_timeout': {'key': 'properties.requestTimeout', 'type': 'int'},
         'probe': {'key': 'properties.probe', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
