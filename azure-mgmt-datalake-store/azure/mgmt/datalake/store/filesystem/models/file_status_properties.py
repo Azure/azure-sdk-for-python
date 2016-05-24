@@ -50,7 +50,8 @@ class FileStatusProperties(Model):
     :vartype permission: str
     :ivar type: Gets the type of the path object. Possible values include:
      'FILE', 'DIRECTORY'
-    :vartype type: str
+    :vartype type: str or :class:`FileType
+     <azure.mgmt.datalake.store.filesystem.models.FileType>`
     """ 
 
     _validation = {

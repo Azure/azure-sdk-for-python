@@ -29,7 +29,8 @@ class NodeReimageParameter(Model):
     :param node_reimage_option: When to reimage the compute node and what to
      do with currently running tasks. The default value is requeue. Possible
      values include: 'requeue', 'terminate', 'taskcompletion', 'retaineddata'
-    :type node_reimage_option: str
+    :type node_reimage_option: str or :class:`ComputeNodeReimageOption
+     <azure.batch.models.ComputeNodeReimageOption>`
     """ 
 
     _attribute_map = {

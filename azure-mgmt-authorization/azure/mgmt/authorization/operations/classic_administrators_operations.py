@@ -44,7 +44,7 @@ class ClassicAdministratorsOperations(object):
         self.config = config
 
     def list(
-            self, api_version, custom_headers={}, raw=False, **operation_config):
+            self, api_version, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of classic administrators for the subscription.
 

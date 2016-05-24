@@ -27,7 +27,7 @@ class RegenerateSecretKeyParameters(Model):
 
     :param key_type: Gets or sets the key type. Possible values include:
      'NotSpecified', 'Primary', 'Secondary'
-    :type key_type: str
+    :type key_type: str or :class:`KeyType <azure.mgmt.logic.models.KeyType>`
     """ 
 
     _attribute_map = {

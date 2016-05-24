@@ -30,7 +30,8 @@ class CheckNameAvailabilityInput(Model):
     :type name: str
     :param type: The type of the resource whose name is to be validated.
      Possible values include: 'Microsoft.Cdn/Profiles/Endpoints'
-    :type type: str
+    :type type: str or :class:`ResourceType
+     <azure.mgmt.cdn.models.ResourceType>`
     """ 
 
     _validation = {

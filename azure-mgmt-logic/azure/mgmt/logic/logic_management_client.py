@@ -91,8 +91,8 @@ class LogicManagementClientConfiguration(AzureConfiguration):
 class LogicManagementClient(object):
     """LogicManagementClient
 
-    :param config: Configuration for client.
-    :type config: LogicManagementClientConfiguration
+    :ivar config: Configuration for client.
+    :vartype config: LogicManagementClientConfiguration
 
     :ivar workflows: Workflows operations
     :vartype workflows: .operations.WorkflowsOperations
@@ -108,17 +108,38 @@ class LogicManagementClient(object):
     :vartype workflow_runs: .operations.WorkflowRunsOperations
     :ivar workflow_run_actions: WorkflowRunActions operations
     :vartype workflow_run_actions: .operations.WorkflowRunActionsOperations
+
+    :param credentials: Gets Azure subscription credentials.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
+    :param subscription_id: The subscription id.
+    :type subscription_id: str
+    :param api_version: The API version.
+    :type api_version: str
+    :param accept_language: Gets or sets the preferred language for the
+     response.
+    :type accept_language: str
+    :param long_running_operation_retry_timeout: Gets or sets the retry
+     timeout in seconds for Long Running Operations. Default value is 30.
+    :type long_running_operation_retry_timeout: int
+    :param generate_client_request_id: When set to true a unique
+     x-ms-client-request-id value is generated and included in each request.
+     Default is true.
+    :type generate_client_request_id: bool
+    :param str base_url: Service URL
+    :param str filepath: Existing config
     """
 
-    def __init__(self, config):
+    def __init__(
+            self, credentials, subscription_id, api_version='2015-02-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
-        self._client = ServiceClient(config.credentials, config)
+        self.config = LogicManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer()
+        self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.config = config
         self.workflows = WorkflowsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_versions = WorkflowVersionsOperations(

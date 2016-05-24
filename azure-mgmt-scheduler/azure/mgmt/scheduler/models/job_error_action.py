@@ -28,7 +28,8 @@ class JobErrorAction(Model):
     :param type: Gets or sets the job error action type. Possible values
      include: 'Http', 'Https', 'StorageQueue', 'ServiceBusQueue',
      'ServiceBusTopic'
-    :type type: str
+    :type type: str or :class:`JobActionType
+     <azure.mgmt.scheduler.models.JobActionType>`
     :param request: Gets or sets the http requests.
     :type request: :class:`HttpRequest
      <azure.mgmt.scheduler.models.HttpRequest>`

@@ -45,7 +45,7 @@ class SitesOperations(object):
         self.config = config
 
     def get_site_vnet_connection_slot(
-            self, resource_group_name, name, vnet_name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a specific Virtual Network Connection associated with this
         web app.
@@ -113,7 +113,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_vnet_connection_slot(
-            self, resource_group_name, name, vnet_name, connection_envelope, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
         """
         Adds a Virtual Network Connection or updates it's properties.
 
@@ -188,7 +188,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_vnet_connection_slot(
-            self, resource_group_name, name, vnet_name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Removes the specified Virtual Network Connection association from this
         web app.
@@ -256,7 +256,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_vnet_connection_slot(
-            self, resource_group_name, name, vnet_name, connection_envelope, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
         """
         Adds a Virtual Network Connection or updates it's properties.
 
@@ -331,7 +331,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_vnet_connection(
-            self, resource_group_name, name, vnet_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a specific Virtual Network Connection associated with this
         web app.
@@ -396,7 +396,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_vnet_connection(
-            self, resource_group_name, name, vnet_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Adds a Virtual Network Connection or updates it's properties.
 
@@ -468,7 +468,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_vnet_connection(
-            self, resource_group_name, name, vnet_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
         """
         Removes the specified Virtual Network Connection association from this
         web app.
@@ -533,7 +533,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_vnet_connection(
-            self, resource_group_name, name, vnet_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Adds a Virtual Network Connection or updates it's properties.
 
@@ -605,7 +605,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_network_features_slot(
-            self, resource_group_name, name, view, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, view, slot, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a view of all network features in use on this web app.
 
@@ -674,7 +674,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_network_features(
-            self, resource_group_name, name, view, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, view, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a view of all network features in use on this web app.
 
@@ -740,7 +740,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_operation_slot(
-            self, resource_group_name, name, operation_id, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, operation_id, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets the operation for a web app
 
@@ -808,7 +808,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_operation(
-            self, resource_group_name, name, operation_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, operation_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets the operation for a web app
 
@@ -872,7 +872,7 @@ class SitesOperations(object):
         return deserialized
 
     def swap_slot_with_production(
-            self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
         """
         Swaps web app slots
 
@@ -930,10 +930,11 @@ class SitesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -969,7 +970,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def swap_slots_slot(
-            self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
         """
         Swaps web app slots
 
@@ -1030,10 +1031,11 @@ class SitesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -1069,7 +1071,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get_slots_differences_from_production(
-            self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
         """
         Get the difference in configuration settings between two web app slots
 
@@ -1143,7 +1145,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_slots_differences_slot(
-            self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
         """
         Get the difference in configuration settings between two web app slots
 
@@ -1220,7 +1222,7 @@ class SitesOperations(object):
         return deserialized
 
     def apply_slot_config_to_production(
-            self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
         """
         Applies the configuration settings from the target slot onto the
         current slot
@@ -1294,7 +1296,7 @@ class SitesOperations(object):
         return deserialized
 
     def apply_slot_config_slot(
-            self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
         """
         Applies the configuration settings from the target slot onto the
         current slot
@@ -1372,7 +1374,7 @@ class SitesOperations(object):
         return deserialized
 
     def reset_production_slot_config(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Resets the configuration settings of the current slot if they were
         previously modified by calling ApplySlotConfig API
@@ -1434,7 +1436,7 @@ class SitesOperations(object):
         return deserialized
 
     def reset_slot_config_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Resets the configuration settings of the current slot if they were
         previously modified by calling ApplySlotConfig API
@@ -1500,7 +1502,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_slot_config_names(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the names of application settings and connection string that
         remain with the slot during swap operation
@@ -1563,7 +1565,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_slot_config_names(
-            self, resource_group_name, name, slot_config_names, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot_config_names, custom_headers=None, raw=False, **operation_config):
         """
         Updates the names of application settings and connection string that
         remain with the slot during swap operation
@@ -1634,7 +1636,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_slots(
-            self, resource_group_name, name, properties_to_include=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets all the slots for a web apps
 
@@ -1700,7 +1702,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_sites(
-            self, resource_group_name, properties_to_include=None, include_site_types=None, include_slots=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, properties_to_include=None, include_site_types=None, include_slots=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets the web apps for a subscription in the specified resource group
 
@@ -1772,7 +1774,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site(
-            self, resource_group_name, name, properties_to_include=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
         """
         Get details of a web app
 
@@ -1838,7 +1840,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site(
-            self, resource_group_name, name, site_envelope, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_envelope, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new web app or modifies an existing web app.
 
@@ -1912,10 +1914,11 @@ class SitesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -1951,7 +1954,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete_site(
-            self, resource_group_name, name, delete_metrics=None, delete_empty_server_farm=None, skip_dns_registration=None, delete_all_slots=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, delete_metrics=None, delete_empty_server_farm=None, skip_dns_registration=None, delete_all_slots=None, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a web app
 
@@ -2030,7 +2033,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_slot(
-            self, resource_group_name, name, slot, properties_to_include=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
         """
         Get details of a web app
 
@@ -2100,7 +2103,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_slot(
-            self, resource_group_name, name, site_envelope, slot, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_envelope, slot, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new web app or modifies an existing web app.
 
@@ -2178,10 +2181,11 @@ class SitesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -2217,7 +2221,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete_site_slot(
-            self, resource_group_name, name, slot, delete_metrics=None, delete_empty_server_farm=None, skip_dns_registration=None, delete_all_slots=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, delete_metrics=None, delete_empty_server_farm=None, skip_dns_registration=None, delete_all_slots=None, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a web app
 
@@ -2300,7 +2304,7 @@ class SitesOperations(object):
         return deserialized
 
     def is_site_cloneable(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new web app or modifies an existing web app.
 
@@ -2362,7 +2366,7 @@ class SitesOperations(object):
         return deserialized
 
     def is_site_cloneable_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new web app or modifies an existing web app.
 
@@ -2428,7 +2432,7 @@ class SitesOperations(object):
         return deserialized
 
     def recover_site(
-            self, resource_group_name, name, recovery_entity, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, recovery_entity, custom_headers=None, raw=False, **operation_config):
         """
         Recovers a deleted web app
 
@@ -2483,10 +2487,11 @@ class SitesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -2520,7 +2525,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def recover_site_slot(
-            self, resource_group_name, name, recovery_entity, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, recovery_entity, slot, custom_headers=None, raw=False, **operation_config):
         """
         Recovers a deleted web app
 
@@ -2579,10 +2584,11 @@ class SitesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -2616,7 +2622,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get_site_snapshots(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Returns all Snapshots to the user.
 
@@ -2677,7 +2683,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_snapshots_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Returns all Snapshots to the user.
 
@@ -2741,7 +2747,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_deleted_sites(
-            self, resource_group_name, properties_to_include=None, include_site_types=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, properties_to_include=None, include_site_types=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets deleted web apps in subscription
 
@@ -2809,7 +2815,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_deployments(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         List deployments
 
@@ -2871,7 +2877,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_deployments_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         List deployments
 
@@ -2937,7 +2943,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_instance_deployments(
-            self, resource_group_name, name, instance_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, instance_id, custom_headers=None, raw=False, **operation_config):
         """
         List deployments
 
@@ -3002,7 +3008,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_instance_deployments_slot(
-            self, resource_group_name, name, slot, instance_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, instance_id, custom_headers=None, raw=False, **operation_config):
         """
         List deployments
 
@@ -3071,7 +3077,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_instance_deployment(
-            self, resource_group_name, name, id, instance_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, instance_id, custom_headers=None, raw=False, **operation_config):
         """
         Get the deployment
 
@@ -3138,7 +3144,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_instance_deployment(
-            self, resource_group_name, name, id, instance_id, deployment, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, instance_id, deployment, custom_headers=None, raw=False, **operation_config):
         """
         Create a deployment
 
@@ -3212,7 +3218,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_instance_deployment(
-            self, resource_group_name, name, id, instance_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, instance_id, custom_headers=None, raw=False, **operation_config):
         """
         Delete the deployment
 
@@ -3279,7 +3285,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_deployment(
-            self, resource_group_name, name, id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, custom_headers=None, raw=False, **operation_config):
         """
         Get the deployment
 
@@ -3343,7 +3349,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_deployment(
-            self, resource_group_name, name, id, deployment, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, deployment, custom_headers=None, raw=False, **operation_config):
         """
         Create a deployment
 
@@ -3414,7 +3420,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_deployment(
-            self, resource_group_name, name, id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, custom_headers=None, raw=False, **operation_config):
         """
         Delete the deployment
 
@@ -3478,7 +3484,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_deployment_slot(
-            self, resource_group_name, name, id, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, slot, custom_headers=None, raw=False, **operation_config):
         """
         Get the deployment
 
@@ -3546,7 +3552,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_deployment_slot(
-            self, resource_group_name, name, id, slot, deployment, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, slot, deployment, custom_headers=None, raw=False, **operation_config):
         """
         Create a deployment
 
@@ -3621,7 +3627,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_deployment_slot(
-            self, resource_group_name, name, id, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, slot, custom_headers=None, raw=False, **operation_config):
         """
         Delete the deployment
 
@@ -3689,7 +3695,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_instance_deployment_slot(
-            self, resource_group_name, name, id, slot, instance_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, slot, instance_id, custom_headers=None, raw=False, **operation_config):
         """
         Get the deployment
 
@@ -3760,7 +3766,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_instance_deployment_slot(
-            self, resource_group_name, name, id, slot, instance_id, deployment, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, slot, instance_id, deployment, custom_headers=None, raw=False, **operation_config):
         """
         Create a deployment
 
@@ -3838,7 +3844,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_instance_deployment_slot(
-            self, resource_group_name, name, id, slot, instance_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, id, slot, instance_id, custom_headers=None, raw=False, **operation_config):
         """
         Delete the deployment
 
@@ -3909,7 +3915,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_instance_identifiers(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets all instance of a web app
 
@@ -3971,7 +3977,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_instance_identifiers_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets all instance of a web app
 
@@ -4037,7 +4043,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_host_name_bindings(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Get web app hostname bindings
 
@@ -4099,7 +4105,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_host_name_bindings_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Get web app hostname bindings
 
@@ -4165,7 +4171,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_host_name_binding(
-            self, resource_group_name, name, host_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, host_name, custom_headers=None, raw=False, **operation_config):
         """
         Get web app binding for a hostname
 
@@ -4230,7 +4236,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_host_name_binding(
-            self, resource_group_name, name, host_name, host_name_binding, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, host_name, host_name_binding, custom_headers=None, raw=False, **operation_config):
         """
         Creates a web app hostname binding
 
@@ -4302,7 +4308,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_host_name_binding(
-            self, resource_group_name, name, host_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, host_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a host name binding
 
@@ -4366,7 +4372,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_host_name_binding_slot(
-            self, resource_group_name, name, slot, host_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, host_name, custom_headers=None, raw=False, **operation_config):
         """
         Get web app binding for a hostname
 
@@ -4435,7 +4441,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_host_name_binding_slot(
-            self, resource_group_name, name, host_name, host_name_binding, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, host_name, host_name_binding, slot, custom_headers=None, raw=False, **operation_config):
         """
         Creates a web app hostname binding
 
@@ -4511,7 +4517,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_host_name_binding_slot(
-            self, resource_group_name, name, slot, host_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, host_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a host name binding
 
@@ -4579,7 +4585,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_config(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the configuration of the web app
 
@@ -4640,7 +4646,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_config(
-            self, resource_group_name, name, site_config, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_config, custom_headers=None, raw=False, **operation_config):
         """
         Update the configuration of web app
 
@@ -4709,7 +4715,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_config(
-            self, resource_group_name, name, site_config, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_config, custom_headers=None, raw=False, **operation_config):
         """
         Update the configuration of web app
 
@@ -4778,7 +4784,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_config_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets the configuration of the web app
 
@@ -4843,7 +4849,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_config_slot(
-            self, resource_group_name, name, site_config, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_config, slot, custom_headers=None, raw=False, **operation_config):
         """
         Update the configuration of web app
 
@@ -4916,7 +4922,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_config_slot(
-            self, resource_group_name, name, site_config, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_config, slot, custom_headers=None, raw=False, **operation_config):
         """
         Update the configuration of web app
 
@@ -4989,7 +4995,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_source_control(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Get the source control configuration of web app
 
@@ -5051,7 +5057,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_source_control(
-            self, resource_group_name, name, site_source_control, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_source_control, custom_headers=None, raw=False, **operation_config):
         """
         Update the source control configuration of web app
 
@@ -5121,7 +5127,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_source_control(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Delete source control configuration of web app
 
@@ -5182,7 +5188,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_source_control(
-            self, resource_group_name, name, site_source_control, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_source_control, custom_headers=None, raw=False, **operation_config):
         """
         Update the source control configuration of web app
 
@@ -5252,7 +5258,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_source_control_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Get the source control configuration of web app
 
@@ -5318,7 +5324,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_source_control_slot(
-            self, resource_group_name, name, site_source_control, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_source_control, slot, custom_headers=None, raw=False, **operation_config):
         """
         Update the source control configuration of web app
 
@@ -5392,7 +5398,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_source_control_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Delete source control configuration of web app
 
@@ -5457,7 +5463,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_source_control_slot(
-            self, resource_group_name, name, site_source_control, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_source_control, slot, custom_headers=None, raw=False, **operation_config):
         """
         Update the source control configuration of web app
 
@@ -5531,7 +5537,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_app_settings_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets the application settings of web app
 
@@ -5597,7 +5603,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_app_settings(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the application settings of web app
 
@@ -5659,7 +5665,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_app_settings(
-            self, resource_group_name, name, app_settings, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, app_settings, custom_headers=None, raw=False, **operation_config):
         """
         Updates the application settings of web app
 
@@ -5728,7 +5734,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_app_settings_slot(
-            self, resource_group_name, name, app_settings, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, app_settings, slot, custom_headers=None, raw=False, **operation_config):
         """
         Updates the application settings of web app
 
@@ -5801,7 +5807,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_connection_strings(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the connection strings associated with web app
 
@@ -5863,7 +5869,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_connection_strings_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets the connection strings associated with web app
 
@@ -5929,7 +5935,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_connection_strings(
-            self, resource_group_name, name, connection_strings, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, connection_strings, custom_headers=None, raw=False, **operation_config):
         """
         Updates the connection strings associated with web app
 
@@ -5998,7 +6004,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_connection_strings_slot(
-            self, resource_group_name, name, connection_strings, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, connection_strings, slot, custom_headers=None, raw=False, **operation_config):
         """
         Updates the connection strings associated with web app
 
@@ -6071,7 +6077,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_auth_settings(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the Authentication / Authorization settings associated with web
         app
@@ -6134,7 +6140,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_auth_settings_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets the Authentication / Authorization settings associated with web
         app
@@ -6201,7 +6207,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_auth_settings(
-            self, resource_group_name, name, site_auth_settings, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_auth_settings, custom_headers=None, raw=False, **operation_config):
         """
         Updates the Authentication / Authorization settings associated with
         web app
@@ -6271,7 +6277,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_auth_settings_slot(
-            self, resource_group_name, name, site_auth_settings, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_auth_settings, slot, custom_headers=None, raw=False, **operation_config):
         """
         Updates the Authentication / Authorization settings associated with
         web app
@@ -6345,7 +6351,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_publishing_credentials(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the web app publishing credentials
 
@@ -6391,10 +6397,11 @@ class SitesOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -6428,7 +6435,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list_site_publishing_credentials_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets the web app publishing credentials
 
@@ -6478,10 +6485,11 @@ class SitesOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -6515,7 +6523,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list_site_metadata(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the web app meta data.
 
@@ -6577,7 +6585,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_metadata_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets the web app meta data.
 
@@ -6643,7 +6651,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_metadata(
-            self, resource_group_name, name, metadata, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, metadata, custom_headers=None, raw=False, **operation_config):
         """
         Updates the meta data for web app
 
@@ -6712,7 +6720,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_metadata_slot(
-            self, resource_group_name, name, metadata, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, metadata, slot, custom_headers=None, raw=False, **operation_config):
         """
         Updates the meta data for web app
 
@@ -6785,7 +6793,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_logs_config(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the web app logs configuration
 
@@ -6846,7 +6854,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_logs_config(
-            self, resource_group_name, name, site_logs_config, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_logs_config, custom_headers=None, raw=False, **operation_config):
         """
         Updates the meta data for web app
 
@@ -6914,7 +6922,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_logs_config_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets the web app logs configuration
 
@@ -6979,7 +6987,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_logs_config_slot(
-            self, resource_group_name, name, site_logs_config, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, site_logs_config, slot, custom_headers=None, raw=False, **operation_config):
         """
         Updates the meta data for web app
 
@@ -7051,7 +7059,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_premier_add_ons(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -7111,7 +7119,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_premier_add_ons_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -7174,7 +7182,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_premier_add_on(
-            self, resource_group_name, name, premier_add_on_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, premier_add_on_name, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -7237,7 +7245,7 @@ class SitesOperations(object):
         return deserialized
 
     def add_site_premier_add_on(
-            self, resource_group_name, name, premier_add_on_name, premier_add_on, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, premier_add_on_name, premier_add_on, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -7307,7 +7315,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_premier_add_on(
-            self, resource_group_name, name, premier_add_on_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, premier_add_on_name, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -7370,7 +7378,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_premier_add_on_slot(
-            self, resource_group_name, name, premier_add_on_name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, premier_add_on_name, slot, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -7436,7 +7444,7 @@ class SitesOperations(object):
         return deserialized
 
     def add_site_premier_add_on_slot(
-            self, resource_group_name, name, premier_add_on_name, premier_add_on, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, premier_add_on_name, premier_add_on, slot, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -7509,7 +7517,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_premier_add_on_slot(
-            self, resource_group_name, name, premier_add_on_name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, premier_add_on_name, slot, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -7575,7 +7583,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_backup_configuration(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the backup configuration for a web app
 
@@ -7636,7 +7644,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_backup_configuration_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets the backup configuration for a web app
 
@@ -7701,7 +7709,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_backup_configuration(
-            self, resource_group_name, name, request, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, request, custom_headers=None, raw=False, **operation_config):
         """
         Updates backup configuration of web app
 
@@ -7769,7 +7777,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_backup_configuration_slot(
-            self, resource_group_name, name, request, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, request, slot, custom_headers=None, raw=False, **operation_config):
         """
         Updates backup configuration of web app
 
@@ -7841,7 +7849,7 @@ class SitesOperations(object):
         return deserialized
 
     def backup_site(
-            self, resource_group_name, name, request, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, request, custom_headers=None, raw=False, **operation_config):
         """
         Creates web app backup
 
@@ -7909,7 +7917,7 @@ class SitesOperations(object):
         return deserialized
 
     def backup_site_slot(
-            self, resource_group_name, name, request, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, request, slot, custom_headers=None, raw=False, **operation_config):
         """
         Creates web app backup
 
@@ -7981,7 +7989,7 @@ class SitesOperations(object):
         return deserialized
 
     def discover_site_restore(
-            self, resource_group_name, name, request, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, request, custom_headers=None, raw=False, **operation_config):
         """
         Discovers existing web app backups that can be restored
 
@@ -8049,7 +8057,7 @@ class SitesOperations(object):
         return deserialized
 
     def discover_site_restore_slot(
-            self, resource_group_name, name, request, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, request, slot, custom_headers=None, raw=False, **operation_config):
         """
         Discovers existing web app backups that can be restored
 
@@ -8121,7 +8129,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_backups(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Lists all available backups for web app
 
@@ -8183,7 +8191,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_backups_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Lists all available backups for web app
 
@@ -8249,7 +8257,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_backup_status(
-            self, resource_group_name, name, backup_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, backup_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets status of a web app backup that may be in progress.
 
@@ -8313,7 +8321,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_backup(
-            self, resource_group_name, name, backup_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, backup_id, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a backup from Azure Storage
 
@@ -8377,7 +8385,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_backup_status_slot(
-            self, resource_group_name, name, backup_id, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, backup_id, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets status of a web app backup that may be in progress.
 
@@ -8445,7 +8453,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_backup_slot(
-            self, resource_group_name, name, backup_id, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, backup_id, slot, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a backup from Azure Storage
 
@@ -8513,7 +8521,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_backup_status_secrets_slot(
-            self, resource_group_name, name, backup_id, request, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, backup_id, request, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets status of a web app backup that may be in progress, including
         secrets associated with the backup, such as the Azure Storage SAS
@@ -8591,7 +8599,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_backup_status_secrets(
-            self, resource_group_name, name, backup_id, request, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, backup_id, request, custom_headers=None, raw=False, **operation_config):
         """
         Gets status of a web app backup that may be in progress, including
         secrets associated with the backup, such as the Azure Storage SAS
@@ -8665,7 +8673,7 @@ class SitesOperations(object):
         return deserialized
 
     def restore_site(
-            self, resource_group_name, name, backup_id, request, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, backup_id, request, custom_headers=None, raw=False, **operation_config):
         """
         Restores a web app
 
@@ -8722,10 +8730,11 @@ class SitesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -8759,7 +8768,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def restore_site_slot(
-            self, resource_group_name, name, backup_id, request, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, backup_id, request, slot, custom_headers=None, raw=False, **operation_config):
         """
         Restores a web app
 
@@ -8820,10 +8829,11 @@ class SitesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -8857,7 +8867,7 @@ class SitesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get_site_usages(
-            self, resource_group_name, name, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets the quota usage numbers for web app
 
@@ -8927,7 +8937,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_usages_slot(
-            self, resource_group_name, name, slot, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets the quota usage numbers for web app
 
@@ -9001,7 +9011,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_metrics(
-            self, resource_group_name, name, details=None, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets metrics for web app
 
@@ -9075,7 +9085,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_metrics_slot(
-            self, resource_group_name, name, slot, details=None, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets metrics for web app
 
@@ -9153,7 +9163,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_metric_definitions_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Gets metric definitions for web app
 
@@ -9219,7 +9229,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_metric_definitions(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets metric definitions for web app
 
@@ -9281,7 +9291,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_publishing_profile_xml(
-            self, resource_group_name, name, format=None, custom_headers={}, raw=False, callback=None, **operation_config):
+            self, resource_group_name, name, format=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """
         Gets the publishing profile for web app
 
@@ -9358,7 +9368,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_publishing_profile_xml_slot(
-            self, resource_group_name, name, slot, format=None, custom_headers={}, raw=False, callback=None, **operation_config):
+            self, resource_group_name, name, slot, format=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """
         Gets the publishing profile for web app
 
@@ -9439,7 +9449,7 @@ class SitesOperations(object):
         return deserialized
 
     def restart_site_slot(
-            self, resource_group_name, name, slot, soft_restart=None, synchronous=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, soft_restart=None, synchronous=None, custom_headers=None, raw=False, **operation_config):
         """
         Restarts web app
 
@@ -9515,7 +9525,7 @@ class SitesOperations(object):
         return deserialized
 
     def restart_site(
-            self, resource_group_name, name, soft_restart=None, synchronous=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, soft_restart=None, synchronous=None, custom_headers=None, raw=False, **operation_config):
         """
         Restarts web app
 
@@ -9587,7 +9597,7 @@ class SitesOperations(object):
         return deserialized
 
     def start_site(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Starts web app
 
@@ -9648,7 +9658,7 @@ class SitesOperations(object):
         return deserialized
 
     def start_site_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Starts web app
 
@@ -9713,7 +9723,7 @@ class SitesOperations(object):
         return deserialized
 
     def stop_site(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Stops web app
 
@@ -9774,7 +9784,7 @@ class SitesOperations(object):
         return deserialized
 
     def stop_site_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Stops web app
 
@@ -9839,7 +9849,7 @@ class SitesOperations(object):
         return deserialized
 
     def sync_site_repository(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -9899,7 +9909,7 @@ class SitesOperations(object):
         return deserialized
 
     def sync_site_repository_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:
@@ -9962,7 +9972,7 @@ class SitesOperations(object):
         return deserialized
 
     def generate_new_site_publishing_password_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Generates new random app publishing password
 
@@ -10027,7 +10037,7 @@ class SitesOperations(object):
         return deserialized
 
     def generate_new_site_publishing_password(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Generates new random app publishing password
 
@@ -10088,7 +10098,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_relay_service_connection(
-            self, resource_group_name, name, entity_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, entity_name, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a Biztalk Hybrid Connection identified by its entity name.
 
@@ -10154,7 +10164,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_relay_service_connection(
-            self, resource_group_name, name, entity_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, entity_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new association to a Biztalk Hybrid Connection, or updates
         an existing one.
@@ -10228,7 +10238,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_relay_service_connection(
-            self, resource_group_name, name, entity_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, entity_name, custom_headers=None, raw=False, **operation_config):
         """
         Removes the association to a Biztalk Hybrid Connection, identified by
         its entity name.
@@ -10294,7 +10304,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_relay_service_connection(
-            self, resource_group_name, name, entity_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, entity_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new association to a Biztalk Hybrid Connection, or updates
         an existing one.
@@ -10368,7 +10378,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_relay_service_connection_slot(
-            self, resource_group_name, name, entity_name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, entity_name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a Biztalk Hybrid Connection identified by its entity name.
 
@@ -10437,7 +10447,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_relay_service_connection_slot(
-            self, resource_group_name, name, entity_name, connection_envelope, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, entity_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new association to a Biztalk Hybrid Connection, or updates
         an existing one.
@@ -10514,7 +10524,7 @@ class SitesOperations(object):
         return deserialized
 
     def delete_site_relay_service_connection_slot(
-            self, resource_group_name, name, entity_name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, entity_name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Removes the association to a Biztalk Hybrid Connection, identified by
         its entity name.
@@ -10583,7 +10593,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_relay_service_connection_slot(
-            self, resource_group_name, name, entity_name, connection_envelope, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, entity_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new association to a Biztalk Hybrid Connection, or updates
         an existing one.
@@ -10660,7 +10670,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_relay_service_connections_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves all Biztalk Hybrid Connections associated with this web app.
 
@@ -10725,7 +10735,7 @@ class SitesOperations(object):
         return deserialized
 
     def list_site_relay_service_connections(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves all Biztalk Hybrid Connections associated with this web app.
 
@@ -10787,7 +10797,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_vnet_gateway_slot(
-            self, resource_group_name, name, vnet_name, gateway_name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a Virtual Network connection gateway associated with this
         web app and virtual network.
@@ -10859,7 +10869,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_vnet_connection_gateway_slot(
-            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
         """
         Updates the Virtual Network Gateway.
 
@@ -10938,7 +10948,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_vnet_connection_gateway_slot(
-            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
         """
         Updates the Virtual Network Gateway.
 
@@ -11017,7 +11027,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_vnet_gateway(
-            self, resource_group_name, name, vnet_name, gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a Virtual Network connection gateway associated with this
         web app and virtual network.
@@ -11086,7 +11096,7 @@ class SitesOperations(object):
         return deserialized
 
     def create_or_update_site_vnet_connection_gateway(
-            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Updates the Virtual Network Gateway.
 
@@ -11162,7 +11172,7 @@ class SitesOperations(object):
         return deserialized
 
     def update_site_vnet_connection_gateway(
-            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Updates the Virtual Network Gateway.
 
@@ -11238,7 +11248,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_vnet_connections(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a list of all Virtual Network Connections associated with
         this web app.
@@ -11300,7 +11310,7 @@ class SitesOperations(object):
         return deserialized
 
     def get_site_vnet_connections_slot(
-            self, resource_group_name, name, slot, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves a list of all Virtual Network Connections associated with
         this web app.

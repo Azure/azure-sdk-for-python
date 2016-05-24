@@ -38,7 +38,9 @@ class SiteAuthSettings(Model):
     :param unauthenticated_client_action: Gets or sets the action to take
      when an unauthenticated client attempts to access the app. Possible
      values include: 'RedirectToLoginPage', 'AllowAnonymous'
-    :type unauthenticated_client_action: str
+    :type unauthenticated_client_action: str or
+     :class:`UnauthenticatedClientAction
+     <azure.mgmt.web.models.UnauthenticatedClientAction>`
     :param token_store_enabled: Gets or sets a value indicating whether to
      durably store platform-specific security tokens
      obtained during login flows. This capability is disabled by
@@ -60,7 +62,8 @@ class SiteAuthSettings(Model):
      action is set to "RedirectToLoginPage". Possible values
      include: 'AzureActiveDirectory', 'Facebook', 'Google',
      'MicrosoftAccount', 'Twitter'
-    :type default_provider: str
+    :type default_provider: str or :class:`BuiltInAuthenticationProvider
+     <azure.mgmt.web.models.BuiltInAuthenticationProvider>`
     :param token_refresh_extension_hours: Gets or sets the number of hours
      after session token expiration that a session token can be used to
      call the token refresh API. The default is 72 hours.

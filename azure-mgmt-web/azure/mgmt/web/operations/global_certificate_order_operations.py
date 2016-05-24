@@ -44,7 +44,7 @@ class GlobalCertificateOrderOperations(object):
         self.config = config
 
     def get_all_certificate_orders(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Lists all domains in a subscription
 
@@ -100,7 +100,7 @@ class GlobalCertificateOrderOperations(object):
         return deserialized
 
     def validate_certificate_purchase_information(
-            self, certificate_order, custom_headers={}, raw=False, **operation_config):
+            self, certificate_order, custom_headers=None, raw=False, **operation_config):
         """
         Validate certificate purchase information
 

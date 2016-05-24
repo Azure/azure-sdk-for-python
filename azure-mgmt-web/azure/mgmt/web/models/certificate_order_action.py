@@ -43,7 +43,9 @@ class CertificateOrderAction(Resource):
      'CertificateOrderCreated', 'CertificateRevoked',
      'DomainValidationComplete', 'FraudDetected', 'OrgNameChange',
      'OrgValidationComplete', 'SanDrop'
-    :type certificate_order_action_type: str
+    :type certificate_order_action_type: str or
+     :class:`CertificateOrderActionType
+     <azure.mgmt.web.models.CertificateOrderActionType>`
     :param created_at: Time at which the certificate action was performed
     :type created_at: datetime
     """ 

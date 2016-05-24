@@ -24,7 +24,7 @@ from msrest.serialization import Model
 
 class RedisProperties(Model):
     """
-    Parameters supplied to CreateOrUpdate redis operation.
+    Properties supplied to CreateOrUpdate redis operation.
 
     :param redis_version: RedisVersion parameter has been deprecated. As
      such, it is no longer necessary to provide this parameter and any value
@@ -44,13 +44,10 @@ class RedisProperties(Model):
     :param shard_count: The number of shards to be created on a Premium
      Cluster Cache.
     :type shard_count: int
-    :param virtual_network: The exact ARM resource ID of the virtual network
+    :param subnet_id: The full resource ID of a subnet in a virtual network
      to deploy the redis cache in. Example format:
-     /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.ClassicNetwork/VirtualNetworks/vnet1
-    :type virtual_network: str
-    :param subnet: Required when deploying a redis cache inside an existing
-     Azure Virtual Network.
-    :type subnet: str
+     /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1
+    :type subnet_id: str
     :param static_ip: Required when deploying a redis cache inside an
      existing Azure Virtual Network.
     :type static_ip: str
@@ -67,18 +64,16 @@ class RedisProperties(Model):
         'enable_non_ssl_port': {'key': 'enableNonSslPort', 'type': 'bool'},
         'tenant_settings': {'key': 'tenantSettings', 'type': '{str}'},
         'shard_count': {'key': 'shardCount', 'type': 'int'},
-        'virtual_network': {'key': 'virtualNetwork', 'type': 'str'},
-        'subnet': {'key': 'subnet', 'type': 'str'},
+        'subnet_id': {'key': 'subnetId', 'type': 'str'},
         'static_ip': {'key': 'staticIP', 'type': 'str'},
     }
 
-    def __init__(self, sku, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None):
+    def __init__(self, sku, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, subnet_id=None, static_ip=None):
         self.redis_version = redis_version
         self.sku = sku
         self.redis_configuration = redis_configuration
         self.enable_non_ssl_port = enable_non_ssl_port
         self.tenant_settings = tenant_settings
         self.shard_count = shard_count
-        self.virtual_network = virtual_network
-        self.subnet = subnet
+        self.subnet_id = subnet_id
         self.static_ip = static_ip

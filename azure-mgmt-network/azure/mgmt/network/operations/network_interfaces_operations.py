@@ -45,7 +45,7 @@ class NetworkInterfacesOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, network_interface_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
         """
         The delete netwokInterface operation deletes the specified
         netwokInterface.
@@ -92,10 +92,11 @@ class NetworkInterfacesOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -122,7 +123,7 @@ class NetworkInterfacesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, network_interface_name, expand=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_interface_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """
         The Get ntework interface operation retreives information about the
         specified network interface.
@@ -189,7 +190,7 @@ class NetworkInterfacesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, network_interface_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, network_interface_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put NetworkInterface operation creates/updates a networkInterface
 
@@ -244,10 +245,11 @@ class NetworkInterfacesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -283,7 +285,7 @@ class NetworkInterfacesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list_virtual_machine_scale_set_vm_network_interfaces(
-            self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, custom_headers=None, raw=False, **operation_config):
         """
         The list network interface operation retrieves information about all
         network interfaces in a virtual machine from a virtual machine scale
@@ -358,7 +360,7 @@ class NetworkInterfacesOperations(object):
         return deserialized
 
     def list_virtual_machine_scale_set_network_interfaces(
-            self, resource_group_name, virtual_machine_scale_set_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_machine_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """
         The list network interface operation retrieves information about all
         network interfaces in a virtual machine scale set.
@@ -429,7 +431,7 @@ class NetworkInterfacesOperations(object):
         return deserialized
 
     def get_virtual_machine_scale_set_network_interface(
-            self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, network_interface_name, expand=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, network_interface_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """
         The Get ntework interface operation retreives information about the
         specified network interface in a virtual machine scale set.
@@ -503,7 +505,7 @@ class NetworkInterfacesOperations(object):
         return deserialized
 
     def list_all(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         The List networkInterfaces opertion retrieves all the
         networkInterfaces in a subscription.
@@ -567,7 +569,7 @@ class NetworkInterfacesOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The List networkInterfaces opertion retrieves all the
         networkInterfaces in a resource group.

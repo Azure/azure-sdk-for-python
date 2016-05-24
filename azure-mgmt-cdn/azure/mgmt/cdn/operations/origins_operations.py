@@ -44,7 +44,7 @@ class OriginsOperations(object):
         self.config = config
 
     def list_by_endpoint(
-            self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists the existing CDN origins within an endpoint.
 
@@ -115,7 +115,7 @@ class OriginsOperations(object):
         return deserialized
 
     def get(
-            self, origin_name, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, origin_name, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets an existing CDN origin within an endpoint.
 
@@ -183,7 +183,7 @@ class OriginsOperations(object):
         return deserialized
 
     def create(
-            self, origin_name, origin_properties, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, origin_name, origin_properties, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new CDN origin within an endpoint.
 
@@ -245,10 +245,11 @@ class OriginsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -284,7 +285,7 @@ class OriginsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, origin_name, origin_properties, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, origin_name, origin_properties, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Updates an existing CDN origin within an endpoint.
 
@@ -346,10 +347,11 @@ class OriginsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -383,7 +385,7 @@ class OriginsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete_if_exists(
-            self, origin_name, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, origin_name, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes an existing CDN origin within an endpoint.
 
@@ -438,10 +440,11 @@ class OriginsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 

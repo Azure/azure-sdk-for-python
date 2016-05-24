@@ -42,7 +42,8 @@ class ServiceBusTopicMessage(ServiceBusMessage):
     :type namespace: str
     :param transport_type: Gets or sets the transport type. Possible values
      include: 'NotSpecified', 'NetMessaging', 'AMQP'
-    :type transport_type: str
+    :type transport_type: str or :class:`ServiceBusTransportType
+     <azure.mgmt.scheduler.models.ServiceBusTransportType>`
     :param topic_path: Gets or sets the topic path.
     :type topic_path: str
     """ 

@@ -44,7 +44,7 @@ class SubscriptionOperations(object):
         self.config = config
 
     def get_subscription_quotas(
-            self, location_name, custom_headers={}, raw=False, **operation_config):
+            self, location_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the Batch service quotas for the specified suscription.
 

@@ -28,7 +28,7 @@ class Sku(Model):
 
     :param name: Name of the pricing tier. Possible values include:
      'Standard', 'Premium'
-    :type name: str
+    :type name: str or :class:`SkuName <azure.mgmt.cdn.models.SkuName>`
     """ 
 
     _attribute_map = {

@@ -44,7 +44,7 @@ class DeploymentOperationsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, deployment_name, operation_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, operation_id, custom_headers=None, raw=False, **operation_config):
         """
         Get a list of deployments operations.
 
@@ -110,7 +110,7 @@ class DeploymentOperationsOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, deployment_name, top=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, top=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of deployments operations.
 

@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .subscription_client import SubscriptionClient, SubscriptionClientConfiguration
+from .subscription_client import SubscriptionClient
 from .version import VERSION
 
-__all__ = [
-    'SubscriptionClient',
-    'SubscriptionClientConfiguration'
-]
+__all__ = ['SubscriptionClient']
 
 __version__ = VERSION
 

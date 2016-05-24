@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient, ResourceManagementClientConfiguration
+from .resource_management_client import ResourceManagementClient
 from .version import VERSION
 
-__all__ = [
-    'ResourceManagementClient',
-    'ResourceManagementClientConfiguration'
-]
+__all__ = ['ResourceManagementClient']
 
 __version__ = VERSION
 

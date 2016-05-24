@@ -30,7 +30,7 @@ class HostNameSslState(Model):
     :type name: str
     :param ssl_state: SSL type. Possible values include: 'Disabled',
      'SniEnabled', 'IpBasedEnabled'
-    :type ssl_state: str
+    :type ssl_state: str or :class:`SslState <azure.mgmt.web.models.SslState>`
     :param virtual_ip: Virtual IP address assigned to the host name if IP
      based SSL is enabled
     :type virtual_ip: str

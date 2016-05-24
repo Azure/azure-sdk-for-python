@@ -48,13 +48,17 @@ class HostNameBinding(Resource):
     :type azure_resource_name: str
     :param azure_resource_type: Azure resource type. Possible values include:
      'Website', 'TrafficManager'
-    :type azure_resource_type: str
+    :type azure_resource_type: str or :class:`AzureResourceType
+     <azure.mgmt.web.models.AzureResourceType>`
     :param custom_host_name_dns_record_type: Custom DNS record type. Possible
      values include: 'CName', 'A'
-    :type custom_host_name_dns_record_type: str
+    :type custom_host_name_dns_record_type: str or
+     :class:`CustomHostNameDnsRecordType
+     <azure.mgmt.web.models.CustomHostNameDnsRecordType>`
     :param host_name_type: Host name type. Possible values include:
      'Verified', 'Managed'
-    :type host_name_type: str
+    :type host_name_type: str or :class:`HostNameType
+     <azure.mgmt.web.models.HostNameType>`
     """ 
 
     _validation = {

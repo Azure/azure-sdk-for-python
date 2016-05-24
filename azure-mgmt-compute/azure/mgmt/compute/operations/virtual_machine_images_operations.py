@@ -44,7 +44,7 @@ class VirtualMachineImagesOperations(object):
         self.config = config
 
     def get(
-            self, location, publisher_name, offer, skus, version, custom_headers={}, raw=False, **operation_config):
+            self, location, publisher_name, offer, skus, version, custom_headers=None, raw=False, **operation_config):
         """
         Gets a virtual machine image.
 
@@ -115,7 +115,7 @@ class VirtualMachineImagesOperations(object):
         return deserialized
 
     def list(
-            self, location, publisher_name, offer, skus, filter=None, top=None, orderby=None, custom_headers={}, raw=False, **operation_config):
+            self, location, publisher_name, offer, skus, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of virtual machine images.
 
@@ -195,7 +195,7 @@ class VirtualMachineImagesOperations(object):
         return deserialized
 
     def list_offers(
-            self, location, publisher_name, custom_headers={}, raw=False, **operation_config):
+            self, location, publisher_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of virtual machine image offers.
 
@@ -257,7 +257,7 @@ class VirtualMachineImagesOperations(object):
         return deserialized
 
     def list_publishers(
-            self, location, custom_headers={}, raw=False, **operation_config):
+            self, location, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of virtual machine image publishers.
 
@@ -316,7 +316,7 @@ class VirtualMachineImagesOperations(object):
         return deserialized
 
     def list_skus(
-            self, location, publisher_name, offer, custom_headers={}, raw=False, **operation_config):
+            self, location, publisher_name, offer, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of virtual machine image skus.
 

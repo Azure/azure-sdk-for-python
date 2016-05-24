@@ -48,7 +48,8 @@ class CertificateOrderCertificate(Resource):
      'CertificateOrderFailed', 'OperationNotPermittedOnKeyVault',
      'AzureServiceUnauthorizedToAccessKeyVault', 'KeyVaultDoesNotExist',
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'Unknown'
-    :type provisioning_state: str
+    :type provisioning_state: str or :class:`KeyVaultSecretStatus
+     <azure.mgmt.web.models.KeyVaultSecretStatus>`
     """ 
 
     _validation = {

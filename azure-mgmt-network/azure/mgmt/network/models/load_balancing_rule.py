@@ -42,11 +42,13 @@ class LoadBalancingRule(SubResource):
     :param protocol: Gets or sets the transport protocol for the external
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'
-    :type protocol: str
+    :type protocol: str or :class:`TransportProtocol
+     <azure.mgmt.network.models.TransportProtocol>`
     :param load_distribution: Gets or sets the load distribution policy for
      this rule. Possible values include: 'Default', 'SourceIP',
      'SourceIPProtocol'
-    :type load_distribution: str
+    :type load_distribution: str or :class:`LoadDistribution
+     <azure.mgmt.network.models.LoadDistribution>`
     :param frontend_port: Gets or sets the port for the external endpoint.
      You can specify any port number you choose, but the port numbers
      specified for each role in the service must be unique. Possible values
@@ -93,8 +95,8 @@ class LoadBalancingRule(SubResource):
         'frontend_ip_configuration': {'key': 'properties.frontendIPConfiguration', 'type': 'SubResource'},
         'backend_address_pool': {'key': 'properties.backendAddressPool', 'type': 'SubResource'},
         'probe': {'key': 'properties.probe', 'type': 'SubResource'},
-        'protocol': {'key': 'properties.protocol', 'type': 'TransportProtocol'},
-        'load_distribution': {'key': 'properties.loadDistribution', 'type': 'LoadDistribution'},
+        'protocol': {'key': 'properties.protocol', 'type': 'str'},
+        'load_distribution': {'key': 'properties.loadDistribution', 'type': 'str'},
         'frontend_port': {'key': 'properties.frontendPort', 'type': 'int'},
         'backend_port': {'key': 'properties.backendPort', 'type': 'int'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},

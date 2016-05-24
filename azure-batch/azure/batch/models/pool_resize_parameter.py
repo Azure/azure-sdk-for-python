@@ -35,7 +35,9 @@ class PoolResizeParameter(Model):
     :param node_deallocation_option: When nodes may be removed from the pool,
      if the pool size is decreasing. Possible values include: 'requeue',
      'terminate', 'taskcompletion', 'retaineddata'
-    :type node_deallocation_option: str
+    :type node_deallocation_option: str or
+     :class:`ComputeNodeDeallocationOption
+     <azure.batch.models.ComputeNodeDeallocationOption>`
     """ 
 
     _validation = {
