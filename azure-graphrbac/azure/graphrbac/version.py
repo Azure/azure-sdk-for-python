@@ -19,5 +19,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.42-previewInternal"
+VERSION = "1.6-internal"
 

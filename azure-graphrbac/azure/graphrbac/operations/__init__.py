@@ -19,16 +19,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_operations import ApplicationOperations
-from .objects_operations import ObjectsOperations
-from .group_operations import GroupOperations
-from .service_principal_operations import ServicePrincipalOperations
-from .user_operations import UserOperations
+from .application_operations_operations import ApplicationOperationsOperations
+from .object_operations_operations import ObjectOperationsOperations
+from .group_operations_operations import GroupOperationsOperations
+from .service_principal_operations_operations import ServicePrincipalOperationsOperations
+from .user_operations_operations import UserOperationsOperations
 
 __all__ = [
-    'ApplicationOperations',
-    'ObjectsOperations',
-    'GroupOperations',
-    'ServicePrincipalOperations',
-    'UserOperations',
+    'ApplicationOperationsOperations',
+    'ObjectOperationsOperations',
+    'GroupOperationsOperations',
+    'ServicePrincipalOperationsOperations',
+    'UserOperationsOperations',
 ]
