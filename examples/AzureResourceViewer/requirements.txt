@@ -1,8 +1,8 @@
 adal
-azure-mgmt-compute==0.30.0rc3
-azure-mgmt-network==0.30.0rc3
-azure-mgmt-storage==0.30.0rc3
-azure-mgmt-resource==0.30.0rc3
+azure-mgmt-compute==0.30.0rc4
+azure-mgmt-network==0.30.0rc4
+azure-mgmt-storage==0.30.0rc4
+azure-mgmt-resource==0.30.0rc4
 azure-storage==0.20.2
 Flask<1
 python-dateutil
