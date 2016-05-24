@@ -55,6 +55,7 @@ a `CloudError` if the server refused the request.
 * Latest Swagger update for Redis (API-version 2016-04-01)
 * Latest Swagger update for GraphRbac (API-version 1.6)
 * Latest Swagger update for CDN (API-version 2016-04-02)
+* New Resource Policy client
 
 Dependencies:
 * msrest must be >= 0.4.0 (see their ChangeLog for details)
