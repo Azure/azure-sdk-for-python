@@ -34,7 +34,7 @@ New:
         )
     )
 
-    can now be written directly:
+can now be written directly:
     
     resource_client.resource_groups.create_or_update(
         group_name,
@@ -49,8 +49,8 @@ services which might add new enum types frequently (e.g. VirtualMachine size). T
 you might receive a CloudError exception.
 
 A "strict" enum must follow one of the authorized enum values. Strings are still accepted, but if your value is not valid
-you will receive a SerializationError *without* a call to the REST API. Before, the call was made to the REST API and you received a `CloudError`
-if the server refused the request.
+you will receive a SerializationError *without* a call to the REST API. Before, the call was made to the REST API and you received 
+a `CloudError` if the server refused the request.
 
 * Latest Swagger update for Redis (API-version 2016-04-01)
 
