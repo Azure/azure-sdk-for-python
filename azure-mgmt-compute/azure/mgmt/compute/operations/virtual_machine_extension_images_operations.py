@@ -44,7 +44,7 @@ class VirtualMachineExtensionImagesOperations(object):
         self.config = config
 
     def get(
-            self, location, publisher_name, type, version, custom_headers={}, raw=False, **operation_config):
+            self, location, publisher_name, type, version, custom_headers=None, raw=False, **operation_config):
         """
         Gets a virtual machine extension image.
 
@@ -112,7 +112,7 @@ class VirtualMachineExtensionImagesOperations(object):
         return deserialized
 
     def list_types(
-            self, location, publisher_name, custom_headers={}, raw=False, **operation_config):
+            self, location, publisher_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of virtual machine extension image types.
 
@@ -174,7 +174,7 @@ class VirtualMachineExtensionImagesOperations(object):
         return deserialized
 
     def list_versions(
-            self, location, publisher_name, type, filter=None, top=None, orderby=None, custom_headers={}, raw=False, **operation_config):
+            self, location, publisher_name, type, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of virtual machine extension image versions.
 

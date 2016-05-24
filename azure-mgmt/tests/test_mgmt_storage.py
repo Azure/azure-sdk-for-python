@@ -26,7 +26,6 @@ class MgmtStorageTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtStorageTest, self).setUp()
         self.storage_client = self.create_mgmt_client(
-            azure.mgmt.storage.StorageManagementClientConfiguration,
             azure.mgmt.storage.StorageManagementClient
         )
 

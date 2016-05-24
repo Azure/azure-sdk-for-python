@@ -45,7 +45,7 @@ class VirtualNetworkGatewaysOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put VirtualNetworkGateway operation creates/updates a virtual
         network gateway in the specified resource group through Network
@@ -103,10 +103,11 @@ class VirtualNetworkGatewaysOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -142,7 +143,7 @@ class VirtualNetworkGatewaysOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, virtual_network_gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         The Get VirtualNetworkGateway operation retrieves information about
         the specified virtual network gateway through Network resource
@@ -207,7 +208,7 @@ class VirtualNetworkGatewaysOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, virtual_network_gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         The Delete VirtualNetworkGateway operation deletes the specifed
         virtual network Gateway through Network resource provider.
@@ -255,10 +256,11 @@ class VirtualNetworkGatewaysOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -285,7 +287,7 @@ class VirtualNetworkGatewaysOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The List VirtualNetworkGateways opertion retrieves all the virtual
         network gateways stored.
@@ -352,7 +354,7 @@ class VirtualNetworkGatewaysOperations(object):
         return deserialized
 
     def reset(
-            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Reset VirtualNetworkGateway operation resets the primary of the
         virtual network gateway in the specified resource group through
@@ -410,10 +412,11 @@ class VirtualNetworkGatewaysOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -447,7 +450,7 @@ class VirtualNetworkGatewaysOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def generatevpnclientpackage(
-            self, resource_group_name, virtual_network_gateway_name, processor_architecture=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, virtual_network_gateway_name, processor_architecture=None, custom_headers=None, raw=False, **operation_config):
         """
         The Generatevpnclientpackage operation generates Vpn client package
         for P2S client of the virtual network gateway in the specified
@@ -460,7 +463,8 @@ class VirtualNetworkGatewaysOperations(object):
         :type virtual_network_gateway_name: str
         :param processor_architecture: VPN client Processor Architecture
          -Amd64/X86. Possible values include: 'Amd64', 'X86'
-        :type processor_architecture: str
+        :type processor_architecture: str or :class:`ProcessorArchitecture
+         <azure.mgmt.network.models.ProcessorArchitecture>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

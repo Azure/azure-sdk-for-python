@@ -29,7 +29,8 @@ class RedisRebootParameters(Model):
     :param reboot_type: Which redis node(s) to reboot. Depending on this
      value data loss is possible. Possible values include: 'PrimaryNode',
      'SecondaryNode', 'AllNodes'
-    :type reboot_type: str
+    :type reboot_type: str or :class:`RebootType
+     <azure.mgmt.redis.models.RebootType>`
     :param shard_id: In case of cluster cache, this specifies shard id which
      should be rebooted.
     :type shard_id: int
@@ -40,7 +41,7 @@ class RedisRebootParameters(Model):
     }
 
     _attribute_map = {
-        'reboot_type': {'key': 'rebootType', 'type': 'RebootType'},
+        'reboot_type': {'key': 'rebootType', 'type': 'str'},
         'shard_id': {'key': 'shardId', 'type': 'int'},
     }
 

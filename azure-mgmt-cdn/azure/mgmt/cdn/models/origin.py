@@ -48,10 +48,12 @@ class Origin(Resource):
     :type https_port: int
     :ivar resource_state: Resource status of the origin. Possible values
      include: 'Creating', 'Active', 'Deleting'
-    :vartype resource_state: str
+    :vartype resource_state: str or :class:`OriginResourceState
+     <azure.mgmt.cdn.models.OriginResourceState>`
     :param provisioning_state: Provisioning status of the origin. Possible
      values include: 'Creating', 'Succeeded', 'Failed'
-    :type provisioning_state: str
+    :type provisioning_state: str or :class:`ProvisioningState
+     <azure.mgmt.cdn.models.ProvisioningState>`
     """ 
 
     _validation = {

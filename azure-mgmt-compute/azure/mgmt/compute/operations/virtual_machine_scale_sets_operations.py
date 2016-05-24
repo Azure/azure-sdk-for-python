@@ -45,7 +45,7 @@ class VirtualMachineScaleSetsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Allows you to create or update a virtual machine scale set by
         providing parameters or a path to pre-configured parameter file.
@@ -102,10 +102,11 @@ class VirtualMachineScaleSetsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -141,7 +142,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def deallocate(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         """
         Allows you to deallocate virtual machines in a virtual machine scale
         set. Shuts down the virtual machines and releases the compute
@@ -204,10 +205,11 @@ class VirtualMachineScaleSetsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -234,7 +236,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """
         Allows you to delete a virtual machine scale set.
 
@@ -280,10 +282,11 @@ class VirtualMachineScaleSetsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -310,7 +313,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """
         Display information about a virtual machine scale set.
 
@@ -372,7 +375,7 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def delete_instances(
-            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
         """
         Allows you to delete virtual machines in a virtual machine scale set.
 
@@ -427,10 +430,11 @@ class VirtualMachineScaleSetsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -457,7 +461,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get_instance_view(
-            self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """
         Displays status of a virtual machine scale set instance.
 
@@ -519,7 +523,7 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists all virtual machine scale sets under a resource group.
 
@@ -585,7 +589,7 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def list_all(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Lists all Virtual Machine Scale Sets in the subscription. Use nextLink
         property in the response to get the next page of Virtual Machine
@@ -651,7 +655,7 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def list_skus(
-            self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """
         Displays available skus for your virtual machine scale set including
         the minimum and maximum vm instances allowed for a particular sku.
@@ -721,7 +725,7 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def power_off(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         """
         Allows you to power off (stop) virtual machines in a virtual machine
         scale set. Note that resources are still attached and you are getting
@@ -783,10 +787,11 @@ class VirtualMachineScaleSetsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -813,7 +818,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def restart(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         """
         Allows you to restart virtual machines in a virtual machine scale set.
 
@@ -873,10 +878,11 @@ class VirtualMachineScaleSetsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -903,7 +909,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def start(
-            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         """
         Allows you to start virtual machines in a virtual machine scale set.
 
@@ -963,10 +969,11 @@ class VirtualMachineScaleSetsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -993,7 +1000,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update_instances(
-            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
         """
         Allows you to manually upgrade virtual machines in a virtual machine
         scale set.
@@ -1049,10 +1056,11 @@ class VirtualMachineScaleSetsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -1079,7 +1087,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def reimage(
-            self, resource_group_name, vm_scale_set_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """
         Allows you to re-image(update the version of the installed operating
         system) virtual machines in a virtual machine scale set.
@@ -1126,10 +1134,11 @@ class VirtualMachineScaleSetsOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 

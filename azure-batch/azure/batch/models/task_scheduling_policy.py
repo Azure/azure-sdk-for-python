@@ -28,7 +28,8 @@ class TaskSchedulingPolicy(Model):
 
     :param node_fill_type: How tasks should be distributed across compute
      nodes. Possible values include: 'spread', 'pack', 'unmapped'
-    :type node_fill_type: str
+    :type node_fill_type: str or :class:`ComputeNodeFillType
+     <azure.batch.models.ComputeNodeFillType>`
     """ 
 
     _validation = {

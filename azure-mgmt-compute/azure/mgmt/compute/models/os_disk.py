@@ -28,7 +28,8 @@ class OSDisk(Model):
 
     :param os_type: Gets or sets the Operating System type. Possible values
      include: 'Windows', 'Linux'
-    :type os_type: str
+    :type os_type: str or :class:`OperatingSystemTypes
+     <azure.mgmt.compute.models.OperatingSystemTypes>`
     :param encryption_settings: Gets or sets the disk encryption settings.
     :type encryption_settings: :class:`DiskEncryptionSettings
      <azure.mgmt.compute.models.DiskEncryptionSettings>`
@@ -45,10 +46,12 @@ class OSDisk(Model):
      <azure.mgmt.compute.models.VirtualHardDisk>`
     :param caching: Gets or sets the caching type. Possible values include:
      'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str
+    :type caching: str or :class:`CachingTypes
+     <azure.mgmt.compute.models.CachingTypes>`
     :param create_option: Gets or sets the create option. Possible values
      include: 'fromImage', 'empty', 'attach'
-    :type create_option: str
+    :type create_option: str or :class:`DiskCreateOptionTypes
+     <azure.mgmt.compute.models.DiskCreateOptionTypes>`
     :param disk_size_gb: Gets or sets the initial disk size in GB for blank
      data disks, and the new desired size for existing OS and Data disks.
     :type disk_size_gb: int

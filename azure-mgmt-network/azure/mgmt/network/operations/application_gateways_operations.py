@@ -45,7 +45,7 @@ class ApplicationGatewaysOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, application_gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         The delete applicationgateway operation deletes the specified
         applicationgateway.
@@ -92,10 +92,11 @@ class ApplicationGatewaysOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -122,7 +123,7 @@ class ApplicationGatewaysOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, application_gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         The Get applicationgateway operation retreives information about the
         specified applicationgateway.
@@ -185,7 +186,7 @@ class ApplicationGatewaysOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, application_gateway_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, application_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put ApplicationGateway operation creates/updates a
         ApplicationGateway
@@ -241,10 +242,11 @@ class ApplicationGatewaysOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -280,7 +282,7 @@ class ApplicationGatewaysOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The List ApplicationGateway opertion retrieves all the
         applicationgateways in a resource group.
@@ -347,7 +349,7 @@ class ApplicationGatewaysOperations(object):
         return deserialized
 
     def list_all(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         The List applicationgateway opertion retrieves all the
         applicationgateways in a subscription.
@@ -411,7 +413,7 @@ class ApplicationGatewaysOperations(object):
         return deserialized
 
     def start(
-            self, resource_group_name, application_gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         The Start ApplicationGateway operation starts application gatewayin
         the specified resource group through Network resource provider.
@@ -458,10 +460,11 @@ class ApplicationGatewaysOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -488,7 +491,7 @@ class ApplicationGatewaysOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def stop(
-            self, resource_group_name, application_gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         The STOP ApplicationGateway operation stops application gatewayin the
         specified resource group through Network resource provider.
@@ -535,10 +538,11 @@ class ApplicationGatewaysOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 

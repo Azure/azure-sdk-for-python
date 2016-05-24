@@ -57,13 +57,10 @@ class RedisResourceWithAccessKey(Resource):
     :param shard_count: The number of shards to be created on a Premium
      Cluster Cache.
     :type shard_count: int
-    :param virtual_network: The exact ARM resource ID of the virtual network
+    :param subnet_id: The full resource ID of a subnet in a virtual network
      to deploy the redis cache in. Example format:
-     /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.ClassicNetwork/VirtualNetworks/vnet1
-    :type virtual_network: str
-    :param subnet: Required when deploying a redis cache inside an existing
-     Azure Virtual Network.
-    :type subnet: str
+     /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1
+    :type subnet_id: str
     :param static_ip: Required when deploying a redis cache inside an
      existing Azure Virtual Network.
     :type static_ip: str
@@ -100,8 +97,7 @@ class RedisResourceWithAccessKey(Resource):
         'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
         'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
         'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'str'},
+        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
         'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
@@ -110,7 +106,7 @@ class RedisResourceWithAccessKey(Resource):
         'access_keys': {'key': 'properties.accessKeys', 'type': 'RedisAccessKeys'},
     }
 
-    def __init__(self, location, sku, tags=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, virtual_network=None, subnet=None, static_ip=None, provisioning_state=None, host_name=None, port=None, ssl_port=None, access_keys=None):
+    def __init__(self, location, sku, tags=None, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, subnet_id=None, static_ip=None, provisioning_state=None, host_name=None, port=None, ssl_port=None, access_keys=None):
         super(RedisResourceWithAccessKey, self).__init__(location=location, tags=tags)
         self.redis_version = redis_version
         self.sku = sku
@@ -118,8 +114,7 @@ class RedisResourceWithAccessKey(Resource):
         self.enable_non_ssl_port = enable_non_ssl_port
         self.tenant_settings = tenant_settings
         self.shard_count = shard_count
-        self.virtual_network = virtual_network
-        self.subnet = subnet
+        self.subnet_id = subnet_id
         self.static_ip = static_ip
         self.provisioning_state = provisioning_state
         self.host_name = host_name

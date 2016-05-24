@@ -51,7 +51,9 @@ class ExpressRouteCircuit(Resource):
      ServiceProviderProvisioningState state of the resource . Possible values
      include: 'NotProvisioned', 'Provisioning', 'Provisioned',
      'Deprovisioning'
-    :type service_provider_provisioning_state: str
+    :type service_provider_provisioning_state: str or
+     :class:`ServiceProviderProvisioningState
+     <azure.mgmt.network.models.ServiceProviderProvisioningState>`
     :param authorizations: Gets or sets list of authorizations
     :type authorizations: list of :class:`ExpressRouteCircuitAuthorization
      <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
@@ -88,7 +90,7 @@ class ExpressRouteCircuit(Resource):
         'sku': {'key': 'sku', 'type': 'ExpressRouteCircuitSku'},
         'allow_classic_operations': {'key': 'properties.allowClassicOperations', 'type': 'bool'},
         'circuit_provisioning_state': {'key': 'properties.circuitProvisioningState', 'type': 'str'},
-        'service_provider_provisioning_state': {'key': 'properties.serviceProviderProvisioningState', 'type': 'ServiceProviderProvisioningState'},
+        'service_provider_provisioning_state': {'key': 'properties.serviceProviderProvisioningState', 'type': 'str'},
         'authorizations': {'key': 'properties.authorizations', 'type': '[ExpressRouteCircuitAuthorization]'},
         'peerings': {'key': 'properties.peerings', 'type': '[ExpressRouteCircuitPeering]'},
         'service_key': {'key': 'properties.serviceKey', 'type': 'str'},

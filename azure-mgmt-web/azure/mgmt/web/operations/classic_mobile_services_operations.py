@@ -44,7 +44,7 @@ class ClassicMobileServicesOperations(object):
         self.config = config
 
     def get_classic_mobile_services(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Get all mobile services in a resource group.
 
@@ -103,7 +103,7 @@ class ClassicMobileServicesOperations(object):
         return deserialized
 
     def get_classic_mobile_service(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Get a mobile service.
 
@@ -165,7 +165,7 @@ class ClassicMobileServicesOperations(object):
         return deserialized
 
     def delete_classic_mobile_service(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Delete a mobile service.
 

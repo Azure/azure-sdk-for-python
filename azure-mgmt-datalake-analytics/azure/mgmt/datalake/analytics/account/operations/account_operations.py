@@ -45,7 +45,7 @@ class AccountOperations(object):
         self.config = config
 
     def get_storage_account(
-            self, resource_group_name, account_name, storage_account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the specified Azure Storage account linked to the given Data Lake
         Analytics account.
@@ -114,7 +114,7 @@ class AccountOperations(object):
         return deserialized
 
     def delete_storage_account(
-            self, resource_group_name, account_name, storage_account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
         """
         Updates the specified Data Lake Analytics account to remove an Azure
         Storage account.
@@ -175,7 +175,7 @@ class AccountOperations(object):
             return client_raw_response
 
     def update_storage_account(
-            self, resource_group_name, account_name, storage_account_name, properties, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, storage_account_name, properties, custom_headers=None, raw=False, **operation_config):
         """
         Updates the Data Lake Analytics account to replace Azure Storage blob
         account details, such as the access key and/or suffix.
@@ -245,7 +245,7 @@ class AccountOperations(object):
             return client_raw_response
 
     def add_storage_account(
-            self, resource_group_name, account_name, storage_account_name, properties, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, storage_account_name, properties, custom_headers=None, raw=False, **operation_config):
         """
         Updates the specified Data Lake Analytics account to add an Azure
         Storage account.
@@ -316,7 +316,7 @@ class AccountOperations(object):
             return client_raw_response
 
     def get_storage_container(
-            self, resource_group_name, account_name, storage_account_name, container_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, storage_account_name, container_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the specified Azure Storage container associated with the given
         Data Lake Analytics and Azure Storage accounts.
@@ -389,7 +389,7 @@ class AccountOperations(object):
         return deserialized
 
     def list_storage_containers(
-            self, resource_group_name, account_name, storage_account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists the Azure Storage containers, if any, associated with the
         specified Data Lake Analytics and Azure Storage account combination.
@@ -465,140 +465,8 @@ class AccountOperations(object):
 
         return deserialized
 
-    def storage_containers_list_next(
-            self, next_link, custom_headers={}, raw=False, **operation_config):
-        """
-        Gets the next page of Azure Storage containers, if any, within the
-        specified Azure Storage account. The response includes a link to the
-        next page of results, if any.
-
-        :param next_link: The URL to the next Azure Storage Container page.
-        :type next_link: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BlobContainerPaged
-         <azure.mgmt.datalake.analytics.account.models.BlobContainerPaged>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = '/{nextLink}'
-                path_format_arguments = {
-                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True)
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.BlobContainerPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.BlobContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-
-    def sas_tokens_list_next(
-            self, next_link, custom_headers={}, raw=False, **operation_config):
-        """
-        Gets the next page of the SAS token objects within the specified Azure
-        Storage account and container, if any.
-
-        :param next_link: The URL to the next Azure Storage Container SAS
-         token page.
-        :type next_link: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasTokenInfoPaged
-         <azure.mgmt.datalake.analytics.account.models.SasTokenInfoPaged>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = '/{nextLink}'
-                path_format_arguments = {
-                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True)
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.SasTokenInfoPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.SasTokenInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-
     def list_sas_tokens(
-            self, resource_group_name, account_name, storage_account_name, container_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, storage_account_name, container_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the SAS token associated with the specified Data Lake Analytics
         and Azure Storage account and container combination.
@@ -678,7 +546,7 @@ class AccountOperations(object):
         return deserialized
 
     def get_data_lake_store_account(
-            self, resource_group_name, account_name, data_lake_store_account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, data_lake_store_account_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the specified Data Lake Store account details in the specified
         Data Lake Analytics account.
@@ -747,7 +615,7 @@ class AccountOperations(object):
         return deserialized
 
     def delete_data_lake_store_account(
-            self, resource_group_name, account_name, data_lake_store_account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, data_lake_store_account_name, custom_headers=None, raw=False, **operation_config):
         """
         Updates the Data Lake Analytics account specified to remove the
         specified Data Lake Store account.
@@ -808,7 +676,7 @@ class AccountOperations(object):
             return client_raw_response
 
     def add_data_lake_store_account(
-            self, resource_group_name, account_name, data_lake_store_account_name, properties, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, data_lake_store_account_name, properties, custom_headers=None, raw=False, **operation_config):
         """
         Updates the specified Data Lake Analytics account to include the
         additional Data Lake Store account.
@@ -879,7 +747,7 @@ class AccountOperations(object):
             return client_raw_response
 
     def list_storage_accounts(
-            self, resource_group_name, account_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets the first page of Azure Storage accounts, if any, linked to the
         specified Data Lake Analytics account. The response includes a link
@@ -1002,7 +870,7 @@ class AccountOperations(object):
         return deserialized
 
     def list_data_lake_store_accounts(
-            self, resource_group_name, account_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets the first page of Data Lake Store accounts linked to the
         specified Data Lake Analytics account. The response includes a link
@@ -1125,7 +993,7 @@ class AccountOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets the first page of Data Lake Analytics accounts, if any, within a
         specific resource group. This includes a link to the next page, if
@@ -1244,7 +1112,7 @@ class AccountOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets the first page of Data Lake Analytics accounts, if any, within
         the current subscription. This includes a link to the next page, if
@@ -1359,7 +1227,7 @@ class AccountOperations(object):
         return deserialized
 
     def get(
-            self, resource_group_name, account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets details of the specified Data Lake Analytics account.
 
@@ -1423,7 +1291,7 @@ class AccountOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """
         Begins the delete delete process for the Data Lake Analytics account
         object specified by the account name.
@@ -1472,10 +1340,11 @@ class AccountOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -1502,7 +1371,7 @@ class AccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def create(
-            self, resource_group_name, name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Creates the specified Data Lake Analytics account. This supplies the
         user with computation services for Data Lake Analytics workloads
@@ -1560,10 +1429,11 @@ class AccountOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -1599,7 +1469,7 @@ class AccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, resource_group_name, name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Updates the Data Lake Analytics account object specified by the
         accountName with the contents of the account object.
@@ -1656,10 +1526,11 @@ class AccountOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 

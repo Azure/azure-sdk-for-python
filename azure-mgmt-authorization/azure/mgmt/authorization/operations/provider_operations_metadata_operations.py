@@ -44,7 +44,7 @@ class ProviderOperationsMetadataOperations(object):
         self.config = config
 
     def get(
-            self, resource_provider_namespace, api_version, expand="resourceTypes", custom_headers={}, raw=False, **operation_config):
+            self, resource_provider_namespace, api_version, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
         """
         Gets provider operations metadata
 
@@ -109,7 +109,7 @@ class ProviderOperationsMetadataOperations(object):
         return deserialized
 
     def list(
-            self, api_version, expand="resourceTypes", custom_headers={}, raw=False, **operation_config):
+            self, api_version, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
         """
         Gets provider operations metadata list
 

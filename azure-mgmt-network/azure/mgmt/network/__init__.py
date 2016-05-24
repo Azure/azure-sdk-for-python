@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient, NetworkManagementClientConfiguration
+from .network_management_client import NetworkManagementClient
 from .version import VERSION
 
-__all__ = [
-    'NetworkManagementClient',
-    'NetworkManagementClientConfiguration'
-]
+__all__ = ['NetworkManagementClient']
 
 __version__ = VERSION
 

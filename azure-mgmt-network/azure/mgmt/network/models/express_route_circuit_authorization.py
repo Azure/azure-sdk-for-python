@@ -32,7 +32,8 @@ class ExpressRouteCircuitAuthorization(SubResource):
     :type authorization_key: str
     :param authorization_use_status: Gets or sets AuthorizationUseStatus.
      Possible values include: 'Available', 'InUse'
-    :type authorization_use_status: str
+    :type authorization_use_status: str or :class:`AuthorizationUseStatus
+     <azure.mgmt.network.models.AuthorizationUseStatus>`
     :param provisioning_state: Gets or sets Provisioning state of the
      PublicIP resource Updating/Deleting/Failed
     :type provisioning_state: str
@@ -47,7 +48,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'authorization_use_status': {'key': 'properties.authorizationUseStatus', 'type': 'AuthorizationUseStatus'},
+        'authorization_use_status': {'key': 'properties.authorizationUseStatus', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},

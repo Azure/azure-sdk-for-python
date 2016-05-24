@@ -28,11 +28,9 @@ class MgmtAppsTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtAppsTest, self).setUp()
         self.logic_client = self.create_mgmt_client(
-            azure.mgmt.logic.LogicManagementClientConfiguration,
             azure.mgmt.logic.LogicManagementClient
         )
         self.web_client = self.create_mgmt_client(
-            azure.mgmt.web.WebSiteManagementClientConfiguration,
             azure.mgmt.web.WebSiteManagementClient
         )
 

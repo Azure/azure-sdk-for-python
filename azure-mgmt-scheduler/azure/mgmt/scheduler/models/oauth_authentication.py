@@ -28,7 +28,8 @@ class OAuthAuthentication(HttpAuthentication):
     :param type: Gets or sets the http authentication type. Possible values
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
-    :type type: str
+    :type type: str or :class:`HttpAuthenticationType
+     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
     :param secret: Gets or sets the secret.
     :type secret: str
     :param tenant: Gets or sets the tenant.

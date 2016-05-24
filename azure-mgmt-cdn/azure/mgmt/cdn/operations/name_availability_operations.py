@@ -43,7 +43,7 @@ class NameAvailabilityOperations(object):
         self.config = config
 
     def check_name_availability(
-            self, name, type, custom_headers={}, raw=False, **operation_config):
+            self, name, type, custom_headers=None, raw=False, **operation_config):
         """
         Check the availability of a resource name without creating the
         resource. This is needed for resources where name is globally unique,
@@ -53,7 +53,8 @@ class NameAvailabilityOperations(object):
         :type name: str
         :param type: The type of the resource whose name is to be validated.
          Possible values include: 'Microsoft.Cdn/Profiles/Endpoints'
-        :type type: str
+        :type type: str or :class:`ResourceType
+         <azure.mgmt.cdn.models.ResourceType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
