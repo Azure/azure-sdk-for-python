@@ -1,3 +1,7 @@
+## 2016.05.23 - Azure ARM version 0.3.1
+* Regenerated ARM sdk with Autorest [autorest.0.17.0-Nightly20160519](https://www.myget.org/feed/autorest/package/nuget/autorest/0.17.0-Nightly20160522)
+* Updating gemspec files to use the correct [homepage](https://github.com/Azure/azure-sdk-ruby) for each gem
+
 ## 2016.05.23 - Azure ARM version 0.3.0
 * Regenerated ARM sdk with Autorest [autorest.0.17.0-Nightly20160519](https://www.myget.org/feed/autorest/package/nuget/autorest/0.17.0-Nightly20160522)
 * Regenerated ARM sdk for newest published swagger specs from azure-rest-api-specs
