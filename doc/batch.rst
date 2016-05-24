@@ -16,15 +16,13 @@ see the :doc:`Batch Management Client <resourcemanagementbatch>`.
 
 .. code:: python
 
-    from azure.batch import BatchServiceClient, BatchServiceClientConfiguration
+    from azure.batch import BatchServiceClient
     from azure.batch.batch_auth import SharedKeyCredentials
 
     credentials = SharedKeyCredentials(BATCH_ACCOUNT_NAME, BATCH_ACCOUNT_KEY)
     batch_client = BatchServiceClient(
-        BatchServiceClientConfiguration(
-            credentials,
-            base_url=BATCH_ACCOUNT_URL
-        )
+        credentials,
+        base_url=BATCH_ACCOUNT_URL
     )
 
 Manage Pools and Nodes
