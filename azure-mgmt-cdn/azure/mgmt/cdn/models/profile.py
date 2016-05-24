@@ -69,7 +69,7 @@ class Profile(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'ProfileResourceState'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }
