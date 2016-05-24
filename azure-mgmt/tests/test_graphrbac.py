@@ -30,6 +30,7 @@ class GraphRbacTest(AzureMgmtTestCase):
             tenant_id=self.settings.AD_DOMAIN
         )
 
+    @unittest.skip("1.42 API Version does not exists anymore, to be migrated to 1.6")
     @record
     def test_graphrbac_users(self):
 
