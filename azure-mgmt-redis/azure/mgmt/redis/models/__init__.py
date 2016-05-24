@@ -29,6 +29,8 @@ from .redis_resource import RedisResource
 from .redis_list_keys_result import RedisListKeysResult
 from .redis_regenerate_key_parameters import RedisRegenerateKeyParameters
 from .redis_reboot_parameters import RedisRebootParameters
+from .export_rdb_parameters import ExportRDBParameters
+from .import_rdb_parameters import ImportRDBParameters
 from .redis_resource_paged import RedisResourcePaged
 from .redis_management_client_enums import (
     SkuName,
@@ -48,6 +50,8 @@ __all__ = [
     'RedisListKeysResult',
     'RedisRegenerateKeyParameters',
     'RedisRebootParameters',
+    'ExportRDBParameters',
+    'ImportRDBParameters',
     'RedisResourcePaged',
     'SkuName',
     'SkuFamily',

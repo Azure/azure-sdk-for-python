@@ -45,7 +45,7 @@ class AccountOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, account_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new Batch account with the specified parameters. Existing
         accounts cannot be updated with this API and should instead be
@@ -107,10 +107,11 @@ class AccountOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -144,7 +145,7 @@ class AccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, resource_group_name, account_name, tags=None, auto_storage=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, tags=None, auto_storage=None, custom_headers=None, raw=False, **operation_config):
         """
         Updates the properties of an existing Batch account.
 
@@ -218,7 +219,7 @@ class AccountOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes the specified Batch account.
 
@@ -265,10 +266,11 @@ class AccountOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -295,7 +297,7 @@ class AccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the specified Batch account.
 
@@ -358,7 +360,7 @@ class AccountOperations(object):
         return deserialized
 
     def list(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the Batch accounts associated with the
         subscription.
@@ -422,7 +424,7 @@ class AccountOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the Batch accounts associated within the
         specified resource group.
@@ -490,7 +492,7 @@ class AccountOperations(object):
         return deserialized
 
     def synchronize_auto_storage_keys(
-            self, resource_group_name, account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """
         Synchronizes access keys for the auto storage account configured for
         the specified Batch account.
@@ -546,7 +548,7 @@ class AccountOperations(object):
             return client_raw_response
 
     def regenerate_key(
-            self, resource_group_name, account_name, key_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, key_name, custom_headers=None, raw=False, **operation_config):
         """
         Regenerates the specified account key for the specified Batch account.
 
@@ -557,7 +559,8 @@ class AccountOperations(object):
         :type account_name: str
         :param key_name: The type of account key to regenerate. Possible
          values include: 'Primary', 'Secondary'
-        :type key_name: str
+        :type key_name: str or :class:`AccountKeyType
+         <azure.mgmt.batch.models.AccountKeyType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -618,7 +621,7 @@ class AccountOperations(object):
         return deserialized
 
     def list_keys(
-            self, resource_group_name, account_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists the account keys for the specified Batch account.
 

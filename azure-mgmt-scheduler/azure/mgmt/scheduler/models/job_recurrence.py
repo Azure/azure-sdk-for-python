@@ -28,7 +28,8 @@ class JobRecurrence(Model):
     :param frequency: Gets or sets the frequency of recurrence (second,
      minute, hour, day, week, month). Possible values include: 'Minute',
      'Hour', 'Day', 'Week', 'Month'
-    :type frequency: str
+    :type frequency: str or :class:`RecurrenceFrequency
+     <azure.mgmt.scheduler.models.RecurrenceFrequency>`
     :param interval: Gets or sets the interval between retries.
     :type interval: int
     :param count: Gets or sets the maximum number of times that the job

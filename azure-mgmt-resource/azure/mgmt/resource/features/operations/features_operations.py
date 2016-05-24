@@ -44,7 +44,7 @@ class FeaturesOperations(object):
         self.config = config
 
     def list_all(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of previewed features for all the providers in the current
         subscription.
@@ -108,7 +108,7 @@ class FeaturesOperations(object):
         return deserialized
 
     def list(
-            self, resource_provider_namespace, custom_headers={}, raw=False, **operation_config):
+            self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of previewed features of a resource provider.
 
@@ -175,7 +175,7 @@ class FeaturesOperations(object):
         return deserialized
 
     def get(
-            self, resource_provider_namespace, feature_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_provider_namespace, feature_name, custom_headers=None, raw=False, **operation_config):
         """
         Get all features under the subscription.
 
@@ -238,7 +238,7 @@ class FeaturesOperations(object):
         return deserialized
 
     def register(
-            self, resource_provider_namespace, feature_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_provider_namespace, feature_name, custom_headers=None, raw=False, **operation_config):
         """
         Registers for a previewed feature of a resource provider.
 

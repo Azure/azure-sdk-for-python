@@ -44,7 +44,7 @@ class ServicePrincipalOperations(object):
         self.config = config
 
     def create(
-            self, app_id, account_enabled, custom_headers={}, raw=False, **operation_config):
+            self, app_id, account_enabled, custom_headers=None, raw=False, **operation_config):
         """
         Creates a service principal in the  directory.
 
@@ -110,7 +110,7 @@ class ServicePrincipalOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets list of service principals from the current tenant.
 
@@ -177,7 +177,7 @@ class ServicePrincipalOperations(object):
         return deserialized
 
     def delete(
-            self, object_id, custom_headers={}, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """
         Deletes service principal from the directory.
 
@@ -228,7 +228,7 @@ class ServicePrincipalOperations(object):
             return client_raw_response
 
     def get(
-            self, object_id, custom_headers={}, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets service principal information from the directory.
 
@@ -287,7 +287,7 @@ class ServicePrincipalOperations(object):
         return deserialized
 
     def list_next(
-            self, next_link, custom_headers={}, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """
         Gets list of service principals from the current tenant.
 

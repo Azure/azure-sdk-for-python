@@ -44,7 +44,7 @@ class JobsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, job_collection_name, job_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a job.
 
@@ -109,7 +109,7 @@ class JobsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, job_collection_name, job_name, job, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_name, job, custom_headers=None, raw=False, **operation_config):
         """
         Provisions a new job or updates an existing job.
 
@@ -183,7 +183,7 @@ class JobsOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, job_collection_name, job_name, job, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_name, job, custom_headers=None, raw=False, **operation_config):
         """
         Patches an existing job.
 
@@ -255,7 +255,7 @@ class JobsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, job_collection_name, job_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a job.
 
@@ -312,7 +312,7 @@ class JobsOperations(object):
             return client_raw_response
 
     def run(
-            self, resource_group_name, job_collection_name, job_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_name, custom_headers=None, raw=False, **operation_config):
         """
         Runs a job.
 
@@ -369,7 +369,7 @@ class JobsOperations(object):
             return client_raw_response
 
     def list(
-            self, resource_group_name, job_collection_name, top=None, skip=None, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, top=None, skip=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists all jobs under the specified job collection.
 
@@ -451,7 +451,7 @@ class JobsOperations(object):
         return deserialized
 
     def list_job_history(
-            self, resource_group_name, job_collection_name, job_name, top=None, skip=None, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_name, top=None, skip=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists job history.
 

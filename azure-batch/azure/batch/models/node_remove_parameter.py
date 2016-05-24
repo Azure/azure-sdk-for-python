@@ -35,7 +35,9 @@ class NodeRemoveParameter(Model):
     :param node_deallocation_option: When compute nodes may be removed from
      the pool. Possible values include: 'requeue', 'terminate',
      'taskcompletion', 'retaineddata'
-    :type node_deallocation_option: str
+    :type node_deallocation_option: str or
+     :class:`ComputeNodeDeallocationOption
+     <azure.batch.models.ComputeNodeDeallocationOption>`
     """ 
 
     _validation = {

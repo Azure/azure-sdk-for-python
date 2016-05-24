@@ -44,7 +44,7 @@ class JobCollectionsOperations(object):
         self.config = config
 
     def list_by_subscription(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets all job collections under specified subscription.
 
@@ -107,7 +107,7 @@ class JobCollectionsOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets all job collections under specified resource group.
 
@@ -173,7 +173,7 @@ class JobCollectionsOperations(object):
         return deserialized
 
     def get(
-            self, resource_group_name, job_collection_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a job collection.
 
@@ -235,7 +235,7 @@ class JobCollectionsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, job_collection_name, job_collection, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_collection, custom_headers=None, raw=False, **operation_config):
         """
         Provisions a new job collection or updates an existing job collection.
 
@@ -306,7 +306,7 @@ class JobCollectionsOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, job_collection_name, job_collection, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_collection, custom_headers=None, raw=False, **operation_config):
         """
         Patches an existing job collection.
 
@@ -375,7 +375,7 @@ class JobCollectionsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, job_collection_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a job collection.
 
@@ -429,7 +429,7 @@ class JobCollectionsOperations(object):
             return client_raw_response
 
     def enable(
-            self, resource_group_name, job_collection_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, custom_headers=None, raw=False, **operation_config):
         """
         Enables all of the jobs in the job collection.
 
@@ -483,7 +483,7 @@ class JobCollectionsOperations(object):
             return client_raw_response
 
     def disable(
-            self, resource_group_name, job_collection_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, custom_headers=None, raw=False, **operation_config):
         """
         Disables all of the jobs in the job collection.
 

@@ -44,7 +44,7 @@ class CertificateOrdersOperations(object):
         self.config = config
 
     def get_certificate(
-            self, resource_group_name, certificate_order_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Get certificate associated with the certificate order
 
@@ -109,7 +109,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def create_or_update_certificate(
-            self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers=None, raw=False, **operation_config):
         """
         Associates a Key Vault secret to a certificate store that will be used
         for storing the certificate once it's ready
@@ -182,7 +182,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def delete_certificate(
-            self, resource_group_name, certificate_order_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes the certificate associated with the certificate order
 
@@ -246,7 +246,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def update_certificate(
-            self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers=None, raw=False, **operation_config):
         """
         Associates a Key Vault secret to a certificate store that will be used
         for storing the certificate once it's ready
@@ -319,7 +319,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def get_certificate_order(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Get a certificate order
 
@@ -381,7 +381,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def create_or_update_certificate_order(
-            self, resource_group_name, name, certificate_distinguished_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
         """
         Create or update a certificate purchase order
 
@@ -451,7 +451,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def delete_certificate_order(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Delete an existing certificate order
 
@@ -512,7 +512,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def update_certificate_order(
-            self, resource_group_name, name, certificate_distinguished_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
         """
         Create or update a certificate purchase order
 
@@ -582,7 +582,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def get_certificate_orders(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Get certificate orders in a resource group
 
@@ -641,7 +641,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def get_certificates(
-            self, resource_group_name, certificate_order_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """
         List all certificates associated with a certificate order (only one
         certificate can be associated with an order at a time)
@@ -704,7 +704,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def reissue_certificate_order(
-            self, resource_group_name, name, reissue_certificate_order_request, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, reissue_certificate_order_request, custom_headers=None, raw=False, **operation_config):
         """
         Reissue an existing certificate order
 
@@ -773,7 +773,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def renew_certificate_order(
-            self, resource_group_name, name, renew_certificate_order_request, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, renew_certificate_order_request, custom_headers=None, raw=False, **operation_config):
         """
         Renew an existing certificate order
 
@@ -842,7 +842,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def retrieve_certificate_actions(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Retrieve the list of certificate actions
 
@@ -904,7 +904,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def retrieve_certificate_email_history(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Retrive email history
 
@@ -966,7 +966,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def resend_certificate_email(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Resend certificate email
 
@@ -1027,7 +1027,7 @@ class CertificateOrdersOperations(object):
         return deserialized
 
     def verify_domain_ownership(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Verify domain ownership for this certificate order
 

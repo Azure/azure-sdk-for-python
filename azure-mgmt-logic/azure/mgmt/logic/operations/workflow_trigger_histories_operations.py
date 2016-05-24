@@ -44,7 +44,7 @@ class WorkflowTriggerHistoriesOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, workflow_name, trigger_name, top=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, trigger_name, top=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of workflow trigger histories.
 
@@ -120,7 +120,7 @@ class WorkflowTriggerHistoriesOperations(object):
         return deserialized
 
     def get(
-            self, resource_group_name, workflow_name, trigger_name, history_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, trigger_name, history_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a workflow trigger history.
 

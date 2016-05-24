@@ -44,7 +44,7 @@ class UsageOperations(object):
         self.config = config
 
     def list(
-            self, location, custom_headers={}, raw=False, **operation_config):
+            self, location, custom_headers=None, raw=False, **operation_config):
         """
         Lists compute usages for a subscription.
 

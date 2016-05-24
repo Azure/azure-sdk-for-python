@@ -28,7 +28,8 @@ class ClientCertAuthentication(HttpAuthentication):
     :param type: Gets or sets the http authentication type. Possible values
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
-    :type type: str
+    :type type: str or :class:`HttpAuthenticationType
+     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
     :param password: Gets or sets the password.
     :type password: str
     :param pfx: Gets or sets the pfx.

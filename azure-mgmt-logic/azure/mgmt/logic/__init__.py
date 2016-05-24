@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .logic_management_client import LogicManagementClient, LogicManagementClientConfiguration
+from .logic_management_client import LogicManagementClient
 from .version import VERSION
 
-__all__ = [
-    'LogicManagementClient',
-    'LogicManagementClientConfiguration'
-]
+__all__ = ['LogicManagementClient']
 
 __version__ = VERSION
 

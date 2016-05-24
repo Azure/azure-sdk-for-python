@@ -28,18 +28,20 @@ class ApplicationGatewaySku(Model):
 
     :param name: Gets or sets name of application gateway SKU. Possible
      values include: 'Standard_Small', 'Standard_Medium', 'Standard_Large'
-    :type name: str
+    :type name: str or :class:`ApplicationGatewaySkuName
+     <azure.mgmt.network.models.ApplicationGatewaySkuName>`
     :param tier: Gets or sets tier of application gateway. Possible values
      include: 'Standard'
-    :type tier: str
+    :type tier: str or :class:`ApplicationGatewayTier
+     <azure.mgmt.network.models.ApplicationGatewayTier>`
     :param capacity: Gets or sets capacity (instance count) of application
      gateway
     :type capacity: int
     """ 
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'ApplicationGatewaySkuName'},
-        'tier': {'key': 'tier', 'type': 'ApplicationGatewayTier'},
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 

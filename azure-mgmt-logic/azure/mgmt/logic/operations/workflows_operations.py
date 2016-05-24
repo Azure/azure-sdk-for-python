@@ -45,7 +45,7 @@ class WorkflowsOperations(object):
         self.config = config
 
     def list_by_subscription(
-            self, top=None, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of workflows by subscription.
 
@@ -115,7 +115,7 @@ class WorkflowsOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, top=None, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of workflows by resource group.
 
@@ -188,7 +188,7 @@ class WorkflowsOperations(object):
         return deserialized
 
     def get(
-            self, resource_group_name, workflow_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a workflow.
 
@@ -249,7 +249,7 @@ class WorkflowsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, workflow_name, workflow, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, workflow, custom_headers=None, raw=False, **operation_config):
         """
         Creates or updates a workflow.
 
@@ -318,7 +318,7 @@ class WorkflowsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, workflow_name, workflow, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, workflow, custom_headers=None, raw=False, **operation_config):
         """
         Updates a workflow.
 
@@ -385,7 +385,7 @@ class WorkflowsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, workflow_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a workflow.
 
@@ -439,7 +439,7 @@ class WorkflowsOperations(object):
             return client_raw_response
 
     def run(
-            self, resource_group_name, workflow_name, name=None, outputs=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, name=None, outputs=None, custom_headers=None, raw=False, **operation_config):
         """
         Runs a workflow.
 
@@ -496,10 +496,11 @@ class WorkflowsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -533,7 +534,7 @@ class WorkflowsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def disable(
-            self, resource_group_name, workflow_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, custom_headers=None, raw=False, **operation_config):
         """
         Disables a workflow.
 
@@ -587,7 +588,7 @@ class WorkflowsOperations(object):
             return client_raw_response
 
     def enable(
-            self, resource_group_name, workflow_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, custom_headers=None, raw=False, **operation_config):
         """
         Enables a workflow.
 
@@ -641,7 +642,7 @@ class WorkflowsOperations(object):
             return client_raw_response
 
     def validate(
-            self, resource_group_name, workflow_name, workflow, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, workflow, custom_headers=None, raw=False, **operation_config):
         """
         Validates a workflow.
 

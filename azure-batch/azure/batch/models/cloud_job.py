@@ -47,7 +47,7 @@ class CloudJob(Model):
     :param state: The current state of the job. Possible values include:
      'active', 'disabling', 'disabled', 'enabling', 'terminating',
      'completed', 'deleting'
-    :type state: str
+    :type state: str or :class:`JobState <azure.batch.models.JobState>`
     :param state_transition_time: The time at which the job entered its
      current state.
     :type state_transition_time: datetime
@@ -55,7 +55,8 @@ class CloudJob(Model):
      not set if the job is in its initial Active state. Possible values
      include: 'active', 'disabling', 'disabled', 'enabling', 'terminating',
      'completed', 'deleting'
-    :type previous_state: str
+    :type previous_state: str or :class:`JobState
+     <azure.batch.models.JobState>`
     :param previous_state_transition_time: The time at which the job entered
      its previous state. This property is not set if the job is in its
      initial Active state.

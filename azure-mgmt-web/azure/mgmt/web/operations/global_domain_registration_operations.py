@@ -44,7 +44,7 @@ class GlobalDomainRegistrationOperations(object):
         self.config = config
 
     def get_all_domains(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Lists all domains in a subscription
 
@@ -100,7 +100,7 @@ class GlobalDomainRegistrationOperations(object):
         return deserialized
 
     def get_domain_control_center_sso_request(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Generates a single sign on request for domain management portal
 
@@ -156,7 +156,7 @@ class GlobalDomainRegistrationOperations(object):
         return deserialized
 
     def validate_domain_purchase_information(
-            self, domain_registration_input, custom_headers={}, raw=False, **operation_config):
+            self, domain_registration_input, custom_headers=None, raw=False, **operation_config):
         """
         Validates domain registration information
 
@@ -218,7 +218,7 @@ class GlobalDomainRegistrationOperations(object):
         return deserialized
 
     def check_domain_availability(
-            self, name=None, custom_headers={}, raw=False, **operation_config):
+            self, name=None, custom_headers=None, raw=False, **operation_config):
         """
         Checks if a domain is available for registration
 
@@ -282,7 +282,7 @@ class GlobalDomainRegistrationOperations(object):
         return deserialized
 
     def list_domain_recommendations(
-            self, keywords=None, max_domain_recommendations=None, custom_headers={}, raw=False, **operation_config):
+            self, keywords=None, max_domain_recommendations=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists domain recommendations based on keywords
 
