@@ -19,5 +19,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.serialization import Model
 
+
+class ContainerServiceSshConfiguration(Model):
+    """
+    SSH configuration for Linux based VMs running on Azure
+
+    :param public_keys: Gets or sets the list of SSH public keys used to
+     authenticate with Linux based VMs
+    :type public_keys: list of :class:`ContainerServiceSshPublicKey
+     <azure.mgmt.compute.models.ContainerServiceSshPublicKey>`
+    """ 
+
+    _attribute_map = {
+        'public_keys': {'key': 'publicKeys', 'type': '[ContainerServiceSshPublicKey]'},
+    }
+
+    def __init__(self, public_keys=None):
+        self.public_keys = public_keys
