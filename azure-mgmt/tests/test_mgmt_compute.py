@@ -332,6 +332,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                         type_name,
                         version,
                     )
+                    return
 
     @record
     def test_vm_images(self):
