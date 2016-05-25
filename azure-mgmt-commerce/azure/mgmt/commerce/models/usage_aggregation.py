@@ -59,7 +59,7 @@ class UsageAggregation(Model):
     :type meter_region: str
     :param info_fields: Key-value pairs of instance details (legacy format).
     :type info_fields: :class:`InfoField
-     <usagemanagementclient.models.InfoField>`
+     <azure.mgmt.commerce.models.InfoField>`
     :param instance_data: Key-value pairs of instance details represented as
      a string.
     :type instance_data: str

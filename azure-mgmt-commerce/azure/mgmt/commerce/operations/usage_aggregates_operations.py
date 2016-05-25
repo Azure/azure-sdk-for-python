@@ -43,7 +43,7 @@ class UsageAggregatesOperations(object):
         self.config = config
 
     def list(
-            self, reportedstart_time, reported_end_time, show_details=None, aggregation_granularity="Daily", continuation_token=None, custom_headers={}, raw=False, **operation_config):
+            self, reportedstart_time, reported_end_time, show_details=None, aggregation_granularity="Daily", continuation_token=None, custom_headers=None, raw=False, **operation_config):
         """
         Query aggregated Azure subscription consumption data for a date range.
 
@@ -59,7 +59,8 @@ class UsageAggregatesOperations(object):
         :param aggregation_granularity: Value is either daily (default) or
          hourly to tell the API how to return the results grouped by day or
          hour. Possible values include: 'Daily', 'Hourly'
-        :type aggregation_granularity: str
+        :type aggregation_granularity: str or :class:`AggregationGranularity
+         <azure.mgmt.commerce.models.AggregationGranularity>`
         :param continuation_token: Retrieved from previous calls, this is the
          bookmark used for progress when the responses are paged.
         :type continuation_token: str
@@ -69,7 +70,7 @@ class UsageAggregatesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`UsageAggregationPaged
-         <usagemanagementclient.models.UsageAggregationPaged>`
+         <azure.mgmt.commerce.models.UsageAggregationPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
