@@ -43,7 +43,7 @@ class RateCardOperations(object):
         self.config = config
 
     def get(
-            self, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Enables you to query for the resource/meter metadata and related
         prices used in a given subscription by Offer ID, Currency, Locale and
@@ -66,7 +66,7 @@ class RateCardOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceRateCardInfo
-         <usagemanagementclient.models.ResourceRateCardInfo>`
+         <azure.mgmt.commerce.models.ResourceRateCardInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """

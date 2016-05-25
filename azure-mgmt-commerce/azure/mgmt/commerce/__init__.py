@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usage_management_client import UsageManagementClient, UsageManagementClientConfiguration
+from .usage_management_client import UsageManagementClient
 from .version import VERSION
 
-__all__ = [
-    'UsageManagementClient',
-    'UsageManagementClientConfiguration'
-]
+__all__ = ['UsageManagementClient']
 
 __version__ = VERSION
 

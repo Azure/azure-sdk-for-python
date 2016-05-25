@@ -40,10 +40,10 @@ class ResourceRateCardInfo(Model):
     :type tags: list of str
     :param offer_terms: A list of offer terms.
     :type offer_terms: list of :class:`OfferTermInfo
-     <usagemanagementclient.models.OfferTermInfo>`
+     <azure.mgmt.commerce.models.OfferTermInfo>`
     :param meters: A list of meters.
     :type meters: list of :class:`MeterInfo
-     <usagemanagementclient.models.MeterInfo>`
+     <azure.mgmt.commerce.models.MeterInfo>`
     """ 
 
     _attribute_map = {
