@@ -26,25 +26,23 @@ class PoolUsageMetrics(Model):
     """
     Usage metrics for a pool across an aggregation interval.
 
-    :param pool_id: Gets or sets the id of the pool whose metrics are being
-     aggregated.
+    :param pool_id: The id of the pool whose metrics are being aggregated.
     :type pool_id: str
-    :param start_time: Gets or sets the start time of the aggregation
-     interval.
+    :param start_time: The start time of the aggregation interval.
     :type start_time: datetime
-    :param end_time: Gets or sets the end time of the aggregation interval.
+    :param end_time: The end time of the aggregation interval.
     :type end_time: datetime
-    :param vm_size: Gets or sets the size of virtual machines in the pool.
-     All VMs in a pool are the same size.
+    :param vm_size: The size of virtual machines in the pool. All VMs in a
+     pool are the same size.
     :type vm_size: str
-    :param total_core_hours: Gets or sets the total core hours used in the
-     pool during this aggregation interval.
+    :param total_core_hours: The total core hours used in the pool during
+     this aggregation interval.
     :type total_core_hours: float
-    :param data_ingress_gi_b: Gets or sets the cross data center network
-     ingress in GiB to the pool during this interval.
+    :param data_ingress_gi_b: The cross data center network ingress in GiB to
+     the pool during this interval.
     :type data_ingress_gi_b: float
-    :param data_egress_gi_b: Gets or sets the cross data center network
-     egress in GiB from the pool during this interval.
+    :param data_egress_gi_b: The cross data center network egress in GiB from
+     the pool during this interval.
     :type data_egress_gi_b: float
     """ 
 

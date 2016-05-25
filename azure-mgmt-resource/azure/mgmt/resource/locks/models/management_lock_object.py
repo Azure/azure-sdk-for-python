@@ -28,7 +28,8 @@ class ManagementLockObject(Model):
 
     :param level: Gets or sets the lock level of the management lock.
      Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
-    :type level: str
+    :type level: str or :class:`LockLevel
+     <azure.mgmt.resource.locks.models.LockLevel>`
     :param notes: Gets or sets the notes of the management lock.
     :type notes: str
     :param id: Gets or sets the Id of the lock.
@@ -40,7 +41,7 @@ class ManagementLockObject(Model):
     """ 
 
     _attribute_map = {
-        'level': {'key': 'properties.level', 'type': 'LockLevel'},
+        'level': {'key': 'properties.level', 'type': 'str'},
         'notes': {'key': 'properties.notes', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},

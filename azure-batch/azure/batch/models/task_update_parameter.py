@@ -26,8 +26,8 @@ class TaskUpdateParameter(Model):
     """
     Parameters for a CloudTaskOperations.Update request.
 
-    :param constraints: Sets constraints that apply to this task. If omitted,
-     the task is given the default constraints.
+    :param constraints: Constraints that apply to this task. If omitted, the
+     task is given the default constraints.
     :type constraints: :class:`TaskConstraints
      <azure.batch.models.TaskConstraints>`
     """ 

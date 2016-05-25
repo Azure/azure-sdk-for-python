@@ -27,7 +27,8 @@ class Sku(Model):
 
     :param name: Gets or set the SKU. Possible values include: 'Standard',
      'Free', 'Premium'
-    :type name: str
+    :type name: str or :class:`SkuDefinition
+     <azure.mgmt.scheduler.models.SkuDefinition>`
     """ 
 
     _attribute_map = {

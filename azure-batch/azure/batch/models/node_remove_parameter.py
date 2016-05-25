@@ -26,16 +26,18 @@ class NodeRemoveParameter(Model):
     """
     Parameters for a ComputeNodeOperations.Remove request.
 
-    :param node_list: Sets a list containing the id of the compute nodes to
-     be removed from the specified pool.
+    :param node_list: A list containing the id of the compute nodes to be
+     removed from the specified pool.
     :type node_list: list of str
-    :param resize_timeout: Sets the timeout for removal of compute nodes to
-     the pool. The default value is 10 minutes.
+    :param resize_timeout: The timeout for removal of compute nodes to the
+     pool. The default value is 10 minutes.
     :type resize_timeout: timedelta
-    :param node_deallocation_option: Sets when compute nodes may be removed
-     from the pool. Possible values include: 'requeue', 'terminate',
+    :param node_deallocation_option: When compute nodes may be removed from
+     the pool. Possible values include: 'requeue', 'terminate',
      'taskcompletion', 'retaineddata'
-    :type node_deallocation_option: str
+    :type node_deallocation_option: str or
+     :class:`ComputeNodeDeallocationOption
+     <azure.batch.models.ComputeNodeDeallocationOption>`
     """ 
 
     _validation = {

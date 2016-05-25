@@ -44,7 +44,7 @@ class DomainsOperations(object):
         self.config = config
 
     def get_domains(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists domains under a resource group
 
@@ -103,7 +103,7 @@ class DomainsOperations(object):
         return deserialized
 
     def get_domain(
-            self, resource_group_name, domain_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets details of a domain
 
@@ -164,7 +164,7 @@ class DomainsOperations(object):
         return deserialized
 
     def create_or_update_domain(
-            self, resource_group_name, domain_name, domain, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
         """
         Creates a domain
 
@@ -233,7 +233,7 @@ class DomainsOperations(object):
         return deserialized
 
     def delete_domain(
-            self, resource_group_name, domain_name, force_hard_delete_domain=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, domain_name, force_hard_delete_domain=None, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a domain
 
@@ -299,7 +299,7 @@ class DomainsOperations(object):
         return deserialized
 
     def update_domain(
-            self, resource_group_name, domain_name, domain, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
         """
         Creates a domain
 
@@ -368,7 +368,7 @@ class DomainsOperations(object):
         return deserialized
 
     def get_domain_operation(
-            self, resource_group_name, domain_name, operation_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, domain_name, operation_id, custom_headers=None, raw=False, **operation_config):
         """
         Retrieves the latest status of a domain purchase operation
 

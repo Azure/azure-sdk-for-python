@@ -16,7 +16,7 @@ for details on handling Azure Active Directory authentication with the Python SD
 
 .. code:: python
 
-    from azure.mgmt.batch import BatchManagementClient, BatchManagementClientConfiguration
+    from azure.mgmt.batch import BatchManagementClient
 	from azure.common.credentials import UserPassCredentials
 
     # Replace this with your subscription id
@@ -29,10 +29,8 @@ for details on handling Azure Active Directory authentication with the Python SD
 	)
 
     batch_client = BatchManagementClient(
-        BatchManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
 
 
@@ -46,13 +44,11 @@ credentials you created in the previous section.
 
 .. code:: python
 
-    from azure.mgmt.resource.resources import ResourceManagementClient, ResourceManagementClientConfiguration
+    from azure.mgmt.resource.resources import ResourceManagementClient
 
     resource_client = ResourceManagementClient(
-        ResourceManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
     resource_client.providers.register('Microsoft.Batch')
 

@@ -44,7 +44,7 @@ class ResourceProviderOperationDetailsOperations(object):
         self.config = config
 
     def list(
-            self, resource_provider_namespace, api_version, custom_headers={}, raw=False, **operation_config):
+            self, resource_provider_namespace, api_version, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of resource providers.
 

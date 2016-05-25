@@ -44,7 +44,7 @@ class ProfilesOperations(object):
         self.config = config
 
     def list_by_subscription_id(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Lists the CDN profiles within an Azure subscitption.
 
@@ -104,7 +104,7 @@ class ProfilesOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists the CDN profiles within a resource group.
 
@@ -168,7 +168,7 @@ class ProfilesOperations(object):
         return deserialized
 
     def get(
-            self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a CDN profile with the specified parameters.
 
@@ -229,7 +229,7 @@ class ProfilesOperations(object):
         return deserialized
 
     def create(
-            self, profile_name, profile_properties, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, profile_name, profile_properties, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new CDN profile with the specified parameters.
 
@@ -285,20 +285,23 @@ class ProfilesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 202]:
+            if response.status_code not in [200, 201, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             deserialized = None
 
+            if response.status_code == 200:
+                deserialized = self._deserialize('Profile', response)
             if response.status_code == 201:
                 deserialized = self._deserialize('Profile', response)
             if response.status_code == 202:
@@ -322,7 +325,7 @@ class ProfilesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, profile_name, resource_group_name, tags, custom_headers={}, raw=False, **operation_config):
+            self, profile_name, resource_group_name, tags, custom_headers=None, raw=False, **operation_config):
         """
         Updates an existing CDN profile with the specified parameters.
 
@@ -379,10 +382,11 @@ class ProfilesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -416,7 +420,7 @@ class ProfilesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete_if_exists(
-            self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes an existing CDN profile with the specified parameters.
         Deleting a profile will result in the deletion of all subresources
@@ -466,10 +470,11 @@ class ProfilesOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -494,7 +499,7 @@ class ProfilesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def generate_sso_uri(
-            self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Generates a dynamic SSO URI used to sign in to the CDN Supplemental
         Portal used for advanced management tasks, such as Country Filtering,

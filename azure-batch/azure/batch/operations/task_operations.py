@@ -43,13 +43,13 @@ class TaskOperations(object):
         self.config = config
 
     def add(
-            self, job_id, task, task_add_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, task, task_add_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Adds a task to the specified job.
 
         :param job_id: The id of the job to which the task is to be added.
         :type job_id: str
-        :param task: Specifies the task to be added.
+        :param task: The task to be added.
         :type task: :class:`TaskAddParameter
          <azure.batch.models.TaskAddParameter>`
         :param task_add_options: Additional parameters for the operation
@@ -129,7 +129,7 @@ class TaskOperations(object):
             return client_raw_response
 
     def list(
-            self, job_id, task_list_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, task_list_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists all of the tasks that are associated with the specified job.
 
@@ -235,7 +235,7 @@ class TaskOperations(object):
         return deserialized
 
     def add_collection(
-            self, job_id, value, task_add_collection_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, value, task_add_collection_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Adds a collection of tasks to the specified job.
 
@@ -331,7 +331,7 @@ class TaskOperations(object):
         return deserialized
 
     def delete(
-            self, job_id, task_id, task_delete_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, task_id, task_delete_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a task from the specified job.
 
@@ -430,7 +430,7 @@ class TaskOperations(object):
             return client_raw_response
 
     def get(
-            self, job_id, task_id, task_get_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, task_id, task_get_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the specified task.
 
@@ -551,7 +551,7 @@ class TaskOperations(object):
         return deserialized
 
     def update(
-            self, job_id, task_id, task_update_options=None, constraints=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, task_id, task_update_options=None, constraints=None, custom_headers=None, raw=False, **operation_config):
         """
         Updates the properties of the specified task.
 
@@ -562,8 +562,8 @@ class TaskOperations(object):
         :param task_update_options: Additional parameters for the operation
         :type task_update_options: :class:`TaskUpdateOptions
          <azure.batch.models.TaskUpdateOptions>`
-        :param constraints: Sets constraints that apply to this task. If
-         omitted, the task is given the default constraints.
+        :param constraints: Constraints that apply to this task. If omitted,
+         the task is given the default constraints.
         :type constraints: :class:`TaskConstraints
          <azure.batch.models.TaskConstraints>`
         :param dict custom_headers: headers that will be added to the request
@@ -662,7 +662,7 @@ class TaskOperations(object):
             return client_raw_response
 
     def list_subtasks(
-            self, job_id, task_id, task_list_subtasks_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, task_id, task_list_subtasks_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists all of the subtasks that are associated with the specified
         multi-instance task.
@@ -760,7 +760,7 @@ class TaskOperations(object):
         return deserialized
 
     def terminate(
-            self, job_id, task_id, task_terminate_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, task_id, task_terminate_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Terminates the specified task.
 

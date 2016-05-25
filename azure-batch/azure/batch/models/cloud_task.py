@@ -26,77 +26,72 @@ class CloudTask(Model):
     """
     An Azure Batch task.
 
-    :param id: Gets or sets a string that uniquely identifies the task within
-     the job. The id can contain any combination of alphanumeric characters
-     including hyphens and underscores, and cannot contain more than 64
-     characters.
+    :param id: A string that uniquely identifies the task within the job. The
+     id can contain any combination of alphanumeric characters including
+     hyphens and underscores, and cannot contain more than 64 characters.
     :type id: str
-    :param display_name: Gets or sets a display name for the task.
+    :param display_name: A display name for the task.
     :type display_name: str
-    :param url: Gets or sets the URL of the task.
+    :param url: The URL of the task.
     :type url: str
-    :param e_tag: Gets or sets the ETag of the task.
+    :param e_tag: The ETag of the task.
     :type e_tag: str
-    :param last_modified: Gets or sets the last modified time of the task.
+    :param last_modified: The last modified time of the task.
     :type last_modified: datetime
-    :param creation_time: Gets or sets the creation time of the task.
+    :param creation_time: The creation time of the task.
     :type creation_time: datetime
-    :param state: Gets or sets the current state of the task. Possible values
-     include: 'active', 'preparing', 'running', 'completed'
-    :type state: str
-    :param state_transition_time: Gets or sets the time at which the task
-     entered its current state.
+    :param state: The current state of the task. Possible values include:
+     'active', 'preparing', 'running', 'completed'
+    :type state: str or :class:`TaskState <azure.batch.models.TaskState>`
+    :param state_transition_time: The time at which the task entered its
+     current state.
     :type state_transition_time: datetime
-    :param previous_state: Gets or sets the previous state of the task. This
-     property is not set if the task is in its initial Active state. Possible
-     values include: 'active', 'preparing', 'running', 'completed'
-    :type previous_state: str
-    :param previous_state_transition_time: Gets or sets the time at which the
-     task entered its previous state. This property is not set if the task is
-     in its initial Active state.
+    :param previous_state: The previous state of the task. This property is
+     not set if the task is in its initial Active state. Possible values
+     include: 'active', 'preparing', 'running', 'completed'
+    :type previous_state: str or :class:`TaskState
+     <azure.batch.models.TaskState>`
+    :param previous_state_transition_time: The time at which the task entered
+     its previous state. This property is not set if the task is in its
+     initial Active state.
     :type previous_state_transition_time: datetime
-    :param command_line: Gets or sets the command line of the task. For
-     multi-instance tasks, the command line is executed on the primary
-     subtask after all the subtasks have finished executing the coordianation
-     command line.
+    :param command_line: The command line of the task. For multi-instance
+     tasks, the command line is executed on the primary subtask after all the
+     subtasks have finished executing the coordianation command line.
     :type command_line: str
-    :param resource_files: Gets or sets a list of files that Batch will
+    :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. For
      multi-instance tasks, the resource files will only be downloaded to the
      compute node on which the primary subtask is executed.
     :type resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
-    :param environment_settings: Gets or sets a list of environment variable
-     settings for the task.
+    :param environment_settings: A list of environment variable settings for
+     the task.
     :type environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param affinity_info: Gets or sets a locality hint that can be used by
-     the Batch service to select a compute node on which to start the new
-     task.
+    :param affinity_info: A locality hint that can be used by the Batch
+     service to select a compute node on which to start the new task.
     :type affinity_info: :class:`AffinityInformation
      <azure.batch.models.AffinityInformation>`
-    :param constraints: Gets or sets the execution constraints that apply to
-     this task.
+    :param constraints: The execution constraints that apply to this task.
     :type constraints: :class:`TaskConstraints
      <azure.batch.models.TaskConstraints>`
-    :param run_elevated: Gets or sets whether to run the task in elevated
-     mode.
+    :param run_elevated: Whether to run the task in elevated mode.
     :type run_elevated: bool
-    :param execution_info: Gets or sets information about the execution of
-     the task.
+    :param execution_info: Information about the execution of the task.
     :type execution_info: :class:`TaskExecutionInformation
      <azure.batch.models.TaskExecutionInformation>`
-    :param node_info: Gets or sets information about the compute node on
-     which the task ran.
+    :param node_info: Information about the compute node on which the task
+     ran.
     :type node_info: :class:`ComputeNodeInformation
      <azure.batch.models.ComputeNodeInformation>`
-    :param multi_instance_settings: Gets or sets information about how to run
-     the multi-instance task.
+    :param multi_instance_settings: Information about how to run the
+     multi-instance task.
     :type multi_instance_settings: :class:`MultiInstanceSettings
      <azure.batch.models.MultiInstanceSettings>`
-    :param stats: Gets or sets resource usage statistics for the task.
+    :param stats: Resource usage statistics for the task.
     :type stats: :class:`TaskStatistics <azure.batch.models.TaskStatistics>`
-    :param depends_on: Gets or sets any dependencies this task has.
+    :param depends_on: Any dependencies this task has.
     :type depends_on: :class:`TaskDependencies
      <azure.batch.models.TaskDependencies>`
     """ 

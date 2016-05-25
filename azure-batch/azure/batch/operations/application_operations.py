@@ -43,7 +43,7 @@ class ApplicationOperations(object):
         self.config = config
 
     def list(
-            self, application_list_options=None, custom_headers={}, raw=False, **operation_config):
+            self, application_list_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists all of the applications available in the specified account.
 
@@ -130,7 +130,7 @@ class ApplicationOperations(object):
         return deserialized
 
     def get(
-            self, application_id, application_get_options=None, custom_headers={}, raw=False, **operation_config):
+            self, application_id, application_get_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the specified application.
 

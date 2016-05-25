@@ -43,11 +43,11 @@ class CertificateOperations(object):
         self.config = config
 
     def add(
-            self, certificate, certificate_add_options=None, custom_headers={}, raw=False, **operation_config):
+            self, certificate, certificate_add_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Adds a certificate to the specified account.
 
-        :param certificate: Specifies the certificate to be added.
+        :param certificate: The certificate to be added.
         :type certificate: :class:`CertificateAddParameter
          <azure.batch.models.CertificateAddParameter>`
         :param certificate_add_options: Additional parameters for the
@@ -124,7 +124,7 @@ class CertificateOperations(object):
             return client_raw_response
 
     def list(
-            self, certificate_list_options=None, custom_headers={}, raw=False, **operation_config):
+            self, certificate_list_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists all of the certificates that have been added to the specified
         account.
@@ -222,7 +222,7 @@ class CertificateOperations(object):
         return deserialized
 
     def cancel_deletion(
-            self, thumbprint_algorithm, thumbprint, certificate_cancel_deletion_options=None, custom_headers={}, raw=False, **operation_config):
+            self, thumbprint_algorithm, thumbprint, certificate_cancel_deletion_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Cancels a failed deletion of a certificate from the specified account.
 
@@ -307,7 +307,7 @@ class CertificateOperations(object):
             return client_raw_response
 
     def delete(
-            self, thumbprint_algorithm, thumbprint, certificate_delete_options=None, custom_headers={}, raw=False, **operation_config):
+            self, thumbprint_algorithm, thumbprint, certificate_delete_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a certificate from the specified account.
 
@@ -390,7 +390,7 @@ class CertificateOperations(object):
             return client_raw_response
 
     def get(
-            self, thumbprint_algorithm, thumbprint, certificate_get_options=None, custom_headers={}, raw=False, **operation_config):
+            self, thumbprint_algorithm, thumbprint, certificate_get_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the specified certificate.
 

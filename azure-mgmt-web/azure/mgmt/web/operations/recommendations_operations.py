@@ -44,7 +44,7 @@ class RecommendationsOperations(object):
         self.config = config
 
     def get_recommendation_by_subscription(
-            self, featured=None, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, featured=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of recommendations associated with the specified
         subscription.
@@ -113,7 +113,7 @@ class RecommendationsOperations(object):
         return deserialized
 
     def get_rule_details_by_site_name(
-            self, resource_group_name, site_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, site_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the detailed properties of the recommendation object for the
         specified web site.
@@ -179,7 +179,7 @@ class RecommendationsOperations(object):
         return deserialized
 
     def get_recommended_rules_for_site(
-            self, resource_group_name, site_name, featured=None, site_sku=None, num_slots=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, site_name, featured=None, site_sku=None, num_slots=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of recommendations associated with the specified web site.
 
@@ -255,7 +255,7 @@ class RecommendationsOperations(object):
         return deserialized
 
     def get_recommendation_history_for_site(
-            self, resource_group_name, site_name, start_time=None, end_time=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, site_name, start_time=None, end_time=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets the list of past recommendations optionally specified by the time
         range.

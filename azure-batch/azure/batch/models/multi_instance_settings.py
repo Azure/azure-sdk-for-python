@@ -24,16 +24,20 @@ from msrest.serialization import Model
 
 class MultiInstanceSettings(Model):
     """
-    Information about the settings required for multi-instance task.
+    Settings which specify how to run a multi-instance task. Multi-instance
+    tasks are commonly used to support MPI tasks.
 
-    :param number_of_instances: Gets or sets the number of compute node
-     instances used for multi-instance task.
+    :param number_of_instances: The number of compute nodes required by the
+     multi-instance task.
     :type number_of_instances: int
-    :param coordination_command_line: Gets or sets the command to be run on
-     the compute node instances to setup coordination among the subtasks.
+    :param coordination_command_line: The command to run on the compute node
+     instances for coordinating among the subtasks.
     :type coordination_command_line: str
-    :param common_resource_files: Gets or sets a list of files that Batch
-     will download on all subtasks.
+    :param common_resource_files: A list of files that the Batch service will
+     download before running the coordination command line. The difference
+     between common resource files and task resource files is that common
+     resource files are downloaded for all subtasks including the primary,
+     whereas task resource files are downloaded only for the primary.
     :type common_resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
     """ 

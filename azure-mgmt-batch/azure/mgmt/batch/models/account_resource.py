@@ -24,30 +24,31 @@ from .resource import Resource
 
 class AccountResource(Resource):
     """
-    The Batch account information.
+    Contains information about an Azure Batch account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: The id of the resource
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource
     :vartype type: str
-    :param location: Resource location
+    :param location: The location of the resource
     :type location: str
-    :param tags: Resource tags
+    :param tags: The tags of the resource
     :type tags: dict
-    :param account_endpoint: The endpoint used by this account to obtain
-     Batch services.
+    :param account_endpoint: The endpoint used by this account to interact
+     with the Batch services.
     :type account_endpoint: str
     :param provisioning_state: The provisioned state of the resource.
      Possible values include: 'Invalid', 'Creating', 'Deleting', 'Succeeded',
      'Failed', 'Cancelled'
-    :type provisioning_state: str
+    :type provisioning_state: str or :class:`AccountProvisioningState
+     <azure.mgmt.batch.models.AccountProvisioningState>`
     :param auto_storage: The properties and status of any auto storage
-     associated with the account.
+     account associated with the account.
     :type auto_storage: :class:`AutoStorageProperties
      <azure.mgmt.batch.models.AutoStorageProperties>`
     :param core_quota: The core quota for this Batch account.
@@ -63,6 +64,9 @@ class AccountResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'core_quota': {'required': True},
+        'pool_quota': {'required': True},
+        'active_job_and_job_schedule_quota': {'required': True},
     }
 
     _attribute_map = {
@@ -79,7 +83,7 @@ class AccountResource(Resource):
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
     }
 
-    def __init__(self, location=None, tags=None, account_endpoint=None, provisioning_state=None, auto_storage=None, core_quota=None, pool_quota=None, active_job_and_job_schedule_quota=None):
+    def __init__(self, core_quota, pool_quota, active_job_and_job_schedule_quota, location=None, tags=None, account_endpoint=None, provisioning_state=None, auto_storage=None):
         super(AccountResource, self).__init__(location=location, tags=tags)
         self.account_endpoint = account_endpoint
         self.provisioning_state = provisioning_state

@@ -30,8 +30,10 @@ class ApplicationPackage(Model):
     :type version: str
     :param state: The current state of the application package. Possible
      values include: 'pending', 'active', 'unmapped'
-    :type state: str
-    :param format: The format of the application package, if known.
+    :type state: str or :class:`PackageState
+     <azure.mgmt.batch.models.PackageState>`
+    :param format: The format of the application package, if the package has
+     been activated.
     :type format: str
     :param last_activation_time: The time at which the package was last
      activated, if the package is active.

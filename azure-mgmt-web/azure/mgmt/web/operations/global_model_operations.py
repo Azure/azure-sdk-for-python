@@ -44,7 +44,7 @@ class GlobalModelOperations(object):
         self.config = config
 
     def get_subscription_publishing_credentials(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets publishing credentials for the subscription owner
 
@@ -99,7 +99,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def update_subscription_publishing_credentials(
-            self, request_message, custom_headers={}, raw=False, **operation_config):
+            self, request_message, custom_headers=None, raw=False, **operation_config):
         """
         Updates publishing credentials for the subscription owner
 
@@ -160,7 +160,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_subscription_geo_regions(
-            self, sku=None, custom_headers={}, raw=False, **operation_config):
+            self, sku=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets list of available geo regions
 
@@ -220,7 +220,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_all_certificates(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Get all certificates for a subscription
 
@@ -276,7 +276,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_all_server_farms(
-            self, detailed=None, custom_headers={}, raw=False, **operation_config):
+            self, detailed=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets all App Service Plans for a subcription
 
@@ -338,7 +338,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_all_sites(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets all Web Apps for a subscription
 
@@ -393,7 +393,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_all_hosting_environments(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets all hostingEnvironments (App Service Environment) for a
         subscription
@@ -450,7 +450,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_all_managed_hosting_environments(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets all managed hosting environments for a subscription
 
@@ -506,7 +506,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_all_classic_mobile_services(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets all mobile services for a subscription
 
@@ -562,7 +562,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def list_premier_add_on_offers(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         List premier add on offers
 
@@ -617,7 +617,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def is_hosting_environment_name_available(
-            self, name, custom_headers={}, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """
         Whether hosting environment name is available
 
@@ -675,7 +675,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def is_hosting_environment_with_legacy_name_available(
-            self, name, custom_headers={}, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """
         Whether hosting environment name is available
 
@@ -733,7 +733,7 @@ class GlobalModelOperations(object):
         return deserialized
 
     def check_name_availability(
-            self, request, custom_headers={}, raw=False, **operation_config):
+            self, request, custom_headers=None, raw=False, **operation_config):
         """
         Check if resource name is available
 

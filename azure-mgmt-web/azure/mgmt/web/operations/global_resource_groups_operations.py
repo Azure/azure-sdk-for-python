@@ -44,7 +44,7 @@ class GlobalResourceGroupsOperations(object):
         self.config = config
 
     def move_resources(
-            self, resource_group_name, target_resource_group=None, resources=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
         """
 
         :param resource_group_name:

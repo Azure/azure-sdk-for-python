@@ -36,7 +36,8 @@ class Probe(SubResource):
      for the probe to be successful. If http is specified,a 200 OK response
      from the specifies URI is required for the probe to be successful.
      Possible values include: 'Http', 'Tcp'
-    :type protocol: str
+    :type protocol: str or :class:`ProbeProtocol
+     <azure.mgmt.network.models.ProbeProtocol>`
     :param port: Gets or sets Port for communicating the probe. Possible
      values range from 1 to 65535, inclusive.
     :type port: int
@@ -74,7 +75,7 @@ class Probe(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
-        'protocol': {'key': 'properties.protocol', 'type': 'ProbeProtocol'},
+        'protocol': {'key': 'properties.protocol', 'type': 'str'},
         'port': {'key': 'properties.port', 'type': 'int'},
         'interval_in_seconds': {'key': 'properties.intervalInSeconds', 'type': 'int'},
         'number_of_probes': {'key': 'properties.numberOfProbes', 'type': 'int'},

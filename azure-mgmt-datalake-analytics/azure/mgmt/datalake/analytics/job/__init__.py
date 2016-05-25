@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_lake_analytics_job_management_client import DataLakeAnalyticsJobManagementClient, DataLakeAnalyticsJobManagementClientConfiguration
+from .data_lake_analytics_job_management_client import DataLakeAnalyticsJobManagementClient
 from .version import VERSION
 
-__all__ = [
-    'DataLakeAnalyticsJobManagementClient',
-    'DataLakeAnalyticsJobManagementClientConfiguration'
-]
+__all__ = ['DataLakeAnalyticsJobManagementClient']
 
 __version__ = VERSION
 

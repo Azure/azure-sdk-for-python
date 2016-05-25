@@ -26,15 +26,15 @@ class UsageStatistics(Model):
     """
     Statistics related to pool usage information.
 
-    :param start_time: Gets or sets the start time of the time range covered
-     by the statistics.
+    :param start_time: The start time of the time range covered by the
+     statistics.
     :type start_time: datetime
-    :param last_update_time: Gets or sets the time at which the statistics
-     were last updated. All statistics are limited to the range between
-     startTime and lastUpdateTime.
+    :param last_update_time: The time at which the statistics were last
+     updated. All statistics are limited to the range between startTime and
+     lastUpdateTime.
     :type last_update_time: datetime
-    :param dedicated_core_time: Gets or sets the aggregated wall-clock time
-     of the dedicated compute node cores being part of the pool.
+    :param dedicated_core_time: The aggregated wall-clock time of the
+     dedicated compute node cores being part of the pool.
     :type dedicated_core_time: timedelta
     """ 
 

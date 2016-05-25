@@ -44,7 +44,7 @@ class EndpointsOperations(object):
         self.config = config
 
     def list_by_profile(
-            self, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Lists existing CDN endpoints within a profile.
 
@@ -112,7 +112,7 @@ class EndpointsOperations(object):
         return deserialized
 
     def get(
-            self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets an existing CDN endpoint with the specified parameters.
 
@@ -176,7 +176,7 @@ class EndpointsOperations(object):
         return deserialized
 
     def create(
-            self, endpoint_name, endpoint_properties, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, endpoint_properties, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new CDN endpoint with the specified parameters.
 
@@ -235,20 +235,23 @@ class EndpointsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 202]:
+            if response.status_code not in [200, 201, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             deserialized = None
 
+            if response.status_code == 200:
+                deserialized = self._deserialize('Endpoint', response)
             if response.status_code == 201:
                 deserialized = self._deserialize('Endpoint', response)
             if response.status_code == 202:
@@ -272,7 +275,7 @@ class EndpointsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, endpoint_name, endpoint_properties, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, endpoint_properties, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Updates an existing CDN endpoint with the specified parameters. Only
         tags and OriginHostHeader can be updated after creating an endpoint.
@@ -334,10 +337,11 @@ class EndpointsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -371,7 +375,7 @@ class EndpointsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete_if_exists(
-            self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes an existing CDN endpoint with the specified parameters.
 
@@ -422,10 +426,11 @@ class EndpointsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -450,7 +455,7 @@ class EndpointsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def start(
-            self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Starts an existing stopped CDN endpoint.
 
@@ -502,10 +507,11 @@ class EndpointsOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -537,7 +543,7 @@ class EndpointsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def stop(
-            self, endpoint_name, profile_name, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Stops an existing running CDN endpoint.
 
@@ -589,10 +595,11 @@ class EndpointsOperations(object):
             request = self._client.post(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -624,7 +631,7 @@ class EndpointsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def purge_content(
-            self, endpoint_name, profile_name, resource_group_name, content_paths, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, profile_name, resource_group_name, content_paths, custom_headers=None, raw=False, **operation_config):
         """
         Forcibly purges CDN endpoint content.
 
@@ -684,10 +691,11 @@ class EndpointsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -712,7 +720,7 @@ class EndpointsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def load_content(
-            self, endpoint_name, profile_name, resource_group_name, content_paths, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, profile_name, resource_group_name, content_paths, custom_headers=None, raw=False, **operation_config):
         """
         Forcibly pre-loads CDN endpoint content.
 
@@ -772,10 +780,11 @@ class EndpointsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -800,7 +809,7 @@ class EndpointsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def validate_custom_domain(
-            self, endpoint_name, profile_name, resource_group_name, host_name, custom_headers={}, raw=False, **operation_config):
+            self, endpoint_name, profile_name, resource_group_name, host_name, custom_headers=None, raw=False, **operation_config):
         """
         Validates a custom domain mapping to ensure it maps to the correct
         CNAME in DNS.

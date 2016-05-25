@@ -42,7 +42,8 @@ class WorkerPool(Resource):
     :type worker_size_id: int
     :param compute_mode: Shared or dedicated web app hosting. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
-    :type compute_mode: str
+    :type compute_mode: str or :class:`ComputeModeOptions
+     <azure.mgmt.web.models.ComputeModeOptions>`
     :param worker_size: VM size of the worker pool instances
     :type worker_size: str
     :param worker_count: Number of instances in the worker pool

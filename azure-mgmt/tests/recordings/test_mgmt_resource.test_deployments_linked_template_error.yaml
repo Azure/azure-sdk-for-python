@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: !!binary |
+      eyJuYW1lIjogInRlc3RfbWdtdF9yZXNvdXJjZV90ZXN0X2RlcGxveW1lbnRzX2xpbmtlZF90ZW1w
+      bGF0ZV9lcnJvcmFmYTExN2I3IiwgImxvY2F0aW9uIjogIndlc3R1cyJ9
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['99']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.10.0 msrest/0.3.0 msrest_azure/0.3.0 resourcemanagementclient/2016-02-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6492313e-16dc-11e6-9593-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7?api-version=2016-02-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7","name":"test_mgmt_resource_test_deployments_linked_template_errorafa117b7","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['283']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 10 May 2016 18:24:12 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [daaf5562-3acb-4fb8-9dfc-2037e2222870]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [daaf5562-3acb-4fb8-9dfc-2037e2222870]
+      x-ms-routing-request-id: ['WESTUS:20160510T182412Z:daaf5562-3acb-4fb8-9dfc-2037e2222870']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      eyJwcm9wZXJ0aWVzIjogeyJwYXJhbWV0ZXJzTGluayI6IHsidXJpIjogImh0dHBzOi8vcmF3Lmdp
+      dGh1YnVzZXJjb250ZW50LmNvbS9BenVyZS9henVyZS1xdWlja3N0YXJ0LXRlbXBsYXRlcy9tYXN0
+      ZXIvMTAxLXZtLXNpbXBsZS1saW51eC9henVyZWRlcGxveS5wYXJhbWV0ZXJzLmpzb24ifSwgInRl
+      bXBsYXRlTGluayI6IHsidXJpIjogImh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9B
+      enVyZS9henVyZS1xdWlja3N0YXJ0LXRlbXBsYXRlcy9tYXN0ZXIvMTAxLXZtLXNpbXBsZS1saW51
+      eC9henVyZWRlcGxveS5qc29uIn0sICJtb2RlIjogIkluY3JlbWVudGFsIn19
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['330']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 requests/2.10.0 msrest/0.3.0 msrest_azure/0.3.0 resourcemanagementclient/2016-02-01
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [650f526e-16dc-11e6-845f-54ee7574ca37]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2016-02-01
+  response:
+    body: {string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template
+        deployment ''pytestlinkedafa117b7'' is not valid according to the validation
+        procedure. The tracking id is ''01c3fdb8-3987-4aa4-a759-da70eaffb851''. See
+        inner errors for details. Please see http://aka.ms/arm-deploy for usage details.","details":[{"code":"InvalidDomainNameLabel","message":"The
+        domain name label GEN-UNIQUE is invalid. It must conform to the following
+        regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.","details":[]}]}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['502']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 10 May 2016 18:24:14 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [01c3fdb8-3987-4aa4-a759-da70eaffb851]
+      x-ms-failure-cause: [gateway]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [01c3fdb8-3987-4aa4-a759-da70eaffb851]
+      x-ms-routing-request-id: ['WESTUS:20160510T182414Z:01c3fdb8-3987-4aa4-a759-da70eaffb851']
+    status: {code: 400, message: Bad Request}
+version: 1

@@ -26,39 +26,40 @@ class SubtaskInformation(Model):
     """
     Information about an Azure Batch subtask.
 
-    :param id: Gets or sets the id of the subtask.
+    :param id: The id of the subtask.
     :type id: int
-    :param node_info: Gets or sets information about the compute node on
-     which the subtask ran.
+    :param node_info: Information about the compute node on which the subtask
+     ran.
     :type node_info: :class:`ComputeNodeInformation
      <azure.batch.models.ComputeNodeInformation>`
-    :param start_time: Gets or sets the time at which the subtask started
-     running. If the subtask has been restarted or retried, this is the most
-     recent time at which the subtask started running.
+    :param start_time: The time at which the subtask started running. If the
+     subtask has been restarted or retried, this is the most recent time at
+     which the subtask started running.
     :type start_time: datetime
-    :param end_time: Gets or sets the time at which the subtask completed.
-     This property is set only if the subtask is in the Completed state.
+    :param end_time: The time at which the subtask completed. This property
+     is set only if the subtask is in the Completed state.
     :type end_time: datetime
-    :param exit_code: Gets or sets the exit code of the subtask. This
-     property is set only if the subtask is in the Completed state.
+    :param exit_code: The exit code of the subtask. This property is set only
+     if the subtask is in the Completed state.
     :type exit_code: int
-    :param scheduling_error: Gets or sets details of any error encountered
-     scheduling the subtask.
+    :param scheduling_error: Details of any error encountered scheduling the
+     subtask.
     :type scheduling_error: :class:`TaskSchedulingError
      <azure.batch.models.TaskSchedulingError>`
-    :param state: Gets or sets the current state of the subtask. Possible
-     values include: 'active', 'preparing', 'running', 'completed'
-    :type state: str
-    :param state_transition_time: Gets or sets the time at which the subtask
-     entered its current state.
+    :param state: The current state of the subtask. Possible values include:
+     'active', 'preparing', 'running', 'completed'
+    :type state: str or :class:`TaskState <azure.batch.models.TaskState>`
+    :param state_transition_time: The time at which the subtask entered its
+     current state.
     :type state_transition_time: datetime
-    :param previous_state: Gets or sets the previous state of the subtask.
-     This property is not set if the subtask is in its initial Active state.
-     Possible values include: 'active', 'preparing', 'running', 'completed'
-    :type previous_state: str
-    :param previous_state_transition_time: Gets or sets the time at which the
-     subtask entered its previous state. This property is not set if the
-     subtask is in its initial Active state.
+    :param previous_state: The previous state of the subtask. This property
+     is not set if the subtask is in its initial Active state. Possible
+     values include: 'active', 'preparing', 'running', 'completed'
+    :type previous_state: str or :class:`TaskState
+     <azure.batch.models.TaskState>`
+    :param previous_state_transition_time: The time at which the subtask
+     entered its previous state. This property is not set if the subtask is
+     in its initial Active state.
     :type previous_state_transition_time: datetime
     """ 
 

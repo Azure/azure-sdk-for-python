@@ -20,7 +20,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -44,7 +43,7 @@ class FileSystemOperations(object):
         self.config = config
 
     def concurrent_append(
-            self, file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCURRENTAPPEND", transfer_encoding="chunked", append_mode=None, custom_headers={}, raw=False, callback=None, **operation_config):
+            self, file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCURRENTAPPEND", transfer_encoding="chunked", append_mode=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """
         Appends to the specified file. This method supports multiple
         concurrent appends to the file. NOTE: Concurrent append and normal
@@ -69,7 +68,8 @@ class FileSystemOperations(object):
         :param append_mode: Indicates the concurrent append call should
          create the file if it doesn't exist or just open the existing file
          for append. Possible values include: 'autocreate'
-        :type append_mode: str
+        :type append_mode: str or :class:`AppendModeType
+         <azure.mgmt.datalake.store.filesystem.models.AppendModeType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -120,16 +120,14 @@ class FileSystemOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def check_access(
-            self, path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CHECKACCESS", fsaction=None, custom_headers={}, raw=False, **operation_config):
+            self, path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CHECKACCESS", fsaction=None, custom_headers=None, raw=False, **operation_config):
         """
         Checks if the specified access is available at the given path.
 
@@ -184,16 +182,14 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def mkdirs(
-            self, path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MKDIRS", custom_headers={}, raw=False, **operation_config):
+            self, path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MKDIRS", custom_headers=None, raw=False, **operation_config):
         """
         Creates a directory.
 
@@ -244,9 +240,7 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -260,7 +254,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def concat(
-            self, destination_path, sources, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCAT", custom_headers={}, raw=False, **operation_config):
+            self, destination_path, sources, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCAT", custom_headers=None, raw=False, **operation_config):
         """
         Concatenates the list of source files into the destination file,
         removing all source files upon success.
@@ -316,16 +310,14 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def ms_concat(
-            self, ms_concat_destination_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MSCONCAT", delete_source_directory=None, custom_headers={}, raw=False, callback=None, **operation_config):
+            self, ms_concat_destination_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MSCONCAT", delete_source_directory=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """
         Concatenates the list of source files into the destination file,
         deleting all source files upon success. This method accepts more
@@ -403,16 +395,14 @@ class FileSystemOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def list_file_status(
-            self, list_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MSLISTSTATUS", list_size=None, list_after=None, list_before=None, custom_headers={}, raw=False, **operation_config):
+            self, list_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MSLISTSTATUS", list_size=None, list_after=None, list_before=None, custom_headers=None, raw=False, **operation_config):
         """
         Get the list of file status objects specified by the file path, with
         optional pagination parameters
@@ -483,9 +473,7 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -499,7 +487,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def get_content_summary(
-            self, get_content_summary_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETCONTENTSUMMARY", custom_headers={}, raw=False, **operation_config):
+            self, get_content_summary_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETCONTENTSUMMARY", custom_headers=None, raw=False, **operation_config):
         """
         Gets the file content summary object specified by the file path.
 
@@ -550,9 +538,7 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -566,7 +552,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def get_file_status(
-            self, get_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETFILESTATUS", custom_headers={}, raw=False, **operation_config):
+            self, get_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETFILESTATUS", custom_headers=None, raw=False, **operation_config):
         """
         Get the file status object specified by the file path.
 
@@ -617,9 +603,7 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -633,7 +617,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def append(
-            self, direct_file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="APPEND", append="true", transfer_encoding="chunked", custom_headers={}, raw=False, callback=None, **operation_config):
+            self, direct_file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="APPEND", append="true", transfer_encoding="chunked", custom_headers=None, raw=False, callback=None, **operation_config):
         """
         Appends to the specified file. This method does not support multiple
         concurrent appends to the file. NOTE: Concurrent append and normal
@@ -707,16 +691,14 @@ class FileSystemOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def create(
-            self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CREATE", write="true", transfer_encoding="chunked", stream_contents=None, overwrite=None, custom_headers={}, raw=False, callback=None, **operation_config):
+            self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CREATE", write="true", transfer_encoding="chunked", stream_contents=None, overwrite=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """
         Creates a file with optionally specified content.
 
@@ -790,16 +772,14 @@ class FileSystemOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def open(
-            self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="OPEN", read="true", length=None, offset=None, custom_headers={}, raw=False, callback=None, **operation_config):
+            self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="OPEN", read="true", length=None, offset=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """
         Opens and reads from the specified file.
 
@@ -865,9 +845,7 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -881,7 +859,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def set_acl(
-            self, set_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETACL", custom_headers={}, raw=False, **operation_config):
+            self, set_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETACL", custom_headers=None, raw=False, **operation_config):
         """
         Sets the Access Control List (ACL) for a file or folder.
 
@@ -935,16 +913,14 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def modify_acl_entries(
-            self, modify_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MODIFYACLENTRIES", custom_headers={}, raw=False, **operation_config):
+            self, modify_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MODIFYACLENTRIES", custom_headers=None, raw=False, **operation_config):
         """
         Modifies existing Access Control List (ACL) entries on a file or
         folder.
@@ -999,16 +975,14 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def remove_acl_entries(
-            self, remove_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="REMOVEACLENTRIES", custom_headers={}, raw=False, **operation_config):
+            self, remove_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="REMOVEACLENTRIES", custom_headers=None, raw=False, **operation_config):
         """
         Removes existing Access Control List (ACL) entries for a file or
         folder.
@@ -1063,76 +1037,14 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def remove_acl(
-            self, acl_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="REMOVEACL", custom_headers={}, raw=False, **operation_config):
-        """
-        Removes the existing Access Control List (ACL) of the specified file
-        or directory.
-
-        :param account_name: The Azure Data Lake Store account to execute
-         filesystem operations on.
-        :type account_name: str
-        :param acl_file_path: The Data Lake Store path (starting with '/') of
-         the file or directory with the ACL being removed.
-        :type acl_file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/webhdfs/v1/{aclFilePath}'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlsFileSystemDnsSuffix': self._serialize.url("self.config.adls_file_system_dns_suffix", self.config.adls_file_system_dns_suffix, 'str', skip_quote=True),
-            'aclFilePath': self._serialize.url("acl_file_path", acl_file_path, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['op'] = self._serialize.query("op", op, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def get_acl_status(
-            self, acl_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETACLSTATUS", custom_headers={}, raw=False, **operation_config):
+            self, acl_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETACLSTATUS", custom_headers=None, raw=False, **operation_config):
         """
         Gets Access Control List (ACL) entries for the specified file or
         directory.
@@ -1184,9 +1096,7 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1200,7 +1110,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def delete(
-            self, file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="DELETE", recursive=None, custom_headers={}, raw=False, **operation_config):
+            self, file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="DELETE", recursive=None, custom_headers=None, raw=False, **operation_config):
         """
         Deletes the requested file or directory, optionally recursively.
 
@@ -1256,9 +1166,7 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1272,7 +1180,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def rename(
-            self, rename_file_path, destination, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="RENAME", custom_headers={}, raw=False, **operation_config):
+            self, rename_file_path, destination, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="RENAME", custom_headers=None, raw=False, **operation_config):
         """
         Rename a file or directory.
 
@@ -1326,9 +1234,7 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1342,7 +1248,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def set_owner(
-            self, set_owner_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETOWNER", owner=None, group=None, custom_headers={}, raw=False, **operation_config):
+            self, set_owner_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETOWNER", owner=None, group=None, custom_headers=None, raw=False, **operation_config):
         """
         Sets the owner of a file or directory.
 
@@ -1402,16 +1308,14 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def set_permission(
-            self, set_permission_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETPERMISSION", permission=None, custom_headers={}, raw=False, **operation_config):
+            self, set_permission_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETPERMISSION", permission=None, custom_headers=None, raw=False, **operation_config):
         """
         Sets the permission of the file or folder.
 
@@ -1466,9 +1370,7 @@ class FileSystemOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AdlsErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

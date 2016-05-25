@@ -22,18 +22,25 @@
 from msrest.serialization import Model
 
 
-class AccountBaseProperties(Model):
+class ImportRDBParameters(Model):
     """
-    The properties of a Batch account.
+    Parameters for redis import operation.
 
-    :param auto_storage: The properties related to auto storage.
-    :type auto_storage: :class:`AutoStorageBaseProperties
-     <azure.mgmt.batch.models.AutoStorageBaseProperties>`
+    :param format: File format.
+    :type format: str
+    :param files: files to import
+    :type files: list of str
     """ 
 
-    _attribute_map = {
-        'auto_storage': {'key': 'autoStorage', 'type': 'AutoStorageBaseProperties'},
+    _validation = {
+        'files': {'required': True},
     }
 
-    def __init__(self, auto_storage=None):
-        self.auto_storage = auto_storage
+    _attribute_map = {
+        'format': {'key': 'format', 'type': 'str'},
+        'files': {'key': 'files', 'type': '[str]'},
+    }
+
+    def __init__(self, files, format=None):
+        self.format = format
+        self.files = files

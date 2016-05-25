@@ -23,10 +23,12 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.certificate_orders_operations import CertificateOrdersOperations
 from .operations.certificates_operations import CertificatesOperations
 from .operations.classic_mobile_services_operations import ClassicMobileServicesOperations
 from .operations.domains_operations import DomainsOperations
 from .operations.global_model_operations import GlobalModelOperations
+from .operations.global_certificate_order_operations import GlobalCertificateOrderOperations
 from .operations.global_domain_registration_operations import GlobalDomainRegistrationOperations
 from .operations.global_resource_groups_operations import GlobalResourceGroupsOperations
 from .operations.hosting_environments_operations import HostingEnvironmentsOperations
@@ -98,9 +100,11 @@ class WebSiteManagementClientConfiguration(AzureConfiguration):
 class WebSiteManagementClient(object):
     """Use these APIs to manage Azure Websites resources through the Azure Resource Manager. All task operations conform to the HTTP/1.1 protocol specification and each operation returns an x-ms-request-id header that can be used to obtain information about the request. You must make sure that requests made to these resources are secure. For more information, see &lt;a href="https://msdn.microsoft.com/en-us/library/azure/dn790557.aspx"&gt;Authenticating Azure Resource Manager requests.&lt;/a&gt;
 
-    :param config: Configuration for client.
-    :type config: WebSiteManagementClientConfiguration
+    :ivar config: Configuration for client.
+    :vartype config: WebSiteManagementClientConfiguration
 
+    :ivar certificate_orders: CertificateOrders operations
+    :vartype certificate_orders: .operations.CertificateOrdersOperations
     :ivar certificates: Certificates operations
     :vartype certificates: .operations.CertificatesOperations
     :ivar classic_mobile_services: ClassicMobileServices operations
@@ -109,6 +113,8 @@ class WebSiteManagementClient(object):
     :vartype domains: .operations.DomainsOperations
     :ivar global_model: GlobalModel operations
     :vartype global_model: .operations.GlobalModelOperations
+    :ivar global_certificate_order: GlobalCertificateOrder operations
+    :vartype global_certificate_order: .operations.GlobalCertificateOrderOperations
     :ivar global_domain_registration: GlobalDomainRegistration operations
     :vartype global_domain_registration: .operations.GlobalDomainRegistrationOperations
     :ivar global_resource_groups: GlobalResourceGroups operations
@@ -129,17 +135,40 @@ class WebSiteManagementClient(object):
     :vartype top_level_domains: .operations.TopLevelDomainsOperations
     :ivar usage: Usage operations
     :vartype usage: .operations.UsageOperations
+
+    :param credentials: Gets Azure subscription credentials.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
+    :param subscription_id: Subscription Id
+    :type subscription_id: str
+    :param api_version: API Version
+    :type api_version: str
+    :param accept_language: Gets or sets the preferred language for the
+     response.
+    :type accept_language: str
+    :param long_running_operation_retry_timeout: Gets or sets the retry
+     timeout in seconds for Long Running Operations. Default value is 30.
+    :type long_running_operation_retry_timeout: int
+    :param generate_client_request_id: When set to true a unique
+     x-ms-client-request-id value is generated and included in each request.
+     Default is true.
+    :type generate_client_request_id: bool
+    :param str base_url: Service URL
+    :param str filepath: Existing config
     """
 
-    def __init__(self, config):
+    def __init__(
+            self, credentials, subscription_id, api_version='2015-08-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
-        self._client = ServiceClient(config.credentials, config)
+        self.config = WebSiteManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer()
+        self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.config = config
+        self.certificate_orders = CertificateOrdersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.classic_mobile_services = ClassicMobileServicesOperations(
@@ -147,6 +176,8 @@ class WebSiteManagementClient(object):
         self.domains = DomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.global_model = GlobalModelOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.global_certificate_order = GlobalCertificateOrderOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.global_domain_registration = GlobalDomainRegistrationOperations(
             self._client, self.config, self._serialize, self._deserialize)

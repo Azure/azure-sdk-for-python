@@ -16,8 +16,8 @@ for details on getting a ``Credentials`` instance.
 
 .. code:: python
 
-    from azure.mgmt.compute import ComputeManagementClient, ComputeManagementClientConfiguration
-    from azure.mgmt.network import NetworkManagementClient, NetworkManagementClientConfiguration
+    from azure.mgmt.compute import ComputeManagementClient
+    from azure.mgmt.network import NetworkManagementClient
 
     # TODO: Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
@@ -25,17 +25,13 @@ for details on getting a ``Credentials`` instance.
     credentials = ...
 
     compute_client = ComputeManagementClient(
-        ComputeManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
 
     network_client = NetworkManagementClient(
-        NetworkManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
 
 
@@ -50,13 +46,11 @@ credentials you created in the previous section.
 
 .. code:: python
 
-    from azure.mgmt.resource.resources import ResourceManagementClient, ResourceManagementClientConfiguration
+    from azure.mgmt.resource.resources import ResourceManagementClient
 
     resource_client = ResourceManagementClient(
-        ResourceManagementClientConfiguration(
-            credentials,
-            subscription_id
-        )
+        credentials,
+        subscription_id
     )
     resource_client.providers.register('Microsoft.Compute')
     resource_client.providers.register('Microsoft.Network')

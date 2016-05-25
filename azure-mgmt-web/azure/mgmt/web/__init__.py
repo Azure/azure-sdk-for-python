@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .web_site_management_client import WebSiteManagementClient, WebSiteManagementClientConfiguration
+from .web_site_management_client import WebSiteManagementClient
 from .version import VERSION
 
-__all__ = [
-    'WebSiteManagementClient',
-    'WebSiteManagementClientConfiguration'
-]
+__all__ = ['WebSiteManagementClient']
 
 __version__ = VERSION
 

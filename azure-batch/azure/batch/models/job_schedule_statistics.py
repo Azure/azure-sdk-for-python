@@ -24,54 +24,56 @@ from msrest.serialization import Model
 
 class JobScheduleStatistics(Model):
     """
-    The lifetime resource usage statistics for a job schedule.
+    Resource usage statistics for a job schedule.
 
-    :param url: Gets or sets the URL for the statistics.
+    :param url: The URL of the statistics.
     :type url: str
-    :param start_time: Gets or sets the start time of the time range covered
-     by the statistics.
+    :param start_time: The start time of the time range covered by the
+     statistics.
     :type start_time: datetime
-    :param last_update_time: Gets or sets the time at which the statistics
-     were last updated. All statistics are limited to the range between
-     startTime and lastUpdateTime.
+    :param last_update_time: The time at which the statistics were last
+     updated. All statistics are limited to the range between startTime and
+     lastUpdateTime.
     :type last_update_time: datetime
-    :param user_cpu_time: Gets or sets the total user mode CPU time (summed
-     across all cores and all compute nodes) consumed by all the tasks in all
-     the jobs created under the schedule.
+    :param user_cpu_time: The total user mode CPU time (summed across all
+     cores and all compute nodes) consumed by all tasks in all jobs created
+     under the schedule.
     :type user_cpu_time: timedelta
-    :param kernel_cpu_time: Gets or sets the total kernel mode CPU time
-     (summed across all cores and all compute nodes) consumed by all the
-     tasks in all the jobs created under the schedule.
+    :param kernel_cpu_time: The total kernel mode CPU time (summed across all
+     cores and all compute nodes) consumed by all tasks in all jobs created
+     under the schedule.
     :type kernel_cpu_time: timedelta
-    :param wall_clock_time: Gets or sets the total wall clock time of all the
-     tasks in all the jobs created under the schedule.
+    :param wall_clock_time: The total wall clock time of all the tasks in all
+     the jobs created under the schedule.
     :type wall_clock_time: timedelta
-    :param read_iops: Gets or sets the total number of I/O read operations
-     performed by all the tasks in all the jobs created under the schedule.
+    :param read_iops: The total number of disk read operations made by all
+     tasks in all jobs created under the schedule.
     :type read_iops: long
-    :param write_iops: Gets or sets the total number of I/O write operations
-     performed by all the tasks in all the jobs created under the schedule.
+    :param write_iops: The total number of disk write operations made by all
+     tasks in all jobs created under the schedule.
     :type write_iops: long
-    :param read_io_gi_b: Gets or sets the total amount of data in GiB of I/O
-     read by all the tasks in all the jobs created under the schedule.
+    :param read_io_gi_b: The total gibibytes read from disk by all tasks in
+     all jobs created under the schedule.
     :type read_io_gi_b: float
-    :param write_io_gi_b: Gets or sets the total amount of data in GiB of I/O
-     written by all the tasks in all the jobs created under the schedule.
+    :param write_io_gi_b: The total gibibytes written to disk by all tasks in
+     all jobs created under the schedule.
     :type write_io_gi_b: float
-    :param num_succeeded_tasks: Gets or sets the total number of tasks
-     successfully completed during the given time range in jobs created under
-     the schedule.  A task completes successfully if it returns exit code 0.
+    :param num_succeeded_tasks: The total number of tasks successfully
+     completed during the given time range in jobs created under the
+     schedule. A task completes successfully if it returns exit code 0.
     :type num_succeeded_tasks: long
-    :param num_failed_tasks: Gets or sets the total number of tasks that
-     failed during the given time range in jobs created under the schedule. A
-     task fails if it exhausts its maximum retry count without returning exit
-     code 0.
+    :param num_failed_tasks: The total number of tasks that failed during the
+     given time range in jobs created under the schedule. A task fails if it
+     exhausts its maximum retry count without returning exit code 0.
     :type num_failed_tasks: long
-    :param num_task_retries: Gets or sets the total number of retries during
-     the given time range on all the tasks in jobs created under the schedule.
+    :param num_task_retries: The total number of retries during the given
+     time range on all tasks in all jobs created under the schedule.
     :type num_task_retries: long
-    :param wait_time: Gets or sets the total wait time of all the tasks in
-     jobs created under the schedule.
+    :param wait_time: The total wait time of all tasks in all jobs created
+     under the schedule. The wait time for a task is defined as the elapsed
+     time between the creation of the task and the start of task execution.
+     (If the task is retried due to failures, the wait time is the time to
+     the most recent task execution.)
     :type wait_time: timedelta
     """ 
 

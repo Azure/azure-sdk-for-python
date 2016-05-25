@@ -33,6 +33,7 @@ from .entity_id import EntityId
 from .external_table import ExternalTable
 from .usql_table import USqlTable
 from .usql_view import USqlView
+from .usql_table_partition import USqlTablePartition
 from .usql_table_statistics import USqlTableStatistics
 from .usql_type import USqlType
 from .usql_table_valued_function import USqlTableValuedFunction
@@ -50,6 +51,7 @@ from .usql_procedure_paged import USqlProcedurePaged
 from .usql_table_paged import USqlTablePaged
 from .usql_view_paged import USqlViewPaged
 from .usql_table_statistics_paged import USqlTableStatisticsPaged
+from .usql_table_partition_paged import USqlTablePartitionPaged
 from .usql_type_paged import USqlTypePaged
 from .usql_table_valued_function_paged import USqlTableValuedFunctionPaged
 from .usql_assembly_clr_paged import USqlAssemblyClrPaged
@@ -74,6 +76,7 @@ __all__ = [
     'ExternalTable',
     'USqlTable',
     'USqlView',
+    'USqlTablePartition',
     'USqlTableStatistics',
     'USqlType',
     'USqlTableValuedFunction',
@@ -91,6 +94,7 @@ __all__ = [
     'USqlTablePaged',
     'USqlViewPaged',
     'USqlTableStatisticsPaged',
+    'USqlTablePartitionPaged',
     'USqlTypePaged',
     'USqlTableValuedFunctionPaged',
     'USqlAssemblyClrPaged',

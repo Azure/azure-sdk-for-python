@@ -27,8 +27,9 @@ class Sku(Model):
     The SKU (pricing tier) of the CDN profile.
 
     :param name: Name of the pricing tier. Possible values include:
-     'Standard', 'Premium'
-    :type name: str
+     'Standard_Verizon', 'Premium_Verizon', 'Custom_Verizon',
+     'Standard_Akamai'
+    :type name: str or :class:`SkuName <azure.mgmt.cdn.models.SkuName>`
     """ 
 
     _attribute_map = {

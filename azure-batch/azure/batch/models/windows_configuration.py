@@ -24,10 +24,10 @@ from msrest.serialization import Model
 
 class WindowsConfiguration(Model):
     """
-    Windows operating system settings on the virtual machine.
+    Windows operating system settings to apply to the virtual machine.
 
-    :param enable_automatic_updates: Gets or sets whether virtual machine is
-     enabled for automatic updates. If omitted, the default value is true.
+    :param enable_automatic_updates: Whether automatic updates are enabled on
+     the virtual machine. If omitted, the default value is true.
     :type enable_automatic_updates: bool
     """ 
 

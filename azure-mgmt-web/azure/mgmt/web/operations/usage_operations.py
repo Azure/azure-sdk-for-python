@@ -44,7 +44,7 @@ class UsageOperations(object):
         self.config = config
 
     def get_usage(
-            self, resource_group_name, environment_name, last_id, batch_size, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, environment_name, last_id, batch_size, custom_headers=None, raw=False, **operation_config):
         """
         Returns usage records for specified subscription and resource groups
 

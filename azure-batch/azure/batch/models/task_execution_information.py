@@ -26,32 +26,31 @@ class TaskExecutionInformation(Model):
     """
     Information about the execution of a task.
 
-    :param start_time: Gets or sets the time at which the task started
-     running. If the task has been restarted or retried, this is the most
-     recent time at which the task started running.
+    :param start_time: The time at which the task started running. If the
+     task has been restarted or retried, this is the most recent time at
+     which the task started running.
     :type start_time: datetime
-    :param end_time: Gets or sets the time at which the task completed. This
-     property is set only if the task is in the Completed state.
+    :param end_time: The time at which the task completed. This property is
+     set only if the task is in the Completed state.
     :type end_time: datetime
-    :param exit_code: Gets or sets the exit code of the task. This property
-     is set only if the task is in completed state.
+    :param exit_code: The exit code of the task. This property is set only if
+     the task is in completed state.
     :type exit_code: int
-    :param scheduling_error: Gets or sets details of any error encountered
-     scheduling the task.
+    :param scheduling_error: Details of any error encountered scheduling the
+     task.
     :type scheduling_error: :class:`TaskSchedulingError
      <azure.batch.models.TaskSchedulingError>`
-    :param retry_count: Gets or sets the number of times the task has been
-     retried by the Batch service.
+    :param retry_count: The number of times the task has been retried by the
+     Batch service.
     :type retry_count: int
-    :param last_retry_time: Gets or sets the most recent time at which a
-     retry of the task started running.
+    :param last_retry_time: The most recent time at which a retry of the task
+     started running.
     :type last_retry_time: datetime
-    :param requeue_count: Gets or sets the number of times the task has been
-     requeued by the Batch service as the result of a user request.
+    :param requeue_count: The number of times the task has been requeued by
+     the Batch service as the result of a user request.
     :type requeue_count: int
-    :param last_requeue_time: Gets or sets the most recent time at which the
-     task has been requeued by the Batch service as the result of a user
-     request.
+    :param last_requeue_time: The most recent time at which the task has been
+     requeued by the Batch service as the result of a user request.
     :type last_requeue_time: datetime
     """ 
 

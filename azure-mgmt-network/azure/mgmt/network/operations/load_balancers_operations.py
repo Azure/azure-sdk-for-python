@@ -45,7 +45,7 @@ class LoadBalancersOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, load_balancer_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, load_balancer_name, custom_headers=None, raw=False, **operation_config):
         """
         The delete loadbalancer operation deletes the specified loadbalancer.
 
@@ -91,10 +91,11 @@ class LoadBalancersOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -121,7 +122,7 @@ class LoadBalancersOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, load_balancer_name, expand=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, load_balancer_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """
         The Get ntework interface operation retreives information about the
         specified network interface.
@@ -187,7 +188,7 @@ class LoadBalancersOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, load_balancer_name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, load_balancer_name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         The Put LoadBalancer operation creates/updates a LoadBalancer
 
@@ -242,10 +243,11 @@ class LoadBalancersOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -281,7 +283,7 @@ class LoadBalancersOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list_all(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         The List loadBalancer opertion retrieves all the loadbalancers in a
         subscription.
@@ -345,7 +347,7 @@ class LoadBalancersOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         The List loadBalancer opertion retrieves all the loadbalancers in a
         resource group.

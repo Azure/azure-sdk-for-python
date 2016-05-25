@@ -24,18 +24,22 @@ from msrest.serialization import Model
 
 class NodeAgentSku(Model):
     """
-    Information about supported node agent SKU.
+    A node agent SKU supported by the Batch service. The Batch node agent is a
+    program that runs on each node in the pool, and provides the
+    command-and-control interface between the node and the Batch service.
+    There are different implementations of the node agent, known as SKUs, for
+    different operating systems.
 
-    :param id: Gets or sets the node agent SKU id.
+    :param id: The node agent SKU id.
     :type id: str
-    :param verified_image_references: Gets the list of images verified to be
-     compatible with the node agent SKU. This collection is not exhaustive;
-     the node agent SKU may be compatible with other images.
+    :param verified_image_references: The list of images verified to be
+     compatible with this node agent SKU. This collection is not exhaustive
+     (the node agent may be compatible with other images).
     :type verified_image_references: list of :class:`ImageReference
      <azure.batch.models.ImageReference>`
-    :param os_type: Gets or sets the type of OS that the node Agent SKU is
-     targeted against. Possible values include: 'linux', 'windows', 'unmapped'
-    :type os_type: str
+    :param os_type: The type of operating system compatible with the node
+     agent SKU. Possible values include: 'linux', 'windows', 'unmapped'
+    :type os_type: str or :class:`OSType <azure.batch.models.OSType>`
     """ 
 
     _attribute_map = {

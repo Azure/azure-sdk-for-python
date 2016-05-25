@@ -44,7 +44,7 @@ class PermissionsOperations(object):
         self.config = config
 
     def list_for_resource_group(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a resource group permissions.
 
@@ -111,7 +111,7 @@ class PermissionsOperations(object):
         return deserialized
 
     def list_for_resource(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a resource permissions.
 

@@ -21,6 +21,7 @@
 
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 
 from .. import models
@@ -44,7 +45,7 @@ class RedisOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, name, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create a redis cache, or replace (overwrite/recreate, with potential
         downtime) an existing cache
@@ -117,7 +118,7 @@ class RedisOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a redis cache. This operation takes a while to complete.
 
@@ -161,7 +162,7 @@ class RedisOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 202, 404]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -171,7 +172,7 @@ class RedisOperations(object):
             return client_raw_response
 
     def get(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a redis cache (resource description).
 
@@ -232,7 +233,7 @@ class RedisOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets all redis caches in a resource group.
 
@@ -298,7 +299,7 @@ class RedisOperations(object):
         return deserialized
 
     def list(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets all redis caches in the specified subscription.
 
@@ -361,7 +362,7 @@ class RedisOperations(object):
         return deserialized
 
     def list_keys(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Retrieve a redis cache's access keys. This operation requires write
         permission to the cache resource.
@@ -424,7 +425,7 @@ class RedisOperations(object):
         return deserialized
 
     def regenerate_key(
-            self, resource_group_name, name, key_type, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, key_type, custom_headers=None, raw=False, **operation_config):
         """
         Regenerate redis cache's access keys. This operation requires write
         permission to the cache resource.
@@ -435,7 +436,8 @@ class RedisOperations(object):
         :type name: str
         :param key_type: Which redis access key to reset. Possible values
          include: 'Primary', 'Secondary'
-        :type key_type: str
+        :type key_type: str or :class:`RedisKeyType
+         <azure.mgmt.redis.models.RedisKeyType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -496,7 +498,7 @@ class RedisOperations(object):
         return deserialized
 
     def force_reboot(
-            self, resource_group_name, name, reboot_type, shard_id=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, reboot_type, shard_id=None, custom_headers=None, raw=False, **operation_config):
         """
         Reboot specified redis node(s). This operation requires write
         permission to the cache resource. There can be potential data loss.
@@ -508,7 +510,8 @@ class RedisOperations(object):
         :param reboot_type: Which redis node(s) to reboot. Depending on this
          value data loss is possible. Possible values include: 'PrimaryNode',
          'SecondaryNode', 'AllNodes'
-        :type reboot_type: str
+        :type reboot_type: str or :class:`RebootType
+         <azure.mgmt.redis.models.RebootType>`
         :param shard_id: In case of cluster cache, this specifies shard id
          which should be rebooted.
         :type shard_id: int
@@ -554,7 +557,7 @@ class RedisOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200, 202, 404]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -562,3 +565,174 @@ class RedisOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def import_method(
+            self, resource_group_name, name, files, format=None, custom_headers=None, raw=False, **operation_config):
+        """
+        Import data into redis cache.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param name: The name of the redis cache.
+        :type name: str
+        :param files: files to import
+        :type files: list of str
+        :param format: File format.
+        :type format: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        parameters = models.ImportRDBParameters(format=format, files=files)
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/import'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'ImportRDBParameters')
+
+        # Construct and send request
+        def long_running_send():
+
+            request = self._client.post(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+    def export(
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
+        """
+        Import data into redis cache.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param name: The name of the redis cache.
+        :type name: str
+        :param parameters: Parameters for redis export operation.
+        :type parameters: :class:`ExportRDBParameters
+         <azure.mgmt.redis.models.ExportRDBParameters>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/export'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'ExportRDBParameters')
+
+        # Construct and send request
+        def long_running_send():
+
+            request = self._client.post(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)

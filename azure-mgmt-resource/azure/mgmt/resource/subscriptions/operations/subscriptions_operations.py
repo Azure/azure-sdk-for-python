@@ -44,7 +44,7 @@ class SubscriptionsOperations(object):
         self.config = config
 
     def list_locations(
-            self, subscription_id, custom_headers={}, raw=False, **operation_config):
+            self, subscription_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of the subscription locations.
 
@@ -109,7 +109,7 @@ class SubscriptionsOperations(object):
         return deserialized
 
     def get(
-            self, subscription_id, custom_headers={}, raw=False, **operation_config):
+            self, subscription_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets details about particular subscription.
 
@@ -167,7 +167,7 @@ class SubscriptionsOperations(object):
         return deserialized
 
     def list(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of the subscriptionIds.
 

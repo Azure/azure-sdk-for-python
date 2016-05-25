@@ -38,7 +38,9 @@ class SiteAuthSettings(Model):
     :param unauthenticated_client_action: Gets or sets the action to take
      when an unauthenticated client attempts to access the app. Possible
      values include: 'RedirectToLoginPage', 'AllowAnonymous'
-    :type unauthenticated_client_action: str
+    :type unauthenticated_client_action: str or
+     :class:`UnauthenticatedClientAction
+     <azure.mgmt.web.models.UnauthenticatedClientAction>`
     :param token_store_enabled: Gets or sets a value indicating whether to
      durably store platform-specific security tokens
      obtained during login flows. This capability is disabled by
@@ -60,7 +62,12 @@ class SiteAuthSettings(Model):
      action is set to "RedirectToLoginPage". Possible values
      include: 'AzureActiveDirectory', 'Facebook', 'Google',
      'MicrosoftAccount', 'Twitter'
-    :type default_provider: str
+    :type default_provider: str or :class:`BuiltInAuthenticationProvider
+     <azure.mgmt.web.models.BuiltInAuthenticationProvider>`
+    :param token_refresh_extension_hours: Gets or sets the number of hours
+     after session token expiration that a session token can be used to
+     call the token refresh API. The default is 72 hours.
+    :type token_refresh_extension_hours: float
     :param client_id: Gets or sets the Client ID of this relying party
      application, known as the client_id.
      This setting is required for enabling OpenID Connection
@@ -182,6 +189,7 @@ class SiteAuthSettings(Model):
         'token_store_enabled': {'key': 'tokenStoreEnabled', 'type': 'bool'},
         'allowed_external_redirect_urls': {'key': 'allowedExternalRedirectUrls', 'type': '[str]'},
         'default_provider': {'key': 'defaultProvider', 'type': 'BuiltInAuthenticationProvider'},
+        'token_refresh_extension_hours': {'key': 'tokenRefreshExtensionHours', 'type': 'float'},
         'client_id': {'key': 'clientId', 'type': 'str'},
         'client_secret': {'key': 'clientSecret', 'type': 'str'},
         'issuer': {'key': 'issuer', 'type': 'str'},
@@ -202,13 +210,14 @@ class SiteAuthSettings(Model):
         'microsoft_account_oauth_scopes': {'key': 'microsoftAccountOAuthScopes', 'type': '[str]'},
     }
 
-    def __init__(self, enabled=None, http_api_prefix_path=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, client_id=None, client_secret=None, issuer=None, allowed_audiences=None, additional_login_params=None, aad_client_id=None, open_id_issuer=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
+    def __init__(self, enabled=None, http_api_prefix_path=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours=None, client_id=None, client_secret=None, issuer=None, allowed_audiences=None, additional_login_params=None, aad_client_id=None, open_id_issuer=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
         self.enabled = enabled
         self.http_api_prefix_path = http_api_prefix_path
         self.unauthenticated_client_action = unauthenticated_client_action
         self.token_store_enabled = token_store_enabled
         self.allowed_external_redirect_urls = allowed_external_redirect_urls
         self.default_provider = default_provider
+        self.token_refresh_extension_hours = token_refresh_extension_hours
         self.client_id = client_id
         self.client_secret = client_secret
         self.issuer = issuer
