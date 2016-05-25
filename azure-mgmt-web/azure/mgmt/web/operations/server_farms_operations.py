@@ -45,7 +45,7 @@ class ServerFarmsOperations(object):
         self.config = config
 
     def get_server_farms(
-            self, resource_group_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets collection of App Service Plans in a resource group for a given
         subscription.
@@ -105,7 +105,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_server_farm(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets specified App Service Plan in a resource group
 
@@ -167,7 +167,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def create_or_update_server_farm(
-            self, resource_group_name, name, server_farm_envelope, allow_pending_state=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, server_farm_envelope, allow_pending_state=None, custom_headers=None, raw=False, **operation_config):
         """
         Creates or updates an App Service Plan
 
@@ -226,10 +226,11 @@ class ServerFarmsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -265,7 +266,7 @@ class ServerFarmsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete_server_farm(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a App Service Plan
 
@@ -326,7 +327,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_server_farm_metrics(
-            self, resource_group_name, name, details=None, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Queries for App Serice Plan metrics
 
@@ -401,7 +402,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_server_farm_metric_defintions(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         List of metrics that can be queried for an App Service Plan
 
@@ -463,7 +464,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_vnets_for_server_farm(
-            self, resource_group_name, name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """
         Gets list of vnets associated with App Service Plan
 
@@ -524,7 +525,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_vnet_from_server_farm(
-            self, resource_group_name, name, vnet_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a vnet associated with an App Service Plan
 
@@ -588,7 +589,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_routes_for_vnet(
-            self, resource_group_name, name, vnet_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of all routes associated with a vnet, in an app service
         plan
@@ -653,7 +654,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_route_for_vnet(
-            self, resource_group_name, name, vnet_name, route_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, route_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a specific route associated with a vnet, in an app service plan
 
@@ -720,7 +721,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def create_or_update_vnet_route(
-            self, resource_group_name, name, vnet_name, route_name, route, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, route_name, route, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new route or updates an existing route for a vnet in an app
         service plan.
@@ -794,7 +795,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def delete_vnet_route(
-            self, resource_group_name, name, vnet_name, route_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, route_name, custom_headers=None, raw=False, **operation_config):
         """
         Deletes an existing route for a vnet in an app service plan.
 
@@ -861,7 +862,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def update_vnet_route(
-            self, resource_group_name, name, vnet_name, route_name, route, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, route_name, route, custom_headers=None, raw=False, **operation_config):
         """
         Creates a new route or updates an existing route for a vnet in an app
         service plan.
@@ -935,7 +936,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_server_farm_vnet_gateway(
-            self, resource_group_name, name, vnet_name, gateway_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets the vnet gateway.
 
@@ -1003,7 +1004,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def update_server_farm_vnet_gateway(
-            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """
         Updates the vnet gateway
 
@@ -1078,7 +1079,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_server_farm_sites(
-            self, resource_group_name, name, skip_token=None, filter=None, top=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, skip_token=None, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets list of Apps associated with an App Service Plan
 
@@ -1162,7 +1163,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def reboot_worker_for_server_farm(
-            self, resource_group_name, name, worker_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, worker_name, custom_headers=None, raw=False, **operation_config):
         """
         Submit a reboot request for a worker machine in the specified server
         farm
@@ -1227,7 +1228,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def restart_sites_for_server_farm(
-            self, resource_group_name, name, soft_restart=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, soft_restart=None, custom_headers=None, raw=False, **operation_config):
         """
         Restarts web apps in a specified App Service Plan
 
@@ -1294,7 +1295,7 @@ class ServerFarmsOperations(object):
         return deserialized
 
     def get_server_farm_operation(
-            self, resource_group_name, name, operation_id, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, name, operation_id, custom_headers=None, raw=False, **operation_config):
         """
         Gets a server farm operation
 

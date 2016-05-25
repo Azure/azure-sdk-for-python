@@ -27,11 +27,9 @@ class BatchErrorDetail(Model):
     An item of additional information included in an Azure Batch error
     response.
 
-    :param key: Gets or sets an identifier specifying the meaning of the
-     Value property.
+    :param key: An identifier specifying the meaning of the Value property.
     :type key: str
-    :param value: Gets or sets the additional information included with the
-     error response.
+    :param value: The additional information included with the error response.
     :type value: str
     """ 
 

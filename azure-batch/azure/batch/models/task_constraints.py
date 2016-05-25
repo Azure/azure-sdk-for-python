@@ -26,18 +26,17 @@ class TaskConstraints(Model):
     """
     Constraints to apply to the Job Manager task.
 
-    :param max_wall_clock_time: Gets or sets the maximum elapsed time that
-     the task may run, measured from the time the task starts. If the task
-     does not complete within the time limit, the Batch service terminates it.
+    :param max_wall_clock_time: The maximum elapsed time that the task may
+     run, measured from the time the task starts. If the task does not
+     complete within the time limit, the Batch service terminates it.
     :type max_wall_clock_time: timedelta
-    :param retention_time: Gets or sets the minimum time to retain the
-     working directory for the task on the compute node where it ran. After
-     this time, the Batch service may delete the working directory and all
-     its contents. The default is infinite.
+    :param retention_time: The minimum time to retain the working directory
+     for the task on the compute node where it ran, from the time it
+     completes execution. After this time, the Batch service may delete the
+     working directory and all its contents. The default is infinite.
     :type retention_time: timedelta
-    :param max_task_retry_count: Gets or sets the maximum number of times the
-     task may be retried. The Batch service retries a task if its exit code
-     is nonzero.
+    :param max_task_retry_count: The maximum number of times the task may be
+     retried. The Batch service retries a task if its exit code is nonzero.
     :type max_task_retry_count: int
     """ 
 

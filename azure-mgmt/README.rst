@@ -39,18 +39,18 @@ Features
 This version of the Azure Management package bundle consists of the
 following packages. Follow the links for more information on each package.
 
--  `azure-mgmt-authorization v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-authorization/0.30.0rc3>`__
--  `azure-mgmt-batch v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-batch/0.30.0rc3>`__
--  `azure-mgmt-cdn v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-cdn/0.30.0rc3>`__
--  `azure-mgmt-compute v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-compute/0.30.0rc3>`__
--  `azure-mgmt-logic v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-logic/0.30.0rc3>`__
--  `azure-mgmt-network v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-network/0.30.0rc3>`__
--  `azure-mgmt-notificationhubs v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-notificationhubs/0.30.0rc3>`__
--  `azure-mgmt-redis v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-redis/0.30.0rc3>`__
--  `azure-mgmt-resource v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-resource/0.30.0rc3>`__
--  `azure-mgmt-scheduler v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-scheduler/0.30.0rc3>`__
--  `azure-mgmt-storage v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-storage/0.30.0rc3>`__
--  `azure-mgmt-web v0.30.0rc3 <https://pypi.python.org/pypi/azure-mgmt-web/0.30.0rc3>`__
+-  `azure-mgmt-authorization v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-authorization/0.30.0rc4>`__
+-  `azure-mgmt-batch v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-batch/0.30.0rc4>`__
+-  `azure-mgmt-cdn v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-cdn/0.30.0rc4>`__
+-  `azure-mgmt-compute v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-compute/0.30.0rc4>`__
+-  `azure-mgmt-logic v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-logic/0.30.0rc4>`__
+-  `azure-mgmt-network v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-network/0.30.0rc4>`__
+-  `azure-mgmt-notificationhubs v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-notificationhubs/0.30.0rc4>`__
+-  `azure-mgmt-redis v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-redis/0.30.0rc4>`__
+-  `azure-mgmt-resource v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-resource/0.30.0rc4>`__
+-  `azure-mgmt-scheduler v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-scheduler/0.30.0rc4>`__
+-  `azure-mgmt-storage v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-storage/0.30.0rc4>`__
+-  `azure-mgmt-web v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-web/0.30.0rc4>`__
 
 Note that if you don't need all of these packages, you can install/uninstall them individually.
 

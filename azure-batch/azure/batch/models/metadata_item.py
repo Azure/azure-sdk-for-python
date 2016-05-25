@@ -24,13 +24,13 @@ from msrest.serialization import Model
 
 class MetadataItem(Model):
     """
-    A metadata item associated with an Azure Batch resource. The Batch service
-    does not assign any meaning to metadata; it is solely for the use of user
-    code.
+    A name-value pair associated with a Batch service resource. The Batch
+    service does not assign any meaning to this metadata; it is solely for
+    the use of user code.
 
-    :param name: Gets or sets the name of the metadata item.
+    :param name: The name of the metadata item.
     :type name: str
-    :param value: Gets or sets the value of the metadata item.
+    :param value: The value of the metadata item.
     :type value: str
     """ 
 

@@ -45,7 +45,7 @@ class ResourcesOperations(object):
         self.config = config
 
     def move_resources(
-            self, source_resource_group_name, resources=None, target_resource_group=None, custom_headers={}, raw=False, **operation_config):
+            self, source_resource_group_name, resources=None, target_resource_group=None, custom_headers=None, raw=False, **operation_config):
         """
         Move resources from one resource group to another. The resources being
         moved should all be in the same resource group.
@@ -99,10 +99,11 @@ class ResourcesOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -129,7 +130,7 @@ class ResourcesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, filter=None, top=None, custom_headers={}, raw=False, **operation_config):
+            self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """
         Get all of the resources under a subscription.
 
@@ -201,7 +202,7 @@ class ResourcesOperations(object):
         return deserialized
 
     def check_existence(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
         """
         Checks whether resource exists.
 
@@ -269,7 +270,7 @@ class ResourcesOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
         """
         Delete resource and all of its resources.
 
@@ -335,7 +336,7 @@ class ResourcesOperations(object):
             return client_raw_response
 
     def create_or_update(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         """
         Create a resource.
 
@@ -418,7 +419,7 @@ class ResourcesOperations(object):
         return deserialized
 
     def get(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
         """
         Returns a resource belonging to a resource group.
 

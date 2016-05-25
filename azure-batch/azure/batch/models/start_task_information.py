@@ -26,26 +26,24 @@ class StartTaskInformation(Model):
     """
     Information about a start task running on a compute node.
 
-    :param state: Gets or sets the state of the start task on the compute
-     node. Possible values include: 'running', 'completed'
-    :type state: str
-    :param start_time: Gets or sets the time at which the start task started
-     running.
+    :param state: The state of the start task on the compute node. Possible
+     values include: 'running', 'completed'
+    :type state: str or :class:`StartTaskState
+     <azure.batch.models.StartTaskState>`
+    :param start_time: The time at which the start task started running.
     :type start_time: datetime
-    :param end_time: Gets or sets the time at which the start task stopped
-     running.
+    :param end_time: The time at which the start task stopped running.
     :type end_time: datetime
-    :param exit_code: Gets or sets the exit code of the start task.
+    :param exit_code: The exit code of the start task.
     :type exit_code: int
-    :param scheduling_error: Gets or sets any error encountered scheduling
-     the start task.
+    :param scheduling_error: Any error encountered scheduling the start task.
     :type scheduling_error: :class:`TaskSchedulingError
      <azure.batch.models.TaskSchedulingError>`
-    :param retry_count: Gets or sets the number of times the task has been
-     retried by the Batch service.
+    :param retry_count: The number of times the task has been retried by the
+     Batch service.
     :type retry_count: int
-    :param last_retry_time: Gets or sets the most recent time at which a
-     retry of the task started running.
+    :param last_retry_time: The most recent time at which a retry of the task
+     started running.
     :type last_retry_time: datetime
     """ 
 

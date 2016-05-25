@@ -26,11 +26,11 @@ class PoolEnableAutoScaleParameter(Model):
     """
     Parameters for a CloudPoolOperations.EnableAutoScale request.
 
-    :param auto_scale_formula: Sets the formula for the desired number of
-     compute nodes in the pool.
+    :param auto_scale_formula: The formula for the desired number of compute
+     nodes in the pool.
     :type auto_scale_formula: str
-    :param auto_scale_evaluation_interval: Gets or sets a time interval for
-     the desired autoscale evaluation period in the pool.
+    :param auto_scale_evaluation_interval: A time interval for the desired
+     autoscale evaluation period in the pool.
     :type auto_scale_evaluation_interval: timedelta
     """ 
 

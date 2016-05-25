@@ -8,7 +8,7 @@ Installation:
 
 - Use the ``--pre`` flag: ``pip install --pre azure``
 
-- Specify the version:  ``pip install azure==2.0.0rc3``
+- Specify the version:  ``pip install azure==2.0.0rc4``
 
 If you want to install ``azure`` from source::
 
@@ -31,6 +31,7 @@ Documentation:
    * :doc:`Authorization Resource Management<resourcemanagementauthorization>` -- (:doc:`API <ref/azure.mgmt.authorization>`)
    * :doc:`Batch Management<resourcemanagementbatch>` -- (:doc:`API <ref/azure.mgmt.batch>`)
    * :doc:`CDN Resource Management<resourcemanagementcdn>` -- (:doc:`API <ref/azure.mgmt.cdn>`)
+   * :doc:`Commerce - Billing API<resourcemanagementcommerce>` -- (:doc:`API <ref/azure.mgmt.commerce>`)
    * :doc:`Compute Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.compute>`)
    * Apps
       * :doc:`Logic Apps Resource Management<resourcemanagementapps>` -- (:doc:`API <ref/azure.mgmt.logic>`)
@@ -80,6 +81,7 @@ Features:
    -  Authorization: permissions, subscriptions, roles and more
    -  Batch: manage Batch accounts and applications
    -  CDN: profiles, endpoints creation and more
+   -  Commerce: RateCard and Usage Billing API
    -  Compute: create virtual machines and more
    -  Apps:
 
@@ -173,6 +175,7 @@ Indices and tables
   resourcemanagement
   resourcemanagementauthentication
   resourcemanagamentauthorization
+  resourcemanagementcommerce
   resourcemanagementcdn
   resourcemanagementapps
   resourcemanagementstorage

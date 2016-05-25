@@ -26,18 +26,18 @@ class ComputeNodeUser(Model):
     """
     An user account on a compute node.
 
-    :param name: Gets or sets the user name of the account.
+    :param name: The user name of the account.
     :type name: str
-    :param is_admin: Gets or sets whether the account should be an
-     administrator on the compute node.
+    :param is_admin: Whether the account should be an administrator on the
+     compute node.
     :type is_admin: bool
-    :param expiry_time: Gets or sets the time at which the account should
-     expire. If omitted, the default is 1 day from the current time.
+    :param expiry_time: The time at which the account should expire. If
+     omitted, the default is 1 day from the current time.
     :type expiry_time: datetime
-    :param password: Gets or sets the password of the account.
+    :param password: The password of the account.
     :type password: str
-    :param ssh_public_key: Gets or sets the SSH public key that can be used
-     for remote login to the compute node.
+    :param ssh_public_key: The SSH public key that can be used for remote
+     login to the compute node.
     :type ssh_public_key: str
     """ 
 

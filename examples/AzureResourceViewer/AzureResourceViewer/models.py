@@ -17,26 +17,21 @@ from base64 import b64decode
 
 from azure.mgmt.resource.resources import (
     ResourceManagementClient,
-    ResourceManagementClientConfiguration,
 )
 from azure.mgmt.resource.subscriptions import (
     SubscriptionClient,
-    SubscriptionClientConfiguration,
 )
 from azure.mgmt.storage import (
     StorageManagementClient,
-    StorageManagementClientConfiguration,
 )
 from azure.mgmt.storage.models import (
     StorageAccountCreateParameters,
 )
 from azure.mgmt.compute import (
     ComputeManagementClient,
-    ComputeManagementClientConfiguration,
 )
 from azure.mgmt.network import (
     NetworkManagementClient,
-    NetworkManagementClientConfiguration,
 )
 
 from azure.storage import AccessPolicy, CloudStorageAccount, SharedAccessPolicy
@@ -120,7 +115,7 @@ class VirtualNetworkDetails(object):
 
 
 def get_account_details(creds):
-    subscription_client = SubscriptionClient(SubscriptionClientConfiguration(creds))
+    subscription_client = SubscriptionClient(creds)
 
     model = AccountDetails()
     model.subscriptions = list(subscription_client.subscriptions.list())
@@ -128,7 +123,7 @@ def get_account_details(creds):
     return model
 
 def get_subscription_details(subscription_id, creds):
-    resource_client = ResourceManagementClient(ResourceManagementClientConfiguration(creds, subscription_id))
+    resource_client = ResourceManagementClient(creds, subscription_id)
 
     model = SubscriptionDetails()
     model.resource_groups = list(resource_client.resource_groups.list())
@@ -137,10 +132,10 @@ def get_subscription_details(subscription_id, creds):
     return model
 
 def get_resource_group_details(subscription_id, creds, resource_group_name):
-    storage_client = StorageManagementClient(StorageManagementClientConfiguration(creds, subscription_id))
-    resource_client = ResourceManagementClient(ResourceManagementClientConfiguration(creds, subscription_id))
-    compute_client = ComputeManagementClient(ComputeManagementClientConfiguration(creds, subscription_id))
-    network_client = NetworkManagementClient(NetworkManagementClientConfiguration(creds, subscription_id))
+    storage_client = StorageManagementClient(creds, subscription_id)
+    resource_client = ResourceManagementClient(creds, subscription_id)
+    compute_client = ComputeManagementClient(creds, subscription_id)
+    network_client = NetworkManagementClient(creds, subscription_id)
 
     model = ResourceGroupDetails()
     model.storage_accounts = list(storage_client.storage_accounts.list_by_resource_group(resource_group_name))
@@ -156,7 +151,7 @@ def get_resource_group_details(subscription_id, creds, resource_group_name):
     return model
 
 def get_vm_details(subscription_id, creds, resource_group_name, vm_name):
-    compute_client = ComputeManagementClient(ComputeManagementClientConfiguration(creds, subscription_id))
+    compute_client = ComputeManagementClient(creds, subscription_id)
 
     model = VMDetails(
         name=vm_name,
@@ -165,7 +160,7 @@ def get_vm_details(subscription_id, creds, resource_group_name, vm_name):
     return model
 
 def get_virtual_network_details(subscription_id, creds, resource_group_name, network_name):
-    network_client = NetworkManagementClient(NetworkManagementClientConfiguration(creds, subscription_id))
+    network_client = NetworkManagementClient(creds, subscription_id)
 
     model = VirtualNetworkDetails(
         name=network_name,
@@ -174,7 +169,7 @@ def get_virtual_network_details(subscription_id, creds, resource_group_name, net
     return model
 
 def get_storage_account_details(subscription_id, creds, resource_group_name, account_name):
-    storage_client = StorageManagementClient(StorageManagementClientConfiguration(creds, subscription_id))
+    storage_client = StorageManagementClient(creds, subscription_id)
     account_result = storage_client.storage_accounts.get_properties(
         resource_group_name,
         account_name,
@@ -207,7 +202,7 @@ def get_storage_account_details(subscription_id, creds, resource_group_name, acc
     return model
 
 def _get_storage_account_keys(subscription_id, creds, resource_group_name, account_name):
-    storage_client = StorageManagementClient(StorageManagementClientConfiguration(creds, subscription_id))
+    storage_client = StorageManagementClient(creds, subscription_id)
     storage_account_keys = storage_client.storage_accounts.list_keys(
         resource_group_name,
         account_name,
@@ -290,15 +285,15 @@ def _get_entities_custom_fields(entities):
     return custom_fields
 
 def unregister_provider(subscription_id, creds, provider_namespace):
-    resource_client = ResourceManagementClient(ResourceManagementClientConfiguration(creds, subscription_id))
+    resource_client = ResourceManagementClient(creds, subscription_id)
     resource_client.providers.unregister(provider_namespace)
 
 def register_provider(subscription_id, creds, provider_namespace):
-    resource_client = ResourceManagementClient(ResourceManagementClientConfiguration(creds, subscription_id))
+    resource_client = ResourceManagementClient(creds, subscription_id)
     resource_client.providers.register(provider_namespace)
 
 def create_storage_account(subscription_id, creds, resource_group_name, account_name, location, type):
-    storage_client = StorageManagementClient(StorageManagementClientConfiguration(creds, subscription_id))
+    storage_client = StorageManagementClient(creds, subscription_id)
     result = storage_client.storage_accounts.create(
         resource_group_name,
         account_name,
@@ -311,7 +306,7 @@ def create_storage_account(subscription_id, creds, resource_group_name, account_
     return result.response
 
 def delete_storage_account(subscription_id, creds, resource_group_name, account_name):
-    storage_client = StorageManagementClient(StorageManagementClientConfiguration(creds, subscription_id))
+    storage_client = StorageManagementClient(creds, subscription_id)
     result = storage_client.storage_accounts.delete(
         resource_group_name,
         account_name,
@@ -319,7 +314,7 @@ def delete_storage_account(subscription_id, creds, resource_group_name, account_
     return result
 
 def get_create_storage_account_status(subscription_id, creds, link):
-    storage_client = StorageManagementClient(StorageManagementClientConfiguration(creds, subscription_id))
+    storage_client = StorageManagementClient(creds, subscription_id)
     request = storage_client._client.get(link)
     result = storage_client._client.send(request)
     return result

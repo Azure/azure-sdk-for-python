@@ -26,26 +26,27 @@ class CertificateReference(Model):
     """
     A reference to a certificate to be installed on compute nodes in a pool.
 
-    :param thumbprint: Gets or sets the thumbprint of the certificate.
+    :param thumbprint: The thumbprint of the certificate.
     :type thumbprint: str
-    :param thumbprint_algorithm: Gets or sets the algorithm with which the
-     thumbprint is associated.  This must be sha1.
+    :param thumbprint_algorithm: The algorithm with which the thumbprint is
+     associated. This must be sha1.
     :type thumbprint_algorithm: str
-    :param store_location: Gets or sets the location of the certificate store
-     on the compute node into which to install the certificate. The default
-     value is CurrentUser. Possible values include: 'currentuser',
-     'localmachine', 'unmapped'
-    :type store_location: str
-    :param store_name: Gets or sets the name of the certificate store on the
+    :param store_location: The location of the certificate store on the
      compute node into which to install the certificate. The default value is
-     My.
+     CurrentUser. Possible values include: 'currentuser', 'localmachine',
+     'unmapped'
+    :type store_location: str or :class:`CertificateStoreLocation
+     <azure.batch.models.CertificateStoreLocation>`
+    :param store_name: The name of the certificate store on the compute node
+     into which to install the certificate. The default value is My.
     :type store_name: str
-    :param visibility: Gets or sets which user accounts on the compute node
-     should have access to the private data of the certificate. This may be
-     any subset of the values 'starttask', 'task' and 'remoteuser', separated
-     by commas. The default is all accounts, corresponding to the string
+    :param visibility: Which user accounts on the compute node should have
+     access to the private data of the certificate. This may be any subset of
+     the values 'starttask', 'task' and 'remoteuser', separated by commas.
+     The default is all accounts, corresponding to the string
      'starttask,task,remoteuser'.
-    :type visibility: list of str
+    :type visibility: list of str or :class:`CertificateVisibility
+     <azure.batch.models.CertificateVisibility>`
     """ 
 
     _validation = {

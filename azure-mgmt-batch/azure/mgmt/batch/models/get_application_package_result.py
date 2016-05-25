@@ -32,8 +32,10 @@ class GetApplicationPackageResult(Model):
     :type version: str
     :param state: The current state of the application package. Possible
      values include: 'pending', 'active', 'unmapped'
-    :type state: str
-    :param format: The format of the application package, if known.
+    :type state: str or :class:`PackageState
+     <azure.mgmt.batch.models.PackageState>`
+    :param format: The format of the application package, if the package is
+     active.
     :type format: str
     :param storage_url: The storage URL at which the application package is
      stored.

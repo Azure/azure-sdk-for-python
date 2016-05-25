@@ -26,9 +26,9 @@ class ErrorMessage(Model):
     """
     An error message received in an Azure Batch error response.
 
-    :param lang: Gets or sets the language code of the error message
+    :param lang: The language code of the error message
     :type lang: str
-    :param value: Gets or sets the text of the message.
+    :param value: The text of the message.
     :type value: str
     """ 
 

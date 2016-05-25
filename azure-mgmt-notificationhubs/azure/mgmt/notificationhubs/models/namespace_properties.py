@@ -56,7 +56,8 @@ class NamespaceProperties(Model):
     :type critical: bool
     :param namespace_type: Gets or sets the namespace type. Possible values
      include: 'Messaging', 'NotificationHub'
-    :type namespace_type: str
+    :type namespace_type: str or :class:`NamespaceType
+     <azure.mgmt.notificationhubs.models.NamespaceType>`
     """ 
 
     _attribute_map = {

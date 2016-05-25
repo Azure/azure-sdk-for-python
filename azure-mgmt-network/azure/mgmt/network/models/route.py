@@ -34,7 +34,8 @@ class Route(SubResource):
     :param next_hop_type: Gets or sets the type of Azure hop the packet
      should be sent to. Possible values include: 'VirtualNetworkGateway',
      'VnetLocal', 'Internet', 'VirtualAppliance', 'None'
-    :type next_hop_type: str
+    :type next_hop_type: str or :class:`RouteNextHopType
+     <azure.mgmt.network.models.RouteNextHopType>`
     :param next_hop_ip_address: Gets or sets the IP address packets should be
      forwarded to. Next hop values are only allowed in routes where the next
      hop type is VirtualAppliance.
@@ -57,7 +58,7 @@ class Route(SubResource):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'next_hop_type': {'key': 'properties.nextHopType', 'type': 'RouteNextHopType'},
+        'next_hop_type': {'key': 'properties.nextHopType', 'type': 'str'},
         'next_hop_ip_address': {'key': 'properties.nextHopIpAddress', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},

@@ -27,36 +27,37 @@ class Certificate(Model):
     A certificate that can be installed on compute nodes and can be used to
     authenticate operations on the machine.
 
-    :param thumbprint: Get or sets the X.509 thumbprint of the certificate.
-     This is a sequence of up to 40 hex digits (it may include spaces but
-     these are removed).
+    :param thumbprint: The X.509 thumbprint of the certificate. This is a
+     sequence of up to 40 hex digits (it may include spaces but these are
+     removed).
     :type thumbprint: str
-    :param thumbprint_algorithm: Gets or sets the algorithm used to derive
-     the thumbprint. This must be sha1.
+    :param thumbprint_algorithm: The algorithm used to derive the thumbprint.
+     This must be sha1.
     :type thumbprint_algorithm: str
-    :param url: Gets or sets the URL of the certificate.
+    :param url: The URL of the certificate.
     :type url: str
-    :param state: Gets or sets the current state of the certificate. Possible
-     values include: 'active', 'deleting', 'deletefailed'
-    :type state: str
-    :param state_transition_time: Gets or sets the time at which the
-     certificate entered its current state.
+    :param state: The current state of the certificate. Possible values
+     include: 'active', 'deleting', 'deletefailed'
+    :type state: str or :class:`CertificateState
+     <azure.batch.models.CertificateState>`
+    :param state_transition_time: The time at which the certificate entered
+     its current state.
     :type state_transition_time: datetime
-    :param previous_state: Gets or sets the previous state of the
-     certificate. This property is not set if the certificate is in its
-     initial Active state. Possible values include: 'active', 'deleting',
-     'deletefailed'
-    :type previous_state: str
-    :param previous_state_transition_time: Gets or sets the time at which the
-     certificate entered its previous state.  This property is not set if the
-     certificate is in its initial Active state.
+    :param previous_state: The previous state of the certificate. This
+     property is not set if the certificate is in its initial Active state.
+     Possible values include: 'active', 'deleting', 'deletefailed'
+    :type previous_state: str or :class:`CertificateState
+     <azure.batch.models.CertificateState>`
+    :param previous_state_transition_time: The time at which the certificate
+     entered its previous state. This property is not set if the certificate
+     is in its initial Active state.
     :type previous_state_transition_time: datetime
-    :param public_data: Gets or sets the public part of the certificate as a
-     base-64 encoded .cer file.
+    :param public_data: The public part of the certificate as a base-64
+     encoded .cer file.
     :type public_data: str
-    :param delete_certificate_error: Gets or sets the error that occurred on
-     the last attempt to delete this certificate.  This property is set only
-     if the certificate is in the deletefailed state.
+    :param delete_certificate_error: The error that occurred on the last
+     attempt to delete this certificate. This property is set only if the
+     certificate is in the deletefailed state.
     :type delete_certificate_error: :class:`DeleteCertificateError
      <azure.batch.models.DeleteCertificateError>`
     """ 

@@ -26,9 +26,10 @@ class JobDisableParameter(Model):
     """
     Parameters for a CloudJobOperations.Disable request.
 
-    :param disable_tasks: Sets what to do with active tasks associated with
-     the job. Possible values include: 'requeue', 'terminate', 'wait'
-    :type disable_tasks: str
+    :param disable_tasks: What to do with active tasks associated with the
+     job. Possible values include: 'requeue', 'terminate', 'wait'
+    :type disable_tasks: str or :class:`DisableJobOption
+     <azure.batch.models.DisableJobOption>`
     """ 
 
     _validation = {

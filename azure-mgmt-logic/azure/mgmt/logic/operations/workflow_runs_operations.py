@@ -44,7 +44,7 @@ class WorkflowRunsOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, workflow_name, top=None, filter=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of workflow runs.
 
@@ -121,7 +121,7 @@ class WorkflowRunsOperations(object):
         return deserialized
 
     def get(
-            self, resource_group_name, workflow_name, run_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, run_name, custom_headers=None, raw=False, **operation_config):
         """
         Gets a workflow run.
 
@@ -185,7 +185,7 @@ class WorkflowRunsOperations(object):
         return deserialized
 
     def cancel(
-            self, resource_group_name, workflow_name, run_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, workflow_name, run_name, custom_headers=None, raw=False, **operation_config):
         """
         Cancels a workflow run.
 

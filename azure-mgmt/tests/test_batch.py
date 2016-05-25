@@ -58,13 +58,11 @@ def init_test_mode(working_folder):
         return TestMode.playback
 
 
-def create_mgmt_client(settings, configuration_class, client_class, **kwargs):
+def create_mgmt_client(settings, client_class, **kwargs):
     client = client_class(
-        configuration_class(
-            credentials=settings.get_credentials(),
-            subscription_id=settings.SUBSCRIPTION_ID,
-            **kwargs
-        )
+        credentials=settings.get_credentials(),
+        subscription_id=settings.SUBSCRIPTION_ID,
+        **kwargs
     )
     return client
 
@@ -112,8 +110,7 @@ def create_batch_account(client, settings, live):
     else:
         batch_creds = SharedKeyCredentials(AZURE_BATCH_ACCOUNT, 'ZmFrZV9hY29jdW50X2tleQ==')
     url = "https://{}.{}.batch.azure.com/".format(AZURE_BATCH_ACCOUNT, AZURE_LOCATION)
-    batch_config = azure.batch.BatchServiceClientConfiguration(batch_creds, base_url=url)
-    return azure.batch.BatchServiceClient(batch_config)
+    return azure.batch.BatchServiceClient(batch_creds, base_url=url)
 
 
 class BatchMgmtTestCase(RecordingTestCase):
@@ -137,17 +134,14 @@ class BatchMgmtTestCase(RecordingTestCase):
                 cls.live = True
             LOG.debug('    creating resource client')
             cls.resource_client = create_mgmt_client(cls.settings,
-                azure.mgmt.resource.resources.ResourceManagementClientConfiguration,
                 azure.mgmt.resource.resources.ResourceManagementClient
             )
             LOG.debug('    creating storage client')
             cls.storage_client = create_mgmt_client(cls.settings,
-                azure.mgmt.storage.StorageManagementClientConfiguration,
                 azure.mgmt.storage.StorageManagementClient
             )
             LOG.debug('    creating batch client')
             cls.batch_mgmt_client = create_mgmt_client(cls.settings,
-                azure.mgmt.batch.BatchManagementClientConfiguration,
                 azure.mgmt.batch.BatchManagementClient
             )
             if cls.live:
@@ -301,7 +295,7 @@ class BatchMgmtTestCase(RecordingTestCase):
 
         _m = "Test Sync AutoStorage Keys"
         LOG.debug(_m)
-        response = self.assertRuns(_e, _m, self.batch_mgmt_client.account.sync_auto_storage_keys,
+        response = self.assertRuns(_e, _m, self.batch_mgmt_client.account.synchronize_auto_storage_keys,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
         self.assertIsNone(_e, _m, response)
 
@@ -322,10 +316,14 @@ class BatchMgmtTestCase(RecordingTestCase):
         _e = {}
         _m = "Test Add Application"
         LOG.debug(_m)
-        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application,
+        application = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id',
                                    allow_updated=True, display_name='my_application_name')
-        self.assertIsNone(_e, _m, response)
+        self.assertIsInstance(application, azure.mgmt.batch.models.Application)
+        if application:
+            self.assertEqual(_e, _m, application.id, 'my_application_id')
+            self.assertEqual(_e, _m, application.display_name, 'my_application_name')
+            self.assertEqual(_e, _m, application.allow_updates, True)
 
         _m = "Test Mgmt Get Application"
         LOG.debug(_m)

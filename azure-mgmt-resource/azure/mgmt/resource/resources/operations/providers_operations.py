@@ -44,7 +44,7 @@ class ProvidersOperations(object):
         self.config = config
 
     def unregister(
-            self, resource_provider_namespace, custom_headers={}, raw=False, **operation_config):
+            self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
         """
         Unregisters provider from a subscription.
 
@@ -104,7 +104,7 @@ class ProvidersOperations(object):
         return deserialized
 
     def register(
-            self, resource_provider_namespace, custom_headers={}, raw=False, **operation_config):
+            self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
         """
         Registers provider to be used with a subscription.
 
@@ -164,7 +164,7 @@ class ProvidersOperations(object):
         return deserialized
 
     def list(
-            self, top=None, custom_headers={}, raw=False, **operation_config):
+            self, top=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets a list of resource providers.
 
@@ -232,7 +232,7 @@ class ProvidersOperations(object):
         return deserialized
 
     def get(
-            self, resource_provider_namespace, custom_headers={}, raw=False, **operation_config):
+            self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
         """
         Gets a resource provider.
 

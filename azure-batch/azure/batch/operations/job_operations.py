@@ -43,7 +43,7 @@ class JobOperations(object):
         self.config = config
 
     def get_all_jobs_lifetime_statistics(
-            self, job_get_all_jobs_lifetime_statistics_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_get_all_jobs_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets lifetime summary statistics for all of the jobs in the specified
         account. Statistics are aggregated across all jobs that have ever
@@ -129,7 +129,7 @@ class JobOperations(object):
         return deserialized
 
     def delete(
-            self, job_id, job_delete_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, job_delete_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a job.
 
@@ -225,7 +225,7 @@ class JobOperations(object):
             return client_raw_response
 
     def get(
-            self, job_id, job_get_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, job_get_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the specified job.
 
@@ -322,7 +322,7 @@ class JobOperations(object):
         return deserialized
 
     def patch(
-            self, job_id, job_patch_parameter, job_patch_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, job_patch_parameter, job_patch_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Updates the properties of a job.
 
@@ -428,7 +428,7 @@ class JobOperations(object):
             return client_raw_response
 
     def update(
-            self, job_id, job_update_parameter, job_update_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, job_update_parameter, job_update_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Updates the properties of a job.
 
@@ -534,15 +534,16 @@ class JobOperations(object):
             return client_raw_response
 
     def disable(
-            self, job_id, disable_tasks, job_disable_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, disable_tasks, job_disable_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Disables the specified job, preventing new tasks from running.
 
         :param job_id: The id of the job to disable.
         :type job_id: str
-        :param disable_tasks: Sets what to do with active tasks associated
-         with the job. Possible values include: 'requeue', 'terminate', 'wait'
-        :type disable_tasks: str
+        :param disable_tasks: What to do with active tasks associated with
+         the job. Possible values include: 'requeue', 'terminate', 'wait'
+        :type disable_tasks: str or :class:`DisableJobOption
+         <azure.batch.models.DisableJobOption>`
         :param job_disable_options: Additional parameters for the operation
         :type job_disable_options: :class:`JobDisableOptions
          <azure.batch.models.JobDisableOptions>`
@@ -641,7 +642,7 @@ class JobOperations(object):
             return client_raw_response
 
     def enable(
-            self, job_id, job_enable_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, job_enable_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Enables the specified job, allowing new tasks to run.
 
@@ -740,7 +741,7 @@ class JobOperations(object):
             return client_raw_response
 
     def terminate(
-            self, job_id, job_terminate_options=None, terminate_reason=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, job_terminate_options=None, terminate_reason=None, custom_headers=None, raw=False, **operation_config):
         """
         Terminates the specified job, marking it as completed.
 
@@ -749,8 +750,8 @@ class JobOperations(object):
         :param job_terminate_options: Additional parameters for the operation
         :type job_terminate_options: :class:`JobTerminateOptions
          <azure.batch.models.JobTerminateOptions>`
-        :param terminate_reason: Sets the text you want to appear as the
-         job's TerminateReason. The default is 'UserTerminate'.
+        :param terminate_reason: The text you want to appear as the job's
+         TerminateReason. The default is 'UserTerminate'.
         :type terminate_reason: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -852,11 +853,11 @@ class JobOperations(object):
             return client_raw_response
 
     def add(
-            self, job, job_add_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job, job_add_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Adds a job to the specified account.
 
-        :param job: Specifies the job to be added.
+        :param job: The job to be added.
         :type job: :class:`JobAddParameter
          <azure.batch.models.JobAddParameter>`
         :param job_add_options: Additional parameters for the operation
@@ -932,7 +933,7 @@ class JobOperations(object):
             return client_raw_response
 
     def list(
-            self, job_list_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_list_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists all of the jobs in the specified account.
 
@@ -1032,7 +1033,7 @@ class JobOperations(object):
         return deserialized
 
     def list_from_job_schedule(
-            self, job_schedule_id, job_list_from_job_schedule_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_id, job_list_from_job_schedule_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists the jobs that have been created under the specified job schedule.
 
@@ -1141,7 +1142,7 @@ class JobOperations(object):
         return deserialized
 
     def list_preparation_and_release_task_status(
-            self, job_id, job_list_preparation_and_release_task_status_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_id, job_list_preparation_and_release_task_status_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists the execution status of the Job Preparation and Job Release task
         for the specified job across the compute nodes where the job has run.

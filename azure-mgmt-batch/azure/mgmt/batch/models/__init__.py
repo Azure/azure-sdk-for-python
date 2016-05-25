@@ -20,7 +20,6 @@
 # --------------------------------------------------------------------------
 
 from .auto_storage_base_properties import AutoStorageBaseProperties
-from .account_base_properties import AccountBaseProperties
 from .batch_account_create_parameters import BatchAccountCreateParameters
 from .auto_storage_properties import AutoStorageProperties
 from .account_resource import AccountResource
@@ -47,7 +46,6 @@ from .batch_management_client_enums import (
 
 __all__ = [
     'AutoStorageBaseProperties',
-    'AccountBaseProperties',
     'BatchAccountCreateParameters',
     'AutoStorageProperties',
     'AccountResource',

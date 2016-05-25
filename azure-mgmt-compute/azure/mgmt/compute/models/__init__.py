@@ -93,6 +93,16 @@ from .inner_error import InnerError
 from .api_error import ApiError
 from .compute_long_running_operation_properties import ComputeLongRunningOperationProperties
 from .resource import Resource
+from .container_service_orchestrator_profile import ContainerServiceOrchestratorProfile
+from .container_service_master_profile import ContainerServiceMasterProfile
+from .container_service_agent_pool_profile import ContainerServiceAgentPoolProfile
+from .container_service_windows_profile import ContainerServiceWindowsProfile
+from .container_service_linux_profile import ContainerServiceLinuxProfile
+from .container_service_ssh_configuration import ContainerServiceSshConfiguration
+from .container_service_ssh_public_key import ContainerServiceSshPublicKey
+from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
+from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
+from .container_service import ContainerService
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .usage_paged import UsagePaged
@@ -100,6 +110,7 @@ from .virtual_machine_paged import VirtualMachinePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
 from .virtual_machine_scale_set_vm_paged import VirtualMachineScaleSetVMPaged
+from .container_service_paged import ContainerServicePaged
 from .compute_management_client_enums import (
     StatusLevelTypes,
     OperatingSystemTypes,
@@ -113,6 +124,8 @@ from .compute_management_client_enums import (
     UpgradeMode,
     VirtualMachineScaleSetSkuScaleType,
     InstanceViewTypes,
+    ContainerServiceOchestratorTypes,
+    ContainerServiceVMSizeTypes,
 )
 
 __all__ = [
@@ -190,6 +203,16 @@ __all__ = [
     'ApiError',
     'ComputeLongRunningOperationProperties',
     'Resource',
+    'ContainerServiceOrchestratorProfile',
+    'ContainerServiceMasterProfile',
+    'ContainerServiceAgentPoolProfile',
+    'ContainerServiceWindowsProfile',
+    'ContainerServiceLinuxProfile',
+    'ContainerServiceSshConfiguration',
+    'ContainerServiceSshPublicKey',
+    'ContainerServiceDiagnosticsProfile',
+    'ContainerServiceVMDiagnostics',
+    'ContainerService',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'UsagePaged',
@@ -197,6 +220,7 @@ __all__ = [
     'VirtualMachineScaleSetPaged',
     'VirtualMachineScaleSetSkuPaged',
     'VirtualMachineScaleSetVMPaged',
+    'ContainerServicePaged',
     'StatusLevelTypes',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
@@ -209,4 +233,6 @@ __all__ = [
     'UpgradeMode',
     'VirtualMachineScaleSetSkuScaleType',
     'InstanceViewTypes',
+    'ContainerServiceOchestratorTypes',
+    'ContainerServiceVMSizeTypes',
 ]

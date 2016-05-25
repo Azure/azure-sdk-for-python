@@ -24,19 +24,19 @@ from msrest.serialization import Model
 
 class CloudServiceConfiguration(Model):
     """
-    The configuration of cloud service for a pool.
+    The configuration for nodes in a pool based on the Azure Cloud Services
+    platform.
 
-    :param os_family: Gets or sets the Azure Guest OS family to be installed
-     on the virtual machines in the pool.
+    :param os_family: The Azure Guest OS family to be installed on the
+     virtual machines in the pool.
     :type os_family: str
-    :param target_os_version: Gets or sets the Azure Guest OS version to be
-     installed on the virtual machines in the pool. The default value is *
-     which specifies the latest operating system version for the specified OS
-     family.
+    :param target_os_version: The Azure Guest OS version to be installed on
+     the virtual machines in the pool. The default value is * which specifies
+     the latest operating system version for the specified OS family.
     :type target_os_version: str
-    :param current_os_version: Gets or sets the Azure Guest OS Version
-     currently installed on the virtual machines in the pool. This may differ
-     from TargetOSVersion if the pool state is Upgrading.
+    :param current_os_version: The Azure Guest OS Version currently installed
+     on the virtual machines in the pool. This may differ from
+     TargetOSVersion if the pool state is Upgrading.
     :type current_os_version: str
     """ 
 

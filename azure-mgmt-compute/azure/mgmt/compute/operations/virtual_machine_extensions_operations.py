@@ -45,7 +45,7 @@ class VirtualMachineExtensionsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, vm_extension_name, extension_parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
         """
         The operation to create or update the extension.
 
@@ -60,6 +60,8 @@ class VirtualMachineExtensionsOperations(object):
          Virtual Machine Extension operation.
         :type extension_parameters: :class:`VirtualMachineExtension
          <azure.mgmt.compute.models.VirtualMachineExtension>`
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -82,7 +84,7 @@ class VirtualMachineExtensionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -104,10 +106,11 @@ class VirtualMachineExtensionsOperations(object):
             return self._client.send(
                 request, header_parameters, body_content, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -143,7 +146,7 @@ class VirtualMachineExtensionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, resource_group_name, vm_name, vm_extension_name, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, vm_extension_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
         """
         The operation to delete the extension.
 
@@ -154,6 +157,8 @@ class VirtualMachineExtensionsOperations(object):
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension.
         :type vm_extension_name: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -175,7 +180,7 @@ class VirtualMachineExtensionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -193,10 +198,11 @@ class VirtualMachineExtensionsOperations(object):
             request = self._client.delete(url, query_parameters)
             return self._client.send(request, header_parameters, **operation_config)
 
-        def get_long_running_status(status_link, headers={}):
+        def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
-            request.headers.update(headers)
+            if headers:
+                request.headers.update(headers)
             return self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -223,7 +229,7 @@ class VirtualMachineExtensionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, vm_name, vm_extension_name, expand=None, custom_headers={}, raw=False, **operation_config):
+            self, resource_group_name, vm_name, vm_extension_name, api_version="2016-03-30", expand=None, custom_headers=None, raw=False, **operation_config):
         """
         The operation to get the extension.
 
@@ -234,6 +240,8 @@ class VirtualMachineExtensionsOperations(object):
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension.
         :type vm_extension_name: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param expand: The expand expression to apply on the operation.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -260,7 +268,7 @@ class VirtualMachineExtensionsOperations(object):
         query_parameters = {}
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}

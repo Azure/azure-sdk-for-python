@@ -43,7 +43,7 @@ class OperationsOperations(object):
         self.config = config
 
     def list(
-            self, custom_headers={}, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """
         Lists all of the available CDN REST API operations.
 

@@ -19,13 +19,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .graph_rbac_management_client import GraphRbacManagementClient, GraphRbacManagementClientConfiguration
+from .graph_rbac_management_client import GraphRbacManagementClient
 from .version import VERSION
 
-__all__ = [
-    'GraphRbacManagementClient',
-    'GraphRbacManagementClientConfiguration'
-]
+__all__ = ['GraphRbacManagementClient']
 
 __version__ = VERSION
 

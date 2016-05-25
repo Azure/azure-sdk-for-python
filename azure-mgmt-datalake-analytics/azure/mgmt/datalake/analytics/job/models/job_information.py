@@ -35,7 +35,8 @@ class JobInformation(Model):
     :type name: str
     :param type: Gets or sets the job type of the current job (Hive or USql).
      Possible values include: 'USql', 'Hive'
-    :type type: str
+    :type type: str or :class:`JobType
+     <azure.mgmt.datalake.analytics.job.models.JobType>`
     :param submitter: Gets or sets the user or account that submitted the job.
     :type submitter: str
     :ivar error_message: Gets the error message details for the job, if the
@@ -59,11 +60,13 @@ class JobInformation(Model):
      refer to Result and ErrorMessage for details. Possible values include:
      'Accepted', 'Compiling', 'Ended', 'New', 'Queued', 'Running',
      'Scheduling', 'Starting', 'Paused', 'WaitingForCapacity'
-    :vartype state: str
+    :vartype state: str or :class:`JobState
+     <azure.mgmt.datalake.analytics.job.models.JobState>`
     :ivar result: Gets the result of job execution or the current result of
      the running job. Possible values include: 'None', 'Succeeded',
      'Cancelled', 'Failed'
-    :vartype result: str
+    :vartype result: str or :class:`JobResult
+     <azure.mgmt.datalake.analytics.job.models.JobResult>`
     :ivar state_audit_records: Gets the job state audit records, indicating
      when various operations have been performed on this job.
     :vartype state_audit_records: list of :class:`JobStateAuditRecord

@@ -43,7 +43,7 @@ class JobScheduleOperations(object):
         self.config = config
 
     def exists(
-            self, job_schedule_id, job_schedule_exists_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_id, job_schedule_exists_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Checks the specified job schedule exists.
 
@@ -63,9 +63,6 @@ class JobScheduleOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        select = None
-        if job_schedule_exists_options is not None:
-            select = job_schedule_exists_options.select
         timeout = None
         if job_schedule_exists_options is not None:
             timeout = job_schedule_exists_options.timeout
@@ -101,8 +98,6 @@ class JobScheduleOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -150,7 +145,7 @@ class JobScheduleOperations(object):
         return deserialized
 
     def delete(
-            self, job_schedule_id, job_schedule_delete_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_id, job_schedule_delete_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Deletes a job schedule from the specified account.
 
@@ -247,7 +242,7 @@ class JobScheduleOperations(object):
             return client_raw_response
 
     def get(
-            self, job_schedule_id, job_schedule_get_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_id, job_schedule_get_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Gets information about the specified job schedule.
 
@@ -366,7 +361,7 @@ class JobScheduleOperations(object):
         return deserialized
 
     def patch(
-            self, job_schedule_id, job_schedule_patch_parameter, job_schedule_patch_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_id, job_schedule_patch_parameter, job_schedule_patch_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Updates the properties of the specified job schedule.
 
@@ -473,7 +468,7 @@ class JobScheduleOperations(object):
             return client_raw_response
 
     def update(
-            self, job_schedule_id, job_schedule_update_parameter, job_schedule_update_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_id, job_schedule_update_parameter, job_schedule_update_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Updates the properties of the specified job schedule.
 
@@ -581,7 +576,7 @@ class JobScheduleOperations(object):
             return client_raw_response
 
     def disable(
-            self, job_schedule_id, job_schedule_disable_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_id, job_schedule_disable_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Disables a job schedule.
 
@@ -681,7 +676,7 @@ class JobScheduleOperations(object):
             return client_raw_response
 
     def enable(
-            self, job_schedule_id, job_schedule_enable_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_id, job_schedule_enable_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Enables a job schedule.
 
@@ -781,7 +776,7 @@ class JobScheduleOperations(object):
             return client_raw_response
 
     def terminate(
-            self, job_schedule_id, job_schedule_terminate_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_id, job_schedule_terminate_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Terminates a job schedule.
 
@@ -882,11 +877,11 @@ class JobScheduleOperations(object):
             return client_raw_response
 
     def add(
-            self, cloud_job_schedule, job_schedule_add_options=None, custom_headers={}, raw=False, **operation_config):
+            self, cloud_job_schedule, job_schedule_add_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Adds a job schedule to the specified account.
 
-        :param cloud_job_schedule: Specifies the job schedule to be added.
+        :param cloud_job_schedule: The job schedule to be added.
         :type cloud_job_schedule: :class:`JobScheduleAddParameter
          <azure.batch.models.JobScheduleAddParameter>`
         :param job_schedule_add_options: Additional parameters for the
@@ -963,7 +958,7 @@ class JobScheduleOperations(object):
             return client_raw_response
 
     def list(
-            self, job_schedule_list_options=None, custom_headers={}, raw=False, **operation_config):
+            self, job_schedule_list_options=None, custom_headers=None, raw=False, **operation_config):
         """
         Lists all of the job schedules in the specified account.
 

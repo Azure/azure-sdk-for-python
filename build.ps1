@@ -11,6 +11,7 @@ $packages = @(
     "azure-mgmt-authorization",
     "azure-mgmt-batch",
     "azure-mgmt-cdn",
+    "azure-mgmt-commerce",
     "azure-mgmt-compute",
     "azure-mgmt-logic",
     "azure-mgmt-network",

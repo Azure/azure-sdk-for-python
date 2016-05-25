@@ -26,7 +26,6 @@ class MgmtSchedulerTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtSchedulerTest, self).setUp()
         self.scheduler_client = self.create_mgmt_client(
-            azure.mgmt.scheduler.SchedulerManagementClientConfiguration,
             azure.mgmt.scheduler.SchedulerManagementClient
         )
 

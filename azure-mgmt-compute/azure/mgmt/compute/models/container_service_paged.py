@@ -19,21 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ApplicationListResult(Model):
+class ContainerServicePaged(Paged):
     """
-    Role assignment list operation result.
-
-    :param value: Application list.
-    :type value: list of :class:`Application
-     <azure.graphrbac.models.Application>`
-    """ 
+    A paging container for iterating over a list of ContainerService object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Application]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ContainerService]'}
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(ContainerServicePaged, self).__init__(*args, **kwargs)

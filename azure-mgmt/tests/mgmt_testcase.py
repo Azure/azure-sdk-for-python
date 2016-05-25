@@ -15,7 +15,7 @@
 import json
 import os.path
 import time
-import azure.mgmt.resource.resources
+import azure.mgmt.resource
 
 from azure.common.exceptions import (
     CloudError
@@ -58,8 +58,7 @@ class AzureMgmtTestCase(RecordingTestCase):
             self.settings = real_settings
 
         self.resource_client = self.create_mgmt_client(
-            azure.mgmt.resource.resources.ResourceManagementClientConfiguration,
-            azure.mgmt.resource.resources.ResourceManagementClient
+            azure.mgmt.resource.ResourceManagementClient
         )
 
         # Every test uses a different resource group name calculated from its
@@ -90,20 +89,17 @@ class AzureMgmtTestCase(RecordingTestCase):
             self.delete_resource_group(wait_timeout=None)
         return super(AzureMgmtTestCase, self).tearDown()
 
-    def create_basic_client(self, configuration_class, client_class, **kwargs):
+    def create_basic_client(self, client_class, **kwargs):
         client = client_class(
-            configuration_class(
-                credentials=self.settings.get_credentials(),
-                **kwargs
-            )
+            credentials=self.settings.get_credentials(),
+            **kwargs
         )
         if self.is_playback():
             client.config.long_running_operation_timeout = 0
         return client
 
-    def create_mgmt_client(self, configuration_class, client_class, **kwargs):
+    def create_mgmt_client(self, client_class, **kwargs):
         return self.create_basic_client(
-            configuration_class,
             client_class,
             subscription_id=self.settings.SUBSCRIPTION_ID,
             **kwargs
@@ -119,13 +115,11 @@ class AzureMgmtTestCase(RecordingTestCase):
         return val
 
     def create_resource_group(self):
-        group = azure.mgmt.resource.resources.models.ResourceGroup(
-            name=self.group_name,
-            location=self.region
-        )
         result = self.resource_client.resource_groups.create_or_update(
             self.group_name,
-            group,
+            {
+                'location': self.region
+            }
         )
 
     def delete_resource_group(self, wait_timeout):

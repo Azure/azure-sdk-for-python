@@ -26,9 +26,9 @@ class RecentJob(Model):
     """
     Information about the most recent job to run under the job schedule.
 
-    :param id: Gets or sets the id of the job.
+    :param id: The id of the job.
     :type id: str
-    :param url: Gets or sets the URL of the job.
+    :param url: The URL of the job.
     :type url: str
     """ 
 

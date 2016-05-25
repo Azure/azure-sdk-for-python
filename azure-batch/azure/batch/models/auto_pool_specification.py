@@ -28,18 +28,19 @@ class AutoPoolSpecification(Model):
     will create this auto pool, run all the tasks for the job on it, and will
     delete the pool once the job has completed.
 
-    :param auto_pool_id_prefix: Gets or sets a prefix to be added to the
-     unique identifier when a pool is automatically created. The prefix can
-     be up to 20 characters long.
+    :param auto_pool_id_prefix: A prefix to be added to the unique identifier
+     when a pool is automatically created. The prefix can be up to 20
+     characters long.
     :type auto_pool_id_prefix: str
-    :param pool_lifetime_option: Gets or sets the minimum lifetime of created
-     auto pools, and how multiple jobs on a schedule are assigned to pools.
-     Possible values include: 'jobschedule', 'job', 'unmapped'
-    :type pool_lifetime_option: str
-    :param keep_alive: Gets or sets whether to keep an auto pool alive after
-     its lifetime expires.
+    :param pool_lifetime_option: The minimum lifetime of created auto pools,
+     and how multiple jobs on a schedule are assigned to pools. Possible
+     values include: 'jobschedule', 'job', 'unmapped'
+    :type pool_lifetime_option: str or :class:`PoolLifetimeOption
+     <azure.batch.models.PoolLifetimeOption>`
+    :param keep_alive: Whether to keep an auto pool alive after its lifetime
+     expires.
     :type keep_alive: bool
-    :param pool: Gets or sets the pool specification for the auto pool.
+    :param pool: The pool specification for the auto pool.
     :type pool: :class:`PoolSpecification
      <azure.batch.models.PoolSpecification>`
     """ 

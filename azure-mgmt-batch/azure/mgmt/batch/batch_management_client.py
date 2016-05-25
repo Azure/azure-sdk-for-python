@@ -37,9 +37,9 @@ class BatchManagementClientConfiguration(AzureConfiguration):
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify a Microsoft Azure subscription. The subscription id forms part
-     of the URI for every service call.
+    :param subscription_id: A unique identifier of a Microsoft Azure
+     subscription. The subscription id forms part of the URI for every
+     service call.
     :type subscription_id: str
     :param api_version: Client API Version.
     :type api_version: str
@@ -89,8 +89,8 @@ class BatchManagementClientConfiguration(AzureConfiguration):
 class BatchManagementClient(object):
     """BatchManagementClient
 
-    :param config: Configuration for client.
-    :type config: BatchManagementClientConfiguration
+    :ivar config: Configuration for client.
+    :vartype config: BatchManagementClientConfiguration
 
     :ivar account: Account operations
     :vartype account: .operations.AccountOperations
@@ -98,17 +98,40 @@ class BatchManagementClient(object):
     :vartype application: .operations.ApplicationOperations
     :ivar subscription: Subscription operations
     :vartype subscription: .operations.SubscriptionOperations
+
+    :param credentials: Gets Azure subscription credentials.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
+    :param subscription_id: A unique identifier of a Microsoft Azure
+     subscription. The subscription id forms part of the URI for every
+     service call.
+    :type subscription_id: str
+    :param api_version: Client API Version.
+    :type api_version: str
+    :param accept_language: Gets or sets the preferred language for the
+     response.
+    :type accept_language: str
+    :param long_running_operation_retry_timeout: Gets or sets the retry
+     timeout in seconds for Long Running Operations. Default value is 30.
+    :type long_running_operation_retry_timeout: int
+    :param generate_client_request_id: When set to true a unique
+     x-ms-client-request-id value is generated and included in each request.
+     Default is true.
+    :type generate_client_request_id: bool
+    :param str base_url: Service URL
+    :param str filepath: Existing config
     """
 
-    def __init__(self, config):
+    def __init__(
+            self, credentials, subscription_id, api_version='2015-12-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
-        self._client = ServiceClient(config.credentials, config)
+        self.config = BatchManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer()
+        self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.config = config
         self.account = AccountOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.application = ApplicationOperations(

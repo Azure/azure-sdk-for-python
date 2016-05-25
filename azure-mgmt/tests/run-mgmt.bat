@@ -32,6 +32,7 @@ set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-common
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-authorization
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-batch
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-cdn
+set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-commerce
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-compute
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-logic
 set PYTHONPATH=%PYTHONPATH%;..\..\azure-mgmt-network

@@ -26,21 +26,20 @@ class JobPatchParameter(Model):
     """
     Parameters for a CloudJobOperations.Patch request.
 
-    :param priority: Sets the priority of the job. Priority values can range
-     from -1000 to 1000, with -1000 being the lowest priority and 1000 being
-     the highest priority. If omitted, the priority of the job is left
-     unchanged.
+    :param priority: The priority of the job. Priority values can range from
+     -1000 to 1000, with -1000 being the lowest priority and 1000 being the
+     highest priority. If omitted, the priority of the job is left unchanged.
     :type priority: int
-    :param constraints: Sets the execution constraints for the job. If
-     omitted, the existing execution constraints are left unchanged.
+    :param constraints: The execution constraints for the job. If omitted,
+     the existing execution constraints are left unchanged.
     :type constraints: :class:`JobConstraints
      <azure.batch.models.JobConstraints>`
-    :param pool_info: Sets the pool on which the Batch service runs the job's
+    :param pool_info: The pool on which the Batch service runs the job's
      tasks. If omitted, the job continues to run on its current pool.
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
-    :param metadata: Sets a list of name-value pairs associated with the job
-     as metadata. If omitted, the existing job metadata is left unchanged.
+    :param metadata: A list of name-value pairs associated with the job as
+     metadata. If omitted, the existing job metadata is left unchanged.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
     """ 

@@ -46,10 +46,12 @@ class Profile(TrackedResource):
     :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
     :ivar resource_state: Resource status of the profile. Possible values
      include: 'Creating', 'Active', 'Deleting', 'Disabled'
-    :vartype resource_state: str
+    :vartype resource_state: str or :class:`ProfileResourceState
+     <azure.mgmt.cdn.models.ProfileResourceState>`
     :param provisioning_state: Provisioning status of the profile. Possible
      values include: 'Creating', 'Succeeded', 'Failed'
-    :type provisioning_state: str
+    :type provisioning_state: str or :class:`ProvisioningState
+     <azure.mgmt.cdn.models.ProvisioningState>`
     """ 
 
     _validation = {
@@ -67,7 +69,7 @@ class Profile(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'ProfileResourceState'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
     }

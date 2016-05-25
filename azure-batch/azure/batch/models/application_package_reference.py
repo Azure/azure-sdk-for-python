@@ -27,10 +27,10 @@ class ApplicationPackageReference(Model):
     A reference to an application package to be installed on compute nodes in
     a pool.
 
-    :param application_id: Gets or sets the application package id.
+    :param application_id: The id of the application to install.
     :type application_id: str
-    :param version: Gets or sets the application package version. If not
-     specified, the default is used.
+    :param version: The version of the application to install. If omitted,
+     the default version is installed.
     :type version: str
     """ 
 

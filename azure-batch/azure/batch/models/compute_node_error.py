@@ -26,14 +26,14 @@ class ComputeNodeError(Model):
     """
     An error encountered by a compute node.
 
-    :param code: Gets or sets an identifier for the compute node error.
-     Codes are invariant and are intended to be consumed programmatically.
+    :param code: An identifier for the compute node error. Codes are
+     invariant and are intended to be consumed programmatically.
     :type code: str
-    :param message: Gets or sets a message describing the compute node error,
-     intended to be suitable for display in a user interface.
+    :param message: A message describing the compute node error, intended to
+     be suitable for display in a user interface.
     :type message: str
-    :param error_details: Gets or sets the list of additional error details
-     related to the compute node error.
+    :param error_details: The list of additional error details related to the
+     compute node error.
     :type error_details: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
     """ 
