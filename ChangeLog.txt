@@ -43,6 +43,14 @@ can now be written directly:
         }
     )
 
+* All Resources clients have now alias in the azure.mgmt.resource namespace:
+
+    azure.mgmt.resource.FeatureClient
+    azure.mgmt.resource.ManagementLockClient
+    azure.mgmt.resource.PolicyClient
+    azure.mgmt.resource.ResourceManagementClient
+    azure.mgmt.resource.SubscriptionClient
+
 * Enum refactoring. There are now two kinds of enum: "strict" and "soft".
 A "soft" enum can be substituted by any random string without risking a client-side exception. This is useful for
 services which might add new enum types frequently (e.g. VirtualMachine size). The server might decide to refuse our string and
