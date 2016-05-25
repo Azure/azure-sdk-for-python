@@ -15,7 +15,7 @@
 import json
 import os.path
 import time
-import azure.mgmt.resource.resources
+import azure.mgmt.resource
 
 from azure.common.exceptions import (
     CloudError
@@ -58,7 +58,7 @@ class AzureMgmtTestCase(RecordingTestCase):
             self.settings = real_settings
 
         self.resource_client = self.create_mgmt_client(
-            azure.mgmt.resource.resources.ResourceManagementClient
+            azure.mgmt.resource.ResourceManagementClient
         )
 
         # Every test uses a different resource group name calculated from its
@@ -115,13 +115,11 @@ class AzureMgmtTestCase(RecordingTestCase):
         return val
 
     def create_resource_group(self):
-        group = azure.mgmt.resource.resources.models.ResourceGroup(
-            name=self.group_name,
-            location=self.region
-        )
         result = self.resource_client.resource_groups.create_or_update(
             self.group_name,
-            group,
+            {
+                'location': self.region
+            }
         )
 
     def delete_resource_group(self, wait_timeout):
