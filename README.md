@@ -1,5 +1,5 @@
 
-# Microsoft Azure SDK for Ruby - Resource Management
+# Microsoft Azure SDK for Ruby - Resource Management (preview)
 [![Build Status](https://travis-ci.org/Azure/azure-sdk-ruby.png?branch=master)](https://travis-ci.org/Azure/azure-sdk-ruby) [![Code Climate](https://codeclimate.com/github/Azure/azure-sdk-ruby/badges/gpa.svg)](https://codeclimate.com/github/Azure/azure-sdk-ruby)
 
 This project provides a Ruby package for Azure Resource Management (ARM).
@@ -62,7 +62,7 @@ gem 'azure_mgmt_network'
 ```
 
 Be aware the Azure Resource Manager Ruby SDK is in preview and will likely have breaking interface changes in upcoming
-releases.
+releases. An increased number in Minor version may indicate breaking changes. 
 
 ### Authentication
 
