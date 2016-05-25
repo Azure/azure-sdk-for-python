@@ -175,6 +175,7 @@ Indices and tables
   resourcemanagement
   resourcemanagementauthentication
   resourcemanagamentauthorization
+  resourcemanagementcommerce
   resourcemanagementcdn
   resourcemanagementapps
   resourcemanagementstorage
