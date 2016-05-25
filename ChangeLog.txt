@@ -57,6 +57,7 @@ a `CloudError` if the server refused the request.
 * Latest Swagger update for CDN (API-version 2016-04-02)
 * New Resource Policy client
 * New Compute Container client
+* New azure-mgmt-commerce preview package for Billing API
 
 Dependencies:
 * msrest must be >= 0.4.0 (see their ChangeLog for details)

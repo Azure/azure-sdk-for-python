@@ -37,6 +37,13 @@
       },
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
+    "commerce": {
+      "swagger": "arm-commerce/2015-06-01-preview/swagger/commerce.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.commerce"
+      },
+      "output_dir": "azure-mgmt-commerce/azure/mgmt/commerce"
+    },
     "compute": {
       "swagger": "arm-compute/compositeComputeClient.json",
       "autorest_options": {
