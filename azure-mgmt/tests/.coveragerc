@@ -6,6 +6,7 @@ source =
         ../../azure-mgmt-batch/azure
         ../../azure-mgmt-cdn/azure
         ../../azure-mgmt-compute/azure
+        ../../azure-mgmt-commerce/azure
         ../../azure-mgmt-logic/azure
         ../../azure-mgmt-network/azure
         ../../azure-mgmt-notificationhubs/azure
