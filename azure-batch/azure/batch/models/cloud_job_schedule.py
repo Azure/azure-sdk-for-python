@@ -43,7 +43,7 @@ class CloudJobSchedule(Model):
     :param state: The current state of the job schedule. Possible values
      include: 'active', 'completed', 'disabled', 'terminating', 'deleting'
     :type state: str or :class:`JobScheduleState
-     <azure.batch.models.JobScheduleState>`
+     <batchserviceclient.models.JobScheduleState>`
     :param state_transition_time: The time at which the job schedule entered
      the current state.
     :type state_transition_time: datetime
@@ -51,7 +51,7 @@ class CloudJobSchedule(Model):
      values include: 'active', 'completed', 'disabled', 'terminating',
      'deleting'
     :type previous_state: str or :class:`JobScheduleState
-     <azure.batch.models.JobScheduleState>`
+     <batchserviceclient.models.JobScheduleState>`
     :param previous_state_transition_time: The time at which the job schedule
      entered its previous state.
     :type previous_state_transition_time: datetime

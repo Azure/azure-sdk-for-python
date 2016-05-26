@@ -31,11 +31,11 @@ class ExpressRouteCircuitPeering(SubResource):
     :param peering_type: Gets or sets PeeringType. Possible values include:
      'AzurePublicPeering', 'AzurePrivatePeering', 'MicrosoftPeering'
     :type peering_type: str or :class:`ExpressRouteCircuitPeeringType
-     <azure.mgmt.network.models.ExpressRouteCircuitPeeringType>`
+     <networkmanagementclient.models.ExpressRouteCircuitPeeringType>`
     :param state: Gets or sets state of Peering. Possible values include:
      'Disabled', 'Enabled'
     :type state: str or :class:`ExpressRouteCircuitPeeringState
-     <azure.mgmt.network.models.ExpressRouteCircuitPeeringState>`
+     <networkmanagementclient.models.ExpressRouteCircuitPeeringState>`
     :param azure_asn: Gets or sets the azure ASN
     :type azure_asn: int
     :param peer_asn: Gets or sets the peer ASN

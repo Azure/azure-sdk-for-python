@@ -114,7 +114,7 @@ class DataLakeAnalyticsJobManagementClient(object):
     def __init__(
             self, credentials, adla_job_dns_suffix, api_version='2015-11-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
 
-        self.config = DataLakeAnalyticsJobManagementClientConfiguration(credentials, adla_job_dns_suffix, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, filepath)
+        self.config = DataLakeAnalyticsJobManagementClientConfiguration(credentials, api_version, adla_job_dns_suffix, accept_language, long_running_operation_retry_timeout, generate_client_request_id, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

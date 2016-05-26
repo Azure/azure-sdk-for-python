@@ -32,16 +32,16 @@ class AdditionalUnattendContent(Model):
     :param pass_name: Gets or sets the pass name. Currently, the only
      allowable value is oobeSystem. Possible values include: 'oobeSystem'
     :type pass_name: str or :class:`PassNames
-     <azure.mgmt.compute.models.PassNames>`
+     <computemanagementclient.models.PassNames>`
     :param component_name: Gets or sets the component name. Currently, the
      only allowable value is Microsoft-Windows-Shell-Setup. Possible values
      include: 'Microsoft-Windows-Shell-Setup'
     :type component_name: str or :class:`ComponentNames
-     <azure.mgmt.compute.models.ComponentNames>`
+     <computemanagementclient.models.ComponentNames>`
     :param setting_name: Gets or sets setting name (e.g. FirstLogonCommands,
      AutoLogon ). Possible values include: 'AutoLogon', 'FirstLogonCommands'
     :type setting_name: str or :class:`SettingNames
-     <azure.mgmt.compute.models.SettingNames>`
+     <computemanagementclient.models.SettingNames>`
     :param content: Gets or sets XML formatted content that is added to the
      unattend.xml file in the specified pass and component.The XML must be
      less than 4 KB and must include the root element for the setting or

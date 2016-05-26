@@ -31,7 +31,7 @@ class ApplicationGatewayProbe(SubResource):
     :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
-     <azure.mgmt.network.models.ApplicationGatewayProtocol>`
+     <networkmanagementclient.models.ApplicationGatewayProtocol>`
     :param host: Gets or sets the host to send probe to
     :type host: str
     :param path: Gets or sets the relative path of probe

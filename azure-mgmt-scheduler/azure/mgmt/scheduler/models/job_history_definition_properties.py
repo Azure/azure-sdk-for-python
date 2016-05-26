@@ -38,11 +38,11 @@ class JobHistoryDefinitionProperties(Model):
     :ivar action_name: Gets the job history action name. Possible values
      include: 'MainAction', 'ErrorAction'
     :vartype action_name: str or :class:`JobHistoryActionName
-     <azure.mgmt.scheduler.models.JobHistoryActionName>`
+     <schedulermanagementclient.models.JobHistoryActionName>`
     :ivar status: Gets the job history status. Possible values include:
      'Completed', 'Failed', 'Postponed'
     :vartype status: str or :class:`JobExecutionStatus
-     <azure.mgmt.scheduler.models.JobExecutionStatus>`
+     <schedulermanagementclient.models.JobExecutionStatus>`
     :ivar message: Gets the message for the job history.
     :vartype message: str
     :ivar retry_count: Gets the retry count for job.

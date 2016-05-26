@@ -42,7 +42,7 @@ class InboundNatRule(SubResource):
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'
     :type protocol: str or :class:`TransportProtocol
-     <azure.mgmt.network.models.TransportProtocol>`
+     <networkmanagementclient.models.TransportProtocol>`
     :param frontend_port: Gets or sets the port for the external endpoint.
      You can spcify any port number you choose, but the port numbers
      specified for each role in the service must be unique. Possible values

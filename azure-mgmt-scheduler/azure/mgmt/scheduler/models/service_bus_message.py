@@ -43,7 +43,7 @@ class ServiceBusMessage(Model):
     :param transport_type: Gets or sets the transport type. Possible values
      include: 'NotSpecified', 'NetMessaging', 'AMQP'
     :type transport_type: str or :class:`ServiceBusTransportType
-     <azure.mgmt.scheduler.models.ServiceBusTransportType>`
+     <schedulermanagementclient.models.ServiceBusTransportType>`
     """ 
 
     _attribute_map = {

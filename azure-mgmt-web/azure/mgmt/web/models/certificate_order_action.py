@@ -45,7 +45,7 @@ class CertificateOrderAction(Resource):
      'OrgValidationComplete', 'SanDrop'
     :type certificate_order_action_type: str or
      :class:`CertificateOrderActionType
-     <azure.mgmt.web.models.CertificateOrderActionType>`
+     <websitemanagementclient.models.CertificateOrderActionType>`
     :param created_at: Time at which the certificate action was performed
     :type created_at: datetime
     """ 

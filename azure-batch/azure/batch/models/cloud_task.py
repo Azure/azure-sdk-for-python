@@ -42,7 +42,8 @@ class CloudTask(Model):
     :type creation_time: datetime
     :param state: The current state of the task. Possible values include:
      'active', 'preparing', 'running', 'completed'
-    :type state: str or :class:`TaskState <azure.batch.models.TaskState>`
+    :type state: str or :class:`TaskState
+     <batchserviceclient.models.TaskState>`
     :param state_transition_time: The time at which the task entered its
      current state.
     :type state_transition_time: datetime
@@ -50,7 +51,7 @@ class CloudTask(Model):
      not set if the task is in its initial Active state. Possible values
      include: 'active', 'preparing', 'running', 'completed'
     :type previous_state: str or :class:`TaskState
-     <azure.batch.models.TaskState>`
+     <batchserviceclient.models.TaskState>`
     :param previous_state_transition_time: The time at which the task entered
      its previous state. This property is not set if the task is in its
      initial Active state.

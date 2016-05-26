@@ -42,11 +42,11 @@ class PublicIPAddress(Resource):
     :param public_ip_allocation_method: Gets or sets PublicIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type public_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.models.IPAllocationMethod>`
+     <networkmanagementclient.models.IPAllocationMethod>`
     :param public_ip_address_version: Gets or sets PublicIP address version
      (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
     :type public_ip_address_version: str or :class:`IPVersion
-     <azure.mgmt.network.models.IPVersion>`
+     <networkmanagementclient.models.IPVersion>`
     :param ip_configuration:
     :type ip_configuration: :class:`IPConfiguration
      <azure.mgmt.network.models.IPConfiguration>`
