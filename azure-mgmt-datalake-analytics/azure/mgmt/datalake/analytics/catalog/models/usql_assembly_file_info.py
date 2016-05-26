@@ -29,7 +29,7 @@ class USqlAssemblyFileInfo(Model):
     :param type: Gets or sets the assembly file type. Possible values
      include: 'Assembly', 'Resource'
     :type type: str or :class:`FileType
-     <azure.mgmt.datalake.analytics.catalog.models.FileType>`
+     <datalakeanalyticscatalogmanagementclient.models.FileType>`
     :param original_path: Gets or sets the the original path to the assembly
      file.
     :type original_path: str

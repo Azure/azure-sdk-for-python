@@ -46,7 +46,7 @@ class AccountResource(Resource):
      Possible values include: 'Invalid', 'Creating', 'Deleting', 'Succeeded',
      'Failed', 'Cancelled'
     :type provisioning_state: str or :class:`AccountProvisioningState
-     <azure.mgmt.batch.models.AccountProvisioningState>`
+     <batchmanagementclient.models.AccountProvisioningState>`
     :param auto_storage: The properties and status of any auto storage
      account associated with the account.
     :type auto_storage: :class:`AutoStorageProperties

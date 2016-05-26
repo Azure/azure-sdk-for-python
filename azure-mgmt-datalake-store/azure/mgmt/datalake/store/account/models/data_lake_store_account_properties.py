@@ -34,12 +34,12 @@ class DataLakeStoreAccountProperties(Model):
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming',
      'Deleting', 'Deleted'
     :vartype provisioning_state: str or :class:`DataLakeStoreAccountStatus
-     <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountStatus>`
+     <datalakestoreaccountmanagementclient.models.DataLakeStoreAccountStatus>`
     :ivar state: Gets the status of the Data Lake Store account after
      provisioning has completed. Possible values include: 'active',
      'suspended'
     :vartype state: str or :class:`DataLakeStoreAccountState
-     <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountState>`
+     <datalakestoreaccountmanagementclient.models.DataLakeStoreAccountState>`
     :ivar creation_time: Gets the account creation time.
     :vartype creation_time: datetime
     :ivar last_modified_time: Gets the account last modified time.

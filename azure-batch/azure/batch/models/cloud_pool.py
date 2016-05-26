@@ -42,14 +42,15 @@ class CloudPool(Model):
     :type creation_time: datetime
     :param state: The current state of the pool. Possible values include:
      'active', 'deleting', 'upgrading'
-    :type state: str or :class:`PoolState <azure.batch.models.PoolState>`
+    :type state: str or :class:`PoolState
+     <batchserviceclient.models.PoolState>`
     :param state_transition_time: The time at which the pool entered its
      current state.
     :type state_transition_time: datetime
     :param allocation_state: Whether the pool is resizing. Possible values
      include: 'steady', 'resizing', 'stopping'
     :type allocation_state: str or :class:`AllocationState
-     <azure.batch.models.AllocationState>`
+     <batchserviceclient.models.AllocationState>`
     :param allocation_state_transition_time: The time at which the pool
      entered its current allocation state.
     :type allocation_state_transition_time: datetime

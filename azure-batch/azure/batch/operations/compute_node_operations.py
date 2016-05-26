@@ -429,7 +429,7 @@ class ComputeNodeOperations(object):
          Possible values include: 'requeue', 'terminate', 'taskcompletion',
          'retaineddata'
         :type node_reboot_option: str or :class:`ComputeNodeRebootOption
-         <azure.batch.models.ComputeNodeRebootOption>`
+         <batchserviceclient.models.ComputeNodeRebootOption>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -528,7 +528,7 @@ class ComputeNodeOperations(object):
          Possible values include: 'requeue', 'terminate', 'taskcompletion',
          'retaineddata'
         :type node_reimage_option: str or :class:`ComputeNodeReimageOption
-         <azure.batch.models.ComputeNodeReimageOption>`
+         <batchserviceclient.models.ComputeNodeReimageOption>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -630,7 +630,7 @@ class ComputeNodeOperations(object):
          'terminate', 'taskcompletion'
         :type node_disable_scheduling_option: str or
          :class:`DisableComputeNodeSchedulingOption
-         <azure.batch.models.DisableComputeNodeSchedulingOption>`
+         <batchserviceclient.models.DisableComputeNodeSchedulingOption>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

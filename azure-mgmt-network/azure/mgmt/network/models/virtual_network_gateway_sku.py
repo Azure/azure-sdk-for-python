@@ -29,11 +29,11 @@ class VirtualNetworkGatewaySku(Model):
     :param name: Gateway sku name -Basic/HighPerformance/Standard. Possible
      values include: 'Basic', 'HighPerformance', 'Standard'
     :type name: str or :class:`VirtualNetworkGatewaySkuName
-     <azure.mgmt.network.models.VirtualNetworkGatewaySkuName>`
+     <networkmanagementclient.models.VirtualNetworkGatewaySkuName>`
     :param tier: Gateway sku tier -Basic/HighPerformance/Standard. Possible
      values include: 'Basic', 'HighPerformance', 'Standard'
     :type tier: str or :class:`VirtualNetworkGatewaySkuTier
-     <azure.mgmt.network.models.VirtualNetworkGatewaySkuTier>`
+     <networkmanagementclient.models.VirtualNetworkGatewaySkuTier>`
     :param capacity: The capacity
     :type capacity: int
     """ 

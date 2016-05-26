@@ -127,7 +127,7 @@ class GraphRbacManagementClient(object):
     def __init__(
             self, credentials, tenant_id, api_version='1.6-internal', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
-        self.config = GraphRbacManagementClientConfiguration(credentials, tenant_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = GraphRbacManagementClientConfiguration(credentials, api_version, tenant_id, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

@@ -62,7 +62,7 @@ class JobErrorDetails(Model):
     :ivar severity: Gets the severity level of the failure. Possible values
      include: 'Warning', 'Error'
     :vartype severity: str or :class:`SeverityTypes
-     <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
+     <datalakeanalyticsjobmanagementclient.models.SeverityTypes>`
     :ivar source: Gets the ultimate source of the failure (usually either
      SYSTEM or USER).
     :vartype source: str

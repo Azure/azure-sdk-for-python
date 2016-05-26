@@ -53,7 +53,7 @@ class ExpressRouteCircuit(Resource):
      'Deprovisioning'
     :type service_provider_provisioning_state: str or
      :class:`ServiceProviderProvisioningState
-     <azure.mgmt.network.models.ServiceProviderProvisioningState>`
+     <networkmanagementclient.models.ServiceProviderProvisioningState>`
     :param authorizations: Gets or sets list of authorizations
     :type authorizations: list of :class:`ExpressRouteCircuitAuthorization
      <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
