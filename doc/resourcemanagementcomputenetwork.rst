@@ -127,7 +127,7 @@ To create or manage storage accounts, see :doc:`Storage Resource Management<reso
     resource_client = azure.mgmt.resource.ResourceManagementClient(res_config)
     storage_client = azure.mgmt.storage.StorageManagementClient(storage_config)
     compute_client = azure.mgmt.compute.ComputeManagementClient(compute_config)
-    network_client = azure.mgmt.network.NetworkResourceProviderClient(network_config)
+    network_client = azure.mgmt.network.NetworkManagementClient(network_config)
 
     BASE_NAME = 'pythonexample'
 
