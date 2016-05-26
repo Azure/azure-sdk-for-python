@@ -69,7 +69,7 @@ class FileSystemOperations(object):
          create the file if it doesn't exist or just open the existing file
          for append. Possible values include: 'autocreate'
         :type append_mode: str or :class:`AppendModeType
-         <azure.mgmt.datalake.store.filesystem.models.AppendModeType>`
+         <datalakestorefilesystemmanagementclient.models.AppendModeType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

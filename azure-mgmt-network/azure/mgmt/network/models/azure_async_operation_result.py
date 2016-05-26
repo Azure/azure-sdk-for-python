@@ -36,7 +36,7 @@ class AzureAsyncOperationResult(Model):
     :param status: Status of the AzureAsuncOperation. Possible values
      include: 'InProgress', 'Succeeded', 'Failed'
     :type status: str or :class:`NetworkOperationStatus
-     <azure.mgmt.network.models.NetworkOperationStatus>`
+     <networkmanagementclient.models.NetworkOperationStatus>`
     :param error:
     :type error: :class:`Error <azure.mgmt.network.models.Error>`
     """ 

@@ -47,11 +47,11 @@ class Profile(TrackedResource):
     :ivar resource_state: Resource status of the profile. Possible values
      include: 'Creating', 'Active', 'Deleting', 'Disabled'
     :vartype resource_state: str or :class:`ProfileResourceState
-     <azure.mgmt.cdn.models.ProfileResourceState>`
+     <cdnmanagementclient.models.ProfileResourceState>`
     :param provisioning_state: Provisioning status of the profile. Possible
      values include: 'Creating', 'Succeeded', 'Failed'
     :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.cdn.models.ProvisioningState>`
+     <cdnmanagementclient.models.ProvisioningState>`
     """ 
 
     _validation = {

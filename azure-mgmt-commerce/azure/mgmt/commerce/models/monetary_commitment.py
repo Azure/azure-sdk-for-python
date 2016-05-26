@@ -48,7 +48,7 @@ class MonetaryCommitment(OfferTermInfo):
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
         'Name': {'key': 'Name', 'type': 'str'},
-        'tiered_discount': {'key': 'TieredDiscount', 'type': '{decimal}'},
+        'tiered_discount': {'key': 'TieredDiscount', 'type': '{Decimal}'},
     }
 
     def __init__(self, effective_date=None, excluded_meter_ids=None, tiered_discount=None):
