@@ -58,7 +58,7 @@ class EndpointCreateParameters(Model):
      'UseQueryString', 'NotSet'
     :type query_string_caching_behavior: str or
      :class:`QueryStringCachingBehavior
-     <azure.mgmt.cdn.models.QueryStringCachingBehavior>`
+     <cdnmanagementclient.models.QueryStringCachingBehavior>`
     :param origins: The set of origins for the CDN endpoint. When multiple
      origins exist, the first origin will be used as primary and rest will be
      used as failover options.

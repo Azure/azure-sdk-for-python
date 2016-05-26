@@ -38,7 +38,7 @@ class SharedAccessAuthorizationRuleProperties(Model):
     :type claim_value: str
     :param rights: The rights associated with the rule.
     :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.notificationhubs.models.AccessRights>`
+     <notificationhubsmanagementclient.models.AccessRights>`
     :param created_time: The time at which the authorization rule was created.
     :type created_time: datetime
     :param modified_time: The most recent time the rule was updated.

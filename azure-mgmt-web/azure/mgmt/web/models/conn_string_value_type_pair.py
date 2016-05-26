@@ -31,7 +31,7 @@ class ConnStringValueTypePair(Model):
     :param type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom'
     :type type: str or :class:`DatabaseServerType
-     <azure.mgmt.web.models.DatabaseServerType>`
+     <websitemanagementclient.models.DatabaseServerType>`
     """ 
 
     _validation = {

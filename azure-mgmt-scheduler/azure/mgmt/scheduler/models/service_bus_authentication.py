@@ -32,7 +32,7 @@ class ServiceBusAuthentication(Model):
     :param type: Gets or sets the authentication type. Possible values
      include: 'NotSpecified', 'SharedAccessKey'
     :type type: str or :class:`ServiceBusAuthenticationType
-     <azure.mgmt.scheduler.models.ServiceBusAuthenticationType>`
+     <schedulermanagementclient.models.ServiceBusAuthenticationType>`
     """ 
 
     _attribute_map = {

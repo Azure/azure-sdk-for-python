@@ -48,12 +48,12 @@ class HostingEnvironment(Resource):
      (App Service Environment). Possible values include: 'Succeeded',
      'Failed', 'Canceled', 'InProgress', 'Deleting'
     :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.web.models.ProvisioningState>`
+     <websitemanagementclient.models.ProvisioningState>`
     :param status: Current status of the hostingEnvironment (App Service
      Environment). Possible values include: 'Preparing', 'Ready', 'Scaling',
      'Deleting'
     :type status: str or :class:`HostingEnvironmentStatus
-     <azure.mgmt.web.models.HostingEnvironmentStatus>`
+     <websitemanagementclient.models.HostingEnvironmentStatus>`
     :param vnet_name: Name of the hostingEnvironment's (App Service
      Environment) virtual network
     :type vnet_name: str
@@ -72,7 +72,7 @@ class HostingEnvironment(Resource):
      Possible values include: 'None', 'Web', 'Publishing'
     :type internal_load_balancing_mode: str or
      :class:`InternalLoadBalancingMode
-     <azure.mgmt.web.models.InternalLoadBalancingMode>`
+     <websitemanagementclient.models.InternalLoadBalancingMode>`
     :param multi_size: Front-end VM size, e.g. "Medium", "Large"
     :type multi_size: str
     :param multi_role_count: Number of front-end instances
