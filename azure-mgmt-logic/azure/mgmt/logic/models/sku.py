@@ -27,7 +27,7 @@ class Sku(Model):
 
     :param name: Gets or sets the name. Possible values include:
      'NotSpecified', 'Free', 'Shared', 'Basic', 'Standard', 'Premium'
-    :type name: str or :class:`SkuName <azure.mgmt.logic.models.SkuName>`
+    :type name: str or :class:`SkuName <logicmanagementclient.models.SkuName>`
     :param plan: Gets or sets the reference to plan.
     :type plan: :class:`ResourceReference
      <azure.mgmt.logic.models.ResourceReference>`

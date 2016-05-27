@@ -34,7 +34,7 @@ class WorkflowTrigger(SubResource):
      include: 'NotSpecified', 'Creating', 'Succeeded', 'Updating'
     :vartype provisioning_state: str or
      :class:`WorkflowTriggerProvisioningState
-     <azure.mgmt.logic.models.WorkflowTriggerProvisioningState>`
+     <logicmanagementclient.models.WorkflowTriggerProvisioningState>`
     :ivar created_time: Gets the created time.
     :vartype created_time: datetime
     :ivar changed_time: Gets the changed time.
@@ -42,12 +42,12 @@ class WorkflowTrigger(SubResource):
     :ivar state: Gets the state. Possible values include: 'NotSpecified',
      'Enabled', 'Disabled', 'Deleted', 'Suspended'
     :vartype state: str or :class:`WorkflowState
-     <azure.mgmt.logic.models.WorkflowState>`
+     <logicmanagementclient.models.WorkflowState>`
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
     :vartype status: str or :class:`WorkflowStatus
-     <azure.mgmt.logic.models.WorkflowStatus>`
+     <logicmanagementclient.models.WorkflowStatus>`
     :ivar last_execution_time: Gets the last execution time.
     :vartype last_execution_time: datetime
     :ivar next_execution_time: Gets the next execution time.

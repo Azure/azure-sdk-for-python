@@ -30,7 +30,7 @@ class AutoHealActions(Model):
     :param action_type: ActionType - predefined action to be taken. Possible
      values include: 'Recycle', 'LogEvent', 'CustomAction'
     :type action_type: str or :class:`AutoHealActionType
-     <azure.mgmt.web.models.AutoHealActionType>`
+     <websitemanagementclient.models.AutoHealActionType>`
     :param custom_action: CustomAction - custom action to be taken
     :type custom_action: :class:`AutoHealCustomAction
      <azure.mgmt.web.models.AutoHealCustomAction>`

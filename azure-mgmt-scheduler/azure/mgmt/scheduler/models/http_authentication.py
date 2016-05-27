@@ -29,7 +29,7 @@ class HttpAuthentication(Model):
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
     :type type: str or :class:`HttpAuthenticationType
-     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
+     <schedulermanagementclient.models.HttpAuthenticationType>`
     """ 
 
     _attribute_map = {

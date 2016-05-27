@@ -437,7 +437,7 @@ class RedisOperations(object):
         :param key_type: Which redis access key to reset. Possible values
          include: 'Primary', 'Secondary'
         :type key_type: str or :class:`RedisKeyType
-         <azure.mgmt.redis.models.RedisKeyType>`
+         <redismanagementclient.models.RedisKeyType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -511,7 +511,7 @@ class RedisOperations(object):
          value data loss is possible. Possible values include: 'PrimaryNode',
          'SecondaryNode', 'AllNodes'
         :type reboot_type: str or :class:`RebootType
-         <azure.mgmt.redis.models.RebootType>`
+         <redismanagementclient.models.RebootType>`
         :param shard_id: In case of cluster cache, this specifies shard id
          which should be rebooted.
         :type shard_id: int

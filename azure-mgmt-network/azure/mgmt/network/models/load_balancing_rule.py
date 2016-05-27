@@ -43,12 +43,12 @@ class LoadBalancingRule(SubResource):
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'
     :type protocol: str or :class:`TransportProtocol
-     <azure.mgmt.network.models.TransportProtocol>`
+     <networkmanagementclient.models.TransportProtocol>`
     :param load_distribution: Gets or sets the load distribution policy for
      this rule. Possible values include: 'Default', 'SourceIP',
      'SourceIPProtocol'
     :type load_distribution: str or :class:`LoadDistribution
-     <azure.mgmt.network.models.LoadDistribution>`
+     <networkmanagementclient.models.LoadDistribution>`
     :param frontend_port: Gets or sets the port for the external endpoint.
      You can specify any port number you choose, but the port numbers
      specified for each role in the service must be unique. Possible values

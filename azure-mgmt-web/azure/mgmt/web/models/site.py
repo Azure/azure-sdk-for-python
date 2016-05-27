@@ -52,7 +52,7 @@ class Site(Resource):
     :ivar usage_state: State indicating whether web app has exceeded its
      quota usage. Possible values include: 'Normal', 'Exceeded'
     :vartype usage_state: str or :class:`UsageState
-     <azure.mgmt.web.models.UsageState>`
+     <websitemanagementclient.models.UsageState>`
     :param enabled: True if the site is enabled; otherwise, false. Setting
      this  value to false disables the site (takes the site off line).
     :type enabled: bool
@@ -69,7 +69,7 @@ class Site(Resource):
      the site is available and that detailed site information is unavailable.
      Possible values include: 'Normal', 'Limited', 'DisasterRecoveryMode'
     :vartype availability_state: str or :class:`SiteAvailabilityState
-     <azure.mgmt.web.models.SiteAvailabilityState>`
+     <websitemanagementclient.models.SiteAvailabilityState>`
     :param host_name_ssl_states: Hostname SSL states are  used to manage the
      SSL bindings for site's hostnames.
     :type host_name_ssl_states: list of :class:`HostNameSslState

@@ -54,11 +54,11 @@ class DomainRegistrationInput(Resource):
      'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown',
      'Unlocked', 'Unparked', 'Updated', 'JsonConverterFailed'
     :type registration_status: str or :class:`DomainStatus
-     <azure.mgmt.web.models.DomainStatus>`
+     <websitemanagementclient.models.DomainStatus>`
     :param provisioning_state: Domain provisioning state. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.web.models.ProvisioningState>`
+     <websitemanagementclient.models.ProvisioningState>`
     :param name_servers: Name servers
     :type name_servers: list of str
     :param privacy: If true then domain privacy is enabled for this domain

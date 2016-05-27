@@ -47,7 +47,7 @@ class ApplicationGateway(Resource):
      'Stopping'
     :vartype operational_state: str or
      :class:`ApplicationGatewayOperationalState
-     <azure.mgmt.network.models.ApplicationGatewayOperationalState>`
+     <networkmanagementclient.models.ApplicationGatewayOperationalState>`
     :param gateway_ip_configurations: Gets or sets subnets of application
      gateway resource
     :type gateway_ip_configurations: list of

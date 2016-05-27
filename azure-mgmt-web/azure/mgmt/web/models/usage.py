@@ -55,7 +55,7 @@ class Usage(Resource):
     :param compute_mode: ComputeMode used for this usage. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str or :class:`ComputeModeOptions
-     <azure.mgmt.web.models.ComputeModeOptions>`
+     <websitemanagementclient.models.ComputeModeOptions>`
     :param site_mode: SiteMode used for this usage
     :type site_mode: str
     """ 
