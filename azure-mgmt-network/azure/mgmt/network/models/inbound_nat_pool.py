@@ -36,7 +36,7 @@ class InboundNatPool(SubResource):
      endpoint. Possible values are Udp or Tcp. Possible values include:
      'Udp', 'Tcp'
     :type protocol: str or :class:`TransportProtocol
-     <azure.mgmt.network.models.TransportProtocol>`
+     <networkmanagementclient.models.TransportProtocol>`
     :param frontend_port_range_start: Gets or sets the starting port range
      for the NAT pool. You can spcify any port number you choose, but the
      port numbers specified for each role in the service must be unique.

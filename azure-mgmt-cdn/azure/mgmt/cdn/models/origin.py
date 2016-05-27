@@ -49,11 +49,11 @@ class Origin(Resource):
     :ivar resource_state: Resource status of the origin. Possible values
      include: 'Creating', 'Active', 'Deleting'
     :vartype resource_state: str or :class:`OriginResourceState
-     <azure.mgmt.cdn.models.OriginResourceState>`
+     <cdnmanagementclient.models.OriginResourceState>`
     :param provisioning_state: Provisioning status of the origin. Possible
      values include: 'Creating', 'Succeeded', 'Failed'
     :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.cdn.models.ProvisioningState>`
+     <cdnmanagementclient.models.ProvisioningState>`
     """ 
 
     _validation = {

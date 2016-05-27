@@ -28,7 +28,7 @@ class JobStateFilter(Model):
     :param state: Gets or sets the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
     :type state: str or :class:`JobState
-     <azure.mgmt.scheduler.models.JobState>`
+     <schedulermanagementclient.models.JobState>`
     """ 
 
     _attribute_map = {

@@ -48,10 +48,11 @@ class RecommendationRule(Model):
      Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
     :type level: str or :class:`NotificationLevel
-     <azure.mgmt.web.models.NotificationLevel>`
+     <websitemanagementclient.models.NotificationLevel>`
     :param channels: List of available channels that this rule applies.
      Possible values include: 'Notification', 'Api', 'Email', 'All'
-    :type channels: str or :class:`Channels <azure.mgmt.web.models.Channels>`
+    :type channels: str or :class:`Channels
+     <websitemanagementclient.models.Channels>`
     :param tags: An array of category tags that the rule contains.
     :type tags: list of str
     """ 

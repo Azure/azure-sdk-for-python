@@ -47,7 +47,7 @@ class MonetaryCredit(OfferTermInfo):
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
         'Name': {'key': 'Name', 'type': 'str'},
-        'credit': {'key': 'Credit', 'type': 'decimal'},
+        'credit': {'key': 'Credit', 'type': 'Decimal'},
     }
 
     def __init__(self, effective_date=None, excluded_meter_ids=None, credit=None):

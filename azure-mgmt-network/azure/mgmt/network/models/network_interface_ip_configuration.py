@@ -47,13 +47,15 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.models.IPAllocationMethod>`
+     <networkmanagementclient.models.IPAllocationMethod>`
     :param private_ip_address_version: Gets or sets PrivateIP address version
      (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or :class:`IPVersion
-     <azure.mgmt.network.models.IPVersion>`
+     <networkmanagementclient.models.IPVersion>`
     :param subnet:
     :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :param primary: Gets whether this is a primary customer address on the NIC
+    :type primary: bool
     :param public_ip_address:
     :type public_ip_address: :class:`PublicIPAddress
      <azure.mgmt.network.models.PublicIPAddress>`
@@ -76,13 +78,14 @@ class NetworkInterfaceIPConfiguration(SubResource):
         'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
         'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
+        'primary': {'key': 'properties.primary', 'type': 'bool'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, private_ip_address_version=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, application_gateway_backend_address_pools=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_rules=None, private_ip_address=None, private_ip_allocation_method=None, private_ip_address_version=None, subnet=None, primary=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
         super(NetworkInterfaceIPConfiguration, self).__init__(id=id)
         self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
         self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
@@ -91,6 +94,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
         self.private_ip_allocation_method = private_ip_allocation_method
         self.private_ip_address_version = private_ip_address_version
         self.subnet = subnet
+        self.primary = primary
         self.public_ip_address = public_ip_address
         self.provisioning_state = provisioning_state
         self.name = name

@@ -36,7 +36,7 @@ class AutoPoolSpecification(Model):
      and how multiple jobs on a schedule are assigned to pools. Possible
      values include: 'jobschedule', 'job', 'unmapped'
     :type pool_lifetime_option: str or :class:`PoolLifetimeOption
-     <azure.batch.models.PoolLifetimeOption>`
+     <batchserviceclient.models.PoolLifetimeOption>`
     :param keep_alive: Whether to keep an auto pool alive after its lifetime
      expires.
     :type keep_alive: bool

@@ -35,11 +35,11 @@ class ComputeNode(Model):
      'creating', 'starting', 'waitingforstarttask', 'starttaskfailed',
      'unknown', 'leavingpool', 'offline'
     :type state: str or :class:`ComputeNodeState
-     <azure.batch.models.ComputeNodeState>`
+     <batchserviceclient.models.ComputeNodeState>`
     :param scheduling_state: Whether the compute node should be available for
      task scheduling. Possible values include: 'enabled', 'disabled'
     :type scheduling_state: str or :class:`SchedulingState
-     <azure.batch.models.SchedulingState>`
+     <batchserviceclient.models.SchedulingState>`
     :param state_transition_time: The time at which the compute node entered
      its current state.
     :type state_transition_time: datetime

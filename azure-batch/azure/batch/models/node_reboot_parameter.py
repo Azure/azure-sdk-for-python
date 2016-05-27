@@ -30,7 +30,7 @@ class NodeRebootParameter(Model):
      with currently running tasks. The default value is requeue. Possible
      values include: 'requeue', 'terminate', 'taskcompletion', 'retaineddata'
     :type node_reboot_option: str or :class:`ComputeNodeRebootOption
-     <azure.batch.models.ComputeNodeRebootOption>`
+     <batchserviceclient.models.ComputeNodeRebootOption>`
     """ 
 
     _attribute_map = {

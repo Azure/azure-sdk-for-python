@@ -29,7 +29,7 @@ class VpnClientParameters(Model):
     :param processor_architecture: VPN client Processor Architecture
      -Amd64/X86. Possible values include: 'Amd64', 'X86'
     :type processor_architecture: str or :class:`ProcessorArchitecture
-     <azure.mgmt.network.models.ProcessorArchitecture>`
+     <networkmanagementclient.models.ProcessorArchitecture>`
     """ 
 
     _attribute_map = {

@@ -29,7 +29,7 @@ class JobDisableParameter(Model):
     :param disable_tasks: What to do with active tasks associated with the
      job. Possible values include: 'requeue', 'terminate', 'wait'
     :type disable_tasks: str or :class:`DisableJobOption
-     <azure.batch.models.DisableJobOption>`
+     <batchserviceclient.models.DisableJobOption>`
     """ 
 
     _validation = {

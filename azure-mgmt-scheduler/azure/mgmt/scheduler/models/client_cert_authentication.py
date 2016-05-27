@@ -29,7 +29,7 @@ class ClientCertAuthentication(HttpAuthentication):
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
     :type type: str or :class:`HttpAuthenticationType
-     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
+     <schedulermanagementclient.models.HttpAuthenticationType>`
     :param password: Gets or sets the password.
     :type password: str
     :param pfx: Gets or sets the pfx.

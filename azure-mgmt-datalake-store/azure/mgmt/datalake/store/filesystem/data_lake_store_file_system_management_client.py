@@ -114,7 +114,7 @@ class DataLakeStoreFileSystemManagementClient(object):
     def __init__(
             self, credentials, adls_file_system_dns_suffix, api_version='2015-10-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
 
-        self.config = DataLakeStoreFileSystemManagementClientConfiguration(credentials, adls_file_system_dns_suffix, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, filepath)
+        self.config = DataLakeStoreFileSystemManagementClientConfiguration(credentials, api_version, adls_file_system_dns_suffix, accept_language, long_running_operation_retry_timeout, generate_client_request_id, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

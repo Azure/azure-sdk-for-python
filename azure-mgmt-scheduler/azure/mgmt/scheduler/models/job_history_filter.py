@@ -28,7 +28,7 @@ class JobHistoryFilter(Model):
     :param status: Gets or sets the job execution status. Possible values
      include: 'Completed', 'Failed', 'Postponed'
     :type status: str or :class:`JobExecutionStatus
-     <azure.mgmt.scheduler.models.JobExecutionStatus>`
+     <schedulermanagementclient.models.JobExecutionStatus>`
     """ 
 
     _attribute_map = {

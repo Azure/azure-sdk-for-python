@@ -32,7 +32,7 @@ class NodeDisableSchedulingParameter(Model):
      'taskcompletion'
     :type node_disable_scheduling_option: str or
      :class:`DisableComputeNodeSchedulingOption
-     <azure.batch.models.DisableComputeNodeSchedulingOption>`
+     <batchserviceclient.models.DisableComputeNodeSchedulingOption>`
     """ 
 
     _attribute_map = {
