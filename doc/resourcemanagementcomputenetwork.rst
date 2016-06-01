@@ -279,7 +279,7 @@ virtual network, public ip and network interface.
                         name='default',
                         private_ip_allocation_method=azure.mgmt.network.models.IPAllocationMethod.dynamic,
                         subnet=subnet,
-                        public_ip_address=azure.mgmt.network.models.ResourceId(
+                        public_ip_address=azure.mgmt.network.models.PublicIPAddress(
                             id=public_ip_id,
                         ),
                     ),
