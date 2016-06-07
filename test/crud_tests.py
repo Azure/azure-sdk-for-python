@@ -3776,6 +3776,10 @@ class CRUDTests(unittest.TestCase):
             return conflict['_self']
 
 if __name__ == '__main__':
+    if masterKey == '[YOUR_KEY_HERE]' or host == '[YOUR_ENDPOINT_HERE]':
+        raise Exception(
+            "You must specify your Azure DocumentDB account values for "
+            "'masterKey' and 'host' at the top of this file to run the tests.")
     try:
         unittest.main()
     except SystemExit as inst:
