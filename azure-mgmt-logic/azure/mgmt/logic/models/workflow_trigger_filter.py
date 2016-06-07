@@ -28,7 +28,7 @@ class WorkflowTriggerFilter(Model):
     :param state: Gets or sets the state of workflow trigger. Possible values
      include: 'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
     :type state: str or :class:`WorkflowState
-     <logicmanagementclient.models.WorkflowState>`
+     <azure.mgmt.logic.models.WorkflowState>`
     """ 
 
     _attribute_map = {

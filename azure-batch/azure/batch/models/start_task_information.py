@@ -29,7 +29,7 @@ class StartTaskInformation(Model):
     :param state: The state of the start task on the compute node. Possible
      values include: 'running', 'completed'
     :type state: str or :class:`StartTaskState
-     <batchserviceclient.models.StartTaskState>`
+     <azure.batch.models.StartTaskState>`
     :param start_time: The time at which the start task started running.
     :type start_time: datetime
     :param end_time: The time at which the start task stopped running.

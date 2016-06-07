@@ -38,7 +38,7 @@ class WorkflowRunAction(SubResource):
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
     :vartype status: str or :class:`WorkflowStatus
-     <logicmanagementclient.models.WorkflowStatus>`
+     <azure.mgmt.logic.models.WorkflowStatus>`
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.

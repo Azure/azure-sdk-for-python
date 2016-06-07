@@ -29,7 +29,7 @@ class OAuthAuthentication(HttpAuthentication):
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
     :type type: str or :class:`HttpAuthenticationType
-     <schedulermanagementclient.models.HttpAuthenticationType>`
+     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
     :param secret: Gets or sets the secret.
     :type secret: str
     :param tenant: Gets or sets the tenant.

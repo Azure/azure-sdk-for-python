@@ -29,7 +29,7 @@ class PolicyDefinition(Model):
     :param policy_type: Gets or sets policy definition policy type. Possible
      values include: 'NotSpecified', 'BuiltIn', 'Custom'
     :type policy_type: str or :class:`policyType
-     <policyclient.models.policyType>`
+     <azure.mgmt.resource.policy.models.policyType>`
     :param display_name: Gets or sets the policy definition display name.
     :type display_name: str
     :param description: Gets or sets the policy definition description.

@@ -49,7 +49,7 @@ class CertificateOrderCertificate(Resource):
      'AzureServiceUnauthorizedToAccessKeyVault', 'KeyVaultDoesNotExist',
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'Unknown'
     :type provisioning_state: str or :class:`KeyVaultSecretStatus
-     <websitemanagementclient.models.KeyVaultSecretStatus>`
+     <azure.mgmt.web.models.KeyVaultSecretStatus>`
     """ 
 
     _validation = {

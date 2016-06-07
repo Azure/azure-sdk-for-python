@@ -330,7 +330,7 @@ class VirtualMachinesOperations(object):
         :param expand: The expand expression to apply on the operation.
          Possible values include: 'instanceView'
         :type expand: str or :class:`InstanceViewTypes
-         <computemanagementclient.models.InstanceViewTypes>`
+         <azure.mgmt.compute.models.InstanceViewTypes>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

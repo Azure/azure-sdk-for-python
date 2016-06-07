@@ -37,7 +37,7 @@ class PoolResizeParameter(Model):
      'terminate', 'taskcompletion', 'retaineddata'
     :type node_deallocation_option: str or
      :class:`ComputeNodeDeallocationOption
-     <batchserviceclient.models.ComputeNodeDeallocationOption>`
+     <azure.batch.models.ComputeNodeDeallocationOption>`
     """ 
 
     _validation = {

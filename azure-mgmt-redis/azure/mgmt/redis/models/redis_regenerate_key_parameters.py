@@ -29,7 +29,7 @@ class RedisRegenerateKeyParameters(Model):
     :param key_type: Which redis access key to reset. Possible values
      include: 'Primary', 'Secondary'
     :type key_type: str or :class:`RedisKeyType
-     <redismanagementclient.models.RedisKeyType>`
+     <azure.mgmt.redis.models.RedisKeyType>`
     """ 
 
     _validation = {

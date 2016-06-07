@@ -60,7 +60,7 @@ class RestoreRequest(Resource):
     :param operation_type: Operation type. Possible values include:
      'Default', 'Clone', 'Relocation'
     :type operation_type: str or :class:`BackupRestoreOperationType
-     <websitemanagementclient.models.BackupRestoreOperationType>`
+     <azure.mgmt.web.models.BackupRestoreOperationType>`
     :param adjust_connection_strings: Gets or sets a flag showing if
      SiteConfig.ConnectionStrings should be set in new site
     :type adjust_connection_strings: bool

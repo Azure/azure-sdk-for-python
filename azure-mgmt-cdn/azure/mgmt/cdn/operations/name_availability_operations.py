@@ -54,7 +54,7 @@ class NameAvailabilityOperations(object):
         :param type: The type of the resource whose name is to be validated.
          Possible values include: 'Microsoft.Cdn/Profiles/Endpoints'
         :type type: str or :class:`ResourceType
-         <cdnmanagementclient.models.ResourceType>`
+         <azure.mgmt.cdn.models.ResourceType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

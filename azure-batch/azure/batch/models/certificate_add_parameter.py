@@ -40,7 +40,7 @@ class CertificateAddParameter(Model):
     :param certificate_format: The format of the certificate data. Possible
      values include: 'pfx', 'cer', 'unmapped'
     :type certificate_format: str or :class:`CertificateFormat
-     <batchserviceclient.models.CertificateFormat>`
+     <azure.batch.models.CertificateFormat>`
     :param password: The password to access the certificate's private key.
     :type password: str
     """ 

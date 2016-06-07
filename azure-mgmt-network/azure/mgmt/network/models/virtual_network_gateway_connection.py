@@ -54,7 +54,7 @@ class VirtualNetworkGatewayConnection(Resource):
      -Ipsec/Dedicated/VpnClient/Vnet2Vnet. Possible values include: 'IPsec',
      'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
     :type connection_type: str or :class:`VirtualNetworkGatewayConnectionType
-     <networkmanagementclient.models.VirtualNetworkGatewayConnectionType>`
+     <azure.mgmt.network.models.VirtualNetworkGatewayConnectionType>`
     :param routing_weight: The Routing weight.
     :type routing_weight: int
     :param shared_key: The Ipsec share key.
@@ -64,7 +64,7 @@ class VirtualNetworkGatewayConnection(Resource):
      'NotConnected'
     :type connection_status: str or
      :class:`VirtualNetworkGatewayConnectionStatus
-     <networkmanagementclient.models.VirtualNetworkGatewayConnectionStatus>`
+     <azure.mgmt.network.models.VirtualNetworkGatewayConnectionStatus>`
     :param egress_bytes_transferred: The Egress Bytes Transferred in this
      connection
     :type egress_bytes_transferred: long

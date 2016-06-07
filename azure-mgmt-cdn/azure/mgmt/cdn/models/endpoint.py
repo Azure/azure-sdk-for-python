@@ -72,7 +72,7 @@ class Endpoint(TrackedResource):
      'UseQueryString', 'NotSet'
     :type query_string_caching_behavior: str or
      :class:`QueryStringCachingBehavior
-     <cdnmanagementclient.models.QueryStringCachingBehavior>`
+     <azure.mgmt.cdn.models.QueryStringCachingBehavior>`
     :param origins: The set of origins for the CDN endpoint. When multiple
      origins exist, the first origin will be used as primary and rest will be
      used as failover options.
@@ -82,11 +82,11 @@ class Endpoint(TrackedResource):
      include: 'Creating', 'Deleting', 'Running', 'Starting', 'Stopped',
      'Stopping'
     :vartype resource_state: str or :class:`EndpointResourceState
-     <cdnmanagementclient.models.EndpointResourceState>`
+     <azure.mgmt.cdn.models.EndpointResourceState>`
     :param provisioning_state: Provisioning status of the endpoint. Possible
      values include: 'Creating', 'Succeeded', 'Failed'
     :type provisioning_state: str or :class:`ProvisioningState
-     <cdnmanagementclient.models.ProvisioningState>`
+     <azure.mgmt.cdn.models.ProvisioningState>`
     """ 
 
     _validation = {

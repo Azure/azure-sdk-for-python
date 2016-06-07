@@ -39,7 +39,7 @@ class ApplicationGatewayHttpListener(SubResource):
     :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
-     <networkmanagementclient.models.ApplicationGatewayProtocol>`
+     <azure.mgmt.network.models.ApplicationGatewayProtocol>`
     :param host_name: Gets or sets the host name of http listener
     :type host_name: str
     :param ssl_certificate: Gets or sets ssl certificate resource of

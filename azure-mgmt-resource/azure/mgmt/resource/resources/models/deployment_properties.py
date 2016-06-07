@@ -43,7 +43,7 @@ class DeploymentProperties(Model):
     :param mode: Gets or sets the deployment mode. Possible values include:
      'Incremental', 'Complete'
     :type mode: str or :class:`DeploymentMode
-     <resourcemanagementclient.models.DeploymentMode>`
+     <azure.mgmt.resource.resources.models.DeploymentMode>`
     :param debug_setting: Gets or sets the debug setting of the deployment.
     :type debug_setting: :class:`DebugSetting
      <azure.mgmt.resource.resources.models.DebugSetting>`

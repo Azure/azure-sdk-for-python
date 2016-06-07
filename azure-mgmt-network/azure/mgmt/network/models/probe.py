@@ -37,7 +37,7 @@ class Probe(SubResource):
      from the specifies URI is required for the probe to be successful.
      Possible values include: 'Http', 'Tcp'
     :type protocol: str or :class:`ProbeProtocol
-     <networkmanagementclient.models.ProbeProtocol>`
+     <azure.mgmt.network.models.ProbeProtocol>`
     :param port: Gets or sets Port for communicating the probe. Possible
      values range from 1 to 65535, inclusive.
     :type port: int

@@ -35,11 +35,11 @@ class DataLakeAnalyticsAccountProperties(Model):
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming',
      'Deleting', 'Deleted'
     :vartype provisioning_state: str or
-     :class:`DataLakeAnalyticsAccountStatus <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccountStatus>`
+     :class:`DataLakeAnalyticsAccountStatus <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus>`
     :ivar state: Gets the state of the Data Lake Analytics account. Possible
      values include: 'active', 'suspended'
     :vartype state: str or :class:`DataLakeAnalyticsAccountState
-     <datalakeanalyticsaccountmanagementclient.models.DataLakeAnalyticsAccountState>`
+     <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState>`
     :param default_data_lake_store_account: Gets or sets the default data
      lake storage account associated with this Data Lake Analytics account.
     :type default_data_lake_store_account: str

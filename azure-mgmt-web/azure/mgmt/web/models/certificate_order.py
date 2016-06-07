@@ -51,18 +51,18 @@ class CertificateOrder(Resource):
     :param product_type: Certificate product type. Possible values include:
      'StandardDomainValidatedSsl', 'StandardDomainValidatedWildCardSsl'
     :type product_type: str or :class:`CertificateProductType
-     <websitemanagementclient.models.CertificateProductType>`
+     <azure.mgmt.web.models.CertificateProductType>`
     :param auto_renew: Auto renew
     :type auto_renew: bool
     :param provisioning_state: Status of certificate order. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :type provisioning_state: str or :class:`ProvisioningState
-     <websitemanagementclient.models.ProvisioningState>`
+     <azure.mgmt.web.models.ProvisioningState>`
     :param status: Current order status. Possible values include:
      'Pendingissuance', 'Issued', 'Revoked', 'Canceled', 'Denied',
      'Pendingrevocation', 'PendingRekey', 'Unused', 'Expired', 'NotSubmitted'
     :type status: str or :class:`CertificateOrderStatus
-     <websitemanagementclient.models.CertificateOrderStatus>`
+     <azure.mgmt.web.models.CertificateOrderStatus>`
     :param signed_certificate: Signed certificate
     :type signed_certificate: :class:`CertificateDetails
      <azure.mgmt.web.models.CertificateDetails>`

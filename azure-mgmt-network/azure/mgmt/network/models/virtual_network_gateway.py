@@ -46,11 +46,11 @@ class VirtualNetworkGateway(Resource):
     :param gateway_type: The type of this virtual network gateway. Possible
      values include: 'Vpn', 'ExpressRoute'
     :type gateway_type: str or :class:`VirtualNetworkGatewayType
-     <networkmanagementclient.models.VirtualNetworkGatewayType>`
+     <azure.mgmt.network.models.VirtualNetworkGatewayType>`
     :param vpn_type: The type of this virtual network gateway. Possible
      values include: 'PolicyBased', 'RouteBased'
     :type vpn_type: str or :class:`VpnType
-     <networkmanagementclient.models.VpnType>`
+     <azure.mgmt.network.models.VpnType>`
     :param enable_bgp: EnableBgp Flag
     :type enable_bgp: bool
     :param gateway_default_site: Gets or sets the reference of the

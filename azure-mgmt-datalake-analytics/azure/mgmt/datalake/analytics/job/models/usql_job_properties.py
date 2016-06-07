@@ -76,7 +76,7 @@ class USqlJobProperties(JobProperties):
     :param compile_mode: Gets or sets the compile mode for the job. Possible
      values include: 'Semantic', 'Full', 'SingleBox'
     :type compile_mode: str or :class:`CompileMode
-     <datalakeanalyticsjobmanagementclient.models.CompileMode>`
+     <azure.mgmt.datalake.analytics.job.models.CompileMode>`
     """ 
 
     _validation = {

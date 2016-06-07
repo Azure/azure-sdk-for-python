@@ -34,7 +34,7 @@ class DomainAvailablilityCheckResult(Model):
     :param domain_type: Domain type. Possible values include: 'Regular',
      'SoftDeleted'
     :type domain_type: str or :class:`DomainType
-     <websitemanagementclient.models.DomainType>`
+     <azure.mgmt.web.models.DomainType>`
     """ 
 
     _attribute_map = {

@@ -47,11 +47,10 @@ class Recommendation(Model):
      impact. Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
     :type level: str or :class:`NotificationLevel
-     <websitemanagementclient.models.NotificationLevel>`
+     <azure.mgmt.web.models.NotificationLevel>`
     :param channels: List of channels that this recommendation can apply.
      Possible values include: 'Notification', 'Api', 'Email', 'All'
-    :type channels: str or :class:`Channels
-     <websitemanagementclient.models.Channels>`
+    :type channels: str or :class:`Channels <azure.mgmt.web.models.Channels>`
     :param tags: The list of category tags that this recommendation belongs
      to.
     :type tags: list of str

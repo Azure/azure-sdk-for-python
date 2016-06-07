@@ -29,7 +29,7 @@ class JobSchedulingError(Model):
     :param category: The category of the job scheduling error. Possible
      values include: 'usererror', 'servererror', 'unmapped'
     :type category: str or :class:`SchedulingErrorCategory
-     <batchserviceclient.models.SchedulingErrorCategory>`
+     <azure.batch.models.SchedulingErrorCategory>`
     :param code: An identifier for the job scheduling error. Codes are
      invariant and are intended to be consumed programmatically.
     :type code: str

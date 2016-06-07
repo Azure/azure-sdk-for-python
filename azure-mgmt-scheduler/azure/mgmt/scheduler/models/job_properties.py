@@ -38,7 +38,7 @@ class JobProperties(Model):
     :param state: Gets or set the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'
     :type state: str or :class:`JobState
-     <schedulermanagementclient.models.JobState>`
+     <azure.mgmt.scheduler.models.JobState>`
     :ivar status: Gets the job status.
     :vartype status: :class:`JobStatus
      <azure.mgmt.scheduler.models.JobStatus>`

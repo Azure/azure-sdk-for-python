@@ -43,12 +43,12 @@ class StorageAccount(Resource):
      time the operation was called. Possible values include: 'Creating',
      'ResolvingDNS', 'Succeeded'
     :type provisioning_state: str or :class:`ProvisioningState
-     <storagemanagementclient.models.ProvisioningState>`
+     <azure.mgmt.storage.models.ProvisioningState>`
     :param account_type: Gets the type of the storage account. Possible
      values include: 'Standard_LRS', 'Standard_ZRS', 'Standard_GRS',
      'Standard_RAGRS', 'Premium_LRS'
     :type account_type: str or :class:`AccountType
-     <storagemanagementclient.models.AccountType>`
+     <azure.mgmt.storage.models.AccountType>`
     :param primary_endpoints: Gets the URLs that are used to perform a
      retrieval of a public blob, queue or table object.Note that StandardZRS
      and PremiumLRS accounts only return the blob endpoint.
@@ -61,7 +61,7 @@ class StorageAccount(Resource):
      location of the storage account is available or unavailable. Possible
      values include: 'Available', 'Unavailable'
     :type status_of_primary: str or :class:`AccountStatus
-     <storagemanagementclient.models.AccountStatus>`
+     <azure.mgmt.storage.models.AccountStatus>`
     :param last_geo_failover_time: Gets the timestamp of the most recent
      instance of a failover to the secondary location. Only the most recent
      timestamp is retained. This element is not returned if there has never
@@ -77,7 +77,7 @@ class StorageAccount(Resource):
      Only available if the accountType is StandardGRS or StandardRAGRS.
      Possible values include: 'Available', 'Unavailable'
     :type status_of_secondary: str or :class:`AccountStatus
-     <storagemanagementclient.models.AccountStatus>`
+     <azure.mgmt.storage.models.AccountStatus>`
     :param creation_time: Gets the creation date and time of the storage
      account in UTC.
     :type creation_time: datetime

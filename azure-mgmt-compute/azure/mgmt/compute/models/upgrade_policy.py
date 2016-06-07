@@ -29,7 +29,7 @@ class UpgradePolicy(Model):
     :param mode: Gets or sets the upgrade mode. Possible values include:
      'Automatic', 'Manual'
     :type mode: str or :class:`UpgradeMode
-     <computemanagementclient.models.UpgradeMode>`
+     <azure.mgmt.compute.models.UpgradeMode>`
     """ 
 
     _attribute_map = {

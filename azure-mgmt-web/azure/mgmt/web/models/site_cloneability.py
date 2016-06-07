@@ -29,7 +29,7 @@ class SiteCloneability(Model):
     :param result: Name of web app. Possible values include: 'Cloneable',
      'PartiallyCloneable', 'NotCloneable'
     :type result: str or :class:`CloneAbilityResult
-     <websitemanagementclient.models.CloneAbilityResult>`
+     <azure.mgmt.web.models.CloneAbilityResult>`
     :param blocking_features: List of features enabled on web app that
      prevent cloning
     :type blocking_features: list of :class:`SiteCloneabilityCriterion

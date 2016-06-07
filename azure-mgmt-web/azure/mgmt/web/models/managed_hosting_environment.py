@@ -47,7 +47,7 @@ class ManagedHostingEnvironment(Resource):
     :param status: Current status of the managed hosting environment.
      Possible values include: 'Preparing', 'Ready', 'Deleting'
     :type status: str or :class:`ManagedHostingEnvironmentStatus
-     <websitemanagementclient.models.ManagedHostingEnvironmentStatus>`
+     <azure.mgmt.web.models.ManagedHostingEnvironmentStatus>`
     :param virtual_network: Description of the managed hosting environment's
      virtual network
     :type virtual_network: :class:`VirtualNetworkProfile

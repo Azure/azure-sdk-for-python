@@ -56,7 +56,7 @@ class EndpointUpdateParameters(Model):
      'UseQueryString', 'NotSet'
     :type query_string_caching_behavior: str or
      :class:`QueryStringCachingBehavior
-     <cdnmanagementclient.models.QueryStringCachingBehavior>`
+     <azure.mgmt.cdn.models.QueryStringCachingBehavior>`
     """ 
 
     _attribute_map = {

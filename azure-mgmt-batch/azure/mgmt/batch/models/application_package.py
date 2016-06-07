@@ -31,7 +31,7 @@ class ApplicationPackage(Model):
     :param state: The current state of the application package. Possible
      values include: 'pending', 'active', 'unmapped'
     :type state: str or :class:`PackageState
-     <batchmanagementclient.models.PackageState>`
+     <azure.mgmt.batch.models.PackageState>`
     :param format: The format of the application package, if the package has
      been activated.
     :type format: str

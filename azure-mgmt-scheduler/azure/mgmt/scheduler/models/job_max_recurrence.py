@@ -29,7 +29,7 @@ class JobMaxRecurrence(Model):
      minute, hour, day, week, month). Possible values include: 'Minute',
      'Hour', 'Day', 'Week', 'Month'
     :type frequency: str or :class:`RecurrenceFrequency
-     <schedulermanagementclient.models.RecurrenceFrequency>`
+     <azure.mgmt.scheduler.models.RecurrenceFrequency>`
     :param interval: Gets or sets the interval between retries.
     :type interval: int
     """ 

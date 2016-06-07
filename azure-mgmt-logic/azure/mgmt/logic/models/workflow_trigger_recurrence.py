@@ -28,7 +28,7 @@ class WorkflowTriggerRecurrence(Model):
     :param frequency: Gets or sets the frequency. Possible values include:
      'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
     :type frequency: str or :class:`RecurrenceFrequency
-     <logicmanagementclient.models.RecurrenceFrequency>`
+     <azure.mgmt.logic.models.RecurrenceFrequency>`
     :param interval: Gets or sets the interval.
     :type interval: int
     :param start_time: Gets or sets the start time.

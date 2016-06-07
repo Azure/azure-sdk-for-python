@@ -33,8 +33,7 @@ class CheckNameAvailabilityResult(Model):
     :param reason: Gets the reason that a storage account name could not be
      used. The Reason element is only returned if NameAvailable is false.
      Possible values include: 'AccountNameInvalid', 'AlreadyExists'
-    :type reason: str or :class:`Reason
-     <storagemanagementclient.models.Reason>`
+    :type reason: str or :class:`Reason <azure.mgmt.storage.models.Reason>`
     :param message: Gets an error message explaining the Reason value in more
      detail.
     :type message: str

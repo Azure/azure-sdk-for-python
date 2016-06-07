@@ -47,11 +47,11 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <networkmanagementclient.models.IPAllocationMethod>`
+     <azure.mgmt.network.models.IPAllocationMethod>`
     :param private_ip_address_version: Gets or sets PrivateIP address version
      (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or :class:`IPVersion
-     <networkmanagementclient.models.IPVersion>`
+     <azure.mgmt.network.models.IPVersion>`
     :param subnet:
     :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
     :param primary: Gets whether this is a primary customer address on the NIC

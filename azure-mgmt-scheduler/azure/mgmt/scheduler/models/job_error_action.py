@@ -29,7 +29,7 @@ class JobErrorAction(Model):
      include: 'Http', 'Https', 'StorageQueue', 'ServiceBusQueue',
      'ServiceBusTopic'
     :type type: str or :class:`JobActionType
-     <schedulermanagementclient.models.JobActionType>`
+     <azure.mgmt.scheduler.models.JobActionType>`
     :param request: Gets or sets the http requests.
     :type request: :class:`HttpRequest
      <azure.mgmt.scheduler.models.HttpRequest>`

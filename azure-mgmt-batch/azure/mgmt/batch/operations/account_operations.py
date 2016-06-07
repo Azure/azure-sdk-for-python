@@ -560,7 +560,7 @@ class AccountOperations(object):
         :param key_name: The type of account key to regenerate. Possible
          values include: 'Primary', 'Secondary'
         :type key_name: str or :class:`AccountKeyType
-         <batchmanagementclient.models.AccountKeyType>`
+         <azure.mgmt.batch.models.AccountKeyType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

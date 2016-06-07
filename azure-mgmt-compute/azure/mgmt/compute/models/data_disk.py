@@ -42,11 +42,11 @@ class DataDisk(Model):
     :param caching: Gets or sets the caching type. Possible values include:
      'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or :class:`CachingTypes
-     <computemanagementclient.models.CachingTypes>`
+     <azure.mgmt.compute.models.CachingTypes>`
     :param create_option: Gets or sets the create option. Possible values
      include: 'fromImage', 'empty', 'attach'
     :type create_option: str or :class:`DiskCreateOptionTypes
-     <computemanagementclient.models.DiskCreateOptionTypes>`
+     <azure.mgmt.compute.models.DiskCreateOptionTypes>`
     :param disk_size_gb: Gets or sets the initial disk size in GB for blank
      data disks, and the new desired size for existing OS and Data disks.
     :type disk_size_gb: int

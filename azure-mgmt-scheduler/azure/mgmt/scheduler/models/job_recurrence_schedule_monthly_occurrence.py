@@ -30,7 +30,7 @@ class JobRecurrenceScheduleMonthlyOccurrence(Model):
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
      'Sunday'
     :type day: str or :class:`JobScheduleDay
-     <schedulermanagementclient.models.JobScheduleDay>`
+     <azure.mgmt.scheduler.models.JobScheduleDay>`
     :param occurrence: Gets or sets the occurrence. Must be between -5 and 5.
     :type occurrence: int
     """ 

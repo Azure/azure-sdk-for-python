@@ -30,7 +30,7 @@ class WorkflowRunFilter(Model):
      'Skipped', 'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut',
      'Aborted'
     :type status: str or :class:`WorkflowStatus
-     <logicmanagementclient.models.WorkflowStatus>`
+     <azure.mgmt.logic.models.WorkflowStatus>`
     """ 
 
     _attribute_map = {

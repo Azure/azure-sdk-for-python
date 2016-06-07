@@ -29,7 +29,7 @@ class Sku(Model):
     :param name: Name of the pricing tier. Possible values include:
      'Standard_Verizon', 'Premium_Verizon', 'Custom_Verizon',
      'Standard_Akamai'
-    :type name: str or :class:`SkuName <cdnmanagementclient.models.SkuName>`
+    :type name: str or :class:`SkuName <azure.mgmt.cdn.models.SkuName>`
     """ 
 
     _attribute_map = {

@@ -29,7 +29,7 @@ class BasicAuthentication(HttpAuthentication):
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
     :type type: str or :class:`HttpAuthenticationType
-     <schedulermanagementclient.models.HttpAuthenticationType>`
+     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
     :param username: Gets or sets the username.
     :type username: str
     :param password: Gets or sets the password.

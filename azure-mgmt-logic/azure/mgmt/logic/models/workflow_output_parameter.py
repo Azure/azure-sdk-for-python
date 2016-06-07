@@ -32,7 +32,7 @@ class WorkflowOutputParameter(WorkflowParameter):
      'NotSpecified', 'String', 'SecureString', 'Int', 'Float', 'Bool',
      'Array', 'Object', 'SecureObject'
     :type type: str or :class:`ParameterType
-     <logicmanagementclient.models.ParameterType>`
+     <azure.mgmt.logic.models.ParameterType>`
     :param value: Gets or sets the value.
     :type value: object
     :param metadata: Gets or sets the metadata.

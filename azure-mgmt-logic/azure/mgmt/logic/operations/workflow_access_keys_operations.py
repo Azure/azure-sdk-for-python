@@ -391,7 +391,7 @@ class WorkflowAccessKeysOperations(object):
         :param key_type: Gets or sets the key type. Possible values include:
          'NotSpecified', 'Primary', 'Secondary'
         :type key_type: str or :class:`KeyType
-         <logicmanagementclient.models.KeyType>`
+         <azure.mgmt.logic.models.KeyType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

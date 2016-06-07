@@ -41,7 +41,7 @@ class Workflow(Resource):
     :ivar provisioning_state: Gets the provisioning state. Possible values
      include: 'NotSpecified', 'Moving', 'Succeeded'
     :vartype provisioning_state: str or :class:`WorkflowProvisioningState
-     <logicmanagementclient.models.WorkflowProvisioningState>`
+     <azure.mgmt.logic.models.WorkflowProvisioningState>`
     :ivar created_time: Gets the created time.
     :vartype created_time: datetime
     :ivar changed_time: Gets the changed time.
@@ -49,7 +49,7 @@ class Workflow(Resource):
     :param state: Gets or sets the state. Possible values include:
      'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
     :type state: str or :class:`WorkflowState
-     <logicmanagementclient.models.WorkflowState>`
+     <azure.mgmt.logic.models.WorkflowState>`
     :ivar version: Gets the version.
     :vartype version: str
     :ivar access_endpoint: Gets the access endpoint.

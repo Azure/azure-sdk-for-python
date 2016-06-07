@@ -52,7 +52,7 @@ class WorkflowRunTrigger(Model):
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
     :vartype status: str or :class:`WorkflowStatus
-     <logicmanagementclient.models.WorkflowStatus>`
+     <azure.mgmt.logic.models.WorkflowStatus>`
     :ivar error: Gets the error.
     :vartype error: object
     """ 

@@ -31,7 +31,7 @@ class InstanceViewStatus(Model):
     :param level: Gets or sets the level Code. Possible values include:
      'Info', 'Warning', 'Error'
     :type level: str or :class:`StatusLevelTypes
-     <computemanagementclient.models.StatusLevelTypes>`
+     <azure.mgmt.compute.models.StatusLevelTypes>`
     :param display_status: Gets or sets the short localizable label for the
      status.
     :type display_status: str

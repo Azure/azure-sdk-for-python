@@ -36,7 +36,7 @@ class JobReleaseTaskExecutionInformation(Model):
     :param state: The current state of the Job Release task. Possible values
      include: 'running', 'completed'
     :type state: str or :class:`JobReleaseTaskState
-     <batchserviceclient.models.JobReleaseTaskState>`
+     <azure.batch.models.JobReleaseTaskState>`
     :param task_root_directory: The root directory of the Job Release task on
      the compute node. You can use this path to retrieve files created by the
      task, such as log files.

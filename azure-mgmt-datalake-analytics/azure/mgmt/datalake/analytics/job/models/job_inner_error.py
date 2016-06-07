@@ -34,7 +34,7 @@ class JobInnerError(Model):
     :ivar severity: Gets the severity level of the failure. Possible values
      include: 'Warning', 'Error'
     :vartype severity: str or :class:`SeverityTypes
-     <datalakeanalyticsjobmanagementclient.models.SeverityTypes>`
+     <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
     :ivar details: Gets the details of the error message.
     :vartype details: str
     :ivar component: Gets the component that failed.

@@ -51,7 +51,7 @@ class BackupItem(Resource):
      'Failed', 'Succeeded', 'TimedOut', 'Created', 'Skipped',
      'PartiallySucceeded', 'DeleteInProgress', 'DeleteFailed', 'Deleted'
     :type status: str or :class:`BackupItemStatus
-     <websitemanagementclient.models.BackupItemStatus>`
+     <azure.mgmt.web.models.BackupItemStatus>`
     :param size_in_bytes: Size of the backup in bytes
     :type size_in_bytes: long
     :param created: Timestamp of the backup creation

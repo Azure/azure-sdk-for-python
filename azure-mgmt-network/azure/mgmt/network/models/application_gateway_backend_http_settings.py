@@ -33,12 +33,12 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :param protocol: Gets or sets the protocol. Possible values include:
      'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
-     <networkmanagementclient.models.ApplicationGatewayProtocol>`
+     <azure.mgmt.network.models.ApplicationGatewayProtocol>`
     :param cookie_based_affinity: Gets or sets the cookie affinity. Possible
      values include: 'Enabled', 'Disabled'
     :type cookie_based_affinity: str or
      :class:`ApplicationGatewayCookieBasedAffinity
-     <networkmanagementclient.models.ApplicationGatewayCookieBasedAffinity>`
+     <azure.mgmt.network.models.ApplicationGatewayCookieBasedAffinity>`
     :param request_timeout: Gets or sets request timeout
     :type request_timeout: int
     :param probe: Gets or sets probe resource of application gateway

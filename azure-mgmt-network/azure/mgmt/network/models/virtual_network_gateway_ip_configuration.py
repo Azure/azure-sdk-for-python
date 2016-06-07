@@ -34,7 +34,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation
      method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <networkmanagementclient.models.IPAllocationMethod>`
+     <azure.mgmt.network.models.IPAllocationMethod>`
     :param subnet: Gets or sets the reference of the subnet resource
     :type subnet: :class:`SubResource <azure.mgmt.network.models.SubResource>`
     :param public_ip_address: Gets or sets the reference of the PublicIP

@@ -60,7 +60,7 @@ class UsageAggregatesOperations(object):
          hourly to tell the API how to return the results grouped by day or
          hour. Possible values include: 'Daily', 'Hourly'
         :type aggregation_granularity: str or :class:`AggregationGranularity
-         <usagemanagementclient.models.AggregationGranularity>`
+         <azure.mgmt.commerce.models.AggregationGranularity>`
         :param continuation_token: Retrieved from previous calls, this is the
          bookmark used for progress when the responses are paged.
         :type continuation_token: str
