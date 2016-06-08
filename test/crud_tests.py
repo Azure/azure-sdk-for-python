@@ -23,8 +23,8 @@ import pydocumentdb.base as base
 from struct import *
 from __builtin__ import *
 
-masterKey = '[YOUR_KEY_HERE]'
-host = '[YOUR_ENDPOINT_HERE]'
+TEST_DB_NAME = 'sample database'
+
 
 if masterKey == '[YOUR_KEY_HERE]' or host == '[YOUR_ENDPOINT_HERE]':
     raise Exception(
@@ -79,7 +79,7 @@ class CRUDTests(unittest.TestCase):
         databases = list(client.ReadDatabases())
         # create a database.
         before_create_databases_count = len(databases)
-        database_definition = { 'id': 'sample database' }
+        database_definition = { 'id': TEST_DB_NAME }
         created_db = client.CreateDatabase(database_definition)
         self.assertEqual(created_db['id'], database_definition['id'])
         # Read databases after creation.
@@ -141,7 +141,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         collections = list(client.ReadCollections(self.GetDatabaseLink(created_db, is_name_based)))
         # create a collection
         before_create_collections_count = len(collections)
@@ -305,7 +305,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
 
         collection_definition1 = {   'id': 'sample collection1', 
                                     'partitionKey': 
@@ -373,7 +373,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_document_crud_and_query(self):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         collection_definition = {   'id': 'sample collection', 
                                     'partitionKey': 
@@ -494,7 +494,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_permissions(self):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
 
         collection_definition = {   'id': 'sample collection', 
                                     'partitionKey': 
@@ -596,7 +596,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_execute_stored_procedure(self):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
 
         collection_definition = {   'id': 'sample collection', 
                                     'partitionKey': 
@@ -675,7 +675,7 @@ class CRUDTests(unittest.TestCase):
 
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         collection_definition = {   'id': 'sample collection', 
                                     'partitionKey': 
@@ -870,7 +870,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_partition_key_value_types(self):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         collection_definition = {   'id': 'sample collection1', 
                                     'partitionKey': 
@@ -941,7 +941,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_conflit_crud_and_query(self):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
 
         collection_definition = {   'id': 'sample collection', 
                                     'partitionKey': 
@@ -1034,7 +1034,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # create collection
         created_collection = client.CreateCollection(
             self.GetDatabaseLink(created_db, is_name_based),
@@ -1135,7 +1135,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create test database
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         # Create bunch of collections participating in partitioning
         collection0 = client.CreateCollection(
@@ -1270,7 +1270,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create test database
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         # Create bunch of collections participating in partitioning
         collection0 = client.CreateCollection(
@@ -1355,7 +1355,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(0, len(queryIterable.fetch_next_block()))
         
     def test_hash_partition_resolver(self):
-        created_db = { 'id': 'sample database' }
+        created_db = { 'id': TEST_DB_NAME }
         
         # Create bunch of collections participating in partitioning
         collection0 = { 'id': 'coll_0' }
@@ -1493,7 +1493,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_range_partition_resolver(self):
         # create test database
-        created_db = { 'id': 'sample database' }
+        created_db = { 'id': TEST_DB_NAME }
         
         # Create bunch of collections participating in partitioning
         collection0 = { 'id': 'coll_0' }
@@ -1567,7 +1567,7 @@ class CRUDTests(unittest.TestCase):
                                                 {'masterKey': masterKey})
 
         # create database
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
 
         # create collection
         created_collection = client.CreateCollection(
@@ -1673,7 +1673,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_spatial_index(self, is_name_based):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # partial policy specified
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
@@ -1762,7 +1762,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
@@ -1927,7 +1927,7 @@ class CRUDTests(unittest.TestCase):
                                                 {'masterKey': masterKey})
         
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         # create collection
         collection = client.CreateCollection(
@@ -2062,7 +2062,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # list users
         users = list(client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
         before_create_count = len(users)
@@ -2117,7 +2117,7 @@ class CRUDTests(unittest.TestCase):
                                                 {'masterKey': masterKey})
         
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         # read users and check count
         users = list(client.ReadUsers(self.GetDatabaseLink(db, is_name_based)))
@@ -2177,7 +2177,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # create user
         user = client.CreateUser(self.GetDatabaseLink(db, is_name_based), { 'id': 'new user' })
         # list permissions
@@ -2241,7 +2241,7 @@ class CRUDTests(unittest.TestCase):
                                                 {'masterKey': masterKey})
         
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         # create user
         user = client.CreateUser(self.GetDatabaseLink(db, is_name_based), { 'id': 'new user' })
@@ -2330,7 +2330,7 @@ class CRUDTests(unittest.TestCase):
 
             """
             # create database
-            db = client.CreateDatabase({ 'id': 'sample database' })
+            db = client.CreateDatabase({ 'id': TEST_DB_NAME })
             # create collection1
             collection1 = client.CreateCollection(
                 db['_self'], { 'id': 'sample collection' })
@@ -2470,7 +2470,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
@@ -2550,7 +2550,7 @@ class CRUDTests(unittest.TestCase):
                                                 {'masterKey': masterKey})
         
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         # create collection
         collection = client.CreateCollection(
@@ -2640,7 +2640,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
@@ -2709,7 +2709,7 @@ class CRUDTests(unittest.TestCase):
                                                 {'masterKey': masterKey})
         
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         # create collection
         collection = client.CreateCollection(
@@ -2796,7 +2796,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
@@ -2872,7 +2872,7 @@ class CRUDTests(unittest.TestCase):
                                                 {'masterKey': masterKey})
         
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         
         # create collection
         collection = client.CreateCollection(
@@ -2962,7 +2962,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
@@ -3038,7 +3038,7 @@ class CRUDTests(unittest.TestCase):
     def _test_create_default_indexing_policy(self, is_name_based):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
 
         # no indexing policy specified
         collection = client.CreateCollection(self.GetDatabaseLink(db, is_name_based), {'id': 'TestCreateDefaultPolicy01'})
@@ -3152,7 +3152,7 @@ class CRUDTests(unittest.TestCase):
                 dict
 
             """
-            db = client.CreateDatabase({ 'id': 'sample database' })
+            db = client.CreateDatabase({ 'id': TEST_DB_NAME })
             collection = client.CreateCollection(
                 db['_self'],
                 { 'id': 'sample collection' })
@@ -3317,7 +3317,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # create collections
         collection1 = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection 1' })
@@ -3382,7 +3382,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 { 'masterKey': masterKey })
         # create database
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # create collection
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based), { 'id': 'sample collection' })
@@ -3445,7 +3445,7 @@ class CRUDTests(unittest.TestCase):
     def test_offer_read_and_query(self):
         client = document_client.DocumentClient(host, { 'masterKey': masterKey })
         # Create database.
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # Create collection.
         collection = client.CreateCollection(db['_self'], { 'id': 'sample collection' })
         offers = list(client.ReadOffers())
@@ -3490,7 +3490,7 @@ class CRUDTests(unittest.TestCase):
     def test_offer_replace(self):
         client = document_client.DocumentClient(host, { 'masterKey': masterKey })
         # Create database.
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         # Create collection.
         collection = client.CreateCollection(db['_self'], { 'id': 'sample collection' })
         offers = list(client.ReadOffers())
@@ -3528,7 +3528,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host,
                                                 {'masterKey': masterKey})
         # create database
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         collections = list(client.ReadCollections(created_db['_self']))
         # create a collection
         before_create_collections_count = len(collections)
@@ -3577,7 +3577,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_index_progress_headers(self, is_name_based):
         client = document_client.DocumentClient(host, { 'masterKey': masterKey })
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
         consistent_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based), { 'id': 'consistent_coll' })
         client.ReadCollection(self.GetDocumentCollectionLink(created_db, consistent_coll, is_name_based))
         self.assertFalse(http_constants.HttpHeaders.LazyIndexingProgress in client.last_response_headers)
@@ -3670,7 +3670,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
         # create database
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
 
         # pascalCase
         collection_definition1 = { 'id': 'sampleCollection' }
@@ -3702,7 +3702,7 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
         # create database
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
 
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
         collection_definition1 = { 'id': u'हिन्दी भारत की राष्ट्रीय भाषा है' }
