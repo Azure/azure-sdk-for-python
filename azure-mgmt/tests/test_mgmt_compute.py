@@ -18,9 +18,9 @@ import unittest
 
 from collections import namedtuple
 
-import azure.mgmt.compute
-import azure.mgmt.network
-import azure.mgmt.storage
+import azure.mgmt.compute.models
+import azure.mgmt.network.models
+import azure.mgmt.storage.models
 from azure.mgmt.compute.models import InstanceViewTypes
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
@@ -208,7 +208,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
             names.vm,
             params_create,
         )
-        result_create.wait()
+        vm_result = result_create.result()
+        self.assertEquals(vm_result.name, names.vm)
         
         result_get = self.compute_client.virtual_machines.get(
             self.group_name,
