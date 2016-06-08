@@ -64,7 +64,8 @@ class CRUDTests(unittest.TestCase):
         if not databases:
             return
         for database in databases:
-            client.DeleteDatabase(self.GetDatabaseLink(database, False))
+            if database['id'] == TEST_DB_NAME:
+                client.DeleteDatabase(self.GetDatabaseLink(database, False))
 
     def test_database_crud_self_link(self):
         self._test_database_crud(False)
