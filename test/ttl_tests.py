@@ -9,7 +9,12 @@ import pydocumentdb.errors as errors
 masterKey = '[YOUR_KEY_HERE]'
 host = '[YOUR_ENDPOINT_HERE]'
 
-#IMPORTANT NOTES: 
+if masterKey == '[YOUR_KEY_HERE]' or host == '[YOUR_ENDPOINT_HERE]':
+    raise Exception(
+        "You must specify your Azure DocumentDB account values for "
+        "'masterKey' and 'host' at the top of this file to run the tests.")
+
+#IMPORTANT NOTES:
   
 #  	Most test cases in this file create collections in your DocumentDB account.
 #  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
