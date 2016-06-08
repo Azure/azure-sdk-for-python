@@ -90,6 +90,7 @@ class HttpHeaders:
     ResourceTokenExpiry = 'x-ms-documentdb-expiry-seconds'
     EnableScanInQuery = 'x-ms-documentdb-query-enable-scan'
     EmitVerboseTracesInQuery = 'x-ms-documentdb-query-emit-traces'
+    SubStatus = 'x-ms-substatus'
 
     # Quota Info
     MaxEntityCount = 'x-ms-root-entity-max-count'
@@ -207,8 +208,8 @@ class CookieHeaders:
 class Versions:
     """Constants of versions.
     """
-    CurrentVersion = '2015-12-16'
-    UserAgent = 'documentdb-python-sdk-1.7.0'
+    CurrentVersion = '2016-05-30'
+    UserAgent = 'documentdb-python-sdk-1.8.0'
 
 
 class Delimiters:

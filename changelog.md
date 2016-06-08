@@ -1,3 +1,7 @@
+## Changes in 1.8.0 : ##
+
+- Added the support for geo-replicated database accounts.
+
 ## Changes in 1.7.0 : ##
 
 - Added the support for Time To Live(TTL) feature for documents.

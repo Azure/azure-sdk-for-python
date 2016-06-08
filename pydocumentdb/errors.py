@@ -2,7 +2,7 @@
 
 """PyDocumentDB Exceptions.
 """
-
+import pydocumentdb.http_constants as http_constants
 
 class DocumentDBError(Exception):
     """Base class for all DocumentDB errors.
@@ -24,8 +24,14 @@ class HTTPFailure(DocumentDBError):
 
         self.status_code = status_code
         self.headers = headers
-        DocumentDBError.__init__(self,
-                                 'Status code: %d\n%s' % (status_code, message))
+        self.sub_status = None
+        if http_constants.HttpHeaders.SubStatus in self.headers:
+            self.sub_status = int(self.headers[http_constants.HttpHeaders.SubStatus])
+            DocumentDBError.__init__(self,
+                                 'Status code: %d Sub-status: %d\n%s' % (self.status_code, self.sub_status, message))
+        else:
+            DocumentDBError.__init__(self,
+                                 'Status code: %d\n%s' % (self.status_code, message))
 
 
 class JSONParseFailure(DocumentDBError):

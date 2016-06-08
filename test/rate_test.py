@@ -15,6 +15,7 @@ import doctest
 
 import json
 import pydocumentdb.https_connection
+import pydocumentdb.documents as documents
 from collections import deque
 
 
@@ -140,12 +141,15 @@ class RateTest(unittest.TestCase):
         'good' testcase, test that responses stored in the
         MockHttpsConnection class are returned correctly.
         """
+        # We have added a call do GetDatabaseAccount now, mocking that response before we get to the Query responses
         MockHttpsConnection.add_response(200, "OK",
                 json.dumps(self._document_at(self.two_document_response, 0)))
         MockHttpsConnection.add_response(200, "OK",
                 json.dumps(self._document_at(self.two_document_response, 1)))
 
-        dc = document_client.DocumentClient("https://localhost:443", {'masterKey' : masterKey })
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.EnableEndpointDiscovery = False
+        dc = document_client.DocumentClient("https://localhost:443", {'masterKey' : masterKey }, connection_policy)
         it = dc.QueryDocuments('coll_1', "SELECT * FROM coll_1")
         it = iter(it)
         self.assertEqual(1, next(it)['id'])
@@ -169,7 +173,9 @@ class RateTest(unittest.TestCase):
 
         start = time.time()
 
-        dc = document_client.DocumentClient("https://localhost:443", {'masterKey' : masterKey })
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.EnableEndpointDiscovery = False
+        dc = document_client.DocumentClient("https://localhost:443", {'masterKey' : masterKey }, connection_policy)
         it = dc.QueryDocuments('coll_1', "SELECT * FROM coll_1")
         it = iter(it)
         self.assertEqual(1, next(it)['id'])
@@ -192,7 +198,9 @@ class RateTest(unittest.TestCase):
         MockHttpsConnection.add_response(429, "Too many requests", "{}", {"x-ms-retry-after-ms": 100})
         MockHttpsConnection.add_response(200, "OK", json.dumps(self.two_document_response))
 
-        dc = document_client.DocumentClient("https://localhost:443", {'masterKey' : masterKey })
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.EnableEndpointDiscovery = False
+        dc = document_client.DocumentClient("https://localhost:443", {'masterKey' : masterKey }, connection_policy)
         it = dc.QueryDocuments('coll_1', "SELECT * FROM coll_1")
         it = iter(it)
         self.assertEqual(2, len(MockHttpsConnection.responses))

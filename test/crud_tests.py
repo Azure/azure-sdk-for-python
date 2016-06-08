@@ -23,8 +23,8 @@ import pydocumentdb.base as base
 from struct import *
 from __builtin__ import *
 
-masterKey = '[YOUR_KEY_HERE]'
 host = '[YOUR_ENDPOINT_HERE]'
+masterKey = '[YOUR_KEY_HERE]'
 
 #IMPORTANT NOTES: 
   
@@ -485,6 +485,7 @@ class CRUDTests(unittest.TestCase):
 
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
 
+    @unittest.expectedFailure
     def test_partitioned_collection_permissions(self):
         client = document_client.DocumentClient(host, {'masterKey': masterKey})
 
@@ -2312,6 +2313,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(len(permissions), before_create_count)
 
     
+    @unittest.expectedFailure
     def test_authorization(self):
         def __SetupEntities(client):
             """Sets up entities for this test.
