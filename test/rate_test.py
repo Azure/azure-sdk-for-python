@@ -8,14 +8,18 @@ pydocumentdb.https_connection.HTTPSConnection class, and answers
 requests with a predefined sequence of responses.
 """
 
-import unittest
+import doctest
+import json
 import socket
 import time
-import doctest
+import unittest
 
-import json
-import pydocumentdb.https_connection
 from collections import deque
+
+import pydocumentdb.https_connection
+from pydocumentdb import document_client
+
+MASTER_KEY = ''
 
 
 class MockHTTPResponse:
@@ -24,6 +28,7 @@ class MockHTTPResponse:
     by pydocumentdb
     """
     version = 11
+
     def __init__(self, status=200, reason="OK", data="", headers=None):
         self.status = status
         self.reason = reason
@@ -33,7 +38,7 @@ class MockHTTPResponse:
             self.headers = {}
         self.data = data
 
-    def getheader(name, default=None):
+    def getheader(self, name, default=None):
         return self.headers.get(name, default)
 
     def getheaders(self):
@@ -56,7 +61,7 @@ class MockHttpsConnection:
     responses = deque()
 
     def __init__(self, host, port=None, ssl_configuration=None, strict=None,
-            timeout=socket._GLOBAL_DEFAULT_TIMEOUT, source_address=None):
+                 timeout=socket._GLOBAL_DEFAULT_TIMEOUT, source_address=None):
         self.host = host
         self.port = port
 
@@ -93,10 +98,6 @@ pydocumentdb.https_connection.HTTPSConnection = MockHttpsConnection
 
 #####################################################
 
-import pydocumentdb.document_client as document_client
-import pydocumentdb.http_constants as http_constants
-
-masterKey = ''
 
 class RateTest(unittest.TestCase):
 
@@ -104,10 +105,10 @@ class RateTest(unittest.TestCase):
     two_document_response = {
         'Documents': [
             {
-                'id' : 1
+                'id': 1
             },
             {
-                'id' : 2
+                'id': 2
             }
         ]
     }
@@ -129,11 +130,9 @@ class RateTest(unittest.TestCase):
             ret[k] = v
         return ret
 
-
     def setUp(self):
         MockHttpsConnection.responses.clear()
         pass
-
 
     def test_document_retrieval(self):
         """
@@ -145,7 +144,8 @@ class RateTest(unittest.TestCase):
         MockHttpsConnection.add_response(200, "OK",
                 json.dumps(self._document_at(self.two_document_response, 1)))
 
-        dc = document_client.DocumentClient("https://localhost:443", {'masterKey' : masterKey })
+        dc = document_client.DocumentClient("https://localhost:443",
+                                            {'masterKey': MASTER_KEY})
         it = dc.QueryDocuments('coll_1', "SELECT * FROM coll_1")
         it = iter(it)
         self.assertEqual(1, next(it)['id'])
@@ -163,13 +163,15 @@ class RateTest(unittest.TestCase):
         # Send a good response, a 429 and another good response afterwards.
         MockHttpsConnection.add_response(200, "OK", json.dumps(
             self._document_at(self.two_document_response, 0)))
-        MockHttpsConnection.add_response(429, "Too many requests", "{}", {"x-ms-retry-after-ms": 100})
+        MockHttpsConnection.add_response(429, "Too many requests", "{}",
+                                         {"x-ms-retry-after-ms": 100})
         MockHttpsConnection.add_response(200, "OK", json.dumps(
             self._document_at(self.two_document_response, 1)))
 
         start = time.time()
 
-        dc = document_client.DocumentClient("https://localhost:443", {'masterKey' : masterKey })
+        dc = document_client.DocumentClient("https://localhost:443",
+                                            {'masterKey': MASTER_KEY})
         it = dc.QueryDocuments('coll_1', "SELECT * FROM coll_1")
         it = iter(it)
         self.assertEqual(1, next(it)['id'])
@@ -189,10 +191,13 @@ class RateTest(unittest.TestCase):
         """
         return
         self.assertEqual(0, len(MockHttpsConnection.responses))
-        MockHttpsConnection.add_response(429, "Too many requests", "{}", {"x-ms-retry-after-ms": 100})
-        MockHttpsConnection.add_response(200, "OK", json.dumps(self.two_document_response))
+        MockHttpsConnection.add_response(429, "Too many requests", "{}",
+                                         {"x-ms-retry-after-ms": 100})
+        MockHttpsConnection.add_response(
+            200, "OK", json.dumps(self.two_document_response))
 
-        dc = document_client.DocumentClient("https://localhost:443", {'masterKey' : masterKey })
+        dc = document_client.DocumentClient("https://localhost:443",
+                                            {'masterKey': MASTER_KEY})
         it = dc.QueryDocuments('coll_1', "SELECT * FROM coll_1")
         it = iter(it)
         self.assertEqual(2, len(MockHttpsConnection.responses))
