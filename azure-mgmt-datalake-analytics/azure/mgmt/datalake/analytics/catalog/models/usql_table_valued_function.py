@@ -26,20 +26,17 @@ class USqlTableValuedFunction(CatalogItem):
     """
     A Data Lake Analytics catalog U-SQL table valued function item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param schema_name: Gets or sets the name of the schema associated with
-     this database.
+    :param schema_name: the name of the schema associated with this database.
     :type schema_name: str
-    :param name: Gets or sets the name of the table valued function.
+    :param name: the name of the table valued function.
     :type name: str
-    :param definition: Gets or sets the definition of the table valued
-     function.
+    :param definition: the definition of the table valued function.
     :type definition: str
     """ 
 

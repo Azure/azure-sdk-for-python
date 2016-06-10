@@ -26,15 +26,13 @@ class AclStatus(Model):
     """
     Data Lake Store file or directory Access Control List information.
 
-    :param entries: Gets or sets the list of ACLSpec entries on a file or
-     directory.
+    :param entries: the list of ACLSpec entries on a file or directory.
     :type entries: list of str
-    :param group: Gets or sets the group owner, an AAD Object ID.
+    :param group: the group owner, an AAD Object ID.
     :type group: str
-    :param owner: Gets or sets the user owner, an AAD Object ID.
+    :param owner: the user owner, an AAD Object ID.
     :type owner: str
-    :param sticky_bit: Gets or sets the indicator of whether the sticky bit
-     is on or off.
+    :param sticky_bit: the indicator of whether the sticky bit is on or off.
     :type sticky_bit: bool
     """ 
 

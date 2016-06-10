@@ -26,8 +26,7 @@ class DataLakeStoreAccountInfoProperties(Model):
     """
     Data Lake Store account properties information.
 
-    :param suffix: Gets or sets the optional suffix for the Data Lake Store
-     account.
+    :param suffix: the optional suffix for the Data Lake Store account.
     :type suffix: str
     """ 
 

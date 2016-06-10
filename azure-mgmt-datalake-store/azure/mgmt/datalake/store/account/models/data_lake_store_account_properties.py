@@ -29,25 +29,24 @@ class DataLakeStoreAccountProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar provisioning_state: Gets the status of the Data Lake Store account
-     while being provisioned. Possible values include: 'Failed', 'Creating',
+    :ivar provisioning_state: the status of the Data Lake Store account while
+     being provisioned. Possible values include: 'Failed', 'Creating',
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming',
      'Deleting', 'Deleted'
     :vartype provisioning_state: str or :class:`DataLakeStoreAccountStatus
      <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountStatus>`
-    :ivar state: Gets the status of the Data Lake Store account after
-     provisioning has completed. Possible values include: 'active',
-     'suspended'
+    :ivar state: the status of the Data Lake Store account after provisioning
+     has completed. Possible values include: 'active', 'suspended'
     :vartype state: str or :class:`DataLakeStoreAccountState
      <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountState>`
-    :ivar creation_time: Gets the account creation time.
+    :ivar creation_time: the account creation time.
     :vartype creation_time: datetime
-    :ivar last_modified_time: Gets the account last modified time.
+    :ivar last_modified_time: the account last modified time.
     :vartype last_modified_time: datetime
-    :param endpoint: Gets or sets the gateway host.
+    :param endpoint: the gateway host.
     :type endpoint: str
-    :param default_group: Gets or sets the default owner group for all new
-     folders and files created in the Data Lake Store account.
+    :param default_group: the default owner group for all new folders and
+     files created in the Data Lake Store account.
     :type default_group: str
     """ 
 

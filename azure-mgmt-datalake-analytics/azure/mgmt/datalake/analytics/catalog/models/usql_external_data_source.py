@@ -26,23 +26,21 @@ class USqlExternalDataSource(CatalogItem):
     """
     A Data Lake Analytics catalog U-SQL external datasource item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param name: Gets or sets the name of the external data source.
+    :param name: the name of the external data source.
     :type name: str
-    :param provider: Gets or sets the name of the provider for the external
-     data source.
+    :param provider: the name of the provider for the external data source.
     :type provider: str
-    :param provider_string: Gets or sets the name of the provider string for
-     the external data source.
+    :param provider_string: the name of the provider string for the external
+     data source.
     :type provider_string: str
-    :param pushdown_types: Gets or sets the list of types to push down from
-     the external data source.
+    :param pushdown_types: the list of types to push down from the external
+     data source.
     :type pushdown_types: list of str
     """ 
 

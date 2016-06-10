@@ -26,7 +26,7 @@ class USqlAssemblyDependencyInfo(Model):
     """
     A Data Lake Analytics catalog U-SQL dependency information item.
 
-    :param entity_id: Gets or sets the EntityId of the dependency.
+    :param entity_id: the EntityId of the dependency.
     :type entity_id: :class:`EntityId
      <azure.mgmt.datalake.analytics.catalog.models.EntityId>`
     """ 

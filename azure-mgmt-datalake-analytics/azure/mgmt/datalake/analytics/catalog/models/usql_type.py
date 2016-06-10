@@ -26,47 +26,44 @@ class USqlType(CatalogItem):
     """
     A Data Lake Analytics catalog U-SQL type item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param schema_name: Gets or sets the name of the schema associated with
-     this table and database.
+    :param schema_name: the name of the schema associated with this table and
+     database.
     :type schema_name: str
-    :param name: Gets or sets the name of type for this type.
+    :param name: the name of type for this type.
     :type name: str
-    :param type_family: Gets or sets the type family for this type.
+    :param type_family: the type family for this type.
     :type type_family: str
-    :param c_sharp_name: Gets or sets the C# name for this type.
+    :param c_sharp_name: the C# name for this type.
     :type c_sharp_name: str
-    :param full_csharp_name: Gets or sets the fully qualified C# name for
-     this type.
+    :param full_csharp_name: the fully qualified C# name for this type.
     :type full_csharp_name: str
-    :param system_type_id: Gets or sets the system type ID for this type.
+    :param system_type_id: the system type ID for this type.
     :type system_type_id: int
-    :param user_type_id: Gets or sets the user type ID for this type.
+    :param user_type_id: the user type ID for this type.
     :type user_type_id: int
-    :param schema_id: Gets or sets the schema ID for this type.
+    :param schema_id: the schema ID for this type.
     :type schema_id: int
-    :param principal_id: Gets or sets the principal ID for this type.
+    :param principal_id: the principal ID for this type.
     :type principal_id: int
-    :param is_nullable: Gets or sets the the switch indicating if this type
-     is nullable.
+    :param is_nullable: the the switch indicating if this type is nullable.
     :type is_nullable: bool
-    :param is_user_defined: Gets or sets the the switch indicating if this
-     type is user defined.
+    :param is_user_defined: the the switch indicating if this type is user
+     defined.
     :type is_user_defined: bool
-    :param is_assembly_type: Gets or sets the the switch indicating if this
-     type is an assembly type.
+    :param is_assembly_type: the the switch indicating if this type is an
+     assembly type.
     :type is_assembly_type: bool
-    :param is_table_type: Gets or sets the the switch indicating if this type
-     is a table type.
+    :param is_table_type: the the switch indicating if this type is a table
+     type.
     :type is_table_type: bool
-    :param is_complex_type: Gets or sets the the switch indicating if this
-     type is a complex type.
+    :param is_complex_type: the the switch indicating if this type is a
+     complex type.
     :type is_complex_type: bool
     """ 
 
