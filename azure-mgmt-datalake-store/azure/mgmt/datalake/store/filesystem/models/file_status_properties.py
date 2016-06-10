@@ -29,27 +29,26 @@ class FileStatusProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar access_time: Gets the last access time as ticks since the epoch.
+    :ivar access_time: the last access time as ticks since the epoch.
     :vartype access_time: long
-    :ivar block_size: Gets the block size for the file.
+    :ivar block_size: the block size for the file.
     :vartype block_size: long
-    :ivar children_num: Gets the number of children in the directory.
+    :ivar children_num: the number of children in the directory.
     :vartype children_num: long
-    :ivar group: Gets the group owner.
+    :ivar group: the group owner.
     :vartype group: str
-    :ivar length: Gets the number of bytes in a file.
+    :ivar length: the number of bytes in a file.
     :vartype length: long
-    :ivar modification_time: Gets the modification time as ticks since the
-     epoch.
+    :ivar modification_time: the modification time as ticks since the epoch.
     :vartype modification_time: long
-    :ivar owner: Gets the user who is the owner.
+    :ivar owner: the user who is the owner.
     :vartype owner: str
-    :ivar path_suffix: Gets the path suffix.
+    :ivar path_suffix: the path suffix.
     :vartype path_suffix: str
-    :ivar permission: Gets the permission represented as an string.
+    :ivar permission: the permission represented as an string.
     :vartype permission: str
-    :ivar type: Gets the type of the path object. Possible values include:
-     'FILE', 'DIRECTORY'
+    :ivar type: the type of the path object. Possible values include: 'FILE',
+     'DIRECTORY'
     :vartype type: str or :class:`FileType
      <azure.mgmt.datalake.store.filesystem.models.FileType>`
     """ 

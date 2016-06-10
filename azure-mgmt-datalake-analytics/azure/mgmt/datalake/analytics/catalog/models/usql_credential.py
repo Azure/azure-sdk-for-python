@@ -26,21 +26,17 @@ class USqlCredential(CatalogItem):
     """
     A Data Lake Analytics catalog U-SQL credential item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database the
-     credential is in.
+    :param database_name: the name of the database the credential is in.
     :type database_name: str
-    :param identity: Gets or sets the name of the secret associated with the
-     credential.
+    :param identity: the name of the secret associated with the credential.
     :type identity: str
-    :param name: Gets or sets the name of the credential.
+    :param name: the name of the credential.
     :type name: str
-    :param user_name: Gets or sets the user name associated with the
-     credential.
+    :param user_name: the user name associated with the credential.
     :type user_name: str
     """ 
 

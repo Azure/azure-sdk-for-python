@@ -57,10 +57,10 @@ class CatalogOperations(object):
         :type database_name: str
         :param secret_name: The name of the secret.
         :type secret_name: str
-        :param password: Gets or sets the password for the secret to pass in
+        :param password: the password for the secret to pass in
         :type password: str
-        :param uri: Gets or sets the URI identifier for the secret in the
-         format <hostname>:<port>
+        :param uri: the URI identifier for the secret in the format
+         <hostname>:<port>
         :type uri: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -135,10 +135,10 @@ class CatalogOperations(object):
         :type database_name: str
         :param secret_name: The name of the secret.
         :type secret_name: str
-        :param password: Gets or sets the password for the secret to pass in
+        :param password: the password for the secret to pass in
         :type password: str
-        :param uri: Gets or sets the URI identifier for the secret in the
-         format <hostname>:<port>
+        :param uri: the URI identifier for the secret in the format
+         <hostname>:<port>
         :type uri: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

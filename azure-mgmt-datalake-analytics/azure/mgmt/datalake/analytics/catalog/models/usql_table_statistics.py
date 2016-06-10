@@ -26,43 +26,40 @@ class USqlTableStatistics(CatalogItem):
     """
     A Data Lake Analytics catalog U-SQL table statistics item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param schema_name: Gets or sets the name of the schema associated with
-     this table and database.
+    :param schema_name: the name of the schema associated with this table and
+     database.
     :type schema_name: str
-    :param table_name: Gets or sets the name of the table.
+    :param table_name: the name of the table.
     :type table_name: str
-    :param name: Gets or sets the name of the table statistics.
+    :param name: the name of the table statistics.
     :type name: str
-    :param user_stat_name: Gets or sets the name of the user statistics.
+    :param user_stat_name: the name of the user statistics.
     :type user_stat_name: str
-    :param stat_data_path: Gets or sets the path to the statistics data.
+    :param stat_data_path: the path to the statistics data.
     :type stat_data_path: str
-    :param create_time: Gets or sets the creation time of the statistics.
+    :param create_time: the creation time of the statistics.
     :type create_time: datetime
-    :param update_time: Gets or sets the last time the statistics were
-     updated.
+    :param update_time: the last time the statistics were updated.
     :type update_time: datetime
-    :param is_user_created: Gets or sets the switch indicating if these
-     statistics are user created.
+    :param is_user_created: the switch indicating if these statistics are
+     user created.
     :type is_user_created: bool
-    :param is_auto_created: Gets or sets the switch indicating if these
-     statistics are automatically created.
+    :param is_auto_created: the switch indicating if these statistics are
+     automatically created.
     :type is_auto_created: bool
-    :param has_filter: Gets or sets the switch indicating if these statistics
-     have a filter.
+    :param has_filter: the switch indicating if these statistics have a
+     filter.
     :type has_filter: bool
-    :param filter_definition: Gets or sets the filter definition for the
-     statistics.
+    :param filter_definition: the filter definition for the statistics.
     :type filter_definition: str
-    :param col_names: Gets or sets the list of column names associated with
-     these statistics.
+    :param col_names: the list of column names associated with these
+     statistics.
     :type col_names: list of str
     """ 
 

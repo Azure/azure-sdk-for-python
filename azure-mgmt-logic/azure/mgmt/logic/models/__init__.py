@@ -34,6 +34,7 @@ from .workflow_trigger import WorkflowTrigger
 from .workflow_trigger_recurrence import WorkflowTriggerRecurrence
 from .workflow_trigger_filter import WorkflowTriggerFilter
 from .workflow_trigger_history import WorkflowTriggerHistory
+from .workflow_trigger_history_filter import WorkflowTriggerHistoryFilter
 from .workflow_run import WorkflowRun
 from .workflow_run_trigger import WorkflowRunTrigger
 from .workflow_output_parameter import WorkflowOutputParameter
@@ -76,6 +77,7 @@ __all__ = [
     'WorkflowTriggerRecurrence',
     'WorkflowTriggerFilter',
     'WorkflowTriggerHistory',
+    'WorkflowTriggerHistoryFilter',
     'WorkflowRun',
     'WorkflowRunTrigger',
     'WorkflowOutputParameter',
