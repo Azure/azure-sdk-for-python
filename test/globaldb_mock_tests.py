@@ -1,4 +1,4 @@
-import unittest
+﻿import unittest
 import time
 import json
 
@@ -10,14 +10,6 @@ import pydocumentdb.http_constants as http_constants
 import pydocumentdb.constants as constants
 import pydocumentdb.global_endpoint_manager as global_endpoint_manager
 import pydocumentdb.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
-
-host = '[YOUR_GLOBAL_ENDPOINT_HERE]'
-write_location_host = '[YOUR_WRITE_ENDPOINT_HERE]'
-read_location_host = '[YOUR_READ_ENDPOINT_HERE]'
-masterKey = '[YOUR_KEY_HERE]'
-
-write_location = '[YOUR_WRITE_LOCATION_HERE]'
-read_location = '[YOUR_READ_LOCATION_HERE]'
 
 location_changed = False
 
@@ -66,15 +58,15 @@ class MockGlobalEndpointManager:
 
     def GetDatabaseAccount1(self):
         database_account = documents.DatabaseAccount()
-        database_account._ReadableLocations = [{'name' : read_location, 'databaseAccountEndpoint' : read_location_host}]
-        database_account._WritableLocations = [{'name' : write_location, 'databaseAccountEndpoint' : write_location_host}]
+        database_account._ReadableLocations = [{'name' : Test_globaldb_mock_tests.read_location, 'databaseAccountEndpoint' : Test_globaldb_mock_tests.read_location_host}]
+        database_account._WritableLocations = [{'name' : Test_globaldb_mock_tests.write_location, 'databaseAccountEndpoint' : Test_globaldb_mock_tests.write_location_host}]
         
         return database_account
 
     def GetDatabaseAccount2(self):
         database_account = documents.DatabaseAccount()
-        database_account._ReadableLocations = [{'name' : write_location, 'databaseAccountEndpoint' : write_location_host}]
-        database_account._WritableLocations = [{'name' : read_location, 'databaseAccountEndpoint' : read_location_host}]
+        database_account._ReadableLocations = [{'name' : Test_globaldb_mock_tests.write_location, 'databaseAccountEndpoint' : Test_globaldb_mock_tests.write_location_host}]
+        database_account._WritableLocations = [{'name' : Test_globaldb_mock_tests.read_location, 'databaseAccountEndpoint' : Test_globaldb_mock_tests.read_location_host}]
         
         return database_account
 
@@ -91,18 +83,40 @@ class MockGlobalEndpointManager:
 
         return write_endpoint, read_endpoint
 
-# Make pydocumentdb use the MockGlobalEndpointManager
-global_endpoint_manager._GlobalEndpointManager = MockGlobalEndpointManager
+
 
 class Test_globaldb_mock_tests(unittest.TestCase):
+    
+    host = '[YOUR_GLOBAL_ENDPOINT_HERE]'
+    write_location_host = '[YOUR_WRITE_ENDPOINT_HERE]'
+    read_location_host = '[YOUR_READ_ENDPOINT_HERE]'
+    masterKey = '[YOUR_KEY_HERE]'
+
+    write_location = '[YOUR_WRITE_LOCATION_HERE]'
+    read_location = '[YOUR_READ_LOCATION_HERE]'
+
     def setUp(self):
         self.endpoint_discovery_retry_count = 0
+        
+        # Copying the original objects and functions before assigning the mock versions of them
+        self.OriginalGetDatabaseAccountStub = global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
+        self.OriginalGlobalEndpointManager = global_endpoint_manager._GlobalEndpointManager
+        self.OriginalExecuteFunction = endpoint_discovery_retry_policy._ExecuteFunction
+
+        # Make pydocumentdb use the MockGlobalEndpointManager
+        global_endpoint_manager._GlobalEndpointManager = MockGlobalEndpointManager
+
+    def tearDown(self):
+        # Restoring the original objects and functions
+        global_endpoint_manager._GlobalEndpointManager = self.OriginalGlobalEndpointManager
+        global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.OriginalGetDatabaseAccountStub
+        endpoint_discovery_retry_policy._ExecuteFunction = self.OriginalExecuteFunction
     
     def MockExecuteFunction(self, function, *args, **kwargs):
         global location_changed
 
         if self.endpoint_discovery_retry_count == 2:
-            endpoint_discovery_retry_policy._ExecuteFunction = self.RealExecuteFunction
+            endpoint_discovery_retry_policy._ExecuteFunction = self.OriginalExecuteFunction
             return (json.dumps([{ 'id': 'mock database' }]), None)
         else:
             self.endpoint_discovery_retry_count += 1
@@ -113,7 +127,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         raise errors.HTTPFailure(503, "Service unavailable")
     
     def MockCreateDatabase(self, client, database):
-        self.RealExecuteFunction = endpoint_discovery_retry_policy._ExecuteFunction
+        self.OriginalExecuteFunction = endpoint_discovery_retry_policy._ExecuteFunction
         endpoint_discovery_retry_policy._ExecuteFunction = self.MockExecuteFunction
         client.CreateDatabase(database)
 
@@ -121,30 +135,29 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        write_location_client = document_client.DocumentClient(write_location_host, {'masterKey': masterKey}, connection_policy)
-        self.assertEqual(write_location_client._global_endpoint_manager.WriteEndpoint, write_location_host)
+        write_location_client = document_client.DocumentClient(Test_globaldb_mock_tests.write_location_host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
+        self.assertEqual(write_location_client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
         
         self.MockCreateDatabase(write_location_client, { 'id': 'mock database' })
 
-        self.assertEqual(write_location_client._global_endpoint_manager.WriteEndpoint, read_location_host)
+        self.assertEqual(write_location_client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.read_location_host)
 
     def test_globaldb_database_account_unavailable(self):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        client = document_client.DocumentClient(host, {'masterKey': masterKey}, connection_policy)
+        client = document_client.DocumentClient(Test_globaldb_mock_tests.host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
 
-        self.assertEqual(client._global_endpoint_manager.WriteEndpoint, write_location_host)
-        self.assertEqual(client._global_endpoint_manager.ReadEndpoint, write_location_host)
+        self.assertEqual(client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
+        self.assertEqual(client._global_endpoint_manager.ReadEndpoint, Test_globaldb_mock_tests.write_location_host)
 
         global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
         client._global_endpoint_manager.DatabaseAccountAvailable = False
         
         client._global_endpoint_manager.RefreshEndpointList()
 
-        self.assertEqual(client._global_endpoint_manager.WriteEndpoint, host)
-        self.assertEqual(client._global_endpoint_manager.ReadEndpoint, host)
+        self.assertEqual(client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.host)
+        self.assertEqual(client._global_endpoint_manager.ReadEndpoint, Test_globaldb_mock_tests.host)
 
 if __name__ == '__main__':
-    doctest.testmod()
     unittest.main()

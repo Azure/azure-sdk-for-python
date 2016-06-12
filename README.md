@@ -25,10 +25,10 @@ Welcome to DocumentDB.
 
 2) To run tests:
 
-    $ python test/crud_tests.py
+    $ python -m unittest discover -s .\test -p "*.py"
 
     If you use Microsoft Visual Studio, open the project file python.pyproj,
-    and press F5.
+    and run all the tests in Test Explorer.
 
 
 3) To generate documentations:

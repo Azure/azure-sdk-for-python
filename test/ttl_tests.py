@@ -25,8 +25,6 @@ import time
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
 
-host = '[YOUR_ENDPOINT_HERE]'
-masterKey = '[YOUR_KEY_HERE]'
 
 #IMPORTANT NOTES: 
   
@@ -39,6 +37,9 @@ masterKey = '[YOUR_KEY_HERE]'
 class Test_ttl_tests(unittest.TestCase):
     """TTL Unit Tests.
     """
+
+    host = '[YOUR_ENDPOINT_HERE]'
+    masterKey = '[YOUR_KEY_HERE]'
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -54,14 +55,14 @@ class Test_ttl_tests(unittest.TestCase):
             self.assertEqual(inst.status_code, status_code)
 
     def setUp(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         databases = list(client.ReadDatabases())
         for database in databases:
             client.DeleteDatabase(database['_self'])
 
     def test_collection_and_document_ttl_values(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         
@@ -135,7 +136,7 @@ class Test_ttl_tests(unittest.TestCase):
             document_definition)
 
     def test_document_ttl_with_positive_defaultTtl(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         
@@ -217,7 +218,7 @@ class Test_ttl_tests(unittest.TestCase):
             created_document['_self'])
 
     def test_document_ttl_with_negative_one_defaultTtl(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         
@@ -264,7 +265,7 @@ class Test_ttl_tests(unittest.TestCase):
         self.assertEqual(created_document2['id'], read_document['id'])
 
     def test_document_ttl_with_no_defaultTtl(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         
@@ -291,7 +292,7 @@ class Test_ttl_tests(unittest.TestCase):
         self.assertEqual(created_document['id'], read_document['id'])
 
     def test_document_ttl_misc(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         

@@ -58,11 +58,14 @@ class _EndpointDiscoveryRetryPolicy(object):
        (say, after a failover).
     """
 
+    Max_retry_attempt_count = 120
+    Retry_after_in_milliseconds = 1000
+
     def __init__(self, global_endpoint_manager):
         self.global_endpoint_manager = global_endpoint_manager
-        self._max_retry_attempt_count = 120
+        self._max_retry_attempt_count = _EndpointDiscoveryRetryPolicy.Max_retry_attempt_count
         self._current_retry_attempt_count = 0
-        self.retry_after_in_milliseconds = 1000
+        self.retry_after_in_milliseconds = _EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
     def ShouldRetry(self, exception):

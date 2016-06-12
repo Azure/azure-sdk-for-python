@@ -112,15 +112,16 @@ def GetHeaders(document_client,
             datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT'))
 
     if document_client.master_key or document_client.resource_tokens:
-        # -_.!~*'() are valid characters in url, and shouldn't be quoted.
-        headers[http_constants.HttpHeaders.Authorization] = urllib.quote(
-            auth.GetAuthorizationHeader(document_client,
+        authorization = auth.GetAuthorizationHeader(document_client,
                                         verb,
                                         path,
                                         resource_id,
                                         resource_type,
-                                        headers),
-            '-_.!~*\'()')
+                                        headers)
+        # -_.!~*'() are valid characters in url, and shouldn't be quoted.
+        if authorization:
+            authorization = urllib.quote(authorization, '-_.!~*\'()')
+        headers[http_constants.HttpHeaders.Authorization] = authorization
 
     if verb == 'post' or verb == 'put':
         if not headers.get(http_constants.HttpHeaders.ContentType):

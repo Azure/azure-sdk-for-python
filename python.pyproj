@@ -5,7 +5,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ea429a23-2afb-4bf7-a345-28e2bd129564}</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>test\crud_tests.py</StartupFile>
     <SearchPath>.</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -51,6 +50,7 @@
     <Compile Include="pydocumentdb\__init__.py" />
     <Compile Include="test\test_partition_resolver.py" />
     <Compile Include="test\__init__.py" />
+    <Content Include="test\BaselineTest.PathParser.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="pydocumentdb" />
