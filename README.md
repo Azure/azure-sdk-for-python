@@ -9,7 +9,7 @@ Welcome to DocumentDB.
     https://www.python.org/download/releases/2.7
 
 
-    If you use Microsoft Visual Studio as IDE (we use 2013), please install the
+    If you use Microsoft Visual Studio as IDE (we use 2015), please install the
     following extension for Python.
     http://microsoft.github.io/PTVS/
 
@@ -32,10 +32,10 @@ Some of the test files such as [crud_tests.py](https://github.com/Azure/azure-do
 
 To run the tests:
 
-    $ python test/crud_tests.py
+    $ python test/crud_tests.py 
 
     If you use Microsoft Visual Studio, open the project file python.pyproj,
-    and press F5.
+    and press F5. 
 
 **Note:**  
 Test cases in [crud_tests.py](https://github.com/Azure/azure-documentdb-python/blob/fe95945cae62ee4a68ae53bc5519bec11f07522c/test/crud_tests.py) create collections in your DocumentDB account. Collections are billing entities. By running these test cases, you may incur monetary costs on your account.

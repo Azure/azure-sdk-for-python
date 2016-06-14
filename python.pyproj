@@ -5,7 +5,6 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ea429a23-2afb-4bf7-a345-28e2bd129564}</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>test\crud_tests.py</StartupFile>
     <SearchPath>.</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -23,7 +22,10 @@
   <ItemGroup>
     <Content Include="README.md" />
     <Compile Include="pydocumentdb\consistent_hash_ring.py" />
+    <Compile Include="pydocumentdb\constants.py" />
+    <Compile Include="pydocumentdb\endpoint_discovery_retry_policy.py" />
     <Compile Include="pydocumentdb\errors.py" />
+    <Compile Include="pydocumentdb\global_endpoint_manager.py" />
     <Compile Include="pydocumentdb\hash_partition_resolver.py" />
     <Compile Include="pydocumentdb\http_constants.py" />
     <Compile Include="pydocumentdb\murmur_hash.py" />
@@ -34,6 +36,8 @@
     <Compile Include="pydocumentdb\runtime_constants.py" />
     <Compile Include="setup.py" />
     <Compile Include="test\crud_tests.py" />
+    <Compile Include="test\globaldb_tests.py" />
+    <Compile Include="test\globaldb_mock_tests.py" />
     <Compile Include="test\rate_test.py" />
     <Compile Include="test\ttl_tests.py" />
     <Compile Include="pydocumentdb\auth.py" />
@@ -46,6 +50,7 @@
     <Compile Include="pydocumentdb\__init__.py" />
     <Compile Include="test\test_partition_resolver.py" />
     <Compile Include="test\__init__.py" />
+    <Content Include="test\BaselineTest.PathParser.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="pydocumentdb" />

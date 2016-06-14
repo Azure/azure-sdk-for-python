@@ -38,7 +38,20 @@ class DatabaseAccount(object):
         self.ReservedDocumentStorageInMB = 0
         self.ProvisionedDocumentStorageInMB = 0
         self.ConsistencyPolicy = None
+        self._WritableLocations = []
+        self._ReadableLocations = []
 
+    @property
+    def WritableLocations(self):
+        """Gets the list of writable locations for a geo-replicated database account.
+        """
+        return self._WritableLocations
+
+    @property
+    def ReadableLocations(self):
+        """Gets the list of readable locations for a geo-replicated database account.
+        """
+        return self._ReadableLocations
 
 class ConsistencyLevel(object):
     """Represents the consistency levels supported for DocumentDB client
@@ -255,6 +268,15 @@ class ConnectionPolicy(object):
           attachment content (aka media) download mode.
         - `SSLConfiguration`: documents.SSLConfiguration, gets or sets the SSL configuration.
         - `ProxyConfiguration`: documents.ProxyConfiguration, gets or sets the proxy configuration.
+        - `EnableEndpointDiscovery`: boolean, gets or sets endpoint discovery flag for geo-replicated database accounts.
+           When EnableEndpointDiscovery is true, the client will automatically discover the
+           current write and read locations and direct the requests to the correct location
+           taking into consideration of the user's preference(if provided) as PreferredLocations.
+        - `PreferredLocations`: list, gets or sets the preferred locations for geo-replicated database accounts.
+           When EnableEndpointDiscovery is true and PreferredLocations is non-empty, 
+           the client will use this list to evaluate the final location, taking into consideration
+           the order specified in PreferredLocations list. The locations in this list are specified as the names of
+           the azure documentdb locations like, 'West US', 'East US', 'Central India' and so on.
     """
 
     __defaultRequestTimeout = 60000  # milliseconds
@@ -269,6 +291,8 @@ class ConnectionPolicy(object):
         self.MediaReadMode = MediaReadMode.Buffered
         self.SSLConfiguration = None
         self.ProxyConfiguration = None
+        self.EnableEndpointDiscovery = True;
+        self.PreferredLocations = []
 
 
 class RetryPolicy(object):

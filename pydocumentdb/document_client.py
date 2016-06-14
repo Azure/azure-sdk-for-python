@@ -6,10 +6,12 @@
 
 import pydocumentdb.base as base
 import pydocumentdb.documents as documents
+import pydocumentdb.constants as constants
 import pydocumentdb.http_constants as http_constants
 import pydocumentdb.query_iterable as query_iterable
 import pydocumentdb.runtime_constants as runtime_constants
 import pydocumentdb.synchronized_request as synchronized_request
+import pydocumentdb.global_endpoint_manager as global_endpoint_manager
 
 
 try:
@@ -79,7 +81,7 @@ class DocumentClient(object):
                                   documents.ConnectionPolicy())
 
         self.retry_policy = documents.RetryPolicy()
-
+        
         self.partition_resolvers = {}
 
         self.partition_key_definition_cache = {}
@@ -98,10 +100,24 @@ class DocumentClient(object):
         # Keeps the latest response headers from server.
         self.last_response_headers = None
 
+        self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
+
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
         # application/sql is no longer supported.
         self._query_compatibility_mode = DocumentClient._QueryCompatibilityMode.Default
+
+    @property
+    def WriteEndpoint(self):
+        """Gets the curent write endpoint for a geo-replicated database account.
+        """
+        return self._global_endpoint_manager.WriteEndpoint
+
+    @property
+    def ReadEndpoint(self):
+        """Gets the curent read endpoint for a geo-replicated database account.
+        """
+        return self._global_endpoint_manager.ReadEndpoint
 
     def RegisterPartitionResolver(self, database_link, partition_resolver):
         """Registers the partition resolver associated with the database link
@@ -1549,7 +1565,9 @@ class DocumentClient(object):
 
         """
         default_headers = self.default_headers
-        url_connection = self.url_connection
+        # ReadMedia will always use WriteEndpoint since it's not replicated in readable Geo regions
+        url_connection = self._global_endpoint_manager.WriteEndpoint
+
         path = base.GetPathFromLink(media_link)
         media_id = base.GetResourceIdOrFullNameFromLink(media_link)
         attachment_id = base.GetAttachmentIdFromMediaId(media_id)
@@ -1594,7 +1612,9 @@ class DocumentClient(object):
             initial_headers[http_constants.HttpHeaders.ContentType] = (
                 runtime_constants.MediaTypes.OctetStream)
 
-        url_connection = self.url_connection
+        # UpdateMedia will use WriteEndpoint since it uses PUT operation
+        url_connection = self._global_endpoint_manager.WriteEndpoint
+
         path = base.GetPathFromLink(media_link)
         media_id = base.GetResourceIdOrFullNameFromLink(media_link)
         attachment_id = base.GetAttachmentIdFromMediaId(media_id)
@@ -1789,7 +1809,9 @@ class DocumentClient(object):
         if params and not type(params) is list:
             params = [params]
 
-        url_connection = self.url_connection
+        # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
+        url_connection = self._global_endpoint_manager.WriteEndpoint
+
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
         headers = base.GetHeaders(self,
@@ -1950,13 +1972,16 @@ class DocumentClient(object):
                                     options), self.last_response_headers
         return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
 
-    def GetDatabaseAccount(self):
+    def GetDatabaseAccount(self, url_connection=None):
         """Gets database account info.
 
         :Returns:
             documents.DatabaseAccount
 
         """
+        if url_connection is None:
+            url_connection = self.url_connection
+
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self,
                                   initial_headers,
@@ -1965,7 +1990,7 @@ class DocumentClient(object):
                                   '',  # id
                                   '',  # type
                                   {});
-        result, self.last_response_headers = self.__Get(self.url_connection,
+        result, self.last_response_headers = self.__Get(url_connection,
                                                         '',
                                                         headers)
         database_account = documents.DatabaseAccount()
@@ -1981,7 +2006,13 @@ class DocumentClient(object):
             database_account.CurrentMediaStorageUsageInMB = (
                 self.last_response_headers[
                     http_constants.HttpHeaders.CurrentMediaStorageUsageInMB])
-        database_account.ConsistencyPolicy = result['userConsistencyPolicy']
+        database_account.ConsistencyPolicy = result.get(constants._Constants.UserConsistencyPolicy)
+
+        # WritableLocations and ReadableLocations fields will be available only for geo-replicated database accounts
+        if constants._Constants.WritableLocations in result:
+            database_account._WritableLocations = result[constants._Constants.WritableLocations]
+        if constants._Constants.ReadableLocations in result:
+            database_account._ReadableLocations = result[constants._Constants.ReadableLocations]
         return database_account
 
     def Create(self, body, path, type, id, initial_headers, options=None):
@@ -2010,7 +2041,9 @@ class DocumentClient(object):
                                   id,
                                   type,
                                   options)
-        result, self.last_response_headers = self.__Post(self.url_connection,
+        # Create will use WriteEndpoint since it uses POST operation
+        url_connection = self._global_endpoint_manager.WriteEndpoint
+        result, self.last_response_headers = self.__Post(url_connection,
                                                          path,
                                                          body,
                                                          headers)
@@ -2045,7 +2078,9 @@ class DocumentClient(object):
 
         headers[http_constants.HttpHeaders.IsUpsert] = True
 
-        result, self.last_response_headers = self.__Post(self.url_connection,
+        # Upsert will use WriteEndpoint since it uses POST operation
+        url_connection = self._global_endpoint_manager.WriteEndpoint
+        result, self.last_response_headers = self.__Post(url_connection,
                                                          path,
                                                          body,
                                                          headers)
@@ -2077,7 +2112,9 @@ class DocumentClient(object):
                                   id,
                                   type,
                                   options)
-        result, self.last_response_headers = self.__Put(self.url_connection,
+        # Replace will use WriteEndpoint since it uses PUT operation
+        url_connection = self._global_endpoint_manager.WriteEndpoint
+        result, self.last_response_headers = self.__Put(url_connection,
                                                         path,
                                                         resource,
                                                         headers)
@@ -2108,7 +2145,9 @@ class DocumentClient(object):
                                   id,
                                   type,
                                   options)
-        result, self.last_response_headers = self.__Get(self.url_connection,
+        # Read will use ReadEndpoint since it uses GET operation
+        url_connection = self._global_endpoint_manager.ReadEndpoint
+        result, self.last_response_headers = self.__Get(url_connection,
                                                         path,
                                                         headers)
         return result
@@ -2138,7 +2177,9 @@ class DocumentClient(object):
                                   id,
                                   type,
                                   options)
-        result, self.last_response_headers = self.__Delete(self.url_connection,
+        # Delete will use WriteEndpoint since it uses DELETE operation
+        url_connection = self._global_endpoint_manager.WriteEndpoint
+        result, self.last_response_headers = self.__Delete(url_connection,
                                                            path,
                                                            headers)
         return result
@@ -2156,7 +2197,8 @@ class DocumentClient(object):
             dicts
 
         """
-        return synchronized_request.SynchronizedRequest(self.connection_policy,
+        return synchronized_request.SynchronizedRequest(self._global_endpoint_manager,
+                                                        self.connection_policy,
                                                         'GET',
                                                         url,
                                                         path,
@@ -2178,7 +2220,8 @@ class DocumentClient(object):
             dicts
 
         """
-        return synchronized_request.SynchronizedRequest(self.connection_policy,
+        return synchronized_request.SynchronizedRequest(self._global_endpoint_manager,
+                                                        self.connection_policy,
                                                         'POST',
                                                         url,
                                                         path,
@@ -2200,7 +2243,8 @@ class DocumentClient(object):
             dicts
 
         """
-        return synchronized_request.SynchronizedRequest(self.connection_policy,
+        return synchronized_request.SynchronizedRequest(self._global_endpoint_manager,
+                                                        self.connection_policy,
                                                         'PUT',
                                                         url,
                                                         path,
@@ -2221,7 +2265,8 @@ class DocumentClient(object):
             dicts
 
         """
-        return synchronized_request.SynchronizedRequest(self.connection_policy,
+        return synchronized_request.SynchronizedRequest(self._global_endpoint_manager,
+                                                        self.connection_policy,
                                                         'DELETE',
                                                         url,
                                                         path,
@@ -2284,7 +2329,9 @@ class DocumentClient(object):
             def __GetBodiesFromQueryResult(result):
                 return [create_fn(self, body) for body in result_fn(result)]
 
-        url_connection = self.url_connection
+        # Query operations will use ReadEndpoint even though it uses GET(for feed requests) and POST(for regular query operations)
+        url_connection = self._global_endpoint_manager.ReadEndpoint
+
         initial_headers = self.default_headers.copy()
         # Copy to make sure that default_headers won't be changed.
         if query == None:
