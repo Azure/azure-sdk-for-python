@@ -94,14 +94,21 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens,
         dict
 
     """
-    if resource_tokens.get(resource_id_or_fullname):
-        return resource_tokens[resource_id_or_fullname]
-    else:
-        path_parts = path.split('/')
-        resource_types = ['dbs', 'colls', 'docs', 'sprocs', 'udfs', 'triggers',
-                          'users', 'permissions', 'attachments', 'media',
-                          'conflicts', 'offers']
-        for one_part in reversed(path_parts):
-            if not one_part in resource_types and one_part in resource_tokens:
-                return resource_tokens[one_part]
-        return None
+    if resource_tokens and len(resource_tokens) > 0:
+        # For database account access(through GetDatabaseAccount API), path and resource_id_or_fullname are '', 
+        # so in this case we return the first token to be used for creating the auth header as the service will accept any token in this case
+        if not path and not resource_id_or_fullname:
+            return resource_tokens.itervalues().next()
+
+        if resource_tokens.get(resource_id_or_fullname):
+            return resource_tokens[resource_id_or_fullname]
+        else:
+            path_parts = path.split('/')
+            resource_types = ['dbs', 'colls', 'docs', 'sprocs', 'udfs', 'triggers',
+                              'users', 'permissions', 'attachments', 'media',
+                              'conflicts', 'offers']
+            # Get the last resource id or resource name from the path and get it's token from resource_tokens
+            for one_part in reversed(path_parts):
+                if not one_part in resource_types and one_part in resource_tokens:
+                    return resource_tokens[one_part]
+    return None

@@ -9,7 +9,7 @@ Welcome to DocumentDB.
     https://www.python.org/download/releases/2.7
 
 
-    If you use Microsoft Visual Studio as IDE (we use 2013), please install the
+    If you use Microsoft Visual Studio as IDE (we use 2015), please install the
     following extension for Python.
     http://microsoft.github.io/PTVS/
 
@@ -25,10 +25,10 @@ Welcome to DocumentDB.
 
 2) To run tests:
 
-    $ python test/crud_tests.py
+    $ python test/crud_tests.py 
 
     If you use Microsoft Visual Studio, open the project file python.pyproj,
-    and press F5.
+    and press F5. 
 
 
 3) To generate documentations:

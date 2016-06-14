@@ -1,4 +1,23 @@
-﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿#The MIT License (MIT)
+#Copyright (c) 2014 Microsoft Corporation
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
 
 import unittest
 import time
@@ -6,8 +25,6 @@ import time
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
 
-masterKey = '[YOUR_KEY_HERE]'
-host = '[YOUR_ENDPOINT_HERE]'
 
 #IMPORTANT NOTES: 
   
@@ -17,9 +34,12 @@ host = '[YOUR_ENDPOINT_HERE]'
 #  	To Run the test, replace the two member fields (masterKey and host) with values 
 #   associated with your DocumentDB account.
 
-class TTLTests(unittest.TestCase):
+class Test_ttl_tests(unittest.TestCase):
     """TTL Unit Tests.
     """
+
+    host = '[YOUR_ENDPOINT_HERE]'
+    masterKey = '[YOUR_KEY_HERE]'
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -35,14 +55,14 @@ class TTLTests(unittest.TestCase):
             self.assertEqual(inst.status_code, status_code)
 
     def setUp(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         databases = list(client.ReadDatabases())
         for database in databases:
             client.DeleteDatabase(database['_self'])
 
     def test_collection_and_document_ttl_values(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         
@@ -116,7 +136,7 @@ class TTLTests(unittest.TestCase):
             document_definition)
 
     def test_document_ttl_with_positive_defaultTtl(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         
@@ -198,7 +218,7 @@ class TTLTests(unittest.TestCase):
             created_document['_self'])
 
     def test_document_ttl_with_negative_one_defaultTtl(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         
@@ -245,7 +265,7 @@ class TTLTests(unittest.TestCase):
         self.assertEqual(created_document2['id'], read_document['id'])
 
     def test_document_ttl_with_no_defaultTtl(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         
@@ -272,7 +292,7 @@ class TTLTests(unittest.TestCase):
         self.assertEqual(created_document['id'], read_document['id'])
 
     def test_document_ttl_misc(self):
-        client = document_client.DocumentClient(host, {'masterKey': masterKey})
+        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
         created_db = client.CreateDatabase({ 'id': 'sample database' })
         

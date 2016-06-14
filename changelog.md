@@ -1,3 +1,8 @@
+## Changes in 1.8.0 : ##
+
+- Added the support for geo-replicated database accounts.
+- Test fixes to move the global host and masterKey into the individual test classes.
+
 ## Changes in 1.7.0 : ##
 
 - Added the support for Time To Live(TTL) feature for documents.
