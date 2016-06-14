@@ -25,14 +25,6 @@ from __builtin__ import *
 
 TEST_DB_NAME = 'sample database'
 
-masterKey = '[YOUR_KEY_HERE]'
-host = '[YOUR_ENDPOINT_HERE]'
-
-if masterKey == '[YOUR_KEY_HERE]' or host == '[YOUR_ENDPOINT_HERE]':
-    raise Exception(
-        "You must specify your Azure DocumentDB account values for "
-        "'masterKey' and 'host' at the top of this file to run the tests.")
-
 
 #IMPORTANT NOTES:
   
@@ -61,6 +53,15 @@ class CRUDTests(unittest.TestCase):
             self.assertFalse(True, 'function should fail.')
         except errors.HTTPFailure as inst:
             self.assertEqual(inst.status_code, status_code)
+
+    @classmethod
+    def setUpClass(cls):
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure DocumentDB account values for "
+                "'masterKey' and 'host' at the top of this file to run the "
+                "tests.")
 
     def setUp(self):
         client = document_client.DocumentClient(CRUDTests.host,
