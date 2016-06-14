@@ -22,30 +22,33 @@
 from msrest.serialization import Model
 
 
-class UsageName(Model):
+class EncryptionService(Model):
     """
-    The Usage Names.
+    An encrypted service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Gets a string describing the resource name.
-    :vartype value: str
-    :ivar localized_value: Gets a localized string describing the resource
-     name.
-    :vartype localized_value: str
+    :param enabled: A boolean indicating whether or not the service is
+     encrypted.
+    :type enabled: bool
+    :ivar last_enabled_time: Gets a time value indicating when was the
+     encryption enabled by the user last time. We return this value only when
+     encryption is enabled. There might be some unencrypted blobs which were
+     written after this time. This time is just to give a rough estimate of
+     when encryption was enabled.
+    :vartype last_enabled_time: datetime
     """ 
 
     _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        'last_enabled_time': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'last_enabled_time': {'key': 'lastEnabledTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        self.value = None
-        self.localized_value = None
+    def __init__(self, enabled=None):
+        self.enabled = enabled
+        self.last_enabled_time = None

@@ -22,30 +22,17 @@
 from msrest.serialization import Model
 
 
-class UsageName(Model):
+class UsageListResult(Model):
     """
-    The Usage Names.
+    The List Usages operation response.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: Gets a string describing the resource name.
-    :vartype value: str
-    :ivar localized_value: Gets a localized string describing the resource
-     name.
-    :vartype localized_value: str
+    :param value: Gets or sets the list Storage Resource Usages.
+    :type value: list of :class:`Usage <azure.mgmt.storage.models.Usage>`
     """ 
 
-    _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
-    }
-
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[Usage]'},
     }
 
-    def __init__(self):
-        self.value = None
-        self.localized_value = None
+    def __init__(self, value=None):
+        self.value = value
