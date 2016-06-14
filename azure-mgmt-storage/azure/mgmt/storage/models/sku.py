@@ -22,30 +22,33 @@
 from msrest.serialization import Model
 
 
-class UsageName(Model):
+class Sku(Model):
     """
-    The Usage Names.
+    The SKU of the storage account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Gets a string describing the resource name.
-    :vartype value: str
-    :ivar localized_value: Gets a localized string describing the resource
-     name.
-    :vartype localized_value: str
+    :param name: Gets or sets the sku name. Required for account creation,
+     optional for update. Note that in older versions, sku name was called
+     accountType. Possible values include: 'Standard_LRS', 'Standard_GRS',
+     'Standard_RAGRS', 'Standard_ZRS', 'Premium_LRS'
+    :type name: str or :class:`SkuName <azure.mgmt.storage.models.SkuName>`
+    :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
+     values include: 'Standard', 'Premium'
+    :vartype tier: str or :class:`SkuTier <azure.mgmt.storage.models.SkuTier>`
     """ 
 
     _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        'name': {'required': True},
+        'tier': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'SkuName'},
+        'tier': {'key': 'tier', 'type': 'SkuTier'},
     }
 
-    def __init__(self):
-        self.value = None
-        self.localized_value = None
+    def __init__(self, name):
+        self.name = name
+        self.tier = None

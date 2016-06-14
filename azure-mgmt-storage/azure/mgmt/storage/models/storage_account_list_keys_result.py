@@ -22,39 +22,25 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityResult(Model):
+class StorageAccountListKeysResult(Model):
     """
-    The CheckNameAvailability operation response.
+    The ListKeys operation response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name_available: Gets a boolean value that indicates whether the
-     name is available for you to use. If true, the name is available. If
-     false, the name has already been taken or invalid and cannot be used.
-    :vartype name_available: bool
-    :ivar reason: Gets the reason that a storage account name could not be
-     used. The Reason element is only returned if NameAvailable is false.
-     Possible values include: 'AccountNameInvalid', 'AlreadyExists'
-    :vartype reason: str or :class:`Reason <azure.mgmt.storage.models.Reason>`
-    :ivar message: Gets an error message explaining the Reason value in more
-     detail.
-    :vartype message: str
+    :ivar keys: Gets the list of account keys and their properties.
+    :vartype keys: list of :class:`StorageAccountKey
+     <azure.mgmt.storage.models.StorageAccountKey>`
     """ 
 
     _validation = {
-        'name_available': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
+        'keys': {'readonly': True},
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'Reason'},
-        'message': {'key': 'message', 'type': 'str'},
+        'keys': {'key': 'keys', 'type': '[StorageAccountKey]'},
     }
 
     def __init__(self):
-        self.name_available = None
-        self.reason = None
-        self.message = None
+        self.keys = None

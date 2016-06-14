@@ -19,19 +19,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class UsagePaged(Paged):
+class EncryptionServices(Model):
     """
-    A paging container for iterating over a list of Usage object
-    """
+    The encrypted services.
+
+    :param blob: The blob service.
+    :type blob: :class:`EncryptionService
+     <azure.mgmt.storage.models.EncryptionService>`
+    """ 
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Usage]'}
+        'blob': {'key': 'blob', 'type': 'EncryptionService'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(UsagePaged, self).__init__(*args, **kwargs)
+    def __init__(self, blob=None):
+        self.blob = blob
