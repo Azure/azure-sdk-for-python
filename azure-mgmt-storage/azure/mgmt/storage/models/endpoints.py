@@ -27,15 +27,25 @@ class Endpoints(Model):
     The URIs that are used to perform a retrieval of a public blob, queue or
     table object.
 
-    :param blob: Gets the blob endpoint.
-    :type blob: str
-    :param queue: Gets the queue endpoint.
-    :type queue: str
-    :param table: Gets the table endpoint.
-    :type table: str
-    :param file: Gets the file endpoint.
-    :type file: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar blob: Gets the blob endpoint.
+    :vartype blob: str
+    :ivar queue: Gets the queue endpoint.
+    :vartype queue: str
+    :ivar table: Gets the table endpoint.
+    :vartype table: str
+    :ivar file: Gets the file endpoint.
+    :vartype file: str
     """ 
+
+    _validation = {
+        'blob': {'readonly': True},
+        'queue': {'readonly': True},
+        'table': {'readonly': True},
+        'file': {'readonly': True},
+    }
 
     _attribute_map = {
         'blob': {'key': 'blob', 'type': 'str'},
@@ -44,8 +54,8 @@ class Endpoints(Model):
         'file': {'key': 'file', 'type': 'str'},
     }
 
-    def __init__(self, blob=None, queue=None, table=None, file=None):
-        self.blob = blob
-        self.queue = queue
-        self.table = table
-        self.file = file
+    def __init__(self):
+        self.blob = None
+        self.queue = None
+        self.table = None
+        self.file = None
