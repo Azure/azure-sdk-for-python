@@ -58,8 +58,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def create_storage_account(self, storage_name):
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-            location=self.region,
-            account_type=azure.mgmt.storage.models.AccountType.standard_lrs,
+            sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
+            kind=azure.mgmt.storage.models.Kind.storage,
+            location=self.region
         )
         result_create = self.storage_client.storage_accounts.create(
             self.group_name,
@@ -67,7 +68,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
             params_create,
         )
         result_create.wait()
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
     def create_virtual_network(self, network_name, subnet_name):
         params_create = azure.mgmt.network.models.VirtualNetwork(

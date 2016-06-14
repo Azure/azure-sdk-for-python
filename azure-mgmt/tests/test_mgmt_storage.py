@@ -38,43 +38,52 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result_check = self.storage_client.storage_accounts.check_name_availability(
             account_name
         )
-        self.assertTrue(result_check)
+        self.assertTrue(result_check.name_available)
+        self.assertFalse(result_check.reason)
+        self.assertFalse(result_check.message)
 
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-            location=self.region,
-            account_type=azure.mgmt.storage.models.AccountType.standard_lrs,
+            sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
+            kind=azure.mgmt.storage.models.Kind.storage,
+            location=self.region
         )
         result_create = self.storage_client.storage_accounts.create(
             self.group_name,
             account_name,
             params_create,
         )
-        result_create.wait()
+        storage_account = result_create.result()
+        self.assertEqual(storage_account.name, account_name)
 
-        result_get = self.storage_client.storage_accounts.get_properties(
+        storage_account = self.storage_client.storage_accounts.get_properties(
             self.group_name,
             account_name,
         )
+        self.assertEqual(storage_account.name, account_name)
 
         result_list_keys = self.storage_client.storage_accounts.list_keys(
             self.group_name,
             account_name,
         )
-        self.assertGreater(len(result_list_keys.key1), 0)
-        self.assertGreater(len(result_list_keys.key2), 0)
+        keys = {v.key_name: (v.value, v.permissions) for v in result_list_keys.keys}
+        self.assertEquals(len(keys), 2)
+        self.assertGreater(len(keys['key1'][0]), 0)
+        self.assertGreater(len(keys['key1'][0]), 0)
 
         result_regen_keys = self.storage_client.storage_accounts.regenerate_key(
             self.group_name,
             account_name,
             "key1"
         )
+        new_keys = {v.key_name: (v.value, v.permissions) for v in result_regen_keys.keys}
+        self.assertEquals(len(new_keys), 2)
         self.assertNotEqual(
-            result_regen_keys.key1,
-            result_list_keys.key1,
+            new_keys['key1'][0],
+            keys['key1'][0],
         )
         self.assertEqual(
-            result_regen_keys.key2,
-            result_list_keys.key2,
+            new_keys['key2'][0],
+            keys['key2'][0],
         )
 
         result_list = self.storage_client.storage_accounts.list_by_resource_group(
@@ -83,7 +92,11 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result_list = list(result_list)
         self.assertGreater(len(result_list), 0)
 
-        result_delete = self.storage_client.storage_accounts.delete(
+        result_list = self.storage_client.storage_accounts.list()
+        result_list = list(result_list)
+        self.assertGreater(len(result_list), 0)
+
+        self.storage_client.storage_accounts.delete(
             self.group_name,
             account_name,
         )
