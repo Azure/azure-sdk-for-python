@@ -38,7 +38,6 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result_check = self.storage_client.storage_accounts.check_name_availability(
             account_name
         )
-        #self.assertEqual(result_check.status_code, HttpStatusCode.OK)
         self.assertTrue(result_check)
 
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
@@ -50,29 +49,17 @@ class MgmtStorageTest(AzureMgmtTestCase):
             account_name,
             params_create,
         )
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
         result_create.wait()
 
         result_get = self.storage_client.storage_accounts.get_properties(
             self.group_name,
             account_name,
         )
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
-        #self.assertEqual(result_get.storage_account.name, account_name)
-        #self.assertEqual(
-        #    result_get.storage_account.location,
-        #    params_create.location,
-        #)
-        #self.assertEqual(
-        #    result_get.storage_account.type,
-        #    params_create.account_type,
-        #)
 
         result_list_keys = self.storage_client.storage_accounts.list_keys(
             self.group_name,
             account_name,
         )
-        #self.assertEqual(result_list_keys.status_code, HttpStatusCode.OK)
         self.assertGreater(len(result_list_keys.key1), 0)
         self.assertGreater(len(result_list_keys.key2), 0)
 
@@ -81,7 +68,6 @@ class MgmtStorageTest(AzureMgmtTestCase):
             account_name,
             "key1"
         )
-        #self.assertEqual(result_regen_keys.status_code, HttpStatusCode.OK)
         self.assertNotEqual(
             result_regen_keys.key1,
             result_list_keys.key1,
@@ -91,41 +77,16 @@ class MgmtStorageTest(AzureMgmtTestCase):
             result_list_keys.key2,
         )
 
-        #params_update = azure.mgmt.storage.StorageAccountUpdateParameters()
-        #params_update.tags['tagname1'] = 'tagvalue1'
-        #result_update = self.storage_client.storage_accounts.update(
-        #    self.group_name,
-        #    account_name,
-        #    params_update,
-        #)
-        #self.assertEqual(result_update.status_code, HttpStatusCode.OK)
-
-        #result_get = self.client.storage_accounts.get_properties(
-        #    self.group_name,
-        #    account_name,
-        #)
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
-        #self.assertEqual(
-        #    result_get.storage_account.tags['tagname1'],
-        #    'tagvalue1',
-        #)
-
         result_list = self.storage_client.storage_accounts.list_by_resource_group(
             self.group_name,
         )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
         result_list = list(result_list)
         self.assertGreater(len(result_list), 0)
-        #self.assertEqual(
-        #    result_list.storage_accounts[0].name,
-        #    account_name,
-        #)
 
         result_delete = self.storage_client.storage_accounts.delete(
             self.group_name,
             account_name,
         )
-        #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
