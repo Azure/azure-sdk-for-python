@@ -22,21 +22,32 @@
 from msrest.serialization import Model
 
 
-class StorageAccountKeys(Model):
+class Encryption(Model):
     """
-    The access keys for the storage account.
+    The encryption settings on the account.
 
-    :param key1: Gets the value of key 1.
-    :type key1: str
-    :param key2: Gets the value of key 2.
-    :type key2: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param services: Gets the services which are encrypted.
+    :type services: :class:`EncryptionServices
+     <azure.mgmt.storage.models.EncryptionServices>`
+    :ivar key_source: Gets the encryption keySource(provider). Possible
+     values (case-insensitive):  Microsoft.Storage. Default value:
+     "Microsoft.Storage" .
+    :vartype key_source: str
     """ 
 
-    _attribute_map = {
-        'key1': {'key': 'key1', 'type': 'str'},
-        'key2': {'key': 'key2', 'type': 'str'},
+    _validation = {
+        'key_source': {'required': True, 'constant': True},
     }
 
-    def __init__(self, key1=None, key2=None):
-        self.key1 = key1
-        self.key2 = key2
+    _attribute_map = {
+        'services': {'key': 'services', 'type': 'EncryptionServices'},
+        'key_source': {'key': 'keySource', 'type': 'str'},
+    }
+
+    key_source = "Microsoft.Storage"
+
+    def __init__(self, services=None):
+        self.services = services
