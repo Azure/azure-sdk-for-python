@@ -8,15 +8,16 @@ pydocumentdb.https_connection.HTTPSConnection class, and answers
 requests with a predefined sequence of responses.
 """
 
-import unittest
+import doctest
+import json
 import socket
 import time
-import doctest
-
-import json
-import pydocumentdb.https_connection
-import pydocumentdb.documents as documents
+import unittest
 from collections import deque
+
+import pydocumentdb.documents as documents
+import pydocumentdb.https_connection
+from pydocumentdb import document_client
 
 
 class MockHTTPResponse:
@@ -25,6 +26,7 @@ class MockHTTPResponse:
     by pydocumentdb
     """
     version = 11
+
     def __init__(self, status=200, reason="OK", data="", headers=None):
         self.status = status
         self.reason = reason
@@ -34,7 +36,7 @@ class MockHTTPResponse:
             self.headers = {}
         self.data = data
 
-    def getheader(name, default=None):
+    def getheader(self, name, default=None):
         return self.headers.get(name, default)
 
     def getheaders(self):
@@ -57,7 +59,7 @@ class MockHttpsConnection:
     responses = deque()
 
     def __init__(self, host, port=None, ssl_configuration=None, strict=None,
-            timeout=socket._GLOBAL_DEFAULT_TIMEOUT, source_address=None):
+                 timeout=socket._GLOBAL_DEFAULT_TIMEOUT, source_address=None):
         self.host = host
         self.port = port
 
@@ -91,24 +93,20 @@ class MockHttpsConnection:
 
 #####################################################
 
-import pydocumentdb.document_client as document_client
-import pydocumentdb.http_constants as http_constants
-
-
 
 class RateTest(unittest.TestCase):
 
-    host =''
+    host = ''
     masterKey = ''
 
     # a simple two-document respone
     two_document_response = {
         'Documents': [
             {
-                'id' : 1
+                'id': 1
             },
             {
-                'id' : 2
+                'id': 2
             }
         ]
     }
@@ -129,7 +127,6 @@ class RateTest(unittest.TestCase):
                 v = [v[index]]
             ret[k] = v
         return ret
-
 
     def setUp(self):
         self.OriginalHTTPSConnection = pydocumentdb.https_connection.HTTPSConnection
