@@ -13,16 +13,11 @@ import json
 import socket
 import time
 import unittest
-
-import json
-import pydocumentdb.https_connection
-import pydocumentdb.documents as documents
 from collections import deque
 
+import pydocumentdb.documents as documents
 import pydocumentdb.https_connection
 from pydocumentdb import document_client
-
-MASTER_KEY = ''
 
 
 class MockHTTPResponse:
@@ -101,7 +96,7 @@ class MockHttpsConnection:
 
 class RateTest(unittest.TestCase):
 
-    host =''
+    host = ''
     masterKey = ''
 
     # a simple two-document respone

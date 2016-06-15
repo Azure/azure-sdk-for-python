@@ -25,7 +25,6 @@ import time
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
 
-TEST_DB_NAME = 'sample database'
 
 #IMPORTANT NOTES:
   
@@ -41,6 +40,7 @@ class Test_ttl_tests(unittest.TestCase):
 
     host = '[YOUR_ENDPOINT_HERE]'
     masterKey = '[YOUR_KEY_HERE]'
+    testDbName = 'sample database'
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -61,7 +61,7 @@ class Test_ttl_tests(unittest.TestCase):
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure DocumentDB account values for "
-                "'masterKey' and 'host' at the top of this file to run the "
+                "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
     def setUp(self):
@@ -69,13 +69,13 @@ class Test_ttl_tests(unittest.TestCase):
 
         databases = list(client.ReadDatabases())
         for database in databases:
-            if database['id'] == TEST_DB_NAME:
+            if database['id'] == Test_ttl_tests.testDbName:
                 client.DeleteDatabase(database['_self'])
 
     def test_collection_and_document_ttl_values(self):
         client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
-        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
+        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         
         collection_definition = {'id' : 'sample collection1',
                                  'defaultTtl' : 5
@@ -149,7 +149,7 @@ class Test_ttl_tests(unittest.TestCase):
     def test_document_ttl_with_positive_defaultTtl(self):
         client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
-        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
+        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         
         collection_definition = {'id' : 'sample collection',
                                  'defaultTtl' : 5
@@ -231,7 +231,7 @@ class Test_ttl_tests(unittest.TestCase):
     def test_document_ttl_with_negative_one_defaultTtl(self):
         client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
-        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
+        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         
         collection_definition = {'id' : 'sample collection',
                                  'defaultTtl' : -1
@@ -278,7 +278,7 @@ class Test_ttl_tests(unittest.TestCase):
     def test_document_ttl_with_no_defaultTtl(self):
         client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
-        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
+        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         
         collection_definition = {'id' : 'sample collection' }
         
@@ -305,7 +305,7 @@ class Test_ttl_tests(unittest.TestCase):
     def test_document_ttl_misc(self):
         client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
 
-        created_db = client.CreateDatabase({ 'id': TEST_DB_NAME })
+        created_db = client.CreateDatabase({ 'id': Test_ttl_tests.testDbName })
         
         collection_definition = {'id' : 'sample collection',
                                  'defaultTtl' : 8
