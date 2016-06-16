@@ -37,14 +37,6 @@
       },
       "output_dir": "azure-mgmt-commerce/azure/mgmt/commerce"
     },
-    "compute": {
-      "swagger": "arm-compute/compositeComputeClient.json",
-      "autorest_options": {
-        "Namespace": "azure.mgmt.compute",
-        "Modeler": "CompositeSwagger"
-      },
-      "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
-    },
     "logic": {
       "swagger": "arm-logic/2015-02-01-preview/swagger/logic.json",
       "autorest_options": {
