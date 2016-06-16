@@ -65,13 +65,6 @@
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
     },
-    "resources.resources": {
-      "swagger": "arm-resources/resources/2016-02-01/swagger/resources.json",
-      "autorest_options": {
-        "Namespace ": "azure.mgmt.resource.resources"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources"
-    },
     "resources.policy": {
       "swagger": "arm-resources/policy/2016-04-01/swagger/policy.json",
       "autorest_options": {
