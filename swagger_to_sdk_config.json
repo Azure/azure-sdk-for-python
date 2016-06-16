@@ -30,13 +30,6 @@
       },
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
-    "cdn": {
-      "swagger": "arm-cdn/2016-04-02/swagger/cdn.json",
-      "autorest_options": {
-        "Namespace": "azure.mgmt.cdn"
-      },
-      "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
-    },
     "commerce": {
       "swagger": "arm-commerce/2015-06-01-preview/swagger/commerce.json",
       "autorest_options": {
