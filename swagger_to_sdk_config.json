@@ -93,13 +93,6 @@
       },
       "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
     },
-    "storage": {
-      "swagger": "arm-storage/2016-01-01/swagger/storage.json",
-      "autorest_options": {
-        "Namespace ": "azure.mgmt.storage"
-      },
-      "output_dir": "azure-mgmt-storage/azure/mgmt/storage"
-    },
     "web": {
       "swagger": "arm-web/2015-08-01/swagger/service.json",
       "autorest_options": {
