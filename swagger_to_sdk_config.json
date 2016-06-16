@@ -45,13 +45,6 @@
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
-    "graphrbac": {
-      "swagger": "arm-graphrbac/1.6-internal/swagger/graphrbac.json",
-      "autorest_options": {
-        "Namespace": "azure.graphrbac"
-      },
-      "output_dir": "azure-graphrbac/azure/graphrbac"
-    },
     "logic": {
       "swagger": "arm-logic/2015-02-01-preview/swagger/logic.json",
       "autorest_options": {
