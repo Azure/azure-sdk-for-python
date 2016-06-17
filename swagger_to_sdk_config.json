@@ -6,7 +6,8 @@
     "autorest_options": {
       "Header": "MICROSOFT_APACHE_NO_VERSION",
       "AddCredentials": true,
-      "ft": 2
+      "ft": 2,
+      "PackageVersion": "0.30.0rc5"
     },
     "wrapper_filesOrDirs": [],
     "delete_filesOrDirs": [
