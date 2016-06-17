@@ -16,12 +16,26 @@
     "generated_relative_base_directory": "*client"
   },
   "projects": {
+    "authorization": {
+      "swagger": "arm-authorization/2015-07-01/swagger/authorization.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.authorization"
+      },
+      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
+    },
     "batch.management": {
       "swagger": "arm-batch/2015-12-01/swagger/BatchManagement.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.batch"
       },
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
+    },
+    "cdn": {
+      "swagger": "arm-cdn/2016-04-02/swagger/cdn.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.cdn"
+      },
+      "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
     "commerce": {
       "swagger": "arm-commerce/2015-06-01-preview/swagger/commerce.json",
@@ -30,12 +44,34 @@
       },
       "output_dir": "azure-mgmt-commerce/azure/mgmt/commerce"
     },
+    "compute": {
+      "swagger": "arm-compute/compositeComputeClient.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.compute",
+        "Modeler": "CompositeSwagger"
+      },
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
+    },
+    "graphrbac": {
+      "swagger": "arm-graphrbac/1.6-internal/swagger/graphrbac.json",
+      "autorest_options": {
+        "Namespace": "azure.graphrbac"
+      },
+      "output_dir": "azure-graphrbac/azure/graphrbac"
+    },
     "logic": {
       "swagger": "arm-logic/2015-02-01-preview/swagger/logic.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.logic"
       },
       "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
+    },
+    "network": {
+      "swagger": "arm-network/2016-03-30/swagger/network.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.network"
+      },
+      "output_dir": "azure-mgmt-network/azure/mgmt/network"
     },
     "notificationhubs": {
       "swagger": "arm-notificationhubs/2014-09-01/swagger/notificationhubs.json",
@@ -65,6 +101,20 @@
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
     },
+    "resources.resources": {
+      "swagger": "arm-resources/resources/2016-02-01/swagger/resources.json",
+      "autorest_options": {
+        "Namespace ": "azure.mgmt.resource.resources"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources"
+    },
+    "resources.subscriptions": {
+      "swagger": "arm-resources/subscriptions/2015-11-01/swagger/subscriptions.json",
+      "autorest_options": {
+        "Namespace ": "azure.mgmt.resource.subscriptions"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions"
+    },
     "resources.policy": {
       "swagger": "arm-resources/policy/2016-04-01/swagger/policy.json",
       "autorest_options": {
@@ -78,6 +128,13 @@
         "Namespace ": "azure.mgmt.scheduler"
       },
       "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
+    },
+    "storage": {
+      "swagger": "arm-storage/2016-01-01/swagger/storage.json",
+      "autorest_options": {
+        "Namespace ": "azure.mgmt.storage"
+      },
+      "output_dir": "azure-mgmt-storage/azure/mgmt/storage"
     },
     "web": {
       "swagger": "arm-web/2015-08-01/swagger/service.json",
