@@ -26,9 +26,9 @@ class DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(Model):
     """
     DataLakeAnalytics DataLakeAnalyticsAccount information.
 
-    :param password: Gets or sets the password for the secret to pass in
+    :param password: the password for the secret to pass in
     :type password: str
-    :param uri: Gets or sets the URI identifier for the secret in the format
+    :param uri: the URI identifier for the secret in the format
      <hostname>:<port>
     :type uri: str
     """ 

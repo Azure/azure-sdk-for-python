@@ -29,13 +29,13 @@ class ContentSummary(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar directory_count: Gets the number of directories.
+    :ivar directory_count: the number of directories.
     :vartype directory_count: long
-    :ivar file_count: Gets the number of files.
+    :ivar file_count: the number of files.
     :vartype file_count: long
-    :ivar length: Gets the number of bytes used by the contet.
+    :ivar length: the number of bytes used by the contet.
     :vartype length: long
-    :ivar space_consumed: Gets the disk space consumed by the content.
+    :ivar space_consumed: the disk space consumed by the content.
     :vartype space_consumed: long
     """ 
 

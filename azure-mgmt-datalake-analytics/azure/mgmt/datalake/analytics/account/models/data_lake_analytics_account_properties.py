@@ -30,38 +30,38 @@ class DataLakeAnalyticsAccountProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar provisioning_state: Gets the provisioning status of the Data Lake
+    :ivar provisioning_state: the provisioning status of the Data Lake
      Analytics account. Possible values include: 'Failed', 'Creating',
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming',
      'Deleting', 'Deleted'
     :vartype provisioning_state: str or
      :class:`DataLakeAnalyticsAccountStatus <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus>`
-    :ivar state: Gets the state of the Data Lake Analytics account. Possible
+    :ivar state: the state of the Data Lake Analytics account. Possible
      values include: 'active', 'suspended'
     :vartype state: str or :class:`DataLakeAnalyticsAccountState
      <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState>`
-    :param default_data_lake_store_account: Gets or sets the default data
-     lake storage account associated with this Data Lake Analytics account.
+    :param default_data_lake_store_account: the default data lake storage
+     account associated with this Data Lake Analytics account.
     :type default_data_lake_store_account: str
-    :param max_degree_of_parallelism: Gets or sets the maximum supported
-     degree of parallelism for this acocunt.
+    :param max_degree_of_parallelism: the maximum supported degree of
+     parallelism for this acocunt.
     :type max_degree_of_parallelism: int
-    :param max_job_count: Gets or sets the maximum supported jobs running
-     under the account at the same time.
+    :param max_job_count: the maximum supported jobs running under the
+     account at the same time.
     :type max_job_count: int
-    :param data_lake_store_accounts: Gets or sets the list of Data Lake
-     storage accounts associated with this account.
+    :param data_lake_store_accounts: the list of Data Lake storage accounts
+     associated with this account.
     :type data_lake_store_accounts: list of :class:`DataLakeStoreAccountInfo
      <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo>`
-    :param storage_accounts: Gets or sets the list of Azure Blob storage
-     accounts associated with this account.
+    :param storage_accounts: the list of Azure Blob storage accounts
+     associated with this account.
     :type storage_accounts: list of :class:`StorageAccountInfo
      <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
-    :ivar creation_time: Gets or sets the account creation time.
+    :ivar creation_time: the account creation time.
     :vartype creation_time: datetime
-    :ivar last_modified_time: Gets or sets the account last modified time.
+    :ivar last_modified_time: the account last modified time.
     :vartype last_modified_time: datetime
-    :ivar endpoint: Gets or sets the full CName endpoint for this account.
+    :ivar endpoint: the full CName endpoint for this account.
     :vartype endpoint: str
     """ 
 

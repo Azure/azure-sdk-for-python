@@ -31,11 +31,11 @@ class AdlsRuntimeException(AdlsRemoteException):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar java_class_name: Gets the full class package name for the exception
+    :ivar java_class_name: the full class package name for the exception
      thrown, such as 'java.lang.IllegalArgumentException'.
     :vartype java_class_name: str
-    :ivar message: Gets the message associated with the exception that was
-     thrown, such as 'Invalid value for webhdfs parameter "permission":...'.
+    :ivar message: the message associated with the exception that was thrown,
+     such as 'Invalid value for webhdfs parameter "permission":...'.
     :vartype message: str
     :param exception: Polymorphic Discriminator
     :type exception: str

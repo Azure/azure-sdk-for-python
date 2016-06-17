@@ -188,8 +188,8 @@ class AccountOperations(object):
         :type account_name: str
         :param storage_account_name: The Azure Storage account to modify
         :type storage_account_name: str
-        :param properties: Gets or sets the properties for the Azure Storage
-         account being added.
+        :param properties: the properties for the Azure Storage account being
+         added.
         :type properties: :class:`StorageAccountProperties
          <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
         :param dict custom_headers: headers that will be added to the request
@@ -259,8 +259,8 @@ class AccountOperations(object):
         :param storage_account_name: The name of the Azure Storage account to
          add
         :type storage_account_name: str
-        :param properties: Gets or sets the properties for the Azure Storage
-         account being added.
+        :param properties: the properties for the Azure Storage account being
+         added.
         :type properties: :class:`StorageAccountProperties
          <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
         :param dict custom_headers: headers that will be added to the request
@@ -690,8 +690,8 @@ class AccountOperations(object):
         :param data_lake_store_account_name: The name of the Data Lake Store
          account to add.
         :type data_lake_store_account_name: str
-        :param properties: Gets or sets the properties for the Data Lake
-         Store account being added.
+        :param properties: the properties for the Data Lake Store account
+         being added.
         :type properties: :class:`DataLakeStoreAccountInfoProperties
          <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
         :param dict custom_headers: headers that will be added to the request

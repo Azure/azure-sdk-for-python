@@ -26,11 +26,9 @@ class StorageAccountInfo(Model):
     """
     Azure Storage account information.
 
-    :param name: Gets or sets the account name associated with the Azure
-     storage account.
+    :param name: the account name associated with the Azure storage account.
     :type name: str
-    :param properties: Gets or sets the properties associated with this
-     storage account.
+    :param properties: the properties associated with this storage account.
     :type properties: :class:`StorageAccountProperties
      <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
     """ 

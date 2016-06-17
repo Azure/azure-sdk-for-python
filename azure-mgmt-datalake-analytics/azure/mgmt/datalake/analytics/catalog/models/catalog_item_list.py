@@ -26,9 +26,9 @@ class CatalogItemList(Model):
     """
     A Data Lake Analytics catalog item list.
 
-    :param count: Gets or sets the count of items in the list.
+    :param count: the count of items in the list.
     :type count: int
-    :param next_link: Gets or sets the link to the next page of results.
+    :param next_link: the link to the next page of results.
     :type next_link: str
     """ 
 
