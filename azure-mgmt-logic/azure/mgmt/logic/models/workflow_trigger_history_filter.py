@@ -22,29 +22,20 @@
 from msrest.serialization import Model
 
 
-class AclStatus(Model):
-    """
-    Data Lake Store file or directory Access Control List information.
+class WorkflowTriggerHistoryFilter(Model):
+    """WorkflowTriggerHistoryFilter
 
-    :param entries: the list of ACLSpec entries on a file or directory.
-    :type entries: list of str
-    :param group: the group owner, an AAD Object ID.
-    :type group: str
-    :param owner: the user owner, an AAD Object ID.
-    :type owner: str
-    :param sticky_bit: the indicator of whether the sticky bit is on or off.
-    :type sticky_bit: bool
+    :param status: Gets or sets the status of workflow trigger history.
+     Possible values include: 'NotSpecified', 'Paused', 'Running', 'Waiting',
+     'Succeeded', 'Skipped', 'Suspended', 'Cancelled', 'Failed', 'Faulted',
+     'TimedOut', 'Aborted'
+    :type status: str or :class:`WorkflowStatus
+     <azure.mgmt.logic.models.WorkflowStatus>`
     """ 
 
     _attribute_map = {
-        'entries': {'key': 'entries', 'type': '[str]'},
-        'group': {'key': 'group', 'type': 'str'},
-        'owner': {'key': 'owner', 'type': 'str'},
-        'sticky_bit': {'key': 'stickyBit', 'type': 'bool'},
+        'status': {'key': 'status', 'type': 'WorkflowStatus'},
     }
 
-    def __init__(self, entries=None, group=None, owner=None, sticky_bit=None):
-        self.entries = entries
-        self.group = group
-        self.owner = owner
-        self.sticky_bit = sticky_bit
+    def __init__(self, status=None):
+        self.status = status

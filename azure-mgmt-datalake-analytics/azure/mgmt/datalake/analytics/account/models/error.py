@@ -29,17 +29,16 @@ class Error(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Gets or sets the HTTP status code or error code associated
-     with this error
+    :ivar code: the HTTP status code or error code associated with this error
     :vartype code: str
-    :ivar message: Gets or sets the error message to display.
+    :ivar message: the error message to display.
     :vartype message: str
-    :ivar target: Gets or sets the target of the error.
+    :ivar target: the target of the error.
     :vartype target: str
-    :ivar details: Gets or sets the list of error details
+    :ivar details: the list of error details
     :vartype details: list of :class:`ErrorDetails
      <azure.mgmt.datalake.analytics.account.models.ErrorDetails>`
-    :ivar inner_error: Gets or sets the inner exceptions or errors, if any
+    :ivar inner_error: the inner exceptions or errors, if any
     :vartype inner_error: :class:`InnerError
      <azure.mgmt.datalake.analytics.account.models.InnerError>`
     """ 

@@ -29,13 +29,12 @@ class ErrorDetails(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Gets the HTTP status code or error code associated with this
-     error
+    :ivar code: the HTTP status code or error code associated with this error
     :vartype code: str
-    :ivar message: Gets the error message localized based on Accept-Language
+    :ivar message: the error message localized based on Accept-Language
     :vartype message: str
-    :ivar target: Gets the target of the particular error (for example, the
-     name of the property in error).
+    :ivar target: the target of the particular error (for example, the name
+     of the property in error).
     :vartype target: str
     """ 
 

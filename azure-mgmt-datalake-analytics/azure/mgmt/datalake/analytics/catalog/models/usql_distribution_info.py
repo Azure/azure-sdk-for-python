@@ -26,15 +26,15 @@ class USqlDistributionInfo(Model):
     """
     A Data Lake Analytics catalog U-SQL distribution information object.
 
-    :param type: Gets or sets the type of this distribution.
+    :param type: the type of this distribution.
     :type type: int
-    :param keys: Gets or sets the list of directed columns in the distribution
+    :param keys: the list of directed columns in the distribution
     :type keys: list of :class:`USqlDirectedColumn
      <azure.mgmt.datalake.analytics.catalog.models.USqlDirectedColumn>`
-    :param count: Gets or sets the count of indices using this distribution.
+    :param count: the count of indices using this distribution.
     :type count: int
-    :param dynamic_count: Gets or sets the dynamic count of indices using
-     this distribution.
+    :param dynamic_count: the dynamic count of indices using this
+     distribution.
     :type dynamic_count: int
     """ 
 

@@ -26,14 +26,13 @@ class USqlSchema(CatalogItem):
     """
     A Data Lake Analytics catalog U-SQL schema item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param name: Gets or sets the name of the schema.
+    :param name: the name of the schema.
     :type name: str
     """ 
 

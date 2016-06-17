@@ -26,11 +26,10 @@ class ExternalTable(Model):
     """
     A Data Lake Analytics catalog external table item.
 
-    :param table_name: Gets or sets the name of the table associated with
-     this database and schema.
+    :param table_name: the name of the table associated with this database
+     and schema.
     :type table_name: str
-    :param data_source: Gets or sets the data source associated with this
-     external table.
+    :param data_source: the data source associated with this external table.
     :type data_source: :class:`EntityId
      <azure.mgmt.datalake.analytics.catalog.models.EntityId>`
     """ 

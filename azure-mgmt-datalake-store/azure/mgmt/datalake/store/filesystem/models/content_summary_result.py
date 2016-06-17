@@ -29,7 +29,7 @@ class ContentSummaryResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar content_summary: Gets the content summary for the specified path
+    :ivar content_summary: the content summary for the specified path
     :vartype content_summary: :class:`ContentSummary
      <azure.mgmt.datalake.store.filesystem.models.ContentSummary>`
     """ 
