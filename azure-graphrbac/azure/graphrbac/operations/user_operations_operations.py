@@ -423,3 +423,40 @@ class UserOperationsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def resetuserpassword(
+            self, user, password, ChangeNextLogin, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+         url = '/{tenantID}/users/{user}'
+         path_format_arguments = {
+            'user': self._serialize.url("user", user, 'str', skip_quote=True),
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+         }
+         url = self._client.format_url(url, **path_format_arguments)
+         # Construct parameters
+         query_parameters = {}
+         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+         # Construct headers
+         header_parameters = {}
+         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+         if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+         if custom_headers:
+            header_parameters.update(custom_headers)
+         if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+         body_content = {'passwordProfile': {'password': password, 'forceChangePasswordNextLogin': ChangeNextLogin }}
+
+        # Construct and send request
+         request = self._client.patch(url, query_parameters)
+         response = self._client.send(request, header_parameters, body_content, **operation_config)
+         if response.status_code not in [204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+         if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
