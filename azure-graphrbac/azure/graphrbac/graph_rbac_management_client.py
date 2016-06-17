@@ -23,11 +23,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.application_operations_operations import ApplicationOperationsOperations
-from .operations.object_operations_operations import ObjectOperationsOperations
-from .operations.group_operations_operations import GroupOperationsOperations
-from .operations.service_principal_operations_operations import ServicePrincipalOperationsOperations
-from .operations.user_operations_operations import UserOperationsOperations
+from .operations.objects_operations import ObjectsOperations
 from . import models
 
 
@@ -87,21 +83,13 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
 
 
 class GraphRbacManagementClient(object):
-    """GraphRbacManagementClient
+    """The Graph RBAC Management Client
 
     :ivar config: Configuration for client.
     :vartype config: GraphRbacManagementClientConfiguration
 
-    :ivar application_operations: ApplicationOperations operations
-    :vartype application_operations: .operations.ApplicationOperationsOperations
-    :ivar object_operations: ObjectOperations operations
-    :vartype object_operations: .operations.ObjectOperationsOperations
-    :ivar group_operations: GroupOperations operations
-    :vartype group_operations: .operations.GroupOperationsOperations
-    :ivar service_principal_operations: ServicePrincipalOperations operations
-    :vartype service_principal_operations: .operations.ServicePrincipalOperationsOperations
-    :ivar user_operations: UserOperations operations
-    :vartype user_operations: .operations.UserOperationsOperations
+    :ivar objects: Objects operations
+    :vartype objects: .operations.ObjectsOperations
 
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
@@ -134,13 +122,5 @@ class GraphRbacManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.application_operations = ApplicationOperationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.object_operations = ObjectOperationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.group_operations = GroupOperationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.service_principal_operations = ServicePrincipalOperationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.user_operations = UserOperationsOperations(
+        self.objects = ObjectsOperations(
             self._client, self.config, self._serialize, self._deserialize)

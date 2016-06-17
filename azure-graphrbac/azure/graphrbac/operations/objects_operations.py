@@ -26,8 +26,8 @@ import uuid
 from .. import models
 
 
-class ObjectOperationsOperations(object):
-    """ObjectOperationsOperations operations.
+class ObjectsOperations(object):
+    """ObjectsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -45,8 +45,7 @@ class ObjectOperationsOperations(object):
 
     def get_current_user(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the details for current logged in user
+        """Gets the details for current logged in user.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -100,8 +99,7 @@ class ObjectOperationsOperations(object):
 
     def get_objects_by_object_ids(
             self, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets AD group membership by provided AD object Ids
+        """Gets AD group membership by provided AD object Ids.
 
         :param parameters: Objects filtering parameters.
         :type parameters: :class:`GetObjectsParameters
@@ -169,8 +167,7 @@ class ObjectOperationsOperations(object):
 
     def get_objects_by_object_ids_next(
             self, next_link, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets AD group membership by provided AD object Ids
+        """Gets AD group membership by provided AD object Ids.
 
         :param next_link: Next link for list operation.
         :type next_link: str

@@ -19,16 +19,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_operations_operations import ApplicationOperationsOperations
-from .object_operations_operations import ObjectOperationsOperations
-from .group_operations_operations import GroupOperationsOperations
-from .service_principal_operations_operations import ServicePrincipalOperationsOperations
-from .user_operations_operations import UserOperationsOperations
+from .objects_operations import ObjectsOperations
 
 __all__ = [
-    'ApplicationOperationsOperations',
-    'ObjectOperationsOperations',
-    'GroupOperationsOperations',
-    'ServicePrincipalOperationsOperations',
-    'UserOperationsOperations',
+    'ObjectsOperations',
 ]
