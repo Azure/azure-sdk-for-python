@@ -19,10 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class CheckNameRequest(Model):
+    """CheckNameRequest.
 
+    :param name: Workspace collection name
+    :type name: str
+    :param type: Resource type. Default value:
+     "Microsoft.PowerBI/workspaceCollections" .
+    :type type: str
+    """ 
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, name=None, type="Microsoft.PowerBI/workspaceCollections"):
+        self.name = name
+        self.type = type

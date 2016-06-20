@@ -19,10 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class ErrorDetail(Model):
+    """ErrorDetail.
 
+    :param code:
+    :type code: str
+    :param message:
+    :type message: str
+    :param target:
+    :type target: str
+    """ 
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(self, code=None, message=None, target=None):
+        self.code = code
+        self.message = message
+        self.target = target

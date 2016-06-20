@@ -19,10 +19,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class Workspace(Model):
+    """Workspace.
 
+    :param id: Workspace id
+    :type id: str
+    :param name: Workspace name
+    :type name: str
+    :param type: Resource type
+    :type type: str
+    :param properties: Property bag
+    :type properties: object
+    """ 
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
+    }
+
+    def __init__(self, id=None, name=None, type=None, properties=None):
+        self.id = id
+        self.name = name
+        self.type = type
+        self.properties = properties

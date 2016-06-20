@@ -19,10 +19,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
-
-__all__ = ['PowerBIEmbeddedManagementClient']
-
-__version__ = VERSION
+VERSION = "2016-01-29"
 

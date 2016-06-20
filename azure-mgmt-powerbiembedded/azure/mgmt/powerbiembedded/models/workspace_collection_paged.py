@@ -19,10 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class WorkspaceCollectionPaged(Paged):
+    """
+    A paging container for iterating over a list of WorkspaceCollection object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkspaceCollection]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkspaceCollectionPaged, self).__init__(*args, **kwargs)
