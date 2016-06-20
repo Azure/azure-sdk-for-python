@@ -19,10 +19,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class WorkspaceCollectionAccessKey(Model):
+    """WorkspaceCollectionAccessKey.
 
+    :param key_name: Key name. Possible values include: 'key1', 'key2'
+    :type key_name: str or :class:`AccessKeyName
+     <azure.mgmt.powerbiembedded.models.AccessKeyName>`
+    """ 
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'AccessKeyName'},
+    }
+
+    def __init__(self, key_name=None):
+        self.key_name = key_name

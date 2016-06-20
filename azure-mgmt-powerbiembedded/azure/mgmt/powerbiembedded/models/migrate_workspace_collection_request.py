@@ -19,10 +19,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class MigrateWorkspaceCollectionRequest(Model):
+    """MigrateWorkspaceCollectionRequest.
 
+    :param target_resource_group: Name of the resource group that the Power
+     BI Workspace Collections will be migrated to.
+    :type target_resource_group: str
+    :param resources:
+    :type resources: list of str
+    """ 
+
+    _attribute_map = {
+        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
+        'resources': {'key': 'resources', 'type': '[str]'},
+    }
+
+    def __init__(self, target_resource_group=None, resources=None):
+        self.target_resource_group = target_resource_group
+        self.resources = resources

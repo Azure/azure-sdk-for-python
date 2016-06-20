@@ -19,10 +19,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class Operation(Model):
+    """Operation.
 
+    :param name: The name of the operation being performed on this particular
+     object. It should match the action name that appears in RBAC / the event
+     service.
+    :type name: str
+    :param display:
+    :type display: :class:`Display
+     <azure.mgmt.powerbiembedded.models.Display>`
+    """ 
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'Display'},
+    }
+
+    def __init__(self, name=None, display=None):
+        self.name = name
+        self.display = display

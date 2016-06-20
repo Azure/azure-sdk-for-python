@@ -19,10 +19,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class AccessKeyName(Enum):
 
+    key1 = "key1"
+    key2 = "key2"
+
+
+class CheckNameReason(Enum):
+
+    unavailable = "Unavailable"
+    invalid = "Invalid"

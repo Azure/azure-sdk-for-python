@@ -19,10 +19,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class AzureSku(Model):
+    """AzureSku.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: SKU name. Default value: "S1" .
+    :vartype name: str
+    :ivar tier: SKU tier. Default value: "Standard" .
+    :vartype tier: str
+    """ 
+
+    _validation = {
+        'name': {'required': True, 'constant': True},
+        'tier': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    name = "S1"
+
+    tier = "Standard"

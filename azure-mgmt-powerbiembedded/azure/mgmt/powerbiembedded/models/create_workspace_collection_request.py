@@ -19,10 +19,37 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from .azure_sku import AzureSku
+from msrest.serialization import Model
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class CreateWorkspaceCollectionRequest(Model):
+    """CreateWorkspaceCollectionRequest.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param location: Azure location
+    :type location: str
+    :param tags:
+    :type tags: dict
+    :ivar sku:
+    :vartype sku: :class:`AzureSku
+     <azure.mgmt.powerbiembedded.models.AzureSku>`
+    """ 
+
+    _validation = {
+        'sku': {'constant': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'AzureSku'},
+    }
+
+    sku = AzureSku()
+
+    def __init__(self, location=None, tags=None):
+        self.location = location
+        self.tags = tags

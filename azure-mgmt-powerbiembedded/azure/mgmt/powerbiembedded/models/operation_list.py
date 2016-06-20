@@ -19,10 +19,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .power_bi_embedded_management_client import PowerBIEmbeddedManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['PowerBIEmbeddedManagementClient']
 
-__version__ = VERSION
+class OperationList(Model):
+    """OperationList.
 
+    :param value:
+    :type value: list of :class:`Operation
+     <azure.mgmt.powerbiembedded.models.Operation>`
+    """ 
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+    }
+
+    def __init__(self, value=None):
+        self.value = value
