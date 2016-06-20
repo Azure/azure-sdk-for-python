@@ -19,10 +19,47 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_services_management_client import CognitiveServicesManagementClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['CognitiveServicesManagementClient']
 
-__version__ = VERSION
+class SkuName(Enum):
 
+    f0 = "F0"
+    s0 = "S0"
+    s1 = "S1"
+    s2 = "S2"
+    s3 = "S3"
+    s4 = "S4"
+
+
+class SkuTier(Enum):
+
+    free = "Free"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class Kind(Enum):
+
+    computer_vision = "ComputerVision"
+    emotion = "Emotion"
+    face = "Face"
+    luis = "LUIS"
+    recommendations = "Recommendations"
+    speech = "Speech"
+    text_analytics = "TextAnalytics"
+    web_lm = "WebLM"
+
+
+class ProvisioningState(Enum):
+
+    creating = "Creating"
+    resolving_dns = "ResolvingDNS"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class KeyName(Enum):
+
+    key1 = "Key1"
+    key2 = "Key2"

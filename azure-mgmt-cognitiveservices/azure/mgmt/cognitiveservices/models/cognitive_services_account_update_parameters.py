@@ -19,10 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_services_management_client import CognitiveServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['CognitiveServicesManagementClient']
 
-__version__ = VERSION
+class CognitiveServicesAccountUpdateParameters(Model):
+    """The parameters to provide for the account.
 
+    :param sku:
+    :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    :param tags: Gets or sets a list of key value pairs that describe the
+     resource. These tags can be used in viewing and grouping this resource
+     (across resource groups). A maximum of 15 tags can be provided for a
+     resource. Each tag must have a key no greater than 128 characters and
+     value no greater than 256 characters.
+    :type tags: dict
+    """ 
+
+    _attribute_map = {
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, sku=None, tags=None):
+        self.sku = sku
+        self.tags = tags

@@ -19,10 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_services_management_client import CognitiveServicesManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['CognitiveServicesManagementClient']
 
-__version__ = VERSION
+class CognitiveServicesAccountPaged(Paged):
+    """
+    A paging container for iterating over a list of CognitiveServicesAccount object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CognitiveServicesAccount]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CognitiveServicesAccountPaged, self).__init__(*args, **kwargs)

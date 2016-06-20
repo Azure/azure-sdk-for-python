@@ -19,10 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_services_management_client import CognitiveServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['CognitiveServicesManagementClient']
 
-__version__ = VERSION
+class CognitiveServicesResourceAndSku(Model):
+    """CognitiveServicesResourceAndSku.
 
+    :param resource_type: Resource Namespace and Type
+    :type resource_type: str
+    :param sku:
+    :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    """ 
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+    }
+
+    def __init__(self, resource_type=None, sku=None):
+        self.resource_type = resource_type
+        self.sku = sku

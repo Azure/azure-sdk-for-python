@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_services_management_client import CognitiveServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['CognitiveServicesManagementClient']
 
-__version__ = VERSION
+class ErrorBody(Model):
+    """ErrorBody.
 
+    :param code: error code
+    :type code: str
+    :param message: error message
+    :type message: str
+    """ 
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, code, message):
+        self.code = code
+        self.message = message
