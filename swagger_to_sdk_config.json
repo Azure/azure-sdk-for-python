@@ -37,6 +37,13 @@
       },
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
+    "cognitiveservices": {
+      "swagger": "arm-cognitiveservices/2016-02-01-preview/swagger/cognitiveservices.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.cognitiveservices"
+      },
+      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
+    },
     "commerce": {
       "swagger": "arm-commerce/2015-06-01-preview/swagger/commerce.json",
       "autorest_options": {

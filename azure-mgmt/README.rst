@@ -42,6 +42,7 @@ following packages. Follow the links for more information on each package.
 -  `azure-mgmt-authorization v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-authorization/0.30.0rc4>`__
 -  `azure-mgmt-batch v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-batch/0.30.0rc4>`__
 -  `azure-mgmt-cdn v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-cdn/0.30.0rc4>`__
+-  `azure-mgmt-cognitiveservices v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-cognitiveservices/0.30.0rc4>`__
 -  `azure-mgmt-compute v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-compute/0.30.0rc4>`__
 -  `azure-mgmt-logic v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-logic/0.30.0rc4>`__
 -  `azure-mgmt-network v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-network/0.30.0rc4>`__
