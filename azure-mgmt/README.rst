@@ -46,6 +46,7 @@ following packages. Follow the links for more information on each package.
 -  `azure-mgmt-logic v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-logic/0.30.0rc4>`__
 -  `azure-mgmt-network v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-network/0.30.0rc4>`__
 -  `azure-mgmt-notificationhubs v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-notificationhubs/0.30.0rc4>`__
+-  `azure-mgmt-powerbiembedded v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-powerbiembedded/0.30.0rc4>`__
 -  `azure-mgmt-redis v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-redis/0.30.0rc4>`__
 -  `azure-mgmt-resource v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-resource/0.30.0rc4>`__
 -  `azure-mgmt-scheduler v0.30.0rc4 <https://pypi.python.org/pypi/azure-mgmt-scheduler/0.30.0rc4>`__
