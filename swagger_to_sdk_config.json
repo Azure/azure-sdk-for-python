@@ -80,6 +80,13 @@
       },
       "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs"
     },
+    "powerbiembedded": {
+      "swagger": "arm-powerbiembedded/2016-01-29/swagger/powerbiembedded.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.powerbiembedded"
+      },
+      "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded"
+    },
     "redis": {
       "swagger": "arm-redis/2016-04-01/swagger/redis.json",
       "autorest_options": {

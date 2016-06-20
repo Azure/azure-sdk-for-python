@@ -33,9 +33,9 @@ except ImportError:
     pass
 
 setup(
-    name='azure-mgmt',
+    name='azure-mgmt-powerbiembedded',
     version='0.30.0rc4',
-    description='Microsoft Azure Resource Management Client Libraries for Python',
+    description='Microsoft Azure PowerBI Embedded Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
     author='Microsoft Corporation',
@@ -53,19 +53,15 @@ setup(
         'License :: OSI Approved :: Apache Software License',
     ],
     zip_safe=False,
+    packages=[
+        'azure',
+        'azure.mgmt',
+        'azure.mgmt.powerbiembedded',
+        'azure.mgmt.powerbiembedded.models',
+        'azure.mgmt.powerbiembedded.operations',
+    ],
     install_requires=[
-        'azure-mgmt-authorization==0.30.0rc4',
-        'azure-mgmt-batch==0.30.0rc4',
-        'azure-mgmt-cdn==0.30.0rc4',
-        'azure-mgmt-compute==0.30.0rc4',
-        'azure-mgmt-logic==0.30.0rc4',
-        'azure-mgmt-network==0.30.0rc4',
-        'azure-mgmt-notificationhubs==0.30.0rc4',
-        'azure-mgmt-powerbiembedded==0.30.0rc4',
-        'azure-mgmt-redis==0.30.0rc4',
-        'azure-mgmt-resource==0.30.0rc4',
-        'azure-mgmt-scheduler==0.30.0rc4',
-        'azure-mgmt-storage==0.30.0rc4',
-        'azure-mgmt-web==0.30.0rc4',
+        'azure-common[autorest]==1.1.4',
+        'azure-mgmt-nspkg',
     ],
 )
