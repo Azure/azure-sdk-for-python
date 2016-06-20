@@ -19,10 +19,33 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_services_management_client import CognitiveServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
-__all__ = ['CognitiveServicesManagementClient']
 
-__version__ = VERSION
+class Error(Model):
+    """Error.
 
+    :param errorProperty:
+    :type errorProperty: :class:`ErrorBody
+     <azure.mgmt.cognitiveservices.models.ErrorBody>`
+    """ 
+
+    _attribute_map = {
+        'errorProperty': {'key': 'error', 'type': 'ErrorBody'},
+    }
+
+    def __init__(self, errorProperty=None):
+        self.errorProperty = errorProperty
+
+
+class ErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'Error'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorException, self).__init__(deserialize, response, 'Error', *args)

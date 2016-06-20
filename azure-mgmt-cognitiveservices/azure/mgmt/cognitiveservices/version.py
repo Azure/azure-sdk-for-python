@@ -19,10 +19,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_services_management_client import CognitiveServicesManagementClient
-from .version import VERSION
-
-__all__ = ['CognitiveServicesManagementClient']
-
-__version__ = VERSION
+VERSION = "2016-02-01-preview"
 

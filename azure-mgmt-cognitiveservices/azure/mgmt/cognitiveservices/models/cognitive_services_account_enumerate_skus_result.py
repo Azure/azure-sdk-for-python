@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_services_management_client import CognitiveServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['CognitiveServicesManagementClient']
 
-__version__ = VERSION
+class CognitiveServicesAccountEnumerateSkusResult(Model):
+    """The list of cognitive services accounts operation response.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Gets the list of Cognitive Services accounts and their
+     properties.
+    :vartype value: list of :class:`CognitiveServicesResourceAndSku
+     <azure.mgmt.cognitiveservices.models.CognitiveServicesResourceAndSku>`
+    """ 
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[CognitiveServicesResourceAndSku]'},
+    }
+
+    def __init__(self):
+        self.value = None
