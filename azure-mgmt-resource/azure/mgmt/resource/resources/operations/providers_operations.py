@@ -45,8 +45,7 @@ class ProvidersOperations(object):
 
     def unregister(
             self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
-        """
-        Unregisters provider from a subscription.
+        """Unregisters provider from a subscription.
 
         :param resource_provider_namespace: Namespace of the resource
          provider.
@@ -105,8 +104,7 @@ class ProvidersOperations(object):
 
     def register(
             self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
-        """
-        Registers provider to be used with a subscription.
+        """Registers provider to be used with a subscription.
 
         :param resource_provider_namespace: Namespace of the resource
          provider.
@@ -165,8 +163,7 @@ class ProvidersOperations(object):
 
     def list(
             self, top=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of resource providers.
+        """Gets a list of resource providers.
 
         :param top: Query parameters. If null is passed returns all
          deployments.
@@ -233,8 +230,7 @@ class ProvidersOperations(object):
 
     def get(
             self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a resource provider.
+        """Gets a resource provider.
 
         :param resource_provider_namespace: Namespace of the resource
          provider.

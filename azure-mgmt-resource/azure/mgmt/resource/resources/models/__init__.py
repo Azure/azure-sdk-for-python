@@ -38,6 +38,8 @@ from .deployment_validate_result import DeploymentValidateResult
 from .deployment_extended import DeploymentExtended
 from .generic_resource import GenericResource
 from .plan import Plan
+from .sku import Sku
+from .identity import Identity
 from .resource_group import ResourceGroup
 from .resource_group_properties import ResourceGroupProperties
 from .resources_move_info import ResourcesMoveInfo
@@ -50,8 +52,6 @@ from .http_message import HttpMessage
 from .deployment_operation_properties import DeploymentOperationProperties
 from .deployment_operation import DeploymentOperation
 from .resource_provider_operation_display_properties import ResourceProviderOperationDisplayProperties
-from .resource_provider_operation_definition import ResourceProviderOperationDefinition
-from .resource_provider_operation_detail_list_result import ResourceProviderOperationDetailListResult
 from .resource_model import ResourceModel
 from .sub_resource import SubResource
 from .resource_group_export_result import ResourceGroupExportResult
@@ -61,9 +61,9 @@ from .generic_resource_paged import GenericResourcePaged
 from .resource_group_paged import ResourceGroupPaged
 from .tag_details_paged import TagDetailsPaged
 from .deployment_operation_paged import DeploymentOperationPaged
-from .resource_provider_operation_definition_paged import ResourceProviderOperationDefinitionPaged
 from .resource_management_client_enums import (
     DeploymentMode,
+    ResourceIdentityType,
 )
 
 __all__ = [
@@ -86,6 +86,8 @@ __all__ = [
     'DeploymentExtended',
     'GenericResource',
     'Plan',
+    'Sku',
+    'Identity',
     'ResourceGroup',
     'ResourceGroupProperties',
     'ResourcesMoveInfo',
@@ -98,8 +100,6 @@ __all__ = [
     'DeploymentOperationProperties',
     'DeploymentOperation',
     'ResourceProviderOperationDisplayProperties',
-    'ResourceProviderOperationDefinition',
-    'ResourceProviderOperationDetailListResult',
     'ResourceModel',
     'SubResource',
     'ResourceGroupExportResult',
@@ -109,6 +109,6 @@ __all__ = [
     'ResourceGroupPaged',
     'TagDetailsPaged',
     'DeploymentOperationPaged',
-    'ResourceProviderOperationDefinitionPaged',
     'DeploymentMode',
+    'ResourceIdentityType',
 ]

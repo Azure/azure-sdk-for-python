@@ -26,3 +26,8 @@ class DeploymentMode(Enum):
 
     incremental = "Incremental"
     complete = "Complete"
+
+
+class ResourceIdentityType(Enum):
+
+    system_assigned = "SystemAssigned"

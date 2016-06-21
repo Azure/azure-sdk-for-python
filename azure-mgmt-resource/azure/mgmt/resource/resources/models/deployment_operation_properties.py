@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeploymentOperationProperties(Model):
-    """
-    Deployment operation properties.
+    """Deployment operation properties.
 
     :param provisioning_state: Gets or sets the state of the provisioning.
     :type provisioning_state: str

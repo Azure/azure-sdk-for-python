@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Deployment(Model):
-    """
-    Deployment operation parameters.
+    """Deployment operation parameters.
 
     :param properties: Gets or sets the deployment properties.
     :type properties: :class:`DeploymentProperties

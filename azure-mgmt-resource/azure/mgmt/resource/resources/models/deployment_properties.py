@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeploymentProperties(Model):
-    """
-    Deployment properties.
+    """Deployment properties.
 
     :param template: Gets or sets the template content. Use only one of
      Template or TemplateLink.

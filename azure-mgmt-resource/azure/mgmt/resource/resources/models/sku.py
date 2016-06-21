@@ -22,23 +22,36 @@
 from msrest.serialization import Model
 
 
-class ResourceProviderOperationDefinition(Model):
-    """
-    Resource provider operation information.
+class Sku(Model):
+    """Sku for the resource.
 
-    :param name: Gets or sets the provider operation name.
+    :param name: Gets or sets the sku name.
     :type name: str
-    :param display: Gets or sets the display property of the provider
-     operation.
-    :type display: :class:`ResourceProviderOperationDisplayProperties
-     <azure.mgmt.resource.resources.models.ResourceProviderOperationDisplayProperties>`
+    :param tier: Gets or sets the sku tier.
+    :type tier: str
+    :param size: Gets or sets the sku size.
+    :type size: str
+    :param family: Gets or sets the sku family.
+    :type family: str
+    :param model: Gets or sets the sku model.
+    :type model: str
+    :param capacity: Gets or sets the sku capacity.
+    :type capacity: int
     """ 
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplayProperties'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'size': {'key': 'size', 'type': 'str'},
+        'family': {'key': 'family', 'type': 'str'},
+        'model': {'key': 'model', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, display=None):
+    def __init__(self, name=None, tier=None, size=None, family=None, model=None, capacity=None):
         self.name = name
-        self.display = display
+        self.tier = tier
+        self.size = size
+        self.family = family
+        self.model = model
+        self.capacity = capacity
