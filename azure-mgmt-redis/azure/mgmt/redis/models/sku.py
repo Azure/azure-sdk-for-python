@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """
-    Sku parameters supplied to the create redis operation.
+    """Sku parameters supplied to the create redis operation.
 
     :param name: What type of redis cache to deploy. Valid values: (Basic,
      Standard, Premium). Possible values include: 'Basic', 'Standard',

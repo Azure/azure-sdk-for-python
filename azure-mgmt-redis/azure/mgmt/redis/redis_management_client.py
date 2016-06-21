@@ -24,6 +24,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.redis_operations import RedisOperations
+from .operations.patch_schedules_operations import PatchSchedulesOperations
 from . import models
 
 
@@ -92,6 +93,8 @@ class RedisManagementClient(object):
 
     :ivar redis: Redis operations
     :vartype redis: .operations.RedisOperations
+    :ivar patch_schedules: PatchSchedules operations
+    :vartype patch_schedules: .operations.PatchSchedulesOperations
 
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
@@ -127,4 +130,6 @@ class RedisManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.redis = RedisOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.patch_schedules = PatchSchedulesOperations(
             self._client, self.config, self._serialize, self._deserialize)

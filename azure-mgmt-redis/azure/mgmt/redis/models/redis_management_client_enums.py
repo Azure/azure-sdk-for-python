@@ -46,3 +46,14 @@ class RebootType(Enum):
     primary_node = "PrimaryNode"
     secondary_node = "SecondaryNode"
     all_nodes = "AllNodes"
+
+
+class DayOfWeek(Enum):
+
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+    sunday = "Sunday"

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class RedisRebootParameters(Model):
-    """
-    Specifies which redis node(s) to reboot.
+    """Specifies which redis node(s) to reboot.
 
     :param reboot_type: Which redis node(s) to reboot. Depending on this
      value data loss is possible. Possible values include: 'PrimaryNode',

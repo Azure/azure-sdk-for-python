@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class RedisCreateOrUpdateParameters(Resource):
-    """
-    Parameters supplied to the CreateOrUpdate Redis operation.
+    """Parameters supplied to the CreateOrUpdate Redis operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -72,6 +71,8 @@ class RedisCreateOrUpdateParameters(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
+        'subnet_id': {'pattern': '^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
+        'static_ip': {'pattern': '^\d+\.\d+\.\d+\.\d+$'},
     }
 
     _attribute_map = {
