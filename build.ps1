@@ -16,6 +16,7 @@ $packages = @(
     "azure-mgmt-logic",
     "azure-mgmt-network",
     "azure-mgmt-notificationhubs",
+    "azure-mgmt-powerbiembedded",
     "azure-mgmt-redis",
     "azure-mgmt-resource",
     "azure-mgmt-scheduler",

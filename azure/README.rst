@@ -76,6 +76,7 @@ Use the following script to uninstall all of them.
     pip uninstall azure-mgmt-logic
     pip uninstall azure-mgmt-network
     pip uninstall azure-mgmt-notificationhubs
+    pip uninstall azure-mgmt-powerbiembedded
     pip uninstall azure-mgmt-redis
     pip uninstall azure-mgmt-resource
     pip uninstall azure-mgmt-scheduler
