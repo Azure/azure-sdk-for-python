@@ -73,6 +73,7 @@ Use the following script to uninstall all of them.
     pip uninstall azure-mgmt-batch
     pip uninstall azure-mgmt-cdn
     pip uninstall azure-mgmt-cognitiveservices
+    pip uninstall azure-mgmt-commerce
     pip uninstall azure-mgmt-compute
     pip uninstall azure-mgmt-logic
     pip uninstall azure-mgmt-network
