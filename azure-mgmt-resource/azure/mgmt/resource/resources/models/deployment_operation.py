@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeploymentOperation(Model):
-    """
-    Deployment operation information.
+    """Deployment operation information.
 
     :param id: Gets or sets full deployment operation id.
     :type id: str

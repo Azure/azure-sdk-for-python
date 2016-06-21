@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class HttpMessage(Model):
-    """HttpMessage
+    """HttpMessage.
 
     :param content: Gets or sets HTTP message content.
     :type content: object

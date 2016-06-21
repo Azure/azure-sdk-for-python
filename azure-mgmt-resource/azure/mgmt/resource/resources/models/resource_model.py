@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceModel(Model):
-    """ResourceModel
+    """ResourceModel.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -34,6 +34,10 @@ class ResourceModel(Model):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
+    :ivar created_time: Created time of the resource.
+    :vartype created_time: datetime
+    :ivar changed_time: Changed time of the resource.
+    :vartype changed_time: datetime
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -44,6 +48,8 @@ class ResourceModel(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'created_time': {'readonly': True},
+        'changed_time': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -51,6 +57,8 @@ class ResourceModel(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'changed_time': {'key': 'changedTime', 'type': 'iso-8601'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
@@ -59,5 +67,7 @@ class ResourceModel(Model):
         self.id = None
         self.name = None
         self.type = None
+        self.created_time = None
+        self.changed_time = None
         self.location = location
         self.tags = tags

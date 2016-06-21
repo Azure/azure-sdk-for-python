@@ -29,7 +29,6 @@ from .operations.resource_groups_operations import ResourceGroupsOperations
 from .operations.resources_operations import ResourcesOperations
 from .operations.tags_operations import TagsOperations
 from .operations.deployment_operations_operations import DeploymentOperationsOperations
-from .operations.resource_provider_operation_details_operations import ResourceProviderOperationDetailsOperations
 from . import models
 
 
@@ -108,8 +107,6 @@ class ResourceManagementClient(object):
     :vartype tags: .operations.TagsOperations
     :ivar deployment_operations: DeploymentOperations operations
     :vartype deployment_operations: .operations.DeploymentOperationsOperations
-    :ivar resource_provider_operation_details: ResourceProviderOperationDetails operations
-    :vartype resource_provider_operation_details: .operations.ResourceProviderOperationDetailsOperations
 
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
@@ -155,6 +152,4 @@ class ResourceManagementClient(object):
         self.tags = TagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.deployment_operations = DeploymentOperationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.resource_provider_operation_details = ResourceProviderOperationDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)

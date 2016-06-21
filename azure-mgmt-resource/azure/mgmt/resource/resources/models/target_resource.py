@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TargetResource(Model):
-    """
-    Target resource.
+    """Target resource.
 
     :param id: Gets or sets the ID of the resource.
     :type id: str

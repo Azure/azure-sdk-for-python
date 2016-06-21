@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Plan(Model):
-    """
-    Plan for the resource.
+    """Plan for the resource.
 
     :param name: Gets or sets the plan ID.
     :type name: str
