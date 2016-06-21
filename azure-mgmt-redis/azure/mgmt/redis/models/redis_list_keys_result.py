@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class RedisListKeysResult(Model):
-    """
-    The response of redis list keys operation.
+    """The response of redis list keys operation.
 
     :param primary_key: The current primary key that clients can use to
      authenticate with redis cache.

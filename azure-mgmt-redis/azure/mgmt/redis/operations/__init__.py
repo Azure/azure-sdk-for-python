@@ -20,7 +20,9 @@
 # --------------------------------------------------------------------------
 
 from .redis_operations import RedisOperations
+from .patch_schedules_operations import PatchSchedulesOperations
 
 __all__ = [
     'RedisOperations',
+    'PatchSchedulesOperations',
 ]
