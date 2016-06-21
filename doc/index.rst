@@ -32,12 +32,14 @@ Documentation:
    * :doc:`Batch Management<resourcemanagementbatch>` -- (:doc:`API <ref/azure.mgmt.batch>`)
    * :doc:`CDN Resource Management<resourcemanagementcdn>` -- (:doc:`API <ref/azure.mgmt.cdn>`)
    * :doc:`Commerce - Billing API<resourcemanagementcommerce>` -- (:doc:`API <ref/azure.mgmt.commerce>`)
+   * :doc:`Cognitive Services Management<resourcemanagementcognitiveservices>` -- (:doc:`API <ref/azure.mgmt.cognitiveservices>`)
    * :doc:`Compute Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.compute>`)
    * Apps
       * :doc:`Logic Apps Resource Management<resourcemanagementapps>` -- (:doc:`API <ref/azure.mgmt.logic>`)
       * :doc:`Web Apps Management<resourcemanagementapps>` -- (:doc:`API <ref/azure.mgmt.web>`)
    * :doc:`Network Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.network>`)
    * :doc:`Notification Hubs Resource Management<resourcemanagementnotificationhubs>` -- (:doc:`API <ref/azure.mgmt.notificationhubs>`)
+   * :doc:`PowerBI Embedded Management<resourcemanagementpowerbiembedded>` -- (:doc:`API <ref/azure.mgmt.powerbiembedded>`)
    * :doc:`Redis Cache Resource Management<resourcemanagementredis>` -- (:doc:`API <ref/azure.mgmt.redis>`)
    * :doc:`Resource Management<resourcemanagement>` -- (:doc:`API <ref/azure.mgmt.resource>`)   
    * :doc:`Scheduler Management<resourcemanagementscheduler>` -- (:doc:`API <ref/azure.mgmt.scheduler>`)
@@ -82,6 +84,7 @@ Features:
    -  Batch: manage Batch accounts and applications
    -  CDN: profiles, endpoints creation and more
    -  Commerce: RateCard and Usage Billing API
+   -  Cognitive Services: Manage your accounts
    -  Compute: create virtual machines and more
    -  Apps:
 
@@ -90,6 +93,7 @@ Features:
 
    -  Network: create virtual networks, network interfaces, public ips and more
    -  Notification Hubs: Namespaces, hub creation/deletion and more
+   -  PowerBI Embedded: Manage your workspaces
    -  Redis: create cache and more
    -  Resource:
    
