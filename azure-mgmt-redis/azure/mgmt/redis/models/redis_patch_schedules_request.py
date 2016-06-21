@@ -22,22 +22,21 @@
 from msrest.serialization import Model
 
 
-class RedisAccessKeys(Model):
-    """Redis cache access keys.
+class RedisPatchSchedulesRequest(Model):
+    """Parameters to set patch schedules for redis cache.
 
-    :param primary_key: The current primary key that clients can use to
-     authenticate with redis cache.
-    :type primary_key: str
-    :param secondary_key: The current secondary key that clients can use to
-     authenticate with redis cache.
-    :type secondary_key: str
+    :param schedule_entries: List of patch schedules for redis cache.
+    :type schedule_entries: list of :class:`ScheduleEntry
+     <azure.mgmt.redis.models.ScheduleEntry>`
     """ 
 
-    _attribute_map = {
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+    _validation = {
+        'schedule_entries': {'required': True},
     }
 
-    def __init__(self, primary_key=None, secondary_key=None):
-        self.primary_key = primary_key
-        self.secondary_key = secondary_key
+    _attribute_map = {
+        'schedule_entries': {'key': 'properties.scheduleEntries', 'type': '[ScheduleEntry]'},
+    }
+
+    def __init__(self, schedule_entries):
+        self.schedule_entries = schedule_entries

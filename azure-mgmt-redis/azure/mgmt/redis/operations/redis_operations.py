@@ -46,9 +46,8 @@ class RedisOperations(object):
 
     def create_or_update(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a redis cache, or replace (overwrite/recreate, with potential
-        downtime) an existing cache
+        """Create a redis cache, or replace (overwrite/recreate, with potential
+        downtime) an existing cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -119,8 +118,7 @@ class RedisOperations(object):
 
     def delete(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a redis cache. This operation takes a while to complete.
+        """Deletes a redis cache. This operation takes a while to complete.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -173,8 +171,7 @@ class RedisOperations(object):
 
     def get(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a redis cache (resource description).
+        """Gets a redis cache (resource description).
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -234,8 +231,7 @@ class RedisOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all redis caches in a resource group.
+        """Gets all redis caches in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -300,8 +296,7 @@ class RedisOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all redis caches in the specified subscription.
+        """Gets all redis caches in the specified subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -363,8 +358,7 @@ class RedisOperations(object):
 
     def list_keys(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieve a redis cache's access keys. This operation requires write
+        """Retrieve a redis cache's access keys. This operation requires write
         permission to the cache resource.
 
         :param resource_group_name: The name of the resource group.
@@ -426,8 +420,7 @@ class RedisOperations(object):
 
     def regenerate_key(
             self, resource_group_name, name, key_type, custom_headers=None, raw=False, **operation_config):
-        """
-        Regenerate redis cache's access keys. This operation requires write
+        """Regenerate redis cache's access keys. This operation requires write
         permission to the cache resource.
 
         :param resource_group_name: The name of the resource group.
@@ -499,8 +492,7 @@ class RedisOperations(object):
 
     def force_reboot(
             self, resource_group_name, name, reboot_type, shard_id=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Reboot specified redis node(s). This operation requires write
+        """Reboot specified redis node(s). This operation requires write
         permission to the cache resource. There can be potential data loss.
 
         :param resource_group_name: The name of the resource group.
@@ -568,8 +560,7 @@ class RedisOperations(object):
 
     def import_method(
             self, resource_group_name, name, files, format=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Import data into redis cache.
+        """Import data into redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -655,8 +646,7 @@ class RedisOperations(object):
 
     def export(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Import data into redis cache.
+        """Import data into redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
