@@ -142,3 +142,6 @@ If you encounter any bugs with the library please file an issue in the [Issues](
 
 For documentation on [Azure PowerShell](http://github.com/azure/azure-powershell).
 For documentation on [Azure CLI](http://github.com/azure/azure-xplat-cli).
+
+# Code of Conduct 
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
