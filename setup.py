@@ -32,6 +32,7 @@ packages = [
     'azure-mgmt-batch',
     'azure-mgmt-cdn',
 	'azure-mgmt-commerce',
+    'azure-mgmt-cognitiveservices',
     'azure-mgmt-compute',
     'azure-mgmt-logic',
     'azure-mgmt-graphrbac',
