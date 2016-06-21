@@ -22,8 +22,8 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """Resource.
+class RedisPatchSchedulesResponse(Model):
+    """Response to put/get patch schedules for redis cache.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -36,15 +36,16 @@ class Resource(Model):
     :vartype type: str
     :param location: Resource location
     :type location: str
-    :param tags: Resource tags
-    :type tags: dict
+    :param schedule_entries: List of patch schedules for redis cache.
+    :type schedule_entries: list of :class:`ScheduleEntry
+     <azure.mgmt.redis.models.ScheduleEntry>`
     """ 
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'schedule_entries': {'required': True},
     }
 
     _attribute_map = {
@@ -52,12 +53,12 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'schedule_entries': {'key': 'properties.scheduleEntries', 'type': '[ScheduleEntry]'},
     }
 
-    def __init__(self, location, tags=None):
+    def __init__(self, schedule_entries, location=None):
         self.id = None
         self.name = None
         self.type = None
         self.location = location
-        self.tags = tags
+        self.schedule_entries = schedule_entries

@@ -31,12 +31,16 @@ from .redis_regenerate_key_parameters import RedisRegenerateKeyParameters
 from .redis_reboot_parameters import RedisRebootParameters
 from .export_rdb_parameters import ExportRDBParameters
 from .import_rdb_parameters import ImportRDBParameters
+from .schedule_entry import ScheduleEntry
+from .redis_patch_schedules_request import RedisPatchSchedulesRequest
+from .redis_patch_schedules_response import RedisPatchSchedulesResponse
 from .redis_resource_paged import RedisResourcePaged
 from .redis_management_client_enums import (
     SkuName,
     SkuFamily,
     RedisKeyType,
     RebootType,
+    DayOfWeek,
 )
 
 __all__ = [
@@ -52,9 +56,13 @@ __all__ = [
     'RedisRebootParameters',
     'ExportRDBParameters',
     'ImportRDBParameters',
+    'ScheduleEntry',
+    'RedisPatchSchedulesRequest',
+    'RedisPatchSchedulesResponse',
     'RedisResourcePaged',
     'SkuName',
     'SkuFamily',
     'RedisKeyType',
     'RebootType',
+    'DayOfWeek',
 ]

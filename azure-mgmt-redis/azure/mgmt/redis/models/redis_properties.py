@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class RedisProperties(Model):
-    """
-    Properties supplied to CreateOrUpdate redis operation.
+    """Properties supplied to CreateOrUpdate redis operation.
 
     :param redis_version: RedisVersion parameter has been deprecated. As
      such, it is no longer necessary to provide this parameter and any value
@@ -55,6 +54,8 @@ class RedisProperties(Model):
 
     _validation = {
         'sku': {'required': True},
+        'subnet_id': {'pattern': '^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
+        'static_ip': {'pattern': '^\d+\.\d+\.\d+\.\d+$'},
     }
 
     _attribute_map = {
