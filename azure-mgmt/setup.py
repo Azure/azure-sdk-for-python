@@ -58,6 +58,7 @@ setup(
         'azure-mgmt-batch==0.30.0rc4',
         'azure-mgmt-cdn==0.30.0rc4',
         'azure-mgmt-cognitiveservices==0.30.0rc4',
+        'azure-mgmt-commerce==0.30.0rc4',
         'azure-mgmt-compute==0.30.0rc4',
         'azure-mgmt-logic==0.30.0rc4',
         'azure-mgmt-network==0.30.0rc4',
