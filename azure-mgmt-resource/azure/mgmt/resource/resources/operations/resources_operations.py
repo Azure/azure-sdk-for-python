@@ -46,8 +46,7 @@ class ResourcesOperations(object):
 
     def move_resources(
             self, source_resource_group_name, resources=None, target_resource_group=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Move resources from one resource group to another. The resources being
+        """Move resources from one resource group to another. The resources being
         moved should all be in the same resource group.
 
         :param source_resource_group_name: Source resource group name.
@@ -131,8 +130,7 @@ class ResourcesOperations(object):
 
     def list(
             self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all of the resources under a subscription.
+        """Get all of the resources under a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -203,8 +201,7 @@ class ResourcesOperations(object):
 
     def check_existence(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
-        """
-        Checks whether resource exists.
+        """Checks whether resource exists.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -271,8 +268,7 @@ class ResourcesOperations(object):
 
     def delete(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete resource and all of its resources.
+        """Delete resource and all of its resources. .
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -337,8 +333,7 @@ class ResourcesOperations(object):
 
     def create_or_update(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a resource.
+        """Create a resource.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -420,8 +415,7 @@ class ResourcesOperations(object):
 
     def get(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
-        """
-        Returns a resource belonging to a resource group.
+        """Returns a resource belonging to a resource group.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TagCount(Model):
-    """
-    Tag count.
+    """Tag count.
 
     :param type: Type of count.
     :type type: str

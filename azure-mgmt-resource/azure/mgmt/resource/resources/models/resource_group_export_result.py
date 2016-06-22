@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceGroupExportResult(Model):
-    """ResourceGroupExportResult
+    """ResourceGroupExportResult.
 
     :param template: Gets or sets the template content.
     :type template: object

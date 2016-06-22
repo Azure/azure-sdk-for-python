@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ParametersLink(Model):
-    """
-    Entity representing the reference to the deployment paramaters.
+    """Entity representing the reference to the deployment paramaters.
 
     :param uri: URI referencing the template.
     :type uri: str

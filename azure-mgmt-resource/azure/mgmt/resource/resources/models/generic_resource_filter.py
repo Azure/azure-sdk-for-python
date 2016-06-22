@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class GenericResourceFilter(Model):
-    """
-    Resource filter.
+    """Resource filter.
 
     :param resource_type: Gets or sets the resource type.
     :type resource_type: str
@@ -32,15 +31,19 @@ class GenericResourceFilter(Model):
     :type tagname: str
     :param tagvalue: Gets or sets the tag value.
     :type tagvalue: str
+    :param expand: Gets or sets the expand value.
+    :type expand: str
     """ 
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'tagname': {'key': 'tagname', 'type': 'str'},
         'tagvalue': {'key': 'tagvalue', 'type': 'str'},
+        'expand': {'key': 'expand', 'type': 'str'},
     }
 
-    def __init__(self, resource_type=None, tagname=None, tagvalue=None):
+    def __init__(self, resource_type=None, tagname=None, tagvalue=None, expand=None):
         self.resource_type = resource_type
         self.tagname = tagname
         self.tagvalue = tagvalue
+        self.expand = expand

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeploymentValidateResult(Model):
-    """
-    Information from validate template deployment response.
+    """Information from validate template deployment response.
 
     :param error: Gets or sets validation error.
     :type error: :class:`ResourceManagementErrorWithDetails
