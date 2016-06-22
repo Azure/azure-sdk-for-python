@@ -23,11 +23,10 @@ from msrest.serialization import Model
 
 
 class DatabaseBackupSetting(Model):
-    """
-    Note: properties are serialized in JSON format and stored in DB.
+    """Note: properties are serialized in JSON format and stored in DB.
     if new properties are added they might not be in the previous
     data rows
-    so please handle nulls
+    so please handle nulls.
 
     :param database_type: SqlAzure / MySql
     :type database_type: str

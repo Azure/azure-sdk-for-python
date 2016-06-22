@@ -46,8 +46,7 @@ class ServerFarmsOperations(object):
 
     def get_server_farms(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets collection of App Service Plans in a resource group for a given
+        """Gets collection of App Service Plans in a resource group for a given
         subscription.
 
         :param resource_group_name: Name of resource group
@@ -106,8 +105,7 @@ class ServerFarmsOperations(object):
 
     def get_server_farm(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets specified App Service Plan in a resource group
+        """Gets specified App Service Plan in a resource group.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -168,8 +166,7 @@ class ServerFarmsOperations(object):
 
     def create_or_update_server_farm(
             self, resource_group_name, name, server_farm_envelope, allow_pending_state=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates or updates an App Service Plan
+        """Creates or updates an App Service Plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -267,8 +264,7 @@ class ServerFarmsOperations(object):
 
     def delete_server_farm(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a App Service Plan
+        """Deletes a App Service Plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -328,8 +324,7 @@ class ServerFarmsOperations(object):
 
     def get_server_farm_metrics(
             self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Queries for App Serice Plan metrics
+        """Queries for App Serice Plan metrics.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -403,8 +398,7 @@ class ServerFarmsOperations(object):
 
     def get_server_farm_metric_defintions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        List of metrics that can be queried for an App Service Plan
+        """List of metrics that can be queried for an App Service Plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -465,8 +459,7 @@ class ServerFarmsOperations(object):
 
     def get_vnets_for_server_farm(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets list of vnets associated with App Service Plan
+        """Gets list of vnets associated with App Service Plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -526,8 +519,7 @@ class ServerFarmsOperations(object):
 
     def get_vnet_from_server_farm(
             self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a vnet associated with an App Service Plan
+        """Gets a vnet associated with an App Service Plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -590,9 +582,8 @@ class ServerFarmsOperations(object):
 
     def get_routes_for_vnet(
             self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of all routes associated with a vnet, in an app service
-        plan
+        """Gets a list of all routes associated with a vnet, in an app service
+        plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -655,8 +646,7 @@ class ServerFarmsOperations(object):
 
     def get_route_for_vnet(
             self, resource_group_name, name, vnet_name, route_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a specific route associated with a vnet, in an app service plan
+        """Gets a specific route associated with a vnet, in an app service plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -722,8 +712,7 @@ class ServerFarmsOperations(object):
 
     def create_or_update_vnet_route(
             self, resource_group_name, name, vnet_name, route_name, route, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new route or updates an existing route for a vnet in an app
+        """Creates a new route or updates an existing route for a vnet in an app
         service plan.
 
         :param resource_group_name: Name of resource group
@@ -796,8 +785,7 @@ class ServerFarmsOperations(object):
 
     def delete_vnet_route(
             self, resource_group_name, name, vnet_name, route_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes an existing route for a vnet in an app service plan.
+        """Deletes an existing route for a vnet in an app service plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -863,8 +851,7 @@ class ServerFarmsOperations(object):
 
     def update_vnet_route(
             self, resource_group_name, name, vnet_name, route_name, route, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new route or updates an existing route for a vnet in an app
+        """Creates a new route or updates an existing route for a vnet in an app
         service plan.
 
         :param resource_group_name: Name of resource group
@@ -937,8 +924,7 @@ class ServerFarmsOperations(object):
 
     def get_server_farm_vnet_gateway(
             self, resource_group_name, name, vnet_name, gateway_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the vnet gateway.
+        """Gets the vnet gateway.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1005,8 +991,7 @@ class ServerFarmsOperations(object):
 
     def update_server_farm_vnet_gateway(
             self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the vnet gateway
+        """Updates the vnet gateway.
 
         :param resource_group_name: The resource group
         :type resource_group_name: str
@@ -1080,8 +1065,7 @@ class ServerFarmsOperations(object):
 
     def get_server_farm_sites(
             self, resource_group_name, name, skip_token=None, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets list of Apps associated with an App Service Plan
+        """Gets list of Apps associated with an App Service Plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1164,9 +1148,8 @@ class ServerFarmsOperations(object):
 
     def reboot_worker_for_server_farm(
             self, resource_group_name, name, worker_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Submit a reboot request for a worker machine in the specified server
-        farm
+        """Submit a reboot request for a worker machine in the specified server
+        farm.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1229,8 +1212,7 @@ class ServerFarmsOperations(object):
 
     def restart_sites_for_server_farm(
             self, resource_group_name, name, soft_restart=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Restarts web apps in a specified App Service Plan
+        """Restarts web apps in a specified App Service Plan.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1296,8 +1278,7 @@ class ServerFarmsOperations(object):
 
     def get_server_farm_operation(
             self, resource_group_name, name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a server farm operation
+        """Gets a server farm operation.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str

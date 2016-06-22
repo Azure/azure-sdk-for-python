@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SiteCollection(Model):
-    """
-    Collection of sites
+    """Collection of sites.
 
     :param value: Collection of resources
     :type value: list of :class:`Site <azure.mgmt.web.models.Site>`

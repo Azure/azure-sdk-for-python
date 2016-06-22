@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class GeoRegionCollection(Model):
-    """
-    Collection of geo regions
+    """Collection of geo regions.
 
     :param value: Collection of resources
     :type value: list of :class:`GeoRegion <azure.mgmt.web.models.GeoRegion>`

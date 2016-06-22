@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AutoHealActions(Model):
-    """
-    AutoHealActions - Describes the actions which can be
+    """AutoHealActions - Describes the actions which can be
     taken by the auto-heal module when a rule is triggered.
 
     :param action_type: ActionType - predefined action to be taken. Possible

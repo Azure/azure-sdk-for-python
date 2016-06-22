@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class Site(Resource):
-    """
-    Represents a web app
+    """Represents a web app.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

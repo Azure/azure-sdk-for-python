@@ -45,8 +45,7 @@ class ProviderOperations(object):
 
     def get_source_controls(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the source controls available for Azure websites
+        """Gets the source controls available for Azure websites.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -97,8 +96,7 @@ class ProviderOperations(object):
 
     def get_source_control(
             self, source_control_type, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets source control token
+        """Gets source control token.
 
         :param source_control_type: Type of source control
         :type source_control_type: str
@@ -154,8 +152,7 @@ class ProviderOperations(object):
 
     def update_source_control(
             self, source_control_type, request_message, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates source control token
+        """Updates source control token.
 
         :param source_control_type: Type of source control
         :type source_control_type: str
@@ -218,8 +215,7 @@ class ProviderOperations(object):
 
     def get_publishing_user(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets publishing user
+        """Gets publishing user.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -269,8 +265,7 @@ class ProviderOperations(object):
 
     def update_publishing_user(
             self, request_message, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates publishing user
+        """Updates publishing user.
 
         :param request_message: Details of publishing user
         :type request_message: :class:`User <azure.mgmt.web.models.User>`

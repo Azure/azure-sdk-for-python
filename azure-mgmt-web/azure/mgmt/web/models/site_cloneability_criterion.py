@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SiteCloneabilityCriterion(Model):
-    """
-    Represents a site cloneability criterion
+    """Represents a site cloneability criterion.
 
     :param name: Name of criterion
     :type name: str

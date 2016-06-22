@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BackupItemCollection(Model):
-    """
-    Collection of Backup Items
+    """Collection of Backup Items.
 
     :param value: Collection of resources
     :type value: list of :class:`BackupItem

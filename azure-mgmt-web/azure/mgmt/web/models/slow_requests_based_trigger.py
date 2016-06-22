@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SlowRequestsBasedTrigger(Model):
-    """
-    SlowRequestsBasedTrigger
+    """SlowRequestsBasedTrigger.
 
     :param time_taken: TimeTaken
     :type time_taken: str

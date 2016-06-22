@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SiteInstanceCollection(Model):
-    """
-    Collection of site instances
+    """Collection of site instances.
 
     :param value: Collection of resources
     :type value: list of :class:`SiteInstance

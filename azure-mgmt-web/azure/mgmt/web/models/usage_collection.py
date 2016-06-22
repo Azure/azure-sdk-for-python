@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class UsageCollection(Model):
-    """
-    Collection of usages
+    """Collection of usages.
 
     :param value: Collection of resources
     :type value: list of :class:`Usage <azure.mgmt.web.models.Usage>`

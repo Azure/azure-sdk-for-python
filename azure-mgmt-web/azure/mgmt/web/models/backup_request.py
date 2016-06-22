@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class BackupRequest(Resource):
-    """
-    Description of a backup which will be performed
+    """Description of a backup which will be performed.
 
     :param id: Resource Id
     :type id: str

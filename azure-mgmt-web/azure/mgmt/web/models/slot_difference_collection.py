@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SlotDifferenceCollection(Model):
-    """
-    Collection of Slot Differences
+    """Collection of Slot Differences.
 
     :param value: Collection of resources
     :type value: list of :class:`SlotDifference

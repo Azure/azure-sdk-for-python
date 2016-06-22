@@ -45,8 +45,7 @@ class RecommendationsOperations(object):
 
     def get_recommendation_by_subscription(
             self, featured=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of recommendations associated with the specified
+        """Gets a list of recommendations associated with the specified
         subscription.
 
         :param featured: If set, this API returns only the most critical
@@ -114,8 +113,7 @@ class RecommendationsOperations(object):
 
     def get_rule_details_by_site_name(
             self, resource_group_name, site_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the detailed properties of the recommendation object for the
+        """Gets the detailed properties of the recommendation object for the
         specified web site.
 
         :param resource_group_name: Resource group name
@@ -180,8 +178,7 @@ class RecommendationsOperations(object):
 
     def get_recommended_rules_for_site(
             self, resource_group_name, site_name, featured=None, site_sku=None, num_slots=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of recommendations associated with the specified web site.
+        """Gets a list of recommendations associated with the specified web site.
 
         :param resource_group_name: Resource group name
         :type resource_group_name: str
@@ -256,8 +253,7 @@ class RecommendationsOperations(object):
 
     def get_recommendation_history_for_site(
             self, resource_group_name, site_name, start_time=None, end_time=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the list of past recommendations optionally specified by the time
+        """Gets the list of past recommendations optionally specified by the time
         range.
 
         :param resource_group_name: Resource group name

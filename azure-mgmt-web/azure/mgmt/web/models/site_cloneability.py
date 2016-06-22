@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SiteCloneability(Model):
-    """
-    Represents whether or not a web app is cloneable
+    """Represents whether or not a web app is cloneable.
 
     :param result: Name of web app. Possible values include: 'Cloneable',
      'PartiallyCloneable', 'NotCloneable'

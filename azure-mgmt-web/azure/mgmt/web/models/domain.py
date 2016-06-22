@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class Domain(Resource):
-    """
-    Represents a domain
+    """Represents a domain.
 
     :param id: Resource Id
     :type id: str

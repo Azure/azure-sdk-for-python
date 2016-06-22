@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class RestoreRequest(Resource):
-    """
-    Description of a restore request
+    """Description of a restore request.
 
     :param id: Resource Id
     :type id: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class LocalizableString(Model):
-    """
-    LocalizableString object containing the name and a localized value.
+    """LocalizableString object containing the name and a localized value.
 
     :param value: Non localized name
     :type value: str

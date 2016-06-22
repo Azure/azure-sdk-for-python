@@ -45,8 +45,7 @@ class GlobalModelOperations(object):
 
     def get_subscription_publishing_credentials(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets publishing credentials for the subscription owner
+        """Gets publishing credentials for the subscription owner.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -100,8 +99,7 @@ class GlobalModelOperations(object):
 
     def update_subscription_publishing_credentials(
             self, request_message, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates publishing credentials for the subscription owner
+        """Updates publishing credentials for the subscription owner.
 
         :param request_message: requestMessage with new publishing credentials
         :type request_message: :class:`User <azure.mgmt.web.models.User>`
@@ -161,8 +159,7 @@ class GlobalModelOperations(object):
 
     def get_subscription_geo_regions(
             self, sku=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets list of available geo regions
+        """Gets list of available geo regions.
 
         :param sku: Filter only to regions that support this sku
         :type sku: str
@@ -221,8 +218,7 @@ class GlobalModelOperations(object):
 
     def get_all_certificates(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all certificates for a subscription
+        """Get all certificates for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -277,8 +273,7 @@ class GlobalModelOperations(object):
 
     def get_all_server_farms(
             self, detailed=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all App Service Plans for a subcription
+        """Gets all App Service Plans for a subcription.
 
         :param detailed: False to return a subset of App Service Plan
          properties, true to return all of the properties.
@@ -339,8 +334,7 @@ class GlobalModelOperations(object):
 
     def get_all_sites(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all Web Apps for a subscription
+        """Gets all Web Apps for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -394,9 +388,8 @@ class GlobalModelOperations(object):
 
     def get_all_hosting_environments(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all hostingEnvironments (App Service Environment) for a
-        subscription
+        """Gets all hostingEnvironments (App Service Environment) for a
+        subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -451,8 +444,7 @@ class GlobalModelOperations(object):
 
     def get_all_managed_hosting_environments(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all managed hosting environments for a subscription
+        """Gets all managed hosting environments for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -507,8 +499,7 @@ class GlobalModelOperations(object):
 
     def get_all_classic_mobile_services(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all mobile services for a subscription
+        """Gets all mobile services for a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -563,8 +554,7 @@ class GlobalModelOperations(object):
 
     def list_premier_add_on_offers(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        List premier add on offers
+        """List premier add on offers.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -618,8 +608,7 @@ class GlobalModelOperations(object):
 
     def is_hosting_environment_name_available(
             self, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Whether hosting environment name is available
+        """Whether hosting environment name is available.
 
         :param name: Hosting environment name
         :type name: str
@@ -676,8 +665,7 @@ class GlobalModelOperations(object):
 
     def is_hosting_environment_with_legacy_name_available(
             self, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Whether hosting environment name is available
+        """Whether hosting environment name is available.
 
         :param name: Hosting environment name
         :type name: str
@@ -734,8 +722,7 @@ class GlobalModelOperations(object):
 
     def check_name_availability(
             self, request, custom_headers=None, raw=False, **operation_config):
-        """
-        Check if resource name is available
+        """Check if resource name is available.
 
         :param request: Name availability request
         :type request: :class:`ResourceNameAvailabilityRequest

@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class SourceControl(Resource):
-    """
-    Describes the Source Control OAuth Token
+    """Describes the Source Control OAuth Token.
 
     :param id: Resource Id
     :type id: str
