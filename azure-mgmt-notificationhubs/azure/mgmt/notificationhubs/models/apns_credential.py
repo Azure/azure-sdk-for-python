@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ApnsCredential(Model):
-    """
-    Description of a NotificationHub ApnsCredential.
+    """Description of a NotificationHub ApnsCredential.
 
     :param properties: Gets or sets properties of NotificationHub
      ApnsCredential.

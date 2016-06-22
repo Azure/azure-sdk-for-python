@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CheckAvailabilityResource(Model):
-    """
-    Description of a CheckAvailibility resource.
+    """Description of a CheckAvailibility resource.
 
     :param id: Gets or sets the id
     :type id: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CheckAvailabilityParameters(Model):
-    """
-    Parameters supplied to the Check Name Availability for Namespace and
+    """Parameters supplied to the Check Name Availability for Namespace and
     NotificationHubs.
 
     :param name: Gets or sets name

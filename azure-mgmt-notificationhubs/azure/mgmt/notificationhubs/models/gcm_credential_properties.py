@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class GcmCredentialProperties(Model):
-    """
-    Description of a NotificationHub GcmCredential.
+    """Description of a NotificationHub GcmCredential.
 
     :param gcm_endpoint: Gets or sets the GCM endpoint.
     :type gcm_endpoint: str
