@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AADObject(Model):
-    """
-    Active Directory object information
+    """Active Directory object information.
 
     :param object_id: Gets or sets object Id
     :type object_id: str

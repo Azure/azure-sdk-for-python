@@ -26,8 +26,8 @@ import uuid
 from .. import models
 
 
-class ObjectOperationsOperations(object):
-    """ObjectOperationsOperations operations.
+class ObjectsOperations(object):
+    """ObjectsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -44,10 +44,11 @@ class ObjectOperationsOperations(object):
         self.config = config
 
     def get_current_user(
-            self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the details for current logged in user
+            self, api_version="1.6-internal", custom_headers=None, raw=False, **operation_config):
+        """Gets the details for current logged in user.
 
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -66,7 +67,7 @@ class ObjectOperationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -99,13 +100,14 @@ class ObjectOperationsOperations(object):
         return deserialized
 
     def get_objects_by_object_ids(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets AD group membership by provided AD object Ids
+            self, parameters, api_version="1.6-internal", custom_headers=None, raw=False, **operation_config):
+        """Gets AD group membership by provided AD object Ids.
 
         :param parameters: Objects filtering parameters.
         :type parameters: :class:`GetObjectsParameters
          <azure.graphrbac.models.GetObjectsParameters>`
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -126,7 +128,7 @@ class ObjectOperationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -168,12 +170,13 @@ class ObjectOperationsOperations(object):
         return deserialized
 
     def get_objects_by_object_ids_next(
-            self, next_link, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets AD group membership by provided AD object Ids
+            self, next_link, api_version="1.6-internal", custom_headers=None, raw=False, **operation_config):
+        """Gets AD group membership by provided AD object Ids.
 
         :param next_link: Next link for list operation.
         :type next_link: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -195,7 +198,7 @@ class ObjectOperationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link

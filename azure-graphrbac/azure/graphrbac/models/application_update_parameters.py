@@ -22,12 +22,9 @@
 from msrest.serialization import Model
 
 
-class ApplicationCreateParameters(Model):
-    """Request parameters for create a new application.
+class ApplicationUpdateParameters(Model):
+    """Request parameters for updating an existing application.
 
-    :param available_to_other_tenants: Indicates if the application will be
-     available to other tenants
-    :type available_to_other_tenants: bool
     :param display_name: Application display name
     :type display_name: str
     :param homepage: Application homepage
@@ -45,15 +42,7 @@ class ApplicationCreateParameters(Model):
      <azure.graphrbac.models.PasswordCredential>`
     """ 
 
-    _validation = {
-        'available_to_other_tenants': {'required': True},
-        'display_name': {'required': True},
-        'homepage': {'required': True},
-        'identifier_uris': {'required': True},
-    }
-
     _attribute_map = {
-        'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'homepage': {'key': 'homepage', 'type': 'str'},
         'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
@@ -62,8 +51,7 @@ class ApplicationCreateParameters(Model):
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, available_to_other_tenants, display_name, homepage, identifier_uris, reply_urls=None, key_credentials=None, password_credentials=None):
-        self.available_to_other_tenants = available_to_other_tenants
+    def __init__(self, display_name=None, homepage=None, identifier_uris=None, reply_urls=None, key_credentials=None, password_credentials=None):
         self.display_name = display_name
         self.homepage = homepage
         self.identifier_uris = identifier_uris

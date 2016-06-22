@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ApplicationFilter(Model):
-    """
-    Filter parameters for listing applications
+    """Filter parameters for listing applications.
 
     :param display_name_starts_with: Application display name starts with
     :type display_name_starts_with: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Application(Model):
-    """
-    Active Directory user information
+    """Active Directory user information.
 
     :param object_id: Gets or sets object Id
     :type object_id: str
@@ -43,6 +42,8 @@ class Application(Model):
     :type identifier_uris: list of str
     :param reply_urls: Gets or sets the application reply Urls
     :type reply_urls: list of str
+    :param homepage: Application homepage
+    :type homepage: str
     """ 
 
     _attribute_map = {
@@ -54,9 +55,10 @@ class Application(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
         'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
         'reply_urls': {'key': 'replyUrls', 'type': '[str]'},
+        'homepage': {'key': 'homepage', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None):
+    def __init__(self, object_id=None, object_type=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None):
         self.object_id = object_id
         self.object_type = object_type
         self.app_id = app_id
@@ -65,3 +67,4 @@ class Application(Model):
         self.display_name = display_name
         self.identifier_uris = identifier_uris
         self.reply_urls = reply_urls
+        self.homepage = homepage

@@ -26,8 +26,8 @@ import uuid
 from .. import models
 
 
-class GroupOperationsOperations(object):
-    """GroupOperationsOperations operations.
+class GroupsOperations(object):
+    """GroupsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -43,16 +43,86 @@ class GroupOperationsOperations(object):
 
         self.config = config
 
-    def remove_member(
-            self, group_object_id, member_object_id, custom_headers=None, raw=False, **operation_config):
+    def is_member_of(
+            self, group_id, member_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Checks whether the specified user, group, contact, or service
+        principal is a direct or a transitive member of the specified group.
+
+        :param api_version: Client Api Version.
+        :type api_version: str
+        :param group_id: The object ID of the group to check.
+        :type group_id: str
+        :param member_id: The object ID of the contact, group, user, or
+         service principal to check for membership in the specified group.
+        :type member_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`CheckGroupMembershipResult
+         <azure.graphrbac.models.CheckGroupMembershipResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         """
-        Remove a memeber from a group. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/dn151607.aspx
+        parameters = models.CheckGroupMembershipParameters(group_id=group_id, member_id=member_id)
+
+        # Construct URL
+        url = '/{tenantID}/isMemberOf'
+        path_format_arguments = {
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'CheckGroupMembershipParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CheckGroupMembershipResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def remove_member(
+            self, group_object_id, member_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Remove a memeber from a group. Reference:
+        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/groups-operations#DeleteGroupMember.
 
         :param group_object_id: Group object id
         :type group_object_id: str
         :param member_object_id: Member Object id
         :type member_object_id: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -73,7 +143,7 @@ class GroupOperationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -99,14 +169,19 @@ class GroupOperationsOperations(object):
             return client_raw_response
 
     def add_member(
-            self, group_object_id, url, custom_headers=None, raw=False, **operation_config):
-        """
-        Add a memeber to a group. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx
+            self, group_object_id, url, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Add a memeber to a group. Reference:
+        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/groups-operations#AddGroupMembers.
 
         :param group_object_id: Group object id
         :type group_object_id: str
-        :param url: Group display name
+        :param api_version: Client Api Version.
+        :type api_version: str
+        :param url: Member Object Url as
+         "https://graph.windows.net/0b1f9851-1bf0-433f-aec3-cb9272f093dc/directoryObjects/f260bbc4-c254-447b-94cf-293b5ec434dd",
+         where "0b1f9851-1bf0-433f-aec3-cb9272f093dc" is the tenantId and
+         "f260bbc4-c254-447b-94cf-293b5ec434dd" is the objectId of the member
+         (user, application, servicePrincipal, group) to be added.
         :type url: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -129,7 +204,7 @@ class GroupOperationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -159,13 +234,14 @@ class GroupOperationsOperations(object):
             return client_raw_response
 
     def delete(
-            self, group_object_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete a group in the directory. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx
+            self, group_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Delete a group in the directory. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx.
 
         :param group_object_id: Object id
         :type group_object_id: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -185,7 +261,7 @@ class GroupOperationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -211,14 +287,16 @@ class GroupOperationsOperations(object):
             return client_raw_response
 
     def create(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a group in the directory. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx
+            self, display_name, mail_nickname, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Create a group in the directory. Reference:
+        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx.
 
-        :param parameters: Parameters to create a group
-        :type parameters: :class:`GroupCreateParameters
-         <azure.graphrbac.models.GroupCreateParameters>`
+        :param api_version: Client Api Version.
+        :type api_version: str
+        :param display_name: Group display name
+        :type display_name: str
+        :param mail_nickname: Mail nick name
+        :type mail_nickname: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -228,6 +306,8 @@ class GroupOperationsOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        parameters = models.GroupCreateParameters(display_name=display_name, mail_nickname=mail_nickname)
+
         # Construct URL
         url = '/{tenantID}/groups'
         path_format_arguments = {
@@ -237,7 +317,7 @@ class GroupOperationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -274,10 +354,11 @@ class GroupOperationsOperations(object):
         return deserialized
 
     def list(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets list of groups for the current tenant.
+            self, api_version="1.6", filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets list of groups for the current tenant.
 
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -301,7 +382,7 @@ class GroupOperationsOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -340,12 +421,13 @@ class GroupOperationsOperations(object):
         return deserialized
 
     def get_group_members(
-            self, object_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the members of a group.
+            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Gets the members of a group.
 
         :param object_id: Group object Id who's members should be retrieved.
         :type object_id: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -367,7 +449,7 @@ class GroupOperationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -406,12 +488,13 @@ class GroupOperationsOperations(object):
         return deserialized
 
     def get(
-            self, object_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets group information from the directory.
+            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Gets group information from the directory.
 
         :param object_id: User objectId to get group information.
         :type object_id: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -431,7 +514,7 @@ class GroupOperationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -464,13 +547,14 @@ class GroupOperationsOperations(object):
         return deserialized
 
     def get_member_groups(
-            self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a collection that contains the Object IDs of the groups of which
+            self, object_id, security_enabled_only, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Gets a collection that contains the Object IDs of the groups of which
         the group is a member.
 
         :param object_id: Group filtering parameters.
         :type object_id: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param security_enabled_only: If true only membership in security
          enabled groups should be checked. Otherwise membership in all groups
          should be checked
@@ -497,7 +581,7 @@ class GroupOperationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -539,12 +623,13 @@ class GroupOperationsOperations(object):
         return deserialized
 
     def list_next(
-            self, next_link, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets list of groups for the current tenant.
+            self, next_link, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Gets list of groups for the current tenant.
 
         :param next_link: Next link for list operation.
         :type next_link: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -565,7 +650,7 @@ class GroupOperationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -604,12 +689,13 @@ class GroupOperationsOperations(object):
         return deserialized
 
     def get_group_members_next(
-            self, next_link, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the members of a group.
+            self, next_link, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Gets the members of a group.
 
         :param next_link: Next link for list operation.
         :type next_link: str
+        :param api_version: Client Api Version.
+        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -631,7 +717,7 @@ class GroupOperationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
