@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobTerminateParameter(Model):
-    """
-    Parameters for a CloudJobOperations.Terminate request.
+    """Parameters for a CloudJobOperations.Terminate request.
 
     :param terminate_reason: The text you want to appear as the job's
      TerminateReason. The default is 'UserTerminate'.

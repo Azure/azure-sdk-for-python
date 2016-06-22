@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class FileProperties(Model):
-    """
-    The properties of a file on a compute node.
+    """The properties of a file on a compute node.
 
     :param creation_time: The file creation time.
     :type creation_time: datetime

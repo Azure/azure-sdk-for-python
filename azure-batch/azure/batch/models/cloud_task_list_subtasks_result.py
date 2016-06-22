@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CloudTaskListSubtasksResult(Model):
-    """
-    Response to a CloudTaskOperations.ListSubtasks request.
+    """Response to a CloudTaskOperations.ListSubtasks request.
 
     :param value: The list of information of subtasks.
     :type value: list of :class:`SubtaskInformation

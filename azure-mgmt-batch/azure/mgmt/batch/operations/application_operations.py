@@ -45,8 +45,7 @@ class ApplicationOperations(object):
 
     def activate_application_package(
             self, resource_group_name, account_name, id, version, format, custom_headers=None, raw=False, **operation_config):
-        """
-        Activates the specified application package.
+        """Activates the specified application package.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -114,8 +113,7 @@ class ApplicationOperations(object):
 
     def add_application(
             self, resource_group_name, account_name, application_id, allow_updates=None, display_name=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds an application to the specified Batch account.
+        """Adds an application to the specified Batch account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -195,8 +193,7 @@ class ApplicationOperations(object):
 
     def delete_application(
             self, resource_group_name, account_name, application_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes an application.
+        """Deletes an application.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -253,8 +250,7 @@ class ApplicationOperations(object):
 
     def get_application(
             self, resource_group_name, account_name, application_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the specified application.
+        """Gets information about the specified application.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -318,8 +314,7 @@ class ApplicationOperations(object):
 
     def update_application(
             self, resource_group_name, account_name, application_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates settings for the specified application.
+        """Updates settings for the specified application.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -383,8 +378,7 @@ class ApplicationOperations(object):
 
     def add_application_package(
             self, resource_group_name, account_name, application_id, version, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates an application package record.
+        """Creates an application package record.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -452,8 +446,7 @@ class ApplicationOperations(object):
 
     def delete_application_package(
             self, resource_group_name, account_name, application_id, version, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes an application package record and its associated binary file.
+        """Deletes an application package record and its associated binary file.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -513,8 +506,7 @@ class ApplicationOperations(object):
 
     def get_application_package(
             self, resource_group_name, account_name, application_id, version, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the specified application package.
+        """Gets information about the specified application package.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -582,8 +574,7 @@ class ApplicationOperations(object):
 
     def list(
             self, resource_group_name, account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all of the applications in the specified account.
+        """Lists all of the applications in the specified account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.

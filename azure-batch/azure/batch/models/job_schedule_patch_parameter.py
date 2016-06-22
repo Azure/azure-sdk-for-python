@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobSchedulePatchParameter(Model):
-    """
-    Parameters for a CloudJobScheduleOperations.Patch request.
+    """Parameters for a CloudJobScheduleOperations.Patch request.
 
     :param schedule: The schedule according to which jobs will be created. If
      you do not specify this element, the existing schedule is not modified.

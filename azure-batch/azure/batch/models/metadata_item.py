@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class MetadataItem(Model):
-    """
-    A name-value pair associated with a Batch service resource. The Batch
+    """A name-value pair associated with a Batch service resource. The Batch
     service does not assign any meaning to this metadata; it is solely for
     the use of user code.
 

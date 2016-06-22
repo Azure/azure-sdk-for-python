@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskAddResult(Model):
-    """
-    Result for a single task added as part of an add task collection operation.
+    """Result for a single task added as part of an add task collection operation.
 
     :param status: The status of the add task request. Possible values
      include: 'success', 'clienterror', 'servererror', 'unmapped'

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AddApplicationPackageResult(Model):
-    """
-    Response to an ApplicationOperations.AddApplicationPackage request.
+    """Response to an ApplicationOperations.AddApplicationPackage request.
 
     :param id: The id of the application.
     :type id: str

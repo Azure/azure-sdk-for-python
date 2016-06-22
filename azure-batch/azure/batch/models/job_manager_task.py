@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobManagerTask(Model):
-    """
-    Specifies details of a Job Manager task.
+    """Specifies details of a Job Manager task.
 
     :param id: A string that uniquely identifies the Job Manager task. A GUID
      is recommended.

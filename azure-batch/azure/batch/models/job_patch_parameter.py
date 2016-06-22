@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobPatchParameter(Model):
-    """
-    Parameters for a CloudJobOperations.Patch request.
+    """Parameters for a CloudJobOperations.Patch request.
 
     :param priority: The priority of the job. Priority values can range from
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the

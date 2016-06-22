@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobStatistics(Model):
-    """
-    Resource usage statistics for a job.
+    """Resource usage statistics for a job.
 
     :param url: The URL of the statistics.
     :type url: str

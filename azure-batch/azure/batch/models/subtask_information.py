@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SubtaskInformation(Model):
-    """
-    Information about an Azure Batch subtask.
+    """Information about an Azure Batch subtask.
 
     :param id: The id of the subtask.
     :type id: int

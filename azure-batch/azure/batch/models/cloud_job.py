@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CloudJob(Model):
-    """
-    An Azure Batch job.
+    """An Azure Batch job.
 
     :param id: A string that uniquely identifies the job within the account.
      The id can contain any combination of alphanumeric characters including

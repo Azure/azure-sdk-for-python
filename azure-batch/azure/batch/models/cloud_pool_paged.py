@@ -28,7 +28,7 @@ class CloudPoolPaged(Paged):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'odata.nextLink', 'type': 'str'},
+        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
         'current_page': {'key': 'value', 'type': '[CloudPool]'}
     }
 

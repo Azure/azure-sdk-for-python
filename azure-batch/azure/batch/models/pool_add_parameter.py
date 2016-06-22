@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolAddParameter(Model):
-    """
-    A pool in the Azure Batch service to add.
+    """A pool in the Azure Batch service to add.
 
     :param id: A string that uniquely identifies the pool within the account.
      The id can contain any combination of alphanumeric characters including
