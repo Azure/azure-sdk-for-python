@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class Usage(Resource):
-    """
-    Class that represents usage of the quota resource.
+    """Class that represents usage of the quota resource.
 
     :param id: Resource Id
     :type id: str

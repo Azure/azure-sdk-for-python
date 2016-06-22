@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class RequestsBasedTrigger(Model):
-    """
-    RequestsBasedTrigger
+    """RequestsBasedTrigger.
 
     :param count: Count
     :type count: int

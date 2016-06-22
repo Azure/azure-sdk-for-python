@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Contact(Model):
-    """
-    Contact information for domain registration. If 'Domain Privacy' option is
+    """Contact information for domain registration. If 'Domain Privacy' option is
     not selected then the contact information will be  be made publicly
     available through the Whois directories as per ICANN requirements.
 

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class HttpLogsConfig(Model):
-    """
-    Http logs configuration
+    """Http logs configuration.
 
     :param file_system: Http logs to file system configuration
     :type file_system: :class:`FileSystemHttpLogsConfig

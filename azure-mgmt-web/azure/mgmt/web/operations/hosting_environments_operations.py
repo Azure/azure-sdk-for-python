@@ -46,8 +46,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get properties of hostingEnvironment (App Service Environment).
+        """Get properties of hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -108,8 +107,7 @@ class HostingEnvironmentsOperations(object):
 
     def create_or_update_hosting_environment(
             self, resource_group_name, name, hosting_environment_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a hostingEnvironment (App Service Environment).
+        """Create or update a hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -203,8 +201,7 @@ class HostingEnvironmentsOperations(object):
 
     def delete_hosting_environment(
             self, resource_group_name, name, force_delete=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete a hostingEnvironment (App Service Environment).
+        """Delete a hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -294,8 +291,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_diagnostics(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get diagnostic information for hostingEnvironment (App Service
+        """Get diagnostic information for hostingEnvironment (App Service
         Environment).
 
         :param resource_group_name: Name of resource group
@@ -357,8 +353,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_diagnostics_item(
             self, resource_group_name, name, diagnostics_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get diagnostic information for hostingEnvironment (App Service
+        """Get diagnostic information for hostingEnvironment (App Service
         Environment).
 
         :param resource_group_name: Name of resource group
@@ -423,8 +418,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_capacities(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get used, available, and total worker capacity for hostingEnvironment
+        """Get used, available, and total worker capacity for hostingEnvironment
         (App Service Environment).
 
         :param resource_group_name: Name of resource group
@@ -486,8 +480,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_vips(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get IP addresses assigned to the hostingEnvironment (App Service
+        """Get IP addresses assigned to the hostingEnvironment (App Service
         Environment).
 
         :param resource_group_name: Name of resource group
@@ -549,8 +542,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environments(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all hostingEnvironments (App Service Environments) in a resource
+        """Get all hostingEnvironments (App Service Environments) in a resource
         group.
 
         :param resource_group_name: Name of resource group
@@ -609,8 +601,7 @@ class HostingEnvironmentsOperations(object):
 
     def reboot_hosting_environment(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Reboots all machines in a hostingEnvironment (App Service Environment).
+        """Reboots all machines in a hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -670,9 +661,8 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_operations(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        List all currently running operations on the hostingEnvironment (App
-        Service Environment)
+        """List all currently running operations on the hostingEnvironment (App
+        Service Environment).
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -732,8 +722,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_operation(
             self, resource_group_name, name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Get status of an operation on a hostingEnvironment (App Service
+        """Get status of an operation on a hostingEnvironment (App Service
         Environment).
 
         :param resource_group_name: Name of resource group
@@ -799,8 +788,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_metrics(
             self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get global metrics of hostingEnvironment (App Service Environment).
+        """Get global metrics of hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -873,8 +861,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_metric_definitions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get global metric definitions of hostingEnvironment (App Service
+        """Get global metric definitions of hostingEnvironment (App Service
         Environment).
 
         :param resource_group_name: Name of resource group
@@ -936,8 +923,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_usages(
             self, resource_group_name, name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get global usages of hostingEnvironment (App Service Environment).
+        """Get global usages of hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1006,8 +992,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_multi_role_metrics(
             self, resource_group_name, name, start_time=None, end_time=None, time_grain=None, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get metrics for a multiRole pool of a hostingEnvironment (App Service
+        """Get metrics for a multiRole pool of a hostingEnvironment (App Service
         Environment).
 
         :param resource_group_name: Name of resource group
@@ -1093,8 +1078,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_web_worker_metrics(
             self, resource_group_name, name, worker_pool_name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get metrics for a worker pool of a hostingEnvironment (App Service
+        """Get metrics for a worker pool of a hostingEnvironment (App Service
         Environment).
 
         :param resource_group_name: Name of resource group
@@ -1171,8 +1155,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_multi_role_metric_definitions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get metric definitions for a multiRole pool of a hostingEnvironment
+        """Get metric definitions for a multiRole pool of a hostingEnvironment
         (App Service Environment).
 
         :param resource_group_name: Name of resource group
@@ -1234,8 +1217,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_web_worker_metric_definitions(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get metric definitions for a worker pool of a hostingEnvironment (App
+        """Get metric definitions for a worker pool of a hostingEnvironment (App
         Service Environment).
 
         :param resource_group_name: Name of resource group
@@ -1300,8 +1282,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_multi_role_usages(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get usages for a multiRole pool of a hostingEnvironment (App Service
+        """Get usages for a multiRole pool of a hostingEnvironment (App Service
         Environment).
 
         :param resource_group_name: Name of resource group
@@ -1363,8 +1344,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_web_worker_usages(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get usages for a worker pool of a hostingEnvironment (App Service
+        """Get usages for a worker pool of a hostingEnvironment (App Service
         Environment).
 
         :param resource_group_name: Name of resource group
@@ -1429,8 +1409,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_sites(
             self, resource_group_name, name, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all sites on the hostingEnvironment (App Service Environment).
+        """Get all sites on the hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1495,8 +1474,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_web_hosting_plans(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all serverfarms (App Service Plans) on the hostingEnvironment (App
+        """Get all serverfarms (App Service Plans) on the hostingEnvironment (App
         Service Environment).
 
         :param resource_group_name: Name of resource group
@@ -1558,8 +1536,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_hosting_environment_server_farms(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all serverfarms (App Service Plans) on the hostingEnvironment (App
+        """Get all serverfarms (App Service Plans) on the hostingEnvironment (App
         Service Environment).
 
         :param resource_group_name: Name of resource group
@@ -1621,8 +1598,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_multi_role_pools(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all multi role pools
+        """Get all multi role pools.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1683,8 +1659,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_multi_role_pool(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get properties of a multiRool pool.
+        """Get properties of a multiRool pool.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1744,8 +1719,7 @@ class HostingEnvironmentsOperations(object):
 
     def create_or_update_multi_role_pool(
             self, resource_group_name, name, multi_role_pool_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a multiRole pool.
+        """Create or update a multiRole pool.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1838,8 +1812,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_multi_role_pool_skus(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get available skus for scaling a multiRole pool.
+        """Get available skus for scaling a multiRole pool.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1900,8 +1873,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_worker_pools(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all worker pools
+        """Get all worker pools.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1962,8 +1934,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_worker_pool(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get properties of a worker pool.
+        """Get properties of a worker pool.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2026,8 +1997,7 @@ class HostingEnvironmentsOperations(object):
 
     def create_or_update_worker_pool(
             self, resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a worker pool.
+        """Create or update a worker pool.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2123,8 +2093,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_worker_pool_skus(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get available skus for scaling a worker pool.
+        """Get available skus for scaling a worker pool.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2188,8 +2157,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_worker_pool_instance_metrics(
             self, resource_group_name, name, worker_pool_name, instance, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get metrics for a specific instance of a worker pool of a
+        """Get metrics for a specific instance of a worker pool of a
         hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
@@ -2268,8 +2236,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_worker_pool_instance_metric_definitions(
             self, resource_group_name, name, worker_pool_name, instance, custom_headers=None, raw=False, **operation_config):
-        """
-        Get metric definitions for a specific instance of a worker pool of a
+        """Get metric definitions for a specific instance of a worker pool of a
         hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
@@ -2336,8 +2303,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_multi_role_pool_instance_metrics(
             self, resource_group_name, name, instance, details=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get metrics for a specific instance of a multiRole pool of a
+        """Get metrics for a specific instance of a multiRole pool of a
         hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
@@ -2405,8 +2371,7 @@ class HostingEnvironmentsOperations(object):
 
     def get_multi_role_pool_instance_metric_definitions(
             self, resource_group_name, name, instance, custom_headers=None, raw=False, **operation_config):
-        """
-        Get metric definitions for a specific instance of a multiRole pool of
+        """Get metric definitions for a specific instance of a multiRole pool of
         a hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
@@ -2470,8 +2435,7 @@ class HostingEnvironmentsOperations(object):
 
     def suspend_hosting_environment(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Suspends the hostingEnvironment.
+        """Suspends the hostingEnvironment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2557,8 +2521,7 @@ class HostingEnvironmentsOperations(object):
 
     def resume_hosting_environment(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Resumes the hostingEnvironment.
+        """Resumes the hostingEnvironment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str

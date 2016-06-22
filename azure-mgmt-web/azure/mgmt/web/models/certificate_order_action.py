@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class CertificateOrderAction(Resource):
-    """
-    Represents a certificate action
+    """Represents a certificate action.
 
     :param id: Resource Id
     :type id: str

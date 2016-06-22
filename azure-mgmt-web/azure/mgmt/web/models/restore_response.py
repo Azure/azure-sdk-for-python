@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class RestoreResponse(Resource):
-    """
-    Response for a restore site request
+    """Response for a restore site request.
 
     :param id: Resource Id
     :type id: str

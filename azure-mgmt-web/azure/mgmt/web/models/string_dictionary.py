@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class StringDictionary(Resource):
-    """
-    String dictionary resource
+    """String dictionary resource.
 
     :param id: Resource Id
     :type id: str

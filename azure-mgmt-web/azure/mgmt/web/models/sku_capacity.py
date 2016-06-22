@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SkuCapacity(Model):
-    """
-    Description of the App Service Plan scale options
+    """Description of the App Service Plan scale options.
 
     :param minimum: Minimum number of Workers for this App Service Plan SKU
     :type minimum: int

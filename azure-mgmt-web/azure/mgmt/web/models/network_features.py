@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class NetworkFeatures(Resource):
-    """
-    This is an object used to store a full view of network features (presently
+    """This is an object used to store a full view of network features (presently
     VNET integration and Hybrid Connections)
     for a web app.
 

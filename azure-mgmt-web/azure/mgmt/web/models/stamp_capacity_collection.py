@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class StampCapacityCollection(Model):
-    """
-    Collection of stamp capacities
+    """Collection of stamp capacities.
 
     :param value: Collection of resources
     :type value: list of :class:`StampCapacity

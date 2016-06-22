@@ -23,9 +23,8 @@ from msrest.serialization import Model
 
 
 class CsmMoveResourceEnvelope(Model):
-    """
-    Class containing a list of the resources that need to be moved and the
-    resource group they should be moved to
+    """Class containing a list of the resources that need to be moved and the
+    resource group they should be moved to.
 
     :param target_resource_group:
     :type target_resource_group: str

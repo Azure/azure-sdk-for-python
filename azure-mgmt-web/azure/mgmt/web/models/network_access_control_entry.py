@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class NetworkAccessControlEntry(Model):
-    """NetworkAccessControlEntry
+    """NetworkAccessControlEntry.
 
     :param action: Possible values include: 'Permit', 'Deny'
     :type action: str or :class:`AccessControlEntryAction

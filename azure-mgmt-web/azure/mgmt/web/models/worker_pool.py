@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class WorkerPool(Resource):
-    """
-    Worker pool of a hostingEnvironment (App Service Environment)
+    """Worker pool of a hostingEnvironment (App Service Environment).
 
     :param id: Resource Id
     :type id: str

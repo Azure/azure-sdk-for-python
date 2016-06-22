@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class HostNameBindingCollection(Model):
-    """
-    Collection of host name bindings
+    """Collection of host name bindings.
 
     :param value: Collection of resources
     :type value: list of :class:`HostNameBinding

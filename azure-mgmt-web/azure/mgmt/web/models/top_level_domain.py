@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class TopLevelDomain(Resource):
-    """
-    A top level domain object
+    """A top level domain object.
 
     :param id: Resource Id
     :type id: str

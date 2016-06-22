@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ClassicMobileServiceCollection(Model):
-    """
-    Collection of Classic Mobile Services
+    """Collection of Classic Mobile Services.
 
     :param value: Collection of resources
     :type value: list of :class:`ClassicMobileService

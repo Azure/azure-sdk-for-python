@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class RelayServiceConnectionEntity(Resource):
-    """
-    Class that represents a Biztalk Hybrid Connection
+    """Class that represents a Biztalk Hybrid Connection.
 
     :param id: Resource Id
     :type id: str

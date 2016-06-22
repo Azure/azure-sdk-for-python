@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class SlotConfigNamesResource(Resource):
-    """
-    Slot Config names azure resource
+    """Slot Config names azure resource.
 
     :param id: Resource Id
     :type id: str

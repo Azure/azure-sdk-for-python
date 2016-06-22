@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AzureBlobStorageApplicationLogsConfig(Model):
-    """
-    Application logs azure blob storage configuration
+    """Application logs azure blob storage configuration.
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'

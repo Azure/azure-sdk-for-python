@@ -45,8 +45,7 @@ class CertificateOrdersOperations(object):
 
     def get_certificate(
             self, resource_group_name, certificate_order_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get certificate associated with the certificate order
+        """Get certificate associated with the certificate order.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -110,9 +109,8 @@ class CertificateOrdersOperations(object):
 
     def create_or_update_certificate(
             self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers=None, raw=False, **operation_config):
-        """
-        Associates a Key Vault secret to a certificate store that will be used
-        for storing the certificate once it's ready
+        """Associates a Key Vault secret to a certificate store that will be used
+        for storing the certificate once it's ready.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -183,8 +181,7 @@ class CertificateOrdersOperations(object):
 
     def delete_certificate(
             self, resource_group_name, certificate_order_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the certificate associated with the certificate order
+        """Deletes the certificate associated with the certificate order.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -247,9 +244,8 @@ class CertificateOrdersOperations(object):
 
     def update_certificate(
             self, resource_group_name, certificate_order_name, name, key_vault_certificate, custom_headers=None, raw=False, **operation_config):
-        """
-        Associates a Key Vault secret to a certificate store that will be used
-        for storing the certificate once it's ready
+        """Associates a Key Vault secret to a certificate store that will be used
+        for storing the certificate once it's ready.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -320,8 +316,7 @@ class CertificateOrdersOperations(object):
 
     def get_certificate_order(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get a certificate order
+        """Get a certificate order.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -382,8 +377,7 @@ class CertificateOrdersOperations(object):
 
     def create_or_update_certificate_order(
             self, resource_group_name, name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a certificate purchase order
+        """Create or update a certificate purchase order.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -452,8 +446,7 @@ class CertificateOrdersOperations(object):
 
     def delete_certificate_order(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete an existing certificate order
+        """Delete an existing certificate order.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -513,8 +506,7 @@ class CertificateOrdersOperations(object):
 
     def update_certificate_order(
             self, resource_group_name, name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a certificate purchase order
+        """Create or update a certificate purchase order.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -583,8 +575,7 @@ class CertificateOrdersOperations(object):
 
     def get_certificate_orders(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get certificate orders in a resource group
+        """Get certificate orders in a resource group.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -642,9 +633,8 @@ class CertificateOrdersOperations(object):
 
     def get_certificates(
             self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
-        """
-        List all certificates associated with a certificate order (only one
-        certificate can be associated with an order at a time)
+        """List all certificates associated with a certificate order (only one
+        certificate can be associated with an order at a time).
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -705,8 +695,7 @@ class CertificateOrdersOperations(object):
 
     def reissue_certificate_order(
             self, resource_group_name, name, reissue_certificate_order_request, custom_headers=None, raw=False, **operation_config):
-        """
-        Reissue an existing certificate order
+        """Reissue an existing certificate order.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -774,8 +763,7 @@ class CertificateOrdersOperations(object):
 
     def renew_certificate_order(
             self, resource_group_name, name, renew_certificate_order_request, custom_headers=None, raw=False, **operation_config):
-        """
-        Renew an existing certificate order
+        """Renew an existing certificate order.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -843,8 +831,7 @@ class CertificateOrdersOperations(object):
 
     def retrieve_certificate_actions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieve the list of certificate actions
+        """Retrieve the list of certificate actions.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -905,8 +892,7 @@ class CertificateOrdersOperations(object):
 
     def retrieve_certificate_email_history(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrive email history
+        """Retrive email history.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -967,8 +953,7 @@ class CertificateOrdersOperations(object):
 
     def resend_certificate_email(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Resend certificate email
+        """Resend certificate email.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str
@@ -1028,8 +1013,7 @@ class CertificateOrdersOperations(object):
 
     def verify_domain_ownership(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Verify domain ownership for this certificate order
+        """Verify domain ownership for this certificate order.
 
         :param resource_group_name: Azure resource group name
         :type resource_group_name: str

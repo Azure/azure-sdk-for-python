@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SourceControlCollection(Model):
-    """
-    Collection of soure controls
+    """Collection of soure controls.
 
     :param value: Collection of resources
     :type value: list of :class:`SourceControl

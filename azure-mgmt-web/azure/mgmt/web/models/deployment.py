@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class Deployment(Resource):
-    """
-    Represents user crendentials used for publishing activity
+    """Represents user crendentials used for publishing activity.
 
     :param id: Resource Id
     :type id: str

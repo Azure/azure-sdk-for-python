@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class Csr(Resource):
-    """
-    Certificate signing request object
+    """Certificate signing request object.
 
     :param id: Resource Id
     :type id: str

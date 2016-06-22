@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SiteLimits(Model):
-    """
-    Represents metric limits set on a web app.
+    """Represents metric limits set on a web app.
 
     :param max_percentage_cpu: Maximum allowed CPU usage percentage
     :type max_percentage_cpu: float
