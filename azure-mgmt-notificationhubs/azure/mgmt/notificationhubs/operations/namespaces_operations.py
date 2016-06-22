@@ -46,8 +46,7 @@ class NamespacesOperations(object):
 
     def check_availability(
             self, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Checks the availability of the given service namespace across all
+        """Checks the availability of the given service namespace across all
         Windows Azure subscriptions. This is useful because the domain name
         is created based on the service namespace name.
 
@@ -111,8 +110,7 @@ class NamespacesOperations(object):
 
     def create_or_update(
             self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates/Updates a service namespace. Once created, this namespace's
+        """Creates/Updates a service namespace. Once created, this namespace's
         resource manifest is immutable. This operation is idempotent.
 
         :param resource_group_name: The name of the resource group.
@@ -183,8 +181,7 @@ class NamespacesOperations(object):
 
     def delete(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes an existing namespace. This operation also removes all
+        """Deletes an existing namespace. This operation also removes all
         associated notificationHubs under the namespace.
 
         :param resource_group_name: The name of the resource group.
@@ -261,8 +258,7 @@ class NamespacesOperations(object):
 
     def get(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Returns the description for the specified namespace.
+        """Returns the description for the specified namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -323,8 +319,7 @@ class NamespacesOperations(object):
 
     def create_or_update_authorization_rule(
             self, resource_group_name, namespace_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates an authorization rule for a namespace
+        """Creates an authorization rule for a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -396,8 +391,7 @@ class NamespacesOperations(object):
 
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a namespace authorization rule
+        """Deletes a namespace authorization rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -453,8 +447,7 @@ class NamespacesOperations(object):
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets an authorization rule for a namespace by name.
+        """Gets an authorization rule for a namespace by name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -518,8 +511,7 @@ class NamespacesOperations(object):
 
     def get_long_running_operation_status(
             self, operation_status_link, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get Operation Status operation returns the status of the specified
+        """The Get Operation Status operation returns the status of the specified
         operation. After calling an asynchronous operation, you can call Get
         Operation Status to determine whether the operation has succeeded,
         failed, or is still in progress.
@@ -571,8 +563,7 @@ class NamespacesOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the available namespaces within a resourceGroup.
+        """Lists the available namespaces within a resourceGroup.
 
         :param resource_group_name: The name of the resource group. If
          resourceGroupName value is null the method lists all the namespaces
@@ -639,8 +630,7 @@ class NamespacesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all the available namespaces within the subscription
+        """Lists all the available namespaces within the subscription
         irrespective of the resourceGroups.
 
         :param dict custom_headers: headers that will be added to the request
@@ -703,8 +693,7 @@ class NamespacesOperations(object):
 
     def list_authorization_rules(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the authorization rules for a namespace.
+        """Gets the authorization rules for a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -772,8 +761,7 @@ class NamespacesOperations(object):
 
     def list_keys(
             self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the Primary and Secondary ConnectionStrings to the namespace
+        """Gets the Primary and Secondary ConnectionStrings to the namespace .
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NamespaceProperties(Model):
-    """
-    Namespace properties.
+    """Namespace properties.
 
     :param name: The name of the namespace.
     :type name: str
