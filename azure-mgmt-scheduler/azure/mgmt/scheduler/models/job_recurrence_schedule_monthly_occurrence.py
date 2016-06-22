@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class JobRecurrenceScheduleMonthlyOccurrence(Model):
-    """JobRecurrenceScheduleMonthlyOccurrence
+    """JobRecurrenceScheduleMonthlyOccurrence.
 
     :param day: Gets or sets the day. Must be one of monday, tuesday,
      wednesday, thursday, friday, saturday, sunday. Possible values include:

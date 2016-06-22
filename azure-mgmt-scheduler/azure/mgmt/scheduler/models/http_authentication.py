@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class HttpAuthentication(Model):
-    """HttpAuthentication
+    """HttpAuthentication.
 
     :param type: Gets or sets the http authentication type. Possible values
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',

@@ -23,7 +23,7 @@ from .service_bus_message import ServiceBusMessage
 
 
 class ServiceBusQueueMessage(ServiceBusMessage):
-    """ServiceBusQueueMessage
+    """ServiceBusQueueMessage.
 
     :param authentication: Gets or sets the authentication.
     :type authentication: :class:`ServiceBusAuthentication
