@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceRateCardInfo(Model):
-    """
-    Price and Metadata information for resources
+    """Price and Metadata information for resources.
 
     :param currency: The currency in which the rates are provided.
     :type currency: str

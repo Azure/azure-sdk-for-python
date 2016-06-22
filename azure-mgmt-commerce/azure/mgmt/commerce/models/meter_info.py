@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class MeterInfo(Model):
-    """
-    Detailed information about the meter.
+    """Detailed information about the meter.
 
     :param meter_id: The unique identifier of the resource.
     :type meter_id: str
