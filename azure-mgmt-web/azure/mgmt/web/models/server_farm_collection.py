@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ServerFarmCollection(Model):
-    """
-    Collection of serverfarms
+    """Collection of serverfarms.
 
     :param value: Collection of resources
     :type value: list of :class:`ServerFarmWithRichSku

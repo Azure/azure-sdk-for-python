@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class SiteProperties(Model):
-    """SiteProperties
+    """SiteProperties.
 
     :param metadata:
     :type metadata: list of :class:`NameValuePair

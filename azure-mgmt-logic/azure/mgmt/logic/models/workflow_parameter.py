@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class WorkflowParameter(Model):
-    """WorkflowParameter
+    """WorkflowParameter.
 
     :param type: Gets or sets the type. Possible values include:
      'NotSpecified', 'String', 'SecureString', 'Int', 'Float', 'Bool',

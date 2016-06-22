@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class WorkflowTriggerRecurrence(Model):
-    """WorkflowTriggerRecurrence
+    """WorkflowTriggerRecurrence.
 
     :param frequency: Gets or sets the frequency. Possible values include:
      'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'

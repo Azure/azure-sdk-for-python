@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ArmPlan(Model):
-    """
-    The plan object in an ARM, represents a marketplace plan
+    """The plan object in an ARM, represents a marketplace plan.
 
     :param name: The name
     :type name: str

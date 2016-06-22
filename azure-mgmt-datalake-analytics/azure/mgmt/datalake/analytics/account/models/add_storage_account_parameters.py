@@ -23,11 +23,10 @@ from msrest.serialization import Model
 
 
 class AddStorageAccountParameters(Model):
-    """
-    Additional Azure Storage account parameters.
+    """Additional Azure Storage account parameters.
 
-    :param properties: Gets or sets the properties for the Azure Storage
-     account being added.
+    :param properties: the properties for the Azure Storage account being
+     added.
     :type properties: :class:`StorageAccountProperties
      <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
     """ 

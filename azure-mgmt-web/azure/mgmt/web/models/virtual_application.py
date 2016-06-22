@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class VirtualApplication(Model):
-    """VirtualApplication
+    """VirtualApplication.
 
     :param virtual_path:
     :type virtual_path: str

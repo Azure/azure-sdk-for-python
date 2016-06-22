@@ -44,8 +44,7 @@ class TaskOperations(object):
 
     def add(
             self, job_id, task, task_add_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a task to the specified job.
+        """Adds a task to the specified job.
 
         :param job_id: The id of the job to which the task is to be added.
         :type job_id: str
@@ -94,7 +93,7 @@ class TaskOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -130,8 +129,7 @@ class TaskOperations(object):
 
     def list(
             self, job_id, task_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all of the tasks that are associated with the specified job.
+        """Lists all of the tasks that are associated with the specified job.
 
         :param job_id: The id of the job.
         :type job_id: str
@@ -202,7 +200,7 @@ class TaskOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
@@ -236,8 +234,7 @@ class TaskOperations(object):
 
     def add_collection(
             self, job_id, value, task_add_collection_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a collection of tasks to the specified job.
+        """Adds a collection of tasks to the specified job.
 
         :param job_id: The id of the job to which the task collection is to
          be added.
@@ -290,7 +287,7 @@ class TaskOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -332,8 +329,7 @@ class TaskOperations(object):
 
     def delete(
             self, job_id, task_id, task_delete_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a task from the specified job.
+        """Deletes a task from the specified job.
 
         :param job_id: The id of the job from which to delete the task.
         :type job_id: str
@@ -394,7 +390,7 @@ class TaskOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -431,8 +427,7 @@ class TaskOperations(object):
 
     def get(
             self, job_id, task_id, task_get_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the specified task.
+        """Gets information about the specified task.
 
         :param job_id: The id of the job that contains the task.
         :type job_id: str
@@ -503,7 +498,7 @@ class TaskOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -552,8 +547,7 @@ class TaskOperations(object):
 
     def update(
             self, job_id, task_id, task_update_options=None, constraints=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the properties of the specified task.
+        """Updates the properties of the specified task.
 
         :param job_id: The id of the job containing the task.
         :type job_id: str
@@ -619,7 +613,7 @@ class TaskOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -663,8 +657,7 @@ class TaskOperations(object):
 
     def list_subtasks(
             self, job_id, task_id, task_list_subtasks_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all of the subtasks that are associated with the specified
+        """Lists all of the subtasks that are associated with the specified
         multi-instance task.
 
         :param job_id: The id of the job.
@@ -721,7 +714,7 @@ class TaskOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -761,8 +754,7 @@ class TaskOperations(object):
 
     def terminate(
             self, job_id, task_id, task_terminate_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Terminates the specified task.
+        """Terminates the specified task.
 
         :param job_id: The id of the job containing the task.
         :type job_id: str
@@ -823,7 +815,7 @@ class TaskOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:

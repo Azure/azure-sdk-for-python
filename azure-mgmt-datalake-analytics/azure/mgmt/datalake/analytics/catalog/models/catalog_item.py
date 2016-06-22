@@ -23,13 +23,11 @@ from msrest.serialization import Model
 
 
 class CatalogItem(Model):
-    """
-    A Data Lake Analytics catalog item.
+    """A Data Lake Analytics catalog item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
     """ 
 

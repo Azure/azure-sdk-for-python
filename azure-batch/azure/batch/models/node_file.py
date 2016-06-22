@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NodeFile(Model):
-    """
-    Information about a file or directory on a compute node.
+    """Information about a file or directory on a compute node.
 
     :param name: The file path.
     :type name: str

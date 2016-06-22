@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobScheduleExecutionInformation(Model):
-    """
-    Specifies how tasks should be run in a job associated with a job schedule.
+    """Specifies how tasks should be run in a job associated with a job schedule.
 
     :param next_run_time: The next time at which a job will be created under
      this schedule.

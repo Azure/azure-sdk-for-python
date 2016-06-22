@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AdmCredentialProperties(Model):
-    """
-    Description of a NotificationHub AdmCredential.
+    """Description of a NotificationHub AdmCredential.
 
     :param client_id: Gets or sets the client identifier.
     :type client_id: str

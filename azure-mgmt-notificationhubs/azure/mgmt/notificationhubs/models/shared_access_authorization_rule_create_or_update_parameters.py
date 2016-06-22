@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
-    """
-    Parameters supplied to the CreateOrUpdate Namespace AuthorizationRules.
+    """Parameters supplied to the CreateOrUpdate Namespace AuthorizationRules.
 
     :param location: Gets or sets Namespace data center location.
     :type location: str

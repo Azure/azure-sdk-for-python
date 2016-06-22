@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ProfileCreateParameters(Model):
-    """
-    Profile properties required for profile creation.
+    """Profile properties required for profile creation.
 
     :param location: Profile location
     :type location: str

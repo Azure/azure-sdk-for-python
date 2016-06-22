@@ -23,14 +23,12 @@ from msrest.serialization import Model
 
 
 class BlobContainerProperties(Model):
-    """
-    Azure Storage blob container properties information.
+    """Azure Storage blob container properties information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar last_modified_time: Gets or sets the last modified time of the blob
-     container.
+    :ivar last_modified_time: the last modified time of the blob container.
     :vartype last_modified_time: datetime
     """ 
 

@@ -23,7 +23,7 @@ from .job_properties import JobProperties
 
 
 class USqlJobProperties(JobProperties):
-    """USqlJobProperties
+    """USqlJobProperties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

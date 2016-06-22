@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AzureTableStorageApplicationLogsConfig(Model):
-    """
-    Application logs to azure table storage configuration
+    """Application logs to azure table storage configuration.
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'

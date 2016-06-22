@@ -44,8 +44,7 @@ class FileSystemOperations(object):
 
     def concurrent_append(
             self, file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCURRENTAPPEND", transfer_encoding="chunked", append_mode=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Appends to the specified file. This method supports multiple
+        """Appends to the specified file. This method supports multiple
         concurrent appends to the file. NOTE: Concurrent append and normal
         (serial) append CANNOT be used interchangeably. Once a file has been
         appended to using either append option, it can only be appended to
@@ -128,8 +127,7 @@ class FileSystemOperations(object):
 
     def check_access(
             self, path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CHECKACCESS", fsaction=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Checks if the specified access is available at the given path.
+        """Checks if the specified access is available at the given path.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -190,8 +188,7 @@ class FileSystemOperations(object):
 
     def mkdirs(
             self, path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MKDIRS", custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a directory.
+        """Creates a directory.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -255,8 +252,7 @@ class FileSystemOperations(object):
 
     def concat(
             self, destination_path, sources, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCAT", custom_headers=None, raw=False, **operation_config):
-        """
-        Concatenates the list of source files into the destination file,
+        """Concatenates the list of source files into the destination file,
         removing all source files upon success.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -318,8 +314,7 @@ class FileSystemOperations(object):
 
     def ms_concat(
             self, ms_concat_destination_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MSCONCAT", delete_source_directory=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Concatenates the list of source files into the destination file,
+        """Concatenates the list of source files into the destination file,
         deleting all source files upon success. This method accepts more
         source file paths than the Concat method. This method and the
         parameters it accepts are subject to change for usability in an
@@ -403,9 +398,8 @@ class FileSystemOperations(object):
 
     def list_file_status(
             self, list_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MSLISTSTATUS", list_size=None, list_after=None, list_before=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get the list of file status objects specified by the file path, with
-        optional pagination parameters
+        """Get the list of file status objects specified by the file path, with
+        optional pagination parameters.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -488,8 +482,7 @@ class FileSystemOperations(object):
 
     def get_content_summary(
             self, get_content_summary_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETCONTENTSUMMARY", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the file content summary object specified by the file path.
+        """Gets the file content summary object specified by the file path.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -553,8 +546,7 @@ class FileSystemOperations(object):
 
     def get_file_status(
             self, get_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETFILESTATUS", custom_headers=None, raw=False, **operation_config):
-        """
-        Get the file status object specified by the file path.
+        """Get the file status object specified by the file path.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -618,8 +610,7 @@ class FileSystemOperations(object):
 
     def append(
             self, direct_file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="APPEND", append="true", transfer_encoding="chunked", custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Appends to the specified file. This method does not support multiple
+        """Appends to the specified file. This method does not support multiple
         concurrent appends to the file. NOTE: Concurrent append and normal
         (serial) append CANNOT be used interchangeably. Once a file has been
         appended to using either append option, it can only be appended to
@@ -699,8 +690,7 @@ class FileSystemOperations(object):
 
     def create(
             self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CREATE", write="true", transfer_encoding="chunked", stream_contents=None, overwrite=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Creates a file with optionally specified content.
+        """Creates a file with optionally specified content.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -780,8 +770,7 @@ class FileSystemOperations(object):
 
     def open(
             self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="OPEN", read="true", length=None, offset=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Opens and reads from the specified file.
+        """Opens and reads from the specified file.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -860,8 +849,7 @@ class FileSystemOperations(object):
 
     def set_acl(
             self, set_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETACL", custom_headers=None, raw=False, **operation_config):
-        """
-        Sets the Access Control List (ACL) for a file or folder.
+        """Sets the Access Control List (ACL) for a file or folder.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -921,8 +909,7 @@ class FileSystemOperations(object):
 
     def modify_acl_entries(
             self, modify_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MODIFYACLENTRIES", custom_headers=None, raw=False, **operation_config):
-        """
-        Modifies existing Access Control List (ACL) entries on a file or
+        """Modifies existing Access Control List (ACL) entries on a file or
         folder.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -983,8 +970,7 @@ class FileSystemOperations(object):
 
     def remove_acl_entries(
             self, remove_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="REMOVEACLENTRIES", custom_headers=None, raw=False, **operation_config):
-        """
-        Removes existing Access Control List (ACL) entries for a file or
+        """Removes existing Access Control List (ACL) entries for a file or
         folder.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -1045,8 +1031,7 @@ class FileSystemOperations(object):
 
     def get_acl_status(
             self, acl_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETACLSTATUS", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets Access Control List (ACL) entries for the specified file or
+        """Gets Access Control List (ACL) entries for the specified file or
         directory.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -1111,8 +1096,7 @@ class FileSystemOperations(object):
 
     def delete(
             self, file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="DELETE", recursive=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the requested file or directory, optionally recursively.
+        """Deletes the requested file or directory, optionally recursively.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -1181,8 +1165,7 @@ class FileSystemOperations(object):
 
     def rename(
             self, rename_file_path, destination, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="RENAME", custom_headers=None, raw=False, **operation_config):
-        """
-        Rename a file or directory.
+        """Rename a file or directory.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -1249,8 +1232,7 @@ class FileSystemOperations(object):
 
     def set_owner(
             self, set_owner_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETOWNER", owner=None, group=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Sets the owner of a file or directory.
+        """Sets the owner of a file or directory.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.
@@ -1316,8 +1298,7 @@ class FileSystemOperations(object):
 
     def set_permission(
             self, set_permission_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETPERMISSION", permission=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Sets the permission of the file or folder.
+        """Sets the permission of the file or folder.
 
         :param account_name: The Azure Data Lake Store account to execute
          filesystem operations on.

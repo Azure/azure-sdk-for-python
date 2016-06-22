@@ -45,8 +45,7 @@ class WorkflowAccessKeysOperations(object):
 
     def list(
             self, resource_group_name, workflow_name, top=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of workflow access keys.
+        """Gets a list of workflow access keys.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -118,8 +117,7 @@ class WorkflowAccessKeysOperations(object):
 
     def get(
             self, resource_group_name, workflow_name, access_key_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a workflow access key.
+        """Gets a workflow access key.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -183,8 +181,7 @@ class WorkflowAccessKeysOperations(object):
 
     def create_or_update(
             self, resource_group_name, workflow_name, access_key_name, workflow_accesskey, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates or updates a workflow access key.
+        """Creates or updates a workflow access key.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -257,8 +254,7 @@ class WorkflowAccessKeysOperations(object):
 
     def delete(
             self, resource_group_name, workflow_name, access_key_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a workflow access key.
+        """Deletes a workflow access key.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -314,8 +310,7 @@ class WorkflowAccessKeysOperations(object):
 
     def list_secret_keys(
             self, resource_group_name, workflow_name, access_key_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists secret keys.
+        """Lists secret keys.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -379,8 +374,7 @@ class WorkflowAccessKeysOperations(object):
 
     def regenerate_secret_key(
             self, resource_group_name, workflow_name, access_key_name, key_type=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Regenerates secret key.
+        """Regenerates secret key.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

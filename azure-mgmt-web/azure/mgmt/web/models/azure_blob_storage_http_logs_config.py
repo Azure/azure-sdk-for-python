@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AzureBlobStorageHttpLogsConfig(Model):
-    """
-    Http logs to azure blob storage configuration
+    """Http logs to azure blob storage configuration.
 
     :param sas_url: SAS url to a azure blob container with
      read/write/list/delete permissions

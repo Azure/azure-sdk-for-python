@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CloudPool(Model):
-    """
-    A pool in the Azure Batch service.
+    """A pool in the Azure Batch service.
 
     :param id: A string that uniquely identifies the pool within the account.
      The id can contain any combination of alphanumeric characters including

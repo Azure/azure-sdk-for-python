@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AzureAsyncOperationResult(Model):
-    """
-    The response body contains the status of the specified asynchronous
+    """The response body contains the status of the specified asynchronous
     operation, indicating whether it has succeeded, is inprogress, or has
     failed. Note that this status is distinct from the HTTP status code
     returned for the Get Operation Status operation itself. If the
@@ -36,8 +35,8 @@ class AzureAsyncOperationResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar status: Gets or sets the status of the AzureAsuncOperation.
-     Possible values include: 'InProgress', 'Succeeded', 'Failed'
+    :ivar status: the status of the AzureAsuncOperation. Possible values
+     include: 'InProgress', 'Succeeded', 'Failed'
     :vartype status: str or :class:`OperationStatus
      <azure.mgmt.datalake.analytics.account.models.OperationStatus>`
     :ivar error:

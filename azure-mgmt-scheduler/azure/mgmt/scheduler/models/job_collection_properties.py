@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class JobCollectionProperties(Model):
-    """JobCollectionProperties
+    """JobCollectionProperties.
 
     :param sku: Gets or sets the SKU.
     :type sku: :class:`Sku <azure.mgmt.scheduler.models.Sku>`

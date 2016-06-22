@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CustomDomainParameters(Model):
-    """
-    CustomDomain properties required for custom domain creation or update.
+    """CustomDomain properties required for custom domain creation or update.
 
     :param host_name: The host name of the custom domain. Must be a domain
      name.

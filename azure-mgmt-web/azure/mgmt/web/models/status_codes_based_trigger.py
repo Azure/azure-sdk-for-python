@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class StatusCodesBasedTrigger(Model):
-    """
-    StatusCodeBasedTrigger
+    """StatusCodeBasedTrigger.
 
     :param status: HTTP status code
     :type status: int

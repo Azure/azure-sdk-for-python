@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NameIdentifier(Model):
-    """
-    Identifies an object
+    """Identifies an object.
 
     :param name: Name of the object
     :type name: str

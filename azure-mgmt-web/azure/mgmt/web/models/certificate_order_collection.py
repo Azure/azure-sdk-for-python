@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CertificateOrderCollection(Model):
-    """
-    Collection of ceritificate orders
+    """Collection of ceritificate orders.
 
     :param value: Collection of resources
     :type value: list of :class:`CertificateOrder

@@ -23,13 +23,12 @@ from msrest.serialization import Model
 
 
 class USqlDirectedColumn(Model):
-    """
-    A Data Lake Analytics catalog U-SQL directed column item.
+    """A Data Lake Analytics catalog U-SQL directed column item.
 
-    :param name: Gets or sets the name of the index in the table.
+    :param name: the name of the index in the table.
     :type name: str
-    :param descending: Gets or sets the switch indicating if the index is
-     descending or not.
+    :param descending: the switch indicating if the index is descending or
+     not.
     :type descending: bool
     """ 
 

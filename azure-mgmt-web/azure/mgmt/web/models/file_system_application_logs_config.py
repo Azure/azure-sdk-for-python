@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class FileSystemApplicationLogsConfig(Model):
-    """
-    Application logs to file system configuration
+    """Application logs to file system configuration.
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'

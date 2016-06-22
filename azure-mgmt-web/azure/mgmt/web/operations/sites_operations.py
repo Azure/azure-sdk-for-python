@@ -46,8 +46,7 @@ class SitesOperations(object):
 
     def get_site_vnet_connection_slot(
             self, resource_group_name, name, vnet_name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a specific Virtual Network Connection associated with this
+        """Retrieves a specific Virtual Network Connection associated with this
         web app.
 
         :param resource_group_name: The resource group name
@@ -114,8 +113,7 @@ class SitesOperations(object):
 
     def create_or_update_site_vnet_connection_slot(
             self, resource_group_name, name, vnet_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a Virtual Network Connection or updates it's properties.
+        """Adds a Virtual Network Connection or updates it's properties.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -189,8 +187,7 @@ class SitesOperations(object):
 
     def delete_site_vnet_connection_slot(
             self, resource_group_name, name, vnet_name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Removes the specified Virtual Network Connection association from this
+        """Removes the specified Virtual Network Connection association from this
         web app.
 
         :param resource_group_name: The resource group name
@@ -257,8 +254,7 @@ class SitesOperations(object):
 
     def update_site_vnet_connection_slot(
             self, resource_group_name, name, vnet_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a Virtual Network Connection or updates it's properties.
+        """Adds a Virtual Network Connection or updates it's properties.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -332,8 +328,7 @@ class SitesOperations(object):
 
     def get_site_vnet_connection(
             self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a specific Virtual Network Connection associated with this
+        """Retrieves a specific Virtual Network Connection associated with this
         web app.
 
         :param resource_group_name: The resource group name
@@ -397,8 +392,7 @@ class SitesOperations(object):
 
     def create_or_update_site_vnet_connection(
             self, resource_group_name, name, vnet_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a Virtual Network Connection or updates it's properties.
+        """Adds a Virtual Network Connection or updates it's properties.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -469,8 +463,7 @@ class SitesOperations(object):
 
     def delete_site_vnet_connection(
             self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Removes the specified Virtual Network Connection association from this
+        """Removes the specified Virtual Network Connection association from this
         web app.
 
         :param resource_group_name: The resource group name
@@ -534,8 +527,7 @@ class SitesOperations(object):
 
     def update_site_vnet_connection(
             self, resource_group_name, name, vnet_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a Virtual Network Connection or updates it's properties.
+        """Adds a Virtual Network Connection or updates it's properties.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -606,8 +598,7 @@ class SitesOperations(object):
 
     def get_site_network_features_slot(
             self, resource_group_name, name, view, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a view of all network features in use on this web app.
+        """Retrieves a view of all network features in use on this web app.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -675,8 +666,7 @@ class SitesOperations(object):
 
     def get_site_network_features(
             self, resource_group_name, name, view, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a view of all network features in use on this web app.
+        """Retrieves a view of all network features in use on this web app.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -741,8 +731,7 @@ class SitesOperations(object):
 
     def get_site_operation_slot(
             self, resource_group_name, name, operation_id, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the operation for a web app
+        """Gets the operation for a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -809,8 +798,7 @@ class SitesOperations(object):
 
     def get_site_operation(
             self, resource_group_name, name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the operation for a web app
+        """Gets the operation for a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -873,8 +861,7 @@ class SitesOperations(object):
 
     def swap_slot_with_production(
             self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Swaps web app slots
+        """Swaps web app slots.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -971,8 +958,7 @@ class SitesOperations(object):
 
     def swap_slots_slot(
             self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Swaps web app slots
+        """Swaps web app slots.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1072,8 +1058,7 @@ class SitesOperations(object):
 
     def get_slots_differences_from_production(
             self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get the difference in configuration settings between two web app slots
+        """Get the difference in configuration settings between two web app slots.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1146,8 +1131,7 @@ class SitesOperations(object):
 
     def get_slots_differences_slot(
             self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get the difference in configuration settings between two web app slots
+        """Get the difference in configuration settings between two web app slots.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1223,9 +1207,8 @@ class SitesOperations(object):
 
     def apply_slot_config_to_production(
             self, resource_group_name, name, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Applies the configuration settings from the target slot onto the
-        current slot
+        """Applies the configuration settings from the target slot onto the
+        current slot.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1297,9 +1280,8 @@ class SitesOperations(object):
 
     def apply_slot_config_slot(
             self, resource_group_name, name, slot, target_slot=None, preserve_vnet=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Applies the configuration settings from the target slot onto the
-        current slot
+        """Applies the configuration settings from the target slot onto the
+        current slot.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1375,9 +1357,8 @@ class SitesOperations(object):
 
     def reset_production_slot_config(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Resets the configuration settings of the current slot if they were
-        previously modified by calling ApplySlotConfig API
+        """Resets the configuration settings of the current slot if they were
+        previously modified by calling ApplySlotConfig API.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1437,9 +1418,8 @@ class SitesOperations(object):
 
     def reset_slot_config_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Resets the configuration settings of the current slot if they were
-        previously modified by calling ApplySlotConfig API
+        """Resets the configuration settings of the current slot if they were
+        previously modified by calling ApplySlotConfig API.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1503,9 +1483,8 @@ class SitesOperations(object):
 
     def get_slot_config_names(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the names of application settings and connection string that
-        remain with the slot during swap operation
+        """Gets the names of application settings and connection string that
+        remain with the slot during swap operation.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1566,9 +1545,8 @@ class SitesOperations(object):
 
     def update_slot_config_names(
             self, resource_group_name, name, slot_config_names, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the names of application settings and connection string that
-        remain with the slot during swap operation
+        """Updates the names of application settings and connection string that
+        remain with the slot during swap operation.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1637,8 +1615,7 @@ class SitesOperations(object):
 
     def get_site_slots(
             self, resource_group_name, name, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all the slots for a web apps
+        """Gets all the slots for a web apps.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1703,8 +1680,7 @@ class SitesOperations(object):
 
     def get_sites(
             self, resource_group_name, properties_to_include=None, include_site_types=None, include_slots=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the web apps for a subscription in the specified resource group
+        """Gets the web apps for a subscription in the specified resource group.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1775,8 +1751,7 @@ class SitesOperations(object):
 
     def get_site(
             self, resource_group_name, name, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get details of a web app
+        """Get details of a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -1841,8 +1816,7 @@ class SitesOperations(object):
 
     def create_or_update_site(
             self, resource_group_name, name, site_envelope, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new web app or modifies an existing web app.
+        """Creates a new web app or modifies an existing web app.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -1955,8 +1929,7 @@ class SitesOperations(object):
 
     def delete_site(
             self, resource_group_name, name, delete_metrics=None, delete_empty_server_farm=None, skip_dns_registration=None, delete_all_slots=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a web app
+        """Deletes a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2034,8 +2007,7 @@ class SitesOperations(object):
 
     def get_site_slot(
             self, resource_group_name, name, slot, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get details of a web app
+        """Get details of a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2104,8 +2076,7 @@ class SitesOperations(object):
 
     def create_or_update_site_slot(
             self, resource_group_name, name, site_envelope, slot, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new web app or modifies an existing web app.
+        """Creates a new web app or modifies an existing web app.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -2222,8 +2193,7 @@ class SitesOperations(object):
 
     def delete_site_slot(
             self, resource_group_name, name, slot, delete_metrics=None, delete_empty_server_farm=None, skip_dns_registration=None, delete_all_slots=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a web app
+        """Deletes a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2305,8 +2275,7 @@ class SitesOperations(object):
 
     def is_site_cloneable(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new web app or modifies an existing web app.
+        """Creates a new web app or modifies an existing web app.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -2367,8 +2336,7 @@ class SitesOperations(object):
 
     def is_site_cloneable_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new web app or modifies an existing web app.
+        """Creates a new web app or modifies an existing web app.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -2433,8 +2401,7 @@ class SitesOperations(object):
 
     def recover_site(
             self, resource_group_name, name, recovery_entity, custom_headers=None, raw=False, **operation_config):
-        """
-        Recovers a deleted web app
+        """Recovers a deleted web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2526,8 +2493,7 @@ class SitesOperations(object):
 
     def recover_site_slot(
             self, resource_group_name, name, recovery_entity, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Recovers a deleted web app
+        """Recovers a deleted web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2623,8 +2589,7 @@ class SitesOperations(object):
 
     def get_site_snapshots(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Returns all Snapshots to the user.
+        """Returns all Snapshots to the user.
 
         :param resource_group_name: Webspace
         :type resource_group_name: str
@@ -2684,8 +2649,7 @@ class SitesOperations(object):
 
     def get_site_snapshots_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Returns all Snapshots to the user.
+        """Returns all Snapshots to the user.
 
         :param resource_group_name: Webspace
         :type resource_group_name: str
@@ -2748,8 +2712,7 @@ class SitesOperations(object):
 
     def get_deleted_sites(
             self, resource_group_name, properties_to_include=None, include_site_types=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets deleted web apps in subscription
+        """Gets deleted web apps in subscription.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2816,8 +2779,7 @@ class SitesOperations(object):
 
     def get_deployments(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        List deployments
+        """List deployments.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2878,8 +2840,7 @@ class SitesOperations(object):
 
     def get_deployments_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        List deployments
+        """List deployments.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -2944,8 +2905,7 @@ class SitesOperations(object):
 
     def get_instance_deployments(
             self, resource_group_name, name, instance_id, custom_headers=None, raw=False, **operation_config):
-        """
-        List deployments
+        """List deployments.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3009,8 +2969,7 @@ class SitesOperations(object):
 
     def get_instance_deployments_slot(
             self, resource_group_name, name, slot, instance_id, custom_headers=None, raw=False, **operation_config):
-        """
-        List deployments
+        """List deployments.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3078,8 +3037,7 @@ class SitesOperations(object):
 
     def get_instance_deployment(
             self, resource_group_name, name, id, instance_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Get the deployment
+        """Get the deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3145,8 +3103,7 @@ class SitesOperations(object):
 
     def create_instance_deployment(
             self, resource_group_name, name, id, instance_id, deployment, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a deployment
+        """Create a deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3219,8 +3176,7 @@ class SitesOperations(object):
 
     def delete_instance_deployment(
             self, resource_group_name, name, id, instance_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete the deployment
+        """Delete the deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3286,8 +3242,7 @@ class SitesOperations(object):
 
     def get_deployment(
             self, resource_group_name, name, id, custom_headers=None, raw=False, **operation_config):
-        """
-        Get the deployment
+        """Get the deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3350,8 +3305,7 @@ class SitesOperations(object):
 
     def create_deployment(
             self, resource_group_name, name, id, deployment, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a deployment
+        """Create a deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3421,8 +3375,7 @@ class SitesOperations(object):
 
     def delete_deployment(
             self, resource_group_name, name, id, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete the deployment
+        """Delete the deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3485,8 +3438,7 @@ class SitesOperations(object):
 
     def get_deployment_slot(
             self, resource_group_name, name, id, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Get the deployment
+        """Get the deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3553,8 +3505,7 @@ class SitesOperations(object):
 
     def create_deployment_slot(
             self, resource_group_name, name, id, slot, deployment, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a deployment
+        """Create a deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3628,8 +3579,7 @@ class SitesOperations(object):
 
     def delete_deployment_slot(
             self, resource_group_name, name, id, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete the deployment
+        """Delete the deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3696,8 +3646,7 @@ class SitesOperations(object):
 
     def get_instance_deployment_slot(
             self, resource_group_name, name, id, slot, instance_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Get the deployment
+        """Get the deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3767,8 +3716,7 @@ class SitesOperations(object):
 
     def create_instance_deployment_slot(
             self, resource_group_name, name, id, slot, instance_id, deployment, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a deployment
+        """Create a deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3845,8 +3793,7 @@ class SitesOperations(object):
 
     def delete_instance_deployment_slot(
             self, resource_group_name, name, id, slot, instance_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete the deployment
+        """Delete the deployment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3916,8 +3863,7 @@ class SitesOperations(object):
 
     def get_site_instance_identifiers(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all instance of a web app
+        """Gets all instance of a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -3978,8 +3924,7 @@ class SitesOperations(object):
 
     def get_site_instance_identifiers_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all instance of a web app
+        """Gets all instance of a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4044,8 +3989,7 @@ class SitesOperations(object):
 
     def get_site_host_name_bindings(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get web app hostname bindings
+        """Get web app hostname bindings.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4106,8 +4050,7 @@ class SitesOperations(object):
 
     def get_site_host_name_bindings_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Get web app hostname bindings
+        """Get web app hostname bindings.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4172,8 +4115,7 @@ class SitesOperations(object):
 
     def get_site_host_name_binding(
             self, resource_group_name, name, host_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get web app binding for a hostname
+        """Get web app binding for a hostname.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4237,8 +4179,7 @@ class SitesOperations(object):
 
     def create_or_update_site_host_name_binding(
             self, resource_group_name, name, host_name, host_name_binding, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a web app hostname binding
+        """Creates a web app hostname binding.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4309,8 +4250,7 @@ class SitesOperations(object):
 
     def delete_site_host_name_binding(
             self, resource_group_name, name, host_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a host name binding
+        """Deletes a host name binding.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4373,8 +4313,7 @@ class SitesOperations(object):
 
     def get_site_host_name_binding_slot(
             self, resource_group_name, name, slot, host_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get web app binding for a hostname
+        """Get web app binding for a hostname.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4442,8 +4381,7 @@ class SitesOperations(object):
 
     def create_or_update_site_host_name_binding_slot(
             self, resource_group_name, name, host_name, host_name_binding, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a web app hostname binding
+        """Creates a web app hostname binding.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4518,8 +4456,7 @@ class SitesOperations(object):
 
     def delete_site_host_name_binding_slot(
             self, resource_group_name, name, slot, host_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a host name binding
+        """Deletes a host name binding.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4586,8 +4523,7 @@ class SitesOperations(object):
 
     def get_site_config(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the configuration of the web app
+        """Gets the configuration of the web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4647,8 +4583,7 @@ class SitesOperations(object):
 
     def create_or_update_site_config(
             self, resource_group_name, name, site_config, custom_headers=None, raw=False, **operation_config):
-        """
-        Update the configuration of web app
+        """Update the configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4716,8 +4651,7 @@ class SitesOperations(object):
 
     def update_site_config(
             self, resource_group_name, name, site_config, custom_headers=None, raw=False, **operation_config):
-        """
-        Update the configuration of web app
+        """Update the configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4785,8 +4719,7 @@ class SitesOperations(object):
 
     def get_site_config_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the configuration of the web app
+        """Gets the configuration of the web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4850,8 +4783,7 @@ class SitesOperations(object):
 
     def create_or_update_site_config_slot(
             self, resource_group_name, name, site_config, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Update the configuration of web app
+        """Update the configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4923,8 +4855,7 @@ class SitesOperations(object):
 
     def update_site_config_slot(
             self, resource_group_name, name, site_config, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Update the configuration of web app
+        """Update the configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -4996,8 +4927,7 @@ class SitesOperations(object):
 
     def get_site_source_control(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get the source control configuration of web app
+        """Get the source control configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5058,8 +4988,7 @@ class SitesOperations(object):
 
     def create_or_update_site_source_control(
             self, resource_group_name, name, site_source_control, custom_headers=None, raw=False, **operation_config):
-        """
-        Update the source control configuration of web app
+        """Update the source control configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5128,8 +5057,7 @@ class SitesOperations(object):
 
     def delete_site_source_control(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete source control configuration of web app
+        """Delete source control configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5189,8 +5117,7 @@ class SitesOperations(object):
 
     def update_site_source_control(
             self, resource_group_name, name, site_source_control, custom_headers=None, raw=False, **operation_config):
-        """
-        Update the source control configuration of web app
+        """Update the source control configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5259,8 +5186,7 @@ class SitesOperations(object):
 
     def get_site_source_control_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Get the source control configuration of web app
+        """Get the source control configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5325,8 +5251,7 @@ class SitesOperations(object):
 
     def create_or_update_site_source_control_slot(
             self, resource_group_name, name, site_source_control, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Update the source control configuration of web app
+        """Update the source control configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5399,8 +5324,7 @@ class SitesOperations(object):
 
     def delete_site_source_control_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete source control configuration of web app
+        """Delete source control configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5464,8 +5388,7 @@ class SitesOperations(object):
 
     def update_site_source_control_slot(
             self, resource_group_name, name, site_source_control, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Update the source control configuration of web app
+        """Update the source control configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5538,8 +5461,7 @@ class SitesOperations(object):
 
     def list_site_app_settings_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the application settings of web app
+        """Gets the application settings of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5604,8 +5526,7 @@ class SitesOperations(object):
 
     def list_site_app_settings(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the application settings of web app
+        """Gets the application settings of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5666,8 +5587,7 @@ class SitesOperations(object):
 
     def update_site_app_settings(
             self, resource_group_name, name, app_settings, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the application settings of web app
+        """Updates the application settings of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5735,8 +5655,7 @@ class SitesOperations(object):
 
     def update_site_app_settings_slot(
             self, resource_group_name, name, app_settings, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the application settings of web app
+        """Updates the application settings of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5808,8 +5727,7 @@ class SitesOperations(object):
 
     def list_site_connection_strings(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the connection strings associated with web app
+        """Gets the connection strings associated with web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5870,8 +5788,7 @@ class SitesOperations(object):
 
     def list_site_connection_strings_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the connection strings associated with web app
+        """Gets the connection strings associated with web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -5936,8 +5853,7 @@ class SitesOperations(object):
 
     def update_site_connection_strings(
             self, resource_group_name, name, connection_strings, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the connection strings associated with web app
+        """Updates the connection strings associated with web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6005,8 +5921,7 @@ class SitesOperations(object):
 
     def update_site_connection_strings_slot(
             self, resource_group_name, name, connection_strings, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the connection strings associated with web app
+        """Updates the connection strings associated with web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6078,9 +5993,8 @@ class SitesOperations(object):
 
     def list_site_auth_settings(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the Authentication / Authorization settings associated with web
-        app
+        """Gets the Authentication / Authorization settings associated with web
+        app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6141,9 +6055,8 @@ class SitesOperations(object):
 
     def list_site_auth_settings_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the Authentication / Authorization settings associated with web
-        app
+        """Gets the Authentication / Authorization settings associated with web
+        app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6208,9 +6121,8 @@ class SitesOperations(object):
 
     def update_site_auth_settings(
             self, resource_group_name, name, site_auth_settings, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the Authentication / Authorization settings associated with
-        web app
+        """Updates the Authentication / Authorization settings associated with
+        web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6278,9 +6190,8 @@ class SitesOperations(object):
 
     def update_site_auth_settings_slot(
             self, resource_group_name, name, site_auth_settings, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the Authentication / Authorization settings associated with
-        web app
+        """Updates the Authentication / Authorization settings associated with
+        web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6352,8 +6263,7 @@ class SitesOperations(object):
 
     def list_site_publishing_credentials(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the web app publishing credentials
+        """Gets the web app publishing credentials.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6436,8 +6346,7 @@ class SitesOperations(object):
 
     def list_site_publishing_credentials_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the web app publishing credentials
+        """Gets the web app publishing credentials.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6524,8 +6433,7 @@ class SitesOperations(object):
 
     def list_site_metadata(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the web app meta data.
+        """Gets the web app meta data.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6586,8 +6494,7 @@ class SitesOperations(object):
 
     def list_site_metadata_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the web app meta data.
+        """Gets the web app meta data.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6652,8 +6559,7 @@ class SitesOperations(object):
 
     def update_site_metadata(
             self, resource_group_name, name, metadata, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the meta data for web app
+        """Updates the meta data for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6721,8 +6627,7 @@ class SitesOperations(object):
 
     def update_site_metadata_slot(
             self, resource_group_name, name, metadata, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the meta data for web app
+        """Updates the meta data for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6794,8 +6699,7 @@ class SitesOperations(object):
 
     def get_site_logs_config(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the web app logs configuration
+        """Gets the web app logs configuration.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6855,8 +6759,7 @@ class SitesOperations(object):
 
     def update_site_logs_config(
             self, resource_group_name, name, site_logs_config, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the meta data for web app
+        """Updates the meta data for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6923,8 +6826,7 @@ class SitesOperations(object):
 
     def get_site_logs_config_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the web app logs configuration
+        """Gets the web app logs configuration.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6988,8 +6890,7 @@ class SitesOperations(object):
 
     def update_site_logs_config_slot(
             self, resource_group_name, name, site_logs_config, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the meta data for web app
+        """Updates the meta data for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -7584,8 +7485,7 @@ class SitesOperations(object):
 
     def get_site_backup_configuration(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the backup configuration for a web app
+        """Gets the backup configuration for a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -7645,8 +7545,7 @@ class SitesOperations(object):
 
     def get_site_backup_configuration_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the backup configuration for a web app
+        """Gets the backup configuration for a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -7710,8 +7609,7 @@ class SitesOperations(object):
 
     def update_site_backup_configuration(
             self, resource_group_name, name, request, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates backup configuration of web app
+        """Updates backup configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -7778,8 +7676,7 @@ class SitesOperations(object):
 
     def update_site_backup_configuration_slot(
             self, resource_group_name, name, request, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates backup configuration of web app
+        """Updates backup configuration of web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -7850,8 +7747,7 @@ class SitesOperations(object):
 
     def backup_site(
             self, resource_group_name, name, request, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates web app backup
+        """Creates web app backup.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -7918,8 +7814,7 @@ class SitesOperations(object):
 
     def backup_site_slot(
             self, resource_group_name, name, request, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates web app backup
+        """Creates web app backup.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -7990,8 +7885,7 @@ class SitesOperations(object):
 
     def discover_site_restore(
             self, resource_group_name, name, request, custom_headers=None, raw=False, **operation_config):
-        """
-        Discovers existing web app backups that can be restored
+        """Discovers existing web app backups that can be restored.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8058,8 +7952,7 @@ class SitesOperations(object):
 
     def discover_site_restore_slot(
             self, resource_group_name, name, request, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Discovers existing web app backups that can be restored
+        """Discovers existing web app backups that can be restored.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8130,8 +8023,7 @@ class SitesOperations(object):
 
     def list_site_backups(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all available backups for web app
+        """Lists all available backups for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8192,8 +8084,7 @@ class SitesOperations(object):
 
     def list_site_backups_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all available backups for web app
+        """Lists all available backups for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8258,8 +8149,7 @@ class SitesOperations(object):
 
     def get_site_backup_status(
             self, resource_group_name, name, backup_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets status of a web app backup that may be in progress.
+        """Gets status of a web app backup that may be in progress.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8322,8 +8212,7 @@ class SitesOperations(object):
 
     def delete_backup(
             self, resource_group_name, name, backup_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a backup from Azure Storage
+        """Deletes a backup from Azure Storage.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8386,8 +8275,7 @@ class SitesOperations(object):
 
     def get_site_backup_status_slot(
             self, resource_group_name, name, backup_id, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets status of a web app backup that may be in progress.
+        """Gets status of a web app backup that may be in progress.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8454,8 +8342,7 @@ class SitesOperations(object):
 
     def delete_backup_slot(
             self, resource_group_name, name, backup_id, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a backup from Azure Storage
+        """Deletes a backup from Azure Storage.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8522,8 +8409,7 @@ class SitesOperations(object):
 
     def get_site_backup_status_secrets_slot(
             self, resource_group_name, name, backup_id, request, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets status of a web app backup that may be in progress, including
+        """Gets status of a web app backup that may be in progress, including
         secrets associated with the backup, such as the Azure Storage SAS
         URL. Also can be used to update the SAS URL for the backup if a new
         URL is passed in the request body.
@@ -8600,8 +8486,7 @@ class SitesOperations(object):
 
     def get_site_backup_status_secrets(
             self, resource_group_name, name, backup_id, request, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets status of a web app backup that may be in progress, including
+        """Gets status of a web app backup that may be in progress, including
         secrets associated with the backup, such as the Azure Storage SAS
         URL. Also can be used to update the SAS URL for the backup if a new
         URL is passed in the request body.
@@ -8674,8 +8559,7 @@ class SitesOperations(object):
 
     def restore_site(
             self, resource_group_name, name, backup_id, request, custom_headers=None, raw=False, **operation_config):
-        """
-        Restores a web app
+        """Restores a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8769,8 +8653,7 @@ class SitesOperations(object):
 
     def restore_site_slot(
             self, resource_group_name, name, backup_id, request, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Restores a web app
+        """Restores a web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8868,8 +8751,7 @@ class SitesOperations(object):
 
     def get_site_usages(
             self, resource_group_name, name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the quota usage numbers for web app
+        """Gets the quota usage numbers for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8938,8 +8820,7 @@ class SitesOperations(object):
 
     def get_site_usages_slot(
             self, resource_group_name, name, slot, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the quota usage numbers for web app
+        """Gets the quota usage numbers for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9012,8 +8893,7 @@ class SitesOperations(object):
 
     def get_site_metrics(
             self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets metrics for web app
+        """Gets metrics for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9086,8 +8966,7 @@ class SitesOperations(object):
 
     def get_site_metrics_slot(
             self, resource_group_name, name, slot, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets metrics for web app
+        """Gets metrics for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9164,8 +9043,7 @@ class SitesOperations(object):
 
     def get_site_metric_definitions_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets metric definitions for web app
+        """Gets metric definitions for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9230,8 +9108,7 @@ class SitesOperations(object):
 
     def get_site_metric_definitions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets metric definitions for web app
+        """Gets metric definitions for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9292,8 +9169,7 @@ class SitesOperations(object):
 
     def list_site_publishing_profile_xml(
             self, resource_group_name, name, format=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Gets the publishing profile for web app
+        """Gets the publishing profile for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9369,8 +9245,7 @@ class SitesOperations(object):
 
     def list_site_publishing_profile_xml_slot(
             self, resource_group_name, name, slot, format=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Gets the publishing profile for web app
+        """Gets the publishing profile for web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9450,8 +9325,7 @@ class SitesOperations(object):
 
     def restart_site_slot(
             self, resource_group_name, name, slot, soft_restart=None, synchronous=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Restarts web app
+        """Restarts web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9526,8 +9400,7 @@ class SitesOperations(object):
 
     def restart_site(
             self, resource_group_name, name, soft_restart=None, synchronous=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Restarts web app
+        """Restarts web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9598,8 +9471,7 @@ class SitesOperations(object):
 
     def start_site(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Starts web app
+        """Starts web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9659,8 +9531,7 @@ class SitesOperations(object):
 
     def start_site_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Starts web app
+        """Starts web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9724,8 +9595,7 @@ class SitesOperations(object):
 
     def stop_site(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Stops web app
+        """Stops web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9785,8 +9655,7 @@ class SitesOperations(object):
 
     def stop_site_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Stops web app
+        """Stops web app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -9973,8 +9842,7 @@ class SitesOperations(object):
 
     def generate_new_site_publishing_password_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Generates new random app publishing password
+        """Generates new random app publishing password.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -10038,8 +9906,7 @@ class SitesOperations(object):
 
     def generate_new_site_publishing_password(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Generates new random app publishing password
+        """Generates new random app publishing password.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -10099,8 +9966,7 @@ class SitesOperations(object):
 
     def get_site_relay_service_connection(
             self, resource_group_name, name, entity_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a Biztalk Hybrid Connection identified by its entity name.
+        """Retrieves a Biztalk Hybrid Connection identified by its entity name.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -10165,8 +10031,7 @@ class SitesOperations(object):
 
     def create_or_update_site_relay_service_connection(
             self, resource_group_name, name, entity_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new association to a Biztalk Hybrid Connection, or updates
+        """Creates a new association to a Biztalk Hybrid Connection, or updates
         an existing one.
 
         :param resource_group_name: The resource group name
@@ -10239,8 +10104,7 @@ class SitesOperations(object):
 
     def delete_site_relay_service_connection(
             self, resource_group_name, name, entity_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Removes the association to a Biztalk Hybrid Connection, identified by
+        """Removes the association to a Biztalk Hybrid Connection, identified by
         its entity name.
 
         :param resource_group_name: The resource group name
@@ -10305,8 +10169,7 @@ class SitesOperations(object):
 
     def update_site_relay_service_connection(
             self, resource_group_name, name, entity_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new association to a Biztalk Hybrid Connection, or updates
+        """Creates a new association to a Biztalk Hybrid Connection, or updates
         an existing one.
 
         :param resource_group_name: The resource group name
@@ -10379,8 +10242,7 @@ class SitesOperations(object):
 
     def get_site_relay_service_connection_slot(
             self, resource_group_name, name, entity_name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a Biztalk Hybrid Connection identified by its entity name.
+        """Retrieves a Biztalk Hybrid Connection identified by its entity name.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -10448,8 +10310,7 @@ class SitesOperations(object):
 
     def create_or_update_site_relay_service_connection_slot(
             self, resource_group_name, name, entity_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new association to a Biztalk Hybrid Connection, or updates
+        """Creates a new association to a Biztalk Hybrid Connection, or updates
         an existing one.
 
         :param resource_group_name: The resource group name
@@ -10525,8 +10386,7 @@ class SitesOperations(object):
 
     def delete_site_relay_service_connection_slot(
             self, resource_group_name, name, entity_name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Removes the association to a Biztalk Hybrid Connection, identified by
+        """Removes the association to a Biztalk Hybrid Connection, identified by
         its entity name.
 
         :param resource_group_name: The resource group name
@@ -10594,8 +10454,7 @@ class SitesOperations(object):
 
     def update_site_relay_service_connection_slot(
             self, resource_group_name, name, entity_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new association to a Biztalk Hybrid Connection, or updates
+        """Creates a new association to a Biztalk Hybrid Connection, or updates
         an existing one.
 
         :param resource_group_name: The resource group name
@@ -10671,8 +10530,7 @@ class SitesOperations(object):
 
     def list_site_relay_service_connections_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves all Biztalk Hybrid Connections associated with this web app.
+        """Retrieves all Biztalk Hybrid Connections associated with this web app.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -10736,8 +10594,7 @@ class SitesOperations(object):
 
     def list_site_relay_service_connections(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves all Biztalk Hybrid Connections associated with this web app.
+        """Retrieves all Biztalk Hybrid Connections associated with this web app.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -10798,8 +10655,7 @@ class SitesOperations(object):
 
     def get_site_vnet_gateway_slot(
             self, resource_group_name, name, vnet_name, gateway_name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a Virtual Network connection gateway associated with this
+        """Retrieves a Virtual Network connection gateway associated with this
         web app and virtual network.
 
         :param resource_group_name: The resource group name
@@ -10870,8 +10726,7 @@ class SitesOperations(object):
 
     def create_or_update_site_vnet_connection_gateway_slot(
             self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the Virtual Network Gateway.
+        """Updates the Virtual Network Gateway.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -10949,8 +10804,7 @@ class SitesOperations(object):
 
     def update_site_vnet_connection_gateway_slot(
             self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the Virtual Network Gateway.
+        """Updates the Virtual Network Gateway.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -11028,8 +10882,7 @@ class SitesOperations(object):
 
     def get_site_vnet_gateway(
             self, resource_group_name, name, vnet_name, gateway_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a Virtual Network connection gateway associated with this
+        """Retrieves a Virtual Network connection gateway associated with this
         web app and virtual network.
 
         :param resource_group_name: The resource group name
@@ -11097,8 +10950,7 @@ class SitesOperations(object):
 
     def create_or_update_site_vnet_connection_gateway(
             self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the Virtual Network Gateway.
+        """Updates the Virtual Network Gateway.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -11173,8 +11025,7 @@ class SitesOperations(object):
 
     def update_site_vnet_connection_gateway(
             self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the Virtual Network Gateway.
+        """Updates the Virtual Network Gateway.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -11249,8 +11100,7 @@ class SitesOperations(object):
 
     def get_site_vnet_connections(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a list of all Virtual Network Connections associated with
+        """Retrieves a list of all Virtual Network Connections associated with
         this web app.
 
         :param resource_group_name: The resource group name
@@ -11311,8 +11161,7 @@ class SitesOperations(object):
 
     def get_site_vnet_connections_slot(
             self, resource_group_name, name, slot, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves a list of all Virtual Network Connections associated with
+        """Retrieves a list of all Virtual Network Connections associated with
         this web app.
 
         :param resource_group_name: The resource group name

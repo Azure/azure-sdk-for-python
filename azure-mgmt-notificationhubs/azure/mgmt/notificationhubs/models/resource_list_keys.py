@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceListKeys(Model):
-    """
-    Namespace/NotificationHub Connection String
+    """Namespace/NotificationHub Connection String.
 
     :param primary_connection_string: Gets or sets the
      primaryConnectionString of the created Namespace AuthorizationRule.

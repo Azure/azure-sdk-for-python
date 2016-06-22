@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ContentHash(Model):
-    """ContentHash
+    """ContentHash.
 
     :param algorithm: Gets or sets the algorithm.
     :type algorithm: str

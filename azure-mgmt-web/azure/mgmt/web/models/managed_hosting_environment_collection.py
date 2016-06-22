@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ManagedHostingEnvironmentCollection(Model):
-    """
-    Collection of managed hosting environments
+    """Collection of managed hosting environments.
 
     :param value: Collection of resources
     :type value: list of :class:`ManagedHostingEnvironment

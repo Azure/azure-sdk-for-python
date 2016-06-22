@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class PremierAddOnRequest(Model):
-    """PremierAddOnRequest
+    """PremierAddOnRequest.
 
     :param location: Geo region resource belongs to e.g. SouthCentralUS,
      SouthEastAsia

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskStatistics(Model):
-    """
-    Resource usage statistics for a task.
+    """Resource usage statistics for a task.
 
     :param url: The URL of the statistics.
     :type url: str

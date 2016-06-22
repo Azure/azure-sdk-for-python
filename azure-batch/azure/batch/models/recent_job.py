@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class RecentJob(Model):
-    """
-    Information about the most recent job to run under the job schedule.
+    """Information about the most recent job to run under the job schedule.
 
     :param id: The id of the job.
     :type id: str

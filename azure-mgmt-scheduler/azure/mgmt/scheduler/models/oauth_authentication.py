@@ -23,7 +23,7 @@ from .http_authentication import HttpAuthentication
 
 
 class OAuthAuthentication(HttpAuthentication):
-    """OAuthAuthentication
+    """OAuthAuthentication.
 
     :param type: Gets or sets the http authentication type. Possible values
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',

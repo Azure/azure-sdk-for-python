@@ -46,8 +46,7 @@ class AccountOperations(object):
 
     def create(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new Batch account with the specified parameters. Existing
+        """Creates a new Batch account with the specified parameters. Existing
         accounts cannot be updated with this API and should instead be
         updated with the Update Batch Account API.
 
@@ -146,8 +145,7 @@ class AccountOperations(object):
 
     def update(
             self, resource_group_name, account_name, tags=None, auto_storage=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the properties of an existing Batch account.
+        """Updates the properties of an existing Batch account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -220,8 +218,7 @@ class AccountOperations(object):
 
     def delete(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the specified Batch account.
+        """Deletes the specified Batch account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account to be deleted.
@@ -298,8 +295,7 @@ class AccountOperations(object):
 
     def get(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the specified Batch account.
+        """Gets information about the specified Batch account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -361,8 +357,7 @@ class AccountOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the Batch accounts associated with the
+        """Gets information about the Batch accounts associated with the
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -425,8 +420,7 @@ class AccountOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the Batch accounts associated within the
+        """Gets information about the Batch accounts associated within the
         specified resource group.
 
         :param resource_group_name: The name of the resource group whose
@@ -493,8 +487,7 @@ class AccountOperations(object):
 
     def synchronize_auto_storage_keys(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Synchronizes access keys for the auto storage account configured for
+        """Synchronizes access keys for the auto storage account configured for
         the specified Batch account.
 
         :param resource_group_name: The name of the resource group that
@@ -549,8 +542,7 @@ class AccountOperations(object):
 
     def regenerate_key(
             self, resource_group_name, account_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Regenerates the specified account key for the specified Batch account.
+        """Regenerates the specified account key for the specified Batch account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -622,8 +614,7 @@ class AccountOperations(object):
 
     def list_keys(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the account keys for the specified Batch account.
+        """Lists the account keys for the specified Batch account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.

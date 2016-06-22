@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class EndpointCreateParameters(Model):
-    """
-    Endpoint properties required for new endpoint creation.
+    """Endpoint properties required for new endpoint creation.
 
     :param location: Endpoint location
     :type location: str

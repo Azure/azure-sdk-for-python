@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class HostName(Model):
-    """
-    Details of a hostname derived from a domain
+    """Details of a hostname derived from a domain.
 
     :param name: Name of the hostname
     :type name: str

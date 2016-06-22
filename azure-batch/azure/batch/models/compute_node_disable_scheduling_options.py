@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeDisableSchedulingOptions(Model):
-    """
-    Additional parameters for the ComputeNode_DisableScheduling operation.
+    """Additional parameters for the ComputeNode_DisableScheduling operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

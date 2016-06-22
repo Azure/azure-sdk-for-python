@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class AccountResource(Resource):
-    """
-    Contains information about an Azure Batch account.
+    """Contains information about an Azure Batch account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

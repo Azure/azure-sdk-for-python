@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolListPoolUsageMetricsOptions(Model):
-    """
-    Additional parameters for the Pool_ListPoolUsageMetrics operation.
+    """Additional parameters for the Pool_ListPoolUsageMetrics operation.
 
     :param start_time: The earliest time from which to include metrics. This
      must be at least two and a half hours before the current time.

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeploymentCollection(Model):
-    """
-    Collection of app deployments
+    """Collection of app deployments.
 
     :param value: Collection of resources
     :type value: list of :class:`Deployment

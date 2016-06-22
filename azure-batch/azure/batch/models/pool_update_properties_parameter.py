@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolUpdatePropertiesParameter(Model):
-    """
-    Parameters for a CloudPoolOperations.UpdateProperties request.
+    """Parameters for a CloudPoolOperations.UpdateProperties request.
 
     :param start_task: A task to run on each compute node as it joins the
      pool. If omitted, any existing start task is removed from the pool.

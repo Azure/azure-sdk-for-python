@@ -23,15 +23,13 @@ from .catalog_item import CatalogItem
 
 
 class USqlDatabase(CatalogItem):
-    """
-    A Data Lake Analytics catalog U-SQL database item.
+    """A Data Lake Analytics catalog U-SQL database item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param name: Gets or sets the name of the database.
+    :param name: the name of the database.
     :type name: str
     """ 
 

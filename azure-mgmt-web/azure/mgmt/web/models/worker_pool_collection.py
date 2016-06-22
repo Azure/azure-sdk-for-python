@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class WorkerPoolCollection(Model):
-    """
-    Collection of worker pools
+    """Collection of worker pools.
 
     :param value: Collection of resources
     :type value: list of :class:`WorkerPool

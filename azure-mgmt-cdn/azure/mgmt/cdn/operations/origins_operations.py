@@ -45,8 +45,7 @@ class OriginsOperations(object):
 
     def list_by_endpoint(
             self, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the existing CDN origins within an endpoint.
+        """Lists the existing CDN origins within an endpoint.
 
         :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
@@ -116,8 +115,7 @@ class OriginsOperations(object):
 
     def get(
             self, origin_name, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets an existing CDN origin within an endpoint.
+        """Gets an existing CDN origin within an endpoint.
 
         :param origin_name: Name of the origin, an arbitrary value but it
          needs to be unique under endpoint
@@ -184,8 +182,7 @@ class OriginsOperations(object):
 
     def create(
             self, origin_name, origin_properties, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new CDN origin within an endpoint.
+        """Creates a new CDN origin within an endpoint.
 
         :param origin_name: Name of the origin, an arbitrary value but it
          needs to be unique under endpoint
@@ -286,8 +283,7 @@ class OriginsOperations(object):
 
     def update(
             self, origin_name, origin_properties, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates an existing CDN origin within an endpoint.
+        """Updates an existing CDN origin within an endpoint.
 
         :param origin_name: Name of the origin. Must be unique within
          endpoint.
@@ -386,8 +382,7 @@ class OriginsOperations(object):
 
     def delete_if_exists(
             self, origin_name, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes an existing CDN origin within an endpoint.
+        """Deletes an existing CDN origin within an endpoint.
 
         :param origin_name: Name of the origin. Must be unique within
          endpoint.

@@ -45,8 +45,7 @@ class WorkflowTriggersOperations(object):
 
     def list(
             self, resource_group_name, workflow_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of workflow triggers.
+        """Gets a list of workflow triggers.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -122,8 +121,7 @@ class WorkflowTriggersOperations(object):
 
     def get(
             self, resource_group_name, workflow_name, trigger_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a workflow trigger.
+        """Gets a workflow trigger.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -187,8 +185,7 @@ class WorkflowTriggersOperations(object):
 
     def run(
             self, resource_group_name, workflow_name, trigger_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Runs a workflow trigger.
+        """Runs a workflow trigger.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

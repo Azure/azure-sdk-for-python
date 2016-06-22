@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SkuDescription(Model):
-    """
-    Describes a sku for a scalable resource
+    """Describes a sku for a scalable resource.
 
     :param name: Name of the resource sku
     :type name: str

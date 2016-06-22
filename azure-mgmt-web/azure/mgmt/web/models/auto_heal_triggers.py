@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AutoHealTriggers(Model):
-    """
-    AutoHealTriggers - describes the triggers for auto-heal.
+    """AutoHealTriggers - describes the triggers for auto-heal.
 
     :param requests: Requests - Defines a rule based on total requests
     :type requests: :class:`RequestsBasedTrigger

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AffinityInformation(Model):
-    """
-    A locality hint that can be used by the Batch service to select a compute
+    """A locality hint that can be used by the Batch service to select a compute
     node on which to start a task.
 
     :param affinity_id: An opaque string representing the location of a

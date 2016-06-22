@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TopLevelDomainAgreementOption(Model):
-    """
-    Options for retrieving the list of top level domain legal agreements
+    """Options for retrieving the list of top level domain legal agreements.
 
     :param include_privacy: If true then the list of agreements will inclue
      agreements for domain privacy as well.

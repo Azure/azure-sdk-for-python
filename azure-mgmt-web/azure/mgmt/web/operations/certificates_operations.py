@@ -45,8 +45,7 @@ class CertificatesOperations(object):
 
     def get_certificates(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get certificates for a subscription in the specified resource group.
+        """Get certificates for a subscription in the specified resource group.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -104,8 +103,7 @@ class CertificatesOperations(object):
 
     def get_certificate(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get a certificate by certificate name for a subscription in the
+        """Get a certificate by certificate name for a subscription in the
         specified resource group.
 
         :param resource_group_name: Name of the resource group
@@ -166,8 +164,7 @@ class CertificatesOperations(object):
 
     def create_or_update_certificate(
             self, resource_group_name, name, certificate_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates or modifies an existing certificate.
+        """Creates or modifies an existing certificate.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -235,8 +232,7 @@ class CertificatesOperations(object):
 
     def delete_certificate(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete a certificate by name in a specificed subscription and
+        """Delete a certificate by name in a specificed subscription and
         resourcegroup.
 
         :param resource_group_name: Name of the resource group
@@ -297,8 +293,7 @@ class CertificatesOperations(object):
 
     def update_certificate(
             self, resource_group_name, name, certificate_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates or modifies an existing certificate.
+        """Creates or modifies an existing certificate.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -366,9 +361,8 @@ class CertificatesOperations(object):
 
     def get_csrs(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the certificate signing requests for a subscription in the
-        specified resource group
+        """Gets the certificate signing requests for a subscription in the
+        specified resource group.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -425,9 +419,8 @@ class CertificatesOperations(object):
 
     def get_csr(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a certificate signing request by certificate name for a
-        subscription in the specified resource group
+        """Gets a certificate signing request by certificate name for a
+        subscription in the specified resource group.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -487,8 +480,7 @@ class CertificatesOperations(object):
 
     def create_or_update_csr(
             self, resource_group_name, name, csr_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates or modifies an existing certificate signing request.
+        """Creates or modifies an existing certificate signing request.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -555,8 +547,7 @@ class CertificatesOperations(object):
 
     def delete_csr(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete the certificate signing request.
+        """Delete the certificate signing request.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -616,8 +607,7 @@ class CertificatesOperations(object):
 
     def update_csr(
             self, resource_group_name, name, csr_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates or modifies an existing certificate signing request.
+        """Creates or modifies an existing certificate signing request.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str

@@ -44,8 +44,7 @@ class AccountOperations(object):
 
     def list_node_agent_skus(
             self, account_list_node_agent_skus_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all node agent SKUs supported by the Azure Batch service.
+        """Lists all node agent SKUs supported by the Azure Batch service.
 
         :param account_list_node_agent_skus_options: Additional parameters
          for the operation
@@ -103,7 +102,7 @@ class AccountOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:

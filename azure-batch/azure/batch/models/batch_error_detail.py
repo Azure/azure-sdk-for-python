@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BatchErrorDetail(Model):
-    """
-    An item of additional information included in an Azure Batch error
+    """An item of additional information included in an Azure Batch error
     response.
 
     :param key: An identifier specifying the meaning of the Value property.

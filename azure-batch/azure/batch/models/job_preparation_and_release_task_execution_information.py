@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobPreparationAndReleaseTaskExecutionInformation(Model):
-    """
-    The status of the Job Preparation and Job Release tasks on a compute node.
+    """The status of the Job Preparation and Job Release tasks on a compute node.
 
     :param pool_id: The id of the pool containing the compute node to which
      this entry refers.

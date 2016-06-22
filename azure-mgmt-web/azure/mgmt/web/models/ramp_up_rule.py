@@ -23,9 +23,8 @@ from msrest.serialization import Model
 
 
 class RampUpRule(Model):
-    """
-    Routing rules for ramp up testing. This rule allows to redirect static
-    traffic % to a slot or to gradually change routing % based on performance
+    """Routing rules for ramp up testing. This rule allows to redirect static
+    traffic % to a slot or to gradually change routing % based on performance.
 
     :param action_host_name: Hostname of a slot to which the traffic will be
      redirected if decided to. E.g. mysite-stage.azurewebsites.net

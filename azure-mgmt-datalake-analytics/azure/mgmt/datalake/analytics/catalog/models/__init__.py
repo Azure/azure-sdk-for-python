@@ -31,7 +31,9 @@ from .usql_index import USqlIndex
 from .ddl_name import DdlName
 from .entity_id import EntityId
 from .external_table import ExternalTable
+from .type_field_info import TypeFieldInfo
 from .usql_table import USqlTable
+from .usql_table_type import USqlTableType
 from .usql_view import USqlView
 from .usql_table_partition import USqlTablePartition
 from .usql_table_statistics import USqlTableStatistics
@@ -49,6 +51,7 @@ from .usql_external_data_source_paged import USqlExternalDataSourcePaged
 from .usql_credential_paged import USqlCredentialPaged
 from .usql_procedure_paged import USqlProcedurePaged
 from .usql_table_paged import USqlTablePaged
+from .usql_table_type_paged import USqlTableTypePaged
 from .usql_view_paged import USqlViewPaged
 from .usql_table_statistics_paged import USqlTableStatisticsPaged
 from .usql_table_partition_paged import USqlTablePartitionPaged
@@ -74,7 +77,9 @@ __all__ = [
     'DdlName',
     'EntityId',
     'ExternalTable',
+    'TypeFieldInfo',
     'USqlTable',
+    'USqlTableType',
     'USqlView',
     'USqlTablePartition',
     'USqlTableStatistics',
@@ -92,6 +97,7 @@ __all__ = [
     'USqlCredentialPaged',
     'USqlProcedurePaged',
     'USqlTablePaged',
+    'USqlTableTypePaged',
     'USqlViewPaged',
     'USqlTableStatisticsPaged',
     'USqlTablePartitionPaged',

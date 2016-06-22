@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class StartTask(Model):
-    """
-    A task which is run when a compute node joins a pool in the Azure Batch
+    """A task which is run when a compute node joins a pool in the Azure Batch
     service, or when the compute node is rebooted or reimaged.
 
     :param command_line: The command line of the start task.

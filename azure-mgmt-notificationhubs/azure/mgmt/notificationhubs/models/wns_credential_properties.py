@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class WnsCredentialProperties(Model):
-    """
-    Description of a NotificationHub WnsCredential.
+    """Description of a NotificationHub WnsCredential.
 
     :param package_sid: Gets or sets the package ID for this credential.
     :type package_sid: str

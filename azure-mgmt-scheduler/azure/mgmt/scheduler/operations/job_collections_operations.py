@@ -45,8 +45,7 @@ class JobCollectionsOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all job collections under specified subscription.
+        """Gets all job collections under specified subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -108,8 +107,7 @@ class JobCollectionsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all job collections under specified resource group.
+        """Gets all job collections under specified resource group.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -174,8 +172,7 @@ class JobCollectionsOperations(object):
 
     def get(
             self, resource_group_name, job_collection_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a job collection.
+        """Gets a job collection.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -236,8 +233,7 @@ class JobCollectionsOperations(object):
 
     def create_or_update(
             self, resource_group_name, job_collection_name, job_collection, custom_headers=None, raw=False, **operation_config):
-        """
-        Provisions a new job collection or updates an existing job collection.
+        """Provisions a new job collection or updates an existing job collection.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -307,8 +303,7 @@ class JobCollectionsOperations(object):
 
     def patch(
             self, resource_group_name, job_collection_name, job_collection, custom_headers=None, raw=False, **operation_config):
-        """
-        Patches an existing job collection.
+        """Patches an existing job collection.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -376,8 +371,7 @@ class JobCollectionsOperations(object):
 
     def delete(
             self, resource_group_name, job_collection_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a job collection.
+        """Deletes a job collection.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -430,8 +424,7 @@ class JobCollectionsOperations(object):
 
     def enable(
             self, resource_group_name, job_collection_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Enables all of the jobs in the job collection.
+        """Enables all of the jobs in the job collection.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -484,8 +477,7 @@ class JobCollectionsOperations(object):
 
     def disable(
             self, resource_group_name, job_collection_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Disables all of the jobs in the job collection.
+        """Disables all of the jobs in the job collection.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

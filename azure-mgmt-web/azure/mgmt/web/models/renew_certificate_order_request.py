@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class RenewCertificateOrderRequest(Resource):
-    """
-    Class representing certificate renew request
+    """Class representing certificate renew request.
 
     :param id: Resource Id
     :type id: str

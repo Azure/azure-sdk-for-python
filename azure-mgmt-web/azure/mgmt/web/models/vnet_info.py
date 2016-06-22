@@ -23,9 +23,8 @@ from .resource import Resource
 
 
 class VnetInfo(Resource):
-    """
-    VNETInfo contract. This contract is public and is a stripped down version
-    of VNETInfoInternal
+    """VNETInfo contract. This contract is public and is a stripped down version
+    of VNETInfoInternal.
 
     :param id: Resource Id
     :type id: str

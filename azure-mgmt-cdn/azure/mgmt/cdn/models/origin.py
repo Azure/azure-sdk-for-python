@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class Origin(Resource):
-    """
-    CDN origin is the source of the content being delivered via CDN. When the
+    """CDN origin is the source of the content being delivered via CDN. When the
     edge nodes represented by an endpoint do not have the requested content
     cached, they attempt to fetch it from one or more of the configured
     origins.

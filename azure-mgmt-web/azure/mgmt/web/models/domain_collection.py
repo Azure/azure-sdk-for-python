@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DomainCollection(Model):
-    """
-    Collection of domains
+    """Collection of domains.
 
     :param value: Collection of resources
     :type value: list of :class:`Domain <azure.mgmt.web.models.Domain>`

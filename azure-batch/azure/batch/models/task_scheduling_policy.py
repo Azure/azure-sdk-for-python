@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskSchedulingPolicy(Model):
-    """
-    Specifies how tasks should be distributed across compute nodes.
+    """Specifies how tasks should be distributed across compute nodes.
 
     :param node_fill_type: How tasks should be distributed across compute
      nodes. Possible values include: 'spread', 'pack', 'unmapped'

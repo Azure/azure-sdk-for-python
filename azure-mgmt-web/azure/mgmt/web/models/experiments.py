@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Experiments(Model):
-    """
-    Class containing Routing in production experiments
+    """Class containing Routing in production experiments.
 
     :param ramp_up_rules: List of
      {Microsoft.Web.Hosting.Administration.RampUpRule} objects.

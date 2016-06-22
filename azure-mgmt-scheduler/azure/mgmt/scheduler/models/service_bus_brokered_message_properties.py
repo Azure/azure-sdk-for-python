@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ServiceBusBrokeredMessageProperties(Model):
-    """ServiceBusBrokeredMessageProperties
+    """ServiceBusBrokeredMessageProperties.
 
     :param content_type: Gets or sets the content type.
     :type content_type: str
