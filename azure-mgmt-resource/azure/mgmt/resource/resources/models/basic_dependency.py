@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BasicDependency(Model):
-    """
-    Deployment dependency information.
+    """Deployment dependency information.
 
     :param id: Gets or sets the ID of the dependency.
     :type id: str
