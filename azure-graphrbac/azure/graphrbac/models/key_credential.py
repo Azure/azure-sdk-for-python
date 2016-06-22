@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class KeyCredential(Model):
-    """
-    Active Directory service principal Key Credential information
+    """Active Directory service principal Key Credential information.
 
     :param start_date: Gets or sets start date
     :type start_date: datetime

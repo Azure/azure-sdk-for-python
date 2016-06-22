@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class GetObjectsParameters(Model):
-    """
-    Request parameters for GetObjectsByObjectIds API call
+    """Request parameters for GetObjectsByObjectIds API call.
 
     :param object_ids: Requested object Ids
     :type object_ids: list of str
