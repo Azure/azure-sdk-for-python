@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ComputeNode(Model):
-    """
-    A compute node in the Batch service.
+    """A compute node in the Batch service.
 
     :param id: The id of the compute node.
     :type id: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskUpdateParameter(Model):
-    """
-    Parameters for a CloudTaskOperations.Update request.
+    """Parameters for a CloudTaskOperations.Update request.
 
     :param constraints: Constraints that apply to this task. If omitted, the
      task is given the default constraints.

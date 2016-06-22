@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CertificateReference(Model):
-    """
-    A reference to a certificate to be installed on compute nodes in a pool.
+    """A reference to a certificate to be installed on compute nodes in a pool.
 
     :param thumbprint: The thumbprint of the certificate.
     :type thumbprint: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BatchAccountRegenerateKeyParameters(Model):
-    """
-    Parameters supplied to the RegenerateKey operation.
+    """Parameters supplied to the RegenerateKey operation.
 
     :param key_name: The type of account key to regenerate. Possible values
      include: 'Primary', 'Secondary'

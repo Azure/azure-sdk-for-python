@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeleteCertificateError(Model):
-    """
-    An error encountered by the Batch service when deleting a certificate.
+    """An error encountered by the Batch service when deleting a certificate.
 
     :param code: An identifier for the certificate deletion error. Codes are
      invariant and are intended to be consumed programmatically.

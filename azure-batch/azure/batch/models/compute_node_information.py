@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeInformation(Model):
-    """
-    Information about the compute node on which a task ran.
+    """Information about the compute node on which a task ran.
 
     :param affinity_id: An identifier for the compute node on which the task
      ran, which can be passed when adding a task to request that the task be

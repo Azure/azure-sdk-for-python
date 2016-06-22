@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolStatistics(Model):
-    """
-    Contains utilization and resource usage statistics for the lifetime of a
+    """Contains utilization and resource usage statistics for the lifetime of a
     pool.
 
     :param url: The URL for the statistics.

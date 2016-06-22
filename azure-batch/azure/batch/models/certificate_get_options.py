@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CertificateGetOptions(Model):
-    """
-    Additional parameters for the Certificate_Get operation.
+    """Additional parameters for the Certificate_Get operation.
 
     :param select: An OData $select clause.
     :type select: str

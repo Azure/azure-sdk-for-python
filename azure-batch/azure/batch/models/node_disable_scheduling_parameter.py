@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NodeDisableSchedulingParameter(Model):
-    """
-    Parameters for a ComputeNodeOperations.DisableScheduling request.
+    """Parameters for a ComputeNodeOperations.DisableScheduling request.
 
     :param node_disable_scheduling_option: What to do with currently running
      tasks when disable task scheduling on the compute node. The default

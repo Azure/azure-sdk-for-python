@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class StartTaskInformation(Model):
-    """
-    Information about a start task running on a compute node.
+    """Information about a start task running on a compute node.
 
     :param state: The state of the start task on the compute node. Possible
      values include: 'running', 'completed'

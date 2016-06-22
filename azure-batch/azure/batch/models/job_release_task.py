@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobReleaseTask(Model):
-    """
-    A Job Release task to run on job completion on any compute node where the
+    """A Job Release task to run on job completion on any compute node where the
     job has run.
 
     :param id: A string that uniquely identifies the Job Release task within

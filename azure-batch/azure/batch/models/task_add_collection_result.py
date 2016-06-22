@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskAddCollectionResult(Model):
-    """
-    Response to a TaskOperations.AddCollection request.
+    """Response to a TaskOperations.AddCollection request.
 
     :param value: The results of the add task collection operation.
     :type value: list of :class:`TaskAddResult

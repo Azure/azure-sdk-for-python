@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NodeUpdateUserParameter(Model):
-    """
-    Parameters for a ComputeNodeOperations.UpdateUser request.
+    """Parameters for a ComputeNodeOperations.UpdateUser request.
 
     :param password: The password of the account.
     :type password: str

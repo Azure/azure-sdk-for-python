@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolUpgradeOSParameter(Model):
-    """
-    Parameters for a CloudPoolOperations.UpgradeOS request.
+    """Parameters for a CloudPoolOperations.UpgradeOS request.
 
     :param target_os_version: The Azure Guest OS version to be installed on
      the virtual machines in the pool.

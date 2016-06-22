@@ -44,8 +44,7 @@ class JobScheduleOperations(object):
 
     def exists(
             self, job_schedule_id, job_schedule_exists_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Checks the specified job schedule exists.
+        """Checks the specified job schedule exists.
 
         :param job_schedule_id: The id of the job schedule which you want to
          check.
@@ -105,7 +104,7 @@ class JobScheduleOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -146,8 +145,7 @@ class JobScheduleOperations(object):
 
     def delete(
             self, job_schedule_id, job_schedule_delete_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a job schedule from the specified account.
+        """Deletes a job schedule from the specified account.
 
         :param job_schedule_id: The id of the job schedule to delete.
         :type job_schedule_id: str
@@ -206,7 +204,7 @@ class JobScheduleOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -243,8 +241,7 @@ class JobScheduleOperations(object):
 
     def get(
             self, job_schedule_id, job_schedule_get_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the specified job schedule.
+        """Gets information about the specified job schedule.
 
         :param job_schedule_id: The id of the job schedule to get.
         :type job_schedule_id: str
@@ -314,7 +311,7 @@ class JobScheduleOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -362,8 +359,7 @@ class JobScheduleOperations(object):
 
     def patch(
             self, job_schedule_id, job_schedule_patch_parameter, job_schedule_patch_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the properties of the specified job schedule.
+        """Updates the properties of the specified job schedule.
 
         :param job_schedule_id: The id of the job schedule to update.
         :type job_schedule_id: str
@@ -425,7 +421,7 @@ class JobScheduleOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -469,8 +465,7 @@ class JobScheduleOperations(object):
 
     def update(
             self, job_schedule_id, job_schedule_update_parameter, job_schedule_update_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the properties of the specified job schedule.
+        """Updates the properties of the specified job schedule.
 
         :param job_schedule_id: The id of the job schedule to update.
         :type job_schedule_id: str
@@ -533,7 +528,7 @@ class JobScheduleOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -577,8 +572,7 @@ class JobScheduleOperations(object):
 
     def disable(
             self, job_schedule_id, job_schedule_disable_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Disables a job schedule.
+        """Disables a job schedule.
 
         :param job_schedule_id: The id of the job schedule to disable.
         :type job_schedule_id: str
@@ -637,7 +631,7 @@ class JobScheduleOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -677,8 +671,7 @@ class JobScheduleOperations(object):
 
     def enable(
             self, job_schedule_id, job_schedule_enable_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Enables a job schedule.
+        """Enables a job schedule.
 
         :param job_schedule_id: The id of the job schedule to enable.
         :type job_schedule_id: str
@@ -737,7 +730,7 @@ class JobScheduleOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -777,8 +770,7 @@ class JobScheduleOperations(object):
 
     def terminate(
             self, job_schedule_id, job_schedule_terminate_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Terminates a job schedule.
+        """Terminates a job schedule.
 
         :param job_schedule_id: The id of the job schedule to terminates.
         :type job_schedule_id: str
@@ -838,7 +830,7 @@ class JobScheduleOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -878,8 +870,7 @@ class JobScheduleOperations(object):
 
     def add(
             self, cloud_job_schedule, job_schedule_add_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a job schedule to the specified account.
+        """Adds a job schedule to the specified account.
 
         :param cloud_job_schedule: The job schedule to be added.
         :type cloud_job_schedule: :class:`JobScheduleAddParameter
@@ -923,7 +914,7 @@ class JobScheduleOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -959,8 +950,7 @@ class JobScheduleOperations(object):
 
     def list(
             self, job_schedule_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all of the job schedules in the specified account.
+        """Lists all of the job schedules in the specified account.
 
         :param job_schedule_list_options: Additional parameters for the
          operation
@@ -1027,7 +1017,7 @@ class JobScheduleOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:

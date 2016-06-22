@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskAddCollectionParameter(Model):
-    """
-    A collection of Azure Batch tasks to add.
+    """A collection of Azure Batch tasks to add.
 
     :param value: The collection of tasks to add.
     :type value: list of :class:`TaskAddParameter

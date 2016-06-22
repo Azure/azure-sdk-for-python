@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobPreparationTask(Model):
-    """
-    A Job Preparation task to run before any tasks of the job on any given
+    """A Job Preparation task to run before any tasks of the job on any given
     compute node.
 
     :param id: A string that uniquely identifies the job preparation task

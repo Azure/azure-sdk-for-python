@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CloudServiceConfiguration(Model):
-    """
-    The configuration for nodes in a pool based on the Azure Cloud Services
+    """The configuration for nodes in a pool based on the Azure Cloud Services
     platform.
 
     :param os_family: The Azure Guest OS family to be installed on the

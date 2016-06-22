@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolSpecification(Model):
-    """
-    Specification for creating a new pool.
+    """Specification for creating a new pool.
 
     :param display_name: The display name for the pool.
     :type display_name: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskConstraints(Model):
-    """
-    Constraints to apply to the Job Manager task.
+    """Constraints to apply to the Job Manager task.
 
     :param max_wall_clock_time: The maximum elapsed time that the task may
      run, measured from the time the task starts. If the task does not

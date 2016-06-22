@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeAddUserOptions(Model):
-    """
-    Additional parameters for the ComputeNode_AddUser operation.
+    """Additional parameters for the ComputeNode_AddUser operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BatchAccountListKeyResult(Model):
-    """
-    Values returned by the GetKeys operation.
+    """Values returned by the GetKeys operation.
 
     :param primary: The primary key associated with the account.
     :type primary: str
