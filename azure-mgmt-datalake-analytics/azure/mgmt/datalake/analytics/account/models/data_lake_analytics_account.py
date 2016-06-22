@@ -23,25 +23,24 @@ from msrest.serialization import Model
 
 
 class DataLakeAnalyticsAccount(Model):
-    """
-    A Data Lake Analytics account object, containing all information
+    """A Data Lake Analytics account object, containing all information
     associated with the named Data Lake Analytics account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param location: Gets or sets the account regional location.
+    :param location: the account regional location.
     :type location: str
-    :param name: Gets or sets the account name.
+    :param name: the account name.
     :type name: str
-    :ivar type: Gets or sets the namespace and type of the account.
+    :ivar type: the namespace and type of the account.
     :vartype type: str
-    :ivar id: Gets or sets the account subscription ID.
+    :ivar id: the account subscription ID.
     :vartype id: str
-    :param tags: Gets or sets the value of custom properties.
+    :param tags: the value of custom properties.
     :type tags: dict
-    :param properties: Gets or sets the properties defined by Data Lake
-     Analytics all properties are specific to each resource provider.
+    :param properties: the properties defined by Data Lake Analytics all
+     properties are specific to each resource provider.
     :type properties: :class:`DataLakeAnalyticsAccountProperties
      <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountProperties>`
     """ 

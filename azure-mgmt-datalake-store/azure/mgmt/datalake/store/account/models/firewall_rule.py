@@ -23,21 +23,20 @@ from msrest.serialization import Model
 
 
 class FirewallRule(Model):
-    """
-    Data Lake Store firewall rule information
+    """Data Lake Store firewall rule information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: Gets or sets the firewall rule's name.
+    :param name: the firewall rule's name.
     :type name: str
-    :ivar type: Gets the namespace and type of the firewall Rule.
+    :ivar type: the namespace and type of the firewall Rule.
     :vartype type: str
-    :param id: Gets or sets the firewall rule's subscription ID.
+    :param id: the firewall rule's subscription ID.
     :type id: str
-    :param location: Gets or sets the firewall rule's regional location.
+    :param location: the firewall rule's regional location.
     :type location: str
-    :param properties: Gets or sets the properties of the firewall rule.
+    :param properties: the properties of the firewall rule.
     :type properties: :class:`FirewallRuleProperties
      <azure.mgmt.datalake.store.account.models.FirewallRuleProperties>`
     """ 

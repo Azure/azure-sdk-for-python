@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobInnerError(Model):
-    """
-    The Data Lake Analytics job error details.
+    """The Data Lake Analytics job error details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

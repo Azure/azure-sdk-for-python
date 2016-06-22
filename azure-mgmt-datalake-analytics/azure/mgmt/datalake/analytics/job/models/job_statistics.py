@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobStatistics(Model):
-    """
-    The Data Lake Analytics U-SQL job execution statistics.
+    """The Data Lake Analytics U-SQL job execution statistics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -23,13 +23,12 @@ from msrest.serialization import Model
 
 
 class USqlTableColumn(Model):
-    """
-    A Data Lake Analytics catalog U-SQL table column item.
+    """A Data Lake Analytics catalog U-SQL table column item.
 
-    :param name: Gets or sets the name of the column in the table.
+    :param name: the name of the column in the table.
     :type name: str
-    :param type: Gets or sets the object type of the specified column (such
-     as System.String).
+    :param type: the object type of the specified column (such as
+     System.String).
     :type type: str
     """ 
 

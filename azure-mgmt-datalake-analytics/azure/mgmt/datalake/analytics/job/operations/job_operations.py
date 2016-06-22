@@ -45,8 +45,7 @@ class JobOperations(object):
 
     def get_statistics(
             self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets statistics of the specified job.
+        """Gets statistics of the specified job.
 
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
@@ -108,8 +107,7 @@ class JobOperations(object):
 
     def get_debug_data_path(
             self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the U-SQL job debug data information specified by the job ID.
+        """Gets the U-SQL job debug data information specified by the job ID.
 
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
@@ -171,8 +169,7 @@ class JobOperations(object):
 
     def build(
             self, parameters, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
-        """
-        Builds (compiles) the specified job in the specified Data Lake
+        """Builds (compiles) the specified job in the specified Data Lake
         Analytics account for job correctness and validation.
 
         :param account_name: The Azure Data Lake Analytics account to execute
@@ -239,8 +236,7 @@ class JobOperations(object):
 
     def cancel(
             self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
-        """
-        Cancels the running job specified by the job ID.
+        """Cancels the running job specified by the job ID.
 
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
@@ -294,8 +290,7 @@ class JobOperations(object):
 
     def get(
             self, job_identity, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the job information for the specified job ID.
+        """Gets the job information for the specified job ID.
 
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
@@ -357,8 +352,7 @@ class JobOperations(object):
 
     def create(
             self, job_identity, parameters, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", custom_headers=None, raw=False, **operation_config):
-        """
-        Submits a job to the specified Data Lake Analytics account.
+        """Submits a job to the specified Data Lake Analytics account.
 
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
@@ -427,8 +421,7 @@ class JobOperations(object):
 
     def list(
             self, account_name="\"\\"\\\"\\\\"\\\\\"None\\\\\"\\\\"\\\"\\"\"", filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the jobs, if any, associated with the specified Data Lake
+        """Lists the jobs, if any, associated with the specified Data Lake
         Analytics account. The response includes a link to the next page of
         results, if any.
 

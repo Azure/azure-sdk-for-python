@@ -19,27 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SasTokenInfo(Model):
-    """SAS token information.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar access_token: the access token for the associated Azure Storage
-     Container.
-    :vartype access_token: str
-    """ 
-
-    _validation = {
-        'access_token': {'readonly': True},
-    }
+class USqlTableTypePaged(Paged):
+    """
+    A paging container for iterating over a list of USqlTableType object
+    """
 
     _attribute_map = {
-        'access_token': {'key': 'accessToken', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[USqlTableType]'}
     }
 
-    def __init__(self):
-        self.access_token = None
+    def __init__(self, *args, **kwargs):
+
+        super(USqlTableTypePaged, self).__init__(*args, **kwargs)
