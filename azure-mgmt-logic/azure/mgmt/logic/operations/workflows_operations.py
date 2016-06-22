@@ -46,8 +46,7 @@ class WorkflowsOperations(object):
 
     def list_by_subscription(
             self, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of workflows by subscription.
+        """Gets a list of workflows by subscription.
 
         :param top: The number of items to be included in the result.
         :type top: int
@@ -116,8 +115,7 @@ class WorkflowsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of workflows by resource group.
+        """Gets a list of workflows by resource group.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -189,8 +187,7 @@ class WorkflowsOperations(object):
 
     def get(
             self, resource_group_name, workflow_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a workflow.
+        """Gets a workflow.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -250,8 +247,7 @@ class WorkflowsOperations(object):
 
     def create_or_update(
             self, resource_group_name, workflow_name, workflow, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates or updates a workflow.
+        """Creates or updates a workflow.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -319,8 +315,7 @@ class WorkflowsOperations(object):
 
     def update(
             self, resource_group_name, workflow_name, workflow, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates a workflow.
+        """Updates a workflow.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -386,8 +381,7 @@ class WorkflowsOperations(object):
 
     def delete(
             self, resource_group_name, workflow_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a workflow.
+        """Deletes a workflow.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -440,8 +434,7 @@ class WorkflowsOperations(object):
 
     def run(
             self, resource_group_name, workflow_name, name=None, outputs=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Runs a workflow.
+        """Runs a workflow.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -535,8 +528,7 @@ class WorkflowsOperations(object):
 
     def disable(
             self, resource_group_name, workflow_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Disables a workflow.
+        """Disables a workflow.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -589,8 +581,7 @@ class WorkflowsOperations(object):
 
     def enable(
             self, resource_group_name, workflow_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Enables a workflow.
+        """Enables a workflow.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -643,8 +634,7 @@ class WorkflowsOperations(object):
 
     def validate(
             self, resource_group_name, workflow_name, workflow, custom_headers=None, raw=False, **operation_config):
-        """
-        Validates a workflow.
+        """Validates a workflow.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

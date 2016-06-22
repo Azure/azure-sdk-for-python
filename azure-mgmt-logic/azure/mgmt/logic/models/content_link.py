@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ContentLink(Model):
-    """ContentLink
+    """ContentLink.
 
     :param uri: Gets or sets the content link URI.
     :type uri: str

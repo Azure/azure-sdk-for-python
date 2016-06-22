@@ -45,8 +45,7 @@ class WorkflowRunActionsOperations(object):
 
     def list(
             self, resource_group_name, workflow_name, run_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of workflow run actions.
+        """Gets a list of workflow run actions.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -125,8 +124,7 @@ class WorkflowRunActionsOperations(object):
 
     def get(
             self, resource_group_name, workflow_name, run_name, action_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a workflow run action.
+        """Gets a workflow run action.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
