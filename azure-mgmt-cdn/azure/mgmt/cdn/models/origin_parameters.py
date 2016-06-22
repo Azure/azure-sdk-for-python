@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class OriginParameters(Model):
-    """
-    Origin properties needed for origin creation or update.
+    """Origin properties needed for origin creation or update.
 
     :param host_name: The address of the origin. Domain names, IPv4
      addresses, and IPv6 addresses are supported.

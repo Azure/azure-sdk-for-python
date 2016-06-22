@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ValidateCustomDomainOutput(Model):
-    """
-    Output of custom domain validation.
+    """Output of custom domain validation.
 
     :param custom_domain_validated: Indicates whether the custom domain is
      validated or not.
