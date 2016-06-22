@@ -22,18 +22,34 @@
 from msrest.serialization import Model
 
 
-class ResourceProviderOperationDetailListResult(Model):
-    """
-    List of resource provider operations.
+class Identity(Model):
+    """Identity for the resource.
 
-    :param value: Gets or sets the list of resource provider operations.
-    :type value: list of :class:`ResourceProviderOperationDefinition
-     <azure.mgmt.resource.resources.models.ResourceProviderOperationDefinition>`
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal id of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id of resource.
+    :vartype tenant_id: str
+    :param type: Gets or sets the identity type. Possible values include:
+     'SystemAssigned'
+    :type type: str or :class:`ResourceIdentityType
+     <azure.mgmt.resource.resources.models.ResourceIdentityType>`
     """ 
 
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceProviderOperationDefinition]'},
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+    }
+
+    def __init__(self, type=None):
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type

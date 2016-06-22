@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TagValue(Model):
-    """
-    Tag information.
+    """Tag information.
 
     :param id: Gets or sets the tag ID.
     :type id: str

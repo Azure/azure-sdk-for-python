@@ -46,8 +46,7 @@ class DeploymentsOperations(object):
 
     def delete(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete deployment.
+        """Delete deployment.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -124,8 +123,7 @@ class DeploymentsOperations(object):
 
     def check_existence(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Checks whether deployment exists.
+        """Checks whether deployment exists.
 
         :param resource_group_name: The name of the resource group to check.
          The name is case insensitive.
@@ -181,8 +179,7 @@ class DeploymentsOperations(object):
 
     def create_or_update(
             self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a named template deployment using a template.
+        """Create a named template deployment using a template.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -278,8 +275,7 @@ class DeploymentsOperations(object):
 
     def get(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get a deployment.
+        """Get a deployment.
 
         :param resource_group_name: The name of the resource group to get.
          The name is case insensitive.
@@ -341,8 +337,7 @@ class DeploymentsOperations(object):
 
     def cancel(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Cancel a currently running template deployment.
+        """Cancel a currently running template deployment.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -396,8 +391,7 @@ class DeploymentsOperations(object):
 
     def validate(
             self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Validate a deployment template.
+        """Validate a deployment template.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -470,8 +464,7 @@ class DeploymentsOperations(object):
 
     def export_template(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Exports a deployment template.
+        """Exports a deployment template.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -533,8 +526,7 @@ class DeploymentsOperations(object):
 
     def list(
             self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get a list of deployments.
+        """Get a list of deployments.
 
         :param resource_group_name: The name of the resource group to filter
          by. The name is case insensitive.

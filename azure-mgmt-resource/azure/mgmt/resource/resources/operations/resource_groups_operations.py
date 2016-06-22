@@ -46,8 +46,7 @@ class ResourceGroupsOperations(object):
 
     def list_resources(
             self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all of the resources under a subscription.
+        """Get all of the resources under a subscription.
 
         :param resource_group_name: Query parameters. If null is passed
          returns all resource groups.
@@ -122,8 +121,7 @@ class ResourceGroupsOperations(object):
 
     def check_existence(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Checks whether resource group exists.
+        """Checks whether resource group exists.
 
         :param resource_group_name: The name of the resource group to check.
          The name is case insensitive.
@@ -176,8 +174,7 @@ class ResourceGroupsOperations(object):
 
     def create_or_update(
             self, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a resource group.
+        """Create a resource group.
 
         :param resource_group_name: The name of the resource group to be
          created or updated.
@@ -246,8 +243,7 @@ class ResourceGroupsOperations(object):
 
     def delete(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete resource group.
+        """Delete resource group.
 
         :param resource_group_name: The name of the resource group to be
          deleted. The name is case insensitive.
@@ -321,8 +317,7 @@ class ResourceGroupsOperations(object):
 
     def get(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get a resource group.
+        """Get a resource group.
 
         :param resource_group_name: The name of the resource group to get.
          The name is case insensitive.
@@ -381,11 +376,10 @@ class ResourceGroupsOperations(object):
 
     def patch(
             self, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Resource groups can be updated through a simple PATCH operation to a
+        """Resource groups can be updated through a simple PATCH operation to a
         group address. The format of the request is the same as that for
         creating a resource groups, though if a field is unspecified current
-        value will be carried over.
+        value will be carried over. .
 
         :param resource_group_name: The name of the resource group to be
          created or updated. The name is case insensitive.
@@ -452,8 +446,7 @@ class ResourceGroupsOperations(object):
 
     def export_template(
             self, resource_group_name, resources=None, options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Captures the specified resource group as a template.
+        """Captures the specified resource group as a template.
 
         :param resource_group_name: The name of the resource group to be
          created or updated.
@@ -526,8 +519,7 @@ class ResourceGroupsOperations(object):
 
     def list(
             self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a collection of resource groups.
+        """Gets a collection of resource groups.
 
         :param filter: The filter to apply on the operation.
         :type filter: str

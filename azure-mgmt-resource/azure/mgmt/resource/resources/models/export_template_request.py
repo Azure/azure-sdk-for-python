@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ExportTemplateRequest(Model):
-    """
-    Export resource group template request parameters.
+    """Export resource group template request parameters.
 
     :param resources: Gets or sets the ids of the resources. The only
      supported string currently is '*' (all resources). Future api updates
