@@ -23,7 +23,7 @@ from .offer_term_info import OfferTermInfo
 
 
 class MonetaryCredit(OfferTermInfo):
-    """MonetaryCredit
+    """MonetaryCredit.
 
     :param effective_date: Indicates the date from which the meter rate or
      offer term is effective.
