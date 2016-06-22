@@ -22,25 +22,18 @@
 from msrest.serialization import Model
 
 
-class UserCreateParametersPasswordProfile(Model):
-    """UserCreateParametersPasswordProfile
+class CheckGroupMembershipResult(Model):
+    """Server response for IsMemberOf API call.
 
-    :param password: Password
-    :type password: str
-    :param force_change_password_next_login: Force change password on next
-     login
-    :type force_change_password_next_login: bool
+    :param value: true if the specified user, group, contact, or service
+     principal has either direct or transitive membership in the specified
+     group; otherwise, false.
+    :type value: bool
     """ 
 
-    _validation = {
-        'password': {'required': True},
-    }
-
     _attribute_map = {
-        'password': {'key': 'password', 'type': 'str'},
-        'force_change_password_next_login': {'key': 'forceChangePasswordNextLogin', 'type': 'bool'},
+        'value': {'key': 'value', 'type': 'bool'},
     }
 
-    def __init__(self, password, force_change_password_next_login=None):
-        self.password = password
-        self.force_change_password_next_login = force_change_password_next_login
+    def __init__(self, value=None):
+        self.value = value

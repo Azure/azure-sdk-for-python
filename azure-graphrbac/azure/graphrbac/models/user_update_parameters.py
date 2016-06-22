@@ -22,32 +22,30 @@
 from msrest.serialization import Model
 
 
-class ServicePrincipal(Model):
-    """Active Directory service principal information.
+class UserUpdateParameters(Model):
+    """Request parameters for updating an existing work or school account user.
 
-    :param object_id: Gets or sets object Id
-    :type object_id: str
-    :param object_type: Gets or sets object type
-    :type object_type: str
-    :param display_name: Gets or sets service principal display name
+    :param account_enabled: Enable the account. If it is enabled then true
+     else false.
+    :type account_enabled: bool
+    :param display_name: User display name
     :type display_name: str
-    :param app_id: Gets or sets app id
-    :type app_id: str
-    :param service_principal_names: Gets or sets the list of names.
-    :type service_principal_names: list of str
+    :param password_profile: Password Profile
+    :type password_profile: :class:`PasswordProfile
+     <azure.graphrbac.models.PasswordProfile>`
+    :param mail_nickname: The mail alias for the user
+    :type mail_nickname: str
     """ 
 
     _attribute_map = {
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
+        'password_profile': {'key': 'passwordProfile', 'type': 'PasswordProfile'},
+        'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, display_name=None, app_id=None, service_principal_names=None):
-        self.object_id = object_id
-        self.object_type = object_type
+    def __init__(self, account_enabled=None, display_name=None, password_profile=None, mail_nickname=None):
+        self.account_enabled = account_enabled
         self.display_name = display_name
-        self.app_id = app_id
-        self.service_principal_names = service_principal_names
+        self.password_profile = password_profile
+        self.mail_nickname = mail_nickname

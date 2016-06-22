@@ -19,19 +19,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ServicePrincipalPaged(Paged):
-    """
-    A paging container for iterating over a list of ServicePrincipal object
-    """
+class CheckGroupMembershipParameters(Model):
+    """Request parameters for IsMemberOf API call.
 
-    _attribute_map = {
-        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ServicePrincipal]'}
+    :param group_id: The object ID of the group to check.
+    :type group_id: str
+    :param member_id: The object ID of the contact, group, user, or service
+     principal to check for membership in the specified group.
+    :type member_id: str
+    """ 
+
+    _validation = {
+        'group_id': {'required': True},
+        'member_id': {'required': True},
     }
 
-    def __init__(self, *args, **kwargs):
+    _attribute_map = {
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'member_id': {'key': 'memberId', 'type': 'str'},
+    }
 
-        super(ServicePrincipalPaged, self).__init__(*args, **kwargs)
+    def __init__(self, group_id, member_id):
+        self.group_id = group_id
+        self.member_id = member_id
