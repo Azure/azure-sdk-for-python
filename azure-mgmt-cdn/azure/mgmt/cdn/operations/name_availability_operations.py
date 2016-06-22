@@ -44,8 +44,7 @@ class NameAvailabilityOperations(object):
 
     def check_name_availability(
             self, name, type, custom_headers=None, raw=False, **operation_config):
-        """
-        Check the availability of a resource name without creating the
+        """Check the availability of a resource name without creating the
         resource. This is needed for resources where name is globally unique,
         such as a CDN endpoint.
 

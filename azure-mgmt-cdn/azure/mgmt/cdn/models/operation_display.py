@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class OperationDisplay(Model):
-    """OperationDisplay
+    """OperationDisplay.
 
     :param provider: Service provider: Microsoft.Cdn
     :type provider: str

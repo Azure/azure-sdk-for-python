@@ -23,8 +23,7 @@ from .tracked_resource import TrackedResource
 
 
 class Profile(TrackedResource):
-    """
-    CDN profile represents the top level resource and the entry point into the
+    """CDN profile represents the top level resource and the entry point into the
     CDN API. This allows users to set up a logical grouping of endpoints in
     addition to creating shared configuration settings and selecting pricing
     tiers and providers.

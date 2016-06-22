@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CheckNameAvailabilityOutput(Model):
-    """
-    Output of check name availability API.
+    """Output of check name availability API.
 
     :param name_available: Indicates whether the name is available.
     :type name_available: bool

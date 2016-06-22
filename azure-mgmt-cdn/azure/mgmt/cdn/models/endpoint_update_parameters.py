@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class EndpointUpdateParameters(Model):
-    """
-    Endpoint properties required for new endpoint creation.
+    """Endpoint properties required for new endpoint creation.
 
     :param tags: Endpoint tags
     :type tags: dict

@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class CustomDomain(Resource):
-    """
-    CDN CustomDomain represents a mapping between a user specified domain name
+    """CDN CustomDomain represents a mapping between a user specified domain name
     and a CDN endpoint. This is to use custom domain names to represent the
     URLs for branding purposes.
 
