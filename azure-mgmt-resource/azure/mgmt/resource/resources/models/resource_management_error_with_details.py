@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceManagementErrorWithDetails(Model):
-    """ResourceManagementErrorWithDetails
+    """ResourceManagementErrorWithDetails.
 
     :param code: Gets or sets the error code returned from the server.
     :type code: str

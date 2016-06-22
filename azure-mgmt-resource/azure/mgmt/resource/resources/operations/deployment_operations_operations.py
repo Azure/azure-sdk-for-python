@@ -45,8 +45,7 @@ class DeploymentOperationsOperations(object):
 
     def get(
             self, resource_group_name, deployment_name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Get a list of deployments operations.
+        """Get a list of deployments operations.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -111,8 +110,7 @@ class DeploymentOperationsOperations(object):
 
     def list(
             self, resource_group_name, deployment_name, top=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of deployments operations.
+        """Gets a list of deployments operations.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
