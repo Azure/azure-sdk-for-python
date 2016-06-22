@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class RetryPolicy(Model):
-    """RetryPolicy
+    """RetryPolicy.
 
     :param retry_type: Gets or sets the retry strategy to be used. Possible
      values include: 'None', 'Fixed'

@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ServiceBusAuthentication(Model):
-    """ServiceBusAuthentication
+    """ServiceBusAuthentication.
 
     :param sas_key: Gets or sets the SAS key.
     :type sas_key: str

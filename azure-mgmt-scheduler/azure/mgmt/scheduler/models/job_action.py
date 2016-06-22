@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class JobAction(Model):
-    """JobAction
+    """JobAction.
 
     :param type: Gets or sets the job action type. Possible values include:
      'Http', 'Https', 'StorageQueue', 'ServiceBusQueue', 'ServiceBusTopic'
