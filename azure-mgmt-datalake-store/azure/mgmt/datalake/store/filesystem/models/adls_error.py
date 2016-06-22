@@ -24,13 +24,12 @@ from msrest.exceptions import HttpOperationError
 
 
 class AdlsError(Model):
-    """
-    Data Lake Store filesystem error containing a specific WebHDFS exception.
+    """Data Lake Store filesystem error containing a specific WebHDFS exception.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar remote_exception: Gets the object representing the actual WebHDFS
+    :ivar remote_exception: the object representing the actual WebHDFS
      exception being returned.
     :vartype remote_exception: :class:`AdlsRemoteException
      <azure.mgmt.datalake.store.filesystem.models.AdlsRemoteException>`

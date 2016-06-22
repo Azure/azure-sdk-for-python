@@ -23,22 +23,20 @@ from .catalog_item import CatalogItem
 
 
 class USqlProcedure(CatalogItem):
-    """
-    A Data Lake Analytics catalog U-SQL procedure item.
+    """A Data Lake Analytics catalog U-SQL procedure item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param schema_name: Gets or sets the name of the schema associated with
-     this procedure and database.
+    :param schema_name: the name of the schema associated with this procedure
+     and database.
     :type schema_name: str
-    :param name: Gets or sets the name of the procedure.
+    :param name: the name of the procedure.
     :type name: str
-    :param definition: Gets or sets the defined query of the procedure.
+    :param definition: the defined query of the procedure.
     :type definition: str
     """ 
 

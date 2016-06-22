@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobStatisticsVertexStage(Model):
-    """
-    The Data Lake Analytics U-SQL job statistics vertex stage information.
+    """The Data Lake Analytics U-SQL job statistics vertex stage information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

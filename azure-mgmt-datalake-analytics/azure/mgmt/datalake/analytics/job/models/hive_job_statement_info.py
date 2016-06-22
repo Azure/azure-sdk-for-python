@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class HiveJobStatementInfo(Model):
-    """HiveJobStatementInfo
+    """HiveJobStatementInfo.
 
     :param log_location: Gets or sets the log location for this statement.
     :type log_location: str

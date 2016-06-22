@@ -23,14 +23,11 @@ from msrest.serialization import Model
 
 
 class FirewallRuleProperties(Model):
-    """
-    Data Lake Store firewall rule properties information
+    """Data Lake Store firewall rule properties information.
 
-    :param start_ip_address: Gets or sets the start IP address for the
-     firewall rule.
+    :param start_ip_address: the start IP address for the firewall rule.
     :type start_ip_address: str
-    :param end_ip_address: Gets or sets the end IP address for the firewall
-     rule.
+    :param end_ip_address: the end IP address for the firewall rule.
     :type end_ip_address: str
     """ 
 

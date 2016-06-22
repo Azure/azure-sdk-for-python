@@ -23,13 +23,12 @@ from msrest.serialization import Model
 
 
 class DataLakeStoreAccountInfo(Model):
-    """
-    Data Lake Store account information.
+    """Data Lake Store account information.
 
-    :param name: Gets or sets the account name of the Data Lake Store account.
+    :param name: the account name of the Data Lake Store account.
     :type name: str
-    :param properties: Gets or sets the properties associated with this Data
-     Lake Store account.
+    :param properties: the properties associated with this Data Lake Store
+     account.
     :type properties: :class:`DataLakeStoreAccountInfoProperties
      <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
     """ 

@@ -23,31 +23,28 @@ from .catalog_item import CatalogItem
 
 
 class USqlAssembly(CatalogItem):
-    """
-    A Data Lake Analytics catalog U-SQL Assembly.
+    """A Data Lake Analytics catalog U-SQL Assembly.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param name: Gets or sets the name of the assembly.
+    :param name: the name of the assembly.
     :type name: str
-    :param clr_name: Gets or sets the name of the CLR.
+    :param clr_name: the name of the CLR.
     :type clr_name: str
-    :param is_visible: Gets or sets the switch indicating if this assembly is
-     visible or not.
+    :param is_visible: the switch indicating if this assembly is visible or
+     not.
     :type is_visible: bool
-    :param is_user_defined: Gets or sets the switch indicating if this
-     assembly is user defined or not.
+    :param is_user_defined: the switch indicating if this assembly is user
+     defined or not.
     :type is_user_defined: bool
-    :param files: Gets or sets the list of files associated with the assembly
+    :param files: the list of files associated with the assembly
     :type files: list of :class:`USqlAssemblyFileInfo
      <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyFileInfo>`
-    :param dependencies: Gets or sets the list of dependencies associated
-     with the assembly
+    :param dependencies: the list of dependencies associated with the assembly
     :type dependencies: list of :class:`USqlAssemblyDependencyInfo
      <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyDependencyInfo>`
     """ 

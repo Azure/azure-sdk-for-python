@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobResource(Model):
-    """
-    The Data Lake Analytics U-SQL job resources.
+    """The Data Lake Analytics U-SQL job resources.
 
     :param name: Gets or set the name of the resource.
     :type name: str

@@ -23,34 +23,33 @@ from .catalog_item import CatalogItem
 
 
 class USqlTable(CatalogItem):
-    """
-    A Data Lake Analytics catalog U-SQL table item.
+    """A Data Lake Analytics catalog U-SQL table item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param schema_name: Gets or sets the name of the schema associated with
-     this table and database.
+    :param schema_name: the name of the schema associated with this table and
+     database.
     :type schema_name: str
-    :param name: Gets or sets the name of the table.
+    :param name: the name of the table.
     :type name: str
-    :param column_list: Gets or sets the list of columns in this table
+    :param column_list: the list of columns in this table
     :type column_list: list of :class:`USqlTableColumn
      <azure.mgmt.datalake.analytics.catalog.models.USqlTableColumn>`
-    :param index_list: Gets or sets the list of indices in this table
+    :param index_list: the list of indices in this table
     :type index_list: list of :class:`USqlIndex
      <azure.mgmt.datalake.analytics.catalog.models.USqlIndex>`
-    :param partition_key_list: Gets or sets the list of partition keys in the
-     table
+    :param partition_key_list: the list of partition keys in the table
     :type partition_key_list: list of str
-    :param external_table: Gets or sets the external table associated with
-     the table.
+    :param external_table: the external table associated with the table.
     :type external_table: :class:`ExternalTable
      <azure.mgmt.datalake.analytics.catalog.models.ExternalTable>`
+    :param distribution_info: the distributions info of the table
+    :type distribution_info: :class:`USqlDistributionInfo
+     <azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo>`
     """ 
 
     _attribute_map = {
@@ -63,9 +62,10 @@ class USqlTable(CatalogItem):
         'index_list': {'key': 'indexList', 'type': '[USqlIndex]'},
         'partition_key_list': {'key': 'partitionKeyList', 'type': '[str]'},
         'external_table': {'key': 'externalTable', 'type': 'ExternalTable'},
+        'distribution_info': {'key': 'distributionInfo', 'type': 'USqlDistributionInfo'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, column_list=None, index_list=None, partition_key_list=None, external_table=None):
+    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, column_list=None, index_list=None, partition_key_list=None, external_table=None, distribution_info=None):
         super(USqlTable, self).__init__(compute_account_name=compute_account_name, version=version)
         self.database_name = database_name
         self.schema_name = schema_name
@@ -74,3 +74,4 @@ class USqlTable(CatalogItem):
         self.index_list = index_list
         self.partition_key_list = partition_key_list
         self.external_table = external_table
+        self.distribution_info = distribution_info

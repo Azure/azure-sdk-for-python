@@ -22,24 +22,20 @@
 from msrest.serialization import Model
 
 
-class SasTokenInfo(Model):
-    """SAS token information.
+class TypeFieldInfo(Model):
+    """A Data Lake Analytics catalog type field information item.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar access_token: the access token for the associated Azure Storage
-     Container.
-    :vartype access_token: str
+    :param name: the name of the field associated with this type.
+    :type name: str
+    :param type: the type of the field.
+    :type type: str
     """ 
 
-    _validation = {
-        'access_token': {'readonly': True},
-    }
-
     _attribute_map = {
-        'access_token': {'key': 'accessToken', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.access_token = None
+    def __init__(self, name=None, type=None):
+        self.name = name
+        self.type = type

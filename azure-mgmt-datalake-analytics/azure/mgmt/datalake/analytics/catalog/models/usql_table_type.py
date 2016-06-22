@@ -19,11 +19,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .catalog_item import CatalogItem
+from .usql_type import USqlType
 
 
-class USqlType(CatalogItem):
-    """A Data Lake Analytics catalog U-SQL type item.
+class USqlTableType(USqlType):
+    """A Data Lake Analytics catalog U-SQL table type item.
 
     :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
@@ -64,6 +64,10 @@ class USqlType(CatalogItem):
     :param is_complex_type: the the switch indicating if this type is a
      complex type.
     :type is_complex_type: bool
+    :param columns: the type field information associated with this table
+     type.
+    :type columns: :class:`TypeFieldInfo
+     <azure.mgmt.datalake.analytics.catalog.models.TypeFieldInfo>`
     """ 
 
     _attribute_map = {
@@ -84,22 +88,9 @@ class USqlType(CatalogItem):
         'is_assembly_type': {'key': 'isAssemblyType', 'type': 'bool'},
         'is_table_type': {'key': 'isTableType', 'type': 'bool'},
         'is_complex_type': {'key': 'isComplexType', 'type': 'bool'},
+        'columns': {'key': 'columns', 'type': 'TypeFieldInfo'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, type_family=None, c_sharp_name=None, full_csharp_name=None, system_type_id=None, user_type_id=None, schema_id=None, principal_id=None, is_nullable=None, is_user_defined=None, is_assembly_type=None, is_table_type=None, is_complex_type=None):
-        super(USqlType, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.schema_name = schema_name
-        self.name = name
-        self.type_family = type_family
-        self.c_sharp_name = c_sharp_name
-        self.full_csharp_name = full_csharp_name
-        self.system_type_id = system_type_id
-        self.user_type_id = user_type_id
-        self.schema_id = schema_id
-        self.principal_id = principal_id
-        self.is_nullable = is_nullable
-        self.is_user_defined = is_user_defined
-        self.is_assembly_type = is_assembly_type
-        self.is_table_type = is_table_type
-        self.is_complex_type = is_complex_type
+    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, type_family=None, c_sharp_name=None, full_csharp_name=None, system_type_id=None, user_type_id=None, schema_id=None, principal_id=None, is_nullable=None, is_user_defined=None, is_assembly_type=None, is_table_type=None, is_complex_type=None, columns=None):
+        super(USqlTableType, self).__init__(compute_account_name=compute_account_name, version=version, database_name=database_name, schema_name=schema_name, name=name, type_family=type_family, c_sharp_name=c_sharp_name, full_csharp_name=full_csharp_name, system_type_id=system_type_id, user_type_id=user_type_id, schema_id=schema_id, principal_id=principal_id, is_nullable=is_nullable, is_user_defined=is_user_defined, is_assembly_type=is_assembly_type, is_table_type=is_table_type, is_complex_type=is_complex_type)
+        self.columns = columns
