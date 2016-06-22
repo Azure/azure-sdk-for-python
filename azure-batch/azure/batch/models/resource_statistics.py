@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceStatistics(Model):
-    """
-    Statistics related to resource consumption by compute nodes in a pool.
+    """Statistics related to resource consumption by compute nodes in a pool.
 
     :param start_time: The start time of the time range covered by the
      statistics.

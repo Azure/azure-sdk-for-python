@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class MetricDefinition(Resource):
-    """
-    Class repesenting metadata for the metrics
+    """Class repesenting metadata for the metrics.
 
     :param id: Resource Id
     :type id: str

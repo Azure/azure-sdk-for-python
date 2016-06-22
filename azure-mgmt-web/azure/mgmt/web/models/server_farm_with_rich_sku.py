@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class ServerFarmWithRichSku(Resource):
-    """
-    App Service Plan Model
+    """App Service Plan Model.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

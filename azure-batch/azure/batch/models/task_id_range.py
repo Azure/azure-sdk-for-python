@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskIdRange(Model):
-    """
-    A range of task ids that a task can depend on. All tasks with ids in the
+    """A range of task ids that a task can depend on. All tasks with ids in the
     range must complete successfully before the dependent task can be
     scheduled.
 

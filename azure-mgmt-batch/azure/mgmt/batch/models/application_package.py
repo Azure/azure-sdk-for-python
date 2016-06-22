@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ApplicationPackage(Model):
-    """
-    Contains information about an application package.
+    """Contains information about an application package.
 
     :param version: The version of the application package.
     :type version: str

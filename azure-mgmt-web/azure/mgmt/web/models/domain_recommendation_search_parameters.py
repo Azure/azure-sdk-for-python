@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DomainRecommendationSearchParameters(Model):
-    """
-    Domain recommendation search parameters
+    """Domain recommendation search parameters.
 
     :param keywords: Keywords to be used for generating domain recommendations
     :type keywords: str

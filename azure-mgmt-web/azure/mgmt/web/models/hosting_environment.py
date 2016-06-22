@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class HostingEnvironment(Resource):
-    """
-    Description of an hostingEnvironment (App Service Environment)
+    """Description of an hostingEnvironment (App Service Environment).
 
     :param id: Resource Id
     :type id: str

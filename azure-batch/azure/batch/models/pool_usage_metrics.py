@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolUsageMetrics(Model):
-    """
-    Usage metrics for a pool across an aggregation interval.
+    """Usage metrics for a pool across an aggregation interval.
 
     :param pool_id: The id of the pool whose metrics are being aggregated.
     :type pool_id: str

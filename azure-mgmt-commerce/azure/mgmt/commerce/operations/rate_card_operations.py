@@ -44,8 +44,7 @@ class RateCardOperations(object):
 
     def get(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Enables you to query for the resource/meter metadata and related
+        """Enables you to query for the resource/meter metadata and related
         prices used in a given subscription by Offer ID, Currency, Locale and
         Region. The metadata associated with the billing meters, including
         but not limited to service names, types, resources, units of measure,
@@ -53,7 +52,7 @@ class RateCardOperations(object):
         you intend to use this billing data in an automated fashion, please
         use the billing meter GUID to uniquely identify each billable item.
         If the billing meter GUID is scheduled to change due to a new billing
-        model, you will be notified in advance of the change.
+        model, you will be notified in advance of the change. .
 
         :param filter: The filter to apply on the operation. It ONLY supports
          the �eq� and �and� logical operators at this time. All the 4 query

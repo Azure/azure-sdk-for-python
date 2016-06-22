@@ -46,8 +46,7 @@ class ManagedHostingEnvironmentsOperations(object):
 
     def get_managed_hosting_environment(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get properties of a managed hosting environment.
+        """Get properties of a managed hosting environment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -108,8 +107,7 @@ class ManagedHostingEnvironmentsOperations(object):
 
     def create_or_update_managed_hosting_environment(
             self, resource_group_name, name, managed_hosting_environment_envelope, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a managed hosting environment.
+        """Create or update a managed hosting environment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -201,8 +199,7 @@ class ManagedHostingEnvironmentsOperations(object):
 
     def delete_managed_hosting_environment(
             self, resource_group_name, name, force_delete=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete a managed hosting environment.
+        """Delete a managed hosting environment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -290,8 +287,7 @@ class ManagedHostingEnvironmentsOperations(object):
 
     def get_managed_hosting_environments(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all managed hosting environments in a resource group.
+        """Get all managed hosting environments in a resource group.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -349,8 +345,7 @@ class ManagedHostingEnvironmentsOperations(object):
 
     def get_managed_hosting_environment_vips(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get list of ip addresses assigned to a managed hosting environment
+        """Get list of ip addresses assigned to a managed hosting environment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -411,8 +406,7 @@ class ManagedHostingEnvironmentsOperations(object):
 
     def get_managed_hosting_environment_operation(
             self, resource_group_name, name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Get status of an operation on a managed hosting environment.
+        """Get status of an operation on a managed hosting environment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -477,8 +471,7 @@ class ManagedHostingEnvironmentsOperations(object):
 
     def get_managed_hosting_environment_sites(
             self, resource_group_name, name, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all sites on the managed hosting environment.
+        """Get all sites on the managed hosting environment.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -543,8 +536,7 @@ class ManagedHostingEnvironmentsOperations(object):
 
     def get_managed_hosting_environment_web_hosting_plans(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all serverfarms (App Service Plans) on the managed hosting
+        """Get all serverfarms (App Service Plans) on the managed hosting
         environment.
 
         :param resource_group_name: Name of resource group
@@ -606,8 +598,7 @@ class ManagedHostingEnvironmentsOperations(object):
 
     def get_managed_hosting_environment_server_farms(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all serverfarms (App Service Plans) on the managed hosting
+        """Get all serverfarms (App Service Plans) on the managed hosting
         environment.
 
         :param resource_group_name: Name of resource group

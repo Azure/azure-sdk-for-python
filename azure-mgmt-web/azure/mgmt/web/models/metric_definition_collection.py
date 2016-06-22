@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class MetricDefinitionCollection(Model):
-    """
-    Collection of metric defintions
+    """Collection of metric defintions.
 
     :param value: Collection of resources
     :type value: list of :class:`MetricDefinition

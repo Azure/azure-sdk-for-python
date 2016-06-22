@@ -23,7 +23,7 @@ from .offer_term_info import OfferTermInfo
 
 
 class RecurringCharge(OfferTermInfo):
-    """RecurringCharge
+    """RecurringCharge.
 
     :param effective_date: Indicates the date from which the meter rate or
      offer term is effective.

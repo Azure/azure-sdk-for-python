@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolPatchParameter(Model):
-    """
-    Parameters for a CloudPoolOperations.Patch request.
+    """Parameters for a CloudPoolOperations.Patch request.
 
     :param start_task: A task to run on each compute node as it joins the
      pool. If omitted, any existing start task is left unchanged.

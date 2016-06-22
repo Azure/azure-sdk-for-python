@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceMetricValue(Model):
-    """
-    Value of resource metric
+    """Value of resource metric.
 
     :param time_stamp: Value timestamp
     :type time_stamp: str

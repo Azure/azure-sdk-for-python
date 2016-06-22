@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TldLegalAgreementCollection(Model):
-    """
-    Collection of Tld Legal Agreements
+    """Collection of Tld Legal Agreements.
 
     :param value: Collection of resources
     :type value: list of :class:`TldLegalAgreement

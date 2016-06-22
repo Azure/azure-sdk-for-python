@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class VirtualDirectory(Model):
-    """VirtualDirectory
+    """VirtualDirectory.
 
     :param virtual_path:
     :type virtual_path: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskListOptions(Model):
-    """
-    Additional parameters for the Task_List operation.
+    """Additional parameters for the Task_List operation.
 
     :param filter: An OData $filter clause.
     :type filter: str

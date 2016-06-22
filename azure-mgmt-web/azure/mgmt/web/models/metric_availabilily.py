@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class MetricAvailabilily(Model):
-    """
-    Class repesenting metrics availability and retention
+    """Class repesenting metrics availability and retention.
 
     :param time_grain: Time grain
     :type time_grain: str

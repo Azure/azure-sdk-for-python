@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NameIdentifierCollection(Model):
-    """
-    Collection of domain name identifiers
+    """Collection of domain name identifiers.
 
     :param value: Collection of resources
     :type value: list of :class:`NameIdentifier

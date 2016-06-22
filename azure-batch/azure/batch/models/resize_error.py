@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResizeError(Model):
-    """
-    An error that occurred when resizing a pool.
+    """An error that occurred when resizing a pool.
 
     :param code: An identifier for the pool resize error. Codes are invariant
      and are intended to be consumed programmatically.

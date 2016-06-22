@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class JobCollectionQuota(Model):
-    """JobCollectionQuota
+    """JobCollectionQuota.
 
     :param max_job_count: Gets or set the maximum job count.
     :type max_job_count: int

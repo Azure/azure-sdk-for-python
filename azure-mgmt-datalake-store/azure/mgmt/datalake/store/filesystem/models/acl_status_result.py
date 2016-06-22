@@ -23,11 +23,9 @@ from msrest.serialization import Model
 
 
 class AclStatusResult(Model):
-    """
-    Data Lake Store file or directory Access Control List information.
+    """Data Lake Store file or directory Access Control List information.
 
-    :param acl_status: Gets or sets the AclStatus object for a given file or
-     directory.
+    :param acl_status: the AclStatus object for a given file or directory.
     :type acl_status: :class:`AclStatus
      <azure.mgmt.datalake.store.filesystem.models.AclStatus>`
     """ 

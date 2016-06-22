@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BackupSchedule(Model):
-    """
-    Description of a backup schedule. Describes how often should be the backup
+    """Description of a backup schedule. Describes how often should be the backup
     performed and what should be the retention policy.
 
     :param frequency_interval: How often should be the backup executed (e.g.

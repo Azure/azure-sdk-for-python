@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class HostNameBinding(Resource):
-    """
-    A host name binding object
+    """A host name binding object.
 
     :param id: Resource Id
     :type id: str

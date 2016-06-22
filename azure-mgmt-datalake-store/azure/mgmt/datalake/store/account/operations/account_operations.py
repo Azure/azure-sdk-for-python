@@ -46,9 +46,8 @@ class AccountOperations(object):
 
     def delete_firewall_rule(
             self, resource_group_name, account_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the specified firewall rule from the specified Data Lake Store
-        account
+        """Deletes the specified firewall rule from the specified Data Lake Store
+        account.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Store account.
@@ -106,8 +105,7 @@ class AccountOperations(object):
 
     def get_firewall_rule(
             self, resource_group_name, account_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the specified Data Lake Store firewall rule.
+        """Gets the specified Data Lake Store firewall rule.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Store account.
@@ -173,8 +171,7 @@ class AccountOperations(object):
 
     def list_firewall_rules(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the Data Lake Store firewall rules within the specified Data
+        """Lists the Data Lake Store firewall rules within the specified Data
         Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -245,8 +242,7 @@ class AccountOperations(object):
 
     def create_or_update_firewall_rule(
             self, resource_group_name, account_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates or updates the specified firewall rule.
+        """Creates or updates the specified firewall rule.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Store account.
@@ -320,8 +316,7 @@ class AccountOperations(object):
 
     def create(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates the specified Data Lake Store account.
+        """Creates the specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Store account.
@@ -416,8 +411,7 @@ class AccountOperations(object):
 
     def update(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the specified Data Lake Store account information.
+        """Updates the specified Data Lake Store account information.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Store account.
@@ -512,8 +506,7 @@ class AccountOperations(object):
 
     def delete(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the specified Data Lake Store account.
+        """Deletes the specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Store account.
@@ -591,8 +584,7 @@ class AccountOperations(object):
 
     def get(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the specified Data Lake Store account.
+        """Gets the specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Store account.
@@ -655,8 +647,7 @@ class AccountOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the Data Lake Store accounts within a specific resource group.
+        """Lists the Data Lake Store accounts within a specific resource group.
         The response includes a link to the next page of results, if any.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -773,8 +764,7 @@ class AccountOperations(object):
 
     def list(
             self, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the Data Lake Store accounts within the subscription. The
+        """Lists the Data Lake Store accounts within the subscription. The
         response includes a link to the next page of results, if any.
 
         :param filter: OData filter. Optional.

@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class DeletedSite(Resource):
-    """
-    Reports deleted site including the timestamp of operation
+    """Reports deleted site including the timestamp of operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

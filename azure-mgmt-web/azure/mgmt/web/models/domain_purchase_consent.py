@@ -23,9 +23,8 @@ from msrest.serialization import Model
 
 
 class DomainPurchaseConsent(Model):
-    """
-    Domain purchase consent object representing acceptance of applicable legal
-    agreements
+    """Domain purchase consent object representing acceptance of applicable legal
+    agreements.
 
     :param agreement_keys: List of applicable legal agreement keys. This list
      can be retrieved using ListLegalAgreements Api under TopLevelDomain

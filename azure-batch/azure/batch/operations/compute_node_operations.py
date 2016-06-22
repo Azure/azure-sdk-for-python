@@ -44,8 +44,7 @@ class ComputeNodeOperations(object):
 
     def add_user(
             self, pool_id, node_id, user, compute_node_add_user_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a user account to the specified compute node.
+        """Adds a user account to the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -99,7 +98,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -135,8 +134,7 @@ class ComputeNodeOperations(object):
 
     def delete_user(
             self, pool_id, node_id, user_name, compute_node_delete_user_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a user account from the specified compute node.
+        """Deletes a user account from the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -191,7 +189,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -220,8 +218,7 @@ class ComputeNodeOperations(object):
 
     def update_user(
             self, pool_id, node_id, user_name, node_update_user_parameter, compute_node_update_user_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the password or expiration time of a user account on the
+        """Updates the password or expiration time of a user account on the
         specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
@@ -280,7 +277,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -316,8 +313,7 @@ class ComputeNodeOperations(object):
 
     def get(
             self, pool_id, node_id, compute_node_get_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the specified compute node.
+        """Gets information about the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -373,7 +369,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -413,8 +409,7 @@ class ComputeNodeOperations(object):
 
     def reboot(
             self, pool_id, node_id, compute_node_reboot_options=None, node_reboot_option=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Restarts the specified compute node.
+        """Restarts the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -473,7 +468,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -512,8 +507,7 @@ class ComputeNodeOperations(object):
 
     def reimage(
             self, pool_id, node_id, compute_node_reimage_options=None, node_reimage_option=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Reinstalls the operating system on the specified compute node.
+        """Reinstalls the operating system on the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -572,7 +566,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -611,8 +605,7 @@ class ComputeNodeOperations(object):
 
     def disable_scheduling(
             self, pool_id, node_id, compute_node_disable_scheduling_options=None, node_disable_scheduling_option=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Disable task scheduling of the specified compute node.
+        """Disable task scheduling of the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -674,7 +667,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -713,8 +706,7 @@ class ComputeNodeOperations(object):
 
     def enable_scheduling(
             self, pool_id, node_id, compute_node_enable_scheduling_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Enable task scheduling of the specified compute node.
+        """Enable task scheduling of the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -766,7 +758,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -798,8 +790,7 @@ class ComputeNodeOperations(object):
 
     def get_remote_login_settings(
             self, pool_id, node_id, compute_node_get_remote_login_settings_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the settings required for remote login to a compute node.
+        """Gets the settings required for remote login to a compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -852,7 +843,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -892,8 +883,7 @@ class ComputeNodeOperations(object):
 
     def get_remote_desktop(
             self, pool_id, node_id, compute_node_get_remote_desktop_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Gets the Remote Desktop Protocol file for the specified compute node.
+        """Gets the Remote Desktop Protocol file for the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -950,7 +940,7 @@ class ComputeNodeOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -990,8 +980,7 @@ class ComputeNodeOperations(object):
 
     def list(
             self, pool_id, compute_node_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the compute nodes in the specified pool.
+        """Lists the compute nodes in the specified pool.
 
         :param pool_id: The id of the pool from which you want to list nodes.
         :type pool_id: str
@@ -1059,7 +1048,7 @@ class ComputeNodeOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:

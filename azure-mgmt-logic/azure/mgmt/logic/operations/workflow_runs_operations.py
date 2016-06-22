@@ -45,8 +45,7 @@ class WorkflowRunsOperations(object):
 
     def list(
             self, resource_group_name, workflow_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of workflow runs.
+        """Gets a list of workflow runs.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -122,8 +121,7 @@ class WorkflowRunsOperations(object):
 
     def get(
             self, resource_group_name, workflow_name, run_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a workflow run.
+        """Gets a workflow run.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -186,8 +184,7 @@ class WorkflowRunsOperations(object):
 
     def cancel(
             self, resource_group_name, workflow_name, run_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Cancels a workflow run.
+        """Cancels a workflow run.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

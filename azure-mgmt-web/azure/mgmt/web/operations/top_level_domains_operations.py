@@ -45,8 +45,7 @@ class TopLevelDomainsOperations(object):
 
     def get_get_top_level_domains(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all top level domains supported for registration
+        """Lists all top level domains supported for registration.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -101,8 +100,7 @@ class TopLevelDomainsOperations(object):
 
     def get_top_level_domain(
             self, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets details of a top level domain
+        """Gets details of a top level domain.
 
         :param name: Name of the top level domain
         :type name: str
@@ -159,9 +157,8 @@ class TopLevelDomainsOperations(object):
 
     def list_top_level_domain_agreements(
             self, name, include_privacy=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists legal agreements that user needs to accept before purchasing
-        domain
+        """Lists legal agreements that user needs to accept before purchasing
+        domain.
 
         :param name: Name of the top level domain
         :type name: str

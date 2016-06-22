@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DomainControlCenterSsoRequest(Model):
-    """
-    Single sign on request information for domain management
+    """Single sign on request information for domain management.
 
     :param url: Url where the single sign on request is to be made
     :type url: str

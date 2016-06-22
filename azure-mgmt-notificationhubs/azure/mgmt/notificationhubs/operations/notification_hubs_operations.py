@@ -45,8 +45,7 @@ class NotificationHubsOperations(object):
 
     def check_availability(
             self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Checks the availability of the given notificationHub in a namespace.
+        """Checks the availability of the given notificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -114,8 +113,7 @@ class NotificationHubsOperations(object):
 
     def create_or_update(
             self, resource_group_name, namespace_name, notification_hub_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates/Update a NotificationHub in a namespace.
+        """Creates/Update a NotificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -189,8 +187,7 @@ class NotificationHubsOperations(object):
 
     def delete(
             self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a notification hub associated with a namespace.
+        """Deletes a notification hub associated with a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -246,8 +243,7 @@ class NotificationHubsOperations(object):
 
     def get(
             self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the notification hubs associated with a namespace.
+        """Lists the notification hubs associated with a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -311,8 +307,7 @@ class NotificationHubsOperations(object):
 
     def create_or_update_authorization_rule(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates/Updates an authorization rule for a NotificationHub
+        """Creates/Updates an authorization rule for a NotificationHub.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -387,8 +382,7 @@ class NotificationHubsOperations(object):
 
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a notificationHub authorization rule
+        """Deletes a notificationHub authorization rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -447,8 +441,7 @@ class NotificationHubsOperations(object):
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets an authorization rule for a NotificationHub by name.
+        """Gets an authorization rule for a NotificationHub by name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -515,8 +508,7 @@ class NotificationHubsOperations(object):
 
     def list(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the notification hubs associated with a namespace.
+        """Lists the notification hubs associated with a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -584,8 +576,7 @@ class NotificationHubsOperations(object):
 
     def list_authorization_rules(
             self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the authorization rules for a NotificationHub.
+        """Gets the authorization rules for a NotificationHub.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -656,9 +647,8 @@ class NotificationHubsOperations(object):
 
     def list_keys(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the Primary and Secondary ConnectionStrings to the
-        NotificationHub
+        """Gets the Primary and Secondary ConnectionStrings to the
+        NotificationHub .
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -726,8 +716,7 @@ class NotificationHubsOperations(object):
 
     def get_pns_credentials(
             self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the PNS Credentials associated with a notification hub .
+        """Lists the PNS Credentials associated with a notification hub .
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

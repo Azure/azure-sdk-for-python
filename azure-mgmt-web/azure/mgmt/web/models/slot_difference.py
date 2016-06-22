@@ -23,9 +23,8 @@ from .resource import Resource
 
 
 class SlotDifference(Resource):
-    """
-    An object describing the difference in setting values between two web app
-    slots
+    """An object describing the difference in setting values between two web app
+    slots.
 
     :param id: Resource Id
     :type id: str

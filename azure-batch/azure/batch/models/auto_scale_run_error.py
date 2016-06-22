@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AutoScaleRunError(Model):
-    """
-    An error that occurred when executing or evaluating a pool autoscale
+    """An error that occurred when executing or evaluating a pool autoscale
     formula.
 
     :param code: An identifier for the autoscale error. Codes are invariant

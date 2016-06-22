@@ -23,22 +23,20 @@ from .catalog_item import CatalogItem
 
 
 class USqlView(CatalogItem):
-    """
-    A Data Lake Analytics catalog U-SQL view item.
+    """A Data Lake Analytics catalog U-SQL view item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param schema_name: Gets or sets the name of the schema associated with
-     this view and database.
+    :param schema_name: the name of the schema associated with this view and
+     database.
     :type schema_name: str
-    :param name: Gets or sets the name of the view.
+    :param name: the name of the view.
     :type name: str
-    :param definition: Gets or sets the defined query of the view.
+    :param definition: the defined query of the view.
     :type definition: str
     """ 
 

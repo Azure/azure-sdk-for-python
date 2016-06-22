@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AdmCredential(Model):
-    """
-    Description of a NotificationHub AdmCredential.
+    """Description of a NotificationHub AdmCredential.
 
     :param properties: Gets or sets properties of NotificationHub
      AdmCredential.

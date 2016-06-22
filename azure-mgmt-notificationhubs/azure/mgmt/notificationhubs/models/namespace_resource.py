@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NamespaceResource(Model):
-    """
-    Description of a Namespace resource.
+    """Description of a Namespace resource.
 
     :param id: Gets or sets the id of the created Namespace.
     :type id: str

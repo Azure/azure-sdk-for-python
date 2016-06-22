@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeepCreatedOrigin(Model):
-    """
-    Deep created origins within a CDN endpoint.
+    """Deep created origins within a CDN endpoint.
 
     :param name: Origin name
     :type name: str

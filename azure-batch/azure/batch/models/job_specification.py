@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobSpecification(Model):
-    """
-    Specifies details of the jobs to be created on a schedule.
+    """Specifies details of the jobs to be created on a schedule.
 
     :param priority: The priority of jobs created under this schedule.
      Priority values can range from -1000 to 1000, with -1000 being the

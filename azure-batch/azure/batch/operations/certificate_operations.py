@@ -44,8 +44,7 @@ class CertificateOperations(object):
 
     def add(
             self, certificate, certificate_add_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a certificate to the specified account.
+        """Adds a certificate to the specified account.
 
         :param certificate: The certificate to be added.
         :type certificate: :class:`CertificateAddParameter
@@ -89,7 +88,7 @@ class CertificateOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -125,8 +124,7 @@ class CertificateOperations(object):
 
     def list(
             self, certificate_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all of the certificates that have been added to the specified
+        """Lists all of the certificates that have been added to the specified
         account.
 
         :param certificate_list_options: Additional parameters for the
@@ -189,7 +187,7 @@ class CertificateOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
@@ -223,8 +221,7 @@ class CertificateOperations(object):
 
     def cancel_deletion(
             self, thumbprint_algorithm, thumbprint, certificate_cancel_deletion_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Cancels a failed deletion of a certificate from the specified account.
+        """Cancels a failed deletion of a certificate from the specified account.
 
         :param thumbprint_algorithm: The algorithm used to derive the
          thumbprint parameter. This must be sha1.
@@ -276,7 +273,7 @@ class CertificateOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -308,8 +305,7 @@ class CertificateOperations(object):
 
     def delete(
             self, thumbprint_algorithm, thumbprint, certificate_delete_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a certificate from the specified account.
+        """Deletes a certificate from the specified account.
 
         :param thumbprint_algorithm: The algorithm used to derive the
          thumbprint parameter. This must be sha1.
@@ -360,7 +356,7 @@ class CertificateOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -391,8 +387,7 @@ class CertificateOperations(object):
 
     def get(
             self, thumbprint_algorithm, thumbprint, certificate_get_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the specified certificate.
+        """Gets information about the specified certificate.
 
         :param thumbprint_algorithm: The algorithm used to derive the
          thumbprint parameter. This must be sha1.
@@ -448,7 +443,7 @@ class CertificateOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceNameAvailabilityRequest(Model):
-    """
-    Resource name availability request content
+    """Resource name availability request content.
 
     :param name: Resource name to verify
     :type name: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class HostNameSslState(Model):
-    """
-    Object that represents a SSL-enabled host name.
+    """Object that represents a SSL-enabled host name.
 
     :param name: Host name
     :type name: str

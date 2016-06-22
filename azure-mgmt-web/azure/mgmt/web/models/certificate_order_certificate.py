@@ -23,9 +23,8 @@ from .resource import Resource
 
 
 class CertificateOrderCertificate(Resource):
-    """
-    Class representing the Key Vault container for certificate purchased
-    through Azure
+    """Class representing the Key Vault container for certificate purchased
+    through Azure.
 
     :param id: Resource Id
     :type id: str

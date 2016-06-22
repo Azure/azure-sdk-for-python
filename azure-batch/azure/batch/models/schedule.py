@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Schedule(Model):
-    """
-    The schedule according to which jobs will be created
+    """The schedule according to which jobs will be created.
 
     :param do_not_run_until: The earliest time at which any job may be
      created under this job schedule. If you do not specify a doNotRunUntil

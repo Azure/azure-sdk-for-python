@@ -23,7 +23,7 @@ from .job_properties import JobProperties
 
 
 class HiveJobProperties(JobProperties):
-    """HiveJobProperties
+    """HiveJobProperties.
 
     :param runtime_version: Gets or sets the runtime version of the U-SQL
      engine to use

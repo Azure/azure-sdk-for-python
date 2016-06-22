@@ -45,8 +45,7 @@ class DomainsOperations(object):
 
     def get_domains(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists domains under a resource group
+        """Lists domains under a resource group.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -104,8 +103,7 @@ class DomainsOperations(object):
 
     def get_domain(
             self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets details of a domain
+        """Gets details of a domain.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -165,8 +163,7 @@ class DomainsOperations(object):
 
     def create_or_update_domain(
             self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a domain
+        """Creates a domain.
 
         :param resource_group_name: &gt;Name of the resource group
         :type resource_group_name: str
@@ -234,8 +231,7 @@ class DomainsOperations(object):
 
     def delete_domain(
             self, resource_group_name, domain_name, force_hard_delete_domain=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a domain
+        """Deletes a domain.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str
@@ -300,8 +296,7 @@ class DomainsOperations(object):
 
     def update_domain(
             self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a domain
+        """Creates a domain.
 
         :param resource_group_name: &gt;Name of the resource group
         :type resource_group_name: str
@@ -369,8 +364,7 @@ class DomainsOperations(object):
 
     def get_domain_operation(
             self, resource_group_name, domain_name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Retrieves the latest status of a domain purchase operation
+        """Retrieves the latest status of a domain purchase operation.
 
         :param resource_group_name: Name of the resource group
         :type resource_group_name: str

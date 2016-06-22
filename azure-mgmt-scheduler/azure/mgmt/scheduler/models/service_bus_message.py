@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ServiceBusMessage(Model):
-    """ServiceBusMessage
+    """ServiceBusMessage.
 
     :param authentication: Gets or sets the authentication.
     :type authentication: :class:`ServiceBusAuthentication

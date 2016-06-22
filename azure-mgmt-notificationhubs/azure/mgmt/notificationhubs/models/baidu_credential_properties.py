@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BaiduCredentialProperties(Model):
-    """
-    Description of a NotificationHub BaiduCredential.
+    """Description of a NotificationHub BaiduCredential.
 
     :param baidu_api_key: Get or Set Baidu Api Key.
     :type baidu_api_key: str

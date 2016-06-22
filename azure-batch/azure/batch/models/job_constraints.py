@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobConstraints(Model):
-    """
-    Specifies the execution constraints for jobs created on a schedule.
+    """Specifies the execution constraints for jobs created on a schedule.
 
     :param max_wall_clock_time: The maximum elapsed time that the job may
      run, measured from the time the job starts. If the job does not complete

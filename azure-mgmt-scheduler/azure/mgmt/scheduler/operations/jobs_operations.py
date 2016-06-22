@@ -45,8 +45,7 @@ class JobsOperations(object):
 
     def get(
             self, resource_group_name, job_collection_name, job_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a job.
+        """Gets a job.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -110,8 +109,7 @@ class JobsOperations(object):
 
     def create_or_update(
             self, resource_group_name, job_collection_name, job_name, job, custom_headers=None, raw=False, **operation_config):
-        """
-        Provisions a new job or updates an existing job.
+        """Provisions a new job or updates an existing job.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -184,8 +182,7 @@ class JobsOperations(object):
 
     def patch(
             self, resource_group_name, job_collection_name, job_name, job, custom_headers=None, raw=False, **operation_config):
-        """
-        Patches an existing job.
+        """Patches an existing job.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -256,8 +253,7 @@ class JobsOperations(object):
 
     def delete(
             self, resource_group_name, job_collection_name, job_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a job.
+        """Deletes a job.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -313,8 +309,7 @@ class JobsOperations(object):
 
     def run(
             self, resource_group_name, job_collection_name, job_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Runs a job.
+        """Runs a job.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -370,8 +365,7 @@ class JobsOperations(object):
 
     def list(
             self, resource_group_name, job_collection_name, top=None, skip=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all jobs under the specified job collection.
+        """Lists all jobs under the specified job collection.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -452,8 +446,7 @@ class JobsOperations(object):
 
     def list_job_history(
             self, resource_group_name, job_collection_name, job_name, top=None, skip=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists job history.
+        """Lists job history.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
