@@ -23,7 +23,7 @@ from .sub_resource import SubResource
 
 
 class WorkflowAccessKey(SubResource):
-    """WorkflowAccessKey
+    """WorkflowAccessKey.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

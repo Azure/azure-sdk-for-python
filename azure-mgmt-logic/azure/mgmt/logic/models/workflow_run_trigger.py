@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class WorkflowRunTrigger(Model):
-    """WorkflowRunTrigger
+    """WorkflowRunTrigger.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

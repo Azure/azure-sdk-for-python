@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class RunWorkflowParameters(Model):
-    """RunWorkflowParameters
+    """RunWorkflowParameters.
 
     :param name: Gets or sets the name of workflow run trigger.
     :type name: str

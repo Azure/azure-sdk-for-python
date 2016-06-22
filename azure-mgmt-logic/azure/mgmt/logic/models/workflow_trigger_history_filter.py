@@ -22,17 +22,20 @@
 from msrest.serialization import Model
 
 
-class RegenerateSecretKeyParameters(Model):
-    """RegenerateSecretKeyParameters.
+class WorkflowTriggerHistoryFilter(Model):
+    """WorkflowTriggerHistoryFilter.
 
-    :param key_type: Gets or sets the key type. Possible values include:
-     'NotSpecified', 'Primary', 'Secondary'
-    :type key_type: str or :class:`KeyType <azure.mgmt.logic.models.KeyType>`
+    :param status: Gets or sets the status of workflow trigger history.
+     Possible values include: 'NotSpecified', 'Paused', 'Running', 'Waiting',
+     'Succeeded', 'Skipped', 'Suspended', 'Cancelled', 'Failed', 'Faulted',
+     'TimedOut', 'Aborted'
+    :type status: str or :class:`WorkflowStatus
+     <azure.mgmt.logic.models.WorkflowStatus>`
     """ 
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'KeyType'},
+        'status': {'key': 'status', 'type': 'WorkflowStatus'},
     }
 
-    def __init__(self, key_type=None):
-        self.key_type = key_type
+    def __init__(self, status=None):
+        self.status = status
