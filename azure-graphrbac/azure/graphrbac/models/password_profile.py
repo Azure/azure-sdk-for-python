@@ -19,19 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class ServicePrincipalPaged(Paged):
-    """
-    A paging container for iterating over a list of ServicePrincipal object
-    """
+class PasswordProfile(Model):
+    """Contains the password profile associated with a user.
 
-    _attribute_map = {
-        'next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ServicePrincipal]'}
+    :param password: Password
+    :type password: str
+    :param force_change_password_next_login: Force change password on next
+     login
+    :type force_change_password_next_login: bool
+    """ 
+
+    _validation = {
+        'password': {'required': True},
     }
 
-    def __init__(self, *args, **kwargs):
+    _attribute_map = {
+        'password': {'key': 'password', 'type': 'str'},
+        'force_change_password_next_login': {'key': 'forceChangePasswordNextLogin', 'type': 'bool'},
+    }
 
-        super(ServicePrincipalPaged, self).__init__(*args, **kwargs)
+    def __init__(self, password, force_change_password_next_login=None):
+        self.password = password
+        self.force_change_password_next_login = force_change_password_next_login
