@@ -1,4 +1,4 @@
-2016-xx-xx Version 2.0.0rc5 / 0.30.0rc5
+2016-06-23 Version 2.0.0rc5 / 0.30.0rc5
 
 Disclaimer:
 * There is some breaking changes in the Storage client, due to the update the latest API-Version.
