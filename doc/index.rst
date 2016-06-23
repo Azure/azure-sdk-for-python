@@ -23,7 +23,7 @@ This is a release candidate. It could have minor breaking changes until the stab
 
 Some of the new generated libraries have not yet been tested extensively, and some have known issues (such as azure-mgmt-web).
 
-Our goal is to release a stable version by the end of March 2016.  Please send us your feedback!
+Our goal is to release a stable version by July 2016.  Please send us your feedback!
 
 Documentation:
 --------------
