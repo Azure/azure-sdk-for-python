@@ -23,11 +23,10 @@ from msrest.serialization import Model
 
 
 class SlotConfigNames(Model):
-    """
-    Class containing names for connection strings and application settings to
+    """Class containing names for connection strings and application settings to
     be marked as sticky to the slot
     and not moved during swap operation
-    This is valid for all deployment slots under the site
+    This is valid for all deployment slots under the site.
 
     :param connection_string_names: List of connection string names
     :type connection_string_names: list of str

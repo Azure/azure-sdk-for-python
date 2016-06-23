@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobPreparationTaskExecutionInformation(Model):
-    """
-    Contains information about the execution of a Job Preparation task on a
+    """Contains information about the execution of a Job Preparation task on a
     compute node.
 
     :param start_time: The time at which the task started running. Note that

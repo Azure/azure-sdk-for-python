@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NotificationHubCreateOrUpdateParameters(Model):
-    """
-    Parameters supplied to the CreateOrUpdate NotificationHub operation.
+    """Parameters supplied to the CreateOrUpdate NotificationHub operation.
 
     :param location: Gets or sets NotificationHub data center location.
     :type location: str

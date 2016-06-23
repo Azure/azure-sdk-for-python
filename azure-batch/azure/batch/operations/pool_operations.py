@@ -44,8 +44,7 @@ class PoolOperations(object):
 
     def list_pool_usage_metrics(
             self, pool_list_pool_usage_metrics_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the usage metrics, aggregated by pool across individual time
+        """Lists the usage metrics, aggregated by pool across individual time
         intervals, for the specified account.
 
         :param pool_list_pool_usage_metrics_options: Additional parameters
@@ -114,7 +113,7 @@ class PoolOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
@@ -148,8 +147,7 @@ class PoolOperations(object):
 
     def get_all_pools_lifetime_statistics(
             self, pool_get_all_pools_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets lifetime summary statistics for all of the pools in the specified
+        """Gets lifetime summary statistics for all of the pools in the specified
         account. Statistics are aggregated across all pools that have ever
         existed in the account, from account creation to the last update time
         of the statistics.
@@ -194,7 +192,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -234,8 +232,7 @@ class PoolOperations(object):
 
     def add(
             self, pool, pool_add_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a pool to the specified account.
+        """Adds a pool to the specified account.
 
         :param pool: The pool to be added.
         :type pool: :class:`PoolAddParameter
@@ -278,7 +275,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -314,8 +311,7 @@ class PoolOperations(object):
 
     def list(
             self, pool_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all of the pools in the specified account.
+        """Lists all of the pools in the specified account.
 
         :param pool_list_options: Additional parameters for the operation
         :type pool_list_options: :class:`PoolListOptions
@@ -380,7 +376,7 @@ class PoolOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
@@ -414,8 +410,7 @@ class PoolOperations(object):
 
     def delete(
             self, pool_id, pool_delete_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a pool from the specified account.
+        """Deletes a pool from the specified account.
 
         :param pool_id: The id of the pool to delete.
         :type pool_id: str
@@ -473,7 +468,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -510,8 +505,7 @@ class PoolOperations(object):
 
     def exists(
             self, pool_id, pool_exists_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets basic properties of a pool.
+        """Gets basic properties of a pool.
 
         :param pool_id: The id of the pool to get.
         :type pool_id: str
@@ -569,7 +563,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -610,8 +604,7 @@ class PoolOperations(object):
 
     def get(
             self, pool_id, pool_get_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the specified pool.
+        """Gets information about the specified pool.
 
         :param pool_id: The id of the pool to get.
         :type pool_id: str
@@ -679,7 +672,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -727,8 +720,7 @@ class PoolOperations(object):
 
     def patch(
             self, pool_id, pool_patch_parameter, pool_patch_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the properties of a pool.
+        """Updates the properties of a pool.
 
         :param pool_id: The id of the pool to update.
         :type pool_id: str
@@ -789,7 +781,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -833,8 +825,7 @@ class PoolOperations(object):
 
     def disable_auto_scale(
             self, pool_id, pool_disable_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Disables automatic scaling for a pool.
+        """Disables automatic scaling for a pool.
 
         :param pool_id: The id of the pool on which to disable automatic
          scaling.
@@ -883,7 +874,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -915,8 +906,7 @@ class PoolOperations(object):
 
     def enable_auto_scale(
             self, pool_id, pool_enable_auto_scale_options=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Enables automatic scaling for a pool.
+        """Enables automatic scaling for a pool.
 
         :param pool_id: The id of the pool on which to enable automatic
          scaling.
@@ -984,7 +974,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -1028,8 +1018,7 @@ class PoolOperations(object):
 
     def evaluate_auto_scale(
             self, pool_id, auto_scale_formula, pool_evaluate_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the result of evaluating an automatic scaling formula on the pool.
+        """Gets the result of evaluating an automatic scaling formula on the pool.
 
         :param pool_id: The id of the pool on which to evaluate the automatic
          scaling formula.
@@ -1082,7 +1071,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -1127,8 +1116,7 @@ class PoolOperations(object):
 
     def resize(
             self, pool_id, pool_resize_parameter, pool_resize_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Changes the number of compute nodes that are assigned to a pool.
+        """Changes the number of compute nodes that are assigned to a pool.
 
         :param pool_id: The id of the pool to resize.
         :type pool_id: str
@@ -1189,7 +1177,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -1233,8 +1221,7 @@ class PoolOperations(object):
 
     def stop_resize(
             self, pool_id, pool_stop_resize_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Stops an ongoing resize operation on the pool. This does not restore
+        """Stops an ongoing resize operation on the pool. This does not restore
         the pool to its previous state before the resize operation: it only
         stops any further changes being made, and the pool maintains its
         current state.
@@ -1296,7 +1283,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -1336,8 +1323,7 @@ class PoolOperations(object):
 
     def update_properties(
             self, pool_id, pool_update_properties_parameter, pool_update_properties_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the properties of a pool.
+        """Updates the properties of a pool.
 
         :param pool_id: The id of the pool to update.
         :type pool_id: str
@@ -1390,7 +1376,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -1426,8 +1412,7 @@ class PoolOperations(object):
 
     def upgrade_os(
             self, pool_id, target_os_version, pool_upgrade_os_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Upgrades the operating system of the specified pool.
+        """Upgrades the operating system of the specified pool.
 
         :param pool_id: The id of the pool to upgrade.
         :type pool_id: str
@@ -1490,7 +1475,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -1534,8 +1519,7 @@ class PoolOperations(object):
 
     def remove_nodes(
             self, pool_id, node_remove_parameter, pool_remove_nodes_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Removes compute nodes from the specified pool.
+        """Removes compute nodes from the specified pool.
 
         :param pool_id: The id of the pool from which you want to remove
          nodes.
@@ -1598,7 +1582,7 @@ class PoolOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:

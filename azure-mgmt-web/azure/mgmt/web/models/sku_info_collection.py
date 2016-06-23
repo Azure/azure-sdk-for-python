@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SkuInfoCollection(Model):
-    """
-    Collection of SkuInfos
+    """Collection of SkuInfos.
 
     :param value: Collection of resources
     :type value: list of :class:`SkuInfo <azure.mgmt.web.models.SkuInfo>`

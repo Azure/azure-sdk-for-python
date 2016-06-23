@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CorsSettings(Model):
-    """
-    Cross-Origin Resource Sharing (CORS) settings for the web app.
+    """Cross-Origin Resource Sharing (CORS) settings for the web app.
 
     :param allowed_origins: Gets or sets the list of origins that should be
      allowed to make cross-origin

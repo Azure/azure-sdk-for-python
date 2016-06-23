@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolResizeParameter(Model):
-    """
-    Parameters for a CloudPoolOperations.Resize request.
+    """Parameters for a CloudPoolOperations.Resize request.
 
     :param target_dedicated: The desired number of compute nodes in the pool.
     :type target_dedicated: int

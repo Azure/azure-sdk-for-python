@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CloudJobSchedule(Model):
-    """
-    A job schedule that allows recurring jobs by specifying when to run jobs
+    """A job schedule that allows recurring jobs by specifying when to run jobs
     and a specification used to create each job.
 
     :param id: A string that uniquely identifies the schedule within the

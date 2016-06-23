@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CsmSiteRecoveryEntity(Model):
-    """
-    Class containting details about site recovery operation.
+    """Class containting details about site recovery operation.
 
     :param snapshot_time: Point in time in which the site recover should be
      attempted.

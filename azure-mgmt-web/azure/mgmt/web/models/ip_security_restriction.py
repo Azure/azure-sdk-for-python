@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class IpSecurityRestriction(Model):
-    """
-    Represents an ip security restriction on a web app.
+    """Represents an ip security restriction on a web app.
 
     :param ip_address: IP address the security restriction is valid for
     :type ip_address: str

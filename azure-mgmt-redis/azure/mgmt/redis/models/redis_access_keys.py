@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class RedisAccessKeys(Model):
-    """
-    Redis cache access keys.
+    """Redis cache access keys.
 
     :param primary_key: The current primary key that clients can use to
      authenticate with redis cache.

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class VirtualNetworkProfile(Model):
-    """
-    Specification for using a virtual network
+    """Specification for using a virtual network.
 
     :param id: Resource id of the virtual network
     :type id: str

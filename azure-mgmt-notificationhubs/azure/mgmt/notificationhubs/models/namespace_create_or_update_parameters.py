@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NamespaceCreateOrUpdateParameters(Model):
-    """
-    Parameters supplied to the CreateOrUpdate Namespace operation.
+    """Parameters supplied to the CreateOrUpdate Namespace operation.
 
     :param location: Gets or sets Namespace data center location.
     :type location: str

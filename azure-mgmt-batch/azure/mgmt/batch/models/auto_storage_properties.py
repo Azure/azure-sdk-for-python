@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AutoStorageProperties(Model):
-    """
-    Contains information about the auto storage account associated with a
+    """Contains information about the auto storage account associated with a
     Batch account.
 
     :param storage_account_id: The resource id of the storage account to be

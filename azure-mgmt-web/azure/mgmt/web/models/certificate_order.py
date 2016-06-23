@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class CertificateOrder(Resource):
-    """
-    Certificate purchase order
+    """Certificate purchase order.
 
     :param id: Resource Id
     :type id: str

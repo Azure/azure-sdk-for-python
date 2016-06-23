@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class FileSystemHttpLogsConfig(Model):
-    """
-    Http logs to file system configuration
+    """Http logs to file system configuration.
 
     :param retention_in_mb: Maximum size in megabytes that http log files can
      use.

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Address(Model):
-    """
-    Address information for domain registration
+    """Address information for domain registration.
 
     :param address1: Address 1
     :type address1: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeletedSiteCollection(Model):
-    """
-    Collection of deleted sites
+    """Collection of deleted sites.
 
     :param value: Collection of resources
     :type value: list of :class:`DeletedSite

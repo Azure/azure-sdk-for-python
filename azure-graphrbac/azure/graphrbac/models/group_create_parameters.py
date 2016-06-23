@@ -23,24 +23,30 @@ from msrest.serialization import Model
 
 
 class GroupCreateParameters(Model):
-    """
-    Request parameters for create a new group
+    """Request parameters for create a new group.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param display_name: Group display name
     :type display_name: str
-    :param mail_enabled: Mail
-    :type mail_enabled: bool
+    :ivar mail_enabled: Specifies whether the group is mail-enabled. Must be
+     false. This is because only pure security groups can be created using
+     the Graph API. Default value: False .
+    :vartype mail_enabled: bool
     :param mail_nickname: Mail nick name
     :type mail_nickname: str
-    :param security_enabled: Is security enabled
-    :type security_enabled: bool
+    :ivar security_enabled: Specifies whether the group is a security group.
+     Must be true. This is because only pure security groups can be created
+     using the Graph API. Default value: False .
+    :vartype security_enabled: bool
     """ 
 
     _validation = {
         'display_name': {'required': True},
-        'mail_enabled': {'required': True},
+        'mail_enabled': {'required': True, 'constant': True},
         'mail_nickname': {'required': True},
-        'security_enabled': {'required': True},
+        'security_enabled': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
@@ -50,8 +56,10 @@ class GroupCreateParameters(Model):
         'security_enabled': {'key': 'securityEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, display_name, mail_enabled, mail_nickname, security_enabled):
+    mail_enabled = False
+
+    security_enabled = False
+
+    def __init__(self, display_name, mail_nickname):
         self.display_name = display_name
-        self.mail_enabled = mail_enabled
         self.mail_nickname = mail_nickname
-        self.security_enabled = security_enabled

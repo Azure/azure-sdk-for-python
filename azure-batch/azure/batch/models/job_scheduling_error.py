@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobSchedulingError(Model):
-    """
-    An error encountered by the Batch service when scheduling a job.
+    """An error encountered by the Batch service when scheduling a job.
 
     :param category: The category of the job scheduling error. Possible
      values include: 'usererror', 'servererror', 'unmapped'

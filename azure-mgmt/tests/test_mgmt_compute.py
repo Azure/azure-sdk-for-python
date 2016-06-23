@@ -18,9 +18,9 @@ import unittest
 
 from collections import namedtuple
 
-import azure.mgmt.compute
-import azure.mgmt.network
-import azure.mgmt.storage
+import azure.mgmt.compute.models
+import azure.mgmt.network.models
+import azure.mgmt.storage.models
 from azure.mgmt.compute.models import InstanceViewTypes
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
@@ -58,8 +58,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def create_storage_account(self, storage_name):
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-            location=self.region,
-            account_type=azure.mgmt.storage.models.AccountType.standard_lrs,
+            sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
+            kind=azure.mgmt.storage.models.Kind.storage,
+            location=self.region
         )
         result_create = self.storage_client.storage_accounts.create(
             self.group_name,
@@ -67,7 +68,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
             params_create,
         )
         result_create.wait()
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
     def create_virtual_network(self, network_name, subnet_name):
         params_create = azure.mgmt.network.models.VirtualNetwork(
@@ -208,7 +208,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
             names.vm,
             params_create,
         )
-        result_create.wait()
+        vm_result = result_create.result()
+        self.assertEquals(vm_result.name, names.vm)
         
         result_get = self.compute_client.virtual_machines.get(
             self.group_name,

@@ -23,35 +23,31 @@ from msrest.serialization import Model
 
 
 class USqlIndex(Model):
-    """
-    A Data Lake Analytics catalog U-SQL table index item.
+    """A Data Lake Analytics catalog U-SQL table index item.
 
-    :param name: Gets or sets the name of the index in the table.
+    :param name: the name of the index in the table.
     :type name: str
-    :param index_keys: Gets or sets the list of directed columns in the index
+    :param index_keys: the list of directed columns in the index
     :type index_keys: list of :class:`USqlDirectedColumn
      <azure.mgmt.datalake.analytics.catalog.models.USqlDirectedColumn>`
-    :param columns: Gets or sets the list of columns in the index
+    :param columns: the list of columns in the index
     :type columns: list of str
-    :param distribution_info: Gets or sets the distributions info of the index
+    :param distribution_info: the distributions info of the index
     :type distribution_info: :class:`USqlDistributionInfo
      <azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo>`
-    :param partition_function: Gets or sets partition function ID for the
-     index.
+    :param partition_function: partition function ID for the index.
     :type partition_function: str
-    :param partition_key_list: Gets or sets the list of partion keys in the
-     index
+    :param partition_key_list: the list of partion keys in the index
     :type partition_key_list: list of str
-    :param stream_names: Gets or sets the list of full paths to the streams
-     that contain this index in the DataLake account.
+    :param stream_names: the list of full paths to the streams that contain
+     this index in the DataLake account.
     :type stream_names: list of str
-    :param is_columnstore: Gets or sets the switch indicating if this index
-     is a columnstore index.
+    :param is_columnstore: the switch indicating if this index is a
+     columnstore index.
     :type is_columnstore: bool
-    :param index_id: Gets or sets the ID of this index within the table.
+    :param index_id: the ID of this index within the table.
     :type index_id: int
-    :param is_unique: Gets or sets the switch indicating if this index is a
-     unique index.
+    :param is_unique: the switch indicating if this index is a unique index.
     :type is_unique: bool
     """ 
 

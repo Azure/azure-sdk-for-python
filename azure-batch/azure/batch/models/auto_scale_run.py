@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AutoScaleRun(Model):
-    """
-    The results and errors from an execution of a pool autoscale formula.
+    """The results and errors from an execution of a pool autoscale formula.
 
     :param timestamp: The time at which the autoscale formula was last
      evaluated.

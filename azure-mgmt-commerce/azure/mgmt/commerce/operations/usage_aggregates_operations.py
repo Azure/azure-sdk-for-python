@@ -44,8 +44,7 @@ class UsageAggregatesOperations(object):
 
     def list(
             self, reportedstart_time, reported_end_time, show_details=None, aggregation_granularity="Daily", continuation_token=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Query aggregated Azure subscription consumption data for a date range.
+        """Query aggregated Azure subscription consumption data for a date range.
 
         :param reportedstart_time: The start of the time range to retrieve
          data for.

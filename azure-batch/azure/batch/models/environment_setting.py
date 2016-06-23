@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class EnvironmentSetting(Model):
-    """
-    An environment variable to be set on a task process.
+    """An environment variable to be set on a task process.
 
     :param name: The name of the environment variable.
     :type name: str

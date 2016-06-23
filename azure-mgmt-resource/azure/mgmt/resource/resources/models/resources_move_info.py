@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourcesMoveInfo(Model):
-    """
-    Parameters of move resources.
+    """Parameters of move resources.
 
     :param resources: Gets or sets the ids of the resources.
     :type resources: list of str

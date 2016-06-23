@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceGroupProperties(Model):
-    """
-    The resource group properties.
+    """The resource group properties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

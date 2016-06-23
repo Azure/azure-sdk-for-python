@@ -45,8 +45,7 @@ class GlobalDomainRegistrationOperations(object):
 
     def get_all_domains(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all domains in a subscription
+        """Lists all domains in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -101,8 +100,7 @@ class GlobalDomainRegistrationOperations(object):
 
     def get_domain_control_center_sso_request(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Generates a single sign on request for domain management portal
+        """Generates a single sign on request for domain management portal.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -157,8 +155,7 @@ class GlobalDomainRegistrationOperations(object):
 
     def validate_domain_purchase_information(
             self, domain_registration_input, custom_headers=None, raw=False, **operation_config):
-        """
-        Validates domain registration information
+        """Validates domain registration information.
 
         :param domain_registration_input: Domain registration information
         :type domain_registration_input: :class:`DomainRegistrationInput
@@ -219,8 +216,7 @@ class GlobalDomainRegistrationOperations(object):
 
     def check_domain_availability(
             self, name=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Checks if a domain is available for registration
+        """Checks if a domain is available for registration.
 
         :param name: Name of the object
         :type name: str
@@ -283,8 +279,7 @@ class GlobalDomainRegistrationOperations(object):
 
     def list_domain_recommendations(
             self, keywords=None, max_domain_recommendations=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists domain recommendations based on keywords
+        """Lists domain recommendations based on keywords.
 
         :param keywords: Keywords to be used for generating domain
          recommendations

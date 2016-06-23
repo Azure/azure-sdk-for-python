@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolStopResizeOptions(Model):
-    """
-    Additional parameters for the Pool_StopResize operation.
+    """Additional parameters for the Pool_StopResize operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .

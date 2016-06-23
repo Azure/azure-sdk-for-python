@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class SiteConfig(Resource):
-    """
-    Configuration of Azure web site
+    """Configuration of Azure web site.
 
     :param id: Resource Id
     :type id: str

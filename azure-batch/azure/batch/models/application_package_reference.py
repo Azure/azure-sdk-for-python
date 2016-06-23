@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ApplicationPackageReference(Model):
-    """
-    A reference to an application package to be installed on compute nodes in
+    """A reference to an application package to be installed on compute nodes in
     a pool.
 
     :param application_id: The id of the application to install.

@@ -45,8 +45,7 @@ class TagsOperations(object):
 
     def delete_value(
             self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete a subscription resource tag value.
+        """Delete a subscription resource tag value.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -99,8 +98,7 @@ class TagsOperations(object):
 
     def create_or_update_value(
             self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a subscription resource tag value.
+        """Create a subscription resource tag value.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -163,8 +161,7 @@ class TagsOperations(object):
 
     def create_or_update(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Create a subscription resource tag.
+        """Create a subscription resource tag.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -224,8 +221,7 @@ class TagsOperations(object):
 
     def delete(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete a subscription resource tag.
+        """Delete a subscription resource tag.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -275,8 +271,7 @@ class TagsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Get a list of subscription resource tags.
+        """Get a list of subscription resource tags.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

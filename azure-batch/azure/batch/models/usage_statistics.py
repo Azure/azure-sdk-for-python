@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class UsageStatistics(Model):
-    """
-    Statistics related to pool usage information.
+    """Statistics related to pool usage information.
 
     :param start_time: The start time of the time range covered by the
      statistics.

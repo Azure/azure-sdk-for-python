@@ -6,7 +6,8 @@
     "autorest_options": {
       "Header": "MICROSOFT_APACHE_NO_VERSION",
       "AddCredentials": true,
-      "ft": 2
+      "ft": 2,
+      "PackageVersion": "0.30.0rc5"
     },
     "wrapper_filesOrDirs": [],
     "delete_filesOrDirs": [
@@ -37,6 +38,13 @@
       },
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
+    "cognitiveservices": {
+      "swagger": "arm-cognitiveservices/2016-02-01-preview/swagger/cognitiveservices.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.cognitiveservices"
+      },
+      "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
+    },
     "commerce": {
       "swagger": "arm-commerce/2015-06-01-preview/swagger/commerce.json",
       "autorest_options": {
@@ -53,9 +61,10 @@
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
     "graphrbac": {
-      "swagger": "arm-graphrbac/1.6-internal/swagger/graphrbac.json",
+      "swagger": "arm-graphrbac/compositeGraphRbacManagementClient.json",
       "autorest_options": {
-        "Namespace": "azure.graphrbac"
+        "Namespace": "azure.graphrbac",
+        "Modeler": "CompositeSwagger"
       },
       "output_dir": "azure-graphrbac/azure/graphrbac"
     },
@@ -79,6 +88,13 @@
         "Namespace": "azure.mgmt.notificationhubs"
       },
       "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs"
+    },
+    "powerbiembedded": {
+      "swagger": "arm-powerbiembedded/2016-01-29/swagger/powerbiembedded.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.powerbiembedded"
+      },
+      "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded"
     },
     "redis": {
       "swagger": "arm-redis/2016-04-01/swagger/redis.json",
@@ -130,7 +146,7 @@
       "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
     },
     "storage": {
-      "swagger": "arm-storage/2015-06-15/swagger/storage.json",
+      "swagger": "arm-storage/2016-01-01/swagger/storage.json",
       "autorest_options": {
         "Namespace ": "azure.mgmt.storage"
       },

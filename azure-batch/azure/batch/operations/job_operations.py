@@ -44,8 +44,7 @@ class JobOperations(object):
 
     def get_all_jobs_lifetime_statistics(
             self, job_get_all_jobs_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets lifetime summary statistics for all of the jobs in the specified
+        """Gets lifetime summary statistics for all of the jobs in the specified
         account. Statistics are aggregated across all jobs that have ever
         existed in the account, from account creation to the last update time
         of the statistics.
@@ -90,7 +89,7 @@ class JobOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -130,8 +129,7 @@ class JobOperations(object):
 
     def delete(
             self, job_id, job_delete_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes a job.
+        """Deletes a job.
 
         :param job_id: The id of the job to delete.
         :type job_id: str
@@ -189,7 +187,7 @@ class JobOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -226,8 +224,7 @@ class JobOperations(object):
 
     def get(
             self, job_id, job_get_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets information about the specified job.
+        """Gets information about the specified job.
 
         :param job_id: The id of the job.
         :type job_id: str
@@ -283,7 +280,7 @@ class JobOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -323,8 +320,7 @@ class JobOperations(object):
 
     def patch(
             self, job_id, job_patch_parameter, job_patch_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the properties of a job.
+        """Updates the properties of a job.
 
         :param job_id: The id of the job whose properties you want to update.
         :type job_id: str
@@ -385,7 +381,7 @@ class JobOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -429,8 +425,7 @@ class JobOperations(object):
 
     def update(
             self, job_id, job_update_parameter, job_update_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the properties of a job.
+        """Updates the properties of a job.
 
         :param job_id: The id of the job whose properties you want to update.
         :type job_id: str
@@ -491,7 +486,7 @@ class JobOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -535,8 +530,7 @@ class JobOperations(object):
 
     def disable(
             self, job_id, disable_tasks, job_disable_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Disables the specified job, preventing new tasks from running.
+        """Disables the specified job, preventing new tasks from running.
 
         :param job_id: The id of the job to disable.
         :type job_id: str
@@ -599,7 +593,7 @@ class JobOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -643,8 +637,7 @@ class JobOperations(object):
 
     def enable(
             self, job_id, job_enable_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Enables the specified job, allowing new tasks to run.
+        """Enables the specified job, allowing new tasks to run.
 
         :param job_id: The id of the job to enable.
         :type job_id: str
@@ -702,7 +695,7 @@ class JobOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -742,8 +735,7 @@ class JobOperations(object):
 
     def terminate(
             self, job_id, job_terminate_options=None, terminate_reason=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Terminates the specified job, marking it as completed.
+        """Terminates the specified job, marking it as completed.
 
         :param job_id: The id of the job to terminate.
         :type job_id: str
@@ -807,7 +799,7 @@ class JobOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -854,8 +846,7 @@ class JobOperations(object):
 
     def add(
             self, job, job_add_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Adds a job to the specified account.
+        """Adds a job to the specified account.
 
         :param job: The job to be added.
         :type job: :class:`JobAddParameter
@@ -898,7 +889,7 @@ class JobOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -934,8 +925,7 @@ class JobOperations(object):
 
     def list(
             self, job_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all of the jobs in the specified account.
+        """Lists all of the jobs in the specified account.
 
         :param job_list_options: Additional parameters for the operation
         :type job_list_options: :class:`JobListOptions
@@ -1000,7 +990,7 @@ class JobOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
@@ -1034,8 +1024,7 @@ class JobOperations(object):
 
     def list_from_job_schedule(
             self, job_schedule_id, job_list_from_job_schedule_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the jobs that have been created under the specified job schedule.
+        """Lists the jobs that have been created under the specified job schedule.
 
         :param job_schedule_id: The id of the job schedule from which you
          want to get a list of jobs.
@@ -1109,7 +1098,7 @@ class JobOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
@@ -1143,8 +1132,7 @@ class JobOperations(object):
 
     def list_preparation_and_release_task_status(
             self, job_id, job_list_preparation_and_release_task_status_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the execution status of the Job Preparation and Job Release task
+        """Lists the execution status of the Job Preparation and Job Release task
         for the specified job across the compute nodes where the job has run.
 
         :param job_id: The id of the job.
@@ -1214,7 +1202,7 @@ class JobOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:

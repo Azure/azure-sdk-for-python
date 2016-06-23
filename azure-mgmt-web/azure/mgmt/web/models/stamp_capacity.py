@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class StampCapacity(Model):
-    """
-    Class containing stamp capacity information
+    """Class containing stamp capacity information.
 
     :param name: Name of the stamp
     :type name: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Operation(Model):
-    """
-    CDN REST API operation
+    """CDN REST API operation.
 
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str

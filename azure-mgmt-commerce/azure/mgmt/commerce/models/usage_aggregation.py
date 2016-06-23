@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class UsageAggregation(Model):
-    """
-    Describes the usageAggregation.
+    """Describes the usageAggregation.
 
     :param id: Unique Id for the usage aggregate.
     :type id: str

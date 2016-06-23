@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class BackupItem(Resource):
-    """
-    Backup description
+    """Backup description.
 
     :param id: Resource Id
     :type id: str

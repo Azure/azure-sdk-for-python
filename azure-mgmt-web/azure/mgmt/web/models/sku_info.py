@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SkuInfo(Model):
-    """
-    Sku discovery information
+    """Sku discovery information.
 
     :param resource_type: Resource type that this sku applies to
     :type resource_type: str

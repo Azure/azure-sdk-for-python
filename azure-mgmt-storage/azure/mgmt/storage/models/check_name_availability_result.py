@@ -23,21 +23,29 @@ from msrest.serialization import Model
 
 
 class CheckNameAvailabilityResult(Model):
-    """
-    The CheckNameAvailability operation response.
+    """The CheckNameAvailability operation response.
 
-    :param name_available: Gets a boolean value that indicates whether the
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name_available: Gets a boolean value that indicates whether the
      name is available for you to use. If true, the name is available. If
      false, the name has already been taken or invalid and cannot be used.
-    :type name_available: bool
-    :param reason: Gets the reason that a storage account name could not be
+    :vartype name_available: bool
+    :ivar reason: Gets the reason that a storage account name could not be
      used. The Reason element is only returned if NameAvailable is false.
      Possible values include: 'AccountNameInvalid', 'AlreadyExists'
-    :type reason: str or :class:`Reason <azure.mgmt.storage.models.Reason>`
-    :param message: Gets an error message explaining the Reason value in more
+    :vartype reason: str or :class:`Reason <azure.mgmt.storage.models.Reason>`
+    :ivar message: Gets an error message explaining the Reason value in more
      detail.
-    :type message: str
+    :vartype message: str
     """ 
+
+    _validation = {
+        'name_available': {'readonly': True},
+        'reason': {'readonly': True},
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
@@ -45,7 +53,7 @@ class CheckNameAvailabilityResult(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
+    def __init__(self):
+        self.name_available = None
+        self.reason = None
+        self.message = None

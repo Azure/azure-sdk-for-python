@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ApplicationSummary(Model):
-    """
-    Contains information about an application in an Azure Batch account.
+    """Contains information about an application in an Azure Batch account.
 
     :param id: A string that uniquely identifies the application within the
      account.

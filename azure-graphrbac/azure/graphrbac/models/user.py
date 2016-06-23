@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class User(Model):
-    """
-    Active Directory user information
+    """Active Directory user information.
 
     :param object_id: Gets or sets object Id
     :type object_id: str
@@ -38,6 +37,8 @@ class User(Model):
     :type sign_in_name: str
     :param mail: Gets or sets user mail
     :type mail: str
+    :param mail_nickname: The mail alias for the user
+    :type mail_nickname: str
     """ 
 
     _attribute_map = {
@@ -47,12 +48,14 @@ class User(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
         'sign_in_name': {'key': 'signInName', 'type': 'str'},
         'mail': {'key': 'mail', 'type': 'str'},
+        'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, user_principal_name=None, display_name=None, sign_in_name=None, mail=None):
+    def __init__(self, object_id=None, object_type=None, user_principal_name=None, display_name=None, sign_in_name=None, mail=None, mail_nickname=None):
         self.object_id = object_id
         self.object_type = object_type
         self.user_principal_name = user_principal_name
         self.display_name = display_name
         self.sign_in_name = sign_in_name
         self.mail = mail
+        self.mail_nickname = mail_nickname

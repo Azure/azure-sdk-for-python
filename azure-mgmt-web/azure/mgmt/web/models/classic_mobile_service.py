@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class ClassicMobileService(Resource):
-    """
-    A mobile service
+    """A mobile service.
 
     :param id: Resource Id
     :type id: str

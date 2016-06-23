@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ApplicationLogsConfig(Model):
-    """
-    Application logs configuration
+    """Application logs configuration.
 
     :param file_system: Application logs to file system configuration
     :type file_system: :class:`FileSystemApplicationLogsConfig

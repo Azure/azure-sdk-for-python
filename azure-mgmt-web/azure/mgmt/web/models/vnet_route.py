@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class VnetRoute(Resource):
-    """
-    VnetRoute contract used to pass routing information for a vnet.
+    """VnetRoute contract used to pass routing information for a vnet.
 
     :param id: Resource Id
     :type id: str

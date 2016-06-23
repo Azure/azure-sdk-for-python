@@ -23,13 +23,12 @@ from msrest.serialization import Model
 
 
 class FileOperationResult(Model):
-    """
-    The result of the request or operation.
+    """The result of the request or operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar operation_result: Gets the result of the operation or request.
+    :ivar operation_result: the result of the operation or request.
     :vartype operation_result: bool
     """ 
 

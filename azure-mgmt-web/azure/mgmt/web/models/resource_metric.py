@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceMetric(Model):
-    """
-    Object representing a metric for any resource
+    """Object representing a metric for any resource.
 
     :param name: Name of metric
     :type name: :class:`ResourceMetricName

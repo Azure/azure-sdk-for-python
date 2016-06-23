@@ -33,13 +33,13 @@ class GraphRbacTest(AzureMgmtTestCase):
     @record
     def test_graphrbac_users(self):
 
-        user = self.graphrbac_client.user_operations.create(
+        user = self.graphrbac_client.users.create(
             azure.graphrbac.models.UserCreateParameters(
                 user_principal_name="testbuddy@{}".format(self.settings.AD_DOMAIN),
                 account_enabled=False,
                 display_name='Test Buddy',
                 mail_nickname='testbuddy',
-                password_profile=azure.graphrbac.models.UserCreateParametersPasswordProfile(
+                password_profile=azure.graphrbac.models.PasswordProfile(
                     password='MyStr0ngP4ssword',
                     force_change_password_next_login=True
                 )
@@ -47,17 +47,17 @@ class GraphRbacTest(AzureMgmtTestCase):
         )
         self.assertEqual(user.display_name, 'Test Buddy')
 
-        user = self.graphrbac_client.user_operations.get(user.object_id)
+        user = self.graphrbac_client.users.get(user.object_id)
         self.assertEqual(user.display_name, 'Test Buddy')
 
-        users = self.graphrbac_client.user_operations.list(
+        users = self.graphrbac_client.users.list(
             filter="displayName eq 'Test Buddy'"
         )
         users = list(users)
         self.assertEqual(len(users), 1)
         self.assertEqual(users[0].display_name, 'Test Buddy')
 
-        self.graphrbac_client.user_operations.delete(user.object_id)
+        self.graphrbac_client.users.delete(user.object_id)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

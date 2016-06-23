@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CloudTask(Model):
-    """
-    An Azure Batch task.
+    """An Azure Batch task.
 
     :param id: A string that uniquely identifies the task within the job. The
      id can contain any combination of alphanumeric characters including

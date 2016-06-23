@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class RateCardQueryParameters(Model):
-    """
-    Parameters that are used in the odata $filter query parameter for
+    """Parameters that are used in the odata $filter query parameter for
     providing RateCard information.
 
     :param offer_durable_id: The Offer ID parameter consists of the 'MS-AZR-'

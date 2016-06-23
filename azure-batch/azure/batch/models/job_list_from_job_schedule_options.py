@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobListFromJobScheduleOptions(Model):
-    """
-    Additional parameters for the Job_ListFromJobSchedule operation.
+    """Additional parameters for the Job_ListFromJobSchedule operation.
 
     :param filter: An OData $filter clause.
     :type filter: str

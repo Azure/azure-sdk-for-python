@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TopLevelDomainCollection(Model):
-    """
-    Collection of Top Level Domains
+    """Collection of Top Level Domains.
 
     :param value: Collection of resources
     :type value: list of :class:`TopLevelDomain

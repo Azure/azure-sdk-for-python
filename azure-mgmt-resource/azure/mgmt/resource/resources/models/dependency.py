@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Dependency(Model):
-    """
-    Deployment dependency information.
+    """Deployment dependency information.
 
     :param depends_on: Gets the list of dependencies.
     :type depends_on: list of :class:`BasicDependency

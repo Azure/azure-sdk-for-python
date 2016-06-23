@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ConnStringValueTypePair(Model):
-    """
-    Database connection string value to type pair
+    """Database connection string value to type pair.
 
     :param value: Value of pair
     :type value: str

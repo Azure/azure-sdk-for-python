@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ImportRDBParameters(Model):
-    """
-    Parameters for redis import operation.
+    """Parameters for redis import operation.
 
     :param format: File format.
     :type format: str

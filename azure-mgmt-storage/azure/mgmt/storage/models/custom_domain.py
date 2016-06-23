@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CustomDomain(Model):
-    """
-    The custom domain assigned to this storage account. This can be set via
+    """The custom domain assigned to this storage account. This can be set via
     Update.
 
     :param name: Gets or sets the custom domain name. Name is the CNAME

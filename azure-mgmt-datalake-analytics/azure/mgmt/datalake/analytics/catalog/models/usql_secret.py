@@ -23,25 +23,23 @@ from .catalog_item import CatalogItem
 
 
 class USqlSecret(CatalogItem):
-    """
-    A Data Lake Analytics catalog U-SQL secret item.
+    """A Data Lake Analytics catalog U-SQL secret item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param name: Gets or sets the name of the secret.
+    :param name: the name of the secret.
     :type name: str
-    :param creation_time: Gets or sets the creation time of the credential
-     object. This is the only information returned about a secret from a GET.
+    :param creation_time: the creation time of the credential object. This is
+     the only information returned about a secret from a GET.
     :type creation_time: datetime
-    :param uri: Gets or sets the URI identifier for the secret in the format
+    :param uri: the URI identifier for the secret in the format
      <hostname>:<port>
     :type uri: str
-    :param password: Gets or sets the password for the secret to pass in
+    :param password: the password for the secret to pass in
     :type password: str
     """ 
 

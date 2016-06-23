@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobDisableParameter(Model):
-    """
-    Parameters for a CloudJobOperations.Disable request.
+    """Parameters for a CloudJobOperations.Disable request.
 
     :param disable_tasks: What to do with active tasks associated with the
      job. Possible values include: 'requeue', 'terminate', 'wait'

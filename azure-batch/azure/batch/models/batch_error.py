@@ -24,8 +24,7 @@ from msrest.exceptions import HttpOperationError
 
 
 class BatchError(Model):
-    """
-    An error response received from the Azure Batch service.
+    """An error response received from the Azure Batch service.
 
     :param code: An identifier for the error. Codes are invariant and are
      intended to be consumed programmatically.

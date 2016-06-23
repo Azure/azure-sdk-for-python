@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class WorkflowFilter(Model):
-    """WorkflowFilter
+    """WorkflowFilter.
 
     :param state: Gets or sets the state of workflows. Possible values
      include: 'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'

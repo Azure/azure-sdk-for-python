@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CsmUsageQuota(Model):
-    """
-    Usage of the quota resource
+    """Usage of the quota resource.
 
     :param unit: Units of measurement for the quota resourse
     :type unit: str

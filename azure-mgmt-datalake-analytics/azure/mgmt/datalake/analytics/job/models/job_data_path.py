@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobDataPath(Model):
-    """
-    A Data Lake Analytics U-SQL job data path item.
+    """A Data Lake Analytics U-SQL job data path item.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

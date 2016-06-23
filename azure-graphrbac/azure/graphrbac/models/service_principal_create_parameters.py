@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ServicePrincipalCreateParameters(Model):
-    """
-    Request parameters for create a new service principal
+    """Request parameters for create a new service principal.
 
     :param app_id: Gets or sets application Id
     :type app_id: str

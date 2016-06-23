@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class HttpRequest(Model):
-    """HttpRequest
+    """HttpRequest.
 
     :param authentication: Gets or sets the http authentication.
     :type authentication: :class:`HttpAuthentication

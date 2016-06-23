@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ApplicationCreateParameters(Model):
-    """
-    Request parameters for create a new application
+    """Request parameters for create a new application.
 
     :param available_to_other_tenants: Indicates if the application will be
      available to other tenants

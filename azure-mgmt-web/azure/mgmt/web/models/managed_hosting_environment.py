@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class ManagedHostingEnvironment(Resource):
-    """
-    Description of a managed hosting environment
+    """Description of a managed hosting environment.
 
     :param id: Resource Id
     :type id: str

@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class JobRecurrenceSchedule(Model):
-    """JobRecurrenceSchedule
+    """JobRecurrenceSchedule.
 
     :param week_days: Gets or sets the days of the week that the job should
      execute on.

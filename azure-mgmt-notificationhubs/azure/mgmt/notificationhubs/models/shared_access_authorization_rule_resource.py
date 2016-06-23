@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SharedAccessAuthorizationRuleResource(Model):
-    """
-    Description of a Namespace AuthorizationRules.
+    """Description of a Namespace AuthorizationRules.
 
     :param id: Gets or sets the id of the created Namespace
      AuthorizationRules.

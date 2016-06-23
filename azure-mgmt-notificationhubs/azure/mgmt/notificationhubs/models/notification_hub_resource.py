@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NotificationHubResource(Model):
-    """
-    Description of a NotificationHub Resource.
+    """Description of a NotificationHub Resource.
 
     :param id: Gets or sets the id of the created NotificationHub.
     :type id: str

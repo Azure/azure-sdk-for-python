@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceProviderOperationDisplayProperties(Model):
-    """
-    Resource provider operation's display properties.
+    """Resource provider operation's display properties.
 
     :param publisher: Gets or sets operation description.
     :type publisher: str

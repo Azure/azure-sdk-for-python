@@ -45,8 +45,7 @@ class UsageOperations(object):
 
     def get_usage(
             self, resource_group_name, environment_name, last_id, batch_size, custom_headers=None, raw=False, **operation_config):
-        """
-        Returns usage records for specified subscription and resource groups
+        """Returns usage records for specified subscription and resource groups.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BatchAccountRegenerateKeyResult(Model):
-    """
-    Values returned by the RegenerateKey operation.
+    """Values returned by the RegenerateKey operation.
 
     :param primary: The primary key associated with the account.
     :type primary: str

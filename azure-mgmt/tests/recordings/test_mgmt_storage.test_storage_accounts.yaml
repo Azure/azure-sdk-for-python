@@ -1,2399 +1,16 @@
 interactions:
 - request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMifQ==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['22']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts43b8102a?api-version=2014-04-01-preview
-  response:
-    body: {string: '{"id":"/subscriptions/daa135f2-0a85-4d87-bda5-7e765966cd64/resourceGroups/test_mgmt_storage_test_storage_accounts","name":"test_mgmt_storage_test_storage_accounts","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['231']
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:33:41 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [bab12d31-9a57-40ea-891b-a683f5e70c5a]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [bab12d31-9a57-40ea-891b-a683f5e70c5a]
-      x-ms-routing-request-id: ['WESTUS:20150615T223341Z:bab12d31-9a57-40ea-891b-a683f5e70c5a']
-    status: {code: 201, message: Created}
-- request:
-    body: !!binary |
-      eyJ0eXBlIjogIk1pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cyIsICJuYW1lIjogInB5
-      YXJtc3RvcmFnZSJ9
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['69']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-      x-ms-client-request-id: [9832fd41-6b84-4416-ac74-c8ece1799374]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-05-01-preview
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
-        kR9fZkWZTcr8o0dtvc5/yf8DVlVqihYAAAA=
-    headers:
-      cache-control: [no-cache]
-      content-encoding: [gzip]
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:33:41 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [84ae100f-a1d9-4329-93d6-1448cbbea3b5]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [7720ab0c-c91e-4200-971c-8d7b84566794]
-      x-ms-routing-request-id: ['WESTUS:20150615T223342Z:84ae100f-a1d9-4329-93d6-1448cbbea3b5']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAicHJvcGVydGllcyI6IHsiYWNjb3VudFR5cGUiOiAiU3Rh
-      bmRhcmRfTFJTIn19
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['69']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-      x-ms-client-request-id: [1305199b-1bda-4c36-bb66-151c98337e61]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-05-01-preview
-  response:
-    body: {string: 'null'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['4']
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:33:42 GMT']
-      expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview']
-      pragma: [no-cache]
-      retry-after: ['0']
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [a9b33dcf-162e-41c1-9359-da0c39405ae3]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
-      x-ms-request-id: [16a532f6-55d6-475a-ae68-074c95c14831]
-      x-ms-routing-request-id: ['WESTUS:20150615T223343Z:a9b33dcf-162e-41c1-9359-da0c39405ae3']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-      x-ms-client-request-id: [55262aaf-53c1-4f36-95dd-ddc878a81564]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview
-  response:
-    body: {string: 'null'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['4']
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:33:43 GMT']
-      expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview']
-      pragma: [no-cache]
-      retry-after: ['0']
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [f108bae2-72ee-4b1e-987b-89fbfbb3905e]
-      x-ms-ratelimit-remaining-subscription-reads: ['14996']
-      x-ms-request-id: [7606ca3a-2c75-436b-9acb-4a60c7020ea0]
-      x-ms-routing-request-id: ['WESTUS:20150615T223344Z:f108bae2-72ee-4b1e-987b-89fbfbb3905e']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-      x-ms-client-request-id: [8a5cf44f-aff3-4c55-8c7a-6acd13f238b0]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/16a532f6-55d6-475a-ae68-074c95c14831?monitor=true&api-version=2015-05-01-preview
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR6u6
-        WuV1W+TNR49+8UfZdFqtl+2b61X+0aOPXrfZcpbVs9//+avXH/2S0UdlNc3aolrSV9/Nmzb96vVH
-        v+T/AdZKU7pCAAAA
-    headers:
-      cache-control: [no-cache]
-      content-encoding: [gzip]
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:34:08 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [afe3a31b-2127-4b49-9348-ad9d9fd8cd67]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [952439fd-0f7d-4273-8480-438cc80d39f0]
-      x-ms-routing-request-id: ['WESTUS:20150615T223409Z:afe3a31b-2127-4b49-9348-ad9d9fd8cd67']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-      x-ms-client-request-id: [871af809-6a7f-46df-9b71-9058c6e022bf]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-05-01-preview
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3VmW7d67f763vZMd3N/enx082J7MsvvbD/IHn95/+Omn09mn+3frvKnW
-        9TT/vK7Wq+Zumzft77+4WLS/f9NWdXaR//78ifkjm06r9bJt7q7q6rKY5XVz94tiWldNdd6OX0uj
-        u9r42La9zuqFfvjR6KNltsgJ2c6nZTXNgDZ9813qMf3qNX3YXq/Q9MYuqCkhtMrrtsibjx79Yvx1
-        WTQErlhevG6zFlBer6fTPJ/lM2qt43gj8KnFcpbVs9//+Sv0uqqLRVZfny5nq6oAdAI4KasJtZy3
-        7ap5dDcY0hjfjadVnY+viuWsumrGy7y9S4B+0TpfA370Lf4y+lqbTcrB1/jLyGu/xOL9PEbJhoiw
-        br48fylt6Lvjy6woAYy+ndY5v/Km4KnZ29m9v73z6fbu/Td7e4/u3Xu0vzfeuX/w8N7Bw5/66Jf8
-        kv8HkjagbG4CAAA=
-    headers:
-      cache-control: [no-cache]
-      content-encoding: [gzip]
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:34:08 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [e54e5dc9-cd8d-4b17-9d9a-2d79671d5af8]
-      x-ms-ratelimit-remaining-subscription-reads: ['14994']
-      x-ms-request-id: [259488c5-fe88-4a8d-93ce-181b49d63c10]
-      x-ms-routing-request-id: ['WESTUS:20150615T223409Z:e54e5dc9-cd8d-4b17-9d9a-2d79671d5af8']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-      x-ms-client-request-id: [c00a7cb1-1358-4449-97ec-75680abac4ad]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/listKeys?api-version=2015-05-01-preview
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn1Uvfmp2e998m71k9e/dzn/vX6vL5dn5f3v7qy+ffa6+uQHz+6+e/6dT54unx9//u31/sNP
-        nr7IFrOf+r2Wl2fZ9b2fXO8V0+e/6HjS/t4PFu16+uL3Or47vfvi/g9erC4+++yjEXrYox4ePP/p
-        t9MvPn319CD/ReXnn/7ET72ezN/W+28ePvnpJ8v9nzxf/dT164fl0/3JVXuwLvZ+n5dvZ7/X7/Pg
-        7sOrk+ns4ovi1adf/V67T5+/uvfm9y7uzR/ee/fVw2KV/wT18Ev+H+5eUDvFAAAA
-    headers:
-      cache-control: [no-cache]
-      content-encoding: [gzip]
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:34:09 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [d0a7806e-ef90-4c9d-90ba-3b19453b0113]
-      x-ms-ratelimit-remaining-subscription-writes: ['1195']
-      x-ms-request-id: [d46d3d31-8e46-4222-ae5b-4c7eb1b3f12e]
-      x-ms-routing-request-id: ['WESTUS:20150615T223409Z:d0a7806e-ef90-4c9d-90ba-3b19453b0113']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJrZXlOYW1lIjogImtleTEifQ==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['19']
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-      x-ms-client-request-id: [8199f50f-9923-4204-8a7e-9f84425460a3]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/regenerateKey?api-version=2015-05-01-preview
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn1U/eTkJ568vH717sUvuvq9q0+evdz75PdaPPjJTz9fFfee51/NflF9fXb1Zuf3/vzL8+f3
-        559PXr5+8YPj5c7re9/J97/9sD5+vre+e3rw4veazy8vfvJ8v17ee3a3ufjss49G6GGPenjw/Kff
-        Tr/49NXTg/wXlZ9/+hM/9Xoyf1vvv3n45KefLPd/8nz1U9evH5ZP9ydX7cG62Pt9Xr6d/V6/z4O7
-        D69OprOLL4pXn371e+0+ff7q3pvfu7g3f3jv3VcPi1X+E9TDL/l/AHJI5KbFAAAA
-    headers:
-      cache-control: [no-cache]
-      content-encoding: [gzip]
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:34:09 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [ceea1b0d-5f7e-4c17-9bbf-d85c06a6cc74]
-      x-ms-ratelimit-remaining-subscription-writes: ['1194']
-      x-ms-request-id: [ed2f203c-b9e4-4901-8395-3b0422623593]
-      x-ms-routing-request-id: ['WESTUS:20150615T223410Z:ceea1b0d-5f7e-4c17-9bbf-d85c06a6cc74']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-      x-ms-client-request-id: [89f8f215-d8e8-4535-acca-ee80b0b3efd7]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts?api-version=2015-05-01-preview
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXN3lmW79+6f723vZAf3t/dnBw+2J7Ps/vaD/MGn9x9+
-        +ul09un+3TpvqnU9zT+vq/WqudvmTfv7Ly4W7e/ftFWdXeS/P39i/sim02q9bJu7q7q6LGZ53dz9
-        opjWVVOdt+PX0uiuNj62ba+zeqEffjT6aJktCOePOp+W1TQD2vTNd6nH9KvX9GF7vULTG7ugpoTQ
-        Kq/bIm8+evSL8ddl0RC4Ynnxus1aQHm9nk7zfJbPqLWO443ApxbLWVbPfv/nr9Drqi4WWX19upyt
-        qgLQCeCkrCbUct62q+bR3WBIY3w3nlZ1Pr4qlrPqqhkv8/YuAfpF6xzTE3+Lv4y+1maTcvA1/jLy
-        2i+xeD+PUbIhIqybL89fShv67vgyK0oAo2+ndc6vvCl4avZ2du9v73y6vXv/zd7eo3v3Hu3vjXfu
-        Hzy8d/Dwpz76Jb/k+zSH+bv2ebF8S40/+iX/D9q7ZyyIAgAA
-    headers:
-      cache-control: [no-cache]
-      content-encoding: [gzip]
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:34:09 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [05ea5b3e-4f6f-4f50-856e-0155046537af]
-      x-ms-ratelimit-remaining-subscription-reads: ['14993']
-      x-ms-request-id: [8e9f3987-b6b5-4254-94ce-591a8dc7a2b9]
-      x-ms-routing-request-id: ['WESTUS:20150615T223410Z:05ea5b3e-4f6f-4f50-856e-0155046537af']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-      x-ms-client-request-id: [c6131315-fc9e-4c9c-92ae-ba2614f8d47b]
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-05-01-preview
-  response:
-    body: {string: ''}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Mon, 15 Jun 2015 22:34:10 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [0cf92bbd-aee5-49e0-b740-4f49d76fb28c]
-      x-ms-ratelimit-remaining-subscription-writes: ['1193']
-      x-ms-request-id: [d21be340-6ce3-42d9-b2d9-4d3251800917]
-      x-ms-routing-request-id: ['WESTUS:20150615T223411Z:0cf92bbd-aee5-49e0-b740-4f49d76fb28c']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJuYW1lIjogInRlc3RfbWdtdF9zdG9yYWdlX3Rlc3Rfc3RvcmFnZV9hY2NvdW50czQzYjgxMDJh
-      IiwgImxvY2F0aW9uIjogIndlc3R1cyJ9
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['81']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [resource_management_client/1.0.0]
-      accept-language: [en-US]
-      x-ms-client-request-id: [97840782-b647-11e5-ac71-dc53600575a2]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts43b8102a?api-version=2014-04-01-preview
-  response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a","name":"test_mgmt_storage_test_storage_accounts43b8102a","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['247']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 08 Jan 2016 20:37:11 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [204c7071-da50-4b9c-9553-8bc4f78d0b14]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [204c7071-da50-4b9c-9553-8bc4f78d0b14]
-      x-ms-routing-request-id: ['EASTUS2:20160108T203712Z:204c7071-da50-4b9c-9553-8bc4f78d0b14']
-    status: {code: 201, message: Created}
-- request:
-    body: !!binary |
-      eyJ0eXBlIjogIk1pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cyIsICJuYW1lIjogInB5
-      YXJtc3RvcmFnZTQzYjgxMDJhIn0=
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['77']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [988ab5e8-b647-11e5-aa6b-dc53600575a2]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
-        kR9fZkWZTcr8o0dtvc5/SfL/AAeYVbAXAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 20:37:12 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [8b100093-73b2-4f3c-a608-8f12e1f096a9]
-      x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [8b100093-73b2-4f3c-a608-8f12e1f096a9]
-      x-ms-routing-request-id: ['EASTUS2:20160108T203712Z:8b100093-73b2-4f3c-a608-8f12e1f096a9']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAicHJvcGVydGllcyI6IHsiYWNjb3VudFR5cGUiOiAiU3Rh
-      bmRhcmRfTFJTIn19
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['69']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [9907bf2c-b647-11e5-a5b5-dc53600575a2]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Fri, 08 Jan 2016 20:37:14 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/74d50280-ef05-4e44-a21d-76448f882d36?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [eed80fb5-effc-436a-9da3-0f0c970cb5d3]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [eed80fb5-effc-436a-9da3-0f0c970cb5d3]
-      x-ms-routing-request-id: ['EASTUS2:20160108T203714Z:eed80fb5-effc-436a-9da3-0f0c970cb5d3']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [9907bf2c-b647-11e5-a5b5-dc53600575a2]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/74d50280-ef05-4e44-a21d-76448f882d36?monitor=true&api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2U1
-        zdqiWn70KP3oKm/adfPRKP1oVVervG6LvKHPf/FH2XRarZftm+tVTn9/9LrNlrOsnv3+z1+9/uiX
-        /JL/B5Zq+HZFAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 20:37:38 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [7e013dce-cea2-4eb8-8270-f57705d724a3]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [7e013dce-cea2-4eb8-8270-f57705d724a3]
-      x-ms-routing-request-id: ['EASTUS2:20160108T203739Z:7e013dce-cea2-4eb8-8270-f57705d724a3']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [a91bf75c-b647-11e5-a5d5-dc53600575a2]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
-        nuaf19V61dxt86b9/RcXi/b3b9qqzi7y358/MX9k02m1XrbN/r3Jwe7OXnZ3VVeXxSyvm7tfFNO6
-        aqrzdvxaGt/Vl471nbur66xe6IcGwEejj8pqmgFhGsAV9bVu6LNltsjp74E3qNNVXrdF3nz06Bd/
-        pDi9uV7hlddttpxl9ez3f/7qNTWd1jkDf1MwwL2d3U+3d3a3dw7e7O08uvfg0e7+eH9/7+DBwYOf
-        otarulhk9fXpcraqCkIZ4CdlNaE35227ah7djQ5ijDbjaVXn46tiOauumvEyb+8SwPOiRLcbX0ab
-        6Mu/aJ2vb3ybG0Vfb7PJzZ1zo8jrv8QS43lkemgCLouGPiyWF0TwFt28Xk+neT7LZ/R9Q5+tmy/P
-        XwoI+ja7zIoSfQFym12AtPhNJu1G3vnolyT/DzxInqPkAgAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 20:37:40 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [7bec0f3f-5ba1-4e94-b147-86c8a67e80e2]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [7bec0f3f-5ba1-4e94-b147-86c8a67e80e2]
-      x-ms-routing-request-id: ['EASTUS2:20160108T203740Z:7bec0f3f-5ba1-4e94-b147-86c8a67e80e2']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [a93b30d4-b647-11e5-82f7-dc53600575a2]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/listKeys?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn306U8ef/L6yU++OXt30L55cPHg2y8uXr399nz55eXlg190+pOfT+9+8Yu+/e7zX/Tp9YMv
-        f+/zq4tXk/KLNwe79erLL37w4qzMDz4tvry4v/qJ4vOf+H2yB7/PqweLyeTyJz777KMRetijHr7z
-        i6aT3TfNefXpztNvX693fjApm+q797O7D37yJ786f3B19fv85NPj9U9+evVTxbPZarV3f6/58hf9
-        xFdf/aJnD04enL25eDt/vv8y/6mrVy8X3ym/e+/ZvS8+/ak3F9TDL0n+H3pPo67GAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 20:37:40 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [0ffbdf76-f594-4acc-8e19-bb97c51596fc]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [0ffbdf76-f594-4acc-8e19-bb97c51596fc]
-      x-ms-routing-request-id: ['EASTUS2:20160108T203740Z:0ffbdf76-f594-4acc-8e19-bb97c51596fc']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJrZXlOYW1lIjogImtleTEifQ==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['19']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [a95d9538-b647-11e5-8d50-dc53600575a2]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/regenerateKey?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn303XdvX77eefNs+RNPvvqpol3tnD9bTOdfffq2Orn+6v6Dlz9x+uSr4zcXv9enZxevq+f5
-        u5c/ePP7zB/unaxevNv7NP+9ftBWv9fv9Yt2X00//Wpx/frFF1+s3h5/+/Tis88+GqGHPerhO79o
-        Otl905xXn+48/fb1eucHk7Kpvns/u/vgJ3/yq/MHV1e/z08+PV7/5KdXP1U8m61We/f3mi9/0U98
-        9dUvevbg5MHZm4u38+f7L/Ofunr1cvGd8rv3nt374tOfeoMefkny/wClGtK5xgAAAA==
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 20:37:40 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [99566a6f-5a85-425e-92bb-513b7e575eb7]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [99566a6f-5a85-425e-92bb-513b7e575eb7]
-      x-ms-routing-request-id: ['EASTUS2:20160108T203740Z:99566a6f-5a85-425e-92bb-513b7e575eb7']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [a9b935f8-b647-11e5-b9d4-dc53600575a2]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXP3/OHsYPfBw3x7/975zvb+p9PJ9sOH09n2+YO9yXk2
-        2ck+vTe5W+dNta6n+ed1tV41d9u8aX//xcWi/f2btqqzi/z350/MH9l0Wq2XbbN/b3Kwu7OX3V3V
-        1WUxy+vm7hfFtK6a6rwdv5bGd/WlY33n7uo6qxf6oQHw0eijsppmQJgGcEV9rRv6bJktaFwfDbxB
-        na7yui3y5qNHv/gjxenN9QqvvG6z5SyrZ7//81evqem0zhn4m4IB7u3sfrq9s7u9c/Bmb+fRvQeP
-        dvfH+/t7Bw8OHvwUtV7VxSKrr0+Xs1VVEMoAPymrCb05b9tV8+hudBBjtBlPqzofXxXLWXXVjJd5
-        e5cAnhclut34MtpEX/5F6xyzu/ltbhR9vc0mN3fOjSKv/xJLjOeR6aEJuCwa+rBYXhDBW3Tzej2d
-        5vksn9H3DX22br48fykg6NvsMitK9AXIbXYB0uI3mbQbeeejX/L9X5L8P8d6eP3wAgAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 20:37:41 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [45e29332-22a5-4843-a7ae-0520c0b1cbdb]
-      x-ms-ratelimit-remaining-subscription-reads: ['14996']
-      x-ms-request-id: [45e29332-22a5-4843-a7ae-0520c0b1cbdb]
-      x-ms-routing-request-id: ['EASTUS2:20160108T203741Z:45e29332-22a5-4843-a7ae-0520c0b1cbdb']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [a9f7a186-b647-11e5-80be-dc53600575a2]
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Fri, 08 Jan 2016 20:37:42 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [7cbb199f-da17-4552-81da-b36f25cef3d4]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
-      x-ms-request-id: [7cbb199f-da17-4552-81da-b36f25cef3d4]
-      x-ms-routing-request-id: ['EASTUS2:20160108T203742Z:7cbb199f-da17-4552-81da-b36f25cef3d4']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAibmFtZSI6ICJ0ZXN0X21nbXRfc3RvcmFnZV90ZXN0X3N0
-      b3JhZ2VfYWNjb3VudHM0M2I4MTAyYSJ9
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['81']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [resource_management_client/1.0.0]
-      accept-language: [en-US]
-      x-ms-client-request-id: [266213a4-b64b-11e5-ba4a-dc53600575a2]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts43b8102a?api-version=2014-04-01-preview
-  response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a","name":"test_mgmt_storage_test_storage_accounts43b8102a","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['247']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 08 Jan 2016 21:02:39 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [f521d692-5cd4-4bca-9a25-1cabfe3285a2]
-      x-ms-ratelimit-remaining-subscription-writes: ['1192']
-      x-ms-request-id: [f521d692-5cd4-4bca-9a25-1cabfe3285a2]
-      x-ms-routing-request-id: ['EASTUS2:20160108T210239Z:f521d692-5cd4-4bca-9a25-1cabfe3285a2']
-    status: {code: 201, message: Created}
-- request:
-    body: !!binary |
-      eyJ0eXBlIjogIk1pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cyIsICJuYW1lIjogInB5
-      YXJtc3RvcmFnZTQzYjgxMDJhIn0=
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['77']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [271e6d70-b64b-11e5-9c21-dc53600575a2]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
-        kR9fZkWZTcr8o0dtvc5/SfL/AAeYVbAXAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 21:02:40 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [5b4fcea1-2ff3-4617-baac-aa4c32c9b190]
-      x-ms-ratelimit-remaining-subscription-reads: ['14988']
-      x-ms-request-id: [5b4fcea1-2ff3-4617-baac-aa4c32c9b190]
-      x-ms-routing-request-id: ['EASTUS2:20160108T210240Z:5b4fcea1-2ff3-4617-baac-aa4c32c9b190']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAicHJvcGVydGllcyI6IHsiYWNjb3VudFR5cGUiOiAiU3Rh
-      bmRhcmRfTFJTIn19
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['69']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [278f4076-b64b-11e5-8a7b-dc53600575a2]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Fri, 08 Jan 2016 21:02:42 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/34fc673f-3d9b-4a0d-832d-cb8747779129?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [73eb691e-e7c4-4d50-b3ed-6acfa5a8698d]
-      x-ms-ratelimit-remaining-subscription-writes: ['1149']
-      x-ms-request-id: [73eb691e-e7c4-4d50-b3ed-6acfa5a8698d]
-      x-ms-routing-request-id: ['EASTUS2:20160108T210242Z:73eb691e-e7c4-4d50-b3ed-6acfa5a8698d']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [278f4076-b64b-11e5-8a7b-dc53600575a2]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/34fc673f-3d9b-4a0d-832d-cb8747779129?monitor=true&api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2U1
-        zdqiWn70KP3oKm/adfPRKP1oVVervG6LvKHPf/FH2XRarZftm+tVTn9/9LrNlrOsnv3+z1+9/uiX
-        /JL/B5Zq+HZFAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 21:03:07 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [e469ce31-417c-4d91-8c56-b86b1e8a483d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14987']
-      x-ms-request-id: [e469ce31-417c-4d91-8c56-b86b1e8a483d]
-      x-ms-routing-request-id: ['EASTUS2:20160108T210307Z:e469ce31-417c-4d91-8c56-b86b1e8a483d']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [37bb2c52-b64b-11e5-970e-dc53600575a2]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
-        nuaf19V61dxt86b9/RcXi/b3b9qqzi7y358/MX9k02m1XrbN/r3Jwe7OXnZ3VVeXxSyvm7tfFNO6
-        aqrzdvxaGt/Vl471nbur66xe6IcGwEejj8pqmgFhGsAV9bVu6LNltsjp74E3qNNVXrdF3nz06Bd/
-        pDi9uV7hlddttpxl9ez3f/7qNTWd1jkDf1MwwL2d3U+3d3a3dw7e7O0+2tl7tL833jnY2Xu4v/dT
-        1HpVF4usvj5dzlZVQSgD/KSsJvTmvG1XzaO70UGM0WY8rep8fFUsZ9VVM17m7V0CeF6U6Hbjy2gT
-        ffkXrfP1jW9zo+jrbTa5uXNuFHn9l1hiPI9MD03AZdHQh8XyggjeopvX6+k0z2f5jL5v6LN18+X5
-        SwFB32aXWVGiL0BuswuQFr/JpN3IOx/9kuT/AWBS7LXkAgAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 21:03:07 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [ff8cfea9-9e67-4888-9a83-bbaab9b7c14e]
-      x-ms-ratelimit-remaining-subscription-reads: ['14986']
-      x-ms-request-id: [ff8cfea9-9e67-4888-9a83-bbaab9b7c14e]
-      x-ms-routing-request-id: ['EASTUS2:20160108T210307Z:ff8cfea9-9e67-4888-9a83-bbaab9b7c14e']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [37d7c810-b64b-11e5-abe8-dc53600575a2]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/listKeys?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn309tvTyd7v/fnv88nB4qeevtl9un5278n6YGf5xaf3J1ernS8ul3snn5401Q/a3/v89/qk
-        fvPqk+WTp8sfPMy/fbV7+nt99e3V59/5vb/amdQ/nf+inzj49GR2vVctZhefffbRCD3sUQ93d07y
-        F/eyr5rf69NPPn+x/92n+fFXv8+z9d0vP7168Orep+ffXt+/OLj76cvs2y/ffOfl5XL61b2r/GL3
-        +afru7Pl3ec/OF+dXb15vvtT1fX89e/9e39y8cXT32v3BD38kuT/Ab/od1HGAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 21:03:07 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [ff95a944-a492-4913-98a9-d2801f114cda]
-      x-ms-ratelimit-remaining-subscription-writes: ['1148']
-      x-ms-request-id: [ff95a944-a492-4913-98a9-d2801f114cda]
-      x-ms-routing-request-id: ['EASTUS2:20160108T210308Z:ff95a944-a492-4913-98a9-d2801f114cda']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJrZXlOYW1lIjogImtleTEifQ==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['19']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [37fb8b02-b64b-11e5-96b8-dc53600575a2]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/regenerateKey?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn1UPfnixbJ69eTlxdOHZXb8/Keu7z47WJ0cf/p7f/Xk7dP59U98evx7v/6k+HL96cH1i598
-        ce/L6cvpxc7vVX7n2dvVwau9X/Tmwcne1f75T3z6i5Zf7bY/cf+L1UFxefzZZx+N0MMe9XB35yR/
-        cS/7qvm9Pv3k8xf7332aH3/1+zxb3/3y06sHr+59ev7t9f2Lg7ufvsy+/fLNd15eLqdf3bvKL3af
-        f7q+O1veff6D89XZ1Zvnuz9VXc9f/96/9ycXXzz9vXZPLqiHX5L8P13Cey3GAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 21:03:08 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [668b469b-98a5-4ce2-985a-4a383cb079a0]
-      x-ms-ratelimit-remaining-subscription-writes: ['1147']
-      x-ms-request-id: [668b469b-98a5-4ce2-985a-4a383cb079a0]
-      x-ms-routing-request-id: ['EASTUS2:20160108T210308Z:668b469b-98a5-4ce2-985a-4a383cb079a0']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [385bc4c8-b64b-11e5-a3c1-dc53600575a2]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXP3/OHsYPfBw3x7/975zvb+p9PJ9sOH09n2+YO9yXk2
-        2ck+vTe5W+dNta6n+ed1tV41d9u8aX//xcWi/f2btqqzi/z350/MH9l0Wq2XbbN/b3Kwu7OX3V3V
-        1WUxy+vm7hfFtK6a6rwdv5bGd/WlY33n7uo6qxf6oQHw0eijsppmQJgGcEV9rRv6bJktaFwfDbxB
-        na7yui3y5qNHv/gjxenN9QqvvG6z5SyrZ7//81evqem0zhn4m4IB7u3sfrq9s7u9c/Bmb/fRzt6j
-        /b3xzsHO3sP9vZ+i1qu6WGT19elytqoKQhngJ2U1oTfnbbtqHt2NDmKMNuNpVefjq2I5q66a8TJv
-        7xLA86JEtxtfRpvoy79onWN2N7/NjaKvt9nk5s65UeT1X2KJ8TwyPTQBl0VDHxbLCyJ4i25er6fT
-        PJ/lM/q+oc/WzZfnLwUEfZtdZkWJvgC5zS5AWvwmk3Yj73z0S77/S5L/B5eHFBbwAgAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 08 Jan 2016 21:03:08 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [19be5e6a-8ecc-4663-b663-d64a1715141a]
-      x-ms-ratelimit-remaining-subscription-reads: ['14985']
-      x-ms-request-id: [19be5e6a-8ecc-4663-b663-d64a1715141a]
-      x-ms-routing-request-id: ['EASTUS2:20160108T210308Z:19be5e6a-8ecc-4663-b663-d64a1715141a']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [storage_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [3879f040-b64b-11e5-b2a4-dc53600575a2]
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Fri, 08 Jan 2016 21:03:09 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [f4375572-bfe9-4580-8e7c-f99b5f400113]
-      x-ms-ratelimit-remaining-subscription-writes: ['1146']
-      x-ms-request-id: [f4375572-bfe9-4580-8e7c-f99b5f400113]
-      x-ms-routing-request-id: ['EASTUS2:20160108T210310Z:f4375572-bfe9-4580-8e7c-f99b5f400113']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJuYW1lIjogInRlc3RfbWdtdF9zdG9yYWdlX3Rlc3Rfc3RvcmFnZV9hY2NvdW50czQzYjgxMDJh
-      IiwgImxvY2F0aW9uIjogIndlc3R1cyJ9
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['81']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 resourcemanagementclient/2015-11-01]
-      accept-language: [en-US]
-      x-ms-client-request-id: [a9163ca8-d4e0-11e5-b3b9-54ee7574ca37]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts43b8102a?api-version=2015-11-01
-  response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a","name":"test_mgmt_storage_test_storage_accounts43b8102a","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['247']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 16 Feb 2016 19:08:28 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [920bf9e5-be35-43a5-b490-a149ef023a4a]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [920bf9e5-be35-43a5-b490-a149ef023a4a]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T190828Z:920bf9e5-be35-43a5-b490-a149ef023a4a']
-    status: {code: 201, message: Created}
-- request:
-    body: !!binary |
-      eyJuYW1lIjogInB5YXJtc3RvcmFnZTQzYjgxMDJhIiwgInR5cGUiOiAiTWljcm9zb2Z0LlN0b3Jh
-      Z2Uvc3RvcmFnZUFjY291bnRzIn0=
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['77']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [a9bf19f4-d4e0-11e5-88f3-54ee7574ca37]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
-        kR9fZkWZTcr8o0dtvc5/SfL/AAeYVbAXAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 16 Feb 2016 19:08:28 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [f9c473e9-a9cc-4a98-b78f-2357bfd68dd0]
-      x-ms-ratelimit-remaining-subscription-reads: ['14968']
-      x-ms-request-id: [f9c473e9-a9cc-4a98-b78f-2357bfd68dd0]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T190829Z:f9c473e9-a9cc-4a98-b78f-2357bfd68dd0']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJwcm9wZXJ0aWVzIjogeyJhY2NvdW50VHlwZSI6ICJTdGFuZGFyZF9MUlMifSwgImxvY2F0aW9u
-      IjogIndlc3R1cyJ9
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['69']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:08:30 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [258ab00c-6b48-440c-ad2b-e1b2d4914a4d]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [258ab00c-6b48-440c-ad2b-e1b2d4914a4d]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T190831Z:258ab00c-6b48-440c-ad2b-e1b2d4914a4d']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:08:56 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [b8e0340b-bf29-49e1-9ef8-c675182536ba]
-      x-ms-ratelimit-remaining-subscription-reads: ['14968']
-      x-ms-request-id: [b8e0340b-bf29-49e1-9ef8-c675182536ba]
-      x-ms-routing-request-id: ['WESTUS:20160216T190856Z:b8e0340b-bf29-49e1-9ef8-c675182536ba']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:09:21 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [15b3131d-bf04-4bc2-96b5-1b8bad0d3818]
-      x-ms-ratelimit-remaining-subscription-reads: ['14965']
-      x-ms-request-id: [15b3131d-bf04-4bc2-96b5-1b8bad0d3818]
-      x-ms-routing-request-id: ['WESTUS:20160216T190922Z:15b3131d-bf04-4bc2-96b5-1b8bad0d3818']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:09:47 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [5f63e90e-e965-424b-9f06-d7858a71caf9]
-      x-ms-ratelimit-remaining-subscription-reads: ['14964']
-      x-ms-request-id: [5f63e90e-e965-424b-9f06-d7858a71caf9]
-      x-ms-routing-request-id: ['WESTUS:20160216T190947Z:5f63e90e-e965-424b-9f06-d7858a71caf9']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:10:12 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [c1e03a00-8f9b-4c41-9fd9-f9c31686e72e]
-      x-ms-ratelimit-remaining-subscription-reads: ['14968']
-      x-ms-request-id: [c1e03a00-8f9b-4c41-9fd9-f9c31686e72e]
-      x-ms-routing-request-id: ['WESTUS:20160216T191013Z:c1e03a00-8f9b-4c41-9fd9-f9c31686e72e']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:10:38 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [abe1924a-e56f-47e6-9913-bca1da247b84]
-      x-ms-ratelimit-remaining-subscription-reads: ['14967']
-      x-ms-request-id: [abe1924a-e56f-47e6-9913-bca1da247b84]
-      x-ms-routing-request-id: ['WESTUS:20160216T191038Z:abe1924a-e56f-47e6-9913-bca1da247b84']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:11:04 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [57911e80-f00e-4a86-8efd-5a6a2525a880]
-      x-ms-ratelimit-remaining-subscription-reads: ['14974']
-      x-ms-request-id: [57911e80-f00e-4a86-8efd-5a6a2525a880]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191104Z:57911e80-f00e-4a86-8efd-5a6a2525a880']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:11:29 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [fbdbbada-b789-44cb-90bf-d1d6282ef32b]
-      x-ms-ratelimit-remaining-subscription-reads: ['14971']
-      x-ms-request-id: [fbdbbada-b789-44cb-90bf-d1d6282ef32b]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191129Z:fbdbbada-b789-44cb-90bf-d1d6282ef32b']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:11:54 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [3fba6851-59b4-4c9b-ae41-ef7976b48e3a]
-      x-ms-ratelimit-remaining-subscription-reads: ['14965']
-      x-ms-request-id: [3fba6851-59b4-4c9b-ae41-ef7976b48e3a]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191155Z:3fba6851-59b4-4c9b-ae41-ef7976b48e3a']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:12:21 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [9491eb45-90a4-4a60-aed4-5492ac6b21e4]
-      x-ms-ratelimit-remaining-subscription-reads: ['14969']
-      x-ms-request-id: [9491eb45-90a4-4a60-aed4-5492ac6b21e4]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191221Z:9491eb45-90a4-4a60-aed4-5492ac6b21e4']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:12:46 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [23a975d6-f1a0-4d81-b7f2-73aa119ca9c4]
-      x-ms-ratelimit-remaining-subscription-reads: ['14967']
-      x-ms-request-id: [23a975d6-f1a0-4d81-b7f2-73aa119ca9c4]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191247Z:23a975d6-f1a0-4d81-b7f2-73aa119ca9c4']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:13:12 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [f53992ef-a7b7-4a78-a296-4c2fa7cd115b]
-      x-ms-ratelimit-remaining-subscription-reads: ['14968']
-      x-ms-request-id: [f53992ef-a7b7-4a78-a296-4c2fa7cd115b]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191312Z:f53992ef-a7b7-4a78-a296-4c2fa7cd115b']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:13:38 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [bc8c82d6-42c1-4a9c-a4a4-60a3f1460e32]
-      x-ms-ratelimit-remaining-subscription-reads: ['14967']
-      x-ms-request-id: [bc8c82d6-42c1-4a9c-a4a4-60a3f1460e32]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191338Z:bc8c82d6-42c1-4a9c-a4a4-60a3f1460e32']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:14:03 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [8f422cca-a62c-40f7-9a77-ad566d504e0b]
-      x-ms-ratelimit-remaining-subscription-reads: ['14973']
-      x-ms-request-id: [8f422cca-a62c-40f7-9a77-ad566d504e0b]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191404Z:8f422cca-a62c-40f7-9a77-ad566d504e0b']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:14:30 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [4296dcc8-7e25-42be-bcf7-5025e604e4d7]
-      x-ms-ratelimit-remaining-subscription-reads: ['14964']
-      x-ms-request-id: [4296dcc8-7e25-42be-bcf7-5025e604e4d7]
-      x-ms-routing-request-id: ['WESTUS:20160216T191430Z:4296dcc8-7e25-42be-bcf7-5025e604e4d7']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:14:55 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [fe9125c0-f22e-45a9-8159-4f5aa42a50aa]
-      x-ms-ratelimit-remaining-subscription-reads: ['14963']
-      x-ms-request-id: [fe9125c0-f22e-45a9-8159-4f5aa42a50aa]
-      x-ms-routing-request-id: ['WESTUS:20160216T191455Z:fe9125c0-f22e-45a9-8159-4f5aa42a50aa']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:15:20 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [8c77d0d0-521c-4d6a-bd73-c074a38f972f]
-      x-ms-ratelimit-remaining-subscription-reads: ['14967']
-      x-ms-request-id: [8c77d0d0-521c-4d6a-bd73-c074a38f972f]
-      x-ms-routing-request-id: ['WESTUS:20160216T191521Z:8c77d0d0-521c-4d6a-bd73-c074a38f972f']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:15:47 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [49b08658-76e7-46c0-8a85-4a4b7548d7b0]
-      x-ms-ratelimit-remaining-subscription-reads: ['14971']
-      x-ms-request-id: [49b08658-76e7-46c0-8a85-4a4b7548d7b0]
-      x-ms-routing-request-id: ['WESTUS:20160216T191547Z:49b08658-76e7-46c0-8a85-4a4b7548d7b0']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:16:11 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [8bfb2614-ff54-4b64-a8d6-93eefad0b57d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14972']
-      x-ms-request-id: [8bfb2614-ff54-4b64-a8d6-93eefad0b57d]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191612Z:8bfb2614-ff54-4b64-a8d6-93eefad0b57d']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:16:37 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [0f6f45a6-cc39-497e-bda4-137ba12ab1b7]
-      x-ms-ratelimit-remaining-subscription-reads: ['14971']
-      x-ms-request-id: [0f6f45a6-cc39-497e-bda4-137ba12ab1b7]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191638Z:0f6f45a6-cc39-497e-bda4-137ba12ab1b7']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:17:03 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [6f4540a0-1149-48a1-885a-8270d425e29e]
-      x-ms-ratelimit-remaining-subscription-reads: ['14965']
-      x-ms-request-id: [6f4540a0-1149-48a1-885a-8270d425e29e]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191703Z:6f4540a0-1149-48a1-885a-8270d425e29e']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:17:28 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [ebb0ffdd-6198-4745-8870-f46b75e1d3db]
-      x-ms-ratelimit-remaining-subscription-reads: ['14973']
-      x-ms-request-id: [ebb0ffdd-6198-4745-8870-f46b75e1d3db]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191729Z:ebb0ffdd-6198-4745-8870-f46b75e1d3db']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:17:54 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [f6987bf3-2452-4fdc-a236-756239d0342d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14970']
-      x-ms-request-id: [f6987bf3-2452-4fdc-a236-756239d0342d]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191754Z:f6987bf3-2452-4fdc-a236-756239d0342d']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:18:19 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [ec579124-bdba-4a65-95b3-63d2b4a9b55f]
-      x-ms-ratelimit-remaining-subscription-reads: ['14965']
-      x-ms-request-id: [ec579124-bdba-4a65-95b3-63d2b4a9b55f]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191820Z:ec579124-bdba-4a65-95b3-63d2b4a9b55f']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:18:45 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [919ce5ea-0e95-45fe-ad97-5b3696c4c5b5]
-      x-ms-ratelimit-remaining-subscription-reads: ['14967']
-      x-ms-request-id: [919ce5ea-0e95-45fe-ad97-5b3696c4c5b5]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T191846Z:919ce5ea-0e95-45fe-ad97-5b3696c4c5b5']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:19:11 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [c4d5fae5-5fb7-4233-bf2b-98039fa88ee6]
-      x-ms-ratelimit-remaining-subscription-reads: ['14970']
-      x-ms-request-id: [c4d5fae5-5fb7-4233-bf2b-98039fa88ee6]
-      x-ms-routing-request-id: ['WESTUS:20160216T191911Z:c4d5fae5-5fb7-4233-bf2b-98039fa88ee6']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:19:37 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [19b2fbcc-3017-482a-a424-80b00a6bb8b5]
-      x-ms-ratelimit-remaining-subscription-reads: ['14962']
-      x-ms-request-id: [19b2fbcc-3017-482a-a424-80b00a6bb8b5]
-      x-ms-routing-request-id: ['WESTUS:20160216T191937Z:19b2fbcc-3017-482a-a424-80b00a6bb8b5']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aa1003d8-d4e0-11e5-bec5-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/b0ad9413-9418-4026-8dc6-f41694566523?monitor=true&api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR6u6
-        WuV1W+TNR4/SX/xRNp1W62X75nqV098fvW6z5SyrZ7//81evP/olo/SjsppmbVEt8eVV3rTr5qNf
-        8v8Az3mBS0UAAAA=
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 16 Feb 2016 19:20:02 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [771814ab-bc92-46d1-8dbd-37e06e042202]
-      x-ms-ratelimit-remaining-subscription-reads: ['14965']
-      x-ms-request-id: [771814ab-bc92-46d1-8dbd-37e06e042202]
-      x-ms-routing-request-id: ['WESTUS:20160216T192003Z:771814ab-bc92-46d1-8dbd-37e06e042202']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [479dd9dc-d4e2-11e5-87db-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
-        nuaf19V61dxt86b9/RcXi/b3b9qqzi7y358/MX9k02m1XrbN/r3Jwe7OXnZ3VVeXxSyvm7tfFNO6
-        aqrzdvxaGt/Vl471nbur66xe6IcGwEejj8pqmgFhGsAV9bVu6LNltsjp74E3qNNVXrdF3nz06Bd/
-        pDi9uV7hlddttpxl9ez3f/7qNTWd1jkDf1MwwL2d3U+3d/a2dz99s/vw0c7Bo3s7472H93b2Huz9
-        FLVe1cUiq69Pl7NVVRDKAD8pqwm9OW/bVfPobnQQY7QZT6s6H18Vy1l11YyXeXuXAJ4XJbrd+DLa
-        RF/+Ret8fePb3Cj6eptNbu6cG0Ve/yWWGM8j00MTcFk09GGxvCCCt+jm9Xo6zfNZPqPvG/ps3Xx5
-        /lJA0LfZZVaU6AuQ2+wCpMVvMmk38s5HvyT5fwAGkDEB5AIAAA==
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 16 Feb 2016 19:20:03 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [fc70bf13-6c11-4cc2-ad12-44143de48f0d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14966']
-      x-ms-request-id: [fc70bf13-6c11-4cc2-ad12-44143de48f0d]
-      x-ms-routing-request-id: ['WESTUS:20160216T192003Z:fc70bf13-6c11-4cc2-ad12-44143de48f0d']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      bnVsbA==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['4']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [47d287e8-d4e2-11e5-9701-54ee7574ca37]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/listKeys?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn20+M56+d31yRfrFy+/evWs+Pzki8+/zF4u5p//ok8uf5/1/GB2/wdfnn73uHn+01/+xKfP
-        984XL5/c/fb+Rb46ne5f/17Xr37i5f53fu/p3fNPXz08WN37RcXnp6c/ef/4s88+GqGHPeqhfFmd
-        f6f+idWz3Wbx8rgtn/3ev9f+i7NPLvbmx6uXP1UeP/lkvjP7fbIqm+Q/qJ8UP7k633nWFM++81M/
-        +L3qnyxOvvPF7/Xl6sHnr15+9cmi+KnVq+l3nn7SFujhlyT/D/t0V/XGAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 16 Feb 2016 19:20:03 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [b0f699f4-debf-4891-96e2-3949ae83dd20]
-      x-ms-ratelimit-remaining-subscription-writes: ['1195']
-      x-ms-request-id: [b0f699f4-debf-4891-96e2-3949ae83dd20]
-      x-ms-routing-request-id: ['WESTUS:20160216T192004Z:b0f699f4-debf-4891-96e2-3949ae83dd20']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJrZXlOYW1lIjogImtleTEifQ==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['19']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [48137a62-d4e2-11e5-b948-54ee7574ca37]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/regenerateKey?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn30e580T7/4yebNwe+zd//bT7/z7ie+fffZ51++PLtY/OTr6/uvZl+8OXn4nePX315PPv3B
-        4tOfevfVT9+9/93pV1/snP3eLye/V3nyE6vd+/Pf+xf95O/9/KvVVz+1+/u8OXj4ndfHn3320Qg9
-        7FEP5cvq/Dv1T6ye7TaLl8dt+ez3/r32X5x9crE3P169/Kny+Mkn853Z75NV2ST/Qf2k+MnV+c6z
-        pnj2nZ/6we9V/2Rx8p0vfq8vVw8+f/Xyq08WxU+tXk2/8/STtkAPvyT5fwADBACExgAAAA==
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 16 Feb 2016 19:20:04 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [3413e6ea-fef9-4aa5-942f-93539ff608d4]
-      x-ms-ratelimit-remaining-subscription-writes: ['1193']
-      x-ms-request-id: [3413e6ea-fef9-4aa5-942f-93539ff608d4]
-      x-ms-routing-request-id: ['WESTUS:20160216T192004Z:3413e6ea-fef9-4aa5-942f-93539ff608d4']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [4870941e-d4e2-11e5-a68a-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXP3/OHsYPfBw3x7/975zvb+p9PJ9sOH09n2+YO9yXk2
-        2ck+vTe5W+dNta6n+ed1tV41d9u8aX//xcWi/f2btqqzi/z350/MH9l0Wq2XbbN/b3Kwu7OX3V3V
-        1WUxy+vm7hfFtK6a6rwdv5bGd/WlY33n7uo6qxf6oQHw0eijsppmQJgGcEV9rRv6bJktaFwfDbxB
-        na7yui3y5qNHv/gjxenN9QqvvG6z5SyrZ7//81evqem0zhn4m4IB7u3sfrq9s7e9++mb3YePdg4e
-        3dsZ7z28t7P3YO+nqPWqLhZZfX26nK2qglAG+ElZTejNeduumkd3o4MYo814WtX5+KpYzqqrZrzM
-        27sE8Lwo0e3Gl9Em+vIvWueY3c1vc6Po6202ublzbhR5/ZdYYjyPTA9NwGXR0IfF8oII3qKb1+vp
-        NM9n+Yy+b+izdfPl+UsBQd9ml1lRoi9AbrMLkBa/yaTdyDsf/ZLv/5Lk/wH3XNlQ8AIAAA==
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 16 Feb 2016 19:20:05 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [cc700430-d63e-4bb1-b9a2-5944545e7823]
-      x-ms-ratelimit-remaining-subscription-reads: ['14964']
-      x-ms-request-id: [cc700430-d63e-4bb1-b9a2-5944545e7823]
-      x-ms-routing-request-id: ['WESTUS:20160216T192005Z:cc700430-d63e-4bb1-b9a2-5944545e7823']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      bnVsbA==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['4']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 storagemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [48b30776-d4e2-11e5-9b15-54ee7574ca37]
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 16 Feb 2016 19:20:06 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [f8f5085b-264e-46ad-9ed6-60eddf393b32]
-      x-ms-ratelimit-remaining-subscription-writes: ['1194']
-      x-ms-request-id: [f8f5085b-264e-46ad-9ed6-60eddf393b32]
-      x-ms-routing-request-id: ['WESTUS:20160216T192006Z:f8f5085b-264e-46ad-9ed6-60eddf393b32']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAibmFtZSI6ICJ0ZXN0X21nbXRfc3RvcmFnZV90ZXN0X3N0
-      b3JhZ2VfYWNjb3VudHM0M2I4MTAyYSJ9
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['81']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 resourcemanagementclient/2015-11-01
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [9c61de86-f087-11e5-88a2-54ee7574ca37]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts43b8102a?api-version=2015-11-01
-  response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a","name":"test_mgmt_storage_test_storage_accounts43b8102a","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['247']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 22 Mar 2016 23:41:33 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [308ebfeb-70ff-4155-9e16-6a1f5f5a18f9]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [308ebfeb-70ff-4155-9e16-6a1f5f5a18f9]
-      x-ms-routing-request-id: ['EASTUS:20160322T234133Z:308ebfeb-70ff-4155-9e16-6a1f5f5a18f9']
-    status: {code: 201, message: Created}
-- request:
-    body: !!binary |
-      eyJ0eXBlIjogIk1pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cyIsICJuYW1lIjogInB5
-      YXJtc3RvcmFnZTQzYjgxMDJhIn0=
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['77']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [9d8bd9e8-f087-11e5-8e0a-54ee7574ca37]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
-        kR9fZkWZTcr8o0dtvc5/SfL/AAeYVbAXAAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 22 Mar 2016 23:41:35 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [37e566be-6892-4853-a80d-8212688d1b28]
-      x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [37e566be-6892-4853-a80d-8212688d1b28]
-      x-ms-routing-request-id: ['EASTUS:20160322T234136Z:37e566be-6892-4853-a80d-8212688d1b28']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAicHJvcGVydGllcyI6IHsiYWNjb3VudFR5cGUiOiAiU3Rh
-      bmRhcmRfTFJTIn19
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['69']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [9e1241e4-f087-11e5-a51b-54ee7574ca37]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 22 Mar 2016 23:41:38 GMT']
-      Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/842d5dcd-dbb8-4180-95ce-e220cae89a9b?monitor=true&api-version=2015-06-15']
-      Pragma: [no-cache]
-      Retry-After: ['0']
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [e9beb93f-f8f0-4fe2-a0fe-a889175009bf]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [e9beb93f-f8f0-4fe2-a0fe-a889175009bf]
-      x-ms-routing-request-id: ['EASTUS:20160322T234139Z:e9beb93f-f8f0-4fe2-a0fe-a889175009bf']
-    status: {code: 202, message: Accepted}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [9e1241e4-f087-11e5-a51b-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/842d5dcd-dbb8-4180-95ce-e220cae89a9b?monitor=true&api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2U1
-        zdqiWn706KOrvGnXzUejj1Z1tcrrtsibjx794o+y6bRaL9s316ucGr1us+Usq2e///NXrz/6Jb/k
-        /wFUNfWHQQAAAA==
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 22 Mar 2016 23:42:04 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [e8ddf3b4-4ad0-4521-8d9d-d88ac20b7104]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [e8ddf3b4-4ad0-4521-8d9d-d88ac20b7104]
-      x-ms-routing-request-id: ['WESTUS:20160322T234204Z:e8ddf3b4-4ad0-4521-8d9d-d88ac20b7104']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [aed9f99c-f087-11e5-94df-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
-        nuaf19V61dxt86b9/RcXi/b3b9qqzi7y358/MX9k02m1XrbN/r3Jwe7OXnZ3VVeXxSyvm7tfFNO6
-        aqrzdvxaGt/Vl471nbur66xe6IcGwEejj8pqmgFhGsAV9bVu6LNltsjp74E3qNNVXrdF3nz06Bd/
-        pDi9uV7hlddttpxl9ez3f/7qNTWd1jkDf1MwwL2d3U+3d+5t7+292bv3aH/30b2D8f2D/Qc7O/s/
-        Ra1XdbHI6uvT5WxVFYQywE/KakJvztt21Ty6Gx3EGG3G06rOx1fFclZdNeNl3t4lgOdFiW43vow2
-        0Zd/0Tpf3/g2N4q+3maTmzvnRpHXf4klxvPI9NAEXBYNfVgsL4jgLbp5vZ5O83yWz+j7hj5bN1+e
-        vxQQ9G12mRUl+gLkNrsAafGbTNqNvPPRL0n+H3iq3dLkAgAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 22 Mar 2016 23:42:05 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [1b56f9fd-a2e7-4562-816d-1aaa47813a27]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [1b56f9fd-a2e7-4562-816d-1aaa47813a27]
-      x-ms-routing-request-id: ['WESTUS:20160322T234205Z:1b56f9fd-a2e7-4562-816d-1aaa47813a27']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      bnVsbA==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['4']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [af414fc6-f087-11e5-b2c7-54ee7574ca37]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/listKeys?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn1UP5/+xMuz+fq7d39wcvfeF3ufPH393frp9N3iB/v358e/z5ff/s4var+dvfvq/ovptxfv
-        Vk8+Pzv44ttPqh98eXV+cTFff3r1xerVdfuTP/ndr07fvjz74ve6++Zs8vz4s88+GqGHPerhO5Pi
-        q/bF8qevz9avJj/5i5583pzun5+2X5Xz5iJ/evoT0/bgxdPLF6vLyf5+VT18OL3cK54WP3U1u/sT
-        335+vtipHt59cVX83qcv2190/4uTanb/ky9eX15QD78k+X8AklA0jsYAAAA=
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 22 Mar 2016 23:42:06 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [c768d012-dc98-4085-9075-8a6956a136d4]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [c768d012-dc98-4085-9075-8a6956a136d4]
-      x-ms-routing-request-id: ['WESTUS:20160322T234206Z:c768d012-dc98-4085-9075-8a6956a136d4']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJrZXlOYW1lIjogImtleTEifQ==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['19']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [af9d8ad8-f087-11e5-9917-54ee7574ca37]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/regenerateKey?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn307OHvc3x39tXBwU+cfvnwJ7/IZvOHVz/90w8nxew7+eXZi9kvmvyi3+v87uzT6u3z75bt
-        /u+zP5n94CfWbx8+WF79XtnvdX39yU/P1p9XP/mqXf/U+eL3OZ6/zpa/9/InPvvsoxF62KMevjMp
-        vmpfLH/6+mz9avKTv+jJ583p/vlp+1U5by7yp6c/MW0PXjy9fLG6nOzvV9XDh9PLveJp8VNXs7s/
-        8e3n54ud6uHdF1fF7336sv1F9784qWb3P/ni9eUF9fBLkv8HIJy8WcYAAAA=
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 22 Mar 2016 23:42:06 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [44f8cca2-2357-429a-b3fc-dcab0671628d]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [44f8cca2-2357-429a-b3fc-dcab0671628d]
-      x-ms-routing-request-id: ['WESTUS:20160322T234206Z:44f8cca2-2357-429a-b3fc-dcab0671628d']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b0113f1c-f087-11e5-8443-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXP3/OHsYPfBw3x7/975zvb+p9PJ9sOH09n2+YO9yXk2
-        2ck+vTe5W+dNta6n+ed1tV41d9u8aX//xcWi/f2btqqzi/z350/MH9l0Wq2XbbN/b3Kwu7OX3V3V
-        1WUxy+vm7hfFtK6a6rwdv5bGd/WlY33n7uo6qxf6oQHw0eijsppmQJgGcEV9rRv6bJktaFwfDbxB
-        na7yui3y5qNHv/gjxenN9QqvvG6z5SyrZ7//81evqem0zhn4m4IB7u3sfrq9c297b+/N3r1H+7uP
-        7h2M7x/sP9jZ2f8par2qi0VWX58uZ6uqIJQBflJWE3pz3rar5tHd6CDGaDOeVnU+viqWs+qqGS/z
-        9i4BPC9KdLvxZbSJvvyL1jlmd/Pb3Cj6eptNbu6cG0Ve/yWWGM8j00MTcFk09GGxvCCCt+jm9Xo6
-        zfNZPqPvG/ps3Xx5/lJA0LfZZVaU6AuQ2+wCpMVvMmk38s5Hv+T7vyT5fwDRAmkn8AIAAA==
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 22 Mar 2016 23:42:06 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [ac94e149-f0e1-46f3-b941-ada6f5037469]
-      x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [ac94e149-f0e1-46f3-b941-ada6f5037469]
-      x-ms-routing-request-id: ['WESTUS:20160322T234207Z:ac94e149-f0e1-46f3-b941-ada6f5037469']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      bnVsbA==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['4']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.0 msrest_azure/0.1.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b05c8a8a-f087-11e5-86f8-54ee7574ca37]
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Tue, 22 Mar 2016 23:42:08 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [dd383a2c-7add-4423-912e-a2279b2d92e3]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [dd383a2c-7add-4423-912e-a2279b2d92e3]
-      x-ms-routing-request-id: ['WESTUS:20160322T234208Z:dd383a2c-7add-4423-912e-a2279b2d92e3']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAibmFtZSI6ICJ0ZXN0X21nbXRfc3RvcmFnZV90ZXN0X3N0
-      b3JhZ2VfYWNjb3VudHM0M2I4MTAyYSJ9
+    body: '{"location": "westus"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['81']
+      Content-Length: ['22']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 resourcemanagementclient/2016-02-01
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 resourcemanagementclient/2016-02-01 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e7f1e48a-f2bf-11e5-bad3-54ee7574ca37]
+      x-ms-client-request-id: [eb640958-3264-11e6-9865-ecb1d756380e]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_storage_test_storage_accounts43b8102a?api-version=2016-02-01
   response:
@@ -2402,31 +19,29 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['247']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 25 Mar 2016 19:29:35 GMT']
+      Date: ['Tue, 14 Jun 2016 19:19:31 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [e40ea66e-2512-47e4-a674-a5d47b232e85]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [e40ea66e-2512-47e4-a674-a5d47b232e85]
-      x-ms-routing-request-id: ['EASTUS:20160325T192936Z:e40ea66e-2512-47e4-a674-a5d47b232e85']
+      x-ms-correlation-request-id: [725921ce-1d6d-4157-98b1-1818564ef49c]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [725921ce-1d6d-4157-98b1-1818564ef49c]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T191932Z:725921ce-1d6d-4157-98b1-1818564ef49c']
     status: {code: 201, message: Created}
 - request:
-    body: !!binary |
-      eyJuYW1lIjogInB5YXJtc3RvcmFnZTQzYjgxMDJhIiwgInR5cGUiOiAiTWljcm9zb2Z0LlN0b3Jh
-      Z2Uvc3RvcmFnZUFjY291bnRzIn0=
+    body: '{"name": "pyarmstorage43b8102a", "type": "Microsoft.Storage/storageAccounts"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['77']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 storagemanagementclient/2016-01-01 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e8df9230-f2bf-11e5-9d3c-54ee7574ca37]
+      x-ms-client-request-id: [ec2303d2-3264-11e6-9aae-ecb1d756380e]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/checkNameAvailability?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/checkNameAvailability?api-version=2016-01-01
   response:
     body:
       string: !!binary |
@@ -2437,50 +52,48 @@ interactions:
       Cache-Control: [no-cache]
       Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Fri, 25 Mar 2016 19:29:36 GMT']
+      Date: ['Tue, 14 Jun 2016 19:19:31 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [49ae6fd4-7f78-4bc6-8fdc-48e668e37166]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [49ae6fd4-7f78-4bc6-8fdc-48e668e37166]
-      x-ms-routing-request-id: ['EASTUS:20160325T192937Z:49ae6fd4-7f78-4bc6-8fdc-48e668e37166']
+      x-ms-correlation-request-id: [052e2379-39ac-491d-8360-244ce06ba642]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [052e2379-39ac-491d-8360-244ce06ba642]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T191932Z:052e2379-39ac-491d-8360-244ce06ba642']
     status: {code: 200, message: OK}
 - request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAicHJvcGVydGllcyI6IHsiYWNjb3VudFR5cGUiOiAiU3Rh
-      bmRhcmRfTFJTIn19
+    body: '{"location": "westus", "sku": {"name": "Standard_LRS"}, "kind": "Storage"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['69']
+      Content-Length: ['74']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 storagemanagementclient/2016-01-01 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e970efa8-f2bf-11e5-9d6a-54ee7574ca37]
+      x-ms-client-request-id: [ec7251c2-3264-11e6-9a71-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2016-01-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Fri, 25 Mar 2016 19:29:36 GMT']
+      Date: ['Tue, 14 Jun 2016 19:19:33 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/2bae6040-f09a-461d-a3c8-c2be84d3febb?monitor=true&api-version=2015-06-15']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/4262c46a-9079-4e60-a449-a2d23a6421f9?monitor=true&api-version=2016-01-01']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [accf5dc9-76d9-4a62-84d9-65b680e0ed56]
+      x-ms-correlation-request-id: [4138231a-3bba-4c5e-9bce-429233efb9b7]
       x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [accf5dc9-76d9-4a62-84d9-65b680e0ed56]
-      x-ms-routing-request-id: ['EASTUS:20160325T192936Z:accf5dc9-76d9-4a62-84d9-65b680e0ed56']
+      x-ms-request-id: [4138231a-3bba-4c5e-9bce-429233efb9b7]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T191934Z:4138231a-3bba-4c5e-9bce-429233efb9b7']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -2489,48 +102,12 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 storagemanagementclient/2016-01-01 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e970efa8-f2bf-11e5-9d6a-54ee7574ca37]
+      x-ms-client-request-id: [ec7251c2-3264-11e6-9a71-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/2bae6040-f09a-461d-a3c8-c2be84d3febb?monitor=true&api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2U1
-        zdqiWn706KOrvGnXzUejj1Z1tcrrtsibjx794o+y6bRaL9s316ucGr1us+Usq2e///NXrz/6Jb/k
-        /wFUNfWHQQAAAA==
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 25 Mar 2016 19:30:04 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [76ccc416-8df8-465e-9b01-35e0e94fbf8b]
-      x-ms-ratelimit-remaining-subscription-reads: ['14993']
-      x-ms-request-id: [76ccc416-8df8-465e-9b01-35e0e94fbf8b]
-      x-ms-routing-request-id: ['WESTUS:20160325T193005Z:76ccc416-8df8-465e-9b01-35e0e94fbf8b']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [fa1c770a-f2bf-11e5-bb8b-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/4262c46a-9079-4e60-a449-a2d23a6421f9?monitor=true&api-version=2016-01-01
   response:
     body:
       string: !!binary |
@@ -2538,26 +115,67 @@ interactions:
         VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
         o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
         nuaf19V61dxt86b9/RcXi/b3b9qqzi7y358/MX9k02m1XrbN/r3Jwe7OXnZ3VVeXxSyvm7tfFNO6
-        aqrzdvxaGt/Vl471nbur66xe6IcGwEejj8pqmgFhGsAV9bVu6LNltsjp74E3qNNVXrdF3nz06Bd/
-        pDi9uV7hlddttpxl9ez3f/7qNTWd1jkDf1MwwL2d3U+3d+5t791/s/vw0d7DR/cOxge7+58+uP/p
-        T1HrVV0ssvr6dDlbVQWhDPCTsprQm/O2XTWP7kYHMUab8bSq8/FVsZxVV814mbd3CeB5UaLbjS+j
-        TfTlX7TO1ze+zY2ir7fZ5ObOuVHk9V9iifE8Mj00AZdFQx8WywsieItuXq+n0zyf5TP6vqHP1s2X
-        5y8FBH2bXWZFib4Auc0uQFr8JpN2I+989EuS/wdQ3OQc5AIAAA==
+        aqrzdvxaGt/Vl471nbur66xe6IcGwEejj94WSyCvb9EHZTXNMAL68Io6Xzf02TJb5PT3AAjCYpXX
+        bZE3Hz36xR9N65zff1PwO3s7u59u73y6vbv/ZvfhI/rfvXvj/b1PH9y/v/NT/G6xyOrr0+VsVRWE
+        JiBMympCb87bdtU8uhtFfIw242lV5+MrGkB11YyXeXuXAJ4XJbrd+DLaRF/+Ret8fePb3Cj6eptN
+        bu6cG0Ve/yWWGM8jM0A0viwa+rBYXrxusxbdvF5Pp3k+y2f0fUOfrZsvz18KCPo2u8yKEn0BcvN2
+        DcrqPBKA5SyrZ7//81ev6V2audr7FO3b7AJTgd+uV3jlRv766Jck/w+ojqn5CAMAAA==
     headers:
       Cache-Control: [no-cache]
       Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Fri, 25 Mar 2016 19:30:05 GMT']
+      Date: ['Tue, 14 Jun 2016 19:19:58 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [7166f269-a1c4-4f1b-b899-3b08295167be]
-      x-ms-ratelimit-remaining-subscription-reads: ['14994']
-      x-ms-request-id: [7166f269-a1c4-4f1b-b899-3b08295167be]
-      x-ms-routing-request-id: ['WESTUS:20160325T193006Z:7166f269-a1c4-4f1b-b899-3b08295167be']
+      x-ms-correlation-request-id: [13287473-1568-4002-9177-bdebe9d2d913]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [13287473-1568-4002-9177-bdebe9d2d913]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T191959Z:13287473-1568-4002-9177-bdebe9d2d913']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 storagemanagementclient/2016-01-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fc8f52dc-3264-11e6-9c9d-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2016-01-01
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
+        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
+        nuaf19V61dxt86b9/RcXi/b3b9qqzi7y358/MX9k02m1XrbN/r3Jwe7OXnZ3VVeXxSyvm7tfFNO6
+        aqrzdvxaGt/Vl471nbur66xe6IcGwEejj94WSyCvb9EHZTXNMAL68Io6Xzf02TJb5PT3AAjCYpXX
+        bZE3Hz36xR9N65zff1PwO3s7u59u73y6vbv/ZvfhI/rfvXvj/b1PH9y/v/NT/G6xyOrr0+VsVRWE
+        JiBMympCb87bdtU8uhtFfIw242lV5+MrGkB11YyXeXuXAJ4XJbrd+DLaRF/+Ret8fePb3Cj6eptN
+        bu6cG0Ve/yWWGM8jM0A0viwa+rBYXrxusxbdvF5Pp3k+y2f0fUOfrZsvz18KCPo2u8yKEn0BcvN2
+        DcrqPBKA5SyrZ7//81ev6V2audr7FO3b7AJTgd+uV3jlRv766Jck/w+ojqn5CAMAAA==
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json]
+      Date: ['Tue, 14 Jun 2016 19:19:59 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [793e5ecc-19b4-459a-a014-a4d4c742ca83]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [793e5ecc-19b4-459a-a014-a4d4c742ca83]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T191959Z:793e5ecc-19b4-459a-a014-a4d4c742ca83']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -2567,76 +185,77 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 storagemanagementclient/2016-01-01 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [faa7f774-f2bf-11e5-b005-54ee7574ca37]
+      x-ms-client-request-id: [fcc02236-3264-11e6-8943-ecb1d756380e]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/listKeys?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/listKeys?api-version=2016-01-01
   response:
     body:
       string: !!binary |
         H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
         VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn3009W73/vZydmT37t+Xh+8uPfs/ldfrabL56/bN9++W/7gyXdfP3m6u393r31xtvMTT05+
-        n1/03cXLn/pFPzE5Oyi+uvx91pdnV/XLZ7ufPntdf1U9eHgwX3z7J+6ef/ITn3320Qg97FEP859+
-        cNq2P33vZPck+70ujx/+Pjvffta8W784OZj/5Ju9u8XLyfnT3+vbP/VTD4rf5yfvXT376jvTLz+9
-        W2XfPvvO8s2bnziYf/vFdz/9ffb2z17+op2LL/fu/6J3q89/n+9cUQ+/JPl/ADyeZNLGAAAA
+        6+ajR9/jX15ki/yjR/ht96PRR6u8XhRNU1RLavDRs3VZ0oeXWblGmy+yndXB3pvp7/1TBweznS8+
+        f/rtvZ0n+b3jL7/Kzmc/ePX2Ols/WWefN99e/8Tl29ny5c538u9e3/vkO7/P7/X0q+Plk9/rq99n
+        /6efrt7MF1+++3L6/PmD47r89vHxZ5999EtGHVT2qNeNqNz96eI0fzG7e3XwYPLVFz81eXJw8VPr
+        nbPv/MT8k586rX/y3aT46vWLy0/b8nqRFd9+8YPTq58++H3eHF9dXTf7X159cnL/WVYuf/Ltuy+r
+        5uXL19fPz0+/nNy/ACrf/yXJ/wNnpesxIQEAAA==
     headers:
       Cache-Control: [no-cache]
       Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Fri, 25 Mar 2016 19:30:06 GMT']
+      Date: ['Tue, 14 Jun 2016 19:19:59 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [b884f3e1-abea-4264-a427-294c1ed247ce]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
-      x-ms-request-id: [b884f3e1-abea-4264-a427-294c1ed247ce]
-      x-ms-routing-request-id: ['WESTUS:20160325T193006Z:b884f3e1-abea-4264-a427-294c1ed247ce']
+      x-ms-correlation-request-id: [b6654f9c-69bc-4ba7-9eb2-74bb7b3d9055]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [b6654f9c-69bc-4ba7-9eb2-74bb7b3d9055]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T192000Z:b6654f9c-69bc-4ba7-9eb2-74bb7b3d9055']
     status: {code: 200, message: OK}
 - request:
-    body: !!binary |
-      eyJrZXlOYW1lIjogImtleTEifQ==
+    body: '{"keyName": "key1"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['19']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 storagemanagementclient/2016-01-01 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fae69b74-f2bf-11e5-bab1-54ee7574ca37]
+      x-ms-client-request-id: [fd02dfee-3264-11e6-ae82-ecb1d756380e]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/regenerateKey?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a/regenerateKey?api-version=2016-01-01
   response:
     body:
       string: !!binary |
         H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
         VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR2/z
-        692PHn309Aefzl79Xr/Xd3769/69n0+enD551Zx8+3nz6eniO19efT5fXf7UT57N3z2tJtdnP/Xt
-        n9j/ycXy9/7JyYtf9LLKDn6vh/d+4qvnv/e0Kn7i2Zv8yfPdX/RJdlZNlw/vPj3+7LOPRuhhj3qY
-        //SD07b96XsnuyfZ73V5/PD32fn2s+bd+sXJwfwn3+zdLV5Ozp/+Xt/+qZ96UPw+P3nv6tlX35l+
-        +endKvv22XeWb978xMH82y++++nvs7d/9vIX7Vx8uXf/F71bff77fOeKevglyf8Dw+DGrMYAAAA=
+        6+ajR9/jX15ki/yjR/ht96PRR6u8XhRNU1RLavDRs3VZ0oeXWblGm2//3ju/zy/69Cd/8FNX+5e/
+        z2L2nc+fTe7tv/npy58+efAkW7+++/mrX7T+6d/n3u8z/e7uy3erV89mP/Xs4MXv9YOnbz/9we6L
+        t1+eP386+fZ3furzN79P9uTh9Pdql6ufKObN1WefffRLRh1U9qjXjajc/eniNH8xu3t18GDy1Rc/
+        NXlycPFT652z7/zE/JOfOq1/8t2k+Or1i8tP2/J6kRXffvGD06ufPvh93hxfXV03+19efXJy/1lW
+        Ln/y7bsvq+bly9fXz89Pv5zcvwAq3/8lyf8DUEk85SEBAAA=
     headers:
       Cache-Control: [no-cache]
       Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Fri, 25 Mar 2016 19:30:06 GMT']
+      Date: ['Tue, 14 Jun 2016 19:20:00 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [ba6d3971-14df-41c0-b44a-6657484a226c]
-      x-ms-ratelimit-remaining-subscription-writes: ['1193']
-      x-ms-request-id: [ba6d3971-14df-41c0-b44a-6657484a226c]
-      x-ms-routing-request-id: ['WESTUS:20160325T193007Z:ba6d3971-14df-41c0-b44a-6657484a226c']
+      x-ms-correlation-request-id: [ee3f1dd4-c683-4227-b9a0-f28cb05c08c6]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [ee3f1dd4-c683-4227-b9a0-f28cb05c08c6]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T192000Z:ee3f1dd4-c683-4227-b9a0-f28cb05c08c6']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -2645,12 +264,12 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 storagemanagementclient/2016-01-01 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fb69a018-f2bf-11e5-b485-54ee7574ca37]
+      x-ms-client-request-id: [fd73a6da-3264-11e6-8d9a-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts?api-version=2016-01-01
   response:
     body:
       string: !!binary |
@@ -2658,26 +277,77 @@ interactions:
         VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
         uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXP3/OHsYPfBw3x7/975zvb+p9PJ9sOH09n2+YO9yXk2
         2ck+vTe5W+dNta6n+ed1tV41d9u8aX//xcWi/f2btqqzi/z350/MH9l0Wq2XbbN/b3Kwu7OX3V3V
-        1WUxy+vm7hfFtK6a6rwdv5bGd/WlY33n7uo6qxf6oQHw0eijsppmQJgGcEV9rRv6bJktaFwfDbxB
-        na7yui3y5qNHv/gjxenN9QqvvG6z5SyrZ7//81evqem0zhn4m4IB7u3sfrq9c2977/6b3YeP9h4+
-        uncwPtjd//TB/U9/ilqv6mKR1deny9mqKghlgJ+U1YTenLftqnl0NzqIMdqMp1Wdj6+K5ay6asbL
-        vL1LAM+LEt1ufBltoi//onWO2d38NjeKvt5mk5s750aR13+JJcbzyPTQBFwWDX1YLC+I4C26eb2e
-        TvN8ls/o+4Y+Wzdfnr8UEPRtdpkVJfoC5Da7AGnxm0zajbzz0S/5/i9J/h9LtlLD8AIAAA==
+        1WUxy+vm7hfFtK6a6rwdv5bGd/WlY33n7uo6qxf6oQHw0eijt8USyOtb9EFZTTOMgD68os7XDX22
+        zBY00I8GQBAWq7xui7z56NEv/mha5/z+m4Lf2dvZ/XR759Pt3f03uw8f0f/u3Rvv73364P79nZ/i
+        d4tFVl+fLmerqiA0AWFSVhN6c962q+bR3SjiY7QZT6s6H1/RAKqrZrzM27sE8Lwo0e3Gl9Em+vIv
+        WueY0c1vc6Po6202ublzbhR5/ZdYYjyPzADR+LJo6MNiefG6zVp083o9neb5LJ/R9w19tm6+PH8p
+        IOjb7DIrSvQFyM3bNSir80gAlrOsnv3+z1+9pndp5mrvU7RvswtMBX67XuGVG/nro1/y/V+S/D96
+        EaGpFAMAAA==
     headers:
       Cache-Control: [no-cache]
       Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Fri, 25 Mar 2016 19:30:08 GMT']
+      Date: ['Tue, 14 Jun 2016 19:20:00 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [69542ebc-1e16-4b9a-ab9e-91c41919d9d7]
-      x-ms-ratelimit-remaining-subscription-reads: ['14993']
-      x-ms-request-id: [69542ebc-1e16-4b9a-ab9e-91c41919d9d7]
-      x-ms-routing-request-id: ['WESTUS:20160325T193008Z:69542ebc-1e16-4b9a-ab9e-91c41919d9d7']
+      x-ms-correlation-request-id: [3f72c43a-c221-48c2-93ba-12e22fcaa068]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [3f72c43a-c221-48c2-93ba-12e22fcaa068]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T192001Z:3f72c43a-c221-48c2-93ba-12e22fcaa068']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 storagemanagementclient/2016-01-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fda35ef4-3264-11e6-ab3a-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/storageAccounts?api-version=2016-01-01
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
+        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXP3/OHsYPfBw3x7/975zvb+p9PJ9sOH09n2+YO9yXk2
+        2ck+vTe5W+dNta6n+ed1tV41d2fVsmpneZm3+QU+ubuqq8tiltfN3S+KaV011Xk7ft1WdXaR323k
+        5/F0Wq2Xbf/lTz+9t//R6KO3xRLY6Vv0QVlNM6BIH17lTbtu6LNltqCRfDQAgrBY5XVb5M1Hj37x
+        R9M65/ffFPzO3s7up9s797Z377/ZPXh078Gj3QfjT+8d3L9/cO+n+N1ikdXXp8vZqioITUCYlNWE
+        3py37ap5dDeK+BhtxtOqzsdXNIDqqhkv8/YuATwvSnS78WW0ib78i9Y5pmzz29wo+nqbTW7unBtF
+        Xv8llhjPIzNANL4sGvqwWF68brMW3bxeT6d5Pstn9H1Dn62bL89fCgj6NrvMihJ9AXLzdg3K6jwS
+        gOUsq2e///NXr+ldmrna+xTt2+wCU4Hfrld45Ub+ore+QUbPz7N12W5rH9tChvdi9/n6Yk1v1UVW
+        4u1dGuf7sHrkdep9I5vf3955ADbf23l0/9NHuzvjh/s7uwcPHt6Szbs93prFey/i++iLzLmb3uQG
+        0Vdb5qQNr3KDyKvEQjr4H7H1N8/W92icH8DWeJ16v4mtD7Z3d97s7T66v/vo3r3xw4eku3d2vx5b
+        3/u6bH3va7P1va/P1vd+xNa3YOvsB+s6315dt/NquT3LV2V1vciXxObZYlXm78Xei2mblffP68vz
+        B9mn2Q8EAg36fXh8CAbhsZHRyU2h/z18s3fvEf3v/v54/+Huzr37+7dk9Gi3t+b2+NtoFH2bOfrG
+        17lV9P2WWe2m97lV5H1iNCXIj5i/pWH//ouLRfv7ay+/P39i/si0z/17k4Pdnb3svaRhdZ3VC/3Q
+        ACAivI8wDIAgLG6Whd39N7sPH9H/SOnv73364P79nVvKQqzXW4tC9GW0ib7MPH7T29wo+nrLbHfD
+        69wo8jrxnBLjR3IwyxfVw8n96YPpdLKb72b75/cPJvv7D6cHD+5NJtMH9/YmB+/F/M3O7oNZNnlw
+        f3+293D/YPLpwd7O5GF+QKN/HwHYAIawuUkI7m3vkUO/+2hnn5yf8cGD/Xv39m/r0A/1fGtBGASA
+        dlEAzOe3gcANoyBa5r9bgOCGERDEgEqc/48Kxfd/SfL/AHF77k29EQAA
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Type: [application/json]
+      Date: ['Tue, 14 Jun 2016 19:20:01 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      x-ms-correlation-request-id: [113a8e13-11d7-4430-ae77-ed6cd5651a45]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [113a8e13-11d7-4430-ae77-ed6cd5651a45]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T192001Z:113a8e13-11d7-4430-ae77-ed6cd5651a45']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -2687,25 +357,25 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 storagemanagementclient/2015-06-15
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 storagemanagementclient/2016-01-01 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fbdc9426-f2bf-11e5-a58b-54ee7574ca37]
+      x-ms-client-request-id: [fdf33194-3264-11e6-82cd-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2015-06-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_storage_test_storage_accounts43b8102a/providers/Microsoft.Storage/storageAccounts/pyarmstorage43b8102a?api-version=2016-01-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Fri, 25 Mar 2016 19:30:08 GMT']
+      Date: ['Tue, 14 Jun 2016 19:20:02 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [2b3ba25a-e5a1-4c54-aa88-31e2749a300f]
-      x-ms-ratelimit-remaining-subscription-writes: ['1191']
-      x-ms-request-id: [2b3ba25a-e5a1-4c54-aa88-31e2749a300f]
-      x-ms-routing-request-id: ['WESTUS:20160325T193009Z:2b3ba25a-e5a1-4c54-aa88-31e2749a300f']
+      x-ms-correlation-request-id: [9fe34e86-60ec-4d64-ae23-28f9c370b460]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [9fe34e86-60ec-4d64-ae23-28f9c370b460]
+      x-ms-routing-request-id: ['CENTRALUS:20160614T192003Z:9fe34e86-60ec-4d64-ae23-28f9c370b460']
     status: {code: 200, message: OK}
 version: 1

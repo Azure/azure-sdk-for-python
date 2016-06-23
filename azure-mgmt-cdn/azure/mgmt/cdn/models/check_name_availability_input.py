@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CheckNameAvailabilityInput(Model):
-    """
-    Input of CheckNameAvailability API.
+    """Input of CheckNameAvailability API.
 
     :param name: The resource name to validate.
     :type name: str

@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class JobErrorAction(Model):
-    """JobErrorAction
+    """JobErrorAction.
 
     :param type: Gets or sets the job error action type. Possible values
      include: 'Http', 'Https', 'StorageQueue', 'ServiceBusQueue',

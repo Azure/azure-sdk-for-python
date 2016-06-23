@@ -35,7 +35,7 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
+    :param subscription_id: Get subscription credentials which uniquely
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
@@ -96,7 +96,7 @@ class DataLakeAnalyticsAccountManagementClient(object):
     :param credentials: Gets Azure subscription credentials.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
+    :param subscription_id: Get subscription credentials which uniquely
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str

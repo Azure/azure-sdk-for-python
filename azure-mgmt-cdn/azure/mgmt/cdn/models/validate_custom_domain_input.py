@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ValidateCustomDomainInput(Model):
-    """
-    Input of the custom domain to be validated.
+    """Input of the custom domain to be validated.
 
     :param host_name: The host name of the custom domain. Must be a domain
      name.

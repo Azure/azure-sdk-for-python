@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class SiteInstance(Resource):
-    """
-    Instance of a web app
+    """Instance of a web app.
 
     :param id: Resource Id
     :type id: str

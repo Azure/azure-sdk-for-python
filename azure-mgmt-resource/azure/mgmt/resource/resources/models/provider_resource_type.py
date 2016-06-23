@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ProviderResourceType(Model):
-    """
-    Resource type managed by the resource provider.
+    """Resource type managed by the resource provider.
 
     :param resource_type: Gets or sets the resource type.
     :type resource_type: str

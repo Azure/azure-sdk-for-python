@@ -23,19 +23,18 @@ from msrest.serialization import Model
 
 
 class BlobContainer(Model):
-    """
-    Azure Storage blob container information.
+    """Azure Storage blob container information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Gets or sets the name of the blob container.
+    :ivar name: the name of the blob container.
     :vartype name: str
-    :ivar id: Gets or sets the unique identifier of the blob container.
+    :ivar id: the unique identifier of the blob container.
     :vartype id: str
-    :ivar type: Gets or sets the type of the blob container.
+    :ivar type: the type of the blob container.
     :vartype type: str
-    :ivar properties: Gets or sets the properties of the blob container.
+    :ivar properties: the properties of the blob container.
     :vartype properties: :class:`BlobContainerProperties
      <azure.mgmt.datalake.analytics.account.models.BlobContainerProperties>`
     """ 

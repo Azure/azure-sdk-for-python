@@ -23,13 +23,12 @@ from msrest.serialization import Model
 
 
 class StorageAccountProperties(Model):
-    """
-    Azure Storage account properties information.
+    """Azure Storage account properties information.
 
-    :param access_key: Gets or sets the access key associated with this Azure
-     Storage account that will be used to connect to it.
+    :param access_key: the access key associated with this Azure Storage
+     account that will be used to connect to it.
     :type access_key: str
-    :param suffix: Gets or sets the optional suffix for the Data Lake account.
+    :param suffix: the optional suffix for the Data Lake account.
     :type suffix: str
     """ 
 

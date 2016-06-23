@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobProperties(Model):
-    """
-    The common Data Lake Analytics job properties.
+    """The common Data Lake Analytics job properties.
 
     :param runtime_version: Gets or sets the runtime version of the U-SQL
      engine to use

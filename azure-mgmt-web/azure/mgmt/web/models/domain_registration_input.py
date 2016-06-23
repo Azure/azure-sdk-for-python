@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class DomainRegistrationInput(Resource):
-    """
-    Domain registration input for validation Api
+    """Domain registration input for validation Api.
 
     :param id: Resource Id
     :type id: str

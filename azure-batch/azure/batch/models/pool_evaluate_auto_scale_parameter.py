@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolEvaluateAutoScaleParameter(Model):
-    """
-    Parameters for a CloudJobOperations.EvaluateAutoScale request.
+    """Parameters for a CloudJobOperations.EvaluateAutoScale request.
 
     :param auto_scale_formula: A formula for the desired number of compute
      nodes in the pool.
