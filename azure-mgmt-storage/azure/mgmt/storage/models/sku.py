@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """
-    The SKU of the storage account.
+    """The SKU of the storage account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

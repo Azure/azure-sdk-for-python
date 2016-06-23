@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Usage(Model):
-    """
-    Describes Storage Resource Usage.
+    """Describes Storage Resource Usage.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class StorageAccountUpdateParameters(Model):
-    """
-    The parameters to provide for the account.
+    """The parameters to provide for the account.
 
     :param sku: Gets or sets the sku type. Note that sku cannot be updated to
      StandardZRS or ProvisionedLRS, nor can accounts of that sku type be
