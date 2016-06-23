@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class UsageName(Model):
-    """
-    The Usage Names.
+    """The Usage Names.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
