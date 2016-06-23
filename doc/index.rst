@@ -8,7 +8,7 @@ Installation:
 
 - Use the ``--pre`` flag: ``pip install --pre azure``
 
-- Specify the version:  ``pip install azure==2.0.0rc4``
+- Specify the version:  ``pip install azure==2.0.0rc5``
 
 If you want to install ``azure`` from source::
 
