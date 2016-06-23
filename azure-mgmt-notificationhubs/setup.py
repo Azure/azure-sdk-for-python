@@ -16,6 +16,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+import re
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -32,9 +33,17 @@ try:
 except ImportError:
     pass
 
+# Version extraction inspired from 'requests'
+with open('azure/mgmt/notificationhubs/version.py', 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
+if not version:
+    raise RuntimeError('Cannot find version information')
+
 setup(
     name='azure-mgmt-notificationhubs',
-    version='0.30.0rc4',
+    version=version,
     description='Microsoft Azure Notification Hubs Resource Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',

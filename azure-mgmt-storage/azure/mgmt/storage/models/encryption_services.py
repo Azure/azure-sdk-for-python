@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class EncryptionServices(Model):
-    """
-    The encrypted services.
+    """The encrypted services.
 
     :param blob: The blob service.
     :type blob: :class:`EncryptionService

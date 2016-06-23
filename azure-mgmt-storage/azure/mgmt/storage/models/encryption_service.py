@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class EncryptionService(Model):
-    """
-    An encrypted service.
+    """An encrypted service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

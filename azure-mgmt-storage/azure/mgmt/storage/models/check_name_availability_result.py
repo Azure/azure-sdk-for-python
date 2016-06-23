@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CheckNameAvailabilityResult(Model):
-    """
-    The CheckNameAvailability operation response.
+    """The CheckNameAvailability operation response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

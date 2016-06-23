@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class StorageAccountCreateParameters(Model):
-    """
-    The parameters to provide for the account.
+    """The parameters to provide for the account.
 
     :param sku: Required. Gets or sets the sku type.
     :type sku: :class:`Sku <azure.mgmt.storage.models.Sku>`
